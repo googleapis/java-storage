@@ -273,6 +273,16 @@ public class Bucket extends BucketInfo {
     }
 
     /**
+     * Returns an option for overriding an Unlocked Retention policy. This must be set to true in
+     * order to change a policy from Unlocked to Locked, to set it to null, or to reduce its
+     * retainUntilTime attribute.
+     */
+    @TransportCompatibility({Transport.HTTP})
+    public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {
+      return new BlobTargetOption(UnifiedOpts.overrideUnlockedRetention(overrideUnlockedRetention));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -729,6 +739,12 @@ public class Bucket extends BucketInfo {
     @Override
     public Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig) {
       infoBuilder.setCustomPlacementConfig(customPlacementConfig);
+      return this;
+    }
+
+    @Override
+    Builder setObjectRetention(ObjectRetention objectRetention) {
+      infoBuilder.setObjectRetention(objectRetention);
       return this;
     }
 

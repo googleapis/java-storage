@@ -1,5 +1,45 @@
 # Changelog
 
+## [2.30.1](https://github.com/googleapis/java-storage/compare/v2.30.0...v2.30.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* Revert ReadAllBytes fix ([#2331](https://github.com/googleapis/java-storage/issues/2331)) ([4b8458f](https://github.com/googleapis/java-storage/commit/4b8458f01f4375b18f1c447761e8419d43d0cbc9))
+
+## [2.30.0](https://github.com/googleapis/java-storage/compare/v2.29.1...v2.30.0) (2023-12-01)
+
+
+### Features
+
+* Add object retention feature ([#2277](https://github.com/googleapis/java-storage/issues/2277)) ([3deb29b](https://github.com/googleapis/java-storage/commit/3deb29b2b78310a46b268e20d88f383b9a818e0b))
+
+
+### Bug Fixes
+
+* Fix JSON read handling when socket broken resulting in partial bytes copied ([#2303](https://github.com/googleapis/java-storage/issues/2303)) ([d4bfcf0](https://github.com/googleapis/java-storage/commit/d4bfcf0d4d5155a78c9230bc85be739f99391b1a)), closes [#2301](https://github.com/googleapis/java-storage/issues/2301)
+* Fix Storage#readAllBytes to allow reading compressed bytes ([#2304](https://github.com/googleapis/java-storage/issues/2304)) ([68b96a9](https://github.com/googleapis/java-storage/commit/68b96a97352925a6142e677949395044ddc6c605))
+* Update implementation of readAllBytes and downloadTo to be more robust to retryable errors ([#2305](https://github.com/googleapis/java-storage/issues/2305)) ([21821da](https://github.com/googleapis/java-storage/commit/21821da1483570b0b913f6bfcbc7c5637a637bca))
+
+
+### Dependencies
+
+* Update actions/github-script action to v7 ([#2300](https://github.com/googleapis/java-storage/issues/2300)) ([062df62](https://github.com/googleapis/java-storage/commit/062df62948c5bd4fc11090f42495043fc697c38a))
+* Update actions/github-script action to v7 ([#2302](https://github.com/googleapis/java-storage/issues/2302)) ([c46c24f](https://github.com/googleapis/java-storage/commit/c46c24f64ab0164cffc30b68ed070d854bb4b156))
+* Update actions/github-script action to v7 ([#2318](https://github.com/googleapis/java-storage/issues/2318)) ([44c1b00](https://github.com/googleapis/java-storage/commit/44c1b0022fe892177ae4ae45acaf52e8e9971ec2))
+* Update actions/setup-java action to v4 ([#2315](https://github.com/googleapis/java-storage/issues/2315)) ([5791470](https://github.com/googleapis/java-storage/commit/57914706d2ef8de9895c0c80e6b89755b378c89f))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231117-2.0.0 ([#2320](https://github.com/googleapis/java-storage/issues/2320)) ([b5a34d8](https://github.com/googleapis/java-storage/commit/b5a34d8ce920b0d0a766e4dc9d488c5e4e5e21ba))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.20.0 ([#2316](https://github.com/googleapis/java-storage/issues/2316)) ([49cdc20](https://github.com/googleapis/java-storage/commit/49cdc2085adbba5024b27fda5b1add328de82684))
+* Update dependency net.jqwik:jqwik to v1.8.2 ([#2312](https://github.com/googleapis/java-storage/issues/2312)) ([70d1d1c](https://github.com/googleapis/java-storage/commit/70d1d1c91c28e9a1fa5f9f938301ff5346a56a7b))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.1 ([#2292](https://github.com/googleapis/java-storage/issues/2292)) ([7471a7c](https://github.com/googleapis/java-storage/commit/7471a7ced7a3d53c67c08aeb9a56bb7b2b23b2d0))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.40.0 ([#2306](https://github.com/googleapis/java-storage/issues/2306)) ([29f4ea6](https://github.com/googleapis/java-storage/commit/29f4ea60891914eb87db9227a76b1c51b818a492))
+* Update junit-platform.version to v5.10.1 ([#2293](https://github.com/googleapis/java-storage/issues/2293)) ([6e36cc4](https://github.com/googleapis/java-storage/commit/6e36cc4feba180247a87b095e4f9c145f724d9e8))
+
+
+### Documentation
+
+* Add @TransportCompatibility to StorageBatch ([#2276](https://github.com/googleapis/java-storage/issues/2276)) ([d3b7bb3](https://github.com/googleapis/java-storage/commit/d3b7bb38537117c508527fd843bc9450ebbfe1ee))
+
 ## [2.29.1](https://github.com/googleapis/java-storage/compare/v2.29.0...v2.29.1) (2023-11-02)
 
 

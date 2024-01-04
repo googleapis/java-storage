@@ -33,6 +33,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
+import com.google.cloud.storage.BucketInfo.ObjectRetention.Mode;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Rpo;
@@ -43,6 +44,7 @@ import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageClass;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -55,6 +57,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -111,7 +114,10 @@ public class ITBucketTest {
   @Test
   public void testGetBucketAllSelectedFields() {
     Bucket remoteBucket =
-        storage.get(bucket.getName(), Storage.BucketGetOption.fields(BucketField.values()));
+        storage.get(
+            bucket.getName(),
+            Storage.BucketGetOption.fields(
+                TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     assertEquals(bucket.getName(), remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
   }
@@ -420,6 +426,69 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void testObjectRetention() {
+    String bucketName = generator.randomBucketName();
+
+    // Create a bucket with object retention enabled
+    storage.create(
+        BucketInfo.newBuilder(bucketName).build(), BucketTargetOption.enableObjectRetention(true));
+
+    try {
+      Bucket remoteBucket = storage.get(bucketName);
+      assertNotNull(remoteBucket.getObjectRetention());
+      assertEquals(Mode.ENABLED, remoteBucket.getObjectRetention().getMode());
+
+      OffsetDateTime now = OffsetDateTime.now();
+
+      // Create an object with a retention policy configured
+      storage.create(
+          BlobInfo.newBuilder(bucketName, "retentionObject")
+              .setRetention(
+                  BlobInfo.Retention.newBuilder()
+                      .setMode(BlobInfo.Retention.Mode.UNLOCKED)
+                      .setRetainUntilTime(now.plusDays(2))
+                      .build())
+              .build());
+
+      Blob remoteBlob = storage.get(bucketName, "retentionObject");
+      assertNotNull(remoteBlob.getRetention());
+      assertEquals(BlobInfo.Retention.Mode.UNLOCKED, remoteBlob.getRetention().getMode());
+
+      // Reduce the retainUntilTime of an object's retention policy
+      remoteBlob
+          .toBuilder()
+          .setRetention(
+              BlobInfo.Retention.newBuilder()
+                  .setMode(BlobInfo.Retention.Mode.UNLOCKED)
+                  .setRetainUntilTime(now.plusHours(1))
+                  .build())
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+
+      remoteBlob = storage.get(bucketName, "retentionObject");
+      assertEquals(
+          now.plusHours(1).toInstant().truncatedTo(ChronoUnit.SECONDS),
+          remoteBlob
+              .getRetention()
+              .getRetainUntilTime()
+              .toInstant()
+              .truncatedTo(ChronoUnit.SECONDS));
+
+      // Remove an unlocked retention policy
+      remoteBlob
+          .toBuilder()
+          .setRetention(null)
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+
+      remoteBlob = storage.get(bucketName, "retentionObject");
+      assertNull(remoteBlob.getRetention());
+    } finally {
+      BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
   public void testCreateBucketWithAutoclass_ARCHIVE() throws Exception {
     String bucketName = generator.randomBucketName();
     Autoclass autoclass =

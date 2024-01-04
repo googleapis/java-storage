@@ -21,7 +21,6 @@ import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.bucketCop
 import static com.google.cloud.storage.conformance.retry.Ctx.ctx;
 import static com.google.cloud.storage.conformance.retry.State.empty;
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 
@@ -81,6 +80,7 @@ import org.junit.runner.RunWith;
  * RpcMethodMappings}.
  */
 @RunWith(StorageITRunner.class)
+// @CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
 @SingleBackend(Backend.TEST_BENCH)
 @Parameterized(RetryConformanceParameterProvider.class)
 @ParallelFriendly
@@ -117,10 +117,9 @@ public class ITRetryConformanceTest {
   public void tearDown() throws Throwable {
     LOGGER.fine("Running teardown...");
     if (ctx != null) {
-      Ctx tearDownCtx = ctx.leftMap(s -> nonTestStorage);
       getReplaceStorageInObjectsFromCtx()
           .andThen(mapping.getTearDown())
-          .apply(tearDownCtx, testRetryConformance);
+          .apply(ctx, testRetryConformance);
     }
     retryTestFixture.finished(null);
     LOGGER.fine("Running teardown complete");
@@ -178,9 +177,7 @@ public class ITRetryConformanceTest {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-      assertWithMessage("Filter too strict. Resolved 0 retry test cases")
-          .that(retryTestCases)
-          .isNotEmpty();
+      assertThat(retryTestCases).isNotEmpty();
       return retryTestCases.stream()
           .map(
               rtc ->

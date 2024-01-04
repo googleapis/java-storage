@@ -25,6 +25,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITBucketReadMaskTest.BucketReadMaskTestParameters;
 import com.google.cloud.storage.it.ReadMaskTestUtils.Args;
@@ -138,7 +139,10 @@ public final class ITBucketReadMaskTest {
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());
 
       List<String> definedFields =
-          Arrays.stream(BucketField.values()).map(Enum::name).sorted().collect(Collectors.toList());
+          Arrays.stream(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values()))
+              .map(Enum::name)
+              .sorted()
+              .collect(Collectors.toList());
 
       assertThat(argsDefined).containsExactlyElementsIn(definedFields);
       return args;

@@ -364,6 +364,7 @@ public class HttpStorageRpc implements StorageRpc {
           .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
           .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
           .setUserProject(Option.USER_PROJECT.getString(options))
+          .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options))
           .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -622,6 +623,7 @@ public class HttpStorageRpc implements StorageRpc {
         .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
         .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
         .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+        .setOverrideUnlockedRetention(Option.OVERRIDE_UNLOCKED_RETENTION.getBoolean(options))
         .setUserProject(Option.USER_PROJECT.getString(options));
   }
 
@@ -752,12 +754,6 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
               .setUserProject(Option.USER_PROJECT.getString(options));
       setEncryptionHeaders(getRequest.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
-      Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
-      if (shouldReturnRawInputStream != null) {
-        getRequest.setReturnRawInputStream(shouldReturnRawInputStream);
-      } else {
-        getRequest.setReturnRawInputStream(false);
-      }
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       getRequest.executeMedia().download(out);
       return out.toByteArray();

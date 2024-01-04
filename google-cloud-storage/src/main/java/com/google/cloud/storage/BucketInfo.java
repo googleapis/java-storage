@@ -27,8 +27,11 @@ import static com.google.common.collect.Lists.newArrayList;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
+import com.google.api.core.ApiFunction;
 import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
+import com.google.cloud.StringEnumType;
+import com.google.cloud.StringEnumValue;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobInfo.ImmutableEmptyMap;
 import com.google.cloud.storage.Storage.BucketField;
@@ -114,6 +117,8 @@ public class BucketInfo implements Serializable {
   private final String locationType;
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
+  private final ObjectRetention objectRetention;
+
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /**
@@ -476,6 +481,95 @@ public class BucketInfo implements Serializable {
 
       public Autoclass build() {
         return new Autoclass(this);
+      }
+    }
+  }
+
+  public static final class ObjectRetention implements Serializable {
+
+    private static final long serialVersionUID = 3948199339534287669L;
+    private Mode mode;
+
+    public Mode getMode() {
+      return mode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ObjectRetention)) {
+        return false;
+      }
+      ObjectRetention that = (ObjectRetention) o;
+      return Objects.equals(mode, that.mode);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(mode);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("mode", mode).toString();
+    }
+
+    private ObjectRetention() {}
+
+    private ObjectRetention(Builder builder) {
+      this.mode = builder.mode;
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return new Builder().setMode(this.mode);
+    }
+
+    public static final class Builder {
+      private Mode mode;
+
+      /** Sets the object retention mode. Can be Enabled or Disabled. */
+      public Builder setMode(Mode mode) {
+        this.mode = mode;
+        return this;
+      }
+
+      public ObjectRetention build() {
+        return new ObjectRetention(this);
+      }
+    }
+
+    public static final class Mode extends StringEnumValue {
+      private static final long serialVersionUID = 1973143582659557184L;
+
+      private Mode(String constant) {
+        super(constant);
+      }
+
+      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
+
+      private static final StringEnumType<Mode> type =
+          new StringEnumType<>(Mode.class, CONSTRUCTOR);
+
+      public static final Mode ENABLED = type.createAndRegister("Enabled");
+
+      public static final Mode DISABLED = type.createAndRegister("Disabled");
+
+      public static Mode valueOfStrict(String constant) {
+        return type.valueOfStrict(constant);
+      }
+
+      public static Mode valueOf(String constant) {
+        return type.valueOf(constant);
+      }
+
+      public static Mode[] values() {
+        return type.values();
       }
     }
   }
@@ -1589,6 +1683,8 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
 
+    abstract Builder setObjectRetention(ObjectRetention objectRetention);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
 
@@ -1686,6 +1782,7 @@ public class BucketInfo implements Serializable {
     private String locationType;
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
+    private ObjectRetention objectRetention;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -1724,6 +1821,7 @@ public class BucketInfo implements Serializable {
       locationType = bucketInfo.locationType;
       logging = bucketInfo.logging;
       customPlacementConfig = bucketInfo.customPlacementConfig;
+      objectRetention = bucketInfo.objectRetention;
     }
 
     @Override
@@ -2081,6 +2179,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    Builder setObjectRetention(ObjectRetention objectRetention) {
+      if (!Objects.equals(this.objectRetention, objectRetention)) {
+        modifiedFields.add(BucketField.OBJECT_RETENTION);
+      }
+      this.objectRetention = objectRetention;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       if (!Objects.equals(this.locationType, locationType)) {
         modifiedFields.add(BucketField.LOCATION_TYPE);
@@ -2320,6 +2427,7 @@ public class BucketInfo implements Serializable {
     locationType = builder.locationType;
     logging = builder.logging;
     customPlacementConfig = builder.customPlacementConfig;
+    objectRetention = builder.objectRetention;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2655,6 +2763,11 @@ public class BucketInfo implements Serializable {
     return customPlacementConfig;
   }
 
+  /** returns the Object Retention configuration */
+  public ObjectRetention getObjectRetention() {
+    return objectRetention;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2691,6 +2804,7 @@ public class BucketInfo implements Serializable {
         iamConfiguration,
         autoclass,
         locationType,
+        objectRetention,
         logging);
   }
 
@@ -2731,6 +2845,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(iamConfiguration, that.iamConfiguration)
         && Objects.equals(autoclass, that.autoclass)
         && Objects.equals(locationType, that.locationType)
+        && Objects.equals(objectRetention, that.objectRetention)
         && Objects.equals(logging, that.logging);
   }
 

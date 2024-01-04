@@ -304,4 +304,15 @@ public final class TestUtils {
     }
     return false;
   }
+
+  /**
+   * GRPC test methods will sometimes use all bucket fields, which can cause an error if any aren't
+   * supported by GRPC. todo: b/308194853
+   */
+  public static Storage.BucketField[] filterOutHttpOnlyBucketFields(Storage.BucketField[] fields) {
+    return Arrays.stream(fields)
+        .filter(f -> !f.equals(Storage.BucketField.OBJECT_RETENTION))
+        .collect(ImmutableSet.toImmutableSet())
+        .toArray(new Storage.BucketField[0]);
+  }
 }

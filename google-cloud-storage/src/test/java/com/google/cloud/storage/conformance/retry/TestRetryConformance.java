@@ -42,7 +42,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -238,10 +237,6 @@ final class TestRetryConformance {
   @Override
   public String toString() {
     return getTestName();
-  }
-
-  public static Predicate<TestRetryConformance> transportIs(Transport t) {
-    return trc -> trc.transport == t;
   }
 
   private static Supplier<Path> resolvePathForResource(String objectName, Method method) {

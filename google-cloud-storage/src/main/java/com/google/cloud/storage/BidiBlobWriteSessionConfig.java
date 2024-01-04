@@ -65,12 +65,12 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig implement
      * @since 2.26.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public DefaultBlobWriteSessionConfig withBufferSize(int bufferSize) {
+    public BidiBlobWriteSessionConfig withBufferSize(int bufferSize) {
         Preconditions.checkArgument(
                 bufferSize >= ByteSizeConstants._256KiB,
                 "bufferSize must be >= %d",
                 ByteSizeConstants._256KiB);
-        return new DefaultBlobWriteSessionConfig(bufferSize);
+        return new BidiBlobWriteSessionConfig(bufferSize);
     }
 
     @Override
