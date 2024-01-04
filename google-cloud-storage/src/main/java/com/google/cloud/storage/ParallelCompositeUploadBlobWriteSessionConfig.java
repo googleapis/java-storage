@@ -126,7 +126,6 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
 
-
   private ParallelCompositeUploadBlobWriteSessionConfig(
       int maxPartsPerCompose,
       ExecutorSupplier executorSupplier,
@@ -581,16 +580,17 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + ".part";
       }
     }
-     static final class WithObjectLevelPrefix extends PartNamingStrategy {
 
-       private static final long serialVersionUID = 5157942020618764450L;
+    static final class WithObjectLevelPrefix extends PartNamingStrategy {
+
+      private static final long serialVersionUID = 5157942020618764450L;
       private final String prefix;
 
       private WithObjectLevelPrefix(SecureRandom rand, String prefix) {
         super(rand);
         // If no prefix is specified we will create the part files under the same directory as the
         // ultimate object.
-        this.prefix = prefix.isEmpty() ? prefix :  prefix + "/";
+        this.prefix = prefix.isEmpty() ? prefix : prefix + "/";
       }
 
       @Override
