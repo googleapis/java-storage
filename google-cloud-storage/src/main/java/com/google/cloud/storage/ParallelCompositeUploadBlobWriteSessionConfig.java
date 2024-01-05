@@ -521,8 +521,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     /**
-     * Strategy in which the end object name is the prefix included and is present on each part
-     * and intermediary compose object.
+     * Strategy in which the end object name is the prefix included and is present on each part and
+     * intermediary compose object.
      *
      * <p>General format is
      *
@@ -535,7 +535,6 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
      * objectInfoDigest} are generated is undefined and subject to change at any time.
      *
-     *
      * @see #withPartNamingStrategy(PartNamingStrategy)
      * @since 2.30.2 This new api is in preview and is subject to breaking changes.
      */
@@ -543,7 +542,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     public static PartNamingStrategy objectNamePrefix() {
       return objectNamePrefix("");
     }
-    
+
     private static PartNamingStrategy objectNamePrefix(String prefixPattern) {
       checkNotNull(prefixPattern, "prefixPattern must be non null");
       SecureRandom rand = new SecureRandom();
