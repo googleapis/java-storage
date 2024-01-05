@@ -520,19 +520,14 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       return new WithPrefix(rand, prefixPattern);
     }
 
-    @BetaApi
-    public static PartNamingStrategy objectLevelPrefix() {
-      return objectLevelPrefix("");
-    }
-
     /**
-     * Strategy in which an explicit stable prefix with object name included is present on each part
+     * Strategy in which the end object name is the prefix included and is present on each part
      * and intermediary compose object.
      *
      * <p>General format is
      *
      * <pre><code>
-     *   {prefixPattern}/{objectName}/{randomKeyDigest};{objectInfoDigest};{partIndex}.part
+     *   {objectName}/{randomKeyDigest};{objectInfoDigest};{partIndex}.part
      * </code></pre>
      *
      * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
@@ -540,16 +535,16 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
      * objectInfoDigest} are generated is undefined and subject to change at any time.
      *
-     * <p>Care must be taken when choosing to specify a stable prefix as this can create hotspots in
-     * the keyspace for object names. See <a
-     * href="https://cloud.google.com/storage/docs/request-rate#naming-convention">Object Naming
-     * Convention Guidelines</a> for more details.
      *
      * @see #withPartNamingStrategy(PartNamingStrategy)
      * @since 2.30.2 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public static PartNamingStrategy objectLevelPrefix(String prefixPattern) {
+    public static PartNamingStrategy objectNamePrefix() {
+      return objectNamePrefix("");
+    }
+    
+    private static PartNamingStrategy objectNamePrefix(String prefixPattern) {
       checkNotNull(prefixPattern, "prefixPattern must be non null");
       SecureRandom rand = new SecureRandom();
       return new WithObjectLevelPrefix(rand, prefixPattern);
