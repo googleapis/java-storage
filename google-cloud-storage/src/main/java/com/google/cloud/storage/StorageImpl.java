@@ -230,6 +230,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
+    long size = Files.size(path);
+    if (size == 0L) {
+      return create(blobInfo, null, options);
+    }
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
@@ -251,7 +255,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             getOptions().asRetryDependencies(),
             retryAlgorithmManager.idempotent(),
             jsonResumableWrite);
-    long size = Files.size(path);
     HttpContentRange contentRange =
         HttpContentRange.of(ByteRangeSpec.relativeLength(0L, size), size);
     ResumableOperationResult<StorageObject> put =
