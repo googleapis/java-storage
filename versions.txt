@@ -7,3 +7,4 @@ grpc-google-cloud-storage-v2:2.30.1-alpha:2.30.1-alpha
 proto-google-cloud-storage-v2:2.30.1-alpha:2.30.1-alpha
 google-cloud-storage-control:2.30.1-alpha:2.30.1-alpha
 proto-google-cloud-storage-control-v2:2.30.1-alpha:2.30.1-alpha
+grpc-google-cloud-storage-control-v2:2.30.1:2.30.1

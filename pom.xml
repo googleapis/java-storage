@@ -75,6 +75,11 @@
 
       <dependency>
         <groupId>com.google.api.grpc</groupId>
+        <artifactId>grpc-google-cloud-storage-control-v2</artifactId>
+        <version>2.30.1</version><!-- {x-version-update:grpc-google-cloud-storage-control-v2:current} -->
+      </dependency>
+      <dependency>
+        <groupId>com.google.api.grpc</groupId>
         <artifactId>proto-google-cloud-storage-control-v2</artifactId>
         <version>2.30.1</version><!-- {x-version-update:proto-google-cloud-storage-control-v2:current} -->
       </dependency>
@@ -201,6 +206,7 @@
   <modules>
     <module>google-cloud-storage</module>
     <module>grpc-google-cloud-storage-v2</module>
+    <module>grpc-google-cloud-storage-control-v2</module>
     <module>proto-google-cloud-storage-v2</module>
     <module>proto-google-cloud-storage-control-v2</module>
     <module>gapic-google-cloud-storage-v2</module>
