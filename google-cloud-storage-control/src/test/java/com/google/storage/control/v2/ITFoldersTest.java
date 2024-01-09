@@ -24,6 +24,7 @@ import com.google.api.services.storage.model.Bucket;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.StorageOptions;
 import java.util.UUID;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ITFoldersTest {
@@ -40,8 +41,9 @@ public class ITFoldersTest {
             .setApplicationName("test")
             .build();
     String bucketName = "hns-b-gcs-grpc-team-test-" + UUID.randomUUID();
+    Bucket createdBucket = null;
     try {
-      Bucket bucket =
+      Bucket bucketConfig =
           new Bucket()
               .setName(bucketName)
               .setHierarchicalNamespace(new Bucket.HierarchicalNamespace().setEnabled(true))
@@ -49,17 +51,20 @@ public class ITFoldersTest {
                   new Bucket.IamConfiguration()
                       .setUniformBucketLevelAccess(
                           new Bucket.IamConfiguration.UniformBucketLevelAccess().setEnabled(true)));
-      Storage.Buckets.Insert insert = storage.buckets().insert(option.getProjectId(), bucket);
-      insert.execute();
+      createdBucket = storage.buckets().insert(option.getProjectId(), bucketConfig).execute();
       StorageControlClient storageControlClient = StorageControlClient.create();
+      String folderId = "foldername/";
       Folder folder =
           storageControlClient.createFolder(
               CreateFolderRequest.newBuilder()
                   .setParent(BucketName.format("_", bucketName))
-                  .setFolderId("foldername/")
+                  .setFolderId(folderId)
                   .build());
+      Assert.assertEquals(folder.getName(), FolderName.format("_", bucketName, folderId));
     } finally {
-      storage.buckets().delete(bucketName);
+      if (createdBucket != null) {
+        storage.buckets().delete(bucketName);
+      }
     }
   }
 }
