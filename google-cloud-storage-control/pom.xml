@@ -15,11 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.api</groupId>
-            <artifactId>gax-httpjson</artifactId>
-            <version>2.34.1</version>
-        </dependency>
-        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-api</artifactId>
         </dependency>
@@ -55,10 +50,6 @@
         <dependency>
             <groupId>com.google.api</groupId>
             <artifactId>gax</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.api.grpc</groupId>
-            <artifactId>proto-google-iam-v1</artifactId>
         </dependency>
 
         <dependency>
