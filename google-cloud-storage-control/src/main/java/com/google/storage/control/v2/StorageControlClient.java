@@ -61,7 +61,6 @@ import javax.annotation.Generated;
  * <p>Note: close() needs to be called on the StorageControlClient object to clean up resources such
  * as threads. In the example above, try-with-resources is used, which automatically calls close().
  *
- *
  * <p>See the individual methods for example code.
  *
  * <p>Many parameters require resource names to be formatted in a particular way. To assist with
