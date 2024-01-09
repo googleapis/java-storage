@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.31.0](https://github.com/googleapis/java-storage/compare/v2.30.1...v2.31.0) (2024-01-09)
+
+
+### Features
+
+* Next release from main branch is 2.31.0 ([#2346](https://github.com/googleapis/java-storage/issues/2346)) ([2855f11](https://github.com/googleapis/java-storage/commit/2855f11e21b6aca1ea15fad45130ea689fbf4e23))
+
+
+### Bug Fixes
+
+* Add an exception to zero byte uploads on CreateFrom ([#2342](https://github.com/googleapis/java-storage/issues/2342)) ([2b5b27e](https://github.com/googleapis/java-storage/commit/2b5b27eac3279db815b36b252830d0905ade0665))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.31.0 ([#2349](https://github.com/googleapis/java-storage/issues/2349)) ([578d5d0](https://github.com/googleapis/java-storage/commit/578d5d01f4469409b6d8731bbdc965ab224956ad))
+
+
+### Dependencies
+
+* Update actions/setup-java action to v4 ([#2321](https://github.com/googleapis/java-storage/issues/2321)) ([d7e5b20](https://github.com/googleapis/java-storage/commit/d7e5b20b2e675025e73ee1586014f52f76ed36e6))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231202-2.0.0 ([#2327](https://github.com/googleapis/java-storage/issues/2327)) ([8983c39](https://github.com/googleapis/java-storage/commit/8983c393127a36cce9a359a912b24710b347e5e9))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240105-2.0.0 ([#2351](https://github.com/googleapis/java-storage/issues/2351)) ([e9608c6](https://github.com/googleapis/java-storage/commit/e9608c6e8d59deae714b503792f995f157fd2aaf))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.21.0 ([#2348](https://github.com/googleapis/java-storage/issues/2348)) ([321adb6](https://github.com/googleapis/java-storage/commit/321adb65ae06578e2b2654f1f36ad73b31d20fbd))
+
 ## [2.30.1](https://github.com/googleapis/java-storage/compare/v2.30.0...v2.30.1) (2023-12-06)
 
 
