@@ -1,10 +1,10 @@
 # Format:
 # module:released-version:current-version
 
-google-cloud-storage:2.31.0:2.31.0
-gapic-google-cloud-storage-v2:2.31.0-alpha:2.31.0-alpha
-grpc-google-cloud-storage-v2:2.31.0-alpha:2.31.0-alpha
-proto-google-cloud-storage-v2:2.31.0-alpha:2.31.0-alpha
-google-cloud-storage-control:2.31.0-alpha:2.31.0-alpha
-proto-google-cloud-storage-control-v2:2.31.0-alpha:2.31.0-alpha
-grpc-google-cloud-storage-control-v2:2.31.0-alpha:2.31.0-alpha
+google-cloud-storage:2.31.0:2.31.1-SNAPSHOT
+gapic-google-cloud-storage-v2:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
+grpc-google-cloud-storage-v2:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
+proto-google-cloud-storage-v2:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
+google-cloud-storage-control:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
+proto-google-cloud-storage-control-v2:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
+grpc-google-cloud-storage-control-v2:2.31.0-alpha:2.31.1-alpha-SNAPSHOT
