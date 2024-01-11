@@ -173,13 +173,13 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
-      <version>0.126.0</version>
+      <version>0.127.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
-      <version>2.35.0</version>
+      <version>2.36.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
