@@ -138,14 +138,13 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
             : Paths.get(System.getProperty("java.io.tmpdir"));
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
-    List<ApiFuture<String>> workloadRuns = new ArrayList<>();
     Range objectSizeRange = Range.of(objectSize);
     for (int i = 0; i < samples; i++) {
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       PrintWriter pw = new PrintWriter(System.out, true);
       long startTime = System.currentTimeMillis();
       long endTime = startTime + ( warmup * 1000);
-      // Run a 15s Warmup
+      // Run Warmup
       while (System.currentTimeMillis() < endTime) {
         convert(executorService.submit(
             new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, true))).get();
