@@ -91,10 +91,10 @@ final class W1R3 implements Callable<String> {
     } else {
       printWriter.println(
           generateCloudMonitoringResult(
-              op,
-              StorageSharedBenchmarkingUtils.calculateThroughput(
-                  created.getSize().doubleValue(), duration),
-              created)
+                  op,
+                  StorageSharedBenchmarkingUtils.calculateThroughput(
+                      created.getSize().doubleValue(), duration),
+                  created)
               .formatAsCustomMetric());
     }
   }

@@ -17,10 +17,8 @@
 package com.google.cloud.storage.benchmarking;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.api.gax.rpc.ApiExceptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -29,8 +27,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -143,16 +139,21 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       PrintWriter pw = new PrintWriter(System.out, true);
       long startTime = System.currentTimeMillis();
-      long endTime = startTime + ( warmup * 1000);
+      long endTime = startTime + (warmup * 1000);
       // Run Warmup
       while (System.currentTimeMillis() < endTime) {
-        convert(executorService.submit(
-            new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, true))).get();
+        convert(
+                executorService.submit(
+                    new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, true)))
+            .get();
       }
-      convert(executorService.submit(
-          new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, false))).get();
+      convert(
+              executorService.submit(
+                  new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, false)))
+          .get();
     }
   }
+
   public static int getRandomInt(int min, int max) {
     if (min == max) return min;
     Random random = new Random();
