@@ -37,6 +37,7 @@ final class W1R3 implements Callable<String> {
   private final int objectSize;
   private final Path tempDirectory;
   private final String bucketName;
+  private final boolean isWarmup;
 
   W1R3(
       Storage storage,
@@ -45,7 +46,8 @@ final class W1R3 implements Callable<String> {
       PrintWriter printWriter,
       int objectSize,
       Path tempDirectory,
-      String bucketName) {
+      String bucketName,
+      boolean isWarmup) {
     this.storage = storage;
     this.workers = workers;
     this.api = api;
@@ -53,6 +55,7 @@ final class W1R3 implements Callable<String> {
     this.objectSize = objectSize;
     this.tempDirectory = tempDirectory;
     this.bucketName = bucketName;
+    this.isWarmup = isWarmup;
   }
 
   @Override
@@ -67,31 +70,33 @@ final class W1R3 implements Callable<String> {
       Blob created = storage.createFrom(blob, file.getPath());
       Instant endTime = clock.instant();
       Duration elapsedTimeUpload = Duration.between(startTime, endTime);
-      printWriter.println(
-          generateCloudMonitoringResult(
-                  "WRITE",
-                  StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().doubleValue(), elapsedTimeUpload),
-                  created)
-              .formatAsCustomMetric());
+      printResult("WRITE", created, elapsedTimeUpload);
       for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
         try (TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin")) {
           startTime = clock.instant();
           storage.downloadTo(created.getBlobId(), dest.getPath());
           endTime = clock.instant();
           Duration elapsedTimeDownload = Duration.between(startTime, endTime);
-          printWriter.println(
-              generateCloudMonitoringResult(
-                      "READ[" + i + "]",
-                      StorageSharedBenchmarkingUtils.calculateThroughput(
-                          created.getSize().doubleValue(), elapsedTimeDownload),
-                      created)
-                  .formatAsCustomMetric());
+          printResult("READ[" + i + "]", created, elapsedTimeDownload);
         }
       }
       StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     }
     return "OK";
+  }
+
+  private void printResult(String op, Blob created, Duration duration) {
+    if (isWarmup) {
+      printWriter.println(op + " Warming...");
+    } else {
+      printWriter.println(
+          generateCloudMonitoringResult(
+              op,
+              StorageSharedBenchmarkingUtils.calculateThroughput(
+                  created.getSize().doubleValue(), duration),
+              created)
+              .formatAsCustomMetric());
+    }
   }
 
   private CloudMonitoringResult generateCloudMonitoringResult(

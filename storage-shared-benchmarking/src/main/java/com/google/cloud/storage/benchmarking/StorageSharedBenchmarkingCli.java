@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import picocli.CommandLine;
@@ -108,7 +109,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
-    runW1R3(storageClient);
+    try {
+      runW1R3(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload 1: " + e.getMessage());
+    }
   }
 
   private void runWorkload4() {
@@ -116,10 +121,14 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
-    runW1R3(storageClient);
+    try {
+      runW1R3(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload 4: " + e.getMessage());
+    }
   }
 
-  private void runW1R3(Storage storageClient) {
+  private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     Path tempDir =
         tempDirLocation != null
             ? Paths.get(tempDirLocation)
@@ -131,14 +140,17 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     for (int i = 0; i < samples; i++) {
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       PrintWriter pw = new PrintWriter(System.out, true);
-      workloadRuns.add(
-          convert(
-              executorService.submit(
-                  new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket))));
+      long startTime = System.currentTimeMillis();
+      long endTime = startTime + (15 * 1000);
+      // Run a 15s Warmup
+      while (System.currentTimeMillis() < endTime) {
+        convert(executorService.submit(
+            new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, true))).get();
+      }
+      convert(executorService.submit(
+          new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, false))).get();
     }
-    ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(workloadRuns));
   }
-
   public static int getRandomInt(int min, int max) {
     if (min == max) return min;
     Random random = new Random();
