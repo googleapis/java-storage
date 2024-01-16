@@ -84,6 +84,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       description = "Specify the path where the temporary directory should be located")
   String tempDirLocation;
 
+  @Option(names = "-warmup", description = "Warmup in seconds", defaultValue = "0")
+  int warmup;
+
   public static void main(String[] args) {
     CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class);
     System.exit(cmd.execute(args));
@@ -141,7 +144,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       PrintWriter pw = new PrintWriter(System.out, true);
       long startTime = System.currentTimeMillis();
-      long endTime = startTime + (15 * 1000);
+      long endTime = startTime + ( warmup * 1000);
       // Run a 15s Warmup
       while (System.currentTimeMillis() < endTime) {
         convert(executorService.submit(
