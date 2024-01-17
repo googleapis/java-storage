@@ -80,8 +80,15 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       description = "Specify the path where the temporary directory should be located")
   String tempDirLocation;
 
-  @Option(names = "-warmup", description = "Warmup in seconds", defaultValue = "0")
+  @Option(
+      names = "-warmup",
+      description = "Number of seconds a W1R3 warmup will run on all available processors",
+      defaultValue = "0")
   int warmup;
+
+  Path tempDir;
+
+  PrintWriter printWriter;
 
   public static void main(String[] args) {
     CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class);
@@ -90,6 +97,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Override
   public void run() {
+    tempDir =
+        tempDirLocation != null
+            ? Paths.get(tempDirLocation)
+            : Paths.get(System.getProperty("java.io.tmpdir"));
+    printWriter = new PrintWriter(System.out, true);
     switch (testType) {
       case "w1r3":
         runWorkload1();
@@ -109,7 +121,14 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
     try {
-      runW1R3(storageClient);
+      ListeningExecutorService executorService =
+          MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+      for (int i = 0; i < samples; i++) {
+        if (warmup > 0) {
+          runWarmup(storageClient);
+        }
+        runW1R3(storageClient, false, executorService);
+      }
     } catch (Exception e) {
       System.err.println("Failed to run workload 1: " + e.getMessage());
     }
@@ -121,36 +140,47 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
     try {
-      runW1R3(storageClient);
+      ListeningExecutorService executorService =
+          MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+      for (int i = 0; i < samples; i++) {
+        if (warmup > 0) {
+          runWarmup(storageClient);
+        }
+        runW1R3(storageClient, false, executorService);
+      }
     } catch (Exception e) {
       System.err.println("Failed to run workload 4: " + e.getMessage());
     }
   }
 
-  private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
-    Path tempDir =
-        tempDirLocation != null
-            ? Paths.get(tempDirLocation)
-            : Paths.get(System.getProperty("java.io.tmpdir"));
-    ListeningExecutorService executorService =
-        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+  private void runW1R3(
+      Storage storageClient, boolean isWarmUp, ListeningExecutorService executorService)
+      throws ExecutionException, InterruptedException {
     Range objectSizeRange = Range.of(objectSize);
-    for (int i = 0; i < samples; i++) {
-      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
-      PrintWriter pw = new PrintWriter(System.out, true);
-      long startTime = System.currentTimeMillis();
-      long endTime = startTime + (warmup * 1000);
-      // Run Warmup
-      while (System.currentTimeMillis() < endTime) {
-        convert(
-                executorService.submit(
-                    new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, true)))
-            .get();
-      }
-      convert(
-              executorService.submit(
-                  new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket, false)))
-          .get();
+    int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+    convert(
+            executorService.submit(
+                new W1R3(
+                    storageClient,
+                    workers,
+                    api,
+                    printWriter,
+                    objectSize,
+                    tempDir,
+                    bucket,
+                    isWarmUp)))
+        .get();
+  }
+
+  private void runWarmup(Storage storageClient) throws ExecutionException, InterruptedException {
+    int numberProcessors = Runtime.getRuntime().availableProcessors();
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberProcessors));
+    long startTime = System.currentTimeMillis();
+    long endTime = startTime + (warmup * 1000);
+    // Run Warmup
+    while (System.currentTimeMillis() < endTime) {
+      runW1R3(storageClient, true, executorService);
     }
   }
 
