@@ -74,7 +74,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
   public void partNameStrategy_objectNamePrefix() throws Exception {
     // Creating an object level prefix without specifying an additional prefix will append the
     // object name to the beginning of the part name.
-    PartNamingStrategy strategy = PartNamingStrategy.objectNamePrefix();
+    PartNamingStrategy strategy = PartNamingStrategy.useObjectNameAsPrefix();
 
     String fmt = strategy.fmtName("a/b/obj", PartRange.of(1, 96));
     assertAll(

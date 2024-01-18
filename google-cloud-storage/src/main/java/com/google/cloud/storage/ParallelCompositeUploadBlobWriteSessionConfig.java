@@ -527,7 +527,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * <p>General format is
      *
      * <pre><code>
-     *   {objectName}-parts/{randomKeyDigest};{objectInfoDigest};{partIndex}.part
+     *   {objectName}-{randomKeyDigest};{objectInfoDigest};{partIndex}.part
      * </code></pre>
      *
      * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
@@ -539,11 +539,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * @since 2.30.2 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public static PartNamingStrategy objectNamePrefix() {
-      return objectNamePrefix("");
+    public static PartNamingStrategy useObjectNameAsPrefix() {
+      return useObjectNameAsPrefix("");
     }
 
-    private static PartNamingStrategy objectNamePrefix(String prefixPattern) {
+    private static PartNamingStrategy useObjectNameAsPrefix(String prefixPattern) {
       checkNotNull(prefixPattern, "prefixPattern must be non null");
       SecureRandom rand = new SecureRandom();
       return new WithObjectLevelPrefix(rand, prefixPattern);
@@ -594,8 +594,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         String nameDigest = B64.encodeToString(hashCode.asBytes());
         return prefix
             + ultimateObjectName
-            + "-parts"
-            + "/"
+            + "-"
             + randomKey
             + FIELD_SEPARATOR
             + nameDigest
