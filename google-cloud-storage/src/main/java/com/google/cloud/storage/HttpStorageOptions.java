@@ -323,6 +323,11 @@ public class HttpStorageOptions extends StorageOptions {
     public ServiceRpc create(StorageOptions options) {
       if (options instanceof HttpStorageOptions) {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
+        // todo: In the future, this step will be done automatically, and the getResolvedApiaryHost helper method will
+        // be removed. When that happens, delete the following block.
+        if (httpStorageOptions.getUniverseDomain() != null) {
+          httpStorageOptions = httpStorageOptions.toBuilder().setHost(httpStorageOptions.getResolvedApiaryHost("storage")).build();
+        }
         return new HttpStorageRpc(httpStorageOptions);
       } else {
         throw new IllegalArgumentException("Only HttpStorageOptions supported");
