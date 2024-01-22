@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.32.0](https://github.com/googleapis/java-storage/compare/v2.31.0...v2.32.0) (2024-01-22)
+
+
+### Features
+
+* Add ability to create a PCU Prefix at the object level ([#2345](https://github.com/googleapis/java-storage/issues/2345)) ([d39a4e4](https://github.com/googleapis/java-storage/commit/d39a4e46eb429b77ee75d822521ed31567ed5ec4))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.22.0 ([#2363](https://github.com/googleapis/java-storage/issues/2363)) ([e2e2d7e](https://github.com/googleapis/java-storage/commit/e2e2d7ef5e2bc353357053df7bc26adeb0fe074a))
+
 ## [2.31.0](https://github.com/googleapis/java-storage/compare/v2.30.1...v2.31.0) (2024-01-09)
 
 
