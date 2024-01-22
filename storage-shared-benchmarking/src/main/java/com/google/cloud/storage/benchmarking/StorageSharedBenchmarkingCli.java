@@ -121,12 +121,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
     try {
-      ListeningExecutorService executorService =
-          MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
-        if (warmup > 0) {
-          runWarmup(storageClient);
-        }
-        runW1R3(storageClient, false, executorService);
+        runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 1: " + e.getMessage());
     }
@@ -138,24 +133,19 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
     try {
-      ListeningExecutorService executorService =
-          MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
-        if (warmup > 0) {
-          runWarmup(storageClient);
-        }
-        runW1R3(storageClient, false, executorService);
+        runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 4: " + e.getMessage());
     }
   }
 
   private void runW1R3(
-      Storage storageClient, boolean isWarmUp, ListeningExecutorService executorService)
+      Storage storageClient)
       throws ExecutionException, InterruptedException {
-    // If we are running the actual workload we run for the number of samples, if not (ie. warmup)
-    // we just run once
-    int numberOfRuns = isWarmUp ? 1 : samples;
-    for (int i = 0 ; i < numberOfRuns; i++) {
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    for (int i = 0 ; i < samples; i++) {
+      runWarmup(storageClient);
       Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       convert(
@@ -168,12 +158,15 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
                   objectSize,
                   tempDir,
                   bucket,
-                  isWarmUp)))
+                  false)))
           .get();
     }
   }
 
   private void runWarmup(Storage storageClient) throws ExecutionException, InterruptedException {
+    if(warmup <= 0) {
+      return;
+    }
     int numberProcessors = Runtime.getRuntime().availableProcessors();
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberProcessors));
@@ -181,7 +174,20 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     long endTime = startTime + (warmup * 1000);
     // Run Warmup
     while (System.currentTimeMillis() < endTime) {
-      runW1R3(storageClient, true, executorService);
+      Range objectSizeRange = Range.of(objectSize);
+      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+      convert(
+          executorService.submit(
+              new W1R3(
+                  storageClient,
+                  workers,
+                  api,
+                  printWriter,
+                  objectSize,
+                  tempDir,
+                  bucket,
+                  true)))
+          .get();
     }
   }
 
