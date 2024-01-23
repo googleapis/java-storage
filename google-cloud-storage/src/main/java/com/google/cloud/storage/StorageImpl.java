@@ -1581,6 +1581,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     HttpStorageOptions options = (HttpStorageOptions) super.getOptions();
     /**
      * TODO: In the future, this should happen automatically, and this block will be deleted
+     * https://github.com/googleapis/google-api-java-client-services/issues/19286
      */
     if(options.getUniverseDomain() != null) {
       return options.toBuilder().setHost(options.getResolvedApiaryHost("storage")).build();
