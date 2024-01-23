@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.2](https://github.com/googleapis/java-storage/compare/v2.30.1...v2.30.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* Add an exception to zero byte uploads on CreateFrom ([#2342](https://github.com/googleapis/java-storage/issues/2342)) ([#2371](https://github.com/googleapis/java-storage/issues/2371)) ([0c05107](https://github.com/googleapis/java-storage/commit/0c05107e0b679d09c3a442cc133bebb611eddb43))
+
 ## [2.30.1](https://github.com/googleapis/java-storage/compare/v2.30.0...v2.30.1) (2023-12-06)
 
 
