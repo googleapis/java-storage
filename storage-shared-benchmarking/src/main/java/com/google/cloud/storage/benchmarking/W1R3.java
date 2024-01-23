@@ -82,8 +82,7 @@ final class W1R3 implements Callable<String> {
       }
       StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
       return "OK";
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       CloudMonitoringResult result =
           CloudMonitoringResult.newBuilder()
               .setLibrary("java")
