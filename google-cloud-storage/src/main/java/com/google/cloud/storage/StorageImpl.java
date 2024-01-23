@@ -102,7 +102,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final String STORAGE_XML_URI_SCHEME = "https";
 
   // TODO: in the future, this can be replaced by getOptions().getHost()
-  private final String STORAGE_XML_URI_HOST_NAME = getOptions().getResolvedApiaryHost("storage").replaceFirst("http(s)?://", "").replace("/", "");
+  private final String STORAGE_XML_URI_HOST_NAME =
+      getOptions()
+          .getResolvedApiaryHost("storage")
+          .replaceFirst("http(s)?://", "")
+          .replace("/", "");
 
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
@@ -1584,6 +1588,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
      * https://github.com/googleapis/google-api-java-client-services/issues/19286
      */
     if(options.getUniverseDomain() != null) {
+
       return options.toBuilder().setHost(options.getResolvedApiaryHost("storage")).build();
     }
     return options;

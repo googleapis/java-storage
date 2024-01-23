@@ -323,11 +323,16 @@ public class HttpStorageOptions extends StorageOptions {
     public ServiceRpc create(StorageOptions options) {
       if (options instanceof HttpStorageOptions) {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
-        // todo: In the future, this step will be done automatically, and the getResolvedApiaryHost helper method will
+        // todo: In the future, this step will be done automatically, and the getResolvedApiaryHost
+        // helper method will
         // be removed. When that happens, delete the following block.
         // https://github.com/googleapis/google-api-java-client-services/issues/19286
         if (httpStorageOptions.getUniverseDomain() != null) {
-          httpStorageOptions = httpStorageOptions.toBuilder().setHost(httpStorageOptions.getResolvedApiaryHost("storage")).build();
+          httpStorageOptions =
+              httpStorageOptions
+                  .toBuilder()
+                  .setHost(httpStorageOptions.getResolvedApiaryHost("storage"))
+                  .build();
         }
         return new HttpStorageRpc(httpStorageOptions);
       } else {
