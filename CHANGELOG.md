@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.1](https://github.com/googleapis/java-storage/compare/v2.32.0...v2.32.1) (2024-01-24)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.23.0 ([#2378](https://github.com/googleapis/java-storage/issues/2378)) ([798aadf](https://github.com/googleapis/java-storage/commit/798aadfd585cc584c57cf702f4c7ba341a0b6718))
+
 ## [2.32.0](https://github.com/googleapis/java-storage/compare/v2.31.0...v2.32.0) (2024-01-22)
 
 
