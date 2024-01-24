@@ -99,7 +99,7 @@ final class W1R3 implements Callable<String> {
               .setTransferSize("")
               .setThroughput(-1)
               .build();
-      printWriter.println(result);
+      printWriter.println(result.formatAsCustomMetric());
       return "FAIL";
     }
   }
