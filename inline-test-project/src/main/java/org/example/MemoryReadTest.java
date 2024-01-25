@@ -35,20 +35,18 @@ public class MemoryReadTest {
         final String transport = args[3];
         Storage storage;
         if (transport.equals("grpc")) {
+            System.out.println("Using grpc");
              storage = StorageOptions.grpc()
                     .setAttemptDirectPath(true)
                     .build().getService();
         } else {
+            System.out.println("Using json");
             storage = StorageOptions.http()
                     .build().getService();
         }
         final BlobId blobId = BlobId.of(bucketName, objectName);
-//        final BlobId blobId = BlobId.of("anima-frank-gcs-grpc-team-test-central1", "50gb-sample.txt");
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
         System.out.println("Starting...");
-        System.out.println("Zero-copy");
-        HashFunction hashFunction = Hashing.crc32c();
-        Hasher hasher = hashFunction.newHasher();
-        ByteBuffer buffer = ByteBuffer.allocate(1024*1024*2);
         for (int i = 0; i < numberOfReads; i++) {
             ReadChannel r = storage.reader(blobId);
             int totalBytesRead = 0;
@@ -58,12 +56,9 @@ public class MemoryReadTest {
                     break;
                 }
                 totalBytesRead += bytesRead;
-                buffer.flip();
-                hasher.putBytes(buffer);
                 buffer.clear();
             }
-            System.out.println("hasher: " + hasher.hash());
-            System.out.println("Downlaoded(" + i + "): " + totalBytesRead + ": 100MiB?" + (totalBytesRead == 1024*1024*100));
+            System.out.println("Downlaoded(" + i + "): " + totalBytesRead);
         }
         System.out.println("Finished...");
     }
