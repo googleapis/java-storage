@@ -34,15 +34,12 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
-import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.ClientStreamingCallable;
-import com.google.api.gax.rpc.NotFoundException;
-import com.google.api.gax.rpc.StatusCode;
-import com.google.api.gax.rpc.UnaryCallable;
+import com.google.api.gax.rpc.*;
+import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
@@ -82,45 +79,12 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.FieldMask;
-import com.google.storage.v2.BucketAccessControl;
-import com.google.storage.v2.ComposeObjectRequest;
+import com.google.protobuf.*;
+import com.google.storage.v2.*;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
-import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
-import com.google.storage.v2.CreateNotificationConfigRequest;
-import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
-import com.google.storage.v2.DeleteObjectRequest;
-import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
-import com.google.storage.v2.GetObjectRequest;
-import com.google.storage.v2.GetServiceAccountRequest;
-import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListHmacKeysRequest;
-import com.google.storage.v2.ListNotificationConfigsRequest;
-import com.google.storage.v2.ListNotificationConfigsResponse;
-import com.google.storage.v2.ListObjectsRequest;
-import com.google.storage.v2.ListObjectsResponse;
-import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.NotificationConfig;
-import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
-import com.google.storage.v2.ObjectAccessControl;
-import com.google.storage.v2.ReadObjectRequest;
-import com.google.storage.v2.RewriteObjectRequest;
-import com.google.storage.v2.RewriteResponse;
-import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
-import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
-import com.google.storage.v2.UpdateObjectRequest;
-import com.google.storage.v2.WriteObjectRequest;
-import com.google.storage.v2.WriteObjectResponse;
-import com.google.storage.v2.WriteObjectSpec;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -135,13 +99,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -151,6 +109,12 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.google.storage.v2.stub.GrpcStorageCallableFactory;
+import com.google.storage.v2.stub.GrpcStorageStub;
+import io.grpc.*;
+import io.grpc.protobuf.ProtoUtils;
+import io.grpc.protobuf.lite.ProtoLiteUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -191,7 +155,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       GrpcStorageOptions options,
       StorageClient storageClient,
       WriterFactory writerFactory,
-      Opts<UserProject> defaultOpts) {
+      Opts<UserProject> defaultOpts) throws IOException {
     super(options);
     this.storageClient = storageClient;
     this.writerFactory = writerFactory;
@@ -200,6 +164,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
+    this.serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
+            readObjectTransportSettings, storageClient.getSettings().readObjectSettings(), ClientContext.create(storageClient.getSettings()));
   }
 
   @Override
@@ -681,6 +647,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return reader(BlobId.of(bucket, blob), options);
   }
 
+  private ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> serverStreamingCallable;
+
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
@@ -688,9 +656,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
     return new GrpcBlobReadChannel(
-        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
-        request,
-        !opts.autoGzipDecompression());
+              serverStreamingCallable.withDefaultCallContext(grpcCallContext),
+              request,
+              !opts.autoGzipDecompression());
+//    return new GrpcBlobReadChannel(
+//            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+//            request,
+//            !opts.autoGzipDecompression());
   }
 
   @Override
@@ -1807,6 +1779,116 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
+  public static final ZeroCopyMessageMarshaller getObjectMediaResponseMarshaller =
+          new ZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
+
+  static class ZeroCopyMessageMarshaller<T extends MessageLite> implements MethodDescriptor.PrototypeMarshaller<T> {
+    private Map<T, InputStream> unclosedStreams = Collections.synchronizedMap(new IdentityHashMap<>());
+    private final Parser<T> parser;
+    private final MethodDescriptor.PrototypeMarshaller<T> baseMarshaller;
+
+    ZeroCopyMessageMarshaller(T defaultInstance) {
+      parser = (Parser<T>) defaultInstance.getParserForType();
+      baseMarshaller = (MethodDescriptor.PrototypeMarshaller<T>) ProtoLiteUtils.marshaller(defaultInstance);
+    }
+
+    @Override
+    public Class<T> getMessageClass() {
+      return baseMarshaller.getMessageClass();
+    }
+
+    @Override
+    public T getMessagePrototype() {
+      return baseMarshaller.getMessagePrototype();
+    }
+
+    @Override
+    public InputStream stream(T value) {
+      return baseMarshaller.stream(value);
+    }
+
+    @Override
+    public T parse(InputStream stream) {
+      CodedInputStream cis = null;
+      try {
+        if (stream instanceof KnownLength) {
+          int size = stream.available();
+          if (stream instanceof Detachable && ((HasByteBuffer) stream).byteBufferSupported()) {
+            // Stream is now detached here and should be closed later.
+            stream = ((Detachable) stream).detach();
+            // This mark call is to keep buffer while traversing buffers using skip.
+            stream.mark(size);
+            List<ByteString> byteStrings = new ArrayList<>();
+            while (stream.available() != 0) {
+              ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
+              byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
+              stream.skip(buffer.remaining());
+            }
+            stream.reset();
+            cis = ByteString.copyFrom(byteStrings).newCodedInput();
+            cis.enableAliasing(true);
+            cis.setSizeLimit(Integer.MAX_VALUE);
+          }
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      if (cis != null) {
+        // fast path (no memory copy)
+        T message;
+        try {
+          message = parseFrom(cis);
+        } catch (InvalidProtocolBufferException ipbe) {
+          throw Status.INTERNAL.withDescription("Invalid protobuf byte sequence").withCause(ipbe).asRuntimeException();
+        }
+        unclosedStreams.put(message, stream);
+        return message;
+      } else {
+        // slow path
+        return baseMarshaller.parse(stream);
+      }
+    }
+
+    private T parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
+      T message = parser.parseFrom(stream);
+      try {
+        stream.checkLastTagWas(0);
+        return message;
+      } catch (InvalidProtocolBufferException e) {
+        e.setUnfinishedMessage(message);
+        throw e;
+      }
+    }
+
+    // Application needs to call this function to get the stream for the message and
+    // call stream.close() function to return it to the pool.
+    public InputStream popStream(T message) {
+      return unclosedStreams.remove(message);
+    }
+  }
+  static final MethodDescriptor<ReadObjectRequest, ReadObjectResponse>
+          readObjectMethodDescriptor =
+          MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+                  .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
+                  .setFullMethodName("google.storage.v2.Storage/ReadObject")
+                  .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
+                  .setResponseMarshaller(getObjectMediaResponseMarshaller)
+                  .build();
+
+
+  GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
+          GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+                  .setMethodDescriptor(readObjectMethodDescriptor)
+                  .setParamsExtractor(
+                          request -> {
+                            RequestParamsBuilder builder = RequestParamsBuilder.create();
+                            builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
+                            return builder.build();
+                          })
+                  .build();
+
+
+
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
@@ -1815,9 +1897,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
+    ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
+            readObjectTransportSettings, null, ClientContext.newBuilder().build());
     return ResumableMedia.gapic()
         .read()
-        .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
+        .byteChannel(serverStreamingCallable.withDefaultCallContext(grpcCallContext))
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)

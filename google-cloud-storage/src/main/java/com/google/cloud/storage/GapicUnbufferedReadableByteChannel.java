@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.GrpcStorageImpl.getObjectMediaResponseMarshaller;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
@@ -25,12 +26,16 @@ import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
+import com.google.storage.v2.stub.GrpcStorageStub;
+
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -80,6 +85,7 @@ final class GapicUnbufferedReadableByteChannel
 
     long totalBufferCapacity = Arrays.stream(dsts).mapToLong(Buffer::remaining).sum();
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
+    InputStream stream = null;
     while (c.hasRemaining()) {
       if (leftovers != null) {
         copy(c, leftovers, dsts, offset, length);
@@ -91,6 +97,7 @@ final class GapicUnbufferedReadableByteChannel
 
       if (iter.hasNext()) {
         ReadObjectResponse resp = iter.next();
+        stream = getObjectMediaResponseMarshaller.popStream(resp);
         if (resp.hasMetadata()) {
           Object respMetadata = resp.getMetadata();
           if (metadata == null) {
@@ -106,24 +113,38 @@ final class GapicUnbufferedReadableByteChannel
             result.set(metadata);
           }
         }
+
         ChecksummedData checksummedData = resp.getChecksummedData();
-        ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
+
+        //ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         // very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
-        if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected =
-              Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
-          try {
-            hasher.validate(expected, content::duplicate);
-          } catch (IOException e) {
-            close();
-            throw e;
-          }
-        }
-        copy(c, content, dsts, offset, length);
-        if (content.hasRemaining()) {
-          leftovers = content;
-        }
+//        if (checksummedData.hasCrc32C()) {
+//          Crc32cLengthKnown expected =
+//              Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
+//          try {
+//            hasher.validate(expected, content);
+//          } catch (IOException e) {
+//            close();
+//            throw e;
+//          }
+//        }
+
+        // TODO: stream must be closed to allow reclaiming of buffers
+        // buffer
+        checksummedData.getContent().copyTo(dsts[0]);
+        checksummedData = null;
+        c.advance(1024*1024*2);
+        // copy(c, ByteBuffer.wrap(checksummedData.getContent().toByteArray()), dsts, offset, length);
+//        c.advance(length);
+//        content.copyTo(dsts[0], 0, offset, length);
+//        if (content.hasRemaining()) {
+//          leftovers = content;
+//        }
+        // Make sure to close stream otherwise you'll see the following:
+        // Jan 25, 2024 10:08:20 AM io.grpc.netty.shaded.io.netty.util.ResourceLeakDetector reportTracedLeak
+        // SEVERE: LEAK: ByteBuf.release() was not called before it's garbage-collected. See https://netty.io/wiki/reference-counted-objects.html for more information.
+        stream.close();
       } else {
         complete = true;
         break;
@@ -243,6 +264,7 @@ final class GapicUnbufferedReadableByteChannel
         synchronized (this) {
           if (!streamInitialized) {
             if (serverStream == null) {
+              
               serverStream = read.call(req);
             }
             responseIterator = serverStream.iterator();

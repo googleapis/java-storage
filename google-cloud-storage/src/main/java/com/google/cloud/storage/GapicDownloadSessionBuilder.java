@@ -61,6 +61,7 @@ final class GapicDownloadSessionBuilder {
     private ReadableByteChannelSessionBuilder(
         ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read) {
       this.read = read;
+
       this.hasher = Hasher.noop();
       this.autoGzipDecompression = false;
     }
