@@ -26,6 +26,7 @@ import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
@@ -132,8 +133,12 @@ final class GapicUnbufferedReadableByteChannel
 
         // TODO: stream must be closed to allow reclaiming of buffers
         // buffer
-        checksummedData.getContent().copyTo(dsts[0]);
-        checksummedData = null;
+        ByteString b = checksummedData.getContent();
+        com.google.common.hash.Hasher hasher1 = Hashing.crc32c().newHasher();
+        long value = hasher1.putBytes(b.asReadOnlyByteBuffer().duplicate()).hash().asInt();
+        System.out.println("From GRPC: " + value);
+        // -481370971
+        b.copyTo(dsts[0]);
         c.advance(1024*1024*2);
         // copy(c, ByteBuffer.wrap(checksummedData.getContent().toByteArray()), dsts, offset, length);
 //        c.advance(length);

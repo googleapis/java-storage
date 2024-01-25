@@ -54,12 +54,18 @@ public class MemoryReadTest {
             int totalBytesRead = 0;
             while (r.isOpen()) {
                 int bytesRead = r.read(buffer);
+                System.out.println("Bytes Read: " + bytesRead);
                 if (bytesRead == -1) {
                     break;
+                } else
+                if (bytesRead == 0){
+                    System.out.println("???");
                 }
                 totalBytesRead += bytesRead;
                 buffer.flip();
                 hasher.putBytes(buffer);
+                long hash = hasher.hash().asInt();
+                System.out.println("From java-storage: " + hash);
                 buffer.clear();
             }
             System.out.println("hasher: " + hasher.hash());
