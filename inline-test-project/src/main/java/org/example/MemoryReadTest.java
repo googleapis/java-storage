@@ -24,6 +24,9 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.nio.ByteBuffer;
 
 public class MemoryReadTest {
@@ -47,7 +50,9 @@ public class MemoryReadTest {
         final BlobId blobId = BlobId.of(bucketName, objectName);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         System.out.println("Starting...");
-        for (int i = 0; i < numberOfReads; i++) {
+        int mb = 1024 * 1024;
+        int times5000ObjectsDownloaded = 0;
+        for (int i = 0; i <= numberOfReads; i++) {
             ReadChannel r = storage.reader(blobId);
             int totalBytesRead = 0;
             while (r.isOpen()) {
@@ -58,8 +63,33 @@ public class MemoryReadTest {
                 totalBytesRead += bytesRead;
                 buffer.clear();
             }
-            System.out.println("Downlaoded(" + i + "): " + totalBytesRead);
+            System.out.println("Downloaded(" + i + "): " + totalBytesRead);
+            if (i % 5000 == 0) {
+                times5000ObjectsDownloaded++;
+                System.out.println("Downloaded 5000 objects. Memory info before garbage collection:");
+                printMemory();
+                System.out.println("Running garbage collection..");
+                System.gc();
+                Runtime.getRuntime().gc();
+                System.out.println("Memory info after garbage collection, run number " + times5000ObjectsDownloaded + ":");
+                printMemory();
+            }
         }
         System.out.println("Finished...");
+    }
+
+    private static void printMemory() {
+        int mb = 1024 * 1024;
+        long totalMemory = Runtime.getRuntime().totalMemory() / mb;
+        long freeMemory = Runtime.getRuntime().freeMemory() / mb;
+        long maxMemory = Runtime.getRuntime().maxMemory() / mb;
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+        long hmemUsage = heapMemoryUsage.getUsed() / (1024 * 1024);
+        long heapCommitted = heapMemoryUsage.getCommitted() / (1024 * 1024);
+        System.out.println(
+                String.format(
+                        "TotalMemory=%sMB; FreeMemory=%sMB; MaxMemory=%sMB; heapUsage=%s; heapCommitted=%s",
+                        totalMemory, freeMemory, maxMemory, hmemUsage, heapCommitted));
     }
 }
