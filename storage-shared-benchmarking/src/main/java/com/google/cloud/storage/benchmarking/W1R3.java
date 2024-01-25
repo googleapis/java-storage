@@ -60,7 +60,7 @@ final class W1R3 implements Callable<String> {
   }
 
   @Override
-  public String call() throws IOException {
+  public String call() {
     // Create the file to be uploaded and fill it with data
 
     try (TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
@@ -83,27 +83,10 @@ final class W1R3 implements Callable<String> {
       }
       StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
       return "OK";
-    } /*catch (Exception e) {
-      CloudMonitoringResult result =
-          CloudMonitoringResult.newBuilder()
-              .setLibrary("java")
-              .setApi(api)
-              .setOp("W1R3")
-              .setWorkers(workers)
-              .setObjectSize(-1)
-              .setChunksize(-1)
-              .setCrc32cEnabled(false)
-              .setMd5Enabled(false)
-              .setCpuTimeUs(-1)
-              .setBucketName("")
-              .setStatus("FAIL")
-              .setTransferSize("")
-              .setThroughput(-1)
-              .build();
-      printWriter.println(result.formatAsCustomMetric());
+    } catch (Exception e) {
+      System.err.println("Failed! " + e.getMessage());
       return "FAIL";
     }
-    */
   }
 
   private void printResult(String op, Blob created, Duration duration) {
