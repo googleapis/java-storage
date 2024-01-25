@@ -47,7 +47,9 @@ public class MemoryReadTest {
         final BlobId blobId = BlobId.of(bucketName, objectName);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         System.out.println("Starting...");
-        for (int i = 0; i < numberOfReads; i++) {
+        int mb = 1024 * 1024;
+        int times5000ObjectsDownloaded = 0;
+        for (int i = 0; i <= numberOfReads; i++) {
             ReadChannel r = storage.reader(blobId);
             int totalBytesRead = 0;
             while (r.isOpen()) {
@@ -58,7 +60,16 @@ public class MemoryReadTest {
                 totalBytesRead += bytesRead;
                 buffer.clear();
             }
-            System.out.println("Downlaoded(" + i + "): " + totalBytesRead);
+            System.out.println("Downloaded(" + i + "): " + totalBytesRead);
+            if (i % 5000 == 0) {
+                times5000ObjectsDownloaded++;
+                System.out.println("Downloaded 5000 objects. Free memory before garbage collection is: "
+                + Runtime.getRuntime().freeMemory() / mb);
+                System.out.println("Running garbage collection..");
+                System.gc();
+                Runtime.getRuntime().gc();
+                System.out.println("FM" + times5000ObjectsDownloaded + ": " + Runtime.getRuntime().freeMemory() / mb);
+            }
         }
         System.out.println("Finished...");
     }
