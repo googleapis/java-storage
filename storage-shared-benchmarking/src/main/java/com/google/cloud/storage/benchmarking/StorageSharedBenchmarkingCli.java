@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.NoCredentials;
+import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -131,7 +132,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   private void runWorkload4() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
     StorageOptions retryStorageOptions =
-        StorageOptions.grpc().setCredentials(NoCredentials.getInstance()).setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
+        StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
     try {
       runW1R3(storageClient);
@@ -143,8 +144,8 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    runWarmup(storageClient);
     for (int i = 0; i < samples; i++) {
-      runWarmup(storageClient);
       Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       convert(
