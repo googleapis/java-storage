@@ -102,7 +102,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     tempDir =
         tempDirLocation != null
             ? Paths.get(tempDirLocation)
-            : Paths.get(System.getProperty("java.io.tmpdir"));
+            : Paths.get("/tmp");
     printWriter = new PrintWriter(System.out, true);
     switch (testType) {
       case "w1r3":
