@@ -97,7 +97,7 @@ final class W1R3 implements Callable<String> {
               .setBucketName("")
               .setStatus("FAIL")
               .setTransferSize("")
-              .setThroughput(-1)
+              .setThroughput(0)
               .build();
       printWriter.println(result);
       return "FAIL";
