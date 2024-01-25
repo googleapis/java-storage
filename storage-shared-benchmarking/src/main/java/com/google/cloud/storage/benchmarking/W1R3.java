@@ -21,6 +21,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TmpFile;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -59,7 +60,7 @@ final class W1R3 implements Callable<String> {
   }
 
   @Override
-  public String call() {
+  public String call() throws IOException {
     // Create the file to be uploaded and fill it with data
 
     try (TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
@@ -82,7 +83,7 @@ final class W1R3 implements Callable<String> {
       }
       StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
       return "OK";
-    } catch (Exception e) {
+    } /*catch (Exception e) {
       CloudMonitoringResult result =
           CloudMonitoringResult.newBuilder()
               .setLibrary("java")
@@ -102,6 +103,7 @@ final class W1R3 implements Callable<String> {
       printWriter.println(result.formatAsCustomMetric());
       return "FAIL";
     }
+    */
   }
 
   private void printResult(String op, Blob created, Duration duration) {
