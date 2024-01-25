@@ -180,6 +180,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
+  final ResponseContentLifecycleManager responseContentLifecycleManager;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
@@ -192,10 +193,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   GrpcStorageImpl(
       GrpcStorageOptions options,
       StorageClient storageClient,
+      ResponseContentLifecycleManager responseContentLifecycleManager,
       WriterFactory writerFactory,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
@@ -716,8 +719,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        responseContentLifecycleManager,
         request,
         !opts.autoGzipDecompression());
   }
@@ -1868,7 +1873,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
     return ResumableMedia.gapic()
         .read()
-        .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
+        .byteChannel(
+            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+            responseContentLifecycleManager)
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)

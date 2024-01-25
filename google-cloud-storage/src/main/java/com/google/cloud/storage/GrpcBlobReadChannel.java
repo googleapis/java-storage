@@ -28,15 +28,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final ResponseContentLifecycleManager responseContentLifecycleManager;
   private final ReadObjectRequest request;
   private final boolean autoGzipDecompression;
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ResponseContentLifecycleManager responseContentLifecycleManager,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
     super(Conversions.grpc().blobInfo());
     this.read = read;
+    this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.request = request;
     this.autoGzipDecompression = autoGzipDecompression;
   }
@@ -53,7 +56,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
           ReadableByteChannelSessionBuilder b =
               ResumableMedia.gapic()
                   .read()
-                  .byteChannel(read)
+                  .byteChannel(read, responseContentLifecycleManager)
                   .setHasher(Hasher.noop())
                   .setAutoGzipDecompression(autoGzipDecompression);
           BufferHandle bufferHandle = getBufferHandle();
