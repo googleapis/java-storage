@@ -26,6 +26,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,10 +100,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Override
   public void run() {
+    boolean success = new File("/tmp/workload-4").mkdirs();
     tempDir =
         tempDirLocation != null
             ? Paths.get(tempDirLocation)
-            : Paths.get("/tmp");
+            : Paths.get("/tmp/workload-4");
     printWriter = new PrintWriter(System.out, true);
     switch (testType) {
       case "w1r3":
