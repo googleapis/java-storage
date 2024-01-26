@@ -63,6 +63,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 //          if (bufferHandle.capacity() > 0) {
 //            session =
 //                b.buffered(getBufferHandle()).setReadObjectRequest(getReadObjectRequest()).build();
+          b.buffered(getBufferHandle()).build();
 //          } else {
             session = b.unbuffered().setReadObjectRequest(getReadObjectRequest()).build();
 //          }
