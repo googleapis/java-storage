@@ -81,7 +81,6 @@ final class W1R3 implements Callable<String> {
         }
       }
       StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
-      return "OK";
     } catch (Exception e) {
       CloudMonitoringResult result =
           CloudMonitoringResult.newBuilder()
@@ -100,8 +99,8 @@ final class W1R3 implements Callable<String> {
               .setThroughput(0)
               .build();
       printWriter.println(result);
-      return "FAIL";
     }
+    return "OK";
   }
 
   private void printResult(String op, Blob created, Duration duration) {

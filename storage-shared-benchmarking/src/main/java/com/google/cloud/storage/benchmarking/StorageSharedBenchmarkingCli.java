@@ -124,6 +124,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 1: " + e.getMessage());
+      System.exit(1);
     }
   }
 
@@ -136,6 +137,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 4: " + e.getMessage());
+      System.exit(1);
     }
   }
 
