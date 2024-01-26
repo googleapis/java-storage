@@ -135,10 +135,10 @@ final class GapicUnbufferedReadableByteChannel
         // buffer
         ByteString b = checksummedData.getContent();
 
-        System.out.println("ByteString size: " + b.size());
+        // System.out.println("ByteString size: " + b.size());
         com.google.common.hash.Hasher hasher1 = Hashing.crc32c().newHasher();
         long value = hasher1.putBytes(b.asReadOnlyByteBuffer().duplicate()).hash().asInt();
-        System.out.println("From GRPC: " + value);
+        // System.out.println("From GRPC: " + value);
         // -481370971
         // b.copyTo(dsts[0]);
         dsts[0].put(b.asReadOnlyByteBuffer());
