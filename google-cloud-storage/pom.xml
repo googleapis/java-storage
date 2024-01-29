@@ -27,6 +27,8 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client</artifactId>
+      <!-- This version stops declaring commons-logging -->
+      <version>1.44.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.http-client</groupId>
