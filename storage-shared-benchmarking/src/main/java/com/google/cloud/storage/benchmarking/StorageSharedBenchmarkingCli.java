@@ -17,10 +17,8 @@
 package com.google.cloud.storage.benchmarking;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.api.gax.rpc.ApiExceptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -29,9 +27,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import picocli.CommandLine;
@@ -83,6 +80,16 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       description = "Specify the path where the temporary directory should be located")
   String tempDirLocation;
 
+  @Option(
+      names = "-warmup",
+      description = "Number of seconds a W1R3 warmup will run on all available processors",
+      defaultValue = "0")
+  int warmup;
+
+  Path tempDir;
+
+  PrintWriter printWriter;
+
   public static void main(String[] args) {
     CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class);
     System.exit(cmd.execute(args));
@@ -90,6 +97,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Override
   public void run() {
+    tempDir =
+        tempDirLocation != null
+            ? Paths.get(tempDirLocation)
+            : Paths.get(System.getProperty("java.io.tmpdir"));
+    printWriter = new PrintWriter(System.out, true);
     switch (testType) {
       case "w1r3":
         runWorkload1();
@@ -108,7 +120,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
-    runW1R3(storageClient);
+    try {
+      runW1R3(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload 1: " + e.getMessage());
+    }
   }
 
   private void runWorkload4() {
@@ -116,27 +132,54 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
-    runW1R3(storageClient);
+    try {
+      runW1R3(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload 4: " + e.getMessage());
+    }
   }
 
-  private void runW1R3(Storage storageClient) {
-    Path tempDir =
-        tempDirLocation != null
-            ? Paths.get(tempDirLocation)
-            : Paths.get(System.getProperty("java.io.tmpdir"));
+  private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
-    List<ApiFuture<String>> workloadRuns = new ArrayList<>();
-    Range objectSizeRange = Range.of(objectSize);
     for (int i = 0; i < samples; i++) {
+      runWarmup(storageClient);
+      Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
-      PrintWriter pw = new PrintWriter(System.out, true);
-      workloadRuns.add(
-          convert(
+      convert(
               executorService.submit(
-                  new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket))));
+                  new W1R3(
+                      storageClient,
+                      workers,
+                      api,
+                      printWriter,
+                      objectSize,
+                      tempDir,
+                      bucket,
+                      false)))
+          .get();
     }
-    ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(workloadRuns));
+  }
+
+  private void runWarmup(Storage storageClient) throws ExecutionException, InterruptedException {
+    if (warmup <= 0) {
+      return;
+    }
+    int numberProcessors = Runtime.getRuntime().availableProcessors();
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberProcessors));
+    long startTime = System.currentTimeMillis();
+    long endTime = startTime + (warmup * 1000);
+    // Run Warmup
+    while (System.currentTimeMillis() < endTime) {
+      Range objectSizeRange = Range.of(objectSize);
+      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+      convert(
+              executorService.submit(
+                  new W1R3(
+                      storageClient, workers, api, printWriter, objectSize, tempDir, bucket, true)))
+          .get();
+    }
   }
 
   public static int getRandomInt(int min, int max) {
