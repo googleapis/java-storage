@@ -154,7 +154,7 @@ public final class GrpcStorageOptions extends StorageOptions
    * </ol>
    */
   private Tuple<StorageSettings, Opts<UserProject>> resolveSettingsAndOpts() throws IOException {
-    String endpoint = getHost();
+    String endpoint = getResolvedHost("storage");
     URI uri = URI.create(endpoint);
     String scheme = uri.getScheme();
     int port = uri.getPort();
@@ -228,6 +228,7 @@ public final class GrpcStorageOptions extends StorageOptions
         new GapicStorageSettingsBuilder(StorageSettings.newBuilder().build())
             .setInternalHeaderProvider(internalHeaderProvider)
             .setEndpoint(endpoint)
+            .setUniverseDomain(getUniverseDomain())
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
 
@@ -326,7 +327,7 @@ public final class GrpcStorageOptions extends StorageOptions
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
   @BetaApi
   public static GrpcStorageOptions.Builder newBuilder() {
-    return new GrpcStorageOptions.Builder().setHost(DEFAULT_HOST);
+    return new GrpcStorageOptions.Builder();
   }
 
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */

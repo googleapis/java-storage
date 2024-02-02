@@ -94,7 +94,7 @@ public class HttpStorageOptions extends StorageOptions {
   }
 
   public static HttpStorageOptions.Builder newBuilder() {
-    return new HttpStorageOptions.Builder().setHost(DEFAULT_HOST);
+    return new HttpStorageOptions.Builder();
   }
 
   public static HttpStorageOptions getDefaultInstance() {
