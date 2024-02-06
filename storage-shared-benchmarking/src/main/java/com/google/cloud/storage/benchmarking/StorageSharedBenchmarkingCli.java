@@ -124,6 +124,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 1: " + e.getMessage());
+      System.exit(1);
     }
   }
 
@@ -136,14 +137,15 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 4: " + e.getMessage());
+      System.exit(1);
     }
   }
 
   private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    runWarmup(storageClient);
     for (int i = 0; i < samples; i++) {
-      runWarmup(storageClient);
       Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
       convert(
