@@ -101,7 +101,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   /** Signed URLs are only supported through the GCS XML API endpoint. */
   private static final String STORAGE_XML_URI_SCHEME = "https";
 
-  private static final String STORAGE_XML_URI_HOST_NAME = "storage.googleapis.com";
+  // TODO: in the future, this can be replaced by getOptions().getHost()
+  private final String STORAGE_XML_URI_HOST_NAME =
+      getOptions()
+          .getResolvedApiaryHost("storage")
+          .replaceFirst("http(s)?://", "")
+          .replace("/", "");
 
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
@@ -1048,7 +1053,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             "host",
             slashlessBucketNameFromBlobInfo(blobInfo) + "." + getBaseStorageHostName(optionMap));
       } else if (optionMap.containsKey(SignUrlOption.Option.HOST_NAME)
-          || optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
+          || optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)
+          || getOptions().getUniverseDomain() != null) {
         extHeadersBuilder.put("host", getBaseStorageHostName(optionMap));
       }
     }
@@ -1576,7 +1582,16 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public HttpStorageOptions getOptions() {
-    return (HttpStorageOptions) super.getOptions();
+    HttpStorageOptions options = (HttpStorageOptions) super.getOptions();
+    /**
+     * TODO: In the future, this should happen automatically, and this block will be deleted
+     * https://github.com/googleapis/google-api-java-client-services/issues/19286
+     */
+    if (options.getUniverseDomain() != null) {
+
+      return options.toBuilder().setHost(options.getResolvedApiaryHost("storage")).build();
+    }
+    return options;
   }
 
   private Blob internalGetBlob(BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {

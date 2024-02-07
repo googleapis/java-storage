@@ -38,3 +38,9 @@ branches:
     extraFiles:
       - README.md
     branch: 2.22.x
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-backport
+    extraFiles:
+      - README.md
+    branch: 2.30.x
