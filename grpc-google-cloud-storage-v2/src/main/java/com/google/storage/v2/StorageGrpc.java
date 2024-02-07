@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1536,10 +1536,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket or object.
+     * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     default void getIamPolicy(
@@ -1553,10 +1552,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket or object.
+     * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     default void setIamPolicy(
@@ -2163,10 +2161,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket or object.
+     * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public void getIamPolicy(
@@ -2182,10 +2179,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket or object.
+     * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public void setIamPolicy(
@@ -2792,10 +2788,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket or object.
+     * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2807,10 +2802,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket or object.
+     * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
@@ -3253,10 +3247,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket or object.
+     * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3269,10 +3262,9 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket or object.
+     * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket or
-     * `projects/_/buckets/{bucket}/objects/{object}` for an object.
+     * `projects/_/buckets/{bucket}`.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
