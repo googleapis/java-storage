@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.33.0](https://github.com/googleapis/java-storage/compare/v2.32.1...v2.33.0) (2024-02-07)
+
+
+### Features
+
+* Adds TPC support ([#2362](https://github.com/googleapis/java-storage/issues/2362)) ([8b636db](https://github.com/googleapis/java-storage/commit/8b636dbe8a16b9b81afbb51b8d0032bcbdbef635))
+
+
+### Bug Fixes
+
+* Temporarily restoring storage_grpc_service_config.json to fix broken test ([#2365](https://github.com/googleapis/java-storage/issues/2365)) ([50b6610](https://github.com/googleapis/java-storage/commit/50b6610de94d44815d80381649e7d3a86c38f894))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240202-2.0.0 ([#2393](https://github.com/googleapis/java-storage/issues/2393)) ([3391e1d](https://github.com/googleapis/java-storage/commit/3391e1d3d925604fe57a69c40c823e863ce7593e))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.24.0 ([#2389](https://github.com/googleapis/java-storage/issues/2389)) ([9e4e00d](https://github.com/googleapis/java-storage/commit/9e4e00db40e8235b513f7f798674aba31631ddf4))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.10.0 ([#2390](https://github.com/googleapis/java-storage/issues/2390)) ([59ac502](https://github.com/googleapis/java-storage/commit/59ac502ee4c063ff46aa9dd0409df2e6fda7bc99))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.2 ([#2394](https://github.com/googleapis/java-storage/issues/2394)) ([8dbd4bf](https://github.com/googleapis/java-storage/commit/8dbd4bfb4f76634f97b2e9cd3487128f4c98f58a))
+* Update junit-platform.version to v5.10.2 ([#2395](https://github.com/googleapis/java-storage/issues/2395)) ([0c5aef3](https://github.com/googleapis/java-storage/commit/0c5aef34682ee56786f2006156f4cd645c22d8a8))
+
 ## [2.32.1](https://github.com/googleapis/java-storage/compare/v2.32.0...v2.32.1) (2024-01-24)
 
 
