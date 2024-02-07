@@ -19,6 +19,7 @@ package com.google.cloud.storage.benchmarking;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -109,6 +110,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3-grpc-dp":
         runWorkload4();
         break;
+      case "bidi-w1r3":
+        runWorkloadBidi();
+        break;
       default:
         throw new IllegalStateException("Specify a workload to run");
     }
@@ -137,6 +141,20 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runW1R3(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload 4: " + e.getMessage());
+      System.exit(1);
+    }
+  }
+
+  private void runWorkloadBidi() {
+    StorageOptions options = StorageOptions.grpc()
+        .setProjectId(project)
+        .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+        .build();
+    Storage storageClient = options.getService();
+    try {
+      runW1R3(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload bidi" + e.getMessage());
       System.exit(1);
     }
   }
