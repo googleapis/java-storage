@@ -1574,8 +1574,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /**
      * Returns an option for whether the request should return a soft-deleted object. If an object
-     * has been soft-deleted (Deleted while a Soft Delete Policy) is in place, this must be true
-     * or the request will return null.
+     * has been soft-deleted (Deleted while a Soft Delete Policy) is in place, this must be true or
+     * the request will return null.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption softDeleted(boolean softDeleted) {
@@ -1617,7 +1617,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
   }
 
-  /** Class for specifying blob restore options **/
+  /** Class for specifying blob restore options * */
   class BlobRestoreOption extends Option<ObjectSourceOpt> {
 
     private static final long serialVersionUID = 1922118465380110958L;
@@ -1625,7 +1625,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     BlobRestoreOption(ObjectSourceOpt opt) {
       super(opt);
     }
-
 
     /**
      * Returns an option for blob's data generation match. If this option is used the request will
@@ -1664,7 +1663,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option for whether the restored object should copy the access controls of the source object.
+     * Returns an option for whether the restored object should copy the access controls of the
+     * source object.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobRestoreOption copySourceAcl(boolean copySourceAcl) {
@@ -1895,9 +1895,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BlobListOption(UnifiedOpts.fields(set));
     }
 
-    /**
-     * Returns an option for whether the list result should include soft-deleted objects.
-     */
+    /** Returns an option for whether the list result should include soft-deleted objects. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption softDeleted(boolean softDeleted) {
       return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
@@ -3109,8 +3107,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   Blob get(BlobId blob);
 
   /**
-   * Restores a soft-deleted object to full object status and returns the object.
-   * Note that you must specify a generation to use this method.
+   * Restores a soft-deleted object to full object status and returns the object. Note that you must
+   * specify a generation to use this method.
    *
    * <p>Example of restoring an object.
    *

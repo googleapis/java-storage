@@ -1090,9 +1090,10 @@ public class Bucket extends BucketInfo {
   }
 
   /**
-   * Returns the requested blob in this bucket of a specific generation or {@code null} if not found.
+   * Returns the requested blob in this bucket of a specific generation or {@code null} if not
+   * found.
    *
-   * <p>Example of getting a blob of a specific  in the bucket.
+   * <p>Example of getting a blob of a specific in the bucket.
    *
    * <pre>{@code
    * String blobName = "my_blob_name";
@@ -1106,7 +1107,7 @@ public class Bucket extends BucketInfo {
    * @throws StorageException upon failure
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-  public Blob get(String blob, Long generation, BlobGetOption...options) {
+  public Blob get(String blob, Long generation, BlobGetOption... options) {
     return storage.get(BlobId.of(getName(), blob, generation), options);
   }
 

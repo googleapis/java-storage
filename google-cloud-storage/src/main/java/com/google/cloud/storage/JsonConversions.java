@@ -66,8 +66,8 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.Logging;
 import com.google.cloud.storage.BucketInfo.ObjectRetention;
-import com.google.cloud.storage.BucketInfo.SoftDeletePolicy;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
+import com.google.cloud.storage.BucketInfo.SoftDeletePolicy;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.Cors.Origin;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -123,7 +123,7 @@ final class JsonConversions {
       Codec.of(this::objectRetentionEncode, this::objectRetentionDecode);
 
   private final Codec<SoftDeletePolicy, Bucket.SoftDeletePolicy> softDeletePolicyCodec =
-          Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
+      Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
   private final Codec<LifecycleRule, Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<LifecycleCondition, Condition> lifecycleConditionCodec =
@@ -374,13 +374,15 @@ final class JsonConversions {
 
   private Bucket.SoftDeletePolicy softDeletePolicyEncode(SoftDeletePolicy from) {
     Bucket.SoftDeletePolicy to = new Bucket.SoftDeletePolicy();
-    ifNonNull(from.getRetentionDuration(), durationSecondsCodec::encode, to::setRetentionDurationSeconds);
+    ifNonNull(
+        from.getRetentionDuration(), durationSecondsCodec::encode, to::setRetentionDurationSeconds);
     return to;
   }
 
   private SoftDeletePolicy softDeletePolicyDecode(Bucket.SoftDeletePolicy from) {
     SoftDeletePolicy.Builder to = SoftDeletePolicy.newBuilder();
-    ifNonNull(from.getRetentionDurationSeconds(), durationSecondsCodec::decode, to::setRetentionDuration);
+    ifNonNull(
+        from.getRetentionDurationSeconds(), durationSecondsCodec::decode, to::setRetentionDuration);
     ifNonNull(from.getEffectiveTime(), dateTimeCodec::decode, to::setEffectiveTime);
     return to.build();
   }
@@ -456,7 +458,8 @@ final class JsonConversions {
         to::setCustomPlacementConfig);
     ifNonNull(from.getObjectRetention(), this::objectRetentionEncode, to::setObjectRetention);
     ifNonNull(from.getSoftDeletePolicy(), this::softDeletePolicyEncode, to::setSoftDeletePolicy);
-    if(from.getSoftDeletePolicy() == null && from.getModifiedFields().contains(SOFT_DELETE_POLICY)) {
+    if (from.getSoftDeletePolicy() == null
+        && from.getModifiedFields().contains(SOFT_DELETE_POLICY)) {
       to.setSoftDeletePolicy(Data.nullOf(Bucket.SoftDeletePolicy.class));
     }
     return to;

@@ -213,7 +213,8 @@ final class HttpRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getForObjectsRestore(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
+  public ResultRetryAlgorithm<?> getForObjectsRestore(
+      StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
     return retryStrategy.getIdempotentHandler();
   }
 
