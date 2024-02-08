@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -548,6 +549,47 @@ public class ITBucketTest {
 
       Bucket gen2 = storage.update(gen1);
       assertThat(gen2).isEqualTo(gen1);
+    }
+  }
+
+  @Test
+  public void testSoftDeletePolicy() {
+    String bucketName = generator.randomBucketName();
+    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
+            .newBuilder().setRetentionDuration(Duration.ofDays(10)).build())
+    .build();
+    try {
+      storage.create(bucketInfo);
+
+      Bucket remoteBucket = storage.get(bucketName);
+      assertEquals(Duration.ofDays(10), remoteBucket.getSoftDeletePolicy().getRetentionDuration());
+      assertNotNull(remoteBucket.getSoftDeletePolicy().getEffectiveTime());
+
+      String softDelBlobName = "softdelblob";
+      remoteBucket.create(softDelBlobName, BLOB_BYTE_CONTENT);
+
+      Blob blob = remoteBucket.get(softDelBlobName);
+      long gen = blob.getGeneration();
+
+      blob.delete();
+
+      assertNull(remoteBucket.get(softDelBlobName));
+
+      ImmutableList<Blob> softDeletedBlobs = ImmutableList.copyOf(remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
+      assertThat(softDeletedBlobs.size() > 0);
+
+      assertNotNull(remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true)));
+
+      assertNotNull(storage.restore(blob.getBlobId()));
+
+      remoteBucket.toBuilder()
+              .setSoftDeletePolicy(BucketInfo.SoftDeletePolicy.newBuilder().setRetentionDuration(Duration.ofDays(20)).build())
+              .build()
+              .update();
+
+      assertEquals(Duration.ofDays(20), storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+    } finally {
+      BucketCleaner.doCleanup(bucketName, storage);
     }
   }
 

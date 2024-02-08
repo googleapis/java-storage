@@ -16,12 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Utils.bucketNameCodec;
-import static com.google.cloud.storage.Utils.ifNonNull;
-import static com.google.cloud.storage.Utils.lift;
-import static com.google.cloud.storage.Utils.projectNameCodec;
-import static com.google.cloud.storage.Utils.topicNameCodec;
-
+import com.google.api.client.util.Data;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
@@ -70,6 +65,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
+import static com.google.cloud.storage.Utils.*;
+
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
 
@@ -90,6 +88,9 @@ final class GrpcConversions {
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<BucketInfo.Autoclass, Bucket.Autoclass> autoclassCodec =
       Codec.of(this::autoclassEncode, this::autoclassDecode);
+
+  private final Codec<BucketInfo.SoftDeletePolicy, Bucket.SoftDeletePolicy> softDeletePolicyCodec =
+          Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -290,6 +291,9 @@ final class GrpcConversions {
     if (from.hasAutoclass()) {
       to.setAutoclass(autoclassCodec.decode(from.getAutoclass()));
     }
+    if(from.hasSoftDeletePolicy()) {
+      to.setSoftDeletePolicy(softDeletePolicyCodec.decode(from.getSoftDeletePolicy()));
+    }
     if (from.hasCustomPlacementConfig()) {
       Bucket.CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
       to.setCustomPlacementConfig(
@@ -375,6 +379,12 @@ final class GrpcConversions {
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAclCodec::encode), to::addAllAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     ifNonNull(from.getAutoclass(), autoclassCodec::encode, to::setAutoclass);
+    ifNonNull(from.getSoftDeletePolicy(), softDeletePolicyCodec::encode, to::setSoftDeletePolicy);
+    if(from.getModifiedFields().contains(SOFT_DELETE_POLICY) && from.getSoftDeletePolicy() == null) {
+      System.out.println("this is happening");
+      System.out.println(Bucket.SoftDeletePolicy.getDefaultInstance().toString());
+      to.clearSoftDeletePolicy();
+    }
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
     if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
       to.setCustomPlacementConfig(
@@ -586,6 +596,19 @@ final class GrpcConversions {
         from.getTerminalStorageClassUpdateTime(),
         timestampCodec::encode,
         to::setTerminalStorageClassUpdateTime);
+    return to.build();
+  }
+
+  private BucketInfo.SoftDeletePolicy softDeletePolicyDecode(Bucket.SoftDeletePolicy from) {
+    BucketInfo.SoftDeletePolicy.Builder to = BucketInfo.SoftDeletePolicy.newBuilder();
+    ifNonNull(from.getRetentionDuration(), durationCodec::decode, to::setRetentionDuration);
+    ifNonNull(from.getEffectiveTime(), timestampCodec::decode, to::setEffectiveTime);
+    return to.build();
+  }
+
+  private Bucket.SoftDeletePolicy softDeletePolicyEncode(BucketInfo.SoftDeletePolicy from) {
+    Bucket.SoftDeletePolicy.Builder to = Bucket.SoftDeletePolicy.newBuilder();
+    ifNonNull(from.getRetentionDuration(), durationCodec::encode, to::setRetentionDuration);
     return to.build();
   }
 

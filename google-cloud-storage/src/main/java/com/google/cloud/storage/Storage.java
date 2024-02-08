@@ -160,7 +160,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass"),
     @TransportCompatibility({Transport.HTTP})
-    OBJECT_RETENTION("objectRetention");
+    OBJECT_RETENTION("objectRetention"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    SOFT_DELETE_POLICY("softDeletePolicy", "soft_delete_policy");
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
@@ -1570,6 +1573,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for whether the request should return a soft-deleted object. If an object
+     * has been soft-deleted (Deleted while a Soft Delete Policy) is in place, this must be true
+     * or the request will return null.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobGetOption softDeleted(boolean softDeleted) {
+      return new BlobGetOption(UnifiedOpts.softDeleted(softDeleted));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -1601,6 +1614,61 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @BetaApi
     public static BlobGetOption[] dedupe(BlobGetOption[] array, BlobGetOption... os) {
       return Option.dedupe(BlobGetOption[]::new, array, os);
+    }
+  }
+
+  /** Class for specifying blob restore options **/
+  class BlobRestoreOption extends Option<ObjectSourceOpt> {
+
+    private static final long serialVersionUID = 1922118465380110958L;
+
+    BlobRestoreOption(ObjectSourceOpt opt) {
+      super(opt);
+    }
+
+
+    /**
+     * Returns an option for blob's data generation match. If this option is used the request will
+     * fail if generation does not match.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption generationMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.generationMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's data generation mismatch. If this option is used the request
+     * will fail if blob's generation matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption generationNotMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.generationNotMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's metageneration match. If this option is used the request will
+     * fail if blob's metageneration does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption metagenerationMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.metagenerationMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's metageneration mismatch. If this option is used the request will
+     * fail if blob's metageneration matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption metagenerationNotMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.metagenerationNotMatch(generation));
+    }
+
+    /**
+     * Returns an option for whether the restored object should copy the access controls of the source object.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption copySourceAcl(boolean copySourceAcl) {
+      return new BlobRestoreOption(UnifiedOpts.copySourceAcl(copySourceAcl));
     }
   }
 
@@ -1825,6 +1893,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
                       .map(f -> NamedField.prefixed("items/", f)))
               .collect(ImmutableSet.toImmutableSet());
       return new BlobListOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * Returns an option for whether the list result should include soft-deleted objects.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption softDeleted(boolean softDeleted) {
+      return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
     }
 
     /**
@@ -3031,6 +3107,23 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob get(BlobId blob);
+
+  /**
+   * Restores a soft-deleted object to full object status and returns the object.
+   * Note that you must specify a generation to use this method.
+   *
+   * <p>Example of restoring an object.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * long generation = 42;
+   * BlobId blobId = BlobId.of(bucketName, blobName, gen);
+   * Blob blob = storage.restore(blobId, blobName, gen);
+   * }</pre>
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  Blob restore(BlobId blob, BlobRestoreOption... options);
 
   /**
    * Lists the project's buckets.

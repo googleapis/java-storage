@@ -111,6 +111,7 @@ import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
@@ -400,6 +401,33 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Blob get(BlobId blob) {
     return get(blob, new BlobGetOption[0]);
+  }
+
+  @Override
+  public Blob restore(BlobId blob, BlobRestoreOption... options) {
+    Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
+    return internalObjectRestore(blob, unwrap);
+  }
+
+  private Blob internalObjectRestore(BlobId blobId, Opts<ObjectSourceOpt> opts) {
+    Opts<ObjectSourceOpt> finalOpts = opts.prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
+    GrpcCallContext grpcCallContext =
+            finalOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    RestoreObjectRequest.Builder builder =
+            RestoreObjectRequest.newBuilder()
+                    .setBucket(bucketNameCodec.encode(blobId.getBucket()))
+                    .setObject(blobId.getName());
+    ifNonNull(blobId.getGeneration(), builder::setGeneration);
+    RestoreObjectRequest req = finalOpts.restoreObjectRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
+    return Retrying.run(
+            getOptions(),
+            retryAlgorithmManager.getFor(req),
+            () -> storageClient.restoreObjectCallable().call(req, merge),
+            resp -> {
+              BlobInfo tmp = codecs.blobInfo().decode(resp);
+              return finalOpts.clearBlobFields().decode(tmp).asBlob(this);
+            });
   }
 
   @Override

@@ -119,6 +119,8 @@ public class BucketInfo implements Serializable {
   private final CustomPlacementConfig customPlacementConfig;
   private final ObjectRetention objectRetention;
 
+  private final SoftDeletePolicy softDeletePolicy;
+
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /**
@@ -346,6 +348,91 @@ public class BucketInfo implements Serializable {
           .add("uniformBucketLevelAccessLockedTime", uniformBucketLevelAccessLockedTime)
           .add("publicAccessPrevention", publicAccessPrevention)
           .toString();
+    }
+  }
+
+  /**
+   * The bucket's soft delete policy. If this policy is set, any deleted objects will be
+   * soft-deleted according to the time specified in the policy
+   */
+  public static class SoftDeletePolicy implements Serializable {
+
+    private static final long serialVersionUID = -8100190443052242908L;
+    private Duration retentionDuration;
+    private OffsetDateTime effectiveTime;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof SoftDeletePolicy)) {
+        return false;
+      }
+      SoftDeletePolicy that = (SoftDeletePolicy) o;
+      return Objects.equals(retentionDuration, that.retentionDuration)
+              && Objects.equals(effectiveTime, that.effectiveTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(retentionDuration, effectiveTime);
+    }
+
+    @Override public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("retentionDuration", retentionDuration)
+              .add("effectiveTime", effectiveTime)
+              .toString();
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return new Builder().setRetentionDuration(retentionDuration).setEffectiveTime(effectiveTime);
+    }
+
+    private SoftDeletePolicy() {}
+
+    public SoftDeletePolicy(Builder builder) {
+      this.retentionDuration = builder.retentionDuration;
+      this.effectiveTime = builder.effectiveTime;
+    }
+
+    public Duration getRetentionDuration() {
+      return retentionDuration;
+    }
+
+    public OffsetDateTime getEffectiveTime() {
+      return effectiveTime;
+    }
+
+    public static final class Builder {
+      private Duration retentionDuration;
+      private OffsetDateTime effectiveTime;
+
+      /**
+       * Sets the length of time to retain soft-deleted objects for, expressed as a Duration
+       */
+      public Builder setRetentionDuration(Duration retentionDuration) {
+        this.retentionDuration = retentionDuration;
+        return this;
+      }
+
+      /**
+       * Sets the time from which this soft-delete policy is effective.
+       * This is package-private because it can only be set by the backend.
+       */
+      Builder setEffectiveTime(OffsetDateTime effectiveTime) {
+        this.effectiveTime = effectiveTime;
+        return this;
+      }
+
+      public SoftDeletePolicy build() {
+        return new SoftDeletePolicy(this);
+      }
     }
   }
 
@@ -1685,6 +1772,8 @@ public class BucketInfo implements Serializable {
 
     abstract Builder setObjectRetention(ObjectRetention objectRetention);
 
+    public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
 
@@ -1783,6 +1872,8 @@ public class BucketInfo implements Serializable {
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
     private ObjectRetention objectRetention;
+
+    private SoftDeletePolicy softDeletePolicy;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -1822,6 +1913,7 @@ public class BucketInfo implements Serializable {
       logging = bucketInfo.logging;
       customPlacementConfig = bucketInfo.customPlacementConfig;
       objectRetention = bucketInfo.objectRetention;
+      softDeletePolicy = bucketInfo.softDeletePolicy;
     }
 
     @Override
@@ -2188,6 +2280,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy) {
+      if(!Objects.equals(this.softDeletePolicy, softDeletePolicy)) {
+        modifiedFields.add(BucketField.SOFT_DELETE_POLICY);
+      }
+      this.softDeletePolicy = softDeletePolicy;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       if (!Objects.equals(this.locationType, locationType)) {
         modifiedFields.add(BucketField.LOCATION_TYPE);
@@ -2428,6 +2529,7 @@ public class BucketInfo implements Serializable {
     logging = builder.logging;
     customPlacementConfig = builder.customPlacementConfig;
     objectRetention = builder.objectRetention;
+    softDeletePolicy = builder.softDeletePolicy;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2768,6 +2870,11 @@ public class BucketInfo implements Serializable {
     return objectRetention;
   }
 
+  /** returns the Soft Delete policy */
+  public SoftDeletePolicy getSoftDeletePolicy() {
+    return softDeletePolicy;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2805,6 +2912,7 @@ public class BucketInfo implements Serializable {
         autoclass,
         locationType,
         objectRetention,
+        softDeletePolicy,
         logging);
   }
 
@@ -2846,6 +2954,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(autoclass, that.autoclass)
         && Objects.equals(locationType, that.locationType)
         && Objects.equals(objectRetention, that.objectRetention)
+        && Objects.equals(softDeletePolicy, that.softDeletePolicy)
         && Objects.equals(logging, that.logging);
   }
 
