@@ -371,7 +371,7 @@ public class BucketInfo implements Serializable {
       }
       SoftDeletePolicy that = (SoftDeletePolicy) o;
       return Objects.equals(retentionDuration, that.retentionDuration)
-              && Objects.equals(effectiveTime, that.effectiveTime);
+          && Objects.equals(effectiveTime, that.effectiveTime);
     }
 
     @Override
@@ -379,11 +379,12 @@ public class BucketInfo implements Serializable {
       return Objects.hash(retentionDuration, effectiveTime);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
       return MoreObjects.toStringHelper(this)
-              .add("retentionDuration", retentionDuration)
-              .add("effectiveTime", effectiveTime)
-              .toString();
+          .add("retentionDuration", retentionDuration)
+          .add("effectiveTime", effectiveTime)
+          .toString();
     }
 
     public static Builder newBuilder() {
@@ -413,17 +414,15 @@ public class BucketInfo implements Serializable {
       private Duration retentionDuration;
       private OffsetDateTime effectiveTime;
 
-      /**
-       * Sets the length of time to retain soft-deleted objects for, expressed as a Duration
-       */
+      /** Sets the length of time to retain soft-deleted objects for, expressed as a Duration */
       public Builder setRetentionDuration(Duration retentionDuration) {
         this.retentionDuration = retentionDuration;
         return this;
       }
 
       /**
-       * Sets the time from which this soft-delete policy is effective.
-       * This is package-private because it can only be set by the backend.
+       * Sets the time from which this soft-delete policy is effective. This is package-private
+       * because it can only be set by the backend.
        */
       Builder setEffectiveTime(OffsetDateTime effectiveTime) {
         this.effectiveTime = effectiveTime;
@@ -2281,7 +2280,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy) {
-      if(!Objects.equals(this.softDeletePolicy, softDeletePolicy)) {
+      if (!Objects.equals(this.softDeletePolicy, softDeletePolicy)) {
         modifiedFields.add(BucketField.SOFT_DELETE_POLICY);
       }
       this.softDeletePolicy = softDeletePolicy;
