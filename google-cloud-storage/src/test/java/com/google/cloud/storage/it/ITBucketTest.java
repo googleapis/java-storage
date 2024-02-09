@@ -554,9 +554,8 @@ public class ITBucketTest {
   @Test
   @CrossRun.Exclude(
       transports =
-          Transport
-              .GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic
-                     // models
+          Transport.GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic
+  // models
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =
