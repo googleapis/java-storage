@@ -741,7 +741,7 @@ public final class ITOptionRegressionTest {
             "updated",
             "retention",
             "softDeleteTime",
-            "hardDeleteTIme");
+            "hardDeleteTime");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
