@@ -133,7 +133,8 @@ public final class ITBucketReadMaskTest {
               new Args<>(BucketField.TIME_CREATED, LazyAssertion.equal()),
               new Args<>(BucketField.UPDATED, LazyAssertion.equal()),
               new Args<>(BucketField.VERSIONING, LazyAssertion.equal()),
-              new Args<>(BucketField.WEBSITE, LazyAssertion.equal()));
+              new Args<>(BucketField.WEBSITE, LazyAssertion.equal()),
+              new Args<>(BucketField.SOFT_DELETE_POLICY, LazyAssertion.equal()));
 
       List<String> argsDefined =
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());
