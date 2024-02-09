@@ -28,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -556,9 +555,13 @@ public class ITBucketTest {
   @CrossRun.Exclude(transports = Transport.GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic models
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
-    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
-            .newBuilder().setRetentionDuration(Duration.ofDays(10)).build())
-    .build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setSoftDeletePolicy(
+                BucketInfo.SoftDeletePolicy.newBuilder()
+                    .setRetentionDuration(Duration.ofDays(10))
+                    .build())
+            .build();
     try {
       storage.create(bucketInfo);
 
@@ -579,10 +582,13 @@ public class ITBucketTest {
 
       assertNull(remoteBucket.get(softDelBlobName));
 
-      ImmutableList<Blob> softDeletedBlobs = ImmutableList.copyOf(remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
+      ImmutableList<Blob> softDeletedBlobs =
+          ImmutableList.copyOf(
+              remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
       assertThat(softDeletedBlobs.size() > 0);
 
       Blob softDeletedBlob = remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
+
 
       assertNotNull(softDeletedBlob);
       assertNotNull(softDeletedBlob.getSoftDeleteTime());
@@ -590,12 +596,18 @@ public class ITBucketTest {
 
       assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
 
-      remoteBucket.toBuilder()
-              .setSoftDeletePolicy(BucketInfo.SoftDeletePolicy.newBuilder().setRetentionDuration(Duration.ofDays(20)).build())
-              .build()
-              .update();
+      remoteBucket
+          .toBuilder()
+          .setSoftDeletePolicy(
+              BucketInfo.SoftDeletePolicy.newBuilder()
+                  .setRetentionDuration(Duration.ofDays(20))
+                  .build())
+          .build()
+          .update();
 
-      assertEquals(Duration.ofDays(20), storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+      assertEquals(
+          Duration.ofDays(20),
+          storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
     }

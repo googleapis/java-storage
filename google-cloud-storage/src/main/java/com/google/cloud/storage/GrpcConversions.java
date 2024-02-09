@@ -16,7 +16,9 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.client.util.Data;
+import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
+import static com.google.cloud.storage.Utils.*;
+
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
@@ -65,9 +67,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
-import static com.google.cloud.storage.Utils.*;
-
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
 
@@ -90,7 +89,7 @@ final class GrpcConversions {
       Codec.of(this::autoclassEncode, this::autoclassDecode);
 
   private final Codec<BucketInfo.SoftDeletePolicy, Bucket.SoftDeletePolicy> softDeletePolicyCodec =
-          Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
+      Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -291,7 +290,7 @@ final class GrpcConversions {
     if (from.hasAutoclass()) {
       to.setAutoclass(autoclassCodec.decode(from.getAutoclass()));
     }
-    if(from.hasSoftDeletePolicy()) {
+    if (from.hasSoftDeletePolicy()) {
       to.setSoftDeletePolicy(softDeletePolicyCodec.decode(from.getSoftDeletePolicy()));
     }
     if (from.hasCustomPlacementConfig()) {
@@ -380,7 +379,8 @@ final class GrpcConversions {
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     ifNonNull(from.getAutoclass(), autoclassCodec::encode, to::setAutoclass);
     ifNonNull(from.getSoftDeletePolicy(), softDeletePolicyCodec::encode, to::setSoftDeletePolicy);
-    if(from.getModifiedFields().contains(SOFT_DELETE_POLICY) && from.getSoftDeletePolicy() == null) {
+    if (from.getModifiedFields().contains(SOFT_DELETE_POLICY)
+        && from.getSoftDeletePolicy() == null) {
       System.out.println("this is happening");
       System.out.println(Bucket.SoftDeletePolicy.getDefaultInstance().toString());
       to.clearSoftDeletePolicy();

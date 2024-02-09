@@ -481,9 +481,11 @@ final class UnifiedOpts {
   static SoftDeleted softDeleted(boolean softDeleted) {
     return new SoftDeleted(softDeleted);
   }
+
   static CopySourceAcl copySourceAcl(boolean copySourceAcl) {
     return new CopySourceAcl(copySourceAcl);
   }
+
   static RequestedPolicyVersion requestedPolicyVersion(long l) {
     return new RequestedPolicyVersion(l);
   }
@@ -655,7 +657,8 @@ final class UnifiedOpts {
     }
   }
 
-  static final class SoftDeleted extends RpcOptVal<Boolean> implements ObjectListOpt, ObjectSourceOpt {
+  static final class SoftDeleted extends RpcOptVal<Boolean>
+      implements ObjectListOpt, ObjectSourceOpt {
 
     private static final long serialVersionUID = -8526951678111463350L;
 
@@ -1030,8 +1033,8 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper <RestoreObjectRequest.Builder> restoreObject() {
-      return b-> b.setIfGenerationMatch(val);
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
+      return b -> b.setIfGenerationMatch(val);
     }
 
     @Override

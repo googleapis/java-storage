@@ -543,7 +543,7 @@ public class HttpStorageRpc implements StorageRpc {
         .setFields(Option.FIELDS.getString(options))
         .setUserProject(Option.USER_PROJECT.getString(options))
         .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options));
-        //.setGeneration(Option.GENERATION.getLong(options));
+    // .setGeneration(Option.GENERATION.getLong(options));
   }
 
   @Override
@@ -570,17 +570,20 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_RESTORE_OBJECT);
     Scope scope = tracer.withSpan(span);
     try {
-      Storage.Objects.Restore restore = storage.objects().restore(object.getBucket(), object.getName(), object.getGeneration(), object);
+      Storage.Objects.Restore restore =
+          storage
+              .objects()
+              .restore(object.getBucket(), object.getName(), object.getGeneration(), object);
       return restore
-              .setProjection(DEFAULT_PROJECTION)
-              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-              .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
-              .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
-              .setCopySourceAcl(Option.COPY_SOURCE_ACL.getBoolean(options))
-              .setUserProject(Option.USER_PROJECT.getString(options))
-              .setFields(Option.FIELDS.getString(options))
-              .execute();
+          .setProjection(DEFAULT_PROJECTION)
+          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+          .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
+          .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+          .setCopySourceAcl(Option.COPY_SOURCE_ACL.getBoolean(options))
+          .setUserProject(Option.USER_PROJECT.getString(options))
+          .setFields(Option.FIELDS.getString(options))
+          .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
