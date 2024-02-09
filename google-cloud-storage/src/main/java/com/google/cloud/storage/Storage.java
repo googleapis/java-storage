@@ -263,7 +263,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption"),
     @TransportCompatibility({Transport.HTTP})
-    RETENTION("retention");
+    RETENTION("retention"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    SOFT_DELETE_TIME("softDeleteTime", "soft_delete_time"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HARD_DELETE_TIME("hardDeleteTime", "hard_delete_time");
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 

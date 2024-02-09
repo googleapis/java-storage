@@ -108,6 +108,8 @@ public class BlobInfo implements Serializable {
   private final Boolean temporaryHold;
   private final OffsetDateTime retentionExpirationTime;
   private final Retention retention;
+  private final OffsetDateTime softDeleteTime;
+  private final OffsetDateTime hardDeleteTime;
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
@@ -525,6 +527,10 @@ public class BlobInfo implements Serializable {
       return setRetentionExpirationTime(millisOffsetDateTimeCodec.decode(retentionExpirationTime));
     }
 
+    abstract Builder setSoftDeleteTime(OffsetDateTime offsetDateTime);
+
+    abstract Builder setHardDeleteTime(OffsetDateTime hardDeleteTIme);
+
     public abstract Builder setRetention(Retention retention);
 
     /** Creates a {@code BlobInfo} object. */
@@ -626,6 +632,8 @@ public class BlobInfo implements Serializable {
     private Boolean temporaryHold;
     private OffsetDateTime retentionExpirationTime;
     private Retention retention;
+    private OffsetDateTime softDeleteTime;
+    private OffsetDateTime hardDeleteTime;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
@@ -664,6 +672,8 @@ public class BlobInfo implements Serializable {
       temporaryHold = blobInfo.temporaryHold;
       retentionExpirationTime = blobInfo.retentionExpirationTime;
       retention = blobInfo.retention;
+      softDeleteTime = blobInfo.softDeleteTime;
+      hardDeleteTime = blobInfo.hardDeleteTime;
     }
 
     @Override
@@ -1038,6 +1048,24 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
+    Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
+      if(!Objects.equals(this.softDeleteTime, softDeleteTime)) {
+        modifiedFields.add(BlobField.SOFT_DELETE_TIME);
+      }
+      this.softDeleteTime = softDeleteTime;
+      return this;
+    }
+
+    @Override
+    Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
+      if(!Objects.equals(this.hardDeleteTime, hardDeleteTime)) {
+        modifiedFields.add(BlobField.HARD_DELETE_TIME);
+      }
+      this.hardDeleteTime = hardDeleteTime;
+      return this;
+    }
+
+    @Override
     public Builder setRetention(Retention retention) {
       // todo: b/308194853
       modifiedFields.add(BlobField.RETENTION);
@@ -1269,6 +1297,8 @@ public class BlobInfo implements Serializable {
     temporaryHold = builder.temporaryHold;
     retentionExpirationTime = builder.retentionExpirationTime;
     retention = builder.retention;
+    softDeleteTime = builder.softDeleteTime;
+    hardDeleteTime = builder.hardDeleteTime;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -1662,6 +1692,21 @@ public class BlobInfo implements Serializable {
     return retentionExpirationTime;
   }
 
+  /**
+   * If this object has been soft-deleted, returns the time it was soft-deleted.
+   */
+  public OffsetDateTime getSoftDeleteTime() {
+    return softDeleteTime;
+  }
+
+  /**
+   * If this object has been soft-deleted, returns the time at which it will
+   * be permanently deleted.
+   */
+  public OffsetDateTime getHardDeleteTime() {
+    return hardDeleteTime;
+  }
+
   /** Returns the object's Retention policy. */
   public Retention getRetention() {
     return retention;
@@ -1717,7 +1762,9 @@ public class BlobInfo implements Serializable {
         eventBasedHold,
         temporaryHold,
         retention,
-        retentionExpirationTime);
+        retentionExpirationTime,
+        softDeleteTime,
+        hardDeleteTime);
   }
 
   @Override
@@ -1759,7 +1806,9 @@ public class BlobInfo implements Serializable {
         && Objects.equals(eventBasedHold, blobInfo.eventBasedHold)
         && Objects.equals(temporaryHold, blobInfo.temporaryHold)
         && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime)
-        && Objects.equals(retention, blobInfo.retention);
+        && Objects.equals(retention, blobInfo.retention)
+        && Objects.equals(softDeleteTime, blobInfo.softDeleteTime)
+        && Objects.equals(hardDeleteTime, blobInfo.hardDeleteTime);
   }
 
   ImmutableSet<NamedField> getModifiedFields() {

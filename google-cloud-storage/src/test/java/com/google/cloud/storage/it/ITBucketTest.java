@@ -553,6 +553,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Exclude(transports = Transport.GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic models
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
@@ -571,6 +572,9 @@ public class ITBucketTest {
       Blob blob = remoteBucket.get(softDelBlobName);
       long gen = blob.getGeneration();
 
+      assertNull(blob.getSoftDeleteTime());
+      assertNull(blob.getHardDeleteTime());
+
       blob.delete();
 
       assertNull(remoteBucket.get(softDelBlobName));
@@ -578,9 +582,13 @@ public class ITBucketTest {
       ImmutableList<Blob> softDeletedBlobs = ImmutableList.copyOf(remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
       assertThat(softDeletedBlobs.size() > 0);
 
-      assertNotNull(remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true)));
+      Blob softDeletedBlob = remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
 
-      assertNotNull(storage.restore(blob.getBlobId()));
+      assertNotNull(softDeletedBlob);
+      assertNotNull(softDeletedBlob.getSoftDeleteTime());
+      assertNotNull(softDeletedBlob.getHardDeleteTime());
+
+      assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
 
       remoteBucket.toBuilder()
               .setSoftDeletePolicy(BucketInfo.SoftDeletePolicy.newBuilder().setRetentionDuration(Duration.ofDays(20)).build())

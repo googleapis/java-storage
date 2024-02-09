@@ -252,6 +252,9 @@ final class JsonConversions {
         dateTimeCodec::encode,
         to::setRetentionExpirationTime);
 
+    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::encode, to::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::encode, to::setHardDeleteTime);
+
     // todo: clean this up once retention is enabled in grpc
     // This is a workaround so that explicitly null retention objects are only included when the
     // user set an existing policy to null, to avoid sending any retention objects to the test
@@ -333,6 +336,8 @@ final class JsonConversions {
         dateTimeCodec::decode,
         to::setRetentionExpirationTimeOffsetDateTime);
     ifNonNull(from.getRetention(), this::retentionDecode, to::setRetention);
+    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::decode, to::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::decode, to::setHardDeleteTime);
     return to.build();
   }
 
