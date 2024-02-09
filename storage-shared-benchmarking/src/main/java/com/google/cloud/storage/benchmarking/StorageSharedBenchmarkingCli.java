@@ -20,8 +20,10 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -152,7 +154,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         .build();
     Storage storageClient = options.getService();
     try {
-      runW1R3(storageClient);
+      runBidi(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload bidi" + e.getMessage());
       System.exit(1);
@@ -179,6 +181,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
                       false)))
           .get();
     }
+  }
+
+  private void runBidi() {
   }
 
   private void runWarmup(Storage storageClient) throws ExecutionException, InterruptedException {
