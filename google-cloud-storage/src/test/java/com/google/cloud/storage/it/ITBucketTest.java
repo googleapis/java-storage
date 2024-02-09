@@ -552,7 +552,10 @@ public class ITBucketTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic models
+  @CrossRun.Exclude(
+      transports =
+          Transport.GRPC) // Temporary: softDeleteTime and hardDeleteTime are missing from the gapic
+  // models
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =
@@ -587,8 +590,8 @@ public class ITBucketTest {
               remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
       assertThat(softDeletedBlobs.size() > 0);
 
-      Blob softDeletedBlob = remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
-
+      Blob softDeletedBlob =
+          remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
 
       assertNotNull(softDeletedBlob);
       assertNotNull(softDeletedBlob.getSoftDeleteTime());

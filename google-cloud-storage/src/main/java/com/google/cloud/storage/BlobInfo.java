@@ -1049,7 +1049,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
-      if(!Objects.equals(this.softDeleteTime, softDeleteTime)) {
+      if (!Objects.equals(this.softDeleteTime, softDeleteTime)) {
         modifiedFields.add(BlobField.SOFT_DELETE_TIME);
       }
       this.softDeleteTime = softDeleteTime;
@@ -1058,7 +1058,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
-      if(!Objects.equals(this.hardDeleteTime, hardDeleteTime)) {
+      if (!Objects.equals(this.hardDeleteTime, hardDeleteTime)) {
         modifiedFields.add(BlobField.HARD_DELETE_TIME);
       }
       this.hardDeleteTime = hardDeleteTime;
@@ -1692,16 +1692,13 @@ public class BlobInfo implements Serializable {
     return retentionExpirationTime;
   }
 
-  /**
-   * If this object has been soft-deleted, returns the time it was soft-deleted.
-   */
+  /** If this object has been soft-deleted, returns the time it was soft-deleted. */
   public OffsetDateTime getSoftDeleteTime() {
     return softDeleteTime;
   }
 
   /**
-   * If this object has been soft-deleted, returns the time at which it will
-   * be permanently deleted.
+   * If this object has been soft-deleted, returns the time at which it will be permanently deleted.
    */
   public OffsetDateTime getHardDeleteTime() {
     return hardDeleteTime;
