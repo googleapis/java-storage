@@ -106,15 +106,25 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
-      case "w1r3-grpc-dp":
-        runWorkload4();
-        break;
       default:
         throw new IllegalStateException("Specify a workload to run");
     }
   }
 
   private void runWorkload1() {
+    switch (api) {
+      case "JSON":
+        runWorkload1Json();
+        break;
+      case "DirectPath":
+        runWorkload1DirectPath();
+        break;
+      default:
+        throw new IllegalStateException("Specify a workload to run");
+    }
+  }
+
+  private void runWorkload1Json() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
 
     StorageOptions retryStorageOptions =
@@ -128,7 +138,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     }
   }
 
-  private void runWorkload4() {
+  private void runWorkload1DirectPath() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
     StorageOptions retryStorageOptions =
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
