@@ -53,7 +53,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       description = "Number of workers to run in parallel for the workload")
   int workers;
 
-  @Option(names = "-api", defaultValue = "JSON", description = "API to use")
+  @Option(names = "-api", description = "API to use", required = true)
   String api;
 
   @Option(
@@ -120,7 +120,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
         runWorkload1DirectPath();
         break;
       default:
-        throw new IllegalStateException("Specify a workload to run");
+        throw new IllegalStateException("Specify an API to use");
     }
   }
 
