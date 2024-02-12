@@ -39,7 +39,13 @@ public class MemoryReadTest {
              storage = StorageOptions.grpc()
                     .setAttemptDirectPath(true)
                     .build().getService();
-        } else {
+        } else
+        if (transport.equals("grpc-no-dp")) {
+            System.out.println("Using grpc without DP");
+            storage = StorageOptions.grpc()
+                    .setAttemptDirectPath(false)
+                    .build().getService();
+        }else {
             System.out.println("Using json");
             storage = StorageOptions.http()
                     .build().getService();
