@@ -199,7 +199,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     for(int i = 0; i < samples; i++) {
       Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
-      convert(executorService.submit(new Bidi(storageClient, bucket, objectSize, printWriter))).get();
+      convert(executorService.submit(new Bidi(storageClient, bucket, objectSize, printWriter, api, workers))).get();
     }
   }
 
