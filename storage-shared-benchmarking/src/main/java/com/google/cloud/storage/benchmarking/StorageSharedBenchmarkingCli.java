@@ -109,8 +109,11 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
-      case "bidi-w1r3":
+      case "bidi":
         runWorkloadBidi();
+        break;
+      case "default-nobidi":
+        runWorkloadNoBidi();
         break;
       default:
         throw new IllegalStateException("Specify a workload to run");
@@ -167,6 +170,20 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       runBidi(storageClient);
     } catch (Exception e) {
       System.err.println("Failed to run workload bidi" + e.getMessage());
+      System.exit(1);
+    }
+  }
+
+  private void runWorkloadNoBidi() {
+    StorageOptions options = StorageOptions.grpc()
+        .setProjectId(project)
+        .setBlobWriteSessionConfig(BlobWriteSessionConfigs.getDefault())
+        .build();
+    Storage storageClient = options.getService();
+    try {
+      runBidi(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload no bidi" + e.getMessage());
       System.exit(1);
     }
   }
