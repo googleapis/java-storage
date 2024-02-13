@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.benchmarking;
 
+import static com.google.cloud.storage.benchmarking.StorageSharedBenchmarkingUtils.generateCloudMonitoringResult;
+
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.DataGenerator;
@@ -110,29 +112,8 @@ final class W1R3 implements Callable<String> {
                   op,
                   StorageSharedBenchmarkingUtils.calculateThroughput(
                       created.getSize().doubleValue(), duration),
-                  created)
+                  created.asBlobInfo(), api, workers)
               .formatAsCustomMetric());
     }
-  }
-
-  private CloudMonitoringResult generateCloudMonitoringResult(
-      String op, double throughput, Blob created) {
-    CloudMonitoringResult result =
-        CloudMonitoringResult.newBuilder()
-            .setLibrary("java")
-            .setApi(api)
-            .setOp(op)
-            .setWorkers(workers)
-            .setObjectSize(created.getSize().intValue())
-            .setChunksize(created.getSize().intValue())
-            .setCrc32cEnabled(false)
-            .setMd5Enabled(false)
-            .setCpuTimeUs(-1)
-            .setBucketName(created.getBucket())
-            .setStatus("OK")
-            .setTransferSize(created.getSize().toString())
-            .setThroughput(throughput)
-            .build();
-    return result;
   }
 }

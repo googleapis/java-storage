@@ -56,7 +56,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       description = "Number of workers to run in parallel for the workload")
   int workers;
 
-  @Option(names = "-api", defaultValue = "JSON", description = "API to use")
+  @Option(names = "-api", description = "API to use", required = true)
   String api;
 
   @Option(
@@ -109,9 +109,6 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
-      case "w1r3-grpc-dp":
-        runWorkload4();
-        break;
       case "bidi-w1r3":
         runWorkloadBidi();
         break;
@@ -121,6 +118,19 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   }
 
   private void runWorkload1() {
+    switch (api) {
+      case "JSON":
+        runWorkload1Json();
+        break;
+      case "DirectPath":
+        runWorkload1DirectPath();
+        break;
+      default:
+        throw new IllegalStateException("Specify an API to use");
+    }
+  }
+
+  private void runWorkload1Json() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
 
     StorageOptions retryStorageOptions =
@@ -134,7 +144,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     }
   }
 
-  private void runWorkload4() {
+  private void runWorkload1DirectPath() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
     StorageOptions retryStorageOptions =
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
@@ -183,7 +193,14 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     }
   }
 
-  private void runBidi() {
+  private void runBidi(Storage storageClient) throws ExecutionException, InterruptedException {
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    for(int i = 0; i < samples; i++) {
+      Range objectSizeRange = Range.of(objectSize);
+      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+      convert(executorService.submit(new Bidi(storageClient, bucket, objectSize, printWriter))).get();
+    }
   }
 
   private void runWarmup(Storage storageClient) throws ExecutionException, InterruptedException {

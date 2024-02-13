@@ -17,41 +17,71 @@
 
 package com.google.cloud.storage.benchmarking;
 
+import static com.google.cloud.storage.benchmarking.StorageSharedBenchmarkingUtils.generateCloudMonitoringResult;
+
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 class Bidi implements Callable<String> {
   private final Storage storageClient;
-  private final Bucket bucket;
-  private final Generator generator;
+  private final String bucketName;
+  private final int objectSize;
+  private final PrintWriter pw;
+  private final String api;
+  private final int workers;
 
-  Bidi(Storage storageClient, Bucket bucket, Generator generator) {
+  Bidi(Storage storageClient, String bucketName, int objectSize, PrintWriter pw, String api, int workers) {
     this.storageClient = storageClient;
-    this.bucket = bucket;
-    this.generator = generator;
+    this.bucketName = bucketName;
+    this.objectSize = objectSize;
+    this.pw = pw;
+    this.api = api;
+    this.workers = workers;
   }
 
   @Override
   public String call() throws Exception {
+    Bucket bucket = storageClient.create(BucketInfo.newBuilder(bucketName).build());
     String blobName = DataGenerator.base64Characters().genBytes(20).toString();
     BlobWriteSession sess =
         storageClient.blobWriteSession(
             BlobInfo.newBuilder(bucket, blobName).build(),
             BlobWriteOption.doesNotExist());
-    byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
+    byte[] bytes = DataGenerator.base64Characters().genBytes(objectSize);
+    Clock clock = Clock.systemDefaultZone();
+    Instant startTime = clock.instant();
     try (WritableByteChannel w = sess.open()) {
       w.write(ByteBuffer.wrap(bytes));
     }
-    BlobInfo gen1 = sess.getResult().get(10, TimeUnit.SECONDS);
+    BlobInfo created = sess.getResult().get();
+    Instant endTime = clock.instant();
+    Duration elapsedTimeWrite = Duration.between(startTime, endTime);
+    printResult("BIDI", created, elapsedTimeWrite);
     return "OK";
+  }
+
+  private void printResult(String op, BlobInfo created, Duration duration) {
+    pw.println(
+        generateCloudMonitoringResult(
+            op,
+            StorageSharedBenchmarkingUtils.calculateThroughput(
+                created.getSize().doubleValue(), duration),
+            created, api, workers)
+            .formatAsCustomMetric());
   }
 }
