@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.34.0](https://github.com/googleapis/java-storage/compare/v2.33.0...v2.34.0) (2024-02-14)
+
+
+### Features
+
+* Enable automatic retries for create RenameFolder LRO in Storage Control API ([#2410](https://github.com/googleapis/java-storage/issues/2410)) ([b0450b8](https://github.com/googleapis/java-storage/commit/b0450b8eca26cd018f81a7b7236a1901d8b35b9b))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240205-2.0.0 ([#2400](https://github.com/googleapis/java-storage/issues/2400)) ([70d8c8b](https://github.com/googleapis/java-storage/commit/70d8c8b83b58c47ebb43c7ec15734c1237dc41ac))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240209-2.0.0 ([#2407](https://github.com/googleapis/java-storage/issues/2407)) ([6a25dbb](https://github.com/googleapis/java-storage/commit/6a25dbbd8d8e817fb13ac2b9018a07343733af94))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.25.0 ([#2411](https://github.com/googleapis/java-storage/issues/2411)) ([cba3415](https://github.com/googleapis/java-storage/commit/cba341551cb449bf74654ee33693d55c5c2aed4e))
+
 ## [2.33.0](https://github.com/googleapis/java-storage/compare/v2.32.1...v2.33.0) (2024-02-07)
 
 
