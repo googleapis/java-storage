@@ -155,7 +155,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       GrpcStorageOptions options,
       StorageClient storageClient,
       WriterFactory writerFactory,
-      Opts<UserProject> defaultOpts) throws IOException {
+      Opts<UserProject> defaultOpts)  {
     super(options);
     this.storageClient = storageClient;
     this.writerFactory = writerFactory;
@@ -164,8 +164,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
-    this.serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
-            readObjectTransportSettings, storageClient.getSettings().readObjectSettings(), ClientContext.create(storageClient.getSettings()));
+    try {
+      this.serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
+              readObjectTransportSettings, storageClient.getSettings().readObjectSettings(), ClientContext.create(storageClient.getSettings()));
+    } catch (IOException e) {
+      // prototyping we do not want to do this;
+    }
   }
 
   @Override

@@ -101,8 +101,10 @@ final class GapicUnbufferedReadableByteChannel
         if (leftovers.hasRemaining()) {
           leftovers = null;
           getObjectMediaResponseMarshaller.clearByteStrings();
-          stream.close();
-          stream = null;
+          if (stream != null) {
+            stream.close();
+            stream = null;
+          }
         }
         continue;
       }
