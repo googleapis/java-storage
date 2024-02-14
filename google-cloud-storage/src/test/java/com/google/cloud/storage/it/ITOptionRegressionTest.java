@@ -50,6 +50,7 @@ import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.Storage.UpdateHmacKeyOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -326,7 +327,9 @@ public final class ITOptionRegressionTest {
             "updated",
             "versioning",
             "website");
-    s.get(b.getName(), BucketGetOption.fields(BucketField.values()));
+    s.get(
+        b.getName(),
+        BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
@@ -734,7 +737,8 @@ public final class ITOptionRegressionTest {
             "timeCreated",
             "timeDeleted",
             "timeStorageClassUpdated",
-            "updated");
+            "updated",
+            "retention");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
@@ -813,7 +817,7 @@ public final class ITOptionRegressionTest {
             "items/updated",
             "items/versioning",
             "items/website");
-    s.list(BucketListOption.fields(BucketField.values()));
+    s.list(BucketListOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
@@ -908,7 +912,8 @@ public final class ITOptionRegressionTest {
             "items/timeCreated",
             "items/timeDeleted",
             "items/timeStorageClassUpdated",
-            "items/updated");
+            "items/updated",
+            "items/retention");
     s.list(b.getName(), BlobListOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }

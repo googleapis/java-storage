@@ -172,7 +172,7 @@ public final class Acl implements Serializable {
 
     @Override
     public String toString() {
-      return Conversions.apiary().entity().encode(this);
+      return Conversions.json().entity().encode(this);
     }
   }
 

@@ -91,16 +91,16 @@ public class NotificationInfoTest {
   public void testToPbAndFromPb() {
     compareBucketsNotification(
         NOTIFICATION_INFO,
-        Conversions.apiary()
+        Conversions.json()
             .notificationInfo()
-            .decode(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO)));
+            .decode(Conversions.json().notificationInfo().encode(NOTIFICATION_INFO)));
     NotificationInfo notificationInfo =
         NotificationInfo.of(TOPIC).toBuilder().setPayloadFormat(PayloadFormat.NONE).build();
     compareBucketsNotification(
         notificationInfo,
-        Conversions.apiary()
+        Conversions.json()
             .notificationInfo()
-            .decode(Conversions.apiary().notificationInfo().encode(notificationInfo)));
+            .decode(Conversions.json().notificationInfo().encode(notificationInfo)));
   }
 
   private void compareBucketsNotification(NotificationInfo expected, NotificationInfo actual) {

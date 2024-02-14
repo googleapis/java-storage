@@ -25,6 +25,7 @@ import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.core.BackgroundResourceAggregation;
 import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.RequestParamsBuilder;
@@ -38,6 +39,8 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.CancelResumableWriteRequest;
 import com.google.storage.v2.CancelResumableWriteResponse;
@@ -71,6 +74,7 @@ import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.ServiceAccount;
@@ -235,6 +239,16 @@ public class GrpcStorageStub extends StorageStub {
           .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
           .build();
 
+  private static final MethodDescriptor<RestoreObjectRequest, Object>
+      restoreObjectMethodDescriptor =
+          MethodDescriptor.<RestoreObjectRequest, Object>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.v2.Storage/RestoreObject")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(RestoreObjectRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Object.getDefaultInstance()))
+              .build();
+
   private static final MethodDescriptor<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteMethodDescriptor =
           MethodDescriptor.<CancelResumableWriteRequest, CancelResumableWriteResponse>newBuilder()
@@ -279,6 +293,17 @@ public class GrpcStorageStub extends StorageStub {
               .setRequestMarshaller(ProtoUtils.marshaller(WriteObjectRequest.getDefaultInstance()))
               .setResponseMarshaller(
                   ProtoUtils.marshaller(WriteObjectResponse.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectMethodDescriptor =
+          MethodDescriptor.<BidiWriteObjectRequest, BidiWriteObjectResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.BIDI_STREAMING)
+              .setFullMethodName("google.storage.v2.Storage/BidiWriteObject")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(BidiWriteObjectRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(BidiWriteObjectResponse.getDefaultInstance()))
               .build();
 
   private static final MethodDescriptor<ListObjectsRequest, ListObjectsResponse>
@@ -406,6 +431,7 @@ public class GrpcStorageStub extends StorageStub {
       listNotificationConfigsPagedCallable;
   private final UnaryCallable<ComposeObjectRequest, Object> composeObjectCallable;
   private final UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable;
+  private final UnaryCallable<RestoreObjectRequest, Object> restoreObjectCallable;
   private final UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteCallable;
   private final UnaryCallable<GetObjectRequest, Object> getObjectCallable;
@@ -413,6 +439,8 @@ public class GrpcStorageStub extends StorageStub {
   private final UnaryCallable<UpdateObjectRequest, Object> updateObjectCallable;
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse>
       writeObjectCallable;
+  private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectCallable;
   private final UnaryCallable<ListObjectsRequest, ListObjectsResponse> listObjectsCallable;
   private final UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse>
       listObjectsPagedCallable;
@@ -447,12 +475,8 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate GET_IAM_POLICY_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate GET_IAM_POLICY_1_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
   private static final PathTemplate SET_IAM_POLICY_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate SET_IAM_POLICY_1_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
   private static final PathTemplate TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE =
@@ -470,6 +494,8 @@ public class GrpcStorageStub extends StorageStub {
   private static final PathTemplate COMPOSE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate DELETE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate RESTORE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate CANCEL_RESUMABLE_WRITE_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
@@ -601,7 +627,6 @@ public class GrpcStorageStub extends StorageStub {
                 request -> {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getResource(), "bucket", GET_IAM_POLICY_0_PATH_TEMPLATE);
-                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_1_PATH_TEMPLATE);
                   return builder.build();
                 })
             .build();
@@ -612,7 +637,6 @@ public class GrpcStorageStub extends StorageStub {
                 request -> {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getResource(), "bucket", SET_IAM_POLICY_0_PATH_TEMPLATE);
-                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_1_PATH_TEMPLATE);
                   return builder.build();
                 })
             .build();
@@ -719,6 +743,16 @@ public class GrpcStorageStub extends StorageStub {
                   return builder.build();
                 })
             .build();
+    GrpcCallSettings<RestoreObjectRequest, Object> restoreObjectTransportSettings =
+        GrpcCallSettings.<RestoreObjectRequest, Object>newBuilder()
+            .setMethodDescriptor(restoreObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getBucket(), "bucket", RESTORE_OBJECT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
     GrpcCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
         cancelResumableWriteTransportSettings =
             GrpcCallSettings.<CancelResumableWriteRequest, CancelResumableWriteResponse>newBuilder()
@@ -768,6 +802,11 @@ public class GrpcStorageStub extends StorageStub {
         GrpcCallSettings.<WriteObjectRequest, WriteObjectResponse>newBuilder()
             .setMethodDescriptor(writeObjectMethodDescriptor)
             .build();
+    GrpcCallSettings<BidiWriteObjectRequest, BidiWriteObjectResponse>
+        bidiWriteObjectTransportSettings =
+            GrpcCallSettings.<BidiWriteObjectRequest, BidiWriteObjectResponse>newBuilder()
+                .setMethodDescriptor(bidiWriteObjectMethodDescriptor)
+                .build();
     GrpcCallSettings<ListObjectsRequest, ListObjectsResponse> listObjectsTransportSettings =
         GrpcCallSettings.<ListObjectsRequest, ListObjectsResponse>newBuilder()
             .setMethodDescriptor(listObjectsMethodDescriptor)
@@ -951,6 +990,9 @@ public class GrpcStorageStub extends StorageStub {
     this.deleteObjectCallable =
         callableFactory.createUnaryCallable(
             deleteObjectTransportSettings, settings.deleteObjectSettings(), clientContext);
+    this.restoreObjectCallable =
+        callableFactory.createUnaryCallable(
+            restoreObjectTransportSettings, settings.restoreObjectSettings(), clientContext);
     this.cancelResumableWriteCallable =
         callableFactory.createUnaryCallable(
             cancelResumableWriteTransportSettings,
@@ -968,6 +1010,9 @@ public class GrpcStorageStub extends StorageStub {
     this.writeObjectCallable =
         callableFactory.createClientStreamingCallable(
             writeObjectTransportSettings, settings.writeObjectSettings(), clientContext);
+    this.bidiWriteObjectCallable =
+        callableFactory.createBidiStreamingCallable(
+            bidiWriteObjectTransportSettings, settings.bidiWriteObjectSettings(), clientContext);
     this.listObjectsCallable =
         callableFactory.createUnaryCallable(
             listObjectsTransportSettings, settings.listObjectsSettings(), clientContext);
@@ -1109,6 +1154,11 @@ public class GrpcStorageStub extends StorageStub {
   }
 
   @Override
+  public UnaryCallable<RestoreObjectRequest, Object> restoreObjectCallable() {
+    return restoreObjectCallable;
+  }
+
+  @Override
   public UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteCallable() {
     return cancelResumableWriteCallable;
@@ -1132,6 +1182,12 @@ public class GrpcStorageStub extends StorageStub {
   @Override
   public ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> writeObjectCallable() {
     return writeObjectCallable;
+  }
+
+  @Override
+  public BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectCallable() {
+    return bidiWriteObjectCallable;
   }
 
   @Override

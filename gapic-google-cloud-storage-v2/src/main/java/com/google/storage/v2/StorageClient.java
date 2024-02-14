@@ -22,6 +22,7 @@ import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.AbstractPagedListResponse;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -78,19 +79,595 @@ import javax.annotation.Generated;
  * <p>Note: close() needs to be called on the StorageClient object to clean up resources such as
  * threads. In the example above, try-with-resources is used, which automatically calls close().
  *
- * <p>The surface of this class includes several types of Java methods for each of the API's
- * methods:
- *
- * <ol>
- *   <li>A "flattened" method. With this type of method, the fields of the request type have been
- *       converted into function parameters. It may be the case that not all fields are available as
- *       parameters, and not every API method will have a flattened method entry point.
- *   <li>A "request object" method. This type of method only takes one parameter, a request object,
- *       which must be constructed before the call. Not every API method will have a request object
- *       method.
- *   <li>A "callable" method. This type of method takes no parameters and returns an immutable API
- *       callable object, which can be used to initiate calls to the service.
- * </ol>
+ * <table>
+ *    <caption>Methods</caption>
+ *    <tr>
+ *      <th>Method</th>
+ *      <th>Description</th>
+ *      <th>Method Variants</th>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteBucket</td>
+ *      <td><p> Permanently deletes an empty bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteBucket(DeleteBucketRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteBucket(BucketName name)
+ *           <li><p> deleteBucket(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteBucketCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetBucket</td>
+ *      <td><p> Returns metadata for the specified bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getBucket(GetBucketRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getBucket(BucketName name)
+ *           <li><p> getBucket(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getBucketCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateBucket</td>
+ *      <td><p> Creates a new bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createBucket(CreateBucketRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> createBucket(ProjectName parent, Bucket bucket, String bucketId)
+ *           <li><p> createBucket(String parent, Bucket bucket, String bucketId)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createBucketCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListBuckets</td>
+ *      <td><p> Retrieves a list of buckets for a given project.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listBuckets(ListBucketsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listBuckets(ProjectName parent)
+ *           <li><p> listBuckets(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listBucketsPagedCallable()
+ *           <li><p> listBucketsCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> LockBucketRetentionPolicy</td>
+ *      <td><p> Locks retention policy on a bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> lockBucketRetentionPolicy(LockBucketRetentionPolicyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> lockBucketRetentionPolicy(BucketName bucket)
+ *           <li><p> lockBucketRetentionPolicy(String bucket)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> lockBucketRetentionPolicyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetIamPolicy</td>
+ *      <td><p> Gets the IAM policy for a specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}`.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getIamPolicy(GetIamPolicyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getIamPolicy(ResourceName resource)
+ *           <li><p> getIamPolicy(String resource)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getIamPolicyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> SetIamPolicy</td>
+ *      <td><p> Updates an IAM policy for the specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}`.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> setIamPolicy(SetIamPolicyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> setIamPolicy(ResourceName resource, Policy policy)
+ *           <li><p> setIamPolicy(String resource, Policy policy)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> setIamPolicyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> TestIamPermissions</td>
+ *      <td><p> Tests a set of permissions on the given bucket or object to see which, if any, are held by the caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> testIamPermissions(TestIamPermissionsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> testIamPermissions(ResourceName resource, List&lt;String&gt; permissions)
+ *           <li><p> testIamPermissions(String resource, List&lt;String&gt; permissions)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> testIamPermissionsCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateBucket</td>
+ *      <td><p> Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateBucket(UpdateBucketRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateBucket(Bucket bucket, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateBucketCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteNotificationConfig</td>
+ *      <td><p> Permanently deletes a NotificationConfig.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfig(DeleteNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfig(NotificationConfigName name)
+ *           <li><p> deleteNotificationConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetNotificationConfig</td>
+ *      <td><p> View a NotificationConfig.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfig(GetNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfig(NotificationConfigName name)
+ *           <li><p> getNotificationConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateNotificationConfig</td>
+ *      <td><p> Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered, publish messages to the specified Pub/Sub topics. See https://cloud.google.com/storage/docs/pubsub-notifications.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfig(CreateNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfig(BucketName parent, NotificationConfig notificationConfig)
+ *           <li><p> createNotificationConfig(String parent, NotificationConfig notificationConfig)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListNotificationConfigs</td>
+ *      <td><p> Retrieves a list of NotificationConfigs for a given bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigs(ListNotificationConfigsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigs(BucketName parent)
+ *           <li><p> listNotificationConfigs(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigsPagedCallable()
+ *           <li><p> listNotificationConfigsCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ComposeObject</td>
+ *      <td><p> Concatenates a list of existing objects into a new object in the same bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> composeObject(ComposeObjectRequest request)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> composeObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteObject</td>
+ *      <td><p> Deletes an object and its metadata.
+ * <p>  Deletions are normally permanent when versioning is disabled or whenever the generation parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be restored using RestoreObject until the soft delete retention period has passed.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteObject(DeleteObjectRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteObject(BucketName bucket, String object)
+ *           <li><p> deleteObject(String bucket, String object)
+ *           <li><p> deleteObject(BucketName bucket, String object, long generation)
+ *           <li><p> deleteObject(String bucket, String object, long generation)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> RestoreObject</td>
+ *      <td><p> Restores a soft-deleted object.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> restoreObject(RestoreObjectRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> restoreObject(BucketName bucket, String object, long generation)
+ *           <li><p> restoreObject(String bucket, String object, long generation)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> restoreObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CancelResumableWrite</td>
+ *      <td><p> Cancels an in-progress resumable upload.
+ * <p>  Any attempts to write to the resumable upload after cancelling the upload will fail.
+ * <p>  The behavior for currently in progress write operations is not guaranteed - they could either complete before the cancellation or fail if the cancellation completes first.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> cancelResumableWrite(CancelResumableWriteRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> cancelResumableWrite(String uploadId)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> cancelResumableWriteCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetObject</td>
+ *      <td><p> Retrieves an object's metadata.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getObject(GetObjectRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getObject(BucketName bucket, String object)
+ *           <li><p> getObject(String bucket, String object)
+ *           <li><p> getObject(BucketName bucket, String object, long generation)
+ *           <li><p> getObject(String bucket, String object, long generation)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ReadObject</td>
+ *      <td><p> Reads an object's data.</td>
+ *      <td>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> readObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateObject</td>
+ *      <td><p> Updates an object's metadata. Equivalent to JSON API's storage.objects.patch.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateObject(UpdateObjectRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateObject(Object object, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> WriteObject</td>
+ *      <td><p> Stores a new object and metadata.
+ * <p>  An object can be written either in a single message stream or in a resumable sequence of message streams. To write using a single stream, the client should include in the first message of the stream an `WriteObjectSpec` describing the destination bucket, object, and any preconditions. Additionally, the final message must set 'finish_write' to true, or else it is an error.
+ * <p>  For a resumable write, the client should instead call `StartResumableWrite()`, populating a `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the first message of each following call to `WriteObject`. If the stream is closed before finishing the upload (either explicitly by the client or due to a network error or an error response from the server), the client should do as follows:   - Check the result Status of the stream, to determine if writing can be     resumed on this stream or must be restarted from scratch (by calling     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,     INTERNAL, and UNAVAILABLE. For each case, the client should use binary     exponential backoff before retrying.  Additionally, writes can be     resumed after RESOURCE_EXHAUSTED errors, but only after taking     appropriate measures, which may include reducing aggregate send rate     across clients and/or requesting a quota increase for your project.   - If the call to `WriteObject` returns `ABORTED`, that indicates     concurrent attempts to update the resumable write, caused either by     multiple racing clients or by a single client where the previous     request was timed out on the client side but nonetheless reached the     server. In this case the client should take steps to prevent further     concurrent writes (e.g., increase the timeouts, stop using more than     one process to perform the upload, etc.), and then should follow the     steps below for resuming the upload.   - For resumable errors, the client should call `QueryWriteStatus()` and     then continue writing from the returned `persisted_size`. This may be     less than the amount of data the client previously sent. Note also that     it is acceptable to send data starting at an offset earlier than the     returned `persisted_size`; in this case, the service will skip data at     offsets that were already persisted (without checking that it matches     the previously written data), and write only the data starting from the     persisted offset. Even though the data isn't written, it may still     incur a performance cost over resuming at the correct write offset.     This behavior can make client-side handling simpler in some cases.   - Clients must only send data that is a multiple of 256 KiB per message,     unless the object is being finished with `finish_write` set to `true`.
+ * <p>  The service will not view the object as complete until the client has sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after sending a request with `finish_write` set to `true` will cause an error. The client &#42;&#42;should&#42;&#42; check the response it receives to determine how much data the service was able to commit and whether the service views the object as complete.
+ * <p>  Attempting to resume an already finalized object will result in an OK status, with a WriteObjectResponse containing the finalized object's metadata.
+ * <p>  Alternatively, the BidiWriteObject operation may be used to write an object with controls over flushing and the ability to fetch the ability to determine the current persisted size.</td>
+ *      <td>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> writeObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> BidiWriteObject</td>
+ *      <td><p> Stores a new object and metadata.
+ * <p>  This is similar to the WriteObject call with the added support for manual flushing of persisted state, and the ability to determine current persisted size without closing the stream.
+ * <p>  The client may specify one or both of the `state_lookup` and `flush` fields in each BidiWriteObjectRequest. If `flush` is specified, the data written so far will be persisted to storage. If `state_lookup` is specified, the service will respond with a BidiWriteObjectResponse that contains the persisted size. If both `flush` and `state_lookup` are specified, the flush will always occur before a `state_lookup`, so that both may be set in the same request and the returned state will be the state of the object post-flush. When the stream is closed, a BidiWriteObjectResponse will always be sent to the client, regardless of the value of `state_lookup`.</td>
+ *      <td>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> bidiWriteObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListObjects</td>
+ *      <td><p> Retrieves a list of objects matching the criteria.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listObjects(ListObjectsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listObjects(BucketName parent)
+ *           <li><p> listObjects(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listObjectsPagedCallable()
+ *           <li><p> listObjectsCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> RewriteObject</td>
+ *      <td><p> Rewrites a source object to a destination object. Optionally overrides metadata.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> rewriteObject(RewriteObjectRequest request)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> rewriteObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> StartResumableWrite</td>
+ *      <td><p> Starts a resumable write. How long the write operation remains valid, and what happens when the write operation becomes invalid, are service-dependent.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> startResumableWrite(StartResumableWriteRequest request)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> startResumableWriteCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> QueryWriteStatus</td>
+ *      <td><p> Determines the `persisted_size` for an object that is being written, which can then be used as the `write_offset` for the next `Write()` call.
+ * <p>  If the object does not exist (i.e., the object has been deleted, or the first `Write()` has not yet reached the service), this method returns the error `NOT_FOUND`.
+ * <p>  The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how much data has been processed for this object. This is useful if the client is buffering data and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()` calls for a given object name, the sequence of returned `persisted_size` values will be non-decreasing.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> queryWriteStatus(QueryWriteStatusRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> queryWriteStatus(String uploadId)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> queryWriteStatusCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetServiceAccount</td>
+ *      <td><p> Retrieves the name of a project's Google Cloud Storage service account.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getServiceAccount(GetServiceAccountRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getServiceAccount(ProjectName project)
+ *           <li><p> getServiceAccount(String project)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getServiceAccountCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateHmacKey</td>
+ *      <td><p> Creates a new HMAC key for the given service account.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createHmacKey(CreateHmacKeyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> createHmacKey(ProjectName project, String serviceAccountEmail)
+ *           <li><p> createHmacKey(String project, String serviceAccountEmail)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createHmacKeyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteHmacKey</td>
+ *      <td><p> Deletes a given HMAC key.  Key must be in an INACTIVE state.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteHmacKey(DeleteHmacKeyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteHmacKey(String accessId, ProjectName project)
+ *           <li><p> deleteHmacKey(String accessId, String project)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteHmacKeyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetHmacKey</td>
+ *      <td><p> Gets an existing HMAC key metadata for the given id.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getHmacKey(GetHmacKeyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getHmacKey(String accessId, ProjectName project)
+ *           <li><p> getHmacKey(String accessId, String project)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getHmacKeyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListHmacKeys</td>
+ *      <td><p> Lists HMAC keys under a given project with the additional filters provided.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listHmacKeys(ListHmacKeysRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listHmacKeys(ProjectName project)
+ *           <li><p> listHmacKeys(String project)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listHmacKeysPagedCallable()
+ *           <li><p> listHmacKeysCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateHmacKey</td>
+ *      <td><p> Updates a given HMAC key state between ACTIVE and INACTIVE.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateHmacKey(UpdateHmacKeyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateHmacKey(HmacKeyMetadata hmacKey, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateHmacKeyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *  </table>
  *
  * <p>See the individual methods for example code.
  *
@@ -426,10 +1003,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
-   *     the bucket must be specified in the `bucket.project` field. This field must be in
-   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
-   *     number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -467,10 +1044,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
-   *     the bucket must be specified in the `bucket.project` field. This field must be in
-   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
-   *     number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -833,9 +1410,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -866,9 +1442,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -896,9 +1471,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -929,9 +1503,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -961,9 +1534,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -999,9 +1571,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -1034,9 +1605,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -1068,9 +1638,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}`.
    *
    * <p>Sample code:
    *
@@ -1102,9 +1671,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1142,9 +1710,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1182,9 +1749,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1216,9 +1782,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -2198,6 +2763,147 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   Object response = storageClient.restoreObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the object to restore.
+   * @param generation Required. The specific revision of the object to restore.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(BucketName bucket, String object, long generation) {
+    RestoreObjectRequest request =
+        RestoreObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    return restoreObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   Object response = storageClient.restoreObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the object to restore.
+   * @param generation Required. The specific revision of the object to restore.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(String bucket, String object, long generation) {
+    RestoreObjectRequest request =
+        RestoreObjectRequest.newBuilder()
+            .setBucket(bucket)
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    return restoreObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   RestoreObjectRequest request =
+   *       RestoreObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setObject("object-1023368385")
+   *           .setGeneration(305703192)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setCopySourceAcl(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   Object response = storageClient.restoreObject(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(RestoreObjectRequest request) {
+    return restoreObjectCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   RestoreObjectRequest request =
+   *       RestoreObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setObject("object-1023368385")
+   *           .setGeneration(305703192)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setCopySourceAcl(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   ApiFuture<Object> future = storageClient.restoreObjectCallable().futureCall(request);
+   *   // Do something.
+   *   Object response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<RestoreObjectRequest, Object> restoreObjectCallable() {
+    return stub.restoreObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
    * Cancels an in-progress resumable upload.
    *
    * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
@@ -2444,6 +3150,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setSoftDeleted(true)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2480,6 +3187,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setSoftDeleted(true)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2687,6 +3395,9 @@ public class StorageClient implements BackgroundResource {
    * <p>Attempting to resume an already finalized object will result in an OK status, with a
    * WriteObjectResponse containing the finalized object's metadata.
    *
+   * <p>Alternatively, the BidiWriteObject operation may be used to write an object with controls
+   * over flushing and the ability to fetch the ability to determine the current persisted size.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2729,6 +3440,55 @@ public class StorageClient implements BackgroundResource {
   public final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse>
       writeObjectCallable() {
     return stub.writeObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Stores a new object and metadata.
+   *
+   * <p>This is similar to the WriteObject call with the added support for manual flushing of
+   * persisted state, and the ability to determine current persisted size without closing the
+   * stream.
+   *
+   * <p>The client may specify one or both of the `state_lookup` and `flush` fields in each
+   * BidiWriteObjectRequest. If `flush` is specified, the data written so far will be persisted to
+   * storage. If `state_lookup` is specified, the service will respond with a
+   * BidiWriteObjectResponse that contains the persisted size. If both `flush` and `state_lookup`
+   * are specified, the flush will always occur before a `state_lookup`, so that both may be set in
+   * the same request and the returned state will be the state of the object post-flush. When the
+   * stream is closed, a BidiWriteObjectResponse will always be sent to the client, regardless of
+   * the value of `state_lookup`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BidiStream<BidiWriteObjectRequest, BidiWriteObjectResponse> bidiStream =
+   *       storageClient.bidiWriteObjectCallable().call();
+   *   BidiWriteObjectRequest request =
+   *       BidiWriteObjectRequest.newBuilder()
+   *           .setWriteOffset(-1559543565)
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
+   *           .setStateLookup(true)
+   *           .setFlush(true)
+   *           .setFinishWrite(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   bidiStream.send(request);
+   *   for (BidiWriteObjectResponse response : bidiStream) {
+   *     // Do something when a response is received.
+   *   }
+   * }
+   * }</pre>
+   */
+  public final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectCallable() {
+    return stub.bidiWriteObjectCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2815,6 +3575,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
@@ -2855,6 +3616,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
@@ -2895,6 +3657,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   while (true) {

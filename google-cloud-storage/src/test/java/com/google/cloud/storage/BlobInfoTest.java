@@ -285,23 +285,23 @@ public class BlobInfoTest {
   public void testToPbAndFromPb() {
     compareCustomerEncryptions(
         CUSTOMER_ENCRYPTION,
-        Conversions.apiary()
+        Conversions.json()
             .customerEncryption()
-            .decode(Conversions.apiary().customerEncryption().encode(CUSTOMER_ENCRYPTION)));
+            .decode(Conversions.json().customerEncryption().encode(CUSTOMER_ENCRYPTION)));
     compareBlobs(
         BLOB_INFO,
-        Conversions.apiary().blobInfo().decode(Conversions.apiary().blobInfo().encode(BLOB_INFO)));
+        Conversions.json().blobInfo().decode(Conversions.json().blobInfo().encode(BLOB_INFO)));
     BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of("b", "n")).build();
     compareBlobs(
         blobInfo,
-        Conversions.apiary().blobInfo().decode(Conversions.apiary().blobInfo().encode(blobInfo)));
+        Conversions.json().blobInfo().decode(Conversions.json().blobInfo().encode(blobInfo)));
     StorageObject object =
         new StorageObject()
             .setName("n/")
             .setBucket("b")
             .setSize(BigInteger.ZERO)
             .set("isDirectory", true);
-    blobInfo = Conversions.apiary().blobInfo().decode(object);
+    blobInfo = Conversions.json().blobInfo().decode(object);
     assertEquals("b", blobInfo.getBucket());
     assertEquals("n/", blobInfo.getName());
     assertNull(blobInfo.getAcl());

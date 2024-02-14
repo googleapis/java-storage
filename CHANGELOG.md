@@ -1,5 +1,119 @@
 # Changelog
 
+## [2.33.0](https://github.com/googleapis/java-storage/compare/v2.32.1...v2.33.0) (2024-02-07)
+
+
+### Features
+
+* Adds TPC support ([#2362](https://github.com/googleapis/java-storage/issues/2362)) ([8b636db](https://github.com/googleapis/java-storage/commit/8b636dbe8a16b9b81afbb51b8d0032bcbdbef635))
+
+
+### Bug Fixes
+
+* Temporarily restoring storage_grpc_service_config.json to fix broken test ([#2365](https://github.com/googleapis/java-storage/issues/2365)) ([50b6610](https://github.com/googleapis/java-storage/commit/50b6610de94d44815d80381649e7d3a86c38f894))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240202-2.0.0 ([#2393](https://github.com/googleapis/java-storage/issues/2393)) ([3391e1d](https://github.com/googleapis/java-storage/commit/3391e1d3d925604fe57a69c40c823e863ce7593e))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.24.0 ([#2389](https://github.com/googleapis/java-storage/issues/2389)) ([9e4e00d](https://github.com/googleapis/java-storage/commit/9e4e00db40e8235b513f7f798674aba31631ddf4))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.10.0 ([#2390](https://github.com/googleapis/java-storage/issues/2390)) ([59ac502](https://github.com/googleapis/java-storage/commit/59ac502ee4c063ff46aa9dd0409df2e6fda7bc99))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.2 ([#2394](https://github.com/googleapis/java-storage/issues/2394)) ([8dbd4bf](https://github.com/googleapis/java-storage/commit/8dbd4bfb4f76634f97b2e9cd3487128f4c98f58a))
+* Update junit-platform.version to v5.10.2 ([#2395](https://github.com/googleapis/java-storage/issues/2395)) ([0c5aef3](https://github.com/googleapis/java-storage/commit/0c5aef34682ee56786f2006156f4cd645c22d8a8))
+
+## [2.32.1](https://github.com/googleapis/java-storage/compare/v2.32.0...v2.32.1) (2024-01-24)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.23.0 ([#2378](https://github.com/googleapis/java-storage/issues/2378)) ([798aadf](https://github.com/googleapis/java-storage/commit/798aadfd585cc584c57cf702f4c7ba341a0b6718))
+
+## [2.32.0](https://github.com/googleapis/java-storage/compare/v2.31.0...v2.32.0) (2024-01-22)
+
+
+### Features
+
+* Add ability to create a PCU Prefix at the object level ([#2345](https://github.com/googleapis/java-storage/issues/2345)) ([d39a4e4](https://github.com/googleapis/java-storage/commit/d39a4e46eb429b77ee75d822521ed31567ed5ec4))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.22.0 ([#2363](https://github.com/googleapis/java-storage/issues/2363)) ([e2e2d7e](https://github.com/googleapis/java-storage/commit/e2e2d7ef5e2bc353357053df7bc26adeb0fe074a))
+
+## [2.31.0](https://github.com/googleapis/java-storage/compare/v2.30.1...v2.31.0) (2024-01-09)
+
+
+### Features
+
+* Next release from main branch is 2.31.0 ([#2346](https://github.com/googleapis/java-storage/issues/2346)) ([2855f11](https://github.com/googleapis/java-storage/commit/2855f11e21b6aca1ea15fad45130ea689fbf4e23))
+
+
+### Bug Fixes
+
+* Add an exception to zero byte uploads on CreateFrom ([#2342](https://github.com/googleapis/java-storage/issues/2342)) ([2b5b27e](https://github.com/googleapis/java-storage/commit/2b5b27eac3279db815b36b252830d0905ade0665))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.31.0 ([#2349](https://github.com/googleapis/java-storage/issues/2349)) ([578d5d0](https://github.com/googleapis/java-storage/commit/578d5d01f4469409b6d8731bbdc965ab224956ad))
+
+
+### Dependencies
+
+* Update actions/setup-java action to v4 ([#2321](https://github.com/googleapis/java-storage/issues/2321)) ([d7e5b20](https://github.com/googleapis/java-storage/commit/d7e5b20b2e675025e73ee1586014f52f76ed36e6))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231202-2.0.0 ([#2327](https://github.com/googleapis/java-storage/issues/2327)) ([8983c39](https://github.com/googleapis/java-storage/commit/8983c393127a36cce9a359a912b24710b347e5e9))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240105-2.0.0 ([#2351](https://github.com/googleapis/java-storage/issues/2351)) ([e9608c6](https://github.com/googleapis/java-storage/commit/e9608c6e8d59deae714b503792f995f157fd2aaf))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.21.0 ([#2348](https://github.com/googleapis/java-storage/issues/2348)) ([321adb6](https://github.com/googleapis/java-storage/commit/321adb65ae06578e2b2654f1f36ad73b31d20fbd))
+
+## [2.30.1](https://github.com/googleapis/java-storage/compare/v2.30.0...v2.30.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* Revert ReadAllBytes fix ([#2331](https://github.com/googleapis/java-storage/issues/2331)) ([4b8458f](https://github.com/googleapis/java-storage/commit/4b8458f01f4375b18f1c447761e8419d43d0cbc9))
+
+## [2.30.0](https://github.com/googleapis/java-storage/compare/v2.29.1...v2.30.0) (2023-12-01)
+
+
+### Features
+
+* Add object retention feature ([#2277](https://github.com/googleapis/java-storage/issues/2277)) ([3deb29b](https://github.com/googleapis/java-storage/commit/3deb29b2b78310a46b268e20d88f383b9a818e0b))
+
+
+### Bug Fixes
+
+* Fix JSON read handling when socket broken resulting in partial bytes copied ([#2303](https://github.com/googleapis/java-storage/issues/2303)) ([d4bfcf0](https://github.com/googleapis/java-storage/commit/d4bfcf0d4d5155a78c9230bc85be739f99391b1a)), closes [#2301](https://github.com/googleapis/java-storage/issues/2301)
+* Fix Storage#readAllBytes to allow reading compressed bytes ([#2304](https://github.com/googleapis/java-storage/issues/2304)) ([68b96a9](https://github.com/googleapis/java-storage/commit/68b96a97352925a6142e677949395044ddc6c605))
+* Update implementation of readAllBytes and downloadTo to be more robust to retryable errors ([#2305](https://github.com/googleapis/java-storage/issues/2305)) ([21821da](https://github.com/googleapis/java-storage/commit/21821da1483570b0b913f6bfcbc7c5637a637bca))
+
+
+### Dependencies
+
+* Update actions/github-script action to v7 ([#2300](https://github.com/googleapis/java-storage/issues/2300)) ([062df62](https://github.com/googleapis/java-storage/commit/062df62948c5bd4fc11090f42495043fc697c38a))
+* Update actions/github-script action to v7 ([#2302](https://github.com/googleapis/java-storage/issues/2302)) ([c46c24f](https://github.com/googleapis/java-storage/commit/c46c24f64ab0164cffc30b68ed070d854bb4b156))
+* Update actions/github-script action to v7 ([#2318](https://github.com/googleapis/java-storage/issues/2318)) ([44c1b00](https://github.com/googleapis/java-storage/commit/44c1b0022fe892177ae4ae45acaf52e8e9971ec2))
+* Update actions/setup-java action to v4 ([#2315](https://github.com/googleapis/java-storage/issues/2315)) ([5791470](https://github.com/googleapis/java-storage/commit/57914706d2ef8de9895c0c80e6b89755b378c89f))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231117-2.0.0 ([#2320](https://github.com/googleapis/java-storage/issues/2320)) ([b5a34d8](https://github.com/googleapis/java-storage/commit/b5a34d8ce920b0d0a766e4dc9d488c5e4e5e21ba))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.20.0 ([#2316](https://github.com/googleapis/java-storage/issues/2316)) ([49cdc20](https://github.com/googleapis/java-storage/commit/49cdc2085adbba5024b27fda5b1add328de82684))
+* Update dependency net.jqwik:jqwik to v1.8.2 ([#2312](https://github.com/googleapis/java-storage/issues/2312)) ([70d1d1c](https://github.com/googleapis/java-storage/commit/70d1d1c91c28e9a1fa5f9f938301ff5346a56a7b))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.1 ([#2292](https://github.com/googleapis/java-storage/issues/2292)) ([7471a7c](https://github.com/googleapis/java-storage/commit/7471a7ced7a3d53c67c08aeb9a56bb7b2b23b2d0))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.40.0 ([#2306](https://github.com/googleapis/java-storage/issues/2306)) ([29f4ea6](https://github.com/googleapis/java-storage/commit/29f4ea60891914eb87db9227a76b1c51b818a492))
+* Update junit-platform.version to v5.10.1 ([#2293](https://github.com/googleapis/java-storage/issues/2293)) ([6e36cc4](https://github.com/googleapis/java-storage/commit/6e36cc4feba180247a87b095e4f9c145f724d9e8))
+
+
+### Documentation
+
+* Add @TransportCompatibility to StorageBatch ([#2276](https://github.com/googleapis/java-storage/issues/2276)) ([d3b7bb3](https://github.com/googleapis/java-storage/commit/d3b7bb38537117c508527fd843bc9450ebbfe1ee))
+
+## [2.29.1](https://github.com/googleapis/java-storage/compare/v2.29.0...v2.29.1) (2023-11-02)
+
+
+### Bug Fixes
+
+* Improve 503 handling for json resumable uploads ([#2289](https://github.com/googleapis/java-storage/issues/2289)) ([9b4bb82](https://github.com/googleapis/java-storage/commit/9b4bb8221294bcd94037b69281a37f33b364b174))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231028-2.0.0 ([#2281](https://github.com/googleapis/java-storage/issues/2281)) ([94b8dd6](https://github.com/googleapis/java-storage/commit/94b8dd601d33c25edcff05885b0fadf0decbb86e))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.19.0 ([#2288](https://github.com/googleapis/java-storage/issues/2288)) ([cc65fd0](https://github.com/googleapis/java-storage/commit/cc65fd0897a064d7efc7b50f33acecee9ffa2c4b))
+
 ## [2.29.0](https://github.com/googleapis/java-storage/compare/v2.28.0...v2.29.0) (2023-10-23)
 
 

@@ -17,6 +17,7 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.BlobInfo;
@@ -28,12 +29,12 @@ import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.annotations.SingleBackend;
-import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -41,16 +42,21 @@ import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.PROD)
+@CrossRun(
+    transports = {Transport.GRPC},
+    backends = {Backend.PROD})
 public final class ITBlobWriteSessionTest {
 
-  @Inject
-  @StorageFixture(Transport.GRPC)
-  public Storage storage;
+  @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+  @Inject public Storage storage;
+  @Inject public Transport transport;
 
   @Inject public BucketInfo bucket;
 
@@ -63,11 +69,16 @@ public final class ITBlobWriteSessionTest {
 
   @Test
   public void bufferToTempDirThenUpload() throws Exception {
-    GrpcStorageOptions options =
-        ((GrpcStorageOptions) storage.getOptions())
-            .toBuilder()
-            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
-            .build();
+    StorageOptions options = null;
+    if (transport == Transport.GRPC) {
+      options =
+          ((GrpcStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+              .build();
+    }
+    assertWithMessage("unable to resolve options").that(options).isNotNull();
+    //noinspection DataFlowIssue
     try (Storage s = options.getService()) {
       doTest(s);
     }
@@ -75,12 +86,17 @@ public final class ITBlobWriteSessionTest {
 
   @Test
   public void overrideDefaultBufferSize() throws Exception {
-    GrpcStorageOptions options =
-        ((GrpcStorageOptions) storage.getOptions())
-            .toBuilder()
-            .setBlobWriteSessionConfig(
-                BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
-            .build();
+    StorageOptions options = null;
+    if (transport == Transport.GRPC) {
+      options =
+          ((GrpcStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(
+                  BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
+              .build();
+    }
+    assertWithMessage("unable to resolve options").that(options).isNotNull();
+    //noinspection DataFlowIssue
     try (Storage s = options.getService()) {
       doTest(s);
     }
@@ -95,7 +111,6 @@ public final class ITBlobWriteSessionTest {
     WritableByteChannel open = session.open();
     open.close();
     BlobInfo gen1 = session.getResult().get(1, TimeUnit.SECONDS);
-    System.out.println("gen1 = " + gen1);
 
     assertThat(gen1.getSize()).isEqualTo(0);
   }

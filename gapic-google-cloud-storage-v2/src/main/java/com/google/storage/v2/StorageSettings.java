@@ -169,6 +169,11 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     return ((StorageStubSettings) getStubSettings()).deleteObjectSettings();
   }
 
+  /** Returns the object with the settings used for calls to restoreObject. */
+  public UnaryCallSettings<RestoreObjectRequest, Object> restoreObjectSettings() {
+    return ((StorageStubSettings) getStubSettings()).restoreObjectSettings();
+  }
+
   /** Returns the object with the settings used for calls to cancelResumableWrite. */
   public UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteSettings() {
@@ -193,6 +198,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
   /** Returns the object with the settings used for calls to writeObject. */
   public StreamingCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectSettings() {
     return ((StorageStubSettings) getStubSettings()).writeObjectSettings();
+  }
+
+  /** Returns the object with the settings used for calls to bidiWriteObject. */
+  public StreamingCallSettings<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectSettings() {
+    return ((StorageStubSettings) getStubSettings()).bidiWriteObjectSettings();
   }
 
   /** Returns the object with the settings used for calls to listObjects. */
@@ -431,6 +442,11 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
       return getStubSettingsBuilder().deleteObjectSettings();
     }
 
+    /** Returns the builder for the settings used for calls to restoreObject. */
+    public UnaryCallSettings.Builder<RestoreObjectRequest, Object> restoreObjectSettings() {
+      return getStubSettingsBuilder().restoreObjectSettings();
+    }
+
     /** Returns the builder for the settings used for calls to cancelResumableWrite. */
     public UnaryCallSettings.Builder<CancelResumableWriteRequest, CancelResumableWriteResponse>
         cancelResumableWriteSettings() {
@@ -457,6 +473,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     public StreamingCallSettings.Builder<WriteObjectRequest, WriteObjectResponse>
         writeObjectSettings() {
       return getStubSettingsBuilder().writeObjectSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to bidiWriteObject. */
+    public StreamingCallSettings.Builder<BidiWriteObjectRequest, BidiWriteObjectResponse>
+        bidiWriteObjectSettings() {
+      return getStubSettingsBuilder().bidiWriteObjectSettings();
     }
 
     /** Returns the builder for the settings used for calls to listObjects. */

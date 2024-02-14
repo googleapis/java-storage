@@ -55,7 +55,7 @@ abstract class BaseConvertablePropertyTest<
 
   /** Provide the codec instance used to convert between {@code ModelT} and {@code ProtoT} */
   Codec<ModelT, ApiaryT> apiaryCodec() {
-    ApiaryConversions instance = Conversions.apiary();
+    JsonConversions instance = Conversions.json();
     return resolveCodec(instance, apiaryTType);
   }
 

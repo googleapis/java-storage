@@ -17,11 +17,9 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.InternalApi;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.Clock;
@@ -52,9 +50,15 @@ public abstract class BlobWriteSessionConfig implements Serializable {
   interface WriterFactory {
     @InternalApi
     WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal s,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d);
+        StorageInternal s, BlobInfo info, Opts<ObjectTargetOpt> opts);
   }
+
+  /**
+   * Internal marker interface to signify an implementation of {@link BlobWriteSessionConfig} is
+   * compatible with {@link com.google.cloud.storage.TransportCompatibility.Transport#GRPC}
+   *
+   * <p>We could evaluate the annotations, but the code for that is more complicated and probably
+   * not worth the effort.
+   */
+  interface GrpcCompatible {}
 }

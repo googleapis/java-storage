@@ -93,7 +93,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<Void>> callback = Capture.newInstance();
     batchMock.addDelete(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -123,7 +123,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<Void>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addDelete(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(batchMock);
@@ -143,7 +143,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     batchMock.addPatch(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -177,7 +177,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addPatch(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_COMPLETE)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO_COMPLETE)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(batchMock, storage, optionsMock);
@@ -191,7 +191,7 @@ public class StorageBatchTest {
     assertEquals(42L, capturedOptions.getValue().get(StorageRpc.Option.IF_GENERATION_MATCH));
     assertEquals(42L, capturedOptions.getValue().get(StorageRpc.Option.IF_METAGENERATION_MATCH));
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
-    capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
+    capturedCallback.onSuccess(Conversions.json().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());
   }
 
@@ -200,7 +200,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     batchMock.addGet(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -234,7 +234,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addGet(
-        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
+        EasyMock.eq(Conversions.json().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(storage, batchMock, optionsMock);
@@ -245,7 +245,7 @@ public class StorageBatchTest {
     assertThat(options).containsEntry(StorageRpc.Option.IF_GENERATION_MATCH, 42L);
     assertThat(options).containsEntry(StorageRpc.Option.IF_METAGENERATION_MATCH, 42L);
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
-    capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
+    capturedCallback.onSuccess(Conversions.json().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());
   }
 }

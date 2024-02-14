@@ -32,7 +32,7 @@ final class BlobWriteChannelV2 extends BaseStorageWriteChannel<StorageObject> {
   private final JsonResumableWrite start;
 
   BlobWriteChannelV2(BlobReadChannelContext blobChannelContext, JsonResumableWrite start) {
-    super(Conversions.apiary().blobInfo());
+    super(Conversions.json().blobInfo());
     this.start = start;
     this.blobChannelContext = blobChannelContext;
   }

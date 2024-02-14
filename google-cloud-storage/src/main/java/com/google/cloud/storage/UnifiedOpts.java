@@ -450,6 +450,14 @@ final class UnifiedOpts {
     return new PredefinedDefaultObjectAcl(predefinedAcl.getEntry());
   }
 
+  static EnableObjectRetention enableObjectRetention(boolean enable) {
+    return new EnableObjectRetention(enable);
+  }
+
+  static OverrideUnlockedRetention overrideUnlockedRetention(boolean overrideUnlockedRetention) {
+    return new OverrideUnlockedRetention(overrideUnlockedRetention);
+  }
+
   static Prefix prefix(@NonNull String prefix) {
     requireNonNull(prefix, "prefix must be non null");
     return new Prefix(prefix);
@@ -1399,6 +1407,20 @@ final class UnifiedOpts {
     }
   }
 
+  static final class EnableObjectRetention extends RpcOptVal<Boolean> implements BucketTargetOpt {
+    private static final long serialVersionUID = -2581147719605551578L;
+
+    private EnableObjectRetention(boolean val) {
+      super(StorageRpc.Option.ENABLE_OBJECT_RETENTION, val);
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return CrossTransportUtils.throwHttpJsonOnly(
+          Storage.BucketTargetOption.class, "enableObjectRetention(boolean)");
+    }
+  }
+
   static final class Prefix extends RpcOptVal<String> implements BucketListOpt, ObjectListOpt {
     private static final long serialVersionUID = -3973478772547687371L;
 
@@ -1620,6 +1642,22 @@ final class UnifiedOpts {
     @Override
     public String toString() {
       return "SetContentType{val='" + val + "'}";
+    }
+  }
+
+  static final class OverrideUnlockedRetention extends RpcOptVal<Boolean>
+      implements ObjectTargetOpt {
+
+    private static final long serialVersionUID = -7764590745622588287L;
+
+    private OverrideUnlockedRetention(boolean val) {
+      super(StorageRpc.Option.OVERRIDE_UNLOCKED_RETENTION, val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return CrossTransportUtils.throwHttpJsonOnly(
+          Storage.BlobTargetOption.class, "overrideUnlockedRetention(boolean)");
     }
   }
 

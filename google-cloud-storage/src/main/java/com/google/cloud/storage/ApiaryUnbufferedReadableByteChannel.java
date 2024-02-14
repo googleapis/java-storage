@@ -47,6 +47,7 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
@@ -68,6 +69,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   private long position;
   private ScatteringByteChannel sbc;
   private boolean open;
+  private boolean returnEOF;
 
   // returned X-Goog-Generation header value
   private Long xGoogGeneration;
@@ -84,16 +86,25 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     this.options = options;
     this.resultRetryAlgorithm = resultRetryAlgorithm;
     this.open = true;
+    this.returnEOF = false;
     this.position = apiaryReadRequest.getByteRangeSpec().beginOffset();
   }
 
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+    if (returnEOF) {
+      close();
+      return -1;
+    } else if (!open) {
+      throw new ClosedChannelException();
+    }
+    long totalRead = 0;
     do {
       if (sbc == null) {
         sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
       }
 
+      long totalRemaining = Buffers.totalRemaining(dsts, offset, length);
       try {
         // According to the contract of Retrying#run it's possible for sbc to be null even after
         // invocation. However, the function we provide is guaranteed to return non-null or throw
@@ -101,11 +112,11 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
         //noinspection ConstantConditions
         long read = sbc.read(dsts, offset, length);
         if (read == -1) {
-          open = false;
+          returnEOF = true;
         } else {
-          position += read;
+          totalRead += read;
         }
-        return read;
+        return totalRead;
       } catch (Exception t) {
         if (resultRetryAlgorithm.shouldRetry(t, null)) {
           // if our retry algorithm COULD allow a retry, continue the loop and allow trying to
@@ -120,6 +131,13 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           }
         } else {
           throw new IOException(StorageException.coalesce(t));
+        }
+      } finally {
+        long totalRemainingAfter = Buffers.totalRemaining(dsts, offset, length);
+        long delta = totalRemaining - totalRemainingAfter;
+        if (delta > 0) {
+          position += delta;
+          totalRead += delta;
         }
       }
     } while (true);
