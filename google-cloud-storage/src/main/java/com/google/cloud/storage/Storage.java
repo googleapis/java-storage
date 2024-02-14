@@ -1789,6 +1789,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for whether to include all Folders (including empty Folders) in response.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption includeFolders(boolean includeFolders) {
+      return new BlobListOption(UnifiedOpts.includeFoldersAsPrefixes(includeFolders));
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *

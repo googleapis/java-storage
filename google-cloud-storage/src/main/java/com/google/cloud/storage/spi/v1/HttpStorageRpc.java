@@ -459,6 +459,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
+              .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options))
               .execute();
       Iterable<StorageObject> storageObjects =
           Iterables.concat(
