@@ -13,8 +13,8 @@
 
   <parent>
     <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-shared-config</artifactId>
-    <version>1.6.0</version>
+    <artifactId>sdk-platform-java-config</artifactId>
+    <version>3.25.0</version>
   </parent>
 
   <developers>
@@ -54,7 +54,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.cloud.shared-dependencies.version>3.18.0</google.cloud.shared-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -62,7 +61,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-shared-dependencies</artifactId>
-        <version>${google.cloud.shared-dependencies.version}</version>
+        <version>${google-cloud-shared-dependencies.version}</version>
         <type>pom</type>
         <scope>import</scope>
         <exclusions>
