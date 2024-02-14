@@ -42,9 +42,9 @@ public final class PackagePrivateMethodWorkarounds {
   public static Bucket bucketCopyWithStorage(Bucket b, Storage s) {
     BucketInfo.BuilderImpl builder =
         (BuilderImpl)
-            Conversions.apiary()
+            Conversions.json()
                 .bucketInfo()
-                .decode(Conversions.apiary().bucketInfo().encode(b))
+                .decode(Conversions.json().bucketInfo().encode(b))
                 .toBuilder();
     return new Bucket(s, builder);
   }
@@ -52,9 +52,9 @@ public final class PackagePrivateMethodWorkarounds {
   public static Blob blobCopyWithStorage(Blob b, Storage s) {
     BlobInfo.BuilderImpl builder =
         (BlobInfo.BuilderImpl)
-            Conversions.apiary()
+            Conversions.json()
                 .blobInfo()
-                .decode(Conversions.apiary().blobInfo().encode(b))
+                .decode(Conversions.json().blobInfo().encode(b))
                 .toBuilder();
     return new Blob(s, builder);
   }
@@ -64,7 +64,7 @@ public final class PackagePrivateMethodWorkarounds {
       if (w instanceof BlobWriteChannelV2) {
         BlobWriteChannelV2 blobWriteChannel = (BlobWriteChannelV2) w;
         return Optional.ofNullable(blobWriteChannel.getResolvedObject())
-            .map(Conversions.apiary().blobInfo()::decode);
+            .map(Conversions.json().blobInfo()::decode);
       } else if (w instanceof GrpcBlobWriteChannel) {
         GrpcBlobWriteChannel grpcBlobWriteChannel = (GrpcBlobWriteChannel) w;
         return Optional.of(grpcBlobWriteChannel.getObject())

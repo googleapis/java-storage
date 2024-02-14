@@ -26,9 +26,9 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
@@ -36,7 +36,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -116,7 +115,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Immutable
 @BetaApi
-public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig {
+@TransportCompatibility({Transport.GRPC})
+public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig
+    implements BlobWriteSessionConfig.GrpcCompatible {
 
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;
@@ -461,10 +462,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
       // encode it to base 64, yielding 22 characters
       String randomKey = B64.encodeToString(bytes);
-      HashCode hashCode =
-          OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
-      String nameDigest = B64.encodeToString(hashCode.asBytes());
-      return fmtFields(randomKey, nameDigest, partRange.encode());
+      return fmtFields(randomKey, ultimateObjectName, partRange.encode());
     }
 
     abstract String fmtFields(String randomKey, String nameDigest, String partRange);
@@ -522,6 +520,35 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       return new WithPrefix(rand, prefixPattern);
     }
 
+    /**
+     * Strategy in which the end object name is the prefix included and is present on each part and
+     * intermediary compose object.
+     *
+     * <p>General format is
+     *
+     * <pre><code>
+     *   {objectName}-{randomKeyDigest};{objectInfoDigest};{partIndex}.part
+     * </code></pre>
+     *
+     * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
+     *
+     * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
+     * objectInfoDigest} are generated is undefined and subject to change at any time.
+     *
+     * @see #withPartNamingStrategy(PartNamingStrategy)
+     * @since 2.30.2 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static PartNamingStrategy useObjectNameAsPrefix() {
+      return useObjectNameAsPrefix("");
+    }
+
+    private static PartNamingStrategy useObjectNameAsPrefix(String prefixPattern) {
+      checkNotNull(prefixPattern, "prefixPattern must be non null");
+      SecureRandom rand = new SecureRandom();
+      return new WithObjectLevelPrefix(rand, prefixPattern);
+    }
+
     static final class WithPrefix extends PartNamingStrategy {
       private static final long serialVersionUID = 5709330763161570411L;
 
@@ -533,9 +560,41 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
 
       @Override
-      protected String fmtFields(String randomKey, String nameDigest, String partRange) {
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
         return prefix
             + "/"
+            + randomKey
+            + FIELD_SEPARATOR
+            + nameDigest
+            + FIELD_SEPARATOR
+            + partRange
+            + ".part";
+      }
+    }
+
+    static final class WithObjectLevelPrefix extends PartNamingStrategy {
+
+      private static final long serialVersionUID = 5157942020618764450L;
+      private final String prefix;
+
+      private WithObjectLevelPrefix(SecureRandom rand, String prefix) {
+        super(rand);
+        // If no prefix is specified we will create the part files under the same directory as the
+        // ultimate object.
+        this.prefix = prefix.isEmpty() ? prefix : prefix + "/";
+      }
+
+      @Override
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
+        return prefix
+            + ultimateObjectName
+            + "-"
             + randomKey
             + FIELD_SEPARATOR
             + nameDigest
@@ -669,10 +728,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal s,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d) {
+        StorageInternal s, BlobInfo info, Opts<ObjectTargetOpt> opts) {
       return new PCUSession(s, info, opts);
     }
 

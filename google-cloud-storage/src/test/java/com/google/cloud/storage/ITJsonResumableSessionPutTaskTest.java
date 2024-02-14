@@ -741,6 +741,37 @@ public final class ITJsonResumableSessionPutTaskTest {
   }
 
   @Test
+  public void _503_emptyBody() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), APPEND_GREATER_THAN_CURRENT_SIZE);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler);
+        TmpFile tmpFile =
+            DataGenerator.base64Characters().tempFile(temp.newFolder().toPath(), _256KiBL)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+
+      AtomicLong confirmedBytes = new AtomicLong(-1L);
+
+      JsonResumableSessionPutTask task =
+          new JsonResumableSessionPutTask(
+              httpClientContext,
+              uploadUrl,
+              RewindableContent.of(tmpFile.getPath()),
+              HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
+
+      StorageException se = assertThrows(StorageException.class, task::call);
+      assertThat(se.getCode()).isEqualTo(503);
+      assertThat(confirmedBytes.get()).isEqualTo(-1);
+    }
+  }
+
+  @Test
   public void jsonParseFailure() throws Exception {
 
     HttpRequestHandler handler =

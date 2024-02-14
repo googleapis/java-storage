@@ -261,7 +261,7 @@ public class SerializationTest extends BaseSerializationTest {
         new BlobWriteChannelV2(
             BlobReadChannelContext.from(options),
             JsonResumableWrite.of(
-                Conversions.apiary().blobInfo().encode(BlobInfo.newBuilder("b", "n").build()),
+                Conversions.json().blobInfo().encode(BlobInfo.newBuilder("b", "n").build()),
                 ImmutableMap.of(),
                 "upload-id",
                 0));

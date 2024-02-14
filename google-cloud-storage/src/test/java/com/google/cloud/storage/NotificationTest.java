@@ -109,9 +109,9 @@ public class NotificationTest {
     replay(storage);
     compareBucketNotification(
         NOTIFICATION_INFO,
-        Conversions.apiary()
+        Conversions.json()
             .notificationInfo()
-            .decode(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO))
+            .decode(Conversions.json().notificationInfo().encode(NOTIFICATION_INFO))
             .asNotification(storage));
   }
 

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
@@ -60,6 +61,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.Clock;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -122,7 +124,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   /**
    * We have to perform several introspections and detections to cross-wire/support several features
-   * that are either gapic primitives, ServieOption primitives or GCS semantic requirements.
+   * that are either gapic primitives, ServiceOption primitives or GCS semantic requirements.
    *
    * <h2>Requester Pays, {@code quota_project_id} and {@code userProject}</h2>
    *
@@ -138,12 +140,12 @@ public final class GrpcStorageOptions extends StorageOptions
    * request metadata and we set the request metadata it results in two different entries in the
    * request. This creates ambiguity for GCS which then rejects the request.
    *
-   * <p>To account for this and to provide a similarly level of precedence we are introspecting the
+   * <p>To account for this and to provide a similar level of precedence we are introspecting the
    * credentials and service options to save any {@code quota_project_id} into an {@link
    * UserProject} which is then used by {@link GrpcStorageImpl} to resolve individual request
    * metadata.
    *
-   * <h3>The precedence we want to provide is as follows</h3>
+   * <h3>The precedence we provide is as follows</h3>
    *
    * <ol>
    *   <li>Any "userProject" Option provided to an individual method
@@ -207,13 +209,23 @@ public final class GrpcStorageOptions extends StorageOptions
       }
     }
 
+    boolean isTm =
+        Arrays.stream(Thread.currentThread().getStackTrace())
+            .anyMatch(
+                ste -> ste.getClassName().startsWith("com.google.cloud.storage.transfermanager"));
+
     HeaderProvider internalHeaderProvider =
         StorageSettings.defaultApiClientHeaderProviderBuilder()
             .setClientLibToken(ServiceOptions.getGoogApiClientLibName(), getLibraryVersion())
             .build();
+    if (isTm) {
+      internalHeaderProvider =
+          XGoogApiClientHeaderProvider.of(
+              internalHeaderProvider, ImmutableList.of("gccl-gcs-cmd/tm"));
+    }
 
     StorageSettings.Builder builder =
-        new StorageSettingsBuilder(StorageSettings.newBuilder().build())
+        new GapicStorageSettingsBuilder(StorageSettings.newBuilder().build())
             .setInternalHeaderProvider(internalHeaderProvider)
             .setEndpoint(endpoint)
             .setCredentialsProvider(credentialsProvider)
@@ -522,6 +534,9 @@ public final class GrpcStorageOptions extends StorageOptions
     public GrpcStorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
       requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      checkArgument(
+          blobWriteSessionConfig instanceof BlobWriteSessionConfig.GrpcCompatible,
+          "The provided instance of BlobWriteSessionConfig is not compatible with gRPC transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
       return this;
     }
@@ -738,8 +753,8 @@ public final class GrpcStorageOptions extends StorageOptions
 
   // setInternalHeaderProvider is protected so we need to open its scope in order to set it
   // we are adding an entry for gccl which is set via this provider
-  private static final class StorageSettingsBuilder extends StorageSettings.Builder {
-    private StorageSettingsBuilder(StorageSettings settings) {
+  private static final class GapicStorageSettingsBuilder extends StorageSettings.Builder {
+    private GapicStorageSettingsBuilder(StorageSettings settings) {
       super(settings);
     }
 

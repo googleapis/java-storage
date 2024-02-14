@@ -135,6 +135,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -169,14 +170,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   private static final Opts<Fields> ALL_BLOB_FIELDS =
       Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BlobField.values())));
   private static final Opts<Fields> ALL_BUCKET_FIELDS =
-      Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BucketField.values())));
+      // todo: b/308194853
+      Opts.from(
+          UnifiedOpts.fields(
+              Arrays.stream(BucketField.values())
+                  .filter(f -> !f.equals(BucketField.OBJECT_RETENTION))
+                  .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
-  private final Decoder<WriteObjectResponse, BlobInfo> writeObjectResponseBlobInfoDecoder;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -194,8 +199,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
-    this.writeObjectResponseBlobInfoDecoder =
-        codecs.blobInfo().compose(WriteObjectResponse::getResource);
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
   }
 
@@ -719,14 +722,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    return internalWriter(blobInfo, opts);
-  }
-
-  @Override
-  public GrpcBlobWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(info, opts);
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     Hasher hasher = Hasher.noop();
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
@@ -1534,7 +1532,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(info);
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
-        writerFactory.writeSession(this, info, opts, writeObjectResponseBlobInfoDecoder);
+        writerFactory.writeSession(this, info, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
   }
 

@@ -55,6 +55,8 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.CancelResumableWriteRequest;
 import com.google.storage.v2.CancelResumableWriteResponse;
@@ -88,6 +90,7 @@ import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.ServiceAccount;
@@ -176,6 +179,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       listNotificationConfigsSettings;
   private final UnaryCallSettings<ComposeObjectRequest, Object> composeObjectSettings;
   private final UnaryCallSettings<DeleteObjectRequest, Empty> deleteObjectSettings;
+  private final UnaryCallSettings<RestoreObjectRequest, Object> restoreObjectSettings;
   private final UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteSettings;
   private final UnaryCallSettings<GetObjectRequest, Object> getObjectSettings;
@@ -183,6 +187,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       readObjectSettings;
   private final UnaryCallSettings<UpdateObjectRequest, Object> updateObjectSettings;
   private final StreamingCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectSettings;
+  private final StreamingCallSettings<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectSettings;
   private final PagedCallSettings<ListObjectsRequest, ListObjectsResponse, ListObjectsPagedResponse>
       listObjectsSettings;
   private final UnaryCallSettings<RewriteObjectRequest, RewriteResponse> rewriteObjectSettings;
@@ -518,6 +524,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return deleteObjectSettings;
   }
 
+  /** Returns the object with the settings used for calls to restoreObject. */
+  public UnaryCallSettings<RestoreObjectRequest, Object> restoreObjectSettings() {
+    return restoreObjectSettings;
+  }
+
   /** Returns the object with the settings used for calls to cancelResumableWrite. */
   public UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteSettings() {
@@ -542,6 +553,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
   /** Returns the object with the settings used for calls to writeObject. */
   public StreamingCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectSettings() {
     return writeObjectSettings;
+  }
+
+  /** Returns the object with the settings used for calls to bidiWriteObject. */
+  public StreamingCallSettings<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectSettings() {
+    return bidiWriteObjectSettings;
   }
 
   /** Returns the object with the settings used for calls to listObjects. */
@@ -607,6 +624,21 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     throw new UnsupportedOperationException(
         String.format(
             "Transport not supported: %s", getTransportChannelProvider().getTransportName()));
+  }
+
+  /** Returns the endpoint set by the user or the the service's default endpoint. */
+  @Override
+  public String getEndpoint() {
+    if (super.getEndpoint() != null) {
+      return super.getEndpoint();
+    }
+    return getDefaultEndpoint();
+  }
+
+  /** Returns the default service name. */
+  @Override
+  public String getServiceName() {
+    return "storage";
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
@@ -687,11 +719,13 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     listNotificationConfigsSettings = settingsBuilder.listNotificationConfigsSettings().build();
     composeObjectSettings = settingsBuilder.composeObjectSettings().build();
     deleteObjectSettings = settingsBuilder.deleteObjectSettings().build();
+    restoreObjectSettings = settingsBuilder.restoreObjectSettings().build();
     cancelResumableWriteSettings = settingsBuilder.cancelResumableWriteSettings().build();
     getObjectSettings = settingsBuilder.getObjectSettings().build();
     readObjectSettings = settingsBuilder.readObjectSettings().build();
     updateObjectSettings = settingsBuilder.updateObjectSettings().build();
     writeObjectSettings = settingsBuilder.writeObjectSettings().build();
+    bidiWriteObjectSettings = settingsBuilder.bidiWriteObjectSettings().build();
     listObjectsSettings = settingsBuilder.listObjectsSettings().build();
     rewriteObjectSettings = settingsBuilder.rewriteObjectSettings().build();
     startResumableWriteSettings = settingsBuilder.startResumableWriteSettings().build();
@@ -733,6 +767,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
         listNotificationConfigsSettings;
     private final UnaryCallSettings.Builder<ComposeObjectRequest, Object> composeObjectSettings;
     private final UnaryCallSettings.Builder<DeleteObjectRequest, Empty> deleteObjectSettings;
+    private final UnaryCallSettings.Builder<RestoreObjectRequest, Object> restoreObjectSettings;
     private final UnaryCallSettings.Builder<
             CancelResumableWriteRequest, CancelResumableWriteResponse>
         cancelResumableWriteSettings;
@@ -742,6 +777,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     private final UnaryCallSettings.Builder<UpdateObjectRequest, Object> updateObjectSettings;
     private final StreamingCallSettings.Builder<WriteObjectRequest, WriteObjectResponse>
         writeObjectSettings;
+    private final StreamingCallSettings.Builder<BidiWriteObjectRequest, BidiWriteObjectResponse>
+        bidiWriteObjectSettings;
     private final PagedCallSettings.Builder<
             ListObjectsRequest, ListObjectsResponse, ListObjectsPagedResponse>
         listObjectsSettings;
@@ -818,11 +855,13 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
           PagedCallSettings.newBuilder(LIST_NOTIFICATION_CONFIGS_PAGE_STR_FACT);
       composeObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       deleteObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      restoreObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       cancelResumableWriteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       getObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       readObjectSettings = ServerStreamingCallSettings.newBuilder();
       updateObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       writeObjectSettings = StreamingCallSettings.newBuilder();
+      bidiWriteObjectSettings = StreamingCallSettings.newBuilder();
       listObjectsSettings = PagedCallSettings.newBuilder(LIST_OBJECTS_PAGE_STR_FACT);
       rewriteObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       startResumableWriteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
@@ -851,6 +890,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listNotificationConfigsSettings,
               composeObjectSettings,
               deleteObjectSettings,
+              restoreObjectSettings,
               cancelResumableWriteSettings,
               getObjectSettings,
               updateObjectSettings,
@@ -885,11 +925,13 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       listNotificationConfigsSettings = settings.listNotificationConfigsSettings.toBuilder();
       composeObjectSettings = settings.composeObjectSettings.toBuilder();
       deleteObjectSettings = settings.deleteObjectSettings.toBuilder();
+      restoreObjectSettings = settings.restoreObjectSettings.toBuilder();
       cancelResumableWriteSettings = settings.cancelResumableWriteSettings.toBuilder();
       getObjectSettings = settings.getObjectSettings.toBuilder();
       readObjectSettings = settings.readObjectSettings.toBuilder();
       updateObjectSettings = settings.updateObjectSettings.toBuilder();
       writeObjectSettings = settings.writeObjectSettings.toBuilder();
+      bidiWriteObjectSettings = settings.bidiWriteObjectSettings.toBuilder();
       listObjectsSettings = settings.listObjectsSettings.toBuilder();
       rewriteObjectSettings = settings.rewriteObjectSettings.toBuilder();
       startResumableWriteSettings = settings.startResumableWriteSettings.toBuilder();
@@ -918,6 +960,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listNotificationConfigsSettings,
               composeObjectSettings,
               deleteObjectSettings,
+              restoreObjectSettings,
               cancelResumableWriteSettings,
               getObjectSettings,
               updateObjectSettings,
@@ -939,7 +982,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       builder.setTransportChannelProvider(defaultTransportChannelProvider());
       builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());
       builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());
-      builder.setEndpoint(getDefaultEndpoint());
       builder.setMtlsEndpoint(getDefaultMtlsEndpoint());
       builder.setSwitchToMtlsEndpointAllowed(true);
 
@@ -1019,6 +1061,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
 
       builder
           .deleteObjectSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .restoreObjectSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -1196,6 +1243,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       return deleteObjectSettings;
     }
 
+    /** Returns the builder for the settings used for calls to restoreObject. */
+    public UnaryCallSettings.Builder<RestoreObjectRequest, Object> restoreObjectSettings() {
+      return restoreObjectSettings;
+    }
+
     /** Returns the builder for the settings used for calls to cancelResumableWrite. */
     public UnaryCallSettings.Builder<CancelResumableWriteRequest, CancelResumableWriteResponse>
         cancelResumableWriteSettings() {
@@ -1222,6 +1274,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     public StreamingCallSettings.Builder<WriteObjectRequest, WriteObjectResponse>
         writeObjectSettings() {
       return writeObjectSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to bidiWriteObject. */
+    public StreamingCallSettings.Builder<BidiWriteObjectRequest, BidiWriteObjectResponse>
+        bidiWriteObjectSettings() {
+      return bidiWriteObjectSettings;
     }
 
     /** Returns the builder for the settings used for calls to listObjects. */
@@ -1282,6 +1340,15 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     public UnaryCallSettings.Builder<UpdateHmacKeyRequest, HmacKeyMetadata>
         updateHmacKeySettings() {
       return updateHmacKeySettings;
+    }
+
+    /** Returns the endpoint set by the user or the the service's default endpoint. */
+    @Override
+    public String getEndpoint() {
+      if (super.getEndpoint() != null) {
+        return super.getEndpoint();
+      }
+      return getDefaultEndpoint();
     }
 
     @Override

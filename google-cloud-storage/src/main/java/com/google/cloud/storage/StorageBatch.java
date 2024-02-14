@@ -23,6 +23,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.spi.v1.RpcBatch;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -53,6 +54,7 @@ import java.util.Map;
  * Blob blob = result.get(); // returns get result or throws StorageException
  * }</pre>
  */
+@TransportCompatibility(Transport.HTTP)
 public class StorageBatch {
 
   private final RpcBatch batch;
@@ -86,6 +88,7 @@ public class StorageBatch {
    * {@code false} if the blob was not found, or throws a {@link StorageException} if the operation
    * failed.
    */
+  @TransportCompatibility(Transport.HTTP)
   public StorageBatchResult<Boolean> delete(
       String bucket, String blob, BlobSourceOption... options) {
     return delete(BlobId.of(bucket, blob), options);
@@ -97,11 +100,12 @@ public class StorageBatch {
    * {@code false} if the blob was not found, or throws a {@link StorageException} if the operation
    * failed.
    */
+  @TransportCompatibility(Transport.HTTP)
   public StorageBatchResult<Boolean> delete(BlobId blob, BlobSourceOption... options) {
     StorageBatchResult<Boolean> result = new StorageBatchResult<>();
     RpcBatch.Callback<Void> callback = createDeleteCallback(result);
     Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    batch.addDelete(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
+    batch.addDelete(Conversions.json().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 
@@ -111,12 +115,13 @@ public class StorageBatch {
    * {@link StorageBatchResult#get()} on the return value yields the updated {@link Blob} if
    * successful, or throws a {@link StorageException} if the operation failed.
    */
+  @TransportCompatibility(Transport.HTTP)
   public StorageBatchResult<Blob> update(BlobInfo blobInfo, BlobTargetOption... options) {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createUpdateCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionMap =
         Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
-    batch.addPatch(Conversions.apiary().blobInfo().encode(blobInfo), callback, optionMap);
+    batch.addPatch(Conversions.json().blobInfo().encode(blobInfo), callback, optionMap);
     return result;
   }
 
@@ -127,6 +132,7 @@ public class StorageBatch {
    * {@code null} if no such blob exists, or throws a {@link StorageException} if the operation
    * failed.
    */
+  @TransportCompatibility(Transport.HTTP)
   public StorageBatchResult<Blob> get(String bucket, String blob, BlobGetOption... options) {
     return get(BlobId.of(bucket, blob), options);
   }
@@ -138,15 +144,17 @@ public class StorageBatch {
    * {@code null} if no such blob exists, or throws a {@link StorageException} if the operation
    * failed.
    */
+  @TransportCompatibility(Transport.HTTP)
   public StorageBatchResult<Blob> get(BlobId blob, BlobGetOption... options) {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createGetCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    batch.addGet(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
+    batch.addGet(Conversions.json().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 
   /** Submits this batch for processing using a single RPC request. */
+  @TransportCompatibility(Transport.HTTP)
   public void submit() {
     batch.submit();
   }
@@ -175,7 +183,7 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        BlobInfo info = Conversions.json().blobInfo().decode(response);
         result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 
@@ -196,7 +204,7 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        BlobInfo info = Conversions.json().blobInfo().decode(response);
         result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 

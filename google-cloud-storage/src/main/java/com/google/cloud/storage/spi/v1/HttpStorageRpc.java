@@ -87,11 +87,15 @@ import java.math.BigInteger;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 public class HttpStorageRpc implements StorageRpc {
@@ -122,11 +126,17 @@ public class HttpStorageRpc implements StorageRpc {
     HttpRequestInitializer initializer = transportOptions.getHttpRequestInitializer(options);
     this.options = options;
 
+    boolean isTm =
+        Arrays.stream(Thread.currentThread().getStackTrace())
+            .anyMatch(
+                ste -> ste.getClassName().startsWith("com.google.cloud.storage.transfermanager"));
+    String tm = isTm ? "gccl-gcs-cmd/tm" : null;
+
     // Open Census initialization
     String applicationName = options.getApplicationName();
     CensusHttpModule censusHttpModule = new CensusHttpModule(tracer, IS_RECORD_EVENTS);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
-    initializer = new InvocationIdInitializer(initializer, applicationName);
+    initializer = new InvocationIdInitializer(initializer, applicationName, tm);
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
     storage =
         new Storage.Builder(transport, jsonFactory, initializer)
@@ -142,11 +152,13 @@ public class HttpStorageRpc implements StorageRpc {
   private static final class InvocationIdInitializer implements HttpRequestInitializer {
     @Nullable HttpRequestInitializer initializer;
     @Nullable private final String applicationName;
+    @Nullable private final String tm;
 
     private InvocationIdInitializer(
-        @Nullable HttpRequestInitializer initializer, @Nullable String applicationName) {
+        @Nullable HttpRequestInitializer initializer, @Nullable String applicationName, String tm) {
       this.initializer = initializer;
       this.applicationName = applicationName;
+      this.tm = tm;
     }
 
     @Override
@@ -156,18 +168,23 @@ public class HttpStorageRpc implements StorageRpc {
         this.initializer.initialize(request);
       }
       request.setInterceptor(
-          new InvocationIdInterceptor(request.getInterceptor(), applicationName));
+          new InvocationIdInterceptor(request.getInterceptor(), applicationName, tm));
     }
   }
 
   private static final class InvocationIdInterceptor implements HttpExecuteInterceptor {
+
+    private static final Collector<CharSequence, ?, String> JOINER = Collectors.joining(" ");
     @Nullable private final HttpExecuteInterceptor interceptor;
     @Nullable private final String applicationName;
 
+    @Nullable private final String tm;
+
     private InvocationIdInterceptor(
-        @Nullable HttpExecuteInterceptor interceptor, @Nullable String applicationName) {
+        @Nullable HttpExecuteInterceptor interceptor, @Nullable String applicationName, String tm) {
       this.interceptor = interceptor;
       this.applicationName = applicationName;
+      this.tm = tm;
     }
 
     @Override
@@ -176,19 +193,18 @@ public class HttpStorageRpc implements StorageRpc {
       if (this.interceptor != null) {
         this.interceptor.intercept(request);
       }
-      UUID invocationId = HttpRpcContext.getInstance().getInvocationId();
+      HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
+      UUID invocationId = httpRpcContext.getInvocationId();
       final String signatureKey = "Signature="; // For V2 and V4 signedURLs
       final String builtURL = request.getUrl().build();
       if (invocationId != null && !builtURL.contains(signatureKey)) {
         HttpHeaders headers = request.getHeaders();
         String existing = (String) headers.get("x-goog-api-client");
         String invocationEntry = "gccl-invocation-id/" + invocationId;
-        final String newValue;
-        if (existing != null && !existing.isEmpty()) {
-          newValue = existing + " " + invocationEntry;
-        } else {
-          newValue = invocationEntry;
-        }
+        final String newValue =
+            Stream.of(existing, invocationEntry, tm)
+                .filter(java.util.Objects::nonNull)
+                .collect(JOINER);
         headers.set("x-goog-api-client", newValue);
         headers.set("x-goog-gcs-idempotency-token", invocationId);
 
@@ -348,6 +364,7 @@ public class HttpStorageRpc implements StorageRpc {
           .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
           .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
           .setUserProject(Option.USER_PROJECT.getString(options))
+          .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options))
           .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -606,6 +623,7 @@ public class HttpStorageRpc implements StorageRpc {
         .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
         .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
         .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+        .setOverrideUnlockedRetention(Option.OVERRIDE_UNLOCKED_RETENTION.getBoolean(options))
         .setUserProject(Option.USER_PROJECT.getString(options));
   }
 
