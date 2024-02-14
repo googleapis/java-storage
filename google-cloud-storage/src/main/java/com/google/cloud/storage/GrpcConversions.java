@@ -381,8 +381,6 @@ final class GrpcConversions {
     ifNonNull(from.getSoftDeletePolicy(), softDeletePolicyCodec::encode, to::setSoftDeletePolicy);
     if (from.getModifiedFields().contains(SOFT_DELETE_POLICY)
         && from.getSoftDeletePolicy() == null) {
-      System.out.println("this is happening");
-      System.out.println(Bucket.SoftDeletePolicy.getDefaultInstance().toString());
       to.clearSoftDeletePolicy();
     }
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
