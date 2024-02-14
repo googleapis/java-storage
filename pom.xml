@@ -86,7 +86,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-pubsub</artifactId>
-        <version>1.126.5</version>
+        <version>1.126.6</version>
         <scope>test</scope>
       </dependency>
       <dependency>
