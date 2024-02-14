@@ -61,6 +61,12 @@ final class GapicUnbufferedReadableByteChannel
 
   private ByteBuffer leftovers;
 
+  private boolean hasLeftOvers;
+
+  private com.google.common.hash.Hasher testHasher;
+  private ByteString b;
+
+  private InputStream stream = null;
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
@@ -72,6 +78,9 @@ final class GapicUnbufferedReadableByteChannel
     this.hasher = hasher;
     this.blobOffset = req.getReadOffset();
     this.iter = new LazyServerStreamIterator();
+    this.testHasher = Hashing.crc32c().newHasher();
+    this.stream = null;
+    this.hasLeftOvers = false;
   }
 
   @Override
@@ -86,12 +95,14 @@ final class GapicUnbufferedReadableByteChannel
 
     long totalBufferCapacity = Arrays.stream(dsts).mapToLong(Buffer::remaining).sum();
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
-    InputStream stream = null;
     while (c.hasRemaining()) {
       if (leftovers != null) {
         copy(c, leftovers, dsts, offset, length);
-        if (!leftovers.hasRemaining()) {
+        if (leftovers.hasRemaining()) {
           leftovers = null;
+          getObjectMediaResponseMarshaller.clearByteStrings();
+          stream.close();
+          stream = null;
         }
         continue;
       }
@@ -116,7 +127,11 @@ final class GapicUnbufferedReadableByteChannel
         }
 
         ChecksummedData checksummedData = resp.getChecksummedData();
-
+        // Notes: asReadOnlyByteBuffer() creates a new byte[] of 2MiB everytime it's called
+        //
+//        System.out.println("Before asReadOnlyByteBuffer()");
+        ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
+//        System.out.println("After asReadOnlyByteBuffer()");
         //ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         // very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
@@ -130,29 +145,13 @@ final class GapicUnbufferedReadableByteChannel
 //            throw e;
 //          }
 //        }
-
-        // TODO: stream must be closed to allow reclaiming of buffers
-        // buffer
-        ByteString b = checksummedData.getContent();
-
-        // System.out.println("ByteString size: " + b.size());
-        com.google.common.hash.Hasher hasher1 = Hashing.crc32c().newHasher();
-        long value = hasher1.putBytes(b.asReadOnlyByteBuffer().duplicate()).hash().asInt();
-        // System.out.println("From GRPC: " + value);
-        // -481370971
-        b.copyTo(dsts[0]);
-        // dsts[0].put(b.asReadOnlyByteBuffer());
-        c.advance(1024*1024*2);
-        // copy(c, ByteBuffer.wrap(checksummedData.getContent().toByteArray()), dsts, offset, length);
-//        c.advance(length);
-//        content.copyTo(dsts[0], 0, offset, length);
-//        if (content.hasRemaining()) {
-//          leftovers = content;
-//        }
-        // Make sure to close stream otherwise you'll see the following:
-        // Jan 25, 2024 10:08:20 AM io.grpc.netty.shaded.io.netty.util.ResourceLeakDetector reportTracedLeak
-        // SEVERE: LEAK: ByteBuf.release() was not called before it's garbage-collected. See https://netty.io/wiki/reference-counted-objects.html for more information.
-        stream.close();
+//        // System.out.println("ByteString size: " + b.size());
+//        testHasher.putBytes(b.asReadOnlyByteBuffer().duplicate());
+//        System.out.println("From GRPC: " + testHasher.hash().asInt());
+        copy(c, content, dsts, offset, length);
+        if (content.hasRemaining()) {
+          leftovers = content;
+        }
       } else {
         complete = true;
         break;
@@ -182,7 +181,7 @@ final class GapicUnbufferedReadableByteChannel
 
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
     long copiedBytes = Buffers.copy(content, dsts, offset, length);
-    c.advance(copiedBytes);
+    c.advance(length);
   }
 
   private IOException closeWithError(String message) throws IOException {

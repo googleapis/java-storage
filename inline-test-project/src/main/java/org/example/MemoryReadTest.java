@@ -33,6 +33,7 @@ public class MemoryReadTest {
         final String bucketName = args[1];
         final String objectName = args[2];
         final String transport = args[3];
+        final int appBuffer = Integer.parseInt(args[4]);
         Storage storage;
         if (transport.equals("grpc")) {
              storage = StorageOptions.grpc()
@@ -48,7 +49,7 @@ public class MemoryReadTest {
         System.out.println("Zero-copy");
         HashFunction hashFunction = Hashing.crc32c();
         Hasher hasher = hashFunction.newHasher();
-        ByteBuffer buffer = ByteBuffer.allocate(1024*1024*2);
+        ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
         for (int i = 0; i < numberOfReads; i++) {
             ReadChannel r = storage.reader(blobId);
             int totalBytesRead = 0;

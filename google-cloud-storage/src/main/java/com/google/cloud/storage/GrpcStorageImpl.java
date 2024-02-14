@@ -1787,9 +1787,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     private final Parser<T> parser;
     private final MethodDescriptor.PrototypeMarshaller<T> baseMarshaller;
 
+    private List<ByteString> byteStrings = new ArrayList<>();
     ZeroCopyMessageMarshaller(T defaultInstance) {
       parser = (Parser<T>) defaultInstance.getParserForType();
       baseMarshaller = (MethodDescriptor.PrototypeMarshaller<T>) ProtoLiteUtils.marshaller(defaultInstance);
+    }
+
+    public void clearByteStrings() {
+      byteStrings.clear();
     }
 
     @Override
@@ -1818,7 +1823,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             stream = ((Detachable) stream).detach();
             // This mark call is to keep buffer while traversing buffers using skip.
             stream.mark(size);
-            List<ByteString> byteStrings = new ArrayList<>();
+
             while (stream.available() != 0) {
               ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
               byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
@@ -1845,12 +1850,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         return message;
       } else {
         // slow path
+        System.out.println("Use slow path");
         return baseMarshaller.parse(stream);
       }
     }
 
     private T parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
+//      System.out.println("Before parseFrom");
       T message = parser.parseFrom(stream);
+//      System.out.println("After parseFrom");
       try {
         stream.checkLastTagWas(0);
         return message;
