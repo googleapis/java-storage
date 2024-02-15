@@ -112,7 +112,7 @@ final class GapicUnbufferedReadableByteChannel
         copy(c, interimBuffer, dsts, offset, length);
         interimBuffer.clear();
         leftovers = leftovers.substring(sizeToWrite);
-        if (leftovers.size() < 1024) {
+        if (leftovers.size() == 0) {
           leftovers = null;
           if (stream != null) {
             stream.close();
@@ -142,13 +142,8 @@ final class GapicUnbufferedReadableByteChannel
         }
 
         ChecksummedData checksummedData = resp.getChecksummedData();
-        // Notes: asReadOnlyByteBuffer() creates a new byte[] of 2MiB everytime it's called
-        //
-//        System.out.println("Before asReadOnlyByteBuffer()");
+
         ByteString content = checksummedData.getContent();
-
-
-//        System.out.println("After asReadOnlyByteBuffer()");
         //ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         // very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
@@ -162,9 +157,7 @@ final class GapicUnbufferedReadableByteChannel
 //            throw e;
 //          }
 //        }
-//        // System.out.println("ByteString size: " + b.size());
-//        testHasher.putBytes(b.asReadOnlyByteBuffer().duplicate());
-//        System.out.println("From GRPC: " + testHasher.hash().asInt());
+
         // Test: Use a small interim buffer to copy into to reuse existing java-storage code.
         put(content, offset, 1024, interimBuffer);
         interimBuffer.flip();

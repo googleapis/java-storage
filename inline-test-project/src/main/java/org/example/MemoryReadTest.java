@@ -52,7 +52,7 @@ public class MemoryReadTest {
 
         final BlobId blobId = BlobId.of(bucketName, objectName);
         System.out.println("Starting...");
-        System.out.println("Zero-copy");
+        System.out.println("Using zero-copy...");
         HashFunction hashFunction = Hashing.crc32c();
         ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
         for (int i = 0; i < numberOfReads; i++) {
@@ -62,7 +62,7 @@ public class MemoryReadTest {
                 int totalBytesRead = 0;
                 while (r.isOpen()) {
                     int bytesRead = r.read(buffer);
-                    if (bytesRead == -1 || bytesRead == 0) {
+                    if (bytesRead == -1) {
                         break;
                     }
                     totalBytesRead += bytesRead;
@@ -71,7 +71,7 @@ public class MemoryReadTest {
                     buffer.clear();
                 }
                 System.out.println("Hasher: " + hasher.hash());
-                System.out.println("Downlaoded(" + i + "): " + totalBytesRead + ": 100MiB?" + (totalBytesRead == 1024 * 1024 * 100));
+                System.out.println("Downlaoded(" + i + ") succeeded: " + (totalBytesRead == 104857600));
             } catch (IllegalArgumentException e) {
                 System.out.println("IllegalArgumentException occurred: unstable continue on");
             }
