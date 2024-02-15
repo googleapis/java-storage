@@ -60,8 +60,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
           buffer.flip();
           flipped = true;
         }
-//        long copy = dst.put(buffer);
-        long copy = Buffers.copy(buffer, new ByteBuffer[] {dst}, 0, 1);
+        long copy = Buffers.copy(buffer, new ByteBuffer[] {dst});
         if (buffer.remaining() == 0) {
           Buffers.clear(buffer);
         }
