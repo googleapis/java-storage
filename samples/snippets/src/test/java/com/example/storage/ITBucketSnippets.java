@@ -700,7 +700,5 @@ public class ITBucketSnippets {
     } finally {
       storage.delete(tempBucket);
     }
-
-
   }
 }

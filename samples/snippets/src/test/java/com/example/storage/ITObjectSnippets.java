@@ -58,7 +58,6 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
@@ -440,7 +439,8 @@ public class ITObjectSnippets {
   @Test
   public void testSetObjectRetentionPolicy() {
     String tempBucket = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.of(tempBucket), Storage.BucketTargetOption.enableObjectRetention(true));
+    storage.create(
+        BucketInfo.of(tempBucket), Storage.BucketTargetOption.enableObjectRetention(true));
     String retentionBlob = "retentionblob";
     storage.create(BlobInfo.newBuilder(tempBucket, retentionBlob).build());
     assertNull(storage.get(tempBucket, retentionBlob).getRetention());
@@ -448,7 +448,12 @@ public class ITObjectSnippets {
       SetObjectRetentionPolicy.setObjectRetentionPolicy(PROJECT_ID, tempBucket, retentionBlob);
       assertNotNull(storage.get(tempBucket, retentionBlob).getRetention());
     } finally {
-      storage.get(tempBucket, retentionBlob).toBuilder().setRetention(null).build().update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+      storage
+          .get(tempBucket, retentionBlob)
+          .toBuilder()
+          .setRetention(null)
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
       storage.delete(tempBucket, retentionBlob);
       storage.delete(tempBucket);
     }
