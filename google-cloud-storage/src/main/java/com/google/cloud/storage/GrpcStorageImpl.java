@@ -1900,6 +1900,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
+    // TODO(prototype): Missing protobuf check: similar to ZeroCopyReadinessChecker
+    // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
     return ResumableMedia.gapic()
         .read()
         .byteChannel(serverStreamingCallable.withDefaultCallContext(grpcCallContext))
