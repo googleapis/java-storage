@@ -159,11 +159,12 @@ final class GapicUnbufferedReadableByteChannel
 //        }
 
         // Test: Use a small interim buffer to copy into to reuse existing java-storage code.
-        put(content, offset, 1024, interimBuffer);
+        int sizeToWrite = content.size() > 1024 ? 1024 : content.size();
+        put(content, offset, sizeToWrite, interimBuffer);
         interimBuffer.flip();
         copy(c, interimBuffer, dsts, offset, length);
         interimBuffer.clear();
-        leftovers = content.substring(1024);
+        leftovers = content.substring(sizeToWrite);
       } else {
         complete = true;
         break;

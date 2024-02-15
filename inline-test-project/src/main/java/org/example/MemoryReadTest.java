@@ -56,7 +56,6 @@ public class MemoryReadTest {
         System.out.println("Using zero-copy...");
         ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
         for (int i = 0; i < numberOfReads; i++) {
-            try {
                 ReadChannel r = storage.reader(blobId);
                 int totalBytesRead = 0;
                 while (r.isOpen()) {
@@ -69,9 +68,7 @@ public class MemoryReadTest {
                     buffer.clear();
                 }
                 System.out.println("Downlaoded(" + i + ") succeeded: " + (totalBytesRead == 104857600));
-            } catch (StorageException e) {
-                System.out.println("IllegalArgumentException occurred: unstable continue on");
-            }
+
         }
         System.out.println("Finished...");
     }
