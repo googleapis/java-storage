@@ -1850,15 +1850,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         return message;
       } else {
         // slow path
-        System.out.println("Use slow path");
         return baseMarshaller.parse(stream);
       }
     }
 
     private T parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
-//      System.out.println("Before parseFrom");
       T message = parser.parseFrom(stream);
-//      System.out.println("After parseFrom");
       try {
         stream.checkLastTagWas(0);
         return message;
@@ -1905,8 +1902,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
-    ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
-            readObjectTransportSettings, null, ClientContext.newBuilder().build());
     return ResumableMedia.gapic()
         .read()
         .byteChannel(serverStreamingCallable.withDefaultCallContext(grpcCallContext))
