@@ -17,15 +17,14 @@
 package org.example;
 
 import com.google.cloud.ReadChannel;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.*;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Base64;
 
 public class MemoryReadTest {
 
@@ -55,20 +54,31 @@ public class MemoryReadTest {
         System.out.println("Starting...");
         System.out.println("Using zero-copy...");
         ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
+        HashFunction hashFunction = Hashing.crc32c();
+        Blob blob = storage.get(blobId);
+        byte[] decoded = Base64.getDecoder().decode(blob.getCrc32c());
+        // flip order; hashFunction provides hashes in opposite order.
+        ByteBuffer b = ByteBuffer.allocate(4);
+        for (int i = 3; i >= 0; i--) {
+            b.put(decoded[i]);
+        }
+        byte[] expectedHash = b.array();
         for (int i = 0; i < numberOfReads; i++) {
-                ReadChannel r = storage.reader(blobId);
-                int totalBytesRead = 0;
-                while (r.isOpen()) {
-                    int bytesRead = r.read(buffer);
-                    if (bytesRead == -1) {
-                        break;
-                    }
-                    totalBytesRead += bytesRead;
-                    buffer.flip();
-                    buffer.clear();
+            Hasher h = hashFunction.newHasher();
+            ReadChannel r = storage.reader(blobId);
+            int totalBytesRead = 0;
+            while (r.isOpen()) {
+                int bytesRead = r.read(buffer);
+                if (bytesRead == -1) {
+                    break;
                 }
-                System.out.println("Downlaoded(" + i + ") succeeded: " + (totalBytesRead == 104857600));
-
+                totalBytesRead += bytesRead;
+                buffer.flip();
+                h.putBytes(buffer);
+                buffer.clear();
+            }
+            byte[] resultHash = h.hash().asBytes();
+            System.out.println("Downlaoded(" + i + ") - crc32c match?: " + (Arrays.equals(resultHash, expectedHash)));
         }
         System.out.println("Finished...");
     }
