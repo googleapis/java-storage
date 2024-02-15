@@ -56,7 +56,7 @@ public class GetBucketMetadata {
     System.out.println("StorageClass: " + bucket.getStorageClass().name());
     System.out.println("TimeCreated: " + bucket.getCreateTime());
     System.out.println("VersioningEnabled: " + bucket.versioningEnabled());
-    System.out.println("ObjectRetention: " + bucket.getObjectRetention().toString());
+    System.out.println("ObjectRetention: " + bucket.getObjectRetention());
     if (bucket.getLabels() != null) {
       System.out.println("\n\n\nLabels:");
       for (Map.Entry<String, String> label : bucket.getLabels().entrySet()) {
