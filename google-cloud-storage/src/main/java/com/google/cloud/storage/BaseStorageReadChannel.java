@@ -38,7 +38,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   private boolean open;
   private ByteRangeSpec byteRangeSpec;
-  private int chunkSize = 0;
+  private int chunkSize = _2MiB;
   private BufferHandle bufferHandle;
   private LazyReadChannel<?, T> lazyReadChannel;
 
