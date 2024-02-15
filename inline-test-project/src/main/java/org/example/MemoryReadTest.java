@@ -19,6 +19,7 @@ package org.example;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
@@ -53,11 +54,9 @@ public class MemoryReadTest {
         final BlobId blobId = BlobId.of(bucketName, objectName);
         System.out.println("Starting...");
         System.out.println("Using zero-copy...");
-        HashFunction hashFunction = Hashing.crc32c();
         ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
         for (int i = 0; i < numberOfReads; i++) {
             try {
-                Hasher hasher = hashFunction.newHasher();
                 ReadChannel r = storage.reader(blobId);
                 int totalBytesRead = 0;
                 while (r.isOpen()) {
@@ -67,12 +66,10 @@ public class MemoryReadTest {
                     }
                     totalBytesRead += bytesRead;
                     buffer.flip();
-                    hasher.putBytes(buffer);
                     buffer.clear();
                 }
-                System.out.println("Hasher: " + hasher.hash());
                 System.out.println("Downlaoded(" + i + ") succeeded: " + (totalBytesRead == 104857600));
-            } catch (IllegalArgumentException e) {
+            } catch (StorageException e) {
                 System.out.println("IllegalArgumentException occurred: unstable continue on");
             }
         }
