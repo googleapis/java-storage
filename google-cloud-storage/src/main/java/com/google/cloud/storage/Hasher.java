@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public interface Hasher {
+interface Hasher {
 
   @Nullable
   default Crc32cLengthKnown hash(Supplier<ByteBuffer> b) {
