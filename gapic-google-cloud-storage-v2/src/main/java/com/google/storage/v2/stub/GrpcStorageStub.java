@@ -38,7 +38,7 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.stub.GrpcOperationsStub;
-import com.google.protobuf.*;
+import com.google.protobuf.Empty;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
@@ -85,14 +85,9 @@ import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
-import io.grpc.*;
+import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoUtils;
-import io.grpc.protobuf.lite.ProtoLiteUtils;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 
@@ -265,15 +260,13 @@ public class GrpcStorageStub extends StorageStub {
                   ProtoUtils.marshaller(CancelResumableWriteResponse.getDefaultInstance()))
               .build();
 
-
-  private final MethodDescriptor<GetObjectRequest, Object> getObjectMethodDescriptor =
+  private static final MethodDescriptor<GetObjectRequest, Object> getObjectMethodDescriptor =
       MethodDescriptor.<GetObjectRequest, Object>newBuilder()
           .setType(MethodDescriptor.MethodType.UNARY)
           .setFullMethodName("google.storage.v2.Storage/GetObject")
           .setRequestMarshaller(ProtoUtils.marshaller(GetObjectRequest.getDefaultInstance()))
           .setResponseMarshaller(ProtoUtils.marshaller(Object.getDefaultInstance()))
           .build();
-
 
   private static final MethodDescriptor<ReadObjectRequest, ReadObjectResponse>
       readObjectMethodDescriptor =
