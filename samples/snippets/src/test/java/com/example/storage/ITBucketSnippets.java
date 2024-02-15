@@ -134,9 +134,14 @@ public class ITBucketSnippets {
   public static void beforeClass() {
     RemoteStorageHelper helper = RemoteStorageHelper.create();
     storage =
-        helper.getOptions().toBuilder()
+        helper
+            .getOptions()
+            .toBuilder()
             .setRetrySettings(
-                helper.getOptions().getRetrySettings().toBuilder()
+                helper
+                    .getOptions()
+                    .getRetrySettings()
+                    .toBuilder()
                     .setRetryDelayMultiplier(3.0)
                     .build())
             .build()
@@ -223,7 +228,8 @@ public class ITBucketSnippets {
     Bucket bucket =
         storage.get(BUCKET, Storage.BucketGetOption.fields(Storage.BucketField.values()));
     bucket =
-        bucket.toBuilder()
+        bucket
+            .toBuilder()
             .setLabels(ImmutableMap.of("k", "v"))
             .setLifecycleRules(
                 ImmutableList.of(
@@ -289,7 +295,9 @@ public class ITBucketSnippets {
 
   @Test
   public void testDisableLifecycleManagement() throws Throwable {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setLifecycleRules(
             ImmutableList.of(
                 new BucketInfo.LifecycleRule(
@@ -309,7 +317,9 @@ public class ITBucketSnippets {
     try {
       // By default a bucket PAP state is INHERITED and we are changing the state to validate
       // non-default state.
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
@@ -326,7 +336,9 @@ public class ITBucketSnippets {
       assertTrue(snippetOutput.contains("enforced"));
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -348,7 +360,9 @@ public class ITBucketSnippets {
                   BucketInfo.PublicAccessPrevention.ENFORCED));
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -361,7 +375,9 @@ public class ITBucketSnippets {
   @Test
   public void testSetPublicAccessPreventionInherited() throws Throwable {
     try {
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
@@ -383,7 +399,9 @@ public class ITBucketSnippets {
                   BucketInfo.PublicAccessPrevention.INHERITED));
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -442,7 +460,9 @@ public class ITBucketSnippets {
 
   @Test
   public void deleteBucketDefaultKmsKey() throws Throwable {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setDefaultKmsKeyName(
             "projects/java-docs-samples-testing/locations/us/keyRings/"
                 + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
@@ -501,7 +521,9 @@ public class ITBucketSnippets {
 
   @Test
   public void testRemoveBucketCors() throws Throwable {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setCors(
             ImmutableList.of(
                 Cors.newBuilder()
