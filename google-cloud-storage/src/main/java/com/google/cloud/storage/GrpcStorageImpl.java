@@ -155,7 +155,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       GrpcStorageOptions options,
       StorageClient storageClient,
       WriterFactory writerFactory,
-      Opts<UserProject> defaultOpts)  {
+      Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
     this.writerFactory = writerFactory;
@@ -659,14 +659,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+    // TODO(prototype): Missing protobuf check: similar to ZeroCopyReadinessChecker
+    // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
     return new GrpcBlobReadChannel(
               serverStreamingCallable.withDefaultCallContext(grpcCallContext),
               request,
               !opts.autoGzipDecompression());
-//    return new GrpcBlobReadChannel(
-//            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
-//            request,
-//            !opts.autoGzipDecompression());
   }
 
   @Override
