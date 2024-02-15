@@ -55,11 +55,10 @@ class Bidi implements Callable<String> {
 
   @Override
   public String call() throws Exception {
-    Bucket bucket = storageClient.create(BucketInfo.newBuilder(bucketName).build());
     String blobName = DataGenerator.base64Characters().genBytes(20).toString();
     BlobWriteSession sess =
         storageClient.blobWriteSession(
-            BlobInfo.newBuilder(bucket, blobName).build(),
+            BlobInfo.newBuilder(bucketName, blobName).build(),
             BlobWriteOption.doesNotExist());
     byte[] bytes = DataGenerator.base64Characters().genBytes(objectSize);
     Clock clock = Clock.systemDefaultZone();
