@@ -61,12 +61,10 @@ final class GapicUnbufferedReadableByteChannel
 
   private ByteString leftovers;
 
-  private boolean hasLeftOvers;
-
-  private com.google.common.hash.Hasher testHasher;
   private ByteBuffer interimBuffer;
 
   private InputStream stream = null;
+
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
@@ -78,18 +76,8 @@ final class GapicUnbufferedReadableByteChannel
     this.hasher = hasher;
     this.blobOffset = req.getReadOffset();
     this.iter = new LazyServerStreamIterator();
-    this.testHasher = Hashing.crc32c().newHasher();
     this.stream = null;
-    this.hasLeftOvers = false;
     this.interimBuffer = ByteBuffer.allocate(1024);
-  }
-
-  /** Writes part of a ByteString into a ByteBuffer with as little copying as possible */
-  private static void put(ByteString source, int offset, int size, ByteBuffer dest) {
-    ByteString croppedSource = source.substring(offset, offset + size);
-    for (ByteBuffer sourcePiece : croppedSource.asReadOnlyByteBufferList()) {
-      dest.put(sourcePiece);
-    }
   }
 
   @Override
@@ -106,7 +94,9 @@ final class GapicUnbufferedReadableByteChannel
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
-        int sizeToWrite = leftovers.size() > 1024 ? 1024 : leftovers.size();
+         // TODO(prototype): interimBuffer is a hack to get to delay figuring out how to update copy() to work
+        //  with ByteString instances.
+        int sizeToWrite = Math.min(leftovers.size(), 1024);
         put(leftovers, offset, sizeToWrite, interimBuffer);
         interimBuffer.flip();
         copy(c, interimBuffer, dsts, offset, length);
@@ -114,6 +104,7 @@ final class GapicUnbufferedReadableByteChannel
         leftovers = leftovers.substring(sizeToWrite);
         if (leftovers.size() == 0) {
           leftovers = null;
+          // zero-copy backing CodedInputStream must be closed once all data is read.
           if (stream != null) {
             stream.close();
             stream = null;
@@ -140,12 +131,11 @@ final class GapicUnbufferedReadableByteChannel
             result.set(metadata);
           }
         }
-
         ChecksummedData checksummedData = resp.getChecksummedData();
-
         ByteString content = checksummedData.getContent();
-        //ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
-        // very important to know whether a crc32c value is set. Without checking, protobuf will
+        // TODO(prototype): Re-enable checksum support, it currently requires the full 2MiB message that's stored
+        //  in content. It might be reasonable to reuse a ByteBuffer() to copy data into but needs to be tested.
+        // Very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
 //        if (checksummedData.hasCrc32C()) {
 //          Crc32cLengthKnown expected =
@@ -158,8 +148,9 @@ final class GapicUnbufferedReadableByteChannel
 //          }
 //        }
 
-        // Test: Use a small interim buffer to copy into to reuse existing java-storage code.
-        int sizeToWrite = content.size() > 1024 ? 1024 : content.size();
+        // TODO(prototype): Prototype currently uses an interim buffer and needs to be removed to work with
+        //  existing java-storage code.
+        int sizeToWrite = Math.min(content.size(), 1024);
         put(content, offset, sizeToWrite, interimBuffer);
         interimBuffer.flip();
         copy(c, interimBuffer, dsts, offset, length);
@@ -190,6 +181,15 @@ final class GapicUnbufferedReadableByteChannel
 
   ApiFuture<Object> getResult() {
     return result;
+  }
+
+  // TODO(prototype): ByteString support needs to be factored into copy() or Buffers.copy()
+  /** Writes part of a ByteString into a ByteBuffer with as little copying as possible */
+  private static void put(ByteString source, int offset, int size, ByteBuffer dest) {
+    ByteString croppedSource = source.substring(offset, offset + size);
+    for (ByteBuffer sourcePiece : croppedSource.asReadOnlyByteBufferList()) {
+      dest.put(sourcePiece);
+    }
   }
 
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
@@ -284,7 +284,6 @@ final class GapicUnbufferedReadableByteChannel
         synchronized (this) {
           if (!streamInitialized) {
             if (serverStream == null) {
-              
               serverStream = read.call(req);
             }
             responseIterator = serverStream.iterator();
