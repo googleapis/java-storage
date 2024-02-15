@@ -448,7 +448,10 @@ public class ITObjectSnippets {
       SetObjectRetentionPolicy.setObjectRetentionPolicy(PROJECT_ID, tempBucket, retentionBlob);
       assertNotNull(storage.get(tempBucket, retentionBlob).getRetention());
     } finally {
-      storage.get(tempBucket, retentionBlob).toBuilder()
+
+      storage
+          .get(tempBucket, retentionBlob)
+          .toBuilder()
           .setRetention(null)
           .build()
           .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
