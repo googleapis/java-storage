@@ -36,41 +36,45 @@ public class MemoryReadTest {
         final int appBuffer = Integer.parseInt(args[4]);
         Storage storage;
         if (transport.equals("grpc")) {
-             storage = StorageOptions.grpc()
+            System.out.println("Using gRPC over DP");
+            storage = StorageOptions.grpc()
                     .setAttemptDirectPath(true)
                     .build().getService();
+        } else
+        if (transport.equals("no-dp-grpc")) {
+            System.out.println("Using gRPC over Cloud Path");
+            storage = StorageOptions.grpc().build().getService();
         } else {
+            System.out.println("Using JSON");
             storage = StorageOptions.http()
                     .build().getService();
         }
+
         final BlobId blobId = BlobId.of(bucketName, objectName);
-//        final BlobId blobId = BlobId.of("anima-frank-gcs-grpc-team-test-central1", "50gb-sample.txt");
         System.out.println("Starting...");
         System.out.println("Zero-copy");
         HashFunction hashFunction = Hashing.crc32c();
-        Hasher hasher = hashFunction.newHasher();
         ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
         for (int i = 0; i < numberOfReads; i++) {
-            ReadChannel r = storage.reader(blobId);
-            int totalBytesRead = 0;
-            while (r.isOpen()) {
-                int bytesRead = r.read(buffer);
-                // System.out.println("Bytes Read: " + bytesRead);
-                if (bytesRead == -1) {
-                    break;
-                } else
-                if (bytesRead == 0){
-                    System.out.println("???");
+            try {
+                Hasher hasher = hashFunction.newHasher();
+                ReadChannel r = storage.reader(blobId);
+                int totalBytesRead = 0;
+                while (r.isOpen()) {
+                    int bytesRead = r.read(buffer);
+                    if (bytesRead == -1 || bytesRead == 0) {
+                        break;
+                    }
+                    totalBytesRead += bytesRead;
+                    buffer.flip();
+                    hasher.putBytes(buffer);
+                    buffer.clear();
                 }
-                totalBytesRead += bytesRead;
-                buffer.flip();
-                hasher.putBytes(buffer);
-                long hash = hasher.hash().asInt();
-                // System.out.println("From java-storage: " + hash);
-                buffer.clear();
+                System.out.println("Hasher: " + hasher.hash());
+                System.out.println("Downlaoded(" + i + "): " + totalBytesRead + ": 100MiB?" + (totalBytesRead == 1024 * 1024 * 100));
+            } catch (IllegalArgumentException e) {
+                System.out.println("IllegalArgumentException occurred: unstable continue on");
             }
-            System.out.println("hasher: " + hasher.hash());
-            System.out.println("Downlaoded(" + i + "): " + totalBytesRead + ": 100MiB?" + (totalBytesRead == 1024*1024*100));
         }
         System.out.println("Finished...");
     }

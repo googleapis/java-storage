@@ -100,28 +100,6 @@ final class Buffers {
     return total;
   }
 
-//  static long copySimple(ByteBuffer content, ByteBuffer dsts, int offset, int length) {
-//    long total = 0;
-//    for (int i = offset; i < length; i++) {
-//      int contentRemaining = content.remaining();
-//      if (contentRemaining <= 0) {
-//        break;
-//      }
-//      ByteBuffer buf = dsts[i];
-//      int bufRemaining = buf.remaining();
-//      if (bufRemaining == 0) {
-//        continue;
-//      } else if (bufRemaining < contentRemaining) {
-//        sliceAndConsume(content, bufRemaining, buf::put);
-//      } else {
-//        buf.put(content);
-//      }
-//      int written = bufRemaining - buf.remaining();
-//      total += written;
-//    }
-//    return total;
-//  }
-
   /**
    * Slice the provided source with a limit of {@code limit}, consume the slice with {@code c} then
    * increment position of {@code src} to reflect the consumed bytes.

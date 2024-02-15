@@ -59,12 +59,12 @@ final class GapicUnbufferedReadableByteChannel
 
   private Object metadata;
 
-  private ByteBuffer leftovers;
+  private ByteString leftovers;
 
   private boolean hasLeftOvers;
 
   private com.google.common.hash.Hasher testHasher;
-  private ByteString b;
+  private ByteBuffer interimBuffer;
 
   private InputStream stream = null;
   GapicUnbufferedReadableByteChannel(
@@ -81,6 +81,15 @@ final class GapicUnbufferedReadableByteChannel
     this.testHasher = Hashing.crc32c().newHasher();
     this.stream = null;
     this.hasLeftOvers = false;
+    this.interimBuffer = ByteBuffer.allocate(1024);
+  }
+
+  /** Writes part of a ByteString into a ByteBuffer with as little copying as possible */
+  private static void put(ByteString source, int offset, int size, ByteBuffer dest) {
+    ByteString croppedSource = source.substring(offset, offset + size);
+    for (ByteBuffer sourcePiece : croppedSource.asReadOnlyByteBufferList()) {
+      dest.put(sourcePiece);
+    }
   }
 
   @Override
@@ -97,10 +106,14 @@ final class GapicUnbufferedReadableByteChannel
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
-        copy(c, leftovers, dsts, offset, length);
-        if (leftovers.hasRemaining()) {
+        int sizeToWrite = leftovers.size() > 1024 ? 1024 : leftovers.size();
+        put(leftovers, offset, sizeToWrite, interimBuffer);
+        interimBuffer.flip();
+        copy(c, interimBuffer, dsts, offset, length);
+        interimBuffer.clear();
+        leftovers = leftovers.substring(sizeToWrite);
+        if (leftovers.size() < 1024) {
           leftovers = null;
-          getObjectMediaResponseMarshaller.clearByteStrings();
           if (stream != null) {
             stream.close();
             stream = null;
@@ -132,7 +145,9 @@ final class GapicUnbufferedReadableByteChannel
         // Notes: asReadOnlyByteBuffer() creates a new byte[] of 2MiB everytime it's called
         //
 //        System.out.println("Before asReadOnlyByteBuffer()");
-        ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
+        ByteString content = checksummedData.getContent();
+
+
 //        System.out.println("After asReadOnlyByteBuffer()");
         //ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         // very important to know whether a crc32c value is set. Without checking, protobuf will
@@ -150,10 +165,12 @@ final class GapicUnbufferedReadableByteChannel
 //        // System.out.println("ByteString size: " + b.size());
 //        testHasher.putBytes(b.asReadOnlyByteBuffer().duplicate());
 //        System.out.println("From GRPC: " + testHasher.hash().asInt());
-        copy(c, content, dsts, offset, length);
-        if (content.hasRemaining()) {
-          leftovers = content;
-        }
+        // Test: Use a small interim buffer to copy into to reuse existing java-storage code.
+        put(content, offset, 1024, interimBuffer);
+        interimBuffer.flip();
+        copy(c, interimBuffer, dsts, offset, length);
+        interimBuffer.clear();
+        leftovers = content.substring(1024);
       } else {
         complete = true;
         break;
@@ -183,7 +200,7 @@ final class GapicUnbufferedReadableByteChannel
 
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
     long copiedBytes = Buffers.copy(content, dsts, offset, length);
-    c.advance(length);
+    c.advance(copiedBytes);
   }
 
   private IOException closeWithError(String message) throws IOException {
