@@ -70,6 +70,7 @@ class Bidi implements Callable<String> {
     Instant endTime = clock.instant();
     Duration elapsedTimeWrite = Duration.between(startTime, endTime);
     printResult("BIDI", created, elapsedTimeWrite);
+    StorageSharedBenchmarkingUtils.cleanupObject(storageClient, created);
     return "OK";
   }
 

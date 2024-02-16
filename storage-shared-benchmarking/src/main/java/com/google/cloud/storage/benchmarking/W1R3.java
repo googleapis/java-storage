@@ -82,7 +82,7 @@ final class W1R3 implements Callable<String> {
           printResult("READ[" + i + "]", created, elapsedTimeDownload);
         }
       }
-      StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
+      StorageSharedBenchmarkingUtils.cleanupObject(storage, created.asBlobInfo());
     } catch (Exception e) {
       CloudMonitoringResult result =
           CloudMonitoringResult.newBuilder()

@@ -24,7 +24,7 @@ class StorageSharedBenchmarkingUtils {
   public static long SSB_SIZE_THRESHOLD_BYTES = 1048576;
   public static int DEFAULT_NUMBER_OF_READS = 3;
 
-  public static void cleanupObject(Storage storage, Blob created) {
+  public static void cleanupObject(Storage storage, BlobInfo created) {
     storage.delete(
         created.getBlobId(), Storage.BlobSourceOption.generationMatch(created.getGeneration()));
   }
