@@ -112,7 +112,9 @@ final class W1R3 implements Callable<String> {
                   op,
                   StorageSharedBenchmarkingUtils.calculateThroughput(
                       created.getSize().doubleValue(), duration),
-                  created.asBlobInfo(), api, workers)
+                  created.asBlobInfo(),
+                  api,
+                  workers)
               .formatAsCustomMetric());
     }
   }

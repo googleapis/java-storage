@@ -15,7 +15,6 @@
  */
 package com.google.cloud.storage.benchmarking;
 
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import java.time.Duration;

@@ -18,15 +18,11 @@ package com.google.cloud.storage.benchmarking;
 
 import static com.google.cloud.storage.benchmarking.StorageSharedBenchmarkingUtils.generateCloudMonitoringResult;
 
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSession;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
-import com.google.cloud.storage.it.runner.registry.Generator;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -34,7 +30,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 class Bidi implements Callable<String> {
   private final Storage storageClient;
@@ -44,7 +39,13 @@ class Bidi implements Callable<String> {
   private final String api;
   private final int workers;
 
-  Bidi(Storage storageClient, String bucketName, int objectSize, PrintWriter pw, String api, int workers) {
+  Bidi(
+      Storage storageClient,
+      String bucketName,
+      int objectSize,
+      PrintWriter pw,
+      String api,
+      int workers) {
     this.storageClient = storageClient;
     this.bucketName = bucketName;
     this.objectSize = objectSize;
@@ -58,8 +59,7 @@ class Bidi implements Callable<String> {
     String blobName = DataGenerator.base64Characters().genBytes(20).toString();
     BlobWriteSession sess =
         storageClient.blobWriteSession(
-            BlobInfo.newBuilder(bucketName, blobName).build(),
-            BlobWriteOption.doesNotExist());
+            BlobInfo.newBuilder(bucketName, blobName).build(), BlobWriteOption.doesNotExist());
     byte[] bytes = DataGenerator.base64Characters().genBytes(objectSize);
     Clock clock = Clock.systemDefaultZone();
     Instant startTime = clock.instant();
@@ -77,10 +77,12 @@ class Bidi implements Callable<String> {
   private void printResult(String op, BlobInfo created, Duration duration) {
     pw.println(
         generateCloudMonitoringResult(
-            op,
-            StorageSharedBenchmarkingUtils.calculateThroughput(
-                created.getSize().doubleValue(), duration),
-            created, api, workers)
+                op,
+                StorageSharedBenchmarkingUtils.calculateThroughput(
+                    created.getSize().doubleValue(), duration),
+                created,
+                api,
+                workers)
             .formatAsCustomMetric());
   }
 }
