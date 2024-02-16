@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
    * <p><i>Default:</i> {@code 16777216 (16 MiB)}
    *
    * @see #withBufferSize(int)
-   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.34.0 This new api is in preview and is subject to breaking changes.
    */
   public int getBufferSize() {
     return bufferSize;
@@ -114,7 +114,7 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
    *     {@code 262144 (256 KiB)}
    * @return The new instance
    * @see #getBufferSize()
-   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.34.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public BidiBlobWriteSessionConfig withBufferSize(int bufferSize) {

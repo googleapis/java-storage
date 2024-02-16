@@ -253,7 +253,7 @@ public final class BlobWriteSessionConfigs {
    * <p>Configuration of the buffer size can be performed via {@link
    * BidiBlobWriteSessionConfig#withBufferSize(int)}.
    *
-   * @since 2.30.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.34.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
