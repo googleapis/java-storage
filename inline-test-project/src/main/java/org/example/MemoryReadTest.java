@@ -17,67 +17,67 @@
 package org.example;
 
 import com.google.cloud.ReadChannel;
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 
 public class MemoryReadTest {
 
-    public static void main(String[] args) throws Exception {
-        final int numberOfReads = Integer.parseInt(args[0]);
-        final String bucketName = args[1];
-        final String objectName = args[2];
-        final String transport = args[3];
-        final int appBuffer = Integer.parseInt(args[4]);
-        Storage storage;
-        if (transport.equals("grpc")) {
-            System.out.println("Using gRPC over DP");
-            storage = StorageOptions.grpc()
-                    .setAttemptDirectPath(true)
-                    .build().getService();
-        } else
-        if (transport.equals("no-dp-grpc")) {
-            System.out.println("Using gRPC over Cloud Path");
-            storage = StorageOptions.grpc().build().getService();
-        } else {
-            System.out.println("Using JSON");
-            storage = StorageOptions.http()
-                    .build().getService();
-        }
-
-        final BlobId blobId = BlobId.of(bucketName, objectName);
-        System.out.println("Starting...");
-        System.out.println("Using zero-copy...");
-        ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
-        HashFunction hashFunction = Hashing.crc32c();
-        Blob blob = storage.get(blobId);
-        byte[] decoded = Base64.getDecoder().decode(blob.getCrc32c());
-        // flip order; hashFunction provides hashes in opposite order.
-        ByteBuffer b = ByteBuffer.allocate(4);
-        for (int i = 3; i >= 0; i--) {
-            b.put(decoded[i]);
-        }
-        byte[] expectedHash = b.array();
-        for (int i = 0; i < numberOfReads; i++) {
-            Hasher h = hashFunction.newHasher();
-            ReadChannel r = storage.reader(blobId);
-            while (r.isOpen()) {
-                int bytesRead = r.read(buffer);
-                if (bytesRead == -1) {
-                    break;
-                }
-                buffer.flip();
-                h.putBytes(buffer);
-                buffer.clear();
-            }
-            byte[] resultHash = h.hash().asBytes();
-            System.out.println("Downlaoded(" + i + ") - crc32c match?: " + (Arrays.equals(resultHash, expectedHash)));
-        }
-        System.out.println("Finished...");
+  public static void main(String[] args) throws Exception {
+    final int numberOfReads = Integer.parseInt(args[0]);
+    final String bucketName = args[1];
+    final String objectName = args[2];
+    final String transport = args[3];
+    final int appBuffer = Integer.parseInt(args[4]);
+    Storage storage;
+    if (transport.equals("grpc")) {
+      System.out.println("Using gRPC over DP");
+      System.out.println("Using zero-copy...");
+      storage = StorageOptions.grpc().setAttemptDirectPath(true).build().getService();
+    } else if (transport.equals("no-dp-grpc")) {
+      System.out.println("Using gRPC over Cloud Path");
+      System.out.println("Using zero-copy...");
+      storage = StorageOptions.grpc().build().getService();
+    } else {
+      System.out.println("Using JSON");
+      storage = StorageOptions.http().build().getService();
     }
+
+    final BlobId blobId = BlobId.of(bucketName, objectName);
+    System.out.println("Starting...");
+    ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
+    HashFunction hashFunction = Hashing.crc32c();
+    Blob blob = storage.get(blobId);
+    byte[] decoded = Base64.getDecoder().decode(blob.getCrc32c());
+    // flip order; hashFunction provides hashes in opposite order.
+    ByteBuffer b = ByteBuffer.allocate(4);
+    for (int i = 3; i >= 0; i--) {
+      b.put(decoded[i]);
+    }
+    byte[] expectedHash = b.array();
+    for (int i = 0; i < numberOfReads; i++) {
+      Hasher h = hashFunction.newHasher();
+      ReadChannel r = storage.reader(blobId);
+      while (r.isOpen()) {
+        int bytesRead = r.read(buffer);
+        if (bytesRead == -1) {
+          break;
+        }
+        buffer.flip();
+        h.putBytes(buffer);
+        buffer.clear();
+      }
+      byte[] resultHash = h.hash().asBytes();
+      System.out.println(
+          "Downlaoded(" + i + ") - crc32c match?: " + (Arrays.equals(resultHash, expectedHash)));
+    }
+    System.out.println("Finished...");
+  }
 }
