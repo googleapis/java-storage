@@ -177,15 +177,6 @@ final class GapicUnbufferedReadableByteChannel
     return result;
   }
 
-  // TODO(prototype): ByteString support may need to be factored into copy() or Buffers.copy()
-  /** Writes part of a ByteString into a ByteBuffer with as little copying as possible */
-  private static void put(ByteString source, int offset, int size, ByteBuffer dest) {
-    ByteString croppedSource = source.substring(offset, offset + size);
-    for (ByteBuffer sourcePiece : croppedSource.asReadOnlyByteBufferList()) {
-      dest.put(sourcePiece);
-    }
-  }
-
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
     long copiedBytes = Buffers.copy(content, dsts, offset, length);
     c.advance(copiedBytes);
