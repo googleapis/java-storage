@@ -20,6 +20,7 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -35,6 +36,8 @@ interface Hasher {
   Crc32cLengthKnown hash(ByteBuffer b);
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
+
+  void validate(Crc32cValue<?> expected, List<ByteBuffer> buffers) throws IOException;
 
   @Nullable
   Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
@@ -62,6 +65,9 @@ interface Hasher {
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
 
     @Override
+    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) {}
+
+    @Override
     public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
       return null;
     }
@@ -81,13 +87,30 @@ interface Hasher {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
-      Crc32cLengthKnown actual = hash(b);
+    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) throws IOException {
+      Crc32cLengthKnown actual = null;
+      for (ByteBuffer tmp : b) {
+          if (actual == null) {
+            actual = hash(tmp);
+          }
+          actual.concat(hash(tmp));
+      }
       if (!actual.eqValue(expected)) {
         throw new IOException(
             String.format(
                 "Mismatch checksum value. Expected %s actual %s",
                 expected.debugString(), actual.debugString()));
+      }
+    }
+
+    @Override
+    public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
+      Crc32cLengthKnown actual = hash(b);
+      if (!actual.eqValue(expected)) {
+        throw new IOException(
+                String.format(
+                        "Mismatch checksum value. Expected %s actual %s",
+                        expected.debugString(), actual.debugString()));
       }
     }
 

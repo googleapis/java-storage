@@ -661,6 +661,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
     // TODO(prototype): Missing protobuf check: similar to ZeroCopyReadinessChecker
     // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
+
     return new GrpcBlobReadChannel(
         serverStreamingCallable.withDefaultCallContext(grpcCallContext),
         request,
@@ -1814,24 +1815,25 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     public T parse(InputStream stream) {
       CodedInputStream cis = null;
       try {
-        if (stream instanceof KnownLength) {
+        if (stream instanceof KnownLength
+                && stream instanceof Detachable
+                && stream instanceof HasByteBuffer
+                && ((HasByteBuffer) stream).byteBufferSupported()) {
           int size = stream.available();
-          if (stream instanceof Detachable && ((HasByteBuffer) stream).byteBufferSupported()) {
-            // Stream is now detached here and should be closed later.
-            stream = ((Detachable) stream).detach();
-            // This mark call is to keep buffer while traversing buffers using skip.
-            stream.mark(size);
-            List<ByteString> byteStrings = new ArrayList<>();
-            while (stream.available() != 0) {
-              ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
-              byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
-              stream.skip(buffer.remaining());
-            }
-            stream.reset();
-            cis = ByteString.copyFrom(byteStrings).newCodedInput();
-            cis.enableAliasing(true);
-            cis.setSizeLimit(Integer.MAX_VALUE);
+          // Stream is now detached here and should be closed later.
+          stream = ((Detachable) stream).detach();
+          // This mark call is to keep buffer while traversing buffers using skip.
+          stream.mark(size);
+          List<ByteString> byteStrings = new ArrayList<>();
+          while (stream.available() != 0) {
+            ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
+            byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
+            stream.skip(buffer.remaining());
           }
+          stream.reset();
+          cis = ByteString.copyFrom(byteStrings).newCodedInput();
+          cis.enableAliasing(true);
+          cis.setSizeLimit(Integer.MAX_VALUE);
         }
       } catch (IOException e) {
         throw new RuntimeException(e);
