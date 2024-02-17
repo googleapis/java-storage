@@ -84,7 +84,10 @@ import com.google.storage.v2.*;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
-
+import com.google.storage.v2.stub.GrpcStorageCallableFactory;
+import io.grpc.*;
+import io.grpc.protobuf.ProtoUtils;
+import io.grpc.protobuf.lite.ProtoLiteUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -109,11 +112,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.google.storage.v2.stub.GrpcStorageCallableFactory;
-import io.grpc.*;
-import io.grpc.protobuf.ProtoUtils;
-import io.grpc.protobuf.lite.ProtoLiteUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -164,8 +162,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
     try {
-      this.serverStreamingCallable = new GrpcStorageCallableFactory().createServerStreamingCallable(
-              readObjectTransportSettings, storageClient.getSettings().readObjectSettings(), ClientContext.create(storageClient.getSettings()));
+      this.serverStreamingCallable =
+          new GrpcStorageCallableFactory()
+              .createServerStreamingCallable(
+                  readObjectTransportSettings,
+                  storageClient.getSettings().readObjectSettings(),
+                  ClientContext.create(storageClient.getSettings()));
     } catch (IOException e) {
       // prototyping we do not want to do this;
     }
@@ -1782,17 +1784,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   public static final ZeroCopyMessageMarshaller getObjectMediaResponseMarshaller =
-          new ZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
+      new ZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
 
-  static class ZeroCopyMessageMarshaller<T extends MessageLite> implements MethodDescriptor.PrototypeMarshaller<T> {
-    private Map<T, InputStream> unclosedStreams = Collections.synchronizedMap(new IdentityHashMap<>());
+  static class ZeroCopyMessageMarshaller<T extends MessageLite>
+      implements MethodDescriptor.PrototypeMarshaller<T> {
+    private Map<T, InputStream> unclosedStreams =
+        Collections.synchronizedMap(new IdentityHashMap<>());
     private final Parser<T> parser;
     private final MethodDescriptor.PrototypeMarshaller<T> baseMarshaller;
 
-
     ZeroCopyMessageMarshaller(T defaultInstance) {
       parser = (Parser<T>) defaultInstance.getParserForType();
-      baseMarshaller = (MethodDescriptor.PrototypeMarshaller<T>) ProtoLiteUtils.marshaller(defaultInstance);
+      baseMarshaller =
+          (MethodDescriptor.PrototypeMarshaller<T>) ProtoLiteUtils.marshaller(defaultInstance);
     }
 
     @Override
@@ -1815,9 +1819,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       CodedInputStream cis = null;
       try {
         if (stream instanceof KnownLength
-                && stream instanceof Detachable
-                && stream instanceof HasByteBuffer
-                && ((HasByteBuffer) stream).byteBufferSupported()) {
+            && stream instanceof Detachable
+            && stream instanceof HasByteBuffer
+            && ((HasByteBuffer) stream).byteBufferSupported()) {
           int size = stream.available();
           // Stream is now detached here and should be closed later.
           stream = ((Detachable) stream).detach();
@@ -1843,7 +1847,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         try {
           message = parseFrom(cis);
         } catch (InvalidProtocolBufferException ipbe) {
-          throw Status.INTERNAL.withDescription("Invalid protobuf byte sequence").withCause(ipbe).asRuntimeException();
+          throw Status.INTERNAL
+              .withDescription("Invalid protobuf byte sequence")
+              .withCause(ipbe)
+              .asRuntimeException();
         }
         unclosedStreams.put(message, stream);
         return message;
@@ -1870,28 +1877,25 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       return unclosedStreams.remove(message);
     }
   }
-  static final MethodDescriptor<ReadObjectRequest, ReadObjectResponse>
-          readObjectMethodDescriptor =
-          MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
-                  .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
-                  .setFullMethodName("google.storage.v2.Storage/ReadObject")
-                  .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
-                  .setResponseMarshaller(getObjectMediaResponseMarshaller)
-                  .build();
 
+  static final MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
+      MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+          .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
+          .setFullMethodName("google.storage.v2.Storage/ReadObject")
+          .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
+          .setResponseMarshaller(getObjectMediaResponseMarshaller)
+          .build();
 
   GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
-          GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
-                  .setMethodDescriptor(readObjectMethodDescriptor)
-                  .setParamsExtractor(
-                          request -> {
-                            RequestParamsBuilder builder = RequestParamsBuilder.create();
-                            builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
-                            return builder.build();
-                          })
-                  .build();
-
-
+      GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+          .setMethodDescriptor(readObjectMethodDescriptor)
+          .setParamsExtractor(
+              request -> {
+                RequestParamsBuilder builder = RequestParamsBuilder.create();
+                builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
+                return builder.build();
+              })
+          .build();
 
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {

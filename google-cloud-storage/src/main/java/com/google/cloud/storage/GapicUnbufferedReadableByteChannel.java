@@ -26,14 +26,11 @@ import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
-import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
-import com.google.storage.v2.stub.GrpcStorageStub;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,12 +121,11 @@ final class GapicUnbufferedReadableByteChannel
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
         ByteString content = checksummedData.getContent();
-        int contentSize =  content.size();
+        int contentSize = content.size();
         // Very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
         if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected =
-              Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
+          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
           try {
             hasher.validate(expected, content.asReadOnlyByteBufferList());
           } catch (IOException e) {
@@ -137,14 +133,16 @@ final class GapicUnbufferedReadableByteChannel
             throw e;
           }
         }
-        // Note(Prototype): asReadOnlyByteBufferList() returns a list of ByteBuffer, possition is maintained by each
-        //  ByteBuffer. Supported by new copy() which continues reading from current state of ByteBuffer's.
+        // Note(Prototype): asReadOnlyByteBufferList() returns a list of ByteBuffer, possition is
+        // maintained by each
+        //  ByteBuffer. Supported by new copy() which continues reading from current state of
+        // ByteBuffer's.
         List<ByteBuffer> bfl = content.asReadOnlyByteBufferList();
         copy(c, bfl, dsts, offset, length);
         if (hasRemaining(bfl)) {
           leftovers = bfl;
         } else {
-          if(stream != null) {
+          if (stream != null) {
             stream.close();
             stream = null;
           }

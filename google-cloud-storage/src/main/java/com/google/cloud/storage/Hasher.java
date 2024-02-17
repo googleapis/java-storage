@@ -90,10 +90,10 @@ interface Hasher {
     public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = null;
       for (ByteBuffer tmp : b) {
-          if (actual == null) {
-            actual = hash(tmp);
-          }
-          actual.concat(hash(tmp));
+        if (actual == null) {
+          actual = hash(tmp);
+        }
+        actual.concat(hash(tmp));
       }
       if (!actual.eqValue(expected)) {
         throw new IOException(
@@ -108,9 +108,9 @@ interface Hasher {
       Crc32cLengthKnown actual = hash(b);
       if (!actual.eqValue(expected)) {
         throw new IOException(
-                String.format(
-                        "Mismatch checksum value. Expected %s actual %s",
-                        expected.debugString(), actual.debugString()));
+            String.format(
+                "Mismatch checksum value. Expected %s actual %s",
+                expected.debugString(), actual.debugString()));
       }
     }
 
