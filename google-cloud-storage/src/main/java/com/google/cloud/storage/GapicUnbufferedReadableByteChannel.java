@@ -144,8 +144,10 @@ final class GapicUnbufferedReadableByteChannel
         if (hasRemaining(bfl)) {
           leftovers = bfl;
         } else {
-          stream.close();
-          stream = null;
+          if(stream != null) {
+            stream.close();
+            stream = null;
+          }
         }
       } else {
         complete = true;

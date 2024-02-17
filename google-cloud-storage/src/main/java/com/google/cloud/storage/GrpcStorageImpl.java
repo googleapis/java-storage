@@ -111,7 +111,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.google.storage.v2.stub.GrpcStorageCallableFactory;
-import com.google.storage.v2.stub.GrpcStorageStub;
 import io.grpc.*;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.protobuf.lite.ProtoLiteUtils;
