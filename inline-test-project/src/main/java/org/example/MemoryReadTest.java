@@ -66,13 +66,11 @@ public class MemoryReadTest {
         for (int i = 0; i < numberOfReads; i++) {
             Hasher h = hashFunction.newHasher();
             ReadChannel r = storage.reader(blobId);
-            int totalBytesRead = 0;
             while (r.isOpen()) {
                 int bytesRead = r.read(buffer);
                 if (bytesRead == -1) {
                     break;
                 }
-                totalBytesRead += bytesRead;
                 buffer.flip();
                 h.putBytes(buffer);
                 buffer.clear();
