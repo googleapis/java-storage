@@ -91,7 +91,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageLite;
+import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.BucketAccessControl;
@@ -139,7 +139,6 @@ import io.grpc.KnownLength;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import io.grpc.protobuf.ProtoUtils;
-import io.grpc.protobuf.lite.ProtoLiteUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1847,7 +1846,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public static final ZeroCopyMessageMarshaller getObjectMediaResponseMarshaller =
       new ZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
 
-  static class ZeroCopyMessageMarshaller<T extends MessageLite>
+  static class ZeroCopyMessageMarshaller<T extends Message>
       implements MethodDescriptor.PrototypeMarshaller<T> {
     private Map<T, InputStream> unclosedStreams =
         Collections.synchronizedMap(new IdentityHashMap<>());
@@ -1857,7 +1856,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ZeroCopyMessageMarshaller(T defaultInstance) {
       parser = (Parser<T>) defaultInstance.getParserForType();
       baseMarshaller =
-          (MethodDescriptor.PrototypeMarshaller<T>) ProtoLiteUtils.marshaller(defaultInstance);
+          (MethodDescriptor.PrototypeMarshaller<T>) ProtoUtils.marshaller(defaultInstance);
     }
 
     @Override
