@@ -169,6 +169,7 @@ final class GapicUnbufferedReadableByteChannel
     open = false;
     if (stream != null) {
       stream.close();
+      stream = null;
     }
     iter.close();
   }
