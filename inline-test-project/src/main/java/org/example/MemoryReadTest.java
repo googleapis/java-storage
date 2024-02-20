@@ -24,7 +24,6 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Clock;
@@ -76,36 +75,64 @@ public class MemoryReadTest {
       List<Future<Result>> results = new ArrayList<>();
       ExecutorService executor = Executors.newFixedThreadPool(threads);
       for (int j = 0; j < threads; j++) {
-        results.add(executor.submit(() -> {
-          System.out.println("Starting thread: " + Thread.currentThread());
-          return readWorkload(numberOfReads, appBuffer, storage, blobId, hashFunction, expectedHash, blob.getSize());
-        }));
+        results.add(
+            executor.submit(
+                () -> {
+                  System.out.println("Starting thread: " + Thread.currentThread());
+                  return readWorkload(
+                      numberOfReads,
+                      appBuffer,
+                      storage,
+                      blobId,
+                      hashFunction,
+                      expectedHash,
+                      blob.getSize());
+                }));
       }
       executor.shutdown();
-      for(Future<Result> r : results) {
-          Result t =  r.get();
-          System.out.println(t);
+      for (Future<Result> r : results) {
+        Result t = r.get();
+        System.out.println(t);
       }
     } else {
-      Result t = readWorkload(numberOfReads, appBuffer, storage, blobId, hashFunction, expectedHash, blob.getSize());
+      Result t =
+          readWorkload(
+              numberOfReads,
+              appBuffer,
+              storage,
+              blobId,
+              hashFunction,
+              expectedHash,
+              blob.getSize());
       System.out.println(t);
     }
     System.out.println("Workload Finished");
   }
 
   private static class Result {
-      public long elapsedTime;
-      public long totalSize;
-      public int failures;
-      public double throughput;
+    public long elapsedTime;
+    public long totalSize;
+    public int failures;
+    public double throughput;
 
-      @Override
-      public String toString() {
-          return new Formatter().format("elapsedTime: %d\ntotalSize: %d\nthroughput: %f bps\nfailures: %d", elapsedTime, totalSize, throughput, failures).toString();
-      }
+    @Override
+    public String toString() {
+      return new Formatter()
+          .format(
+              "elapsedTime: %d\ntotalSize: %d\nthroughput: %f bps\nfailures: %d",
+              elapsedTime, totalSize, throughput, failures)
+          .toString();
+    }
   }
 
-  private static Result readWorkload(int numberOfReads, int appBuffer, Storage storage, BlobId blobId, HashFunction hashFunction, byte[] expectedHash, Long objectSize) {
+  private static Result readWorkload(
+      int numberOfReads,
+      int appBuffer,
+      Storage storage,
+      BlobId blobId,
+      HashFunction hashFunction,
+      byte[] expectedHash,
+      Long objectSize) {
     int failures = 0;
     ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
     Clock clock = Clock.systemDefaultZone();
@@ -135,7 +162,7 @@ public class MemoryReadTest {
     Result r = new Result();
     r.elapsedTime = elapsedTime.getSeconds();
     r.totalSize = numberOfReads * objectSize;
-    r.throughput = ((double)r.totalSize/(double)r.elapsedTime);
+    r.throughput = ((double) r.totalSize / (double) r.elapsedTime);
     r.failures = failures;
     return r;
   }
