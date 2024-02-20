@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.GrpcStorageImpl.getObjectMediaResponseMarshaller;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
@@ -25,18 +26,21 @@ import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
@@ -53,7 +57,9 @@ final class GapicUnbufferedReadableByteChannel
 
   private Object metadata;
 
-  private ByteBuffer leftovers;
+  private List<ByteBuffer> leftovers;
+
+  private InputStream stream = null;
 
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
@@ -66,6 +72,7 @@ final class GapicUnbufferedReadableByteChannel
     this.hasher = hasher;
     this.blobOffset = req.getReadOffset();
     this.iter = new LazyServerStreamIterator();
+    this.stream = null;
   }
 
   @Override
@@ -83,14 +90,20 @@ final class GapicUnbufferedReadableByteChannel
     while (c.hasRemaining()) {
       if (leftovers != null) {
         copy(c, leftovers, dsts, offset, length);
-        if (!leftovers.hasRemaining()) {
+        if (!hasRemaining(leftovers)) {
           leftovers = null;
+          // zero-copy backing CodedInputStream must be closed once all data is read.
+          if (stream != null) {
+            stream.close();
+            stream = null;
+          }
         }
         continue;
       }
 
       if (iter.hasNext()) {
         ReadObjectResponse resp = iter.next();
+        stream = getObjectMediaResponseMarshaller.popStream(resp);
         if (resp.hasMetadata()) {
           Object respMetadata = resp.getMetadata();
           if (metadata == null) {
@@ -107,22 +120,32 @@ final class GapicUnbufferedReadableByteChannel
           }
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
-        ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
-        // very important to know whether a crc32c value is set. Without checking, protobuf will
+        ByteString content = checksummedData.getContent();
+        int contentSize = content.size();
+        // Very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
         if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected =
-              Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
+          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
           try {
-            hasher.validate(expected, content::duplicate);
+            hasher.validate(expected, content.asReadOnlyByteBufferList());
           } catch (IOException e) {
             close();
             throw e;
           }
         }
-        copy(c, content, dsts, offset, length);
-        if (content.hasRemaining()) {
-          leftovers = content;
+        // Note(Prototype): asReadOnlyByteBufferList() returns a list of ByteBuffer, possition is
+        // maintained by each
+        //  ByteBuffer. Supported by new copy() which continues reading from current state of
+        // ByteBuffer's.
+        List<ByteBuffer> bfl = content.asReadOnlyByteBufferList();
+        copy(c, bfl, dsts, offset, length);
+        if (hasRemaining(bfl)) {
+          leftovers = bfl;
+        } else {
+          if (stream != null) {
+            stream.close();
+            stream = null;
+          }
         }
       } else {
         complete = true;
@@ -144,6 +167,10 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public void close() throws IOException {
     open = false;
+    if (stream != null) {
+      stream.close();
+      stream = null;
+    }
     iter.close();
   }
 
@@ -154,6 +181,21 @@ final class GapicUnbufferedReadableByteChannel
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
     long copiedBytes = Buffers.copy(content, dsts, offset, length);
     c.advance(copiedBytes);
+  }
+
+  private void copy(ReadCursor c, List<ByteBuffer> bfl, ByteBuffer[] dsts, int offset, int length) {
+    for (ByteBuffer b : bfl) {
+      long copiedBytes = Buffers.copy(b, dsts, offset, length);
+      c.advance(copiedBytes);
+      if (b.hasRemaining()) break;
+    }
+  }
+
+  private boolean hasRemaining(List<ByteBuffer> bfl) {
+    for (ByteBuffer b : bfl) {
+      if (b.hasRemaining()) return true;
+    }
+    return false;
   }
 
   private IOException closeWithError(String message) throws IOException {
