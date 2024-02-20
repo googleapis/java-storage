@@ -24,9 +24,20 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Formatter;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class MemoryReadTest {
 
@@ -36,14 +47,13 @@ public class MemoryReadTest {
     final String objectName = args[2];
     final String transport = args[3];
     final int appBuffer = Integer.parseInt(args[4]);
+    final int threads = Integer.parseInt(args[5]);
     Storage storage;
     if (transport.equals("grpc")) {
-      System.out.println("Using gRPC over DP");
-      System.out.println("Using zero-copy...");
+      System.out.println("Using gRPC over DP-with zero copy");
       storage = StorageOptions.grpc().setAttemptDirectPath(true).build().getService();
     } else if (transport.equals("no-dp-grpc")) {
-      System.out.println("Using gRPC over Cloud Path");
-      System.out.println("Using zero-copy...");
+      System.out.println("Using gRPC over Cloud Path-with zero copy");
       storage = StorageOptions.grpc().build().getService();
     } else {
       System.out.println("Using JSON");
@@ -52,32 +62,81 @@ public class MemoryReadTest {
 
     final BlobId blobId = BlobId.of(bucketName, objectName);
     System.out.println("Starting...");
-    ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
-    HashFunction hashFunction = Hashing.crc32c();
-    Blob blob = storage.get(blobId);
+
+    final HashFunction hashFunction = Hashing.crc32c();
+    final Blob blob = storage.get(blobId);
     byte[] decoded = Base64.getDecoder().decode(blob.getCrc32c());
     // flip order; hashFunction provides hashes in opposite order.
     ByteBuffer b = ByteBuffer.allocate(4);
     for (int i = 3; i >= 0; i--) {
       b.put(decoded[i]);
     }
-    byte[] expectedHash = b.array();
+    final byte[] expectedHash = b.array();
+    if (threads > 1) {
+      List<Future<Result>> results = new ArrayList<>();
+      ExecutorService executor = Executors.newFixedThreadPool(threads);
+      for (int j = 0; j < threads; j++) {
+        results.add(executor.submit(() -> {
+          System.out.println("Starting thread: " + Thread.currentThread());
+          return readWorkload(numberOfReads, appBuffer, storage, blobId, hashFunction, expectedHash, blob.getSize());
+        }));
+      }
+      executor.shutdown();
+      for(Future<Result> r : results) {
+          Result t =  r.get();
+          System.out.println(t);
+      }
+    } else {
+      Result t = readWorkload(numberOfReads, appBuffer, storage, blobId, hashFunction, expectedHash, blob.getSize());
+      System.out.println(t);
+    }
+    System.out.println("Workload Finished");
+  }
+
+  private static class Result {
+      public long elapsedTime;
+      public long totalSize;
+      public int failures;
+      public double throughput;
+
+      @Override
+      public String toString() {
+          return new Formatter().format("elapsedTime: %d\ntotalSize: %d\nthroughput: %f bps\nfailures: %d", elapsedTime, totalSize, throughput, failures).toString();
+      }
+  }
+
+  private static Result readWorkload(int numberOfReads, int appBuffer, Storage storage, BlobId blobId, HashFunction hashFunction, byte[] expectedHash, Long objectSize) {
+    int failures = 0;
+    ByteBuffer buffer = ByteBuffer.allocate(appBuffer);
+    Clock clock = Clock.systemDefaultZone();
+    Instant startTime = clock.instant();
     for (int i = 0; i < numberOfReads; i++) {
       Hasher h = hashFunction.newHasher();
       ReadChannel r = storage.reader(blobId);
-      while (r.isOpen()) {
-        int bytesRead = r.read(buffer);
-        if (bytesRead == -1) {
-          break;
+      try {
+        while (r.isOpen()) {
+          int bytesRead = r.read(buffer);
+          if (bytesRead == -1) {
+            break;
+          }
+          buffer.flip();
+          h.putBytes(buffer);
+          buffer.clear();
         }
-        buffer.flip();
-        h.putBytes(buffer);
-        buffer.clear();
+        byte[] resultHash = h.hash().asBytes();
+        failures += Arrays.equals(resultHash, expectedHash) ? 0 : 1;
+      } catch (IOException e) {
+        System.err.println("failure: " + e);
+        failures++;
       }
-      byte[] resultHash = h.hash().asBytes();
-      System.out.println(
-          "Downlaoded(" + i + ") - crc32c match?: " + (Arrays.equals(resultHash, expectedHash)));
     }
-    System.out.println("Finished...");
+    Instant endTime = clock.instant();
+    Duration elapsedTime = Duration.between(startTime, endTime);
+    Result r = new Result();
+    r.elapsedTime = elapsedTime.getSeconds();
+    r.totalSize = numberOfReads * objectSize;
+    r.throughput = ((double)r.totalSize/(double)r.elapsedTime);
+    r.failures = failures;
+    return r;
   }
 }
