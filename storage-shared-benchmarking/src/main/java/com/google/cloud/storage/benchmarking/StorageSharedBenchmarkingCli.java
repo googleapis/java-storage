@@ -132,7 +132,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   }
 
   private void runWorkload1Json() {
-    RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
+    RetrySettings retrySettings = StorageOptions.getNoRetrySettings().toBuilder().build();
 
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
@@ -146,7 +146,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   }
 
   private void runWorkload1DirectPath() {
-    RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
+    RetrySettings retrySettings = StorageOptions.getNoRetrySettings().toBuilder().build();
     StorageOptions retryStorageOptions =
         StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
     Storage storageClient = retryStorageOptions.getService();
