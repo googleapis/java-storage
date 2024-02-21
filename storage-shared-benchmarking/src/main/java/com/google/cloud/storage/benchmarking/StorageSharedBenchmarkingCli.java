@@ -19,6 +19,7 @@ package com.google.cloud.storage.benchmarking;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -106,6 +107,12 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
+      case "bidi":
+        runWorkloadBidi();
+        break;
+      case "default-nobidi":
+        runWorkloadNoBidi();
+        break;
       default:
         throw new IllegalStateException("Specify a workload to run");
     }
@@ -151,6 +158,36 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     }
   }
 
+  private void runWorkloadBidi() {
+    StorageOptions options =
+        StorageOptions.grpc()
+            .setProjectId(project)
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+            .build();
+    Storage storageClient = options.getService();
+    try {
+      runBidi(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload bidi" + e.getMessage());
+      System.exit(1);
+    }
+  }
+
+  private void runWorkloadNoBidi() {
+    StorageOptions options =
+        StorageOptions.grpc()
+            .setProjectId(project)
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.getDefault())
+            .build();
+    Storage storageClient = options.getService();
+    try {
+      runBidi(storageClient);
+    } catch (Exception e) {
+      System.err.println("Failed to run workload no bidi" + e.getMessage());
+      System.exit(1);
+    }
+  }
+
   private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
@@ -169,6 +206,19 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
                       tempDir,
                       bucket,
                       false)))
+          .get();
+    }
+  }
+
+  private void runBidi(Storage storageClient) throws ExecutionException, InterruptedException {
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    for (int i = 0; i < samples; i++) {
+      Range objectSizeRange = Range.of(objectSize);
+      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+      convert(
+              executorService.submit(
+                  new Bidi(storageClient, bucket, objectSize, printWriter, api, workers)))
           .get();
     }
   }

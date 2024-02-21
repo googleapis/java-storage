@@ -37,6 +37,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
+import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
@@ -168,6 +169,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<WriteObjectRequest.Builder> writeObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return Mapper.identity();
     }
 
@@ -2264,6 +2269,10 @@ final class UnifiedOpts {
 
     Mapper<WriteObjectRequest.Builder> writeObjectRequest() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::writeObject);
+    }
+
+    Mapper<BidiWriteObjectRequest.Builder> bidiWriteObjectRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::bidiWriteObject);
     }
 
     Mapper<GetObjectRequest.Builder> getObjectsRequest() {
