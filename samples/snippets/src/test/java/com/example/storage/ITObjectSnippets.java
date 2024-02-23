@@ -230,6 +230,7 @@ public class ITObjectSnippets {
     assertTrue(snippetOutput.contains("eventBasedHold: disabled"));
     assertTrue(snippetOutput.contains("User metadata:"));
     assertTrue(snippetOutput.contains("k=v"));
+    assertTrue(snippetOutput.contains("Object Retention Policy: " + remoteBlob.getRetention()));
   }
 
   @Test

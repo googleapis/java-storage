@@ -266,6 +266,7 @@ public class ITBucketSnippets {
     assertTrue(snippetOutput.contains("Labels:"));
     assertTrue(snippetOutput.contains("k=v"));
     assertTrue(snippetOutput.contains("Lifecycle Rules:"));
+    assertTrue(snippetOutput.contains("ObjectRetention: " + bucket.getObjectRetention()));
   }
 
   @Test
