@@ -78,8 +78,7 @@ class Bidi implements Callable<String> {
     pw.println(
         generateCloudMonitoringResult(
                 op,
-                StorageSharedBenchmarkingUtils.calculateThroughput(
-                    created.getSize().doubleValue(), duration),
+                duration.toMillis(),
                 created,
                 api,
                 workers)
