@@ -30,6 +30,7 @@ import com.example.storage.bucket.AddBucketLabel;
 import com.example.storage.bucket.ChangeDefaultStorageClass;
 import com.example.storage.bucket.ConfigureBucketCors;
 import com.example.storage.bucket.CreateBucket;
+import com.example.storage.bucket.CreateBucketWithObjectRetention;
 import com.example.storage.bucket.CreateBucketWithStorageClassAndLocation;
 import com.example.storage.bucket.CreateBucketWithTurboReplication;
 import com.example.storage.bucket.DeleteBucket;
@@ -265,6 +266,7 @@ public class ITBucketSnippets {
     assertTrue(snippetOutput.contains("Labels:"));
     assertTrue(snippetOutput.contains("k=v"));
     assertTrue(snippetOutput.contains("Lifecycle Rules:"));
+    assertTrue(snippetOutput.contains("ObjectRetention: " + bucket.getObjectRetention()));
   }
 
   @Test
@@ -662,10 +664,14 @@ public class ITBucketSnippets {
     String tempBucket = RemoteStorageHelper.generateBucketName();
     Bucket bucket = storage.create(BucketInfo.of(tempBucket));
     assertNotNull(bucket);
-    SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, tempBucket, 5L);
-    assertEquals(5L, (long) storage.get(tempBucket).getRetentionPeriod());
-    LockRetentionPolicy.lockRetentionPolicy(PROJECT_ID, tempBucket);
-    assertTrue(storage.get(tempBucket).retentionPolicyIsLocked());
+    try {
+      SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, tempBucket, 5L);
+      assertEquals(5L, (long) storage.get(tempBucket).getRetentionPeriod());
+      LockRetentionPolicy.lockRetentionPolicy(PROJECT_ID, tempBucket);
+      assertTrue(storage.get(tempBucket).retentionPolicyIsLocked());
+    } finally {
+      storage.delete(tempBucket);
+    }
   }
 
   @Test
@@ -681,5 +687,19 @@ public class ITBucketSnippets {
 
     DisableUniformBucketLevelAccess.disableUniformBucketLevelAccess(PROJECT_ID, BUCKET);
     assertFalse(storage.get(BUCKET).getIamConfiguration().isUniformBucketLevelAccessEnabled());
+  }
+
+  @Test
+  public void testCreateBucketWithObjectRetention() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+
+    try {
+      CreateBucketWithObjectRetention.createBucketWithObjectRetention(PROJECT_ID, tempBucket);
+      assertNotNull(storage.get(tempBucket).getObjectRetention());
+      String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+      assertTrue(snippetOutput.contains("Enabled"));
+    } finally {
+      storage.delete(tempBucket);
+    }
   }
 }

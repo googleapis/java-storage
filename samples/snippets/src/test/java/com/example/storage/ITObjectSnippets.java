@@ -47,6 +47,7 @@ import com.example.storage.object.MakeObjectPublic;
 import com.example.storage.object.MoveObject;
 import com.example.storage.object.RotateObjectEncryptionKey;
 import com.example.storage.object.SetObjectMetadata;
+import com.example.storage.object.SetObjectRetentionPolicy;
 import com.example.storage.object.StreamObjectDownload;
 import com.example.storage.object.StreamObjectUpload;
 import com.example.storage.object.UploadEncryptedObject;
@@ -229,6 +230,7 @@ public class ITObjectSnippets {
     assertTrue(snippetOutput.contains("eventBasedHold: disabled"));
     assertTrue(snippetOutput.contains("User metadata:"));
     assertTrue(snippetOutput.contains("k=v"));
+    assertTrue(snippetOutput.contains("Object Retention Policy: " + remoteBlob.getRetention()));
   }
 
   @Test
@@ -433,5 +435,29 @@ public class ITObjectSnippets {
 
     assertEquals("value", firstBlobMetadata.get("keyToAddOrUpdate"));
     assertEquals("value", secondBlobMetadata.get("keyToAddOrUpdate"));
+  }
+
+  @Test
+  public void testSetObjectRetentionPolicy() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    storage.create(
+        BucketInfo.of(tempBucket), Storage.BucketTargetOption.enableObjectRetention(true));
+    String retentionBlob = "retentionblob";
+    storage.create(BlobInfo.newBuilder(tempBucket, retentionBlob).build());
+    assertNull(storage.get(tempBucket, retentionBlob).getRetention());
+    try {
+      SetObjectRetentionPolicy.setObjectRetentionPolicy(PROJECT_ID, tempBucket, retentionBlob);
+      assertNotNull(storage.get(tempBucket, retentionBlob).getRetention());
+    } finally {
+
+      storage
+          .get(tempBucket, retentionBlob)
+          .toBuilder()
+          .setRetention(null)
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+      storage.delete(tempBucket, retentionBlob);
+      storage.delete(tempBucket);
+    }
   }
 }
