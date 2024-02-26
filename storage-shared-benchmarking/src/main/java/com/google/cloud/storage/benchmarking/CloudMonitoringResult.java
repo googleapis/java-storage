@@ -152,7 +152,7 @@ final class CloudMonitoringResult {
 
   public String formatAsCustomMetric() {
     return String.format(
-        "latency{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
+        "api_latency{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
         library,
         api,
         op,
