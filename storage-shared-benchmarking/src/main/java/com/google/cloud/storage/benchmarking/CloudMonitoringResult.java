@@ -39,7 +39,7 @@ final class CloudMonitoringResult {
   @NonNull private final String transferSize;
   @NonNull private final String transferOffset;
   @NonNull private final String failureMsg;
-  private final double throughput;
+  private final double latency;
 
   CloudMonitoringResult(
       String library,
@@ -57,7 +57,7 @@ final class CloudMonitoringResult {
       String transferSize,
       String transferOffset,
       String failureMsg,
-      double throughput) {
+      double latency) {
     this.library = library;
     this.api = api;
     this.op = op;
@@ -73,7 +73,7 @@ final class CloudMonitoringResult {
     this.transferSize = transferSize;
     this.transferOffset = transferOffset;
     this.failureMsg = failureMsg;
-    this.throughput = throughput;
+    this.latency = latency;
   }
 
   public static Builder newBuilder() {
@@ -98,7 +98,7 @@ final class CloudMonitoringResult {
         .add("transferSize", transferSize)
         .add("transferOffset", transferOffset)
         .add("failureMsg", failureMsg)
-        .add("throughput", throughput)
+        .add("latency", latency)
         .toString();
   }
 
@@ -118,7 +118,7 @@ final class CloudMonitoringResult {
         && crc32CEnabled == result.crc32CEnabled
         && md5Enabled == result.md5Enabled
         && cpuTimeUs == result.cpuTimeUs
-        && Double.compare(result.throughput, throughput) == 0
+        && Double.compare(result.latency, latency) == 0
         && Objects.equals(library, result.library)
         && Objects.equals(api, result.api)
         && Objects.equals(op, result.op)
@@ -147,12 +147,12 @@ final class CloudMonitoringResult {
         transferSize,
         transferOffset,
         failureMsg,
-        throughput);
+        latency);
   }
 
   public String formatAsCustomMetric() {
     return String.format(
-        "throughput{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
+        "latency{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
         library,
         api,
         op,
@@ -164,7 +164,7 @@ final class CloudMonitoringResult {
         bucketName,
         status,
         appBufferSize,
-        throughput);
+        latency);
   }
 
   public static class Builder {
@@ -184,7 +184,7 @@ final class CloudMonitoringResult {
     @NonNull private String transferSize;
     @NonNull private String transferOffset;
     @NonNull private String failureMsg;
-    private double throughput;
+    private double latency;
 
     Builder() {
       library = "";
@@ -272,8 +272,8 @@ final class CloudMonitoringResult {
       return this;
     }
 
-    public Builder setThroughput(double throughput) {
-      this.throughput = throughput;
+    public Builder setLatency(double latency) {
+      this.latency = latency;
       return this;
     }
 
@@ -302,7 +302,7 @@ final class CloudMonitoringResult {
           transferSize,
           transferOffset,
           failureMsg,
-          throughput);
+          latency);
     }
   }
 }

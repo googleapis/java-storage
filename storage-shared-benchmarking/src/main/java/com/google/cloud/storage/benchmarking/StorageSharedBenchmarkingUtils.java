@@ -28,17 +28,8 @@ class StorageSharedBenchmarkingUtils {
         created.getBlobId(), Storage.BlobSourceOption.generationMatch(created.getGeneration()));
   }
 
-  public static double calculateThroughput(double size, Duration elapsedTime) {
-    double adjustedSize =
-        size >= StorageSharedBenchmarkingUtils.SSB_SIZE_THRESHOLD_BYTES
-            ? (size / 1024D) / 1024D
-            : size / 1024D;
-    double throughput = adjustedSize / (elapsedTime.toMillis() / 1000D);
-    return throughput;
-  }
-
   public static CloudMonitoringResult generateCloudMonitoringResult(
-      String op, double throughput, BlobInfo created, String api, int workers) {
+      String op, double latency, BlobInfo created, String api, int workers) {
     CloudMonitoringResult result =
         CloudMonitoringResult.newBuilder()
             .setLibrary("java")
@@ -53,7 +44,7 @@ class StorageSharedBenchmarkingUtils {
             .setBucketName(created.getBucket())
             .setStatus("OK")
             .setTransferSize(created.getSize().toString())
-            .setThroughput(throughput)
+            .setLatency(latency)
             .build();
     return result;
   }

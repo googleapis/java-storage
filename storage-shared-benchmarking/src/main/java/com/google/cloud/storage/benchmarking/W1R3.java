@@ -98,7 +98,7 @@ final class W1R3 implements Callable<String> {
               .setBucketName("")
               .setStatus("FAIL")
               .setTransferSize("")
-              .setThroughput(0)
+              .setLatency(0)
               .build();
       printWriter.println(result.formatAsCustomMetric());
     }
@@ -110,8 +110,7 @@ final class W1R3 implements Callable<String> {
       printWriter.println(
           generateCloudMonitoringResult(
                   op,
-                  StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().doubleValue(), duration),
+                  duration.toMillis(),
                   created.asBlobInfo(),
                   api,
                   workers)
