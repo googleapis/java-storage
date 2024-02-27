@@ -108,12 +108,7 @@ final class W1R3 implements Callable<String> {
   private void printResult(String op, Blob created, Duration duration) {
     if (!isWarmup) {
       printWriter.println(
-          generateCloudMonitoringResult(
-                  op,
-                  duration.toMillis(),
-                  created.asBlobInfo(),
-                  api,
-                  workers)
+          generateCloudMonitoringResult(op, duration.toMillis(), created.asBlobInfo(), api, workers)
               .formatAsCustomMetric());
     }
   }

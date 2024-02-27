@@ -17,7 +17,6 @@ package com.google.cloud.storage.benchmarking;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
-import java.time.Duration;
 
 class StorageSharedBenchmarkingUtils {
   public static long SSB_SIZE_THRESHOLD_BYTES = 1048576;
