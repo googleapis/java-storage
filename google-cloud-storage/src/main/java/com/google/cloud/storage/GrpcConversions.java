@@ -858,6 +858,8 @@ final class GrpcConversions {
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setUpdateTime);
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCreateTime);
     ifNonNull(from.getCustomTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCustomTime);
+    ifNonNull(from.getSoftDeleteTime(), timestampCodec::encode, toBuilder::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), timestampCodec::encode, toBuilder::setHardDeleteTime);
     ifNonNull(
         from.getCustomerEncryption(),
         customerEncryptionCodec::encode,
@@ -922,6 +924,12 @@ final class GrpcConversions {
     }
     if (from.hasCustomerEncryption()) {
       toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
+    }
+    if(from.hasSoftDeleteTime()) {
+      toBuilder.setSoftDeleteTime(timestampCodec.decode(from.getSoftDeleteTime()));
+    }
+    if(from.hasHardDeleteTime()) {
+      toBuilder.setHardDeleteTime(timestampCodec.decode(from.getHardDeleteTime()));
     }
     String storageClass = from.getStorageClass();
     if (!storageClass.isEmpty()) {
