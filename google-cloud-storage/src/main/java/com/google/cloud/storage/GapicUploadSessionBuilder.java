@@ -18,9 +18,12 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.WriteObjectRequest;
@@ -38,6 +41,11 @@ final class GapicUploadSessionBuilder {
   GapicWritableByteChannelSessionBuilder byteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
     return new GapicWritableByteChannelSessionBuilder(write);
+  }
+
+  GapicBidiWritableByteChannelSessionBuilder bidiByteChannel(
+      BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write) {
+    return new GapicBidiWritableByteChannelSessionBuilder(write);
   }
 
   ApiFuture<ResumableWrite> resumableWrite(
@@ -60,6 +68,29 @@ final class GapicUploadSessionBuilder {
     return ApiFutures.transform(
         x.futureCall(req),
         (resp) -> new ResumableWrite(req, resp, f),
+        MoreExecutors.directExecutor());
+  }
+
+  ApiFuture<BidiResumableWrite> bidiResumableWrite(
+      UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
+      BidiWriteObjectRequest writeObjectRequest) {
+    StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
+    if (writeObjectRequest.hasWriteObjectSpec()) {
+      b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
+    }
+    if (writeObjectRequest.hasCommonObjectRequestParams()) {
+      b.setCommonObjectRequestParams(writeObjectRequest.getCommonObjectRequestParams());
+    }
+    if (writeObjectRequest.hasObjectChecksums()) {
+      b.setObjectChecksums(writeObjectRequest.getObjectChecksums());
+    }
+    StartResumableWriteRequest req = b.build();
+    Function<String, BidiWriteObjectRequest> f =
+        uploadId ->
+            writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
+    return ApiFutures.transform(
+        x.futureCall(req),
+        (resp) -> new BidiResumableWrite(req, resp, f),
         MoreExecutors.directExecutor());
   }
 }

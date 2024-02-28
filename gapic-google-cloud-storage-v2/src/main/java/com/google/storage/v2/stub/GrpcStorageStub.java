@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -475,12 +475,8 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate GET_IAM_POLICY_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate GET_IAM_POLICY_1_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
   private static final PathTemplate SET_IAM_POLICY_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate SET_IAM_POLICY_1_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
   private static final PathTemplate TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE =
@@ -631,7 +627,6 @@ public class GrpcStorageStub extends StorageStub {
                 request -> {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getResource(), "bucket", GET_IAM_POLICY_0_PATH_TEMPLATE);
-                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_1_PATH_TEMPLATE);
                   return builder.build();
                 })
             .build();
@@ -642,7 +637,6 @@ public class GrpcStorageStub extends StorageStub {
                 request -> {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getResource(), "bucket", SET_IAM_POLICY_0_PATH_TEMPLATE);
-                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_1_PATH_TEMPLATE);
                   return builder.build();
                 })
             .build();

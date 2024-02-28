@@ -84,6 +84,7 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
+import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
@@ -1835,8 +1836,30 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
+  BidiWriteObjectRequest getBidiWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
+    Object object = codecs.blobInfo().encode(info);
+    Object.Builder objectBuilder =
+        object
+            .toBuilder()
+            // required if the data is changing
+            .clearChecksums()
+            // trimmed to shave payload size
+            .clearGeneration()
+            .clearMetageneration()
+            .clearSize()
+            .clearCreateTime()
+            .clearUpdateTime();
+    WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
+
+    BidiWriteObjectRequest.Builder requestBuilder =
+        BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
+
+    return opts.bidiWriteObjectRequest().apply(requestBuilder).build();
+  }
+
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
+
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
@@ -1860,6 +1883,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return ResumableMedia.gapic()
         .write()
         .resumableWrite(
+            storageClient
+                .startResumableWriteCallable()
+                .withDefaultCallContext(merge.withRetryableCodes(codes)),
+            req);
+  }
+
+  ApiFuture<BidiResumableWrite> startResumableWrite(
+      GrpcCallContext grpcCallContext, BidiWriteObjectRequest req) {
+    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
+    return ResumableMedia.gapic()
+        .write()
+        .bidiResumableWrite(
             storageClient
                 .startResumableWriteCallable()
                 .withDefaultCallContext(merge.withRetryableCodes(codes)),

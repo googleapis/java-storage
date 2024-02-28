@@ -15,7 +15,7 @@
  */
 package com.google.cloud.storage.benchmarking;
 
-import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import java.time.Duration;
 
@@ -23,7 +23,7 @@ class StorageSharedBenchmarkingUtils {
   public static long SSB_SIZE_THRESHOLD_BYTES = 1048576;
   public static int DEFAULT_NUMBER_OF_READS = 3;
 
-  public static void cleanupObject(Storage storage, Blob created) {
+  public static void cleanupObject(Storage storage, BlobInfo created) {
     storage.delete(
         created.getBlobId(), Storage.BlobSourceOption.generationMatch(created.getGeneration()));
   }
@@ -35,5 +35,26 @@ class StorageSharedBenchmarkingUtils {
             : size / 1024D;
     double throughput = adjustedSize / (elapsedTime.toMillis() / 1000D);
     return throughput;
+  }
+
+  public static CloudMonitoringResult generateCloudMonitoringResult(
+      String op, double throughput, BlobInfo created, String api, int workers) {
+    CloudMonitoringResult result =
+        CloudMonitoringResult.newBuilder()
+            .setLibrary("java")
+            .setApi(api)
+            .setOp(op)
+            .setWorkers(workers)
+            .setObjectSize(created.getSize().intValue())
+            .setChunksize(created.getSize().intValue())
+            .setCrc32cEnabled(false)
+            .setMd5Enabled(false)
+            .setCpuTimeUs(-1)
+            .setBucketName(created.getBucket())
+            .setStatus("OK")
+            .setTransferSize(created.getSize().toString())
+            .setThroughput(throughput)
+            .build();
+    return result;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.core.InstantiatingExecutorProvider;
@@ -626,6 +625,15 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
             "Transport not supported: %s", getTransportChannelProvider().getTransportName()));
   }
 
+  /** Returns the endpoint set by the user or the the service's default endpoint. */
+  @Override
+  public String getEndpoint() {
+    if (super.getEndpoint() != null) {
+      return super.getEndpoint();
+    }
+    return getDefaultEndpoint();
+  }
+
   /** Returns the default service name. */
   @Override
   public String getServiceName() {
@@ -669,7 +677,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return defaultGrpcTransportProviderBuilder().build();
   }
 
-  @BetaApi("The surface for customizing headers is not stable yet and may change in the future.")
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
     return ApiClientHeaderProvider.newBuilder()
         .setGeneratedLibToken("gapic", GaxProperties.getLibraryVersion(StorageStubSettings.class))
@@ -973,7 +980,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       builder.setTransportChannelProvider(defaultTransportChannelProvider());
       builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());
       builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());
-      builder.setEndpoint(getDefaultEndpoint());
       builder.setMtlsEndpoint(getDefaultMtlsEndpoint());
       builder.setSwitchToMtlsEndpointAllowed(true);
 
@@ -1332,6 +1338,15 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     public UnaryCallSettings.Builder<UpdateHmacKeyRequest, HmacKeyMetadata>
         updateHmacKeySettings() {
       return updateHmacKeySettings;
+    }
+
+    /** Returns the endpoint set by the user or the the service's default endpoint. */
+    @Override
+    public String getEndpoint() {
+      if (super.getEndpoint() != null) {
+        return super.getEndpoint();
+      }
+      return getDefaultEndpoint();
     }
 
     @Override

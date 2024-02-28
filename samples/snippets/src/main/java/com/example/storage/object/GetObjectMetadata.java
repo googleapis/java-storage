@@ -68,6 +68,7 @@ public class GetObjectMetadata {
     System.out.println("StorageClass: " + blob.getStorageClass());
     System.out.println("TimeCreated: " + new Date(blob.getCreateTime()));
     System.out.println("Last Metadata Update: " + new Date(blob.getUpdateTime()));
+    System.out.println("Object Retention Policy: " + blob.getRetention());
     Boolean temporaryHoldIsEnabled = (blob.getTemporaryHold() != null && blob.getTemporaryHold());
     System.out.println("temporaryHold: " + (temporaryHoldIsEnabled ? "enabled" : "disabled"));
     Boolean eventBasedHoldIsEnabled =

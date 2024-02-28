@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.RequestParamsBuilder;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.api.pathtemplate.PathTemplate;
+import com.google.common.base.Strings;
 import com.google.longrunning.Operation;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
@@ -43,6 +44,7 @@ import com.google.storage.control.v2.StorageLayout;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 
@@ -184,6 +186,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   builder.add(request.getParent(), "bucket", CREATE_FOLDER_0_PATH_TEMPLATE);
                   return builder.build();
                 })
+            .setRequestMutator(
+                request -> {
+                  CreateFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
             .build();
     GrpcCallSettings<DeleteFolderRequest, Empty> deleteFolderTransportSettings =
         GrpcCallSettings.<DeleteFolderRequest, Empty>newBuilder()
@@ -194,6 +204,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   builder.add(request.getName(), "bucket", DELETE_FOLDER_0_PATH_TEMPLATE);
                   return builder.build();
                 })
+            .setRequestMutator(
+                request -> {
+                  DeleteFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
             .build();
     GrpcCallSettings<GetFolderRequest, Folder> getFolderTransportSettings =
         GrpcCallSettings.<GetFolderRequest, Folder>newBuilder()
@@ -203,6 +221,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getName(), "bucket", GET_FOLDER_0_PATH_TEMPLATE);
                   return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  GetFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
                 })
             .build();
     GrpcCallSettings<ListFoldersRequest, ListFoldersResponse> listFoldersTransportSettings =
@@ -224,6 +250,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   builder.add(request.getName(), "bucket", RENAME_FOLDER_0_PATH_TEMPLATE);
                   return builder.build();
                 })
+            .setRequestMutator(
+                request -> {
+                  RenameFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
             .build();
     GrpcCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutTransportSettings =
         GrpcCallSettings.<GetStorageLayoutRequest, StorageLayout>newBuilder()
@@ -233,6 +267,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getName(), "bucket", GET_STORAGE_LAYOUT_0_PATH_TEMPLATE);
                   return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  GetStorageLayoutRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
                 })
             .build();
 
