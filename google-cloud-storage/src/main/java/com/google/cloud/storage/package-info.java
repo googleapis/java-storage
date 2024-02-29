@@ -66,7 +66,7 @@
  * features remain experimental and subject to change without notice. The methods to create, list,
  * query, and delete HMAC keys and notifications are unavailable in gRPC transport.
  *
- * <p>This example shows how to enable gRPC with DirectPath only supported on Google Compute Engine.
+ * <p>This example shows how to enable gRPC with Direct Google Access only supported on Google Compute Engine.
  *
  * <pre>{@code
  * StorageOptions options = StorageOptions.grpc().setAttemptDirectPath(true).build();
@@ -83,7 +83,7 @@
  * }
  * }</pre>
  *
- * <p>This example shows how to enable gRPC without DirectPath.
+ * <p>This example shows how to enable gRPC.
  *
  * <pre>{@code
  * StorageOptions options = StorageOptions.grpc().build();
