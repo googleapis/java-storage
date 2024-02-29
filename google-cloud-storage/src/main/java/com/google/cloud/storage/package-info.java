@@ -56,18 +56,15 @@
  * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/BlobWriteChannel.java">
  * BlobWriteChannel</a>.
  *
- * <p>The GCS Java client library includes support to GCS via gRPC.
- * When using GCS from Google Compute Engine (GCE) this library enable higher
- * total throughput across large workloads that run on hundreds or thousands of
- * VMs.</p>
+ * <p>The GCS Java client library includes support to GCS via gRPC. When using GCS from Google
+ * Compute Engine (GCE) this library enable higher total throughput across large workloads that run
+ * on hundreds or thousands of VMs.
  *
- * <p>At present, GCS gRPC is GA with Allowlist. To access this API,
- *   kindly contact the Google Cloud Storage gRPC team at
- *   gcs-grpc-contact@google.com with a list of GCS buckets you would like to
- *   Allowlist. Please note that while the **service** is GA (with Allowlist),
- *   the client library features remain experimental and subject to change
- *   without notice. The methods to create, list, query, and delete HMAC keys and notifications
- *   are unavailable in gRPC transport.</p>
+ * <p>At present, GCS gRPC is GA with Allowlist. To access this API, kindly contact the Google Cloud
+ * Storage gRPC team at gcs-grpc-contact@google.com with a list of GCS buckets you would like to
+ * Allowlist. Please note that while the **service** is GA (with Allowlist), the client library
+ * features remain experimental and subject to change without notice. The methods to create, list,
+ * query, and delete HMAC keys and notifications are unavailable in gRPC transport.
  *
  * <p>This example shows how to enable gRPC with DirectPath only supported on Google Compute Engine.
  *
