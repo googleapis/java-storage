@@ -925,10 +925,10 @@ final class GrpcConversions {
     if (from.hasCustomerEncryption()) {
       toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
     }
-    if(from.hasSoftDeleteTime()) {
+    if (from.hasSoftDeleteTime()) {
       toBuilder.setSoftDeleteTime(timestampCodec.decode(from.getSoftDeleteTime()));
     }
-    if(from.hasHardDeleteTime()) {
+    if (from.hasHardDeleteTime()) {
       toBuilder.setHardDeleteTime(timestampCodec.decode(from.getHardDeleteTime()));
     }
     String storageClass = from.getStorageClass();
