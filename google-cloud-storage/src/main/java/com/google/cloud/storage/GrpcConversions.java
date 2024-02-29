@@ -17,7 +17,11 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
-import static com.google.cloud.storage.Utils.*;
+import static com.google.cloud.storage.Utils.bucketNameCodec;
+import static com.google.cloud.storage.Utils.ifNonNull;
+import static com.google.cloud.storage.Utils.lift;
+import static com.google.cloud.storage.Utils.projectNameCodec;
+import static com.google.cloud.storage.Utils.topicNameCodec;
 
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
