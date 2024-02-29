@@ -386,11 +386,11 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     /**
-     * Option which signifies the client should attempt to connect to gcs via Direct Path.
+     * Option which signifies the client should attempt to connect to gcs via Direct Google Access.
      *
      * <p><i>NOTE</i>There is no need to specify a new endpoint via {@link #setHost(String)} as the
      * underlying code will translate the normal {@code https://storage.googleapis.com:443} into the
-     * proper Direct Path URI for you.
+     * proper Direct Google Access URI for you.
      *
      * @since 2.14.0 This new api is in preview and is subject to breaking changes.
      */
