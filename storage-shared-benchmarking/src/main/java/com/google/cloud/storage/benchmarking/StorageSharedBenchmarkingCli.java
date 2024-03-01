@@ -191,7 +191,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   private void runW1R3(Storage storageClient) throws ExecutionException, InterruptedException {
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    System.out.println("Before Warm up");
     runWarmup(storageClient);
+    System.out.println("After warm up");
     for (int i = 0; i < samples; i++) {
       Range objectSizeRange = Range.of(objectSize);
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);

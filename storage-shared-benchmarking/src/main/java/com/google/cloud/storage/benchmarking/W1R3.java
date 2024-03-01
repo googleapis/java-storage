@@ -73,7 +73,7 @@ final class W1R3 implements Callable<String> {
       Instant endTime = clock.instant();
       Duration elapsedTimeUpload = Duration.between(startTime, endTime);
       printResult("WRITE", created, elapsedTimeUpload);
-      for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
+      for (int i = 0; i < StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
         try (TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin")) {
           startTime = clock.instant();
           storage.downloadTo(created.getBlobId(), dest.getPath());
