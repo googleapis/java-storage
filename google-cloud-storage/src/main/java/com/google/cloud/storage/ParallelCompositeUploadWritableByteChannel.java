@@ -31,6 +31,8 @@ import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCustomTimeStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCustomTimeStrategy.CustomTimeSet;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.UnifiedOpts.Crc32cMatch;
@@ -56,6 +58,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.ClosedChannelException;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -81,6 +85,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       MetadataField.forPartRange("pcu_partIndex");
   private static final MetadataField<Long> OBJECT_OFFSET =
       MetadataField.forLong("pcu_objectOffset");
+  private static final MetadataField<String> CUSTOM_TIME =
+      MetadataField.forString("CustomTime");
   private static final Comparator<BlobInfo> comparator =
       Comparator.comparing(PART_INDEX::readFrom, PartRange.COMP);
   private static final Predicate<ObjectTargetOpt> TO_EXCLUDE_FROM_PARTS;
@@ -111,6 +117,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
   private final int maxElementsPerCompact;
+  private final PartCustomTimeStrategy partCustomTimeStrategy;
   private final SettableApiFuture<BlobInfo> finalObject;
   private final StorageInternal storage;
   private final BlobInfo ultimateObject;
@@ -135,7 +142,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy,
       int maxElementsPerCompact,
-      SettableApiFuture<BlobInfo> finalObject,
+      PartCustomTimeStrategy partCustomTimeStrategy, SettableApiFuture<BlobInfo> finalObject,
       StorageInternal storage,
       BlobInfo ultimateObject,
       Opts<ObjectTargetOpt> opts) {
@@ -144,6 +151,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
     this.maxElementsPerCompact = maxElementsPerCompact;
+    this.partCustomTimeStrategy = partCustomTimeStrategy;
     this.finalObject = finalObject;
     this.storage = storage;
     this.ultimateObject = ultimateObject;
@@ -426,6 +434,11 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     FINAL_OBJECT_NAME.appendTo(id.getName(), builder);
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
+    if(partCustomTimeStrategy.isSetCustomTime()) {
+      Duration timeInFuture = partCustomTimeStrategy.getTimeInFuture();
+      OffsetDateTime now = OffsetDateTime.now();
+      CUSTOM_TIME.appendTo(now.plus(timeInFuture).toString(), builder);
+    }
     b.setMetadata(builder.build());
     return b.build();
   }

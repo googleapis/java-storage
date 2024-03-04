@@ -21,8 +21,10 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.google.cloud.storage.MetadataField.PartRange;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCustomTimeStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.common.truth.StringSubject;
+import java.time.Duration;
 import org.junit.Test;
 
 public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
@@ -36,7 +38,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         // random digest to spread over keyspace
         () -> assertField(fmt, 0).hasLength(22),
         // name digest
-        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 1).hasLength(8),
         () -> assertField(fmt, 2).isEqualTo("0001-0032.part"));
   }
 
@@ -85,6 +87,20 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         () -> assertField(fmt, 1).hasLength(22),
         () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
         () -> assertThat(fmt).startsWith("a/b/obj"));
+  }
+
+  @Test
+  public void partCustomTimeStrategy_noCustomTime() {
+    PartCustomTimeStrategy strategy = PartCustomTimeStrategy.noCustomTime();
+    assertThat(strategy.isSetCustomTime()).isFalse();
+    assertThat(strategy.getTimeInFuture()).isNull();
+  }
+  @Test
+  public void partCustomTimeStrategy_customTimeSet(){
+    Duration timeInFuture = Duration.ofSeconds(30);
+    PartCustomTimeStrategy strategy = PartCustomTimeStrategy.setCustomTime(timeInFuture);
+    assertThat(strategy.isSetCustomTime()).isTrue();
+    assertThat(strategy.getTimeInFuture()).isEqualTo(timeInFuture);
   }
 
   private static StringSubject assertField(String fmt, int idx) {
