@@ -95,8 +95,9 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
     assertThat(strategy.isSetCustomTime()).isFalse();
     assertThat(strategy.getTimeInFuture()).isNull();
   }
+
   @Test
-  public void partCustomTimeStrategy_customTimeSet(){
+  public void partCustomTimeStrategy_customTimeSet() {
     Duration timeInFuture = Duration.ofSeconds(30);
     PartCustomTimeStrategy strategy = PartCustomTimeStrategy.setCustomTime(timeInFuture);
     assertThat(strategy.isSetCustomTime()).isTrue();

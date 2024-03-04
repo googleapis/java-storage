@@ -205,7 +205,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             storageInternal,
             info,
             opts);
@@ -244,7 +245,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             storageInternal,
             info,
             opts);
@@ -343,7 +345,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             new FakeStorageInternal() {
               @Override
               public BlobInfo internalDirectUpload(
@@ -432,7 +435,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             new FakeStorageInternal() {
               @Override
               public BlobInfo internalDirectUpload(
@@ -465,7 +469,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             new FakeStorageInternal() {
               @Override
               public BlobInfo compose(ComposeRequest composeRequest) {
@@ -571,7 +576,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
               partNamingStrategy,
               PartCleanupStrategy.never(),
               32,
-              partCustomTimeStrategy, finalObject,
+              partCustomTimeStrategy,
+              finalObject,
               storageInternal,
               info,
               opts);
@@ -650,7 +656,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             new FakeStorageInternal() {
               @Override
               public BlobInfo compose(ComposeRequest composeRequest) {
@@ -732,7 +739,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             10,
-            partCustomTimeStrategy, finalObject,
+            partCustomTimeStrategy,
+            finalObject,
             storageInternal,
             info,
             opts);
@@ -760,7 +768,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         partNamingStrategy,
         PartCleanupStrategy.always(),
         maxElementsPerCompact,
-        partCustomTimeStrategy, finalObject,
+        partCustomTimeStrategy,
+        finalObject,
         storageInternal,
         info,
         opts);

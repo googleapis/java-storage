@@ -133,7 +133,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       ExecutorSupplier executorSupplier,
       BufferAllocationStrategy bufferAllocationStrategy,
       PartNamingStrategy partNamingStrategy,
-      PartCleanupStrategy partCleanupStrategy,PartCustomTimeStrategy partCustomTimeStrategy) {
+      PartCleanupStrategy partCleanupStrategy,
+      PartCustomTimeStrategy partCustomTimeStrategy) {
     this.maxPartsPerCompose = maxPartsPerCompose;
     this.executorSupplier = executorSupplier;
     this.bufferAllocationStrategy = bufferAllocationStrategy;
@@ -243,9 +244,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   }
 
   @BetaApi
-  public ParallelCompositeUploadBlobWriteSessionConfig withPartCustomTimeStrategy(PartCustomTimeStrategy partCustomTimeStrategy) {
+  public ParallelCompositeUploadBlobWriteSessionConfig withPartCustomTimeStrategy(
+      PartCustomTimeStrategy partCustomTimeStrategy) {
     checkNotNull(partCustomTimeStrategy, "partCustomTimeStrategy must be non null");
-    return new ParallelCompositeUploadBlobWriteSessionConfig(maxPartsPerCompose,
+    return new ParallelCompositeUploadBlobWriteSessionConfig(
+        maxPartsPerCompose,
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
@@ -651,10 +654,9 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
   }
   /**
-   * A strategy which will be used to generate a value for a part or intermediary compose
-   * object's CustomTime Metadata Field. This will be a time set a duration in the future
-   * which will serve to aid in part cleanup via OLM Rules.
-   *
+   * A strategy which will be used to generate a value for a part or intermediary compose object's
+   * CustomTime Metadata Field. This will be a time set a duration in the future which will serve to
+   * aid in part cleanup via OLM Rules.
    *
    * @see #withPartCustomTimeStrategy(PartCustomTimeStrategy)
    * @since <TBD></> This new api is in preview and is subject to breaking changes.
@@ -667,7 +669,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     private PartCustomTimeStrategy(boolean isSetCustomTime) {
       this.isSetCustomTime = isSetCustomTime;
     }
-     abstract Duration getTimeInFuture();
+
+    abstract Duration getTimeInFuture();
 
     public boolean isSetCustomTime() {
       return isSetCustomTime;
@@ -677,22 +680,25 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     public static CustomTimeSet setCustomTime(Duration timeInFuture) {
       return new CustomTimeSet(timeInFuture);
     }
+
     @BetaApi
     public static NoCustomTime noCustomTime() {
       return new NoCustomTime();
     }
 
-
     static final class CustomTimeSet extends PartCustomTimeStrategy {
       private final Duration timeInFuture;
+
       protected Duration getTimeInFuture() {
         return timeInFuture;
       }
+
       CustomTimeSet(Duration timeInFuture) {
         super(true);
         this.timeInFuture = timeInFuture;
       }
     }
+
     static final class NoCustomTime extends PartCustomTimeStrategy {
       NoCustomTime() {
         super(false);
@@ -700,7 +706,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
       @Override
       Duration getTimeInFuture() {
-        return null;
+        throw new IllegalStateException("There is no time in future for NoCustomTime Strategy");
       }
     }
   }
@@ -834,7 +840,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
                 partNamingStrategy,
                 partCleanupStrategy,
                 maxPartsPerCompose,
-                partCustomTimeStrategy, result,
+                partCustomTimeStrategy,
+                result,
                 storageInternal,
                 info,
                 opts);

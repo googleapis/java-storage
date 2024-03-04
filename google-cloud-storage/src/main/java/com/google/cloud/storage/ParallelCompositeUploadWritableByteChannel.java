@@ -139,7 +139,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy,
       int maxElementsPerCompact,
-      PartCustomTimeStrategy partCustomTimeStrategy, SettableApiFuture<BlobInfo> finalObject,
+      PartCustomTimeStrategy partCustomTimeStrategy,
+      SettableApiFuture<BlobInfo> finalObject,
       StorageInternal storage,
       BlobInfo ultimateObject,
       Opts<ObjectTargetOpt> opts) {
@@ -432,7 +433,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
     b.setMetadata(builder.build());
-    if(partCustomTimeStrategy.isSetCustomTime()) {
+    if (partCustomTimeStrategy.isSetCustomTime()) {
       Duration timeInFuture = partCustomTimeStrategy.getTimeInFuture();
       OffsetDateTime now = OffsetDateTime.now();
       b.setCustomTimeOffsetDateTime(now.plus(timeInFuture));
