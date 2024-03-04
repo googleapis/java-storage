@@ -269,7 +269,7 @@
               <dependency>io.grpc:grpc-netty-shaded</dependency>
               <!--
               defining a runtime dependency on this so it is on the default classpath for customers wanting
-              to use direct path
+              to use Direct Google Access
               -->
               <dependency>io.grpc:grpc-googleapis</dependency>
               <dependency>io.grpc:grpc-xds</dependency>
