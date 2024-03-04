@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.35.0](https://github.com/googleapis/java-storage/compare/v2.34.0...v2.35.0) (2024-03-04)
+
+
+### Features
+
+* Add Bidi write feature ([#2343](https://github.com/googleapis/java-storage/issues/2343)) ([47fde85](https://github.com/googleapis/java-storage/commit/47fde853c17d16689a732d5d8eadc70a45efea49))
+* Add soft_delete_time and hard_delete_time object metadata fields ([#2415](https://github.com/googleapis/java-storage/issues/2415)) ([0b67e2d](https://github.com/googleapis/java-storage/commit/0b67e2d2a176e03bcac876bc0b081a69e981ca82))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.27.0 ([#2432](https://github.com/googleapis/java-storage/issues/2432)) ([334119c](https://github.com/googleapis/java-storage/commit/334119ca7e63858b9d1534e0b0b72214de0ad0d1))
+* Update dependency net.jqwik:jqwik to v1.8.3 ([#2425](https://github.com/googleapis/java-storage/issues/2425)) ([17f366c](https://github.com/googleapis/java-storage/commit/17f366c05c2b299ee17e3a936aa470c96c09e5a7))
+* Update dependency net.jqwik:jqwik to v1.8.3 ([#2428](https://github.com/googleapis/java-storage/issues/2428)) ([ba485b3](https://github.com/googleapis/java-storage/commit/ba485b3347f84f35465dcbe63443fdff9c43c7cf))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.10.1 ([#2421](https://github.com/googleapis/java-storage/issues/2421)) ([fff0295](https://github.com/googleapis/java-storage/commit/fff0295f2c397f60eae1dc9215b2ba3cbba42f33))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.10.1 ([#2427](https://github.com/googleapis/java-storage/issues/2427)) ([d031c46](https://github.com/googleapis/java-storage/commit/d031c465064c86844293b0f0395bf8734bbcd91e))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.41.0 ([#2419](https://github.com/googleapis/java-storage/issues/2419)) ([4b05639](https://github.com/googleapis/java-storage/commit/4b05639756eb19ca197c882581cd6ad1a1729683))
+
+
+### Documentation
+
+* Add samples for object retention ([#2417](https://github.com/googleapis/java-storage/issues/2417)) ([45837d3](https://github.com/googleapis/java-storage/commit/45837d33a88deb017a97e403b1437ab15c2c8c67))
+
 ## [2.34.0](https://github.com/googleapis/java-storage/compare/v2.33.0...v2.34.0) (2024-02-14)
 
 
