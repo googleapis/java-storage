@@ -158,8 +158,8 @@ public final class GrpcStorageOptions extends StorageOptions
     URI uri = URI.create(endpoint);
     String scheme = uri.getScheme();
     int port = uri.getPort();
-    // Gax routes the endpoint into a method which can't handle schemes, unless for direct path
-    // try and strip here if we can
+    // Gax routes the endpoint into a method which can't handle schemes,
+    // unless for Direct Google Access try and strip here if we can
     switch (scheme) {
       case "http":
         endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 80);
