@@ -32,7 +32,6 @@ import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWrita
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCustomTimeStrategy;
-import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCustomTimeStrategy.CustomTimeSet;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.UnifiedOpts.Crc32cMatch;
@@ -85,8 +84,6 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       MetadataField.forPartRange("pcu_partIndex");
   private static final MetadataField<Long> OBJECT_OFFSET =
       MetadataField.forLong("pcu_objectOffset");
-  private static final MetadataField<String> CUSTOM_TIME =
-      MetadataField.forString("CustomTime");
   private static final Comparator<BlobInfo> comparator =
       Comparator.comparing(PART_INDEX::readFrom, PartRange.COMP);
   private static final Predicate<ObjectTargetOpt> TO_EXCLUDE_FROM_PARTS;
@@ -434,12 +431,12 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     FINAL_OBJECT_NAME.appendTo(id.getName(), builder);
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
+    b.setMetadata(builder.build());
     if(partCustomTimeStrategy.isSetCustomTime()) {
       Duration timeInFuture = partCustomTimeStrategy.getTimeInFuture();
       OffsetDateTime now = OffsetDateTime.now();
-      CUSTOM_TIME.appendTo(now.plus(timeInFuture).toString(), builder);
+      b.setCustomTimeOffsetDateTime(now.plus(timeInFuture));
     }
-    b.setMetadata(builder.build());
     return b.build();
   }
 
