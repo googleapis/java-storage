@@ -43,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.concurrent.Executor;
@@ -126,7 +127,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   private final BufferAllocationStrategy bufferAllocationStrategy;
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
-  private final PartCustomTimeStrategy partCustomTimeStrategy;
+  private final PartMetadataFieldSupplier partMetadataFieldSupplier;
 
   private ParallelCompositeUploadBlobWriteSessionConfig(
       int maxPartsPerCompose,
@@ -134,13 +135,13 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       BufferAllocationStrategy bufferAllocationStrategy,
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy,
-      PartCustomTimeStrategy partCustomTimeStrategy) {
+      PartMetadataFieldSupplier partMetadataFieldSupplier) {
     this.maxPartsPerCompose = maxPartsPerCompose;
     this.executorSupplier = executorSupplier;
     this.bufferAllocationStrategy = bufferAllocationStrategy;
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
-    this.partCustomTimeStrategy = partCustomTimeStrategy;
+    this.partMetadataFieldSupplier = partMetadataFieldSupplier;
   }
 
   @InternalApi
@@ -155,7 +156,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   /**
@@ -176,7 +177,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   /**
@@ -198,7 +199,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   /**
@@ -219,7 +220,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   /**
@@ -240,20 +241,20 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   @BetaApi
-  public ParallelCompositeUploadBlobWriteSessionConfig withPartCustomTimeStrategy(
-      PartCustomTimeStrategy partCustomTimeStrategy) {
-    checkNotNull(partCustomTimeStrategy, "partCustomTimeStrategy must be non null");
+  public ParallelCompositeUploadBlobWriteSessionConfig withPartMetadataFieldSupplier(
+      PartMetadataFieldSupplier partMetadataFieldSupplier) {
+    checkNotNull(partMetadataFieldSupplier, "partMetadataFieldSupplier must be non null");
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy,
-        partCustomTimeStrategy);
+        partMetadataFieldSupplier);
   }
 
   @BetaApi
@@ -264,7 +265,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         BufferAllocationStrategy.simple(ByteSizeConstants._16MiB),
         PartNamingStrategy.noPrefix(),
         PartCleanupStrategy.always(),
-        PartCustomTimeStrategy.noCustomTime());
+        PartMetadataFieldSupplier.noOp());
   }
 
   @InternalApi
@@ -658,54 +659,41 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * CustomTime Metadata Field. This will be a time set a duration in the future which will serve to
    * aid in part cleanup via OLM Rules.
    *
-   * @see #withPartCustomTimeStrategy(PartCustomTimeStrategy)
-   * @since 2.35.1</> This new api is in preview and is subject to breaking changes.
+   * @see #withPartMetadataFieldSupplier(PartMetadataFieldSupplier)
+   * @since 2.35.1 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
-  public abstract static class PartCustomTimeStrategy implements Serializable {
-    private final boolean isSetCustomTime;
+  public abstract static class PartMetadataFieldSupplier implements Serializable {
 
-    private PartCustomTimeStrategy(boolean isSetCustomTime) {
-      this.isSetCustomTime = isSetCustomTime;
-    }
+    public abstract BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder);
 
-    abstract Duration getTimeInFuture();
-
-    public boolean isSetCustomTime() {
-      return isSetCustomTime;
+    @BetaApi
+    public static CustomTimeInFuture setCustomTimeInFuture(Duration timeInFuture) {
+      return new CustomTimeInFuture(timeInFuture);
     }
 
     @BetaApi
-    public static CustomTimeSet setCustomTime(Duration timeInFuture) {
-      return new CustomTimeSet(timeInFuture);
+    public static NoOp noOp() {
+      return new NoOp();
     }
 
-    @BetaApi
-    public static NoCustomTime noCustomTime() {
-      return new NoCustomTime();
-    }
+    static final class CustomTimeInFuture extends PartMetadataFieldSupplier {
+      private Duration timeInFuture;
 
-    static final class CustomTimeSet extends PartCustomTimeStrategy {
-      private final Duration timeInFuture;
-
-      Duration getTimeInFuture() {
-        return timeInFuture;
-      }
-
-      CustomTimeSet(Duration timeInFuture) {
-        super(true);
+      CustomTimeInFuture(Duration timeInFuture) {
         this.timeInFuture = timeInFuture;
       }
+
+      public BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder) {
+        OffsetDateTime futureTime = OffsetDateTime.now().plus(timeInFuture);
+        return builder.setCustomTimeOffsetDateTime(futureTime);
+      }
     }
 
-    static final class NoCustomTime extends PartCustomTimeStrategy {
-      NoCustomTime() {
-        super(false);
-      }
-
-      Duration getTimeInFuture() {
-        throw new IllegalStateException("There is no time in future for NoCustomTime Strategy");
+    static final class NoOp extends PartMetadataFieldSupplier {
+      public BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder) {
+        return builder;
       }
     }
   }
@@ -839,7 +827,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
                 partNamingStrategy,
                 partCleanupStrategy,
                 maxPartsPerCompose,
-                partCustomTimeStrategy,
+                partMetadataFieldSupplier,
                 result,
                 storageInternal,
                 info,
