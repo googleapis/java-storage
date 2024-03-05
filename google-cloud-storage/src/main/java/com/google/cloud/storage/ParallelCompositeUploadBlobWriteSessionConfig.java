@@ -704,7 +704,6 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         super(false);
       }
 
-      @Override
       Duration getTimeInFuture() {
         throw new IllegalStateException("There is no time in future for NoCustomTime Strategy");
       }
