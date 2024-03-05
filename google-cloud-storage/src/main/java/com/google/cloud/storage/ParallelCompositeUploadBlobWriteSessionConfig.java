@@ -659,7 +659,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * aid in part cleanup via OLM Rules.
    *
    * @see #withPartCustomTimeStrategy(PartCustomTimeStrategy)
-   * @since <TBD></> This new api is in preview and is subject to breaking changes.
+   * @since 2.35.1</> This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -689,7 +689,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     static final class CustomTimeSet extends PartCustomTimeStrategy {
       private final Duration timeInFuture;
 
-      protected Duration getTimeInFuture() {
+      Duration getTimeInFuture() {
         return timeInFuture;
       }
 

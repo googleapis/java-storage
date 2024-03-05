@@ -89,11 +89,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         () -> assertThat(fmt).startsWith("a/b/obj"));
   }
 
-  @Test
+  @Test(expected = IllegalStateException.class)
   public void partCustomTimeStrategy_noCustomTime() {
     PartCustomTimeStrategy strategy = PartCustomTimeStrategy.noCustomTime();
     assertThat(strategy.isSetCustomTime()).isFalse();
-    assertThat(strategy.getTimeInFuture()).isNull();
+    strategy.getTimeInFuture();
   }
 
   @Test
