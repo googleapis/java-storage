@@ -85,16 +85,16 @@ interface Hasher {
       return Crc32cValue.of(Hashing.crc32c().hashBytes(b).asInt(), remaining);
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
     @Override
     public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) throws IOException {
-      Crc32cLengthKnown actual = null;
+      long remaining = 0;
+      com.google.common.hash.Hasher crc32c = Hashing.crc32c().newHasher();
       for (ByteBuffer tmp : b) {
-        if (actual == null) {
-          actual = hash(tmp);
-        }
-        actual.concat(hash(tmp));
+        remaining += tmp.remaining();
+        crc32c.putBytes(tmp);
       }
+      Crc32cLengthKnown actual = Crc32cValue.of(crc32c.hash().asInt(), remaining);
       if (!actual.eqValue(expected)) {
         throw new IOException(
             String.format(

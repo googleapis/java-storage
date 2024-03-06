@@ -25,14 +25,20 @@ import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
+import com.google.api.gax.grpc.GrpcStubCallableFactory;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
+import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.rpc.NoHeaderProvider;
+import com.google.api.gax.rpc.RequestParamsBuilder;
+import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
+import com.google.api.pathtemplate.PathTemplate;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
@@ -42,6 +48,8 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleHandle;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleManager;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -51,17 +59,37 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.CodedInputStream;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Parser;
+import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
+import com.google.storage.v2.stub.GrpcStorageCallableFactory;
+import com.google.storage.v2.stub.GrpcStorageStub;
+import com.google.storage.v2.stub.StorageStub;
+import com.google.storage.v2.stub.StorageStubSettings;
 import io.grpc.ClientInterceptor;
+import io.grpc.Detachable;
+import io.grpc.HasByteBuffer;
+import io.grpc.KnownLength;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.MethodDescriptor;
+import io.grpc.Status;
+import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -658,9 +686,17 @@ public final class GrpcStorageOptions extends StorageOptions
           Tuple<StorageSettings, Opts<UserProject>> t = grpcStorageOptions.resolveSettingsAndOpts();
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
+          StorageStubSettings stubSettings =
+              (StorageStubSettings) storageSettings.getStubSettings();
+          ClientContext clientContext = ClientContext.create(stubSettings);
+          GrpcStorageCallableFactory grpcStorageCallableFactory = new GrpcStorageCallableFactory();
+          InternalGrpcStorageStub stub =
+              new InternalGrpcStorageStub(stubSettings, clientContext, grpcStorageCallableFactory);
+          StorageClient client = new InternalStorageClient(stub);
           return new GrpcStorageImpl(
               grpcStorageOptions,
-              StorageClient.create(storageSettings),
+              client,
+              stub.getObjectMediaResponseMarshaller,
               grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
               defaultOpts);
         } catch (IOException e) {
@@ -777,6 +813,173 @@ public final class GrpcStorageOptions extends StorageOptions
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
+    }
+  }
+
+  private static final class InternalStorageClient extends StorageClient {
+
+    private InternalStorageClient(StorageStub stub) {
+      super(stub);
+    }
+  }
+
+  private static final class InternalGrpcStorageStub extends GrpcStorageStub
+      implements AutoCloseable {
+    private final ReadObjectResponseZeroCopyMessageMarshaller getObjectMediaResponseMarshaller;
+
+    private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse>
+        serverStreamingCallable;
+
+    private InternalGrpcStorageStub(
+        StorageStubSettings settings,
+        ClientContext clientContext,
+        GrpcStubCallableFactory callableFactory)
+        throws IOException {
+      super(settings, clientContext, callableFactory);
+
+      // todo: can this be added to the backgroundResources
+      this.getObjectMediaResponseMarshaller =
+          new ReadObjectResponseZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
+
+      MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
+          MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName("google.storage.v2.Storage/ReadObject")
+              .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
+              .setResponseMarshaller(getObjectMediaResponseMarshaller)
+              .build();
+
+      GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
+          GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
+              .setMethodDescriptor(readObjectMethodDescriptor)
+              .setParamsExtractor(
+                  request -> {
+                    RequestParamsBuilder builder = RequestParamsBuilder.create();
+                    // todo: this is fragile to proto annotation changes, and would require manual
+                    // maintenance
+                    builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
+                    return builder.build();
+                  })
+              .build();
+
+      this.serverStreamingCallable =
+          callableFactory.createServerStreamingCallable(
+              readObjectTransportSettings, settings.readObjectSettings(), clientContext);
+    }
+
+    @Override
+    public ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable() {
+      return serverStreamingCallable;
+    }
+
+    // todo: this class should be closable, and closed when the client is closed
+    //   thereby closing any unclosed streams
+    static class ReadObjectResponseZeroCopyMessageMarshaller
+        implements MethodDescriptor.PrototypeMarshaller<ReadObjectResponse>,
+            ResponseContentLifecycleManager {
+      private final Map<ReadObjectResponse, InputStream> unclosedStreams;
+      private final Parser<ReadObjectResponse> parser;
+      private final MethodDescriptor.PrototypeMarshaller<ReadObjectResponse> baseMarshaller;
+
+      ReadObjectResponseZeroCopyMessageMarshaller(ReadObjectResponse defaultInstance) {
+        parser = defaultInstance.getParserForType();
+        baseMarshaller =
+            (MethodDescriptor.PrototypeMarshaller<ReadObjectResponse>)
+                ProtoUtils.marshaller(defaultInstance);
+        unclosedStreams = Collections.synchronizedMap(new IdentityHashMap<>());
+      }
+
+      @Override
+      public Class<ReadObjectResponse> getMessageClass() {
+        return baseMarshaller.getMessageClass();
+      }
+
+      @Override
+      public ReadObjectResponse getMessagePrototype() {
+        return baseMarshaller.getMessagePrototype();
+      }
+
+      @Override
+      public InputStream stream(ReadObjectResponse value) {
+        return baseMarshaller.stream(value);
+      }
+
+      @Override
+      public ReadObjectResponse parse(InputStream stream) {
+        CodedInputStream cis = null;
+        try {
+          if (stream instanceof KnownLength
+              && stream instanceof Detachable
+              && stream instanceof HasByteBuffer
+              && ((HasByteBuffer) stream).byteBufferSupported()) {
+            int size = stream.available();
+            // Stream is now detached here and should be closed later.
+            stream = ((Detachable) stream).detach();
+            // This mark call is to keep buffer while traversing buffers using skip.
+            stream.mark(size);
+            List<ByteString> byteStrings = new ArrayList<>();
+            while (stream.available() != 0) {
+              ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
+              byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
+              stream.skip(buffer.remaining());
+            }
+            stream.reset();
+            cis = ByteString.copyFrom(byteStrings).newCodedInput();
+            cis.enableAliasing(true);
+            cis.setSizeLimit(Integer.MAX_VALUE);
+          }
+        } catch (IOException e) {
+          // todo: something better than RuntimeException
+          throw new RuntimeException(e);
+        }
+        if (cis != null) {
+          // fast path (no memory copy)
+          ReadObjectResponse message;
+          try {
+            message = parseFrom(cis);
+          } catch (InvalidProtocolBufferException ipbe) {
+            throw Status.INTERNAL
+                .withDescription("Invalid protobuf byte sequence")
+                .withCause(ipbe)
+                .asRuntimeException();
+          }
+          unclosedStreams.put(message, stream);
+          return message;
+        } else {
+          // slow path
+          // todo: can this be pulled earlier?
+          return baseMarshaller.parse(stream);
+        }
+      }
+
+      private ReadObjectResponse parseFrom(CodedInputStream stream)
+          throws InvalidProtocolBufferException {
+        ReadObjectResponse message = parser.parseFrom(stream);
+        try {
+          stream.checkLastTagWas(0);
+          return message;
+        } catch (InvalidProtocolBufferException e) {
+          e.setUnfinishedMessage(message);
+          throw e;
+        }
+      }
+
+      @Override
+      public ResponseContentLifecycleHandle get(ReadObjectResponse response) {
+        InputStream stream = unclosedStreams.remove(response);
+        return new ResponseContentLifecycleHandle(response, stream);
+      }
+    }
+  }
+
+  static void asdf(StorageSettings settings) throws IOException {
+    StorageStubSettings stubSettings = (StorageStubSettings) settings.getStubSettings();
+    ClientContext clientContext = ClientContext.create(stubSettings);
+    GrpcStorageCallableFactory callableFactory = new GrpcStorageCallableFactory();
+    try (StorageClient client =
+        StorageClient.create(
+            new InternalGrpcStorageStub(stubSettings, clientContext, callableFactory))) {
+      client.readObjectCallable();
     }
   }
 }

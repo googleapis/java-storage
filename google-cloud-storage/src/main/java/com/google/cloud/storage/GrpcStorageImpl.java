@@ -34,20 +34,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
-import com.google.api.gax.rpc.RequestParamsBuilder;
-import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
-import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
@@ -55,6 +50,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleManager;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -88,12 +84,7 @@ import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.FieldMask;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Message;
-import com.google.protobuf.Parser;
-import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
@@ -121,7 +112,6 @@ import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
-import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
@@ -132,13 +122,6 @@ import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
-import com.google.storage.v2.stub.GrpcStorageCallableFactory;
-import io.grpc.Detachable;
-import io.grpc.HasByteBuffer;
-import io.grpc.KnownLength;
-import io.grpc.MethodDescriptor;
-import io.grpc.Status;
-import io.grpc.protobuf.ProtoUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -153,10 +136,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -199,6 +179,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
+  final ResponseContentLifecycleManager responseContentLifecycleManager;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
@@ -211,26 +192,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   GrpcStorageImpl(
       GrpcStorageOptions options,
       StorageClient storageClient,
+      ResponseContentLifecycleManager responseContentLifecycleManager,
       WriterFactory writerFactory,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
-    try {
-      this.serverStreamingCallable =
-          new GrpcStorageCallableFactory()
-              .createServerStreamingCallable(
-                  readObjectTransportSettings,
-                  storageClient.getSettings().readObjectSettings(),
-                  ClientContext.create(storageClient.getSettings()));
-    } catch (IOException e) {
-      // prototyping we do not want to do this;
-    }
   }
 
   @Override
@@ -712,8 +685,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return reader(BlobId.of(bucket, blob), options);
   }
 
-  private ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> serverStreamingCallable;
-
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
@@ -724,7 +695,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
 
     return new GrpcBlobReadChannel(
-        serverStreamingCallable.withDefaultCallContext(grpcCallContext),
+        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        responseContentLifecycleManager,
         request,
         !opts.autoGzipDecompression());
   }
@@ -1843,120 +1815,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
-  public static final ZeroCopyMessageMarshaller getObjectMediaResponseMarshaller =
-      new ZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
-
-  static class ZeroCopyMessageMarshaller<T extends Message>
-      implements MethodDescriptor.PrototypeMarshaller<T> {
-    private Map<T, InputStream> unclosedStreams =
-        Collections.synchronizedMap(new IdentityHashMap<>());
-    private final Parser<T> parser;
-    private final MethodDescriptor.PrototypeMarshaller<T> baseMarshaller;
-
-    ZeroCopyMessageMarshaller(T defaultInstance) {
-      parser = (Parser<T>) defaultInstance.getParserForType();
-      baseMarshaller =
-          (MethodDescriptor.PrototypeMarshaller<T>) ProtoUtils.marshaller(defaultInstance);
-    }
-
-    @Override
-    public Class<T> getMessageClass() {
-      return baseMarshaller.getMessageClass();
-    }
-
-    @Override
-    public T getMessagePrototype() {
-      return baseMarshaller.getMessagePrototype();
-    }
-
-    @Override
-    public InputStream stream(T value) {
-      return baseMarshaller.stream(value);
-    }
-
-    @Override
-    public T parse(InputStream stream) {
-      CodedInputStream cis = null;
-      try {
-        if (stream instanceof KnownLength
-            && stream instanceof Detachable
-            && stream instanceof HasByteBuffer
-            && ((HasByteBuffer) stream).byteBufferSupported()) {
-          int size = stream.available();
-          // Stream is now detached here and should be closed later.
-          stream = ((Detachable) stream).detach();
-          // This mark call is to keep buffer while traversing buffers using skip.
-          stream.mark(size);
-          List<ByteString> byteStrings = new ArrayList<>();
-          while (stream.available() != 0) {
-            ByteBuffer buffer = ((HasByteBuffer) stream).getByteBuffer();
-            byteStrings.add(UnsafeByteOperations.unsafeWrap(buffer));
-            stream.skip(buffer.remaining());
-          }
-          stream.reset();
-          cis = ByteString.copyFrom(byteStrings).newCodedInput();
-          cis.enableAliasing(true);
-          cis.setSizeLimit(Integer.MAX_VALUE);
-        }
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-      if (cis != null) {
-        // fast path (no memory copy)
-        T message;
-        try {
-          message = parseFrom(cis);
-        } catch (InvalidProtocolBufferException ipbe) {
-          throw Status.INTERNAL
-              .withDescription("Invalid protobuf byte sequence")
-              .withCause(ipbe)
-              .asRuntimeException();
-        }
-        unclosedStreams.put(message, stream);
-        return message;
-      } else {
-        // slow path
-        return baseMarshaller.parse(stream);
-      }
-    }
-
-    private T parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
-      T message = parser.parseFrom(stream);
-      try {
-        stream.checkLastTagWas(0);
-        return message;
-      } catch (InvalidProtocolBufferException e) {
-        e.setUnfinishedMessage(message);
-        throw e;
-      }
-    }
-
-    // Application needs to call this function to get the stream for the message and
-    // call stream.close() function to return it to the pool.
-    public InputStream popStream(T message) {
-      return unclosedStreams.remove(message);
-    }
-  }
-
-  static final MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
-      MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
-          .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
-          .setFullMethodName("google.storage.v2.Storage/ReadObject")
-          .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
-          .setResponseMarshaller(getObjectMediaResponseMarshaller)
-          .build();
-
-  GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
-      GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
-          .setMethodDescriptor(readObjectMethodDescriptor)
-          .setParamsExtractor(
-              request -> {
-                RequestParamsBuilder builder = RequestParamsBuilder.create();
-                builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
-                return builder.build();
-              })
-          .build();
-
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
@@ -1965,11 +1823,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
-    // TODO(prototype): Missing protobuf check: similar to ZeroCopyReadinessChecker
-    // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
     return ResumableMedia.gapic()
         .read()
-        .byteChannel(serverStreamingCallable.withDefaultCallContext(grpcCallContext))
+        .byteChannel(
+            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+            responseContentLifecycleManager)
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)

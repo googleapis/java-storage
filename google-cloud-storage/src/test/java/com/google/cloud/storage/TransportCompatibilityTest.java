@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.NoCredentials;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleManager;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -38,7 +39,9 @@ public final class TransportCompatibilityTest {
             .setCredentials(NoCredentials.getInstance())
             .build();
     @SuppressWarnings("resource")
-    Storage s = new GrpcStorageImpl(options, null, null, Opts.empty());
+    Storage s =
+        new GrpcStorageImpl(
+            options, null, ResponseContentLifecycleManager.forTests(), null, Opts.empty());
     ImmutableList<String> messages =
         Stream.<Supplier<?>>of(
                 s::batch,
