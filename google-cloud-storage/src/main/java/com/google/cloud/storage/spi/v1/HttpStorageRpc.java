@@ -572,7 +572,7 @@ public class HttpStorageRpc implements StorageRpc {
       Storage.Objects.Restore restore =
           storage
               .objects()
-              .restore(object.getBucket(), object.getName(), object.getGeneration(), object);
+              .restore(object.getBucket(), object.getName(), object.getGeneration());
       return restore
           .setProjection(DEFAULT_PROJECTION)
           .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))

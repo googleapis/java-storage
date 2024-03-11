@@ -3123,7 +3123,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * String blobName = "my-blob-name";
    * long generation = 42;
    * BlobId blobId = BlobId.of(bucketName, blobName, gen);
-   * Blob blob = storage.restore(blobId, blobName, gen);
+   * Blob blob = storage.restore(blobId);
    * }</pre>
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
