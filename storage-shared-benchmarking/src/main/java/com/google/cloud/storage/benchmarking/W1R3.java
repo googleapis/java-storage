@@ -98,7 +98,7 @@ final class W1R3 implements Callable<String> {
               .setBucketName("")
               .setStatus("FAIL")
               .setTransferSize("")
-              .setThroughput(0)
+              .setLatency(0)
               .build();
       printWriter.println(result.formatAsCustomMetric());
     }
@@ -108,13 +108,7 @@ final class W1R3 implements Callable<String> {
   private void printResult(String op, Blob created, Duration duration) {
     if (!isWarmup) {
       printWriter.println(
-          generateCloudMonitoringResult(
-                  op,
-                  StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().doubleValue(), duration),
-                  created.asBlobInfo(),
-                  api,
-                  workers)
+          generateCloudMonitoringResult(op, duration.toMillis(), created.asBlobInfo(), api, workers)
               .formatAsCustomMetric());
     }
   }
