@@ -570,9 +570,7 @@ public class HttpStorageRpc implements StorageRpc {
     Scope scope = tracer.withSpan(span);
     try {
       Storage.Objects.Restore restore =
-          storage
-              .objects()
-              .restore(object.getBucket(), object.getName(), object.getGeneration());
+          storage.objects().restore(object.getBucket(), object.getName(), object.getGeneration());
       return restore
           .setProjection(DEFAULT_PROJECTION)
           .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
