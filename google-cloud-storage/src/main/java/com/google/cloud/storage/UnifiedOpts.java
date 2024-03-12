@@ -374,7 +374,6 @@ final class UnifiedOpts {
     return new IncludeFoldersAsPrefixes(includeFoldersAsPrefixes);
   }
 
-
   @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;

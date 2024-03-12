@@ -138,7 +138,7 @@ final class JsonConversions {
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
 
   private final Codec<BucketInfo.HierarchicalNamespace, Bucket.HierarchicalNamespace>
-          hierarchicalNamespaceCodec =
+      hierarchicalNamespaceCodec =
           Codec.of(this::hierarchicalNamespaceEncode, this::hierarchicalNamespaceDecode);
 
   private final Codec<NotificationInfo, com.google.api.services.storage.model.Notification>
@@ -442,9 +442,9 @@ final class JsonConversions {
         to::setCustomPlacementConfig);
     ifNonNull(from.getObjectRetention(), this::objectRetentionEncode, to::setObjectRetention);
     ifNonNull(
-            from.getHierarchicalNamespace(),
-            this::hierarchicalNamespaceEncode,
-            to::setHierarchicalNamespace);
+        from.getHierarchicalNamespace(),
+        this::hierarchicalNamespaceEncode,
+        to::setHierarchicalNamespace);
     return to;
   }
 
@@ -496,9 +496,9 @@ final class JsonConversions {
         this::customPlacementConfigDecode,
         to::setCustomPlacementConfig);
     ifNonNull(
-            from.getHierarchicalNamespace(),
-            this::hierarchicalNamespaceDecode,
-            to::setHierarchicalNamespace);
+        from.getHierarchicalNamespace(),
+        this::hierarchicalNamespaceDecode,
+        to::setHierarchicalNamespace);
     ifNonNull(from.getObjectRetention(), this::objectRetentionDecode, to::setObjectRetention);
     return to.build();
   }
@@ -873,18 +873,19 @@ final class JsonConversions {
     return to;
   }
 
-  private Bucket.HierarchicalNamespace hierarchicalNamespaceEncode(BucketInfo.HierarchicalNamespace from) {
+  private Bucket.HierarchicalNamespace hierarchicalNamespaceEncode(
+      BucketInfo.HierarchicalNamespace from) {
     Bucket.HierarchicalNamespace to = new Bucket.HierarchicalNamespace();
     ifNonNull(from.getEnabled(), to::setEnabled);
     return to;
   }
 
-  private BucketInfo.HierarchicalNamespace hierarchicalNamespaceDecode(Bucket.HierarchicalNamespace from) {
+  private BucketInfo.HierarchicalNamespace hierarchicalNamespaceDecode(
+      Bucket.HierarchicalNamespace from) {
     BucketInfo.HierarchicalNamespace.Builder to = BucketInfo.HierarchicalNamespace.newBuilder();
     to.setEnabled(from.getEnabled());
     return to.build();
   }
-
 
   private NotificationInfo notificationDecode(
       com.google.api.services.storage.model.Notification from) {

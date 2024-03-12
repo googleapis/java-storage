@@ -111,7 +111,7 @@ final class GrpcConversions {
       Codec.of(this::conditionEncode, this::conditionDecode);
 
   private final Codec<BucketInfo.HierarchicalNamespace, Bucket.HierarchicalNamespace>
-          hierarchicalNamespaceCodec =
+      hierarchicalNamespaceCodec =
           Codec.of(this::hierarchicalNamespaceEncode, this::hierarchicalNamespaceDecode);
 
   @VisibleForTesting
@@ -303,7 +303,7 @@ final class GrpcConversions {
     }
     if (from.hasHierarchicalNamespace()) {
       to.setHierarchicalNamespace(
-              hierarchicalNamespaceCodec.decode(from.getHierarchicalNamespace()));
+          hierarchicalNamespaceCodec.decode(from.getHierarchicalNamespace()));
     }
     // TODO(frankyn): Add SelfLink when the field is available
     if (!from.getEtag().isEmpty()) {
@@ -391,9 +391,9 @@ final class GrpcConversions {
               .build());
     }
     ifNonNull(
-            from.getHierarchicalNamespace(),
-            hierarchicalNamespaceCodec::encode,
-            to::setHierarchicalNamespace);
+        from.getHierarchicalNamespace(),
+        hierarchicalNamespaceCodec::encode,
+        to::setHierarchicalNamespace);
     // TODO(frankyn): Add SelfLink when the field is available
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
@@ -602,14 +602,14 @@ final class GrpcConversions {
   }
 
   private Bucket.HierarchicalNamespace hierarchicalNamespaceEncode(
-          BucketInfo.HierarchicalNamespace from) {
+      BucketInfo.HierarchicalNamespace from) {
     Bucket.HierarchicalNamespace.Builder to = Bucket.HierarchicalNamespace.newBuilder();
     ifNonNull(from.getEnabled(), to::setEnabled);
     return to.build();
   }
 
   private BucketInfo.HierarchicalNamespace hierarchicalNamespaceDecode(
-          Bucket.HierarchicalNamespace from) {
+      Bucket.HierarchicalNamespace from) {
     BucketInfo.HierarchicalNamespace.Builder to = BucketInfo.HierarchicalNamespace.newBuilder();
     to.setEnabled(from.getEnabled());
     return to.build();
