@@ -159,6 +159,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HIERARCHICAL_NAMESPACE("hierarchicalNamespace", "hierarchical_namespace"),
     @TransportCompatibility({Transport.HTTP})
     OBJECT_RETENTION("objectRetention");
 

@@ -651,7 +651,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
-      return null;// return b -> b.setIncludeFoldersAsPrefixes(val);
+      return b -> b.setIncludeFoldersAsPrefixes(val);
     }
   }
 
