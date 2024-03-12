@@ -74,7 +74,8 @@ public interface StorageRpc extends ServiceRpc {
     ENABLE_OBJECT_RETENTION("enableObjectRetention"),
     RETURN_RAW_INPUT_STREAM("returnRawInputStream"),
     OVERRIDE_UNLOCKED_RETENTION("overrideUnlockedRetention"),
-    INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");;
+    INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");
+    ;
 
     private final String value;
 

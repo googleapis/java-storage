@@ -553,17 +553,19 @@ public class ITBucketTest {
       assertThat(gen2).isEqualTo(gen1);
     }
   }
+
   @Test
   public void createBucketWithHierarchicalNamespace() {
     String bucketName = generator.randomBucketName();
     storage.create(
-            BucketInfo.newBuilder(bucketName)
-                    .setHierarchicalNamespace(BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
-                    .setIamConfiguration(
-                            BucketInfo.IamConfiguration.newBuilder()
-                                    .setIsUniformBucketLevelAccessEnabled(true)
-                                    .build())
-                    .build());
+        BucketInfo.newBuilder(bucketName)
+            .setHierarchicalNamespace(
+                BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
     try {
       Bucket remoteBucket = storage.get(bucketName);
       assertNotNull(remoteBucket.getHierarchicalNamespace());
@@ -572,30 +574,32 @@ public class ITBucketTest {
       BucketCleaner.doCleanup(bucketName, storage);
     }
   }
+
   @Test
   public void testListObjectsWithFolders() throws Exception {
     String bucketName = generator.randomBucketName();
     storage.create(
-            BucketInfo.newBuilder(bucketName)
-                    .setHierarchicalNamespace(BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
-                    .setIamConfiguration(
-                            BucketInfo.IamConfiguration.newBuilder()
-                                    .setIsUniformBucketLevelAccessEnabled(true)
-                                    .build())
-                    .build());
+        BucketInfo.newBuilder(bucketName)
+            .setHierarchicalNamespace(
+                BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
     try {
       com.google.api.services.storage.Storage apiaryStorage =
-              new HttpStorageRpc(StorageOptions.getDefaultInstance()).getStorage();
+          new HttpStorageRpc(StorageOptions.getDefaultInstance()).getStorage();
       apiaryStorage
-              .folders()
-              .insert(bucketName, new Folder().setName("F").setBucket(bucketName))
-              .execute();
+          .folders()
+          .insert(bucketName, new Folder().setName("F").setBucket(bucketName))
+          .execute();
 
       Page<Blob> blobs =
-              storage.list(
-                      bucketName,
-                      Storage.BlobListOption.delimiter("/"),
-                      Storage.BlobListOption.includeFolders(false));
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.delimiter("/"),
+              Storage.BlobListOption.includeFolders(false));
 
       boolean found = false;
       for (Blob blob : blobs.iterateAll()) {
@@ -606,10 +610,10 @@ public class ITBucketTest {
       assert (!found);
 
       blobs =
-              storage.list(
-                      bucketName,
-                      Storage.BlobListOption.delimiter("/"),
-                      Storage.BlobListOption.includeFolders(true));
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.delimiter("/"),
+              Storage.BlobListOption.includeFolders(true));
 
       for (Blob blob : blobs.iterateAll()) {
         if (blob.getName().equals("F/")) {
