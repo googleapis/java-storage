@@ -20,7 +20,6 @@ import static com.google.storage.control.v2.StorageControlClient.ListFoldersPage
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.core.InstantiatingExecutorProvider;
@@ -533,8 +532,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     }
 
     /** Returns the builder for the settings used for calls to renameFolder. */
-    @BetaApi(
-        "The surface for use by generated code is not stable yet and may change in the future.")
     public OperationCallSettings.Builder<RenameFolderRequest, Folder, RenameFolderMetadata>
         renameFolderOperationSettings() {
       return renameFolderOperationSettings;

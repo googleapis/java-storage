@@ -3576,6 +3576,7 @@ public class StorageClient implements BackgroundResource {
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
    *           .setSoftDeleted(true)
+   *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
@@ -3617,6 +3618,7 @@ public class StorageClient implements BackgroundResource {
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
    *           .setSoftDeleted(true)
+   *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
@@ -3658,6 +3660,7 @@ public class StorageClient implements BackgroundResource {
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
    *           .setSoftDeleted(true)
+   *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   while (true) {
