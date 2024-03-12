@@ -816,6 +816,7 @@ public final class ITOptionRegressionTest {
             "items/timeCreated",
             "items/updated",
             "items/versioning",
+            "items/hierarchicalNamespace",
             "items/website");
     s.list(BucketListOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());

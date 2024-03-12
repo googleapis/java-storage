@@ -714,6 +714,9 @@ public class BucketInfo implements Serializable {
     }
   }
 
+  /**
+   * The bucket's hierarchical namespace (Folders) configuration. Enable this to use HNS.
+   */
   public static final class HierarchicalNamespace implements Serializable {
 
     private static final long serialVersionUID = 5932926691444613101L;
