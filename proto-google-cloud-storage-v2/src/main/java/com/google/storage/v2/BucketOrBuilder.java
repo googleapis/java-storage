@@ -1079,6 +1079,53 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
+   * Optional. The bucket's hierarchical namespace configuration. If there is no
+   * configuration, the hierarchical namespace feature will be disabled and have
+   * no effect on the bucket.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.HierarchicalNamespace hierarchical_namespace = 32 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the hierarchicalNamespace field is set.
+   */
+  boolean hasHierarchicalNamespace();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's hierarchical namespace configuration. If there is no
+   * configuration, the hierarchical namespace feature will be disabled and have
+   * no effect on the bucket.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.HierarchicalNamespace hierarchical_namespace = 32 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The hierarchicalNamespace.
+   */
+  com.google.storage.v2.Bucket.HierarchicalNamespace getHierarchicalNamespace();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's hierarchical namespace configuration. If there is no
+   * configuration, the hierarchical namespace feature will be disabled and have
+   * no effect on the bucket.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.HierarchicalNamespace hierarchical_namespace = 32 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.Bucket.HierarchicalNamespaceOrBuilder getHierarchicalNamespaceOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Optional. The bucket's soft delete policy. The soft delete policy prevents
    * soft-deleted objects from being permanently deleted.
    * </pre>
