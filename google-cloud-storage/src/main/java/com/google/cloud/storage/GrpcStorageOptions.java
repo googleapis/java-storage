@@ -158,8 +158,8 @@ public final class GrpcStorageOptions extends StorageOptions
     URI uri = URI.create(endpoint);
     String scheme = uri.getScheme();
     int port = uri.getPort();
-    // Gax routes the endpoint into a method which can't handle schemes, unless for direct path
-    // try and strip here if we can
+    // Gax routes the endpoint into a method which can't handle schemes,
+    // unless for Direct Google Access try and strip here if we can
     switch (scheme) {
       case "http":
         endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 80);
@@ -386,11 +386,11 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     /**
-     * Option which signifies the client should attempt to connect to gcs via Direct Path.
+     * Option which signifies the client should attempt to connect to gcs via Direct Google Access.
      *
      * <p><i>NOTE</i>There is no need to specify a new endpoint via {@link #setHost(String)} as the
      * underlying code will translate the normal {@code https://storage.googleapis.com:443} into the
-     * proper Direct Path URI for you.
+     * proper Direct Google Access URI for you.
      *
      * @since 2.14.0 This new api is in preview and is subject to breaking changes.
      */

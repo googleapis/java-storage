@@ -20,6 +20,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
@@ -197,6 +198,12 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(WriteObjectRequest req) {
+    return req.getWriteObjectSpec().hasIfGenerationMatch()
+        ? retryStrategy.getIdempotentHandler()
+        : retryStrategy.getNonidempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getFor(BidiWriteObjectRequest req) {
     return req.getWriteObjectSpec().hasIfGenerationMatch()
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();
