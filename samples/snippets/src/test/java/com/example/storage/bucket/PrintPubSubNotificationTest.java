@@ -54,7 +54,7 @@ public class PrintPubSubNotificationTest extends TestBase {
           GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
       com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
       Binding binding =
-          Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
+          Binding.newBuilder().setRole("roles/owner").addMembers("domain:google.com").build();
       SetIamPolicyRequest setIamPolicyRequest =
           SetIamPolicyRequest.newBuilder()
               .setResource(TOPIC)
