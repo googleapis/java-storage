@@ -670,7 +670,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     @BetaApi
     public static CustomTimeInFuture setCustomTimeInFuture(Duration timeInFuture) {
-      return new CustomTimeInFuture(timeInFuture);
+      return new CustomTimeInFuture(timeInFuture, Clock.systemDefaultZone());
     }
 
     @BetaApi
@@ -680,13 +680,15 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     static final class CustomTimeInFuture extends PartMetadataFieldDecorator {
       private Duration duration;
+      private Clock clock;
 
-      CustomTimeInFuture(Duration duration) {
+      CustomTimeInFuture(Duration duration, Clock clock) {
         this.duration = duration;
+        this.clock = clock;
       }
 
       public BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder) {
-        OffsetDateTime futureTime = OffsetDateTime.now().plus(duration);
+        OffsetDateTime futureTime = OffsetDateTime.from(clock.instant().plus(duration));
         return builder.setCustomTimeOffsetDateTime(futureTime);
       }
     }
