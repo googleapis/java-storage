@@ -202,6 +202,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -268,6 +269,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -334,6 +336,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -406,6 +409,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -566,6 +570,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -633,6 +638,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -954,6 +960,7 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
+            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
