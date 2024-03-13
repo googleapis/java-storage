@@ -58,7 +58,7 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
           GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
       com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
       Binding binding =
-          Binding.newBuilder().setRole("roles/owner").addMembers("domain:google.com").build();
+          Binding.newBuilder().setRole("roles/owner").addMembers("serviceAccount:service-615621127317@gs-project-accounts.iam.gserviceaccount.com").build();
       SetIamPolicyRequest setIamPolicyRequest =
           SetIamPolicyRequest.newBuilder()
               .setResource(TOPIC)
