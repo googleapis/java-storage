@@ -305,6 +305,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static BufferAllocationStrategy simple(int capacity) {
+      checkArgument(capacity > 0, "bufferCapacity must be > 0");
       return new SimpleBufferAllocationStrategy(capacity);
     }
 
@@ -319,6 +320,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static BufferAllocationStrategy fixedPool(int bufferCount, int bufferCapacity) {
+      checkArgument(bufferCount > 0, "bufferCount must be > 0");
+      checkArgument(bufferCapacity > 0, "bufferCapacity must be > 0");
       return new FixedPoolBufferAllocationStrategy(bufferCount, bufferCapacity);
     }
 
@@ -389,6 +392,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier fixedPool(int poolSize) {
+      checkArgument(poolSize > 0, "poolSize must be > 0");
       return new FixedSupplier(poolSize);
     }
 
@@ -679,6 +683,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static PartMetadataFieldDecorator setCustomTimeInFuture(Duration timeInFuture) {
+      // todo: validate non-null
       return new CustomTimeInFuture(timeInFuture);
     }
 
