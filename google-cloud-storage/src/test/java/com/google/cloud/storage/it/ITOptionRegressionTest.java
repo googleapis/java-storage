@@ -326,6 +326,7 @@ public final class ITOptionRegressionTest {
             "timeCreated",
             "updated",
             "versioning",
+            "hierarchicalNamespace",
             "website");
     s.get(
         b.getName(),
