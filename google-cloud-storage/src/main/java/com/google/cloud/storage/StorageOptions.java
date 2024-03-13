@@ -64,7 +64,7 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   @Deprecated
   public static class DefaultStorageFactory extends HttpStorageFactory {
     private static final long serialVersionUID = -7856840922014956661L;
-    
+
     /** @deprecated Use {@link HttpStorageDefaults#getDefaultServiceFactory()} */
     @Deprecated
     public DefaultStorageFactory() {
