@@ -36,6 +36,8 @@ import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -52,7 +54,7 @@ public class HttpStorageOptions extends StorageOptions {
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
-  private final RetryDependenciesAdapter retryDepsAdapter;
+  private transient RetryDependenciesAdapter retryDepsAdapter;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -91,6 +93,11 @@ public class HttpStorageOptions extends StorageOptions {
   @Override
   public boolean equals(Object obj) {
     return obj instanceof HttpStorageOptions && baseEquals((HttpStorageOptions) obj);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    this.retryDepsAdapter = new RetryDependenciesAdapter();
   }
 
   public static HttpStorageOptions.Builder newBuilder() {
@@ -345,8 +352,7 @@ public class HttpStorageOptions extends StorageOptions {
    * We don't yet want to make HttpStorageOptions itself implement {@link RetryingDependencies} but
    * we do need use it in a couple places, for those we create this adapter.
    */
-  private final class RetryDependenciesAdapter implements RetryingDependencies, Serializable {
-    private static long serialVersionUID = -7446566394108158974L;
+  private final class RetryDependenciesAdapter implements RetryingDependencies {
     private RetryDependenciesAdapter() {}
 
     @Override
