@@ -29,7 +29,7 @@ import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
-import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldSupplier;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadWritableByteChannel.BufferHandleReleaser;
 import com.google.cloud.storage.Storage.ComposeRequest;
@@ -81,7 +81,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
   private SettableApiFuture<BlobInfo> finalObject;
   private FakeStorageInternal storageInternal;
   private SimplisticPartNamingStrategy partNamingStrategy;
-  private PartMetadataFieldSupplier partMetadataFieldSupplier;
+  private PartMetadataFieldDecorator partMetadataFieldDecorator;
   private int bufferCapacity;
 
   @Before
@@ -93,7 +93,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     finalObject = SettableApiFuture.create();
     partNamingStrategy = new SimplisticPartNamingStrategy("prefix");
     storageInternal = new FakeStorageInternal();
-    partMetadataFieldSupplier = PartMetadataFieldSupplier.noOp();
+    partMetadataFieldDecorator = PartMetadataFieldDecorator.noOp();
   }
 
   @Test
@@ -205,7 +205,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -245,7 +245,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -345,7 +345,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -435,7 +435,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -469,7 +469,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -576,7 +576,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
               partNamingStrategy,
               PartCleanupStrategy.never(),
               32,
-              partMetadataFieldSupplier,
+              partMetadataFieldDecorator,
               finalObject,
               storageInternal,
               info,
@@ -656,7 +656,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -739,7 +739,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             10,
-            partMetadataFieldSupplier,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -768,7 +768,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         partNamingStrategy,
         PartCleanupStrategy.always(),
         maxElementsPerCompact,
-        partMetadataFieldSupplier,
+        partMetadataFieldDecorator,
         finalObject,
         storageInternal,
         info,
