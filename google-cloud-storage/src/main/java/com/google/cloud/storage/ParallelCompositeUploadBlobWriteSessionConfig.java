@@ -50,6 +50,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.UnaryOperator;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -273,7 +274,10 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   WriterFactory createFactory(Clock clock) throws IOException {
     Executor executor = executorSupplier.get();
     BufferHandlePool bufferHandlePool = bufferAllocationStrategy.get();
-    return new ParallelCompositeUploadWriterFactory(clock, executor, bufferHandlePool);
+    PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance =
+        partMetadataFieldDecorator.newInstance(clock);
+    return new ParallelCompositeUploadWriterFactory(
+        clock, executor, bufferHandlePool, partMetadataFieldDecoratorInstance);
   }
 
   /**
@@ -654,11 +658,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
     }
   }
+
   /**
-   * A strategy which will be used to generate a value for a part or intermediary compose object's
-   * CustomTime Metadata Field. This will be a time set a duration in the future which will serve to
-   * aid in part cleanup via OLM Rules.
-   *
    * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
    * @since 2.35.1 This new api is in preview and is subject to breaking changes.
    */
@@ -666,36 +667,56 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   @Immutable
   public abstract static class PartMetadataFieldDecorator implements Serializable {
 
-    abstract BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder);
+    abstract PartMetadataFieldDecoratorInstance newInstance(Clock clock);
 
+    /**
+     * A strategy which will be used to generate a value for a part or intermediary compose object's
+     * CustomTime Metadata Field. This will be a time set a duration in the future which will serve
+     * to aid in part cleanup via OLM Rules.
+     *
+     * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
+     * @since 2.35.1 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
-    public static CustomTimeInFuture setCustomTimeInFuture(Duration timeInFuture) {
-      return new CustomTimeInFuture(timeInFuture, Clock.systemDefaultZone());
+    public static PartMetadataFieldDecorator setCustomTimeInFuture(Duration timeInFuture) {
+      return new CustomTimeInFuture(timeInFuture);
     }
 
     @BetaApi
-    public static NoOp noOp() {
-      return new NoOp();
+    public static PartMetadataFieldDecorator noOp() {
+      return NoOp.INSTANCE;
     }
 
-    static final class CustomTimeInFuture extends PartMetadataFieldDecorator {
-      private Duration duration;
-      private Clock clock;
+    @BetaApi
+    private static final class CustomTimeInFuture extends PartMetadataFieldDecorator {
+      private static final long serialVersionUID = -6213742554954751892L;
+      private final Duration duration;
 
-      CustomTimeInFuture(Duration duration, Clock clock) {
+      CustomTimeInFuture(Duration duration) {
         this.duration = duration;
-        this.clock = clock;
       }
 
-      public BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder) {
-        OffsetDateTime futureTime = OffsetDateTime.from(clock.instant().plus(duration));
-        return builder.setCustomTimeOffsetDateTime(futureTime);
+      @Override
+      PartMetadataFieldDecoratorInstance newInstance(Clock clock) {
+        return builder -> {
+          OffsetDateTime futureTime = OffsetDateTime.from(clock.instant().plus(duration));
+          return builder.setCustomTimeOffsetDateTime(futureTime);
+        };
       }
     }
 
-    static final class NoOp extends PartMetadataFieldDecorator {
-      public BlobInfo.Builder modifyPartFields(BlobInfo.Builder builder) {
-        return builder;
+    private static final class NoOp extends PartMetadataFieldDecorator {
+      private static final long serialVersionUID = -4569486383992999205L;
+      private static final NoOp INSTANCE = new NoOp();
+
+      @Override
+      PartMetadataFieldDecoratorInstance newInstance(Clock clock) {
+        return builder -> builder;
+      }
+
+      /** prevent java serialization from using a new instance */
+      private Object readResolve() {
+        return INSTANCE;
       }
     }
   }
@@ -777,6 +798,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
   }
 
+  interface PartMetadataFieldDecoratorInstance extends UnaryOperator<BlobInfo.Builder> {}
+
   private abstract static class Factory<T> implements Serializable {
     private static final long serialVersionUID = 271806144227661056L;
 
@@ -790,12 +813,17 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     private final Clock clock;
     private final Executor executor;
     private final BufferHandlePool bufferHandlePool;
+    private final PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance;
 
     private ParallelCompositeUploadWriterFactory(
-        Clock clock, Executor executor, BufferHandlePool bufferHandlePool) {
+        Clock clock,
+        Executor executor,
+        BufferHandlePool bufferHandlePool,
+        PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance) {
       this.clock = clock;
       this.executor = executor;
       this.bufferHandlePool = bufferHandlePool;
+      this.partMetadataFieldDecoratorInstance = partMetadataFieldDecoratorInstance;
     }
 
     @Override
@@ -829,7 +857,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
                 partNamingStrategy,
                 partCleanupStrategy,
                 maxPartsPerCompose,
-                partMetadataFieldDecorator,
+                partMetadataFieldDecoratorInstance,
                 result,
                 storageInternal,
                 info,

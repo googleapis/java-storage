@@ -31,7 +31,7 @@ import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
-import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecoratorInstance;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.UnifiedOpts.Crc32cMatch;
@@ -112,7 +112,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
   private final int maxElementsPerCompact;
-  private final PartMetadataFieldDecorator partMetadataFieldDecorator;
+  private final PartMetadataFieldDecoratorInstance partMetadataFieldDecorator;
   private final SettableApiFuture<BlobInfo> finalObject;
   private final StorageInternal storage;
   private final BlobInfo ultimateObject;
@@ -137,7 +137,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy,
       int maxElementsPerCompact,
-      PartMetadataFieldDecorator partMetadataFieldDecorator,
+      PartMetadataFieldDecoratorInstance partMetadataFieldDecorator,
       SettableApiFuture<BlobInfo> finalObject,
       StorageInternal storage,
       BlobInfo ultimateObject,
@@ -431,7 +431,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
     b.setMetadata(builder.build());
-    b = partMetadataFieldDecorator.modifyPartFields(b);
+    b = partMetadataFieldDecorator.apply(b);
     return b.build();
   }
 

@@ -30,6 +30,7 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecoratorInstance;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadWritableByteChannel.BufferHandleReleaser;
 import com.google.cloud.storage.Storage.ComposeRequest;
@@ -81,7 +82,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
   private SettableApiFuture<BlobInfo> finalObject;
   private FakeStorageInternal storageInternal;
   private SimplisticPartNamingStrategy partNamingStrategy;
-  private PartMetadataFieldDecorator partMetadataFieldDecorator;
+  private PartMetadataFieldDecoratorInstance partMetadataFieldDecorator;
   private int bufferCapacity;
 
   @Before
@@ -93,7 +94,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     finalObject = SettableApiFuture.create();
     partNamingStrategy = new SimplisticPartNamingStrategy("prefix");
     storageInternal = new FakeStorageInternal();
-    partMetadataFieldDecorator = PartMetadataFieldDecorator.noOp();
+    partMetadataFieldDecorator = PartMetadataFieldDecorator.noOp().newInstance(null);
   }
 
   @Test
