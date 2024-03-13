@@ -2540,6 +2540,7 @@ final class UnifiedOpts {
   }
 
   private static final class PrefixedNamedField implements NamedField {
+    private static long serialVersionUID = -4899304145424680141L;
 
     private final String prefix;
     private final NamedField delegate;
@@ -2586,6 +2587,7 @@ final class UnifiedOpts {
   }
 
   private static final class LiteralNamedField implements NamedField {
+    private static long serialVersionUID = 1422947423774466409L;
 
     private final String name;
 
@@ -2627,6 +2629,7 @@ final class UnifiedOpts {
   }
 
   private static final class NestedNamedField implements NamedField {
+    private static long serialVersionUID = -7623005572810688221L;
     private final NamedField parent;
     private final NamedField child;
 
