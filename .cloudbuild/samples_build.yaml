@@ -21,7 +21,7 @@ steps:
   env:
   - 'JOB_TYPE=samples'
   - 'GOOGLE_CLOUD_PROJECT=cloud-java-ci-sample'
-  - 'IT_SERVICE_ACCOUNT_EMAIL=build-runner@cloud-java-ci-sample.iam.gserviceaccount.com'
+  - 'IT_SERVICE_ACCOUNT_EMAIL=samples@cloud-java-ci-sample.iam.gserviceaccount.com'
 - name: gcr.io/cloud-devrel-public-resources/java8
   entrypoint: echo
   args: [
