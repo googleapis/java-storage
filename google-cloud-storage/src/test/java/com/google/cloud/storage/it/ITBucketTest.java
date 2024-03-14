@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.gax.paging.Page;
+import com.google.api.services.storage.model.Folder;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
@@ -44,6 +45,7 @@ import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageClass;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -53,6 +55,7 @@ import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.time.Duration;
@@ -555,12 +558,12 @@ public class ITBucketTest {
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName)
-            .setSoftDeletePolicy(
-                BucketInfo.SoftDeletePolicy.newBuilder()
-                    .setRetentionDuration(Duration.ofDays(10))
-                    .build())
-            .build();
+            BucketInfo.newBuilder(bucketName)
+                    .setSoftDeletePolicy(
+                            BucketInfo.SoftDeletePolicy.newBuilder()
+                                    .setRetentionDuration(Duration.ofDays(10))
+                                    .build())
+                    .build();
     try {
       storage.create(bucketInfo);
 
@@ -582,12 +585,12 @@ public class ITBucketTest {
       assertNull(remoteBucket.get(softDelBlobName));
 
       ImmutableList<Blob> softDeletedBlobs =
-          ImmutableList.copyOf(
-              remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
+              ImmutableList.copyOf(
+                      remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
       assertThat(softDeletedBlobs.size() > 0);
 
       Blob softDeletedBlob =
-          remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
+              remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
 
       assertNotNull(softDeletedBlob);
       assertNotNull(softDeletedBlob.getSoftDeleteTime());
@@ -596,17 +599,91 @@ public class ITBucketTest {
       assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
 
       remoteBucket
-          .toBuilder()
-          .setSoftDeletePolicy(
-              BucketInfo.SoftDeletePolicy.newBuilder()
-                  .setRetentionDuration(Duration.ofDays(20))
-                  .build())
-          .build()
-          .update();
+              .toBuilder()
+              .setSoftDeletePolicy(
+                      BucketInfo.SoftDeletePolicy.newBuilder()
+                              .setRetentionDuration(Duration.ofDays(20))
+                              .build())
+              .build()
+              .update();
 
       assertEquals(
-          Duration.ofDays(20),
-          storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+              Duration.ofDays(20),
+              storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+    } finally {
+      BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+
+  @Test
+  public void createBucketWithHierarchicalNamespace() {
+    String bucketName = generator.randomBucketName();
+    storage.create(
+        BucketInfo.newBuilder(bucketName)
+            .setHierarchicalNamespace(
+                BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
+    try {
+      Bucket remoteBucket = storage.get(bucketName);
+      assertNotNull(remoteBucket.getHierarchicalNamespace());
+      assertTrue(remoteBucket.getHierarchicalNamespace().getEnabled());
+    } finally {
+      BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+  @Test
+  public void testListObjectsWithFolders() throws Exception {
+    String bucketName = generator.randomBucketName();
+    storage.create(
+        BucketInfo.newBuilder(bucketName)
+            .setHierarchicalNamespace(
+                BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
+    try {
+      com.google.api.services.storage.Storage apiaryStorage =
+          new HttpStorageRpc(StorageOptions.getDefaultInstance()).getStorage();
+      apiaryStorage
+          .folders()
+          .insert(bucketName, new Folder().setName("F").setBucket(bucketName))
+          .execute();
+
+      Page<Blob> blobs =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.delimiter("/"),
+              Storage.BlobListOption.includeFolders(false));
+
+      boolean found = false;
+      for (Blob blob : blobs.iterateAll()) {
+        if (blob.getName().equals("F/")) {
+          found = true;
+        }
+      }
+      assert (!found);
+
+      blobs =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.delimiter("/"),
+              Storage.BlobListOption.includeFolders(true));
+
+      for (Blob blob : blobs.iterateAll()) {
+        if (blob.getName().equals("F/")) {
+          found = true;
+        }
+      }
+      assert (found);
+
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
     }

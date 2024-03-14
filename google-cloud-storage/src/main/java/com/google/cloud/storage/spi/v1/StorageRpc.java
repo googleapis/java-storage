@@ -76,7 +76,9 @@ public interface StorageRpc extends ServiceRpc {
     OVERRIDE_UNLOCKED_RETENTION("overrideUnlockedRetention"),
     SOFT_DELETED("softDeleted"),
     COPY_SOURCE_ACL("copySourceAcl"),
-    GENERATION("generation");
+    GENERATION("generation"),
+    INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");
+
 
     private final String value;
 

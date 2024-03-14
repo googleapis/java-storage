@@ -153,7 +153,9 @@ public final class ITBucketReadMaskTest {
                                     .getSoftDeletePolicy()
                                     .getEffectiveTime()
                                     .truncatedTo(ChronoUnit.SECONDS)));
-                  }));
+                  }),
+              new Args<>(BucketField.HIERARCHICAL_NAMESPACE, LazyAssertion.equal()),
+              new Args<>(BucketField.WEBSITE, LazyAssertion.equal()));
 
       List<String> argsDefined =
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());

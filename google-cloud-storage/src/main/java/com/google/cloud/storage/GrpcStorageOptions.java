@@ -767,6 +767,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private static final class NoopGrpcInterceptorProvider
       implements GrpcInterceptorProvider, Serializable {
+    private static long serialVersionUID = -8523033236999805349L;
     private static final NoopGrpcInterceptorProvider INSTANCE = new NoopGrpcInterceptorProvider();
 
     @Override

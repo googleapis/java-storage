@@ -118,6 +118,7 @@ public class BucketInfo implements Serializable {
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
   private final ObjectRetention objectRetention;
+  private final HierarchicalNamespace hierarchicalNamespace;
 
   private final SoftDeletePolicy softDeletePolicy;
 
@@ -795,6 +796,71 @@ public class BucketInfo implements Serializable {
       /** Builds an {@code Logging} object */
       public Logging build() {
         return new Logging(this);
+      }
+    }
+  }
+
+  /** The bucket's hierarchical namespace (Folders) configuration. Enable this to use HNS. */
+  public static final class HierarchicalNamespace implements Serializable {
+
+    private static final long serialVersionUID = 5932926691444613101L;
+    private Boolean enabled;
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof HierarchicalNamespace)) {
+        return false;
+      }
+      HierarchicalNamespace that = (HierarchicalNamespace) o;
+      return Objects.equals(enabled, that.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(enabled);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("enabled", enabled).toString();
+    }
+
+    private HierarchicalNamespace() {}
+
+    private HierarchicalNamespace(Builder builder) {
+      this.enabled = builder.enabled;
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return newBuilder().setEnabled(enabled);
+    }
+
+    public static final class Builder {
+      private Boolean enabled;
+
+      /**
+       * Sets whether Hierarchical Namespace (Folders) is enabled for this bucket. This can only be
+       * enabled at bucket create time. If this is enabled, Uniform Bucket-Level Access must also be
+       * enabled.
+       */
+      public Builder setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+      }
+
+      public HierarchicalNamespace build() {
+        return new HierarchicalNamespace(this);
       }
     }
   }
@@ -1769,6 +1835,8 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
 
+    public abstract Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace);
+
     abstract Builder setObjectRetention(ObjectRetention objectRetention);
 
     public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
@@ -1873,6 +1941,7 @@ public class BucketInfo implements Serializable {
     private ObjectRetention objectRetention;
 
     private SoftDeletePolicy softDeletePolicy;
+    private HierarchicalNamespace hierarchicalNamespace;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -1913,6 +1982,7 @@ public class BucketInfo implements Serializable {
       customPlacementConfig = bucketInfo.customPlacementConfig;
       objectRetention = bucketInfo.objectRetention;
       softDeletePolicy = bucketInfo.softDeletePolicy;
+      hierarchicalNamespace = bucketInfo.hierarchicalNamespace;
     }
 
     @Override
@@ -2288,6 +2358,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace) {
+      if (!Objects.equals(this.hierarchicalNamespace, hierarchicalNamespace)) {
+        modifiedFields.add(BucketField.HIERARCHICAL_NAMESPACE);
+      }
+      this.hierarchicalNamespace = hierarchicalNamespace;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       if (!Objects.equals(this.locationType, locationType)) {
         modifiedFields.add(BucketField.LOCATION_TYPE);
@@ -2529,6 +2608,7 @@ public class BucketInfo implements Serializable {
     customPlacementConfig = builder.customPlacementConfig;
     objectRetention = builder.objectRetention;
     softDeletePolicy = builder.softDeletePolicy;
+    hierarchicalNamespace = builder.hierarchicalNamespace;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2874,6 +2954,11 @@ public class BucketInfo implements Serializable {
     return softDeletePolicy;
   }
 
+  /** Returns the Hierarchical Namespace (Folders) Configuration */
+  public HierarchicalNamespace getHierarchicalNamespace() {
+    return hierarchicalNamespace;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2912,6 +2997,7 @@ public class BucketInfo implements Serializable {
         locationType,
         objectRetention,
         softDeletePolicy,
+        hierarchicalNamespace,
         logging);
   }
 
@@ -2954,6 +3040,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(locationType, that.locationType)
         && Objects.equals(objectRetention, that.objectRetention)
         && Objects.equals(softDeletePolicy, that.softDeletePolicy)
+        && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)
         && Objects.equals(logging, that.logging);
   }
 

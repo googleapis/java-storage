@@ -375,6 +375,10 @@ final class UnifiedOpts {
     return new Delimiter(delimiter);
   }
 
+  static IncludeFoldersAsPrefixes includeFoldersAsPrefixes(boolean includeFoldersAsPrefixes) {
+    return new IncludeFoldersAsPrefixes(includeFoldersAsPrefixes);
+  }
+
   @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;
@@ -646,6 +650,20 @@ final class UnifiedOpts {
             .setCopySourceEncryptionKeyBytes(builder.getEncryptionKeyBytes())
             .setCopySourceEncryptionKeySha256Bytes(builder.getEncryptionKeySha256Bytes());
       };
+    }
+  }
+
+  static final class IncludeFoldersAsPrefixes extends RpcOptVal<Boolean> implements ObjectListOpt {
+
+    private static final long serialVersionUID = 321916692864878282L;
+
+    private IncludeFoldersAsPrefixes(boolean val) {
+      super(StorageRpc.Option.INCLUDE_FOLDERS_AS_PREFIXES, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setIncludeFoldersAsPrefixes(val);
     }
   }
 
@@ -2611,6 +2629,7 @@ final class UnifiedOpts {
   }
 
   private static final class PrefixedNamedField implements NamedField {
+    private static long serialVersionUID = -4899304145424680141L;
 
     private final String prefix;
     private final NamedField delegate;
@@ -2657,6 +2676,7 @@ final class UnifiedOpts {
   }
 
   private static final class LiteralNamedField implements NamedField {
+    private static long serialVersionUID = 1422947423774466409L;
 
     private final String name;
 
@@ -2698,6 +2718,7 @@ final class UnifiedOpts {
   }
 
   private static final class NestedNamedField implements NamedField {
+    private static long serialVersionUID = -7623005572810688221L;
     private final NamedField parent;
     private final NamedField child;
 

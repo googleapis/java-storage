@@ -460,6 +460,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
               .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options))
+              .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options))
               .execute();
       Iterable<StorageObject> storageObjects =
           Iterables.concat(
