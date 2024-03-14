@@ -154,7 +154,7 @@ public final class ITBucketReadMaskTest {
                                     .getEffectiveTime()
                                     .truncatedTo(ChronoUnit.SECONDS)));
                   }),
-              new Args<>(BucketField.HIERARCHICAL_NAMESPACE, LazyAssertion.equal());
+              new Args<>(BucketField.HIERARCHICAL_NAMESPACE, LazyAssertion.equal()));
 
       List<String> argsDefined =
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());
