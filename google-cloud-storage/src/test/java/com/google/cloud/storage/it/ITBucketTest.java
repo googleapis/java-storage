@@ -558,12 +558,12 @@ public class ITBucketTest {
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =
-            BucketInfo.newBuilder(bucketName)
-                    .setSoftDeletePolicy(
-                            BucketInfo.SoftDeletePolicy.newBuilder()
-                                    .setRetentionDuration(Duration.ofDays(10))
-                                    .build())
-                    .build();
+        BucketInfo.newBuilder(bucketName)
+            .setSoftDeletePolicy(
+                BucketInfo.SoftDeletePolicy.newBuilder()
+                    .setRetentionDuration(Duration.ofDays(10))
+                    .build())
+            .build();
     try {
       storage.create(bucketInfo);
 
@@ -585,12 +585,12 @@ public class ITBucketTest {
       assertNull(remoteBucket.get(softDelBlobName));
 
       ImmutableList<Blob> softDeletedBlobs =
-              ImmutableList.copyOf(
-                      remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
+          ImmutableList.copyOf(
+              remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
       assertThat(softDeletedBlobs.size() > 0);
 
       Blob softDeletedBlob =
-              remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
+          remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
 
       assertNotNull(softDeletedBlob);
       assertNotNull(softDeletedBlob.getSoftDeleteTime());
@@ -599,22 +599,21 @@ public class ITBucketTest {
       assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
 
       remoteBucket
-              .toBuilder()
-              .setSoftDeletePolicy(
-                      BucketInfo.SoftDeletePolicy.newBuilder()
-                              .setRetentionDuration(Duration.ofDays(20))
-                              .build())
-              .build()
-              .update();
+          .toBuilder()
+          .setSoftDeletePolicy(
+              BucketInfo.SoftDeletePolicy.newBuilder()
+                  .setRetentionDuration(Duration.ofDays(20))
+                  .build())
+          .build()
+          .update();
 
       assertEquals(
-              Duration.ofDays(20),
-              storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+          Duration.ofDays(20),
+          storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
     }
   }
-
 
   @Test
   public void createBucketWithHierarchicalNamespace() {

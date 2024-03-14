@@ -625,6 +625,7 @@ final class GrpcConversions {
     ifNonNull(from.getRetentionDuration(), durationCodec::encode, to::setRetentionDuration);
     return to.build();
   }
+
   private Bucket.HierarchicalNamespace hierarchicalNamespaceEncode(
       BucketInfo.HierarchicalNamespace from) {
     Bucket.HierarchicalNamespace.Builder to = Bucket.HierarchicalNamespace.newBuilder();
