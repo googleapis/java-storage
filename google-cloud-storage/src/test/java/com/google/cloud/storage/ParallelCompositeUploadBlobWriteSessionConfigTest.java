@@ -23,7 +23,10 @@ import static com.google.common.truth.Truth.assertWithMessage;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.common.truth.StringSubject;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestName;
 
 public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
 
