@@ -683,7 +683,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static PartMetadataFieldDecorator setCustomTimeInFuture(Duration timeInFuture) {
-      // todo: validate non-null
+      checkNotNull(timeInFuture, "timeInFuture must not be null");
       return new CustomTimeInFuture(timeInFuture);
     }
 
