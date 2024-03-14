@@ -245,6 +245,16 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         partMetadataFieldDecorator);
   }
 
+  /**
+   * Specify a Part Metadata Field decorator, this will manipulate the metadata associated with part
+   * files, the ultimate object metadata will remain unchanged.
+   *
+   * <p><i>Default: </i> {@link PartMetadataFieldDecorator#noOp()}
+   *
+   * @since 2.35.1 This new api is in preview and is subject to breaking changes.
+   * @param partMetadataFieldDecorator
+   * @return
+   */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartMetadataFieldDecorator(
       PartMetadataFieldDecorator partMetadataFieldDecorator) {
@@ -664,6 +674,9 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   }
 
   /**
+   * A Decorator which is used to manipulate metadata fields, specifically on the part files used in
+   * a Parallel Composite Upload
+   *
    * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
    * @since 2.35.1 This new api is in preview and is subject to breaking changes.
    */
@@ -674,10 +687,13 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     abstract PartMetadataFieldDecoratorInstance newInstance(Clock clock);
 
     /**
-     * A strategy which will be used to generate a value for a part or intermediary compose object's
-     * CustomTime Metadata Field. This will be a time set a duration in the future which will serve
-     * to aid in part cleanup via OLM Rules.
+     * A decorator that is used to manipulate the Custom Time Metadata field of part files. {@link
+     * com.google.storage.v2.Object#customTime_}
      *
+     * <p>When provided with a duration, a time in the future will be calculated for each part file
+     * upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
+     *
+     * @see {@link https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime}
      * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
      * @since 2.35.1 This new api is in preview and is subject to breaking changes.
      */

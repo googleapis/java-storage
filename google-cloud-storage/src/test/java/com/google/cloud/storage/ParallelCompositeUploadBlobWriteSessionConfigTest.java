@@ -36,7 +36,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         // random digest to spread over keyspace
         () -> assertField(fmt, 0).hasLength(22),
         // name digest
-        () -> assertField(fmt, 1).hasLength(8),
+        () -> assertField(fmt, 1).hasLength(22),
         () -> assertField(fmt, 2).isEqualTo("0001-0032.part"));
   }
 
