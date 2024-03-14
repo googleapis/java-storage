@@ -74,8 +74,10 @@ public interface StorageRpc extends ServiceRpc {
     ENABLE_OBJECT_RETENTION("enableObjectRetention"),
     RETURN_RAW_INPUT_STREAM("returnRawInputStream"),
     OVERRIDE_UNLOCKED_RETENTION("overrideUnlockedRetention"),
+    SOFT_DELETED("softDeleted"),
+    COPY_SOURCE_ACL("copySourceAcl"),
+    GENERATION("generation"),
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");
-    ;
 
     private final String value;
 
@@ -242,6 +244,13 @@ public interface StorageRpc extends ServiceRpc {
    * @throws StorageException upon failure
    */
   StorageObject get(StorageObject object, Map<Option, ?> options);
+
+  /**
+   * If an object has been soft-deleted, restores it and returns the restored object.j
+   *
+   * @throws StorageException upon failure
+   */
+  StorageObject restore(StorageObject object, Map<Option, ?> options);
 
   /**
    * Updates bucket information.

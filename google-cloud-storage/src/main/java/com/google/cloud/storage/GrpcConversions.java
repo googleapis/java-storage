@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
@@ -90,6 +91,9 @@ final class GrpcConversions {
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<BucketInfo.Autoclass, Bucket.Autoclass> autoclassCodec =
       Codec.of(this::autoclassEncode, this::autoclassDecode);
+
+  private final Codec<BucketInfo.SoftDeletePolicy, Bucket.SoftDeletePolicy> softDeletePolicyCodec =
+      Codec.of(this::softDeletePolicyEncode, this::softDeletePolicyDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -294,6 +298,9 @@ final class GrpcConversions {
     if (from.hasAutoclass()) {
       to.setAutoclass(autoclassCodec.decode(from.getAutoclass()));
     }
+    if (from.hasSoftDeletePolicy()) {
+      to.setSoftDeletePolicy(softDeletePolicyCodec.decode(from.getSoftDeletePolicy()));
+    }
     if (from.hasCustomPlacementConfig()) {
       Bucket.CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
       to.setCustomPlacementConfig(
@@ -383,6 +390,11 @@ final class GrpcConversions {
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAclCodec::encode), to::addAllAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     ifNonNull(from.getAutoclass(), autoclassCodec::encode, to::setAutoclass);
+    ifNonNull(from.getSoftDeletePolicy(), softDeletePolicyCodec::encode, to::setSoftDeletePolicy);
+    if (from.getModifiedFields().contains(SOFT_DELETE_POLICY)
+        && from.getSoftDeletePolicy() == null) {
+      to.clearSoftDeletePolicy();
+    }
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
     if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
       to.setCustomPlacementConfig(
@@ -598,6 +610,19 @@ final class GrpcConversions {
         from.getTerminalStorageClassUpdateTime(),
         timestampCodec::encode,
         to::setTerminalStorageClassUpdateTime);
+    return to.build();
+  }
+
+  private BucketInfo.SoftDeletePolicy softDeletePolicyDecode(Bucket.SoftDeletePolicy from) {
+    BucketInfo.SoftDeletePolicy.Builder to = BucketInfo.SoftDeletePolicy.newBuilder();
+    ifNonNull(from.getRetentionDuration(), durationCodec::decode, to::setRetentionDuration);
+    ifNonNull(from.getEffectiveTime(), timestampCodec::decode, to::setEffectiveTime);
+    return to.build();
+  }
+
+  private Bucket.SoftDeletePolicy softDeletePolicyEncode(BucketInfo.SoftDeletePolicy from) {
+    Bucket.SoftDeletePolicy.Builder to = Bucket.SoftDeletePolicy.newBuilder();
+    ifNonNull(from.getRetentionDuration(), durationCodec::encode, to::setRetentionDuration);
     return to.build();
   }
 
@@ -863,6 +888,8 @@ final class GrpcConversions {
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setUpdateTime);
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCreateTime);
     ifNonNull(from.getCustomTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCustomTime);
+    ifNonNull(from.getSoftDeleteTime(), timestampCodec::encode, toBuilder::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), timestampCodec::encode, toBuilder::setHardDeleteTime);
     ifNonNull(
         from.getCustomerEncryption(),
         customerEncryptionCodec::encode,
@@ -927,6 +954,12 @@ final class GrpcConversions {
     }
     if (from.hasCustomerEncryption()) {
       toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
+    }
+    if (from.hasSoftDeleteTime()) {
+      toBuilder.setSoftDeleteTime(timestampCodec.decode(from.getSoftDeleteTime()));
+    }
+    if (from.hasHardDeleteTime()) {
+      toBuilder.setHardDeleteTime(timestampCodec.decode(from.getHardDeleteTime()));
     }
     String storageClass = from.getStorageClass();
     if (!storageClass.isEmpty()) {

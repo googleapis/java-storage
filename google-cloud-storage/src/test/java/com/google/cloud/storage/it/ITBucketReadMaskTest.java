@@ -40,6 +40,7 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersPr
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.collect.ImmutableList;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -133,8 +134,27 @@ public final class ITBucketReadMaskTest {
               new Args<>(BucketField.TIME_CREATED, LazyAssertion.equal()),
               new Args<>(BucketField.UPDATED, LazyAssertion.equal()),
               new Args<>(BucketField.VERSIONING, LazyAssertion.equal()),
-              new Args<>(BucketField.HIERARCHICAL_NAMESPACE, LazyAssertion.equal()),
-              new Args<>(BucketField.WEBSITE, LazyAssertion.equal()));
+              new Args<>(BucketField.WEBSITE, LazyAssertion.equal()),
+              new Args<>(
+                  BucketField.SOFT_DELETE_POLICY,
+                  (jsonT, grpcT) -> {
+                    assertThat(
+                        jsonT
+                            .getSoftDeletePolicy()
+                            .getRetentionDuration()
+                            .equals(grpcT.getSoftDeletePolicy().getRetentionDuration()));
+                    assertThat(
+                        jsonT
+                            .getSoftDeletePolicy()
+                            .getEffectiveTime()
+                            .truncatedTo(ChronoUnit.SECONDS)
+                            .equals(
+                                grpcT
+                                    .getSoftDeletePolicy()
+                                    .getEffectiveTime()
+                                    .truncatedTo(ChronoUnit.SECONDS)));
+                  }),
+              new Args<>(BucketField.HIERARCHICAL_NAMESPACE, LazyAssertion.equal()));
 
       List<String> argsDefined =
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());

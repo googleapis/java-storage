@@ -555,6 +555,67 @@ public class ITBucketTest {
   }
 
   @Test
+  public void testSoftDeletePolicy() {
+    String bucketName = generator.randomBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setSoftDeletePolicy(
+                BucketInfo.SoftDeletePolicy.newBuilder()
+                    .setRetentionDuration(Duration.ofDays(10))
+                    .build())
+            .build();
+    try {
+      storage.create(bucketInfo);
+
+      Bucket remoteBucket = storage.get(bucketName);
+      assertEquals(Duration.ofDays(10), remoteBucket.getSoftDeletePolicy().getRetentionDuration());
+      assertNotNull(remoteBucket.getSoftDeletePolicy().getEffectiveTime());
+
+      String softDelBlobName = "softdelblob";
+      remoteBucket.create(softDelBlobName, BLOB_BYTE_CONTENT);
+
+      Blob blob = remoteBucket.get(softDelBlobName);
+      long gen = blob.getGeneration();
+
+      assertNull(blob.getSoftDeleteTime());
+      assertNull(blob.getHardDeleteTime());
+
+      blob.delete();
+
+      assertNull(remoteBucket.get(softDelBlobName));
+
+      ImmutableList<Blob> softDeletedBlobs =
+          ImmutableList.copyOf(
+              remoteBucket.list(Storage.BlobListOption.softDeleted(true)).iterateAll());
+      assertThat(softDeletedBlobs.size() > 0);
+
+      Blob softDeletedBlob =
+          remoteBucket.get(softDelBlobName, gen, Storage.BlobGetOption.softDeleted(true));
+
+      assertNotNull(softDeletedBlob);
+      assertNotNull(softDeletedBlob.getSoftDeleteTime());
+      assertNotNull(softDeletedBlob.getHardDeleteTime());
+
+      assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
+
+      remoteBucket
+          .toBuilder()
+          .setSoftDeletePolicy(
+              BucketInfo.SoftDeletePolicy.newBuilder()
+                  .setRetentionDuration(Duration.ofDays(20))
+                  .build())
+          .build()
+          .update();
+
+      assertEquals(
+          Duration.ofDays(20),
+          storage.get(bucketName).getSoftDeletePolicy().getRetentionDuration());
+    } finally {
+      BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+  @Test
   public void createBucketWithHierarchicalNamespace() {
     String bucketName = generator.randomBucketName();
     storage.create(

@@ -527,6 +527,18 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
+      infoBuilder.setSoftDeleteTime(softDeleteTime);
+      return this;
+    }
+
+    @Override
+    Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
+      infoBuilder.setHardDeleteTime(hardDeleteTime);
+      return this;
+    }
+
+    @Override
     public Builder setRetention(Retention retention) {
       infoBuilder.setRetention(retention);
       return this;

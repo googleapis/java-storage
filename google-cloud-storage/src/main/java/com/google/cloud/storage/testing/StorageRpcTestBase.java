@@ -72,6 +72,11 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
+  public StorageObject restore(StorageObject object, Map<Option, ?> options) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
   public Bucket patch(Bucket bucket, Map<Option, ?> options) {
     throw new UnsupportedOperationException("Not implemented yet");
   }

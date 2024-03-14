@@ -27,6 +27,24 @@
     <method>com.google.cloud.storage.BlobInfo$Builder setRetention(com.google.cloud.storage.BlobInfo$Retention)</method>
   </difference>
 
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setSoftDeletePolicy(com.google.cloud.storage.BucketInfo$SoftDeletePolicy)</method>
+  </difference>
+
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/Storage</className>
+    <method>com.google.cloud.storage.Blob restore(com.google.cloud.storage.BlobId, com.google.cloud.storage.Storage$BlobRestoreOption[])</method>
+  </difference>
+
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+    <method>com.google.api.services.storage.model.StorageObject restore(com.google.api.services.storage.model.StorageObject, java.util.Map)</method>
+  </difference>
+
   <!-- @BetaApi members -->
   <difference>
     <differenceType>7009</differenceType>
