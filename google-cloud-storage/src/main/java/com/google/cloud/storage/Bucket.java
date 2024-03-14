@@ -749,6 +749,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace) {
+      infoBuilder.setHierarchicalNamespace(hierarchicalNamespace);
+      return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }

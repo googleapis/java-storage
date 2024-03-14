@@ -17,6 +17,12 @@
 
   <difference>
     <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setHierarchicalNamespace(com.google.cloud.storage.BucketInfo$HierarchicalNamespace)</method>
+  </difference>
+
+  <difference>
+    <differenceType>7013</differenceType>
     <className>com/google/cloud/storage/BlobInfo$Builder</className>
     <method>com.google.cloud.storage.BlobInfo$Builder setRetention(com.google.cloud.storage.BlobInfo$Retention)</method>
   </difference>

@@ -110,6 +110,10 @@ final class GrpcConversions {
   private final Codec<Condition, Expr> iamConditionCodec =
       Codec.of(this::conditionEncode, this::conditionDecode);
 
+  private final Codec<BucketInfo.HierarchicalNamespace, Bucket.HierarchicalNamespace>
+      hierarchicalNamespaceCodec =
+          Codec.of(this::hierarchicalNamespaceEncode, this::hierarchicalNamespaceDecode);
+
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
       Codec.of(
@@ -297,6 +301,10 @@ final class GrpcConversions {
               .setDataLocations(customPlacementConfig.getDataLocationsList())
               .build());
     }
+    if (from.hasHierarchicalNamespace()) {
+      to.setHierarchicalNamespace(
+          hierarchicalNamespaceCodec.decode(from.getHierarchicalNamespace()));
+    }
     // TODO(frankyn): Add SelfLink when the field is available
     if (!from.getEtag().isEmpty()) {
       to.setEtag(from.getEtag());
@@ -382,6 +390,10 @@ final class GrpcConversions {
               .addAllDataLocations(customPlacementConfig.getDataLocations())
               .build());
     }
+    ifNonNull(
+        from.getHierarchicalNamespace(),
+        hierarchicalNamespaceCodec::encode,
+        to::setHierarchicalNamespace);
     // TODO(frankyn): Add SelfLink when the field is available
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
@@ -586,6 +598,20 @@ final class GrpcConversions {
         from.getTerminalStorageClassUpdateTime(),
         timestampCodec::encode,
         to::setTerminalStorageClassUpdateTime);
+    return to.build();
+  }
+
+  private Bucket.HierarchicalNamespace hierarchicalNamespaceEncode(
+      BucketInfo.HierarchicalNamespace from) {
+    Bucket.HierarchicalNamespace.Builder to = Bucket.HierarchicalNamespace.newBuilder();
+    ifNonNull(from.getEnabled(), to::setEnabled);
+    return to.build();
+  }
+
+  private BucketInfo.HierarchicalNamespace hierarchicalNamespaceDecode(
+      Bucket.HierarchicalNamespace from) {
+    BucketInfo.HierarchicalNamespace.Builder to = BucketInfo.HierarchicalNamespace.newBuilder();
+    to.setEnabled(from.getEnabled());
     return to.build();
   }
 

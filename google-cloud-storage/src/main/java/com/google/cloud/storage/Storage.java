@@ -159,6 +159,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HIERARCHICAL_NAMESPACE("hierarchicalNamespace", "hierarchical_namespace"),
     @TransportCompatibility({Transport.HTTP})
     OBJECT_RETENTION("objectRetention");
 
@@ -1786,6 +1789,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP})
     public static BlobListOption matchGlob(@NonNull String glob) {
       return new BlobListOption(UnifiedOpts.matchGlob(glob));
+    }
+
+    /**
+     * Returns an option for whether to include all Folders (including empty Folders) in response.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption includeFolders(boolean includeFolders) {
+      return new BlobListOption(UnifiedOpts.includeFoldersAsPrefixes(includeFolders));
     }
 
     /**

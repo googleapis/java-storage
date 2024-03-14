@@ -370,6 +370,10 @@ final class UnifiedOpts {
     return new Delimiter(delimiter);
   }
 
+  static IncludeFoldersAsPrefixes includeFoldersAsPrefixes(boolean includeFoldersAsPrefixes) {
+    return new IncludeFoldersAsPrefixes(includeFoldersAsPrefixes);
+  }
+
   @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;
@@ -633,6 +637,20 @@ final class UnifiedOpts {
             .setCopySourceEncryptionKeyBytes(builder.getEncryptionKeyBytes())
             .setCopySourceEncryptionKeySha256Bytes(builder.getEncryptionKeySha256Bytes());
       };
+    }
+  }
+
+  static final class IncludeFoldersAsPrefixes extends RpcOptVal<Boolean> implements ObjectListOpt {
+
+    private static final long serialVersionUID = 321916692864878282L;
+
+    private IncludeFoldersAsPrefixes(boolean val) {
+      super(StorageRpc.Option.INCLUDE_FOLDERS_AS_PREFIXES, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setIncludeFoldersAsPrefixes(val);
     }
   }
 
