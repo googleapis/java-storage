@@ -25,9 +25,11 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.MetadataField.PartRange;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecoratorInstance;
@@ -49,9 +51,15 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.Status.Code;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.WritableByteChannel;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -760,6 +768,49 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
                 .containsExactly(p1, p2, p3, expectedId),
         () -> assertThat(storageInternal.deleteRequests).containsExactly(p1, p2, p3));
   }
+  @Test
+  public void partMetadataFieldDecoratorUsesCustomTime()
+      throws IOException {
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    OffsetDateTime rangeBegin = OffsetDateTime.from(
+        Instant.EPOCH.plus(Duration.ofSeconds(29)).atZone(
+            ZoneId.of("Z")));
+    OffsetDateTime rangeEnd = OffsetDateTime.from(Instant.EPOCH.plus(Duration.ofMinutes(2)).atZone(
+        ZoneId.of("Z")));
+
+    FakeStorageInternal storageInternal =
+        new FakeStorageInternal() {
+          @Override
+          public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts,
+              ByteBuffer buf) {
+            if (info.getBlobId().getName().endsWith(".part")) {
+              // Kinda hacky but since we are creating multiple parts we will use a range
+              // to ensure the customTimes are being calculated appropriately
+              assertThat(info.getCustomTimeOffsetDateTime().isAfter(rangeBegin)).isTrue();
+              assertThat(info.getCustomTimeOffsetDateTime().isBefore(rangeEnd)).isTrue();
+            } else {
+              assertThat(info.getCustomTimeOffsetDateTime()).isNull();
+            }
+            return super.internalDirectUpload(info, opts, buf);
+          }
+
+        };
+    ParallelCompositeUploadWritableByteChannel pcu = new ParallelCompositeUploadWritableByteChannel(
+        bufferHandlePool,
+        MoreExecutors.directExecutor(),
+        partNamingStrategy,
+        PartCleanupStrategy.always(),
+        10,
+        PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofSeconds(30)).newInstance(clock),
+        finalObject,
+        storageInternal,
+        info,
+        opts);
+    byte[] bytes = DataGenerator.base64Characters().genBytes(bufferCapacity * 3 - 1);
+    pcu.write(ByteBuffer.wrap(bytes));
+
+    pcu.close();
+    }
 
   @NonNull
   private ParallelCompositeUploadWritableByteChannel defaultPcu(int maxElementsPerCompact) {
@@ -786,7 +837,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     protected final List<ComposeRequest> composeRequests;
     protected final List<BlobId> deleteRequests;
 
-    private FakeStorageInternal() {
+    FakeStorageInternal() {
       generations = new AtomicInteger(1);
       addedObjects = Collections.synchronizedMap(new HashMap<>());
       composeRequests = Collections.synchronizedList(new ArrayList<>());
