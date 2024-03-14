@@ -69,10 +69,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.Statement;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
@@ -116,7 +113,8 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
             .withBufferAllocationStrategy(BufferAllocationStrategy.simple(_1MiB))
             .withPartNamingStrategy(PartNamingStrategy.prefix("prefix-a"))
             // Write customTime 30 seconds in the future
-            .withPartMetadataFieldDecorator(PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofSeconds(30)))
+            .withPartMetadataFieldDecorator(
+                PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofSeconds(30)))
             // let our fixtures take care of cleaning things
             .withPartCleanupStrategy(PartCleanupStrategy.never());
 
@@ -151,10 +149,7 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
   @Test
   public void partFilesCreatedWithCustomTimeWritten() throws IOException {
     doTest(bucket, 10 * _1MiB + 37, ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
-    Page<Blob> blobs =
-        storage.list(
-            bucket.getName(),
-            Storage.BlobListOption.prefix("prefix-a"));
+    Page<Blob> blobs = storage.list(bucket.getName(), Storage.BlobListOption.prefix("prefix-a"));
     for (Blob blob : blobs.iterateAll()) {
       assertThat(blob.getCustomTimeOffsetDateTime()).isNotNull();
     }
