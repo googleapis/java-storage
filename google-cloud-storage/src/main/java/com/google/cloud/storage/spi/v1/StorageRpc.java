@@ -79,7 +79,6 @@ public interface StorageRpc extends ServiceRpc {
     GENERATION("generation"),
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");
 
-
     private final String value;
 
     Option(String value) {
