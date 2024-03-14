@@ -21,6 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
+import com.google.api.gax.paging.Page;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.cloud.kms.v1.CryptoKey;
 import com.google.cloud.storage.Blob;
@@ -34,6 +35,7 @@ import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -57,6 +59,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.WritableByteChannel;
 import java.security.Key;
+import java.time.Duration;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,7 +69,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.Statement;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
@@ -109,8 +115,10 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
             // define a max part size that is fairly small to aid in test speed
             .withBufferAllocationStrategy(BufferAllocationStrategy.simple(_1MiB))
             .withPartNamingStrategy(PartNamingStrategy.prefix("prefix-a"))
-            // let our fixtures take care of cleaning things up if an upload fails
-            .withPartCleanupStrategy(PartCleanupStrategy.onlyOnSuccess());
+            // Write customTime 30 seconds in the future
+            .withPartMetadataFieldDecorator(PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofSeconds(30)))
+            // let our fixtures take care of cleaning things
+            .withPartCleanupStrategy(PartCleanupStrategy.never());
 
     StorageOptions storageOptions = null;
     if (transport == Transport.GRPC) {
@@ -137,6 +145,18 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
   public static void afterClass() {
     if (exec != null) {
       exec.shutdownNow();
+    }
+  }
+
+  @Test
+  public void partFilesCreatedWithCustomTimeWritten() throws IOException {
+    doTest(bucket, 10 * _1MiB + 37, ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
+    Page<Blob> blobs =
+        storage.list(
+            bucket.getName(),
+            Storage.BlobListOption.prefix("prefix-a"));
+    for (Blob blob : blobs.iterateAll()) {
+      assertThat(blob.getCustomTimeOffsetDateTime()).isNotNull();
     }
   }
 

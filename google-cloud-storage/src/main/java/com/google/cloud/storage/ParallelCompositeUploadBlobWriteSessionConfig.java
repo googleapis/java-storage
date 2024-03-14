@@ -704,7 +704,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       @Override
       PartMetadataFieldDecoratorInstance newInstance(Clock clock) {
         return builder -> {
-          OffsetDateTime futureTime = OffsetDateTime.from(clock.instant().plus(duration));
+          OffsetDateTime futureTime = OffsetDateTime.from(clock.instant().plus(duration).atZone(clock.getZone()).toOffsetDateTime());
           return builder.setCustomTimeOffsetDateTime(futureTime);
         };
       }
