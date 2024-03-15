@@ -672,8 +672,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   }
 
   /**
-   * A Decorator which is used to manipulate metadata fields, specifically on the part objects created in
-   * a Parallel Composite Upload
+   * A Decorator which is used to manipulate metadata fields, specifically on the part objects
+   * created in a Parallel Composite Upload
    *
    * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
    * @since 2.36.0 This new api is in preview and is subject to breaking changes.
@@ -688,8 +688,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * A decorator that is used to manipulate the Custom Time Metadata field of part files. {@link
      * BlobInfo#getCustomTimeOffsetDateTime()}
      *
-     * <p>When provided with a duration, a time in the future will be calculated for each part object
-     * upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
+     * <p>When provided with a duration, a time in the future will be calculated for each part
+     * object upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
      *
      * <p>See [CustomTime OLM
      * documentation](https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime)
