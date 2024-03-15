@@ -44,6 +44,8 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String PROJECT_NUMBER = System.getenv("GOOGLE_CLOUD_PROJECT_NUMBER");
+
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
   private static final String TOPIC =
       String.format("projects/%s/topics/new-topic-delete-%s", PROJECT, ID);
@@ -66,7 +68,9 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
           Binding.newBuilder()
               .setRole("roles/owner")
               .addMembers(
-                  "serviceAccount:service-615621127317@gs-project-accounts.iam.gserviceaccount.com")
+                  "serviceAccount:service-"
+                      + PROJECT_NUMBER
+                      + "@gs-project-accounts.iam.gserviceaccount.com")
               .build();
       SetIamPolicyRequest setIamPolicyRequest =
           SetIamPolicyRequest.newBuilder()
