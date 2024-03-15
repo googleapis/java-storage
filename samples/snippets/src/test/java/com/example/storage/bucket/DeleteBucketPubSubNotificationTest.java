@@ -66,14 +66,13 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
       com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
       // For available bindings identities, see
       // https://cloud.google.com/iam/docs/overview#concepts_related_identity
-      Binding binding =
-          Binding.newBuilder()
-              .setRole("roles/owner")
-              .addMembers(
-                  "serviceAccount:service-"
-                      + PROJECT_NUMBER
-                      + "@gs-project-accounts.iam.gserviceaccount.com")
-              .build();
+      String member =
+          PROJECT_NUMBER != null
+              ? "serviceAccount:service-"
+                  + PROJECT_NUMBER
+                  + "@gs-project-accounts.iam.gserviceaccount.com"
+              : "allAuthenticatedUsers";
+      Binding binding = Binding.newBuilder().setRole("roles/owner").addMembers(member).build();
       SetIamPolicyRequest setIamPolicyRequest =
           SetIamPolicyRequest.newBuilder()
               .setResource(TOPIC)
