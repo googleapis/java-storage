@@ -21,8 +21,13 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.google.cloud.storage.MetadataField.PartRange;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.common.truth.StringSubject;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import org.junit.Test;
 
 public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
@@ -85,6 +90,18 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         () -> assertField(fmt, 1).hasLength(22),
         () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
         () -> assertThat(fmt).startsWith("a/b/obj"));
+  }
+
+  @Test
+  public void partMetadataFieldDecorator_customTime() {
+    BlobInfo.Builder testBlob = BlobInfo.newBuilder("testBlob", "testBucket");
+    Duration duration = Duration.ofSeconds(30);
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    OffsetDateTime expected =
+        OffsetDateTime.from(Instant.EPOCH.plus(duration).atZone(ZoneId.of("Z")));
+    PartMetadataFieldDecorator.setCustomTimeInFuture(duration).newInstance(clock).apply(testBlob);
+
+    assertThat(expected).isEqualTo(testBlob.build().getCustomTimeOffsetDateTime());
   }
 
   private static StringSubject assertField(String fmt, int idx) {

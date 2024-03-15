@@ -37,7 +37,7 @@ final class TestClock extends Clock {
 
   @Override
   public ZoneId getZone() {
-    throw new UnsupportedOperationException("TestClock.getZone()");
+    return ZoneId.of("Z");
   }
 
   @Override
