@@ -59,6 +59,8 @@ public class ListPubSubNotificationsTest extends TestBase {
       GetIamPolicyRequest getIamPolicyRequest =
           GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
       com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
+      // For available bindings identities, see
+      // https://cloud.google.com/iam/docs/overview#concepts_related_identity
       Binding binding =
           Binding.newBuilder()
               .setRole("roles/owner")
