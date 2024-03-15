@@ -97,7 +97,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
     BlobInfo.Builder testBlob = BlobInfo.newBuilder("testBlob", "testBucket");
     Duration duration = Duration.ofSeconds(30);
     TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
-    OffsetDateTime expected = OffsetDateTime.from(Instant.EPOCH.plus(duration).atZone(ZoneId.of("Z")));
+    OffsetDateTime expected =
+        OffsetDateTime.from(Instant.EPOCH.plus(duration).atZone(ZoneId.of("Z")));
     PartMetadataFieldDecorator.setCustomTimeInFuture(duration).newInstance(clock).apply(testBlob);
 
     assertThat(expected).isEqualTo(testBlob.build().getCustomTimeOffsetDateTime());

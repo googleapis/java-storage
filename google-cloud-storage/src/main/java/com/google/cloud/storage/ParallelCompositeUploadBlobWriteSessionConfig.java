@@ -693,7 +693,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * <p>When provided with a duration, a time in the future will be calculated for each part file
      * upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
      *
-     * @see {@link https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime}
+     * See [CustomTime OLM documentation](https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime)
+     *
      * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
      * @since 2.35.1 This new api is in preview and is subject to breaking changes.
      */
