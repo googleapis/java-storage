@@ -118,6 +118,9 @@ public class BucketInfo implements Serializable {
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
   private final ObjectRetention objectRetention;
+  private final HierarchicalNamespace hierarchicalNamespace;
+
+  private final SoftDeletePolicy softDeletePolicy;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -346,6 +349,90 @@ public class BucketInfo implements Serializable {
           .add("uniformBucketLevelAccessLockedTime", uniformBucketLevelAccessLockedTime)
           .add("publicAccessPrevention", publicAccessPrevention)
           .toString();
+    }
+  }
+
+  /**
+   * The bucket's soft delete policy. If this policy is set, any deleted objects will be
+   * soft-deleted according to the time specified in the policy
+   */
+  public static class SoftDeletePolicy implements Serializable {
+
+    private static final long serialVersionUID = -8100190443052242908L;
+    private Duration retentionDuration;
+    private OffsetDateTime effectiveTime;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof SoftDeletePolicy)) {
+        return false;
+      }
+      SoftDeletePolicy that = (SoftDeletePolicy) o;
+      return Objects.equals(retentionDuration, that.retentionDuration)
+          && Objects.equals(effectiveTime, that.effectiveTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(retentionDuration, effectiveTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("retentionDuration", retentionDuration)
+          .add("effectiveTime", effectiveTime)
+          .toString();
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return new Builder().setRetentionDuration(retentionDuration).setEffectiveTime(effectiveTime);
+    }
+
+    private SoftDeletePolicy() {}
+
+    public SoftDeletePolicy(Builder builder) {
+      this.retentionDuration = builder.retentionDuration;
+      this.effectiveTime = builder.effectiveTime;
+    }
+
+    public Duration getRetentionDuration() {
+      return retentionDuration;
+    }
+
+    public OffsetDateTime getEffectiveTime() {
+      return effectiveTime;
+    }
+
+    public static final class Builder {
+      private Duration retentionDuration;
+      private OffsetDateTime effectiveTime;
+
+      /** Sets the length of time to retain soft-deleted objects for, expressed as a Duration */
+      public Builder setRetentionDuration(Duration retentionDuration) {
+        this.retentionDuration = retentionDuration;
+        return this;
+      }
+
+      /**
+       * Sets the time from which this soft-delete policy is effective. This is package-private
+       * because it can only be set by the backend.
+       */
+      Builder setEffectiveTime(OffsetDateTime effectiveTime) {
+        this.effectiveTime = effectiveTime;
+        return this;
+      }
+
+      public SoftDeletePolicy build() {
+        return new SoftDeletePolicy(this);
+      }
     }
   }
 
@@ -709,6 +796,71 @@ public class BucketInfo implements Serializable {
       /** Builds an {@code Logging} object */
       public Logging build() {
         return new Logging(this);
+      }
+    }
+  }
+
+  /** The bucket's hierarchical namespace (Folders) configuration. Enable this to use HNS. */
+  public static final class HierarchicalNamespace implements Serializable {
+
+    private static final long serialVersionUID = 5932926691444613101L;
+    private Boolean enabled;
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof HierarchicalNamespace)) {
+        return false;
+      }
+      HierarchicalNamespace that = (HierarchicalNamespace) o;
+      return Objects.equals(enabled, that.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(enabled);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("enabled", enabled).toString();
+    }
+
+    private HierarchicalNamespace() {}
+
+    private HierarchicalNamespace(Builder builder) {
+      this.enabled = builder.enabled;
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return newBuilder().setEnabled(enabled);
+    }
+
+    public static final class Builder {
+      private Boolean enabled;
+
+      /**
+       * Sets whether Hierarchical Namespace (Folders) is enabled for this bucket. This can only be
+       * enabled at bucket create time. If this is enabled, Uniform Bucket-Level Access must also be
+       * enabled.
+       */
+      public Builder setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+      }
+
+      public HierarchicalNamespace build() {
+        return new HierarchicalNamespace(this);
       }
     }
   }
@@ -1683,7 +1835,11 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
 
+    public abstract Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace);
+
     abstract Builder setObjectRetention(ObjectRetention objectRetention);
+
+    public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
 
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
@@ -1783,6 +1939,9 @@ public class BucketInfo implements Serializable {
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
     private ObjectRetention objectRetention;
+
+    private SoftDeletePolicy softDeletePolicy;
+    private HierarchicalNamespace hierarchicalNamespace;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -1822,6 +1981,8 @@ public class BucketInfo implements Serializable {
       logging = bucketInfo.logging;
       customPlacementConfig = bucketInfo.customPlacementConfig;
       objectRetention = bucketInfo.objectRetention;
+      softDeletePolicy = bucketInfo.softDeletePolicy;
+      hierarchicalNamespace = bucketInfo.hierarchicalNamespace;
     }
 
     @Override
@@ -2188,6 +2349,24 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy) {
+      if (!Objects.equals(this.softDeletePolicy, softDeletePolicy)) {
+        modifiedFields.add(BucketField.SOFT_DELETE_POLICY);
+      }
+      this.softDeletePolicy = softDeletePolicy;
+      return this;
+    }
+
+    @Override
+    public Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace) {
+      if (!Objects.equals(this.hierarchicalNamespace, hierarchicalNamespace)) {
+        modifiedFields.add(BucketField.HIERARCHICAL_NAMESPACE);
+      }
+      this.hierarchicalNamespace = hierarchicalNamespace;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       if (!Objects.equals(this.locationType, locationType)) {
         modifiedFields.add(BucketField.LOCATION_TYPE);
@@ -2428,6 +2607,8 @@ public class BucketInfo implements Serializable {
     logging = builder.logging;
     customPlacementConfig = builder.customPlacementConfig;
     objectRetention = builder.objectRetention;
+    softDeletePolicy = builder.softDeletePolicy;
+    hierarchicalNamespace = builder.hierarchicalNamespace;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2768,6 +2949,16 @@ public class BucketInfo implements Serializable {
     return objectRetention;
   }
 
+  /** returns the Soft Delete policy */
+  public SoftDeletePolicy getSoftDeletePolicy() {
+    return softDeletePolicy;
+  }
+
+  /** Returns the Hierarchical Namespace (Folders) Configuration */
+  public HierarchicalNamespace getHierarchicalNamespace() {
+    return hierarchicalNamespace;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2805,6 +2996,8 @@ public class BucketInfo implements Serializable {
         autoclass,
         locationType,
         objectRetention,
+        softDeletePolicy,
+        hierarchicalNamespace,
         logging);
   }
 
@@ -2846,6 +3039,8 @@ public class BucketInfo implements Serializable {
         && Objects.equals(autoclass, that.autoclass)
         && Objects.equals(locationType, that.locationType)
         && Objects.equals(objectRetention, that.objectRetention)
+        && Objects.equals(softDeletePolicy, that.softDeletePolicy)
+        && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)
         && Objects.equals(logging, that.logging);
   }
 

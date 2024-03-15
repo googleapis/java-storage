@@ -341,6 +341,24 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return get(blob, new BlobGetOption[0]);
   }
 
+  @Override
+  public Blob restore(BlobId blob, BlobRestoreOption... options) {
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+
+    StorageObject obj = codecs.blobId().encode(blob);
+
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsRestore(obj, optionsMap);
+
+    return run(
+        algorithm,
+        () -> storageRpc.restore(obj, optionsMap),
+        (x) -> {
+          BlobInfo info = Conversions.json().blobInfo().decode(x);
+          return info.asBlob(this);
+        });
+  }
+
   private static class BucketPageFetcher implements NextPageFetcher<Bucket> {
 
     private static final long serialVersionUID = 8534413447247364038L;

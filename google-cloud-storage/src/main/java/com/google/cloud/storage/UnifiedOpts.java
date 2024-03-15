@@ -53,6 +53,7 @@ import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
@@ -155,6 +156,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<RestoreObjectRequest.Builder> restoreObject() {
       return Mapper.identity();
     }
   }
@@ -370,6 +375,10 @@ final class UnifiedOpts {
     return new Delimiter(delimiter);
   }
 
+  static IncludeFoldersAsPrefixes includeFoldersAsPrefixes(boolean includeFoldersAsPrefixes) {
+    return new IncludeFoldersAsPrefixes(includeFoldersAsPrefixes);
+  }
+
   @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;
@@ -476,6 +485,14 @@ final class UnifiedOpts {
   static Projection projection(@NonNull String projection) {
     requireNonNull(projection, "projection must be non null");
     return new Projection(projection);
+  }
+
+  static SoftDeleted softDeleted(boolean softDeleted) {
+    return new SoftDeleted(softDeleted);
+  }
+
+  static CopySourceAcl copySourceAcl(boolean copySourceAcl) {
+    return new CopySourceAcl(copySourceAcl);
   }
 
   static RequestedPolicyVersion requestedPolicyVersion(long l) {
@@ -636,6 +653,20 @@ final class UnifiedOpts {
     }
   }
 
+  static final class IncludeFoldersAsPrefixes extends RpcOptVal<Boolean> implements ObjectListOpt {
+
+    private static final long serialVersionUID = 321916692864878282L;
+
+    private IncludeFoldersAsPrefixes(boolean val) {
+      super(StorageRpc.Option.INCLUDE_FOLDERS_AS_PREFIXES, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setIncludeFoldersAsPrefixes(val);
+    }
+  }
+
   static final class Delimiter extends RpcOptVal<String> implements ObjectListOpt {
     private static final long serialVersionUID = -3789556789947615714L;
 
@@ -646,6 +677,40 @@ final class UnifiedOpts {
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
       return b -> b.setDelimiter(val);
+    }
+  }
+
+  static final class SoftDeleted extends RpcOptVal<Boolean>
+      implements ObjectListOpt, ObjectSourceOpt {
+
+    private static final long serialVersionUID = -8526951678111463350L;
+
+    private SoftDeleted(boolean val) {
+      super(StorageRpc.Option.SOFT_DELETED, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setSoftDeleted(val);
+    }
+
+    @Override
+    public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setSoftDeleted(val);
+    }
+  }
+
+  static final class CopySourceAcl extends RpcOptVal<Boolean> implements ObjectSourceOpt {
+
+    private static final long serialVersionUID = 2033755749149128119L;
+
+    private CopySourceAcl(boolean val) {
+      super(StorageRpc.Option.COPY_SOURCE_ACL, val);
+    }
+
+    @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
+      return b -> b.setCopySourceAcl(val);
     }
   }
 
@@ -991,6 +1056,11 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
     public Mapper<UpdateObjectRequest.Builder> updateObject() {
       return b -> b.setIfGenerationMatch(val);
     }
@@ -1043,6 +1113,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
       return b -> b.setIfGenerationNotMatch(val);
     }
 
@@ -1188,6 +1263,11 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
     public Mapper<UpdateObjectRequest.Builder> updateObject() {
       return b -> b.setIfMetagenerationMatch(val);
     }
@@ -1264,6 +1344,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
       return b -> b.setIfMetagenerationNotMatch(val);
     }
 
@@ -2279,6 +2364,10 @@ final class UnifiedOpts {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::getObject);
     }
 
+    Mapper<RestoreObjectRequest.Builder> restoreObjectRequest() {
+      return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::restoreObject);
+    }
+
     Mapper<ReadObjectRequest.Builder> readObjectRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::readObject);
     }
@@ -2540,6 +2629,7 @@ final class UnifiedOpts {
   }
 
   private static final class PrefixedNamedField implements NamedField {
+    private static long serialVersionUID = -4899304145424680141L;
 
     private final String prefix;
     private final NamedField delegate;
@@ -2586,6 +2676,7 @@ final class UnifiedOpts {
   }
 
   private static final class LiteralNamedField implements NamedField {
+    private static long serialVersionUID = 1422947423774466409L;
 
     private final String name;
 
@@ -2627,6 +2718,7 @@ final class UnifiedOpts {
   }
 
   private static final class NestedNamedField implements NamedField {
+    private static long serialVersionUID = -7623005572810688221L;
     private final NamedField parent;
     private final NamedField child;
 
