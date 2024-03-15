@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.36.0](https://github.com/googleapis/java-storage/compare/v2.35.0...v2.36.0) (2024-03-15)
+
+
+### Features
+
+* Add Custom Part Metadata Decorator to ParallelCompositeUploadConfig ([#2434](https://github.com/googleapis/java-storage/issues/2434)) ([43b8006](https://github.com/googleapis/java-storage/commit/43b800645ba3622e5de635825e1d082c6d26c2eb))
+* Add hierarchical namespace and folders features ([#2445](https://github.com/googleapis/java-storage/issues/2445)) ([8074fff](https://github.com/googleapis/java-storage/commit/8074fffed5208a8578e5afe694fdd3d8df627b8c))
+* Add soft delete feature ([#2403](https://github.com/googleapis/java-storage/issues/2403)) ([989f36f](https://github.com/googleapis/java-storage/commit/989f36fbb206832a6a3584c77546d3d560ac0df8))
+
+
+### Bug Fixes
+
+* Fix name digest for noprefix ([#2448](https://github.com/googleapis/java-storage/issues/2448)) ([12c9db8](https://github.com/googleapis/java-storage/commit/12c9db8935f25a5f9e4633af85ea96acaa914d23))
+* Missing serialVersionUID of serializable classes ([#2344](https://github.com/googleapis/java-storage/issues/2344)) ([736865b](https://github.com/googleapis/java-storage/commit/736865b4b97aa3940e1eab6a582d0ef38db31bba))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240307-2.0.0 ([#2442](https://github.com/googleapis/java-storage/issues/2442)) ([1352203](https://github.com/googleapis/java-storage/commit/1352203859c3798423ef78823ed10577b93eebef))
+* Update dependency net.jqwik:jqwik to v1.8.4 ([#2447](https://github.com/googleapis/java-storage/issues/2447)) ([110b80c](https://github.com/googleapis/java-storage/commit/110b80cdde24da4868e46c3909020db7b02d5491))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.42.0 ([#2441](https://github.com/googleapis/java-storage/issues/2441)) ([80745d4](https://github.com/googleapis/java-storage/commit/80745d415810353b3466a3eda12f6ca50a2c71b0))
+
 ## [2.35.0](https://github.com/googleapis/java-storage/compare/v2.34.0...v2.35.0) (2024-03-04)
 
 
