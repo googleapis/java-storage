@@ -612,7 +612,10 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
 
       @Override
-      protected String fmtFields(String randomKey, String nameDigest, String partRange) {
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
         return randomKey
             + FIELD_SEPARATOR
             // todo: do we want to

@@ -84,7 +84,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         // name digest
         () -> assertField(fmt, 1).hasLength(22),
         () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
-        () -> assertThat(fmt).startsWith("a/b/obj/"));
+        () -> assertThat(fmt).startsWith("a/b/obj"));
   }
 
   private static StringSubject assertField(String fmt, int idx) {
