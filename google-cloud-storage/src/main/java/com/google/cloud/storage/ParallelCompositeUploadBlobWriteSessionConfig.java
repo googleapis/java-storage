@@ -251,9 +251,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    *
    * <p><i>Default: </i> {@link PartMetadataFieldDecorator#noOp()}
    *
-   * @since 2.35.1 This new api is in preview and is subject to breaking changes.
-   * @param partMetadataFieldDecorator
-   * @return
+   * @since 2.36.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartMetadataFieldDecorator(
@@ -674,11 +672,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   }
 
   /**
-   * A Decorator which is used to manipulate metadata fields, specifically on the part files used in
+   * A Decorator which is used to manipulate metadata fields, specifically on the part objects created in
    * a Parallel Composite Upload
    *
    * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
-   * @since 2.35.1 This new api is in preview and is subject to breaking changes.
+   * @since 2.36.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -688,16 +686,16 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     /**
      * A decorator that is used to manipulate the Custom Time Metadata field of part files. {@link
-     * com.google.storage.v2.Object#customTime_}
+     * BlobInfo#getCustomTimeOffsetDateTime()}
      *
-     * <p>When provided with a duration, a time in the future will be calculated for each part file
+     * <p>When provided with a duration, a time in the future will be calculated for each part object
      * upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
      *
      * <p>See [CustomTime OLM
      * documentation](https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime)
      *
      * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
-     * @since 2.35.1 This new api is in preview and is subject to breaking changes.
+     * @since 2.36.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static PartMetadataFieldDecorator setCustomTimeInFuture(Duration timeInFuture) {
