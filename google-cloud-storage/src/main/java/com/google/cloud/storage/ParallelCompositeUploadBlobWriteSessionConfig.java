@@ -247,7 +247,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
   /**
    * Specify a Part Metadata Field decorator, this will manipulate the metadata associated with part
-   * files, the ultimate object metadata will remain unchanged.
+   * objects, the ultimate object metadata will remain unchanged.
    *
    * <p><i>Default: </i> {@link PartMetadataFieldDecorator#noOp()}
    *
