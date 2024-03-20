@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.36.1](https://github.com/googleapis/java-storage/compare/v2.36.0...v2.36.1) (2024-03-20)
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240311-2.0.0 ([#2446](https://github.com/googleapis/java-storage/issues/2446)) ([27b4780](https://github.com/googleapis/java-storage/commit/27b4780ff64ce068555887c1cc4f88489dde0a83))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.28.1 ([#2450](https://github.com/googleapis/java-storage/issues/2450)) ([bf35a9a](https://github.com/googleapis/java-storage/commit/bf35a9a041f012b56e4a858d48b018f1270f319d))
+
 ## [2.36.0](https://github.com/googleapis/java-storage/compare/v2.35.0...v2.36.0) (2024-03-15)
 
 
