@@ -153,13 +153,13 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
     }
   }
 
-  private static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
+  static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
       implements WritableByteChannelSession<WBC, BlobInfo> {
 
     private final WritableByteChannelSession<WBC, T> delegate;
     private final Decoder<T, BlobInfo> decoder;
 
-    private DecoratedWritableByteChannelSession(
+    DecoratedWritableByteChannelSession(
         WritableByteChannelSession<WBC, T> delegate, Decoder<T, BlobInfo> decoder) {
       this.delegate = delegate;
       this.decoder = decoder;
@@ -186,11 +186,11 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
     }
   }
 
-  private static final class LazySession<R>
+  static final class LazySession<R>
       implements WritableByteChannelSession<BufferedWritableByteChannel, R> {
     private final LazyWriteChannel<R> lazy;
 
-    private LazySession(LazyWriteChannel<R> lazy) {
+    LazySession(LazyWriteChannel<R> lazy) {
       this.lazy = lazy;
     }
 
