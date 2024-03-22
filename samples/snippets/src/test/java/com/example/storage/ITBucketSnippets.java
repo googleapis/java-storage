@@ -465,7 +465,7 @@ public class ITBucketSnippets {
         .get(BUCKET)
         .toBuilder()
         .setDefaultKmsKeyName("projects/cloud-java-ci-sample/locations/us/keyRings/"
-            + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one");
+            + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
     TestUtils.retryAssert(
