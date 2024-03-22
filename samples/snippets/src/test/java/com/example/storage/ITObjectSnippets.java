@@ -97,8 +97,8 @@ public class ITObjectSnippets {
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String KMS_KEY_NAME =
-      "projects/java-docs-samples-testing/locations/us/keyRings/"
-          + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+      "projects/cloud-java-ci-sample/locations/us/keyRings/"
+          + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
