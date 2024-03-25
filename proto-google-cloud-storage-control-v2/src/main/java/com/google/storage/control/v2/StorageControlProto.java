@@ -204,12 +204,15 @@ public final class StorageControlProto {
           + "m/auth/devstorage.full_control,https://w"
           + "ww.googleapis.com/auth/devstorage.read_o"
           + "nly,https://www.googleapis.com/auth/devs"
-          + "torage.read_writeB\312\001\n\035com.google.storage"
+          + "torage.read_writeB\264\002\n\035com.google.storage"
           + ".control.v2B\023StorageControlProtoP\001ZKclou"
           + "d.google.com/go/storage/control/apiv2/st"
-          + "oragecontrolpb;storagecontrolpb\352AD\n\035stor"
-          + "age.googleapis.com/Bucket\022#projects/{pro"
-          + "ject}/buckets/{bucket}b\006proto3"
+          + "oragecontrolpb;storagecontrolpb\252\002\037Google"
+          + ".Cloud.Storage.Control.V2\312\002\037Google\\Cloud"
+          + "\\Storage\\Control\\V2\352\002#Google::Cloud::Sto"
+          + "rage::Control::V2\352AD\n\035storage.googleapis"
+          + ".com/Bucket\022#projects/{project}/buckets/"
+          + "{bucket}b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
