@@ -87,6 +87,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       defaultValue = "0")
   int warmup;
 
+  @Option(names = "-bidi", description = "If bidi should be enabled")
+  boolean bidiEnabled;
+
   Path tempDir;
 
   PrintWriter printWriter;
@@ -107,11 +110,8 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
-      case "bidi":
-        runWorkloadBidi();
-        break;
-      case "default-nobidi":
-        runWorkloadNoBidi();
+      case "write-only":
+        runWorkloadWriteOnly();
         break;
       default:
         throw new IllegalStateException("Specify a workload to run");
@@ -158,32 +158,27 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     }
   }
 
-  private void runWorkloadBidi() {
-    StorageOptions options =
-        StorageOptions.grpc()
-            .setProjectId(project)
-            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
-            .build();
-    Storage storageClient = options.getService();
+  private void runWorkloadWriteOnly() {
     try {
-      runBidi(storageClient);
+      if (bidiEnabled) {
+        StorageOptions options =
+            StorageOptions.grpc()
+                .setProjectId(project)
+                .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+                .build();
+        Storage storageClient = options.getService();
+        runBidi(storageClient);
+      } else {
+        StorageOptions options =
+            StorageOptions.grpc()
+                .setProjectId(project)
+                .setBlobWriteSessionConfig(BlobWriteSessionConfigs.getDefault())
+                .build();
+        Storage storageClient = options.getService();
+        runBidi(storageClient);
+      }
     } catch (Exception e) {
       System.err.println("Failed to run workload bidi" + e.getMessage());
-      System.exit(1);
-    }
-  }
-
-  private void runWorkloadNoBidi() {
-    StorageOptions options =
-        StorageOptions.grpc()
-            .setProjectId(project)
-            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.getDefault())
-            .build();
-    Storage storageClient = options.getService();
-    try {
-      runBidi(storageClient);
-    } catch (Exception e) {
-      System.err.println("Failed to run workload no bidi" + e.getMessage());
       System.exit(1);
     }
   }
