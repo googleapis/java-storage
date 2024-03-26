@@ -154,7 +154,7 @@ public final class TransferManagerConfig {
     return MoreObjects.toStringHelper(this)
         .add("maxWorkers", maxWorkers)
         .add("perWorkerBufferSize", perWorkerBufferSize)
-        .add("allowChunking", allowDivideAndConquerDownload)
+        .add("allowDivideAndConquerDownload", allowDivideAndConquerDownload)
         .add("allowParallelCompositeUpload", allowParallelCompositeUpload)
         .add("storageOptions", storageOptions)
         .toString();
