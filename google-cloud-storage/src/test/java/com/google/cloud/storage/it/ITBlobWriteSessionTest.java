@@ -112,6 +112,7 @@ public final class ITBlobWriteSessionTest {
   }
 
   @Test
+  @CrossRun.Exclude(transports = Transport.HTTP)
   public void bidiTest() throws Exception {
     StorageOptions options = null;
     if (transport == Transport.GRPC) {
