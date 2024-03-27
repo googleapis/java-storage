@@ -103,7 +103,7 @@ final class TransferManagerImpl implements TransferManager {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
-    if (!transferManagerConfig.isAllowDivideAndConquer()) {
+    if (!transferManagerConfig.isAllowDivideAndConquerDownload()) {
       for (BlobInfo blob : blobs) {
         DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
         downloadTasks.add(convert(executor.submit(callable)));

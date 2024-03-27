@@ -30,7 +30,8 @@ import java.util.Objects;
 public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
-  private final boolean allowDivideAndConquer;
+  private final boolean allowDivideAndConquerDownload;
+  private final boolean allowParallelCompositeUpload;
 
   private final StorageOptions storageOptions;
   private final Qos qos;
@@ -38,12 +39,14 @@ public final class TransferManagerConfig {
   TransferManagerConfig(
       int maxWorkers,
       int perWorkerBufferSize,
-      boolean allowDivideAndConquer,
+      boolean allowDivideAndConquerDownload,
+      boolean allowParallelCompositeUpload,
       StorageOptions storageOptions,
       Qos qos) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
-    this.allowDivideAndConquer = allowDivideAndConquer;
+    this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+    this.allowParallelCompositeUpload = allowParallelCompositeUpload;
     this.storageOptions = storageOptions;
     this.qos = qos;
   }
@@ -72,11 +75,21 @@ public final class TransferManagerConfig {
    * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
    * chunking will be beneficial
    *
-   * @see Builder#setAllowDivideAndConquer(boolean)
+   * @see Builder#setAllowDivideAndConquerDownload(boolean)
    */
   @BetaApi
-  public boolean isAllowDivideAndConquer() {
-    return allowDivideAndConquer;
+  public boolean isAllowDivideAndConquerDownload() {
+    return allowDivideAndConquerDownload;
+  }
+  /**
+   * Whether to allow Transfer Manager to perform Parallel Composite Uploads if it determines
+   * chunking will be beneficial
+   *
+   * @see Builder#setAllowParallelCompositeUpload(boolean)
+   */
+  @BetaApi
+  public boolean isAllowParallelCompositeUpload() {
+    return allowParallelCompositeUpload;
   }
 
   /**
@@ -98,7 +111,8 @@ public final class TransferManagerConfig {
   @BetaApi
   public Builder toBuilder() {
     return new Builder()
-        .setAllowDivideAndConquer(allowDivideAndConquer)
+        .setAllowDivideAndConquerDownload(allowDivideAndConquerDownload)
+        .setAllowParallelCompositeUpload(allowParallelCompositeUpload)
         .setMaxWorkers(maxWorkers)
         .setPerWorkerBufferSize(perWorkerBufferSize)
         .setQos(qos)
@@ -120,13 +134,19 @@ public final class TransferManagerConfig {
     TransferManagerConfig that = (TransferManagerConfig) o;
     return maxWorkers == that.maxWorkers
         && perWorkerBufferSize == that.perWorkerBufferSize
-        && allowDivideAndConquer == that.allowDivideAndConquer
+        && allowDivideAndConquerDownload == that.allowDivideAndConquerDownload
+        && allowParallelCompositeUpload == that.allowParallelCompositeUpload
         && Objects.equals(storageOptions, that.storageOptions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions);
+    return Objects.hash(
+        maxWorkers,
+        perWorkerBufferSize,
+        allowDivideAndConquerDownload,
+        allowParallelCompositeUpload,
+        storageOptions);
   }
 
   @Override
@@ -134,7 +154,8 @@ public final class TransferManagerConfig {
     return MoreObjects.toStringHelper(this)
         .add("maxWorkers", maxWorkers)
         .add("perWorkerBufferSize", perWorkerBufferSize)
-        .add("allowChunking", allowDivideAndConquer)
+        .add("allowDivideAndConquerDownload", allowDivideAndConquerDownload)
+        .add("allowParallelCompositeUpload", allowParallelCompositeUpload)
         .add("storageOptions", storageOptions)
         .toString();
   }
@@ -154,7 +175,8 @@ public final class TransferManagerConfig {
 
     private int maxWorkers;
     private int perWorkerBufferSize;
-    private boolean allowDivideAndConquer;
+    private boolean allowDivideAndConquerDownload;
+    private boolean allowParallelCompositeUpload;
 
     private StorageOptions storageOptions;
     private Qos qos;
@@ -162,7 +184,8 @@ public final class TransferManagerConfig {
     private Builder() {
       this.perWorkerBufferSize = 16 * 1024 * 1024;
       this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
-      this.allowDivideAndConquer = false;
+      this.allowDivideAndConquerDownload = false;
+      this.allowParallelCompositeUpload = false;
       this.storageOptions = StorageOptions.getDefaultInstance();
       this.qos = DefaultQos.of();
     }
@@ -202,12 +225,27 @@ public final class TransferManagerConfig {
      *
      * <p><i>Default Value:</i> false
      *
-     * @return the instance of Builder with the value for allowDivideAndConquer modified.
-     * @see TransferManagerConfig#isAllowDivideAndConquer()
+     * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
+     * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
     @BetaApi
-    public Builder setAllowDivideAndConquer(boolean allowDivideAndConquer) {
-      this.allowDivideAndConquer = allowDivideAndConquer;
+    public Builder setAllowDivideAndConquerDownload(boolean allowDivideAndConquerDownload) {
+      this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+      return this;
+    }
+
+    /**
+     * Whether to allow Transfer Manager to perform Parallel Composite Uploads if it determines
+     * chunking will be beneficial
+     *
+     * <p><i>Default Value:</i> false
+     *
+     * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
+     * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
+     */
+    @BetaApi
+    public Builder setAllowParallelCompositeUpload(boolean allowDivideAndConquerDownload) {
+      this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
       return this;
     }
 
@@ -239,7 +277,12 @@ public final class TransferManagerConfig {
     @BetaApi
     public TransferManagerConfig build() {
       return new TransferManagerConfig(
-          maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions, qos);
+          maxWorkers,
+          perWorkerBufferSize,
+          allowDivideAndConquerDownload,
+          allowParallelCompositeUpload,
+          storageOptions,
+          qos);
     }
   }
 }
