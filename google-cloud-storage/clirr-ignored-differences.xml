@@ -39,12 +39,12 @@
   </difference>
   <difference>
     <differenceType>7002</differenceType>
-    <className>com.google.cloud.storage.transfermanager.TransferManagerConfig</className>
+    <className>com/google/cloud/storage/transfermanager/TransferManagerConfig</className>
     <method>boolean isAllowDivideAndConquer()</method>
   </difference>
   <difference>
     <differenceType>7002</differenceType>
-    <className>com.google.cloud.storage.transfermanager.TransferManagerConfig$Builder</className>
+    <className>com/google/cloud/storage/transfermanager/TransferManagerConfig$Builder</className>
     <method>* setAllowDivideAndConquer(boolean)</method>
   </difference>
 </differences>
