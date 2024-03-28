@@ -86,7 +86,7 @@ import java.util.Collection;
  *       Buffer bytes to a temporary file on disk. On {@link WritableByteChannel#close() close()}
  *       upload the entire files contents to Cloud Storage. Delete the temporary file.
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>
  *       <ol>
  *         <li>A Resumable Upload Session will be used to upload the file on disk.</li>
@@ -272,7 +272,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BlobWriteSessionConfig bufferToTempDirThenUpload() throws IOException {
     return bufferToDiskThenUpload(
         Paths.get(System.getProperty("java.io.tmpdir"), "google-cloud-storage"));
@@ -289,7 +289,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Path path) throws IOException {
     return bufferToDiskThenUpload(ImmutableList.of(path));
   }
@@ -308,7 +308,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Collection<Path> paths)
       throws IOException {
     return new BufferToDiskThenUpload(ImmutableList.copyOf(paths), false);
