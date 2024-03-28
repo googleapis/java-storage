@@ -294,6 +294,11 @@
               google-api-client to be able to bootstrap.
               -->
               <dependency>com.google.http-client:google-http-client-gson</dependency>
+              <!--
+              Our test suite is primarily JUnit4, but also includes JQwik tests which require JUnit 5,
+              Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
+              -->
+              <dependency>org.junit.vintage:junit-vintage-engine</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>
@@ -317,7 +322,6 @@
           <reportNameSuffix>sponge_log</reportNameSuffix>
         </configuration>
         <dependencies>
-          <!-- org.apache.maven.surefire:surefire-junit47 is also included from parent config -->
           <!-- add junit-platform to support jqwik tests for mvn test -->
           <dependency>
             <groupId>org.apache.maven.surefire</groupId>
