@@ -43,6 +43,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
+import com.google.api.services.storage.Storage.Objects.Compose;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.model.Bucket;
@@ -755,13 +756,15 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_COMPOSE);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objects()
-          .compose(target.getBucket(), target.getName(), request)
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(targetOptions))
-          .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
-          .setUserProject(Option.USER_PROJECT.getString(targetOptions))
-          .execute();
+      Compose compose =
+          storage
+              .objects()
+              .compose(target.getBucket(), target.getName(), request)
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(targetOptions))
+              .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
+              .setUserProject(Option.USER_PROJECT.getString(targetOptions));
+      setEncryptionHeaders(compose.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, targetOptions);
+      return compose.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
