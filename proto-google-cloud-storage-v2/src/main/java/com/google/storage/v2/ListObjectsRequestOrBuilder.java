@@ -311,6 +311,20 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
+   * Optional. If true, will also include folders and managed folders (besides
+   * objects) in the returned `prefixes`. Requires `delimiter` to be set to '/'.
+   * </pre>
+   *
+   * <code>bool include_folders_as_prefixes = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The includeFoldersAsPrefixes.
+   */
+  boolean getIncludeFoldersAsPrefixes();
+
+  /**
+   *
+   *
+   * <pre>
    * Optional. Filter results to objects and prefixes that match this glob
    * pattern. See [List Objects Using
    * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)

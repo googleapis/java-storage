@@ -26,6 +26,7 @@ import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
@@ -49,7 +50,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.GRPC},
+    transports = {Transport.HTTP, Transport.GRPC},
     backends = {Backend.PROD})
 public final class ITBlobWriteSessionTest {
 
@@ -76,6 +77,12 @@ public final class ITBlobWriteSessionTest {
               .toBuilder()
               .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
               .build();
+    } else if (transport == Transport.HTTP) {
+      options =
+          ((HttpStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+              .build();
     }
     assertWithMessage("unable to resolve options").that(options).isNotNull();
     //noinspection DataFlowIssue
@@ -94,6 +101,13 @@ public final class ITBlobWriteSessionTest {
               .setBlobWriteSessionConfig(
                   BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
               .build();
+    } else if (transport == Transport.HTTP) {
+      options =
+          ((HttpStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(
+                  BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
+              .build();
     }
     assertWithMessage("unable to resolve options").that(options).isNotNull();
     //noinspection DataFlowIssue
@@ -103,6 +117,7 @@ public final class ITBlobWriteSessionTest {
   }
 
   @Test
+  @CrossRun.Exclude(transports = Transport.HTTP)
   public void bidiTest() throws Exception {
     StorageOptions options = null;
     if (transport == Transport.GRPC) {

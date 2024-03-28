@@ -26,6 +26,7 @@ import java.util.Objects;
  * details.
  */
 public class Notification extends NotificationInfo {
+  private static final long serialVersionUID = 3150928330690874200L;
 
   private final StorageOptions options;
   private transient Storage storage;

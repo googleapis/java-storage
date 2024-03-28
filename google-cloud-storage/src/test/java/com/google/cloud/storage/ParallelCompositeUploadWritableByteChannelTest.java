@@ -29,6 +29,8 @@ import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecoratorInstance;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadWritableByteChannel.BufferHandleReleaser;
 import com.google.cloud.storage.Storage.ComposeRequest;
@@ -47,9 +49,14 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.Status.Code;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.ClosedChannelException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -80,6 +87,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
   private SettableApiFuture<BlobInfo> finalObject;
   private FakeStorageInternal storageInternal;
   private SimplisticPartNamingStrategy partNamingStrategy;
+  private PartMetadataFieldDecoratorInstance partMetadataFieldDecorator;
   private int bufferCapacity;
 
   @Before
@@ -91,6 +99,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     finalObject = SettableApiFuture.create();
     partNamingStrategy = new SimplisticPartNamingStrategy("prefix");
     storageInternal = new FakeStorageInternal();
+    partMetadataFieldDecorator = PartMetadataFieldDecorator.noOp().newInstance(null);
   }
 
   @Test
@@ -202,6 +211,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -241,6 +251,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             maxElementsPerCompact,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -340,6 +351,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -429,6 +441,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -462,6 +475,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             3,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -568,6 +582,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
               partNamingStrategy,
               PartCleanupStrategy.never(),
               32,
+              partMetadataFieldDecorator,
               finalObject,
               storageInternal,
               info,
@@ -647,6 +662,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.never(),
             3,
+            partMetadataFieldDecorator,
             finalObject,
             new FakeStorageInternal() {
               @Override
@@ -729,6 +745,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             partNamingStrategy,
             PartCleanupStrategy.always(),
             10,
+            partMetadataFieldDecorator,
             finalObject,
             storageInternal,
             info,
@@ -749,6 +766,49 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         () -> assertThat(storageInternal.deleteRequests).containsExactly(p1, p2, p3));
   }
 
+  @Test
+  public void partMetadataFieldDecoratorUsesCustomTime() throws IOException {
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    OffsetDateTime rangeBegin =
+        OffsetDateTime.from(Instant.EPOCH.plus(Duration.ofSeconds(29)).atZone(ZoneId.of("Z")));
+    OffsetDateTime rangeEnd =
+        OffsetDateTime.from(Instant.EPOCH.plus(Duration.ofMinutes(2)).atZone(ZoneId.of("Z")));
+
+    FakeStorageInternal storageInternal =
+        new FakeStorageInternal() {
+          @Override
+          public BlobInfo internalDirectUpload(
+              BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+            if (info.getBlobId().getName().endsWith(".part")) {
+              // Kinda hacky but since we are creating multiple parts we will use a range
+              // to ensure the customTimes are being calculated appropriately
+              assertThat(info.getCustomTimeOffsetDateTime().isAfter(rangeBegin)).isTrue();
+              assertThat(info.getCustomTimeOffsetDateTime().isBefore(rangeEnd)).isTrue();
+            } else {
+              assertThat(info.getCustomTimeOffsetDateTime()).isNull();
+            }
+            return super.internalDirectUpload(info, opts, buf);
+          }
+        };
+    ParallelCompositeUploadWritableByteChannel pcu =
+        new ParallelCompositeUploadWritableByteChannel(
+            bufferHandlePool,
+            MoreExecutors.directExecutor(),
+            partNamingStrategy,
+            PartCleanupStrategy.always(),
+            10,
+            PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofSeconds(30))
+                .newInstance(clock),
+            finalObject,
+            storageInternal,
+            info,
+            opts);
+    byte[] bytes = DataGenerator.base64Characters().genBytes(bufferCapacity * 3 - 1);
+    pcu.write(ByteBuffer.wrap(bytes));
+
+    pcu.close();
+  }
+
   @NonNull
   private ParallelCompositeUploadWritableByteChannel defaultPcu(int maxElementsPerCompact) {
     return new ParallelCompositeUploadWritableByteChannel(
@@ -757,6 +817,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         partNamingStrategy,
         PartCleanupStrategy.always(),
         maxElementsPerCompact,
+        partMetadataFieldDecorator,
         finalObject,
         storageInternal,
         info,
@@ -773,7 +834,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     protected final List<ComposeRequest> composeRequests;
     protected final List<BlobId> deleteRequests;
 
-    private FakeStorageInternal() {
+    FakeStorageInternal() {
       generations = new AtomicInteger(1);
       addedObjects = Collections.synchronizedMap(new HashMap<>());
       composeRequests = Collections.synchronizedList(new ArrayList<>());

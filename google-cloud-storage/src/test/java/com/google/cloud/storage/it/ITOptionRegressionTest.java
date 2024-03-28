@@ -326,6 +326,9 @@ public final class ITOptionRegressionTest {
             "timeCreated",
             "updated",
             "versioning",
+            "website",
+            "softDeletePolicy",
+            "hierarchicalNamespace",
             "website");
     s.get(
         b.getName(),
@@ -738,7 +741,9 @@ public final class ITOptionRegressionTest {
             "timeDeleted",
             "timeStorageClassUpdated",
             "updated",
-            "retention");
+            "retention",
+            "softDeleteTime",
+            "hardDeleteTime");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
@@ -816,6 +821,9 @@ public final class ITOptionRegressionTest {
             "items/timeCreated",
             "items/updated",
             "items/versioning",
+            "items/website",
+            "items/softDeletePolicy",
+            "items/hierarchicalNamespace",
             "items/website");
     s.list(BucketListOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
@@ -913,7 +921,9 @@ public final class ITOptionRegressionTest {
             "items/timeDeleted",
             "items/timeStorageClassUpdated",
             "items/updated",
-            "items/retention");
+            "items/retention",
+            "items/softDeleteTime",
+            "items/hardDeleteTime");
     s.list(b.getName(), BlobListOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }

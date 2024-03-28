@@ -31,6 +31,7 @@ import com.google.cloud.storage.BufferHandlePool.PooledBuffer;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecoratorInstance;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.UnifiedOpts.Crc32cMatch;
@@ -111,6 +112,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
   private final int maxElementsPerCompact;
+  private final PartMetadataFieldDecoratorInstance partMetadataFieldDecorator;
   private final SettableApiFuture<BlobInfo> finalObject;
   private final StorageInternal storage;
   private final BlobInfo ultimateObject;
@@ -135,6 +137,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy,
       int maxElementsPerCompact,
+      PartMetadataFieldDecoratorInstance partMetadataFieldDecorator,
       SettableApiFuture<BlobInfo> finalObject,
       StorageInternal storage,
       BlobInfo ultimateObject,
@@ -144,6 +147,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
     this.maxElementsPerCompact = maxElementsPerCompact;
+    this.partMetadataFieldDecorator = partMetadataFieldDecorator;
     this.finalObject = finalObject;
     this.storage = storage;
     this.ultimateObject = ultimateObject;
@@ -427,6 +431,11 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
     b.setMetadata(builder.build());
+    // the value of a kms key name will contain the exact version when read from gcs
+    // however, gcs will not accept that version resource identifier when creating a new object
+    // strip it out, so it can be included as a query string parameter instead
+    b.setKmsKeyName(null);
+    b = partMetadataFieldDecorator.apply(b);
     return b.build();
   }
 
@@ -502,7 +511,11 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   @VisibleForTesting
   @NonNull
   static Opts<ObjectTargetOpt> getPartOpts(Opts<ObjectTargetOpt> opts) {
-    return opts.filter(TO_EXCLUDE_FROM_PARTS).prepend(DOES_NOT_EXIST);
+    return opts.filter(TO_EXCLUDE_FROM_PARTS)
+        .prepend(DOES_NOT_EXIST)
+        // disable gzip transfer encoding for HTTP, it causes a significant bottleneck uploading
+        // the parts
+        .prepend(Opts.from(UnifiedOpts.disableGzipContent()));
   }
 
   @VisibleForTesting

@@ -63,6 +63,8 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   /** @deprecated Use {@link HttpStorageFactory} */
   @Deprecated
   public static class DefaultStorageFactory extends HttpStorageFactory {
+    private static final long serialVersionUID = -7856840922014956661L;
+
     /** @deprecated Use {@link HttpStorageDefaults#getDefaultServiceFactory()} */
     @Deprecated
     public DefaultStorageFactory() {
@@ -73,6 +75,7 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   /** @deprecated Use {@link HttpStorageRpcFactory} */
   @Deprecated
   public static class DefaultStorageRpcFactory extends HttpStorageRpcFactory {
+    private static final long serialVersionUID = -7856840922014956661L;
 
     /** @deprecated Use {@link HttpStorageDefaults#getDefaultRpcFactory()} */
     @Deprecated
