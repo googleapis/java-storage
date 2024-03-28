@@ -27,6 +27,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.HttpStorageOptions;
+import com.google.cloud.storage.JournalingBlobWriteSessionConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
@@ -37,9 +38,11 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -89,6 +92,22 @@ public final class ITBlobWriteSessionTest {
     try (Storage s = options.getService()) {
       doTest(s);
     }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void journalingNotSupportedByHttp() {
+    HttpStorageOptions.Builder builder = ((HttpStorageOptions) storage.getOptions()).toBuilder();
+
+    Path rootPath = temporaryFolder.getRoot().toPath();
+    JournalingBlobWriteSessionConfig journaling =
+        BlobWriteSessionConfigs.journaling(ImmutableList.of(rootPath));
+
+    IllegalArgumentException iae =
+        assertThrows(
+            IllegalArgumentException.class, () -> builder.setBlobWriteSessionConfig(journaling));
+
+    assertThat(iae).hasMessageThat().contains("HTTP transport");
   }
 
   @Test
