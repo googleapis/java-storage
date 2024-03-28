@@ -211,11 +211,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
@@ -249,6 +244,12 @@
       <groupId>net.jqwik</groupId>
       <artifactId>jqwik</artifactId>
       <version>1.8.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit-platform.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -293,6 +294,11 @@
               google-api-client to be able to bootstrap.
               -->
               <dependency>com.google.http-client:google-http-client-gson</dependency>
+              <!--
+              Our test suite is primarily JUnit4, but also includes JQwik tests which require JUnit 5,
+              Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
+              -->
+              <dependency>org.junit.vintage:junit-vintage-engine</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>
@@ -316,7 +322,6 @@
           <reportNameSuffix>sponge_log</reportNameSuffix>
         </configuration>
         <dependencies>
-          <!-- org.apache.maven.surefire:surefire-junit47 is also included from parent config -->
           <!-- add junit-platform to support jqwik tests for mvn test -->
           <dependency>
             <groupId>org.apache.maven.surefire</groupId>

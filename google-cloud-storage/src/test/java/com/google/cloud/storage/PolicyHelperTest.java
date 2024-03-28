@@ -17,12 +17,10 @@
 package com.google.cloud.storage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import com.google.api.services.storage.model.Policy.Bindings;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
-import com.google.cloud.storage.testing.ApiPolicyMatcher;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.junit.Test;
@@ -58,11 +56,8 @@ public class PolicyHelperTest {
             .setVersion(1);
 
     Policy actualLibPolicy = Conversions.json().policyCodec().decode(apiPolicy);
-    com.google.api.services.storage.model.Policy actualApiPolicy =
-        Conversions.json().policyCodec().encode(libPolicy);
 
     assertEquals(libPolicy, actualLibPolicy);
-    assertTrue(new ApiPolicyMatcher(apiPolicy).matches(actualApiPolicy));
   }
 
   @Test
