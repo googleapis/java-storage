@@ -20,6 +20,7 @@ import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleManager;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -28,15 +29,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final ResponseContentLifecycleManager responseContentLifecycleManager;
   private final ReadObjectRequest request;
   private final boolean autoGzipDecompression;
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ResponseContentLifecycleManager responseContentLifecycleManager,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
     super(Conversions.grpc().blobInfo());
     this.read = read;
+    this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.request = request;
     this.autoGzipDecompression = autoGzipDecompression;
   }
@@ -53,7 +57,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
           ReadableByteChannelSessionBuilder b =
               ResumableMedia.gapic()
                   .read()
-                  .byteChannel(read)
+                  .byteChannel(read, responseContentLifecycleManager)
                   .setHasher(Hasher.noop())
                   .setAutoGzipDecompression(autoGzipDecompression);
           BufferHandle bufferHandle = getBufferHandle();

@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
@@ -37,6 +38,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
@@ -46,6 +48,7 @@ final class GapicUnbufferedReadableByteChannel
   private final ReadObjectRequest req;
   private final Hasher hasher;
   private final LazyServerStreamIterator iter;
+  private final ResponseContentLifecycleManager rclm;
 
   private boolean open = true;
   private boolean complete = false;
@@ -53,18 +56,20 @@ final class GapicUnbufferedReadableByteChannel
 
   private Object metadata;
 
-  private ByteBuffer leftovers;
+  private ResponseContentLifecycleHandle leftovers;
 
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest req,
-      Hasher hasher) {
+      Hasher hasher,
+      ResponseContentLifecycleManager rclm) {
     this.result = result;
     this.read = read;
     this.req = req;
     this.hasher = hasher;
     this.blobOffset = req.getReadOffset();
+    this.rclm = rclm;
     this.iter = new LazyServerStreamIterator();
   }
 
@@ -82,8 +87,9 @@ final class GapicUnbufferedReadableByteChannel
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
-        copy(c, leftovers, dsts, offset, length);
+        leftovers.copy(c, dsts, offset, length);
         if (!leftovers.hasRemaining()) {
+          leftovers.close();
           leftovers = null;
         }
         continue;
@@ -91,6 +97,7 @@ final class GapicUnbufferedReadableByteChannel
 
       if (iter.hasNext()) {
         ReadObjectResponse resp = iter.next();
+        ResponseContentLifecycleHandle handle = rclm.get(resp);
         if (resp.hasMetadata()) {
           Object respMetadata = resp.getMetadata();
           if (metadata == null) {
@@ -107,22 +114,24 @@ final class GapicUnbufferedReadableByteChannel
           }
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
-        ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
-        // very important to know whether a crc32c value is set. Without checking, protobuf will
+        ByteString content = checksummedData.getContent();
+        int contentSize = content.size();
+        // Very important to know whether a crc32c value is set. Without checking, protobuf will
         // happily return 0, which is a valid crc32c value.
         if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected =
-              Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
+          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
           try {
-            hasher.validate(expected, content::duplicate);
+            hasher.validate(expected, content.asReadOnlyByteBufferList());
           } catch (IOException e) {
             close();
             throw e;
           }
         }
-        copy(c, content, dsts, offset, length);
-        if (content.hasRemaining()) {
-          leftovers = content;
+        handle.copy(c, dsts, offset, length);
+        if (handle.hasRemaining()) {
+          leftovers = handle;
+        } else {
+          handle.close();
         }
       } else {
         complete = true;
@@ -144,16 +153,17 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public void close() throws IOException {
     open = false;
-    iter.close();
+    try {
+      if (leftovers != null) {
+        leftovers.close();
+      }
+    } finally {
+      iter.close();
+    }
   }
 
   ApiFuture<Object> getResult() {
     return result;
-  }
-
-  private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
-    long copiedBytes = Buffers.copy(content, dsts, offset, length);
-    c.advance(copiedBytes);
   }
 
   private IOException closeWithError(String message) throws IOException {
@@ -167,7 +177,8 @@ final class GapicUnbufferedReadableByteChannel
    * Shrink wraps a beginning, offset and limit for tracking state of an individual invocation of
    * {@link #read}
    */
-  private static final class ReadCursor {
+  // todo: probably move out of this class so the zero copy marshaller isn't coupled to this class
+  static final class ReadCursor {
     private final long beginning;
     private long offset;
     private final long limit;
@@ -194,6 +205,60 @@ final class GapicUnbufferedReadableByteChannel
     @Override
     public String toString() {
       return String.format("ReadCursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
+    }
+  }
+
+  // todo: probably move out of this class so the zero copy marshaller isn't coupled to this class
+  interface ResponseContentLifecycleManager {
+    ResponseContentLifecycleHandle get(ReadObjectResponse response);
+
+    static ResponseContentLifecycleManager forTests() {
+      return response ->
+          new ResponseContentLifecycleHandle(
+              response,
+              () -> {
+                // no-op
+              });
+    }
+  }
+
+  // todo: probably move out of this class so the zero copy marshaller isn't coupled to this class
+  static final class ResponseContentLifecycleHandle implements Closeable {
+    private final ReadObjectResponse resp;
+    private final Closeable dispose;
+
+    private final List<ByteBuffer> buffers;
+
+    ResponseContentLifecycleHandle(ReadObjectResponse resp, Closeable dispose) {
+      this.resp = resp;
+      this.dispose = dispose;
+
+      this.buffers = resp.getChecksummedData().getContent().asReadOnlyByteBufferList();
+    }
+
+    // private void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
+    //   long copiedBytes = Buffers.copy(content, dsts, offset, length);
+    //   c.advance(copiedBytes);
+    // }
+
+    private void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
+      for (ByteBuffer b : buffers) {
+        long copiedBytes = Buffers.copy(b, dsts, offset, length);
+        c.advance(copiedBytes);
+        if (b.hasRemaining()) break;
+      }
+    }
+
+    private boolean hasRemaining() {
+      for (ByteBuffer b : buffers) {
+        if (b.hasRemaining()) return true;
+      }
+      return false;
+    }
+
+    @Override
+    public void close() throws IOException {
+      dispose.close();
     }
   }
 

@@ -20,6 +20,7 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -35,6 +36,8 @@ interface Hasher {
   Crc32cLengthKnown hash(ByteBuffer b);
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
+
+  void validate(Crc32cValue<?> expected, List<ByteBuffer> buffers) throws IOException;
 
   @Nullable
   Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
@@ -62,6 +65,9 @@ interface Hasher {
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
 
     @Override
+    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) {}
+
+    @Override
     public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
       return null;
     }
@@ -79,7 +85,24 @@ interface Hasher {
       return Crc32cValue.of(Hashing.crc32c().hashBytes(b).asInt(), remaining);
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    @Override
+    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) throws IOException {
+      long remaining = 0;
+      com.google.common.hash.Hasher crc32c = Hashing.crc32c().newHasher();
+      for (ByteBuffer tmp : b) {
+        remaining += tmp.remaining();
+        crc32c.putBytes(tmp);
+      }
+      Crc32cLengthKnown actual = Crc32cValue.of(crc32c.hash().asInt(), remaining);
+      if (!actual.eqValue(expected)) {
+        throw new IOException(
+            String.format(
+                "Mismatch checksum value. Expected %s actual %s",
+                expected.debugString(), actual.debugString()));
+      }
+    }
+
     @Override
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = hash(b);

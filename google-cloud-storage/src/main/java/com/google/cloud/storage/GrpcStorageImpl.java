@@ -50,6 +50,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.GapicUnbufferedReadableByteChannel.ResponseContentLifecycleManager;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -180,6 +181,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
+  final ResponseContentLifecycleManager responseContentLifecycleManager;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
@@ -192,10 +194,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   GrpcStorageImpl(
       GrpcStorageOptions options,
       StorageClient storageClient,
+      ResponseContentLifecycleManager responseContentLifecycleManager,
       WriterFactory writerFactory,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
@@ -716,8 +720,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+    // TODO(prototype): Missing protobuf check: similar to ZeroCopyReadinessChecker
+    // https://github.com/GoogleCloudDataproc/hadoop-connectors/pull/564/files#diff-147bf4e8fbe331c20acaff5b56044148c83011d6daa1e62a49fa7fcc14d7c20a
+
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        responseContentLifecycleManager,
         request,
         !opts.autoGzipDecompression());
   }
@@ -1868,7 +1876,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
     return ResumableMedia.gapic()
         .read()
-        .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
+        .byteChannel(
+            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+            responseContentLifecycleManager)
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)
