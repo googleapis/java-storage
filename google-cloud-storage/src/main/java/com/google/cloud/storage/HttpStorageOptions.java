@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
@@ -30,6 +31,7 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
@@ -39,7 +41,9 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.time.Clock;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
 @BetaApi
@@ -55,6 +59,7 @@ public class HttpStorageOptions extends StorageOptions {
 
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
   private transient RetryDependenciesAdapter retryDepsAdapter;
+  private final BlobWriteSessionConfig blobWriteSessionConfig;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -63,6 +68,7 @@ public class HttpStorageOptions extends StorageOptions {
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
     retryDepsAdapter = new RetryDependenciesAdapter();
+    blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
 
   @Override
@@ -120,6 +126,8 @@ public class HttpStorageOptions extends StorageOptions {
   public static class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
+    private BlobWriteSessionConfig blobWriteSessionConfig =
+        HttpStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
     Builder() {}
 
@@ -218,6 +226,24 @@ public class HttpStorageOptions extends StorageOptions {
       return this;
     }
 
+    /**
+     * @see BlobWriteSessionConfig
+     * @see BlobWriteSessionConfigs
+     * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+     * @see HttpStorageDefaults#getDefaultStorageWriterConfig()
+     * @since 2.29.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public HttpStorageOptions.Builder setBlobWriteSessionConfig(
+        @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
+      requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      checkArgument(
+          blobWriteSessionConfig instanceof BlobWriteSessionConfig.HttpCompatible,
+          "The provided instance of BlobWriteSessionConfig is not compatible with this HTTP transport.");
+      this.blobWriteSessionConfig = blobWriteSessionConfig;
+      return this;
+    }
+
     @Override
     public HttpStorageOptions build() {
       return new HttpStorageOptions(this, defaults());
@@ -248,6 +274,12 @@ public class HttpStorageOptions extends StorageOptions {
 
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
+    }
+
+    /** @since 2.29.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
+      return BlobWriteSessionConfigs.getDefault();
     }
   }
 
@@ -287,7 +319,14 @@ public class HttpStorageOptions extends StorageOptions {
     public Storage create(StorageOptions options) {
       if (options instanceof HttpStorageOptions) {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
-        return new StorageImpl(httpStorageOptions);
+        Clock clock = Clock.systemUTC();
+        try {
+          return new StorageImpl(
+              httpStorageOptions, httpStorageOptions.blobWriteSessionConfig.createFactory(clock));
+        } catch (IOException e) {
+          throw new IllegalStateException(
+              "Unable to instantiate HTTP com.google.cloud.storage.Storage client.", e);
+        }
       } else {
         throw new IllegalArgumentException("Only HttpStorageOptions supported");
       }

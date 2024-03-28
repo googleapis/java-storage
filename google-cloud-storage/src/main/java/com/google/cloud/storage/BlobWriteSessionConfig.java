@@ -55,6 +55,15 @@ public abstract class BlobWriteSessionConfig implements Serializable {
 
   /**
    * Internal marker interface to signify an implementation of {@link BlobWriteSessionConfig} is
+   * compatible with {@link com.google.cloud.storage.TransportCompatibility.Transport#HTTP}
+   *
+   * <p>We could evaluate the annotations, but the code for that is more complicated and probably
+   * not worth the effort.
+   */
+  interface HttpCompatible {}
+
+  /**
+   * Internal marker interface to signify an implementation of {@link BlobWriteSessionConfig} is
    * compatible with {@link com.google.cloud.storage.TransportCompatibility.Transport#GRPC}
    *
    * <p>We could evaluate the annotations, but the code for that is more complicated and probably

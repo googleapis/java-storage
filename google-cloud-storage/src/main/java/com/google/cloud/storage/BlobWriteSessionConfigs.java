@@ -55,7 +55,7 @@ import java.util.Collection;
  *       full or close. Buffer size is configurable via
  *       {@link DefaultBlobWriteSessionConfig#withChunkSize(int)}
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>The network will only be used for the following operations:
  *     <ol>
  *       <li>Creating the Resumable Upload Session</li>
@@ -241,7 +241,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static DefaultBlobWriteSessionConfig getDefault() {
     return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);
   }
