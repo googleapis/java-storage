@@ -73,4 +73,11 @@ public class QuickstartSampleIT {
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
+
+  @Test
+  public void testQuickstartStorageControl() throws Exception {
+    QuickstartStorageControlSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got).contains(String.format("Performed getStorageLayout request for %s", bucketName));
+  }
 }
