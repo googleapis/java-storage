@@ -1,4 +1,4 @@
-package com.example.storage;/*
+/*
  * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@ package com.example.storage;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.example.storage;
 
 // [START storage_control_quickstart_sample]
 import com.google.storage.control.v2.GetStorageLayoutRequest;
