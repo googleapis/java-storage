@@ -14,6 +14,7 @@ package com.example.storage;/*
  * limitations under the License.
  */
 
+// [START storage_control_quickstart_sample]
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.StorageControlClient;
 import com.google.storage.control.v2.StorageLayout;
@@ -30,3 +31,4 @@ public class QuickstartStorageControlSample {
     System.out.printf("Performed getStorageLayout request for %s", response.getName());
   }
 }
+// [END storage_control_quickstart_sample]
