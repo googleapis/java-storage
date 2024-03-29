@@ -303,7 +303,7 @@ public class ITTransferManagerTest {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions())
             .toBuilder()
-            .setAllowDivideAndConquer(true)
+            .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
     try (TransferManager transferManager = config.getService()) {
@@ -367,7 +367,7 @@ public class ITTransferManagerTest {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions())
             .toBuilder()
-            .setAllowDivideAndConquer(true)
+            .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
     try (TransferManager transferManager = config.getService()) {
@@ -393,7 +393,7 @@ public class ITTransferManagerTest {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions())
             .toBuilder()
-            .setAllowDivideAndConquer(true)
+            .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
     try (TransferManager transferManager = config.getService()) {
