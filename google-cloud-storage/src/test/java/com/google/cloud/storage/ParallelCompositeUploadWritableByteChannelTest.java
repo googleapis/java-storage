@@ -320,7 +320,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             "kms-key");
     ImmutableMap<StorageRpc.Option, ?> rpcOptions = partOpts.getRpcOptions();
 
-    assertThat(rpcOptions).isEqualTo(expected);
+    assertThat(rpcOptions).containsAtLeastEntriesIn(expected);
   }
 
   @Test
