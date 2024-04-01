@@ -22,14 +22,17 @@ import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceDefaults;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.http.HttpTransportOptions;
+import com.google.cloud.storage.GrpcStorageOptions.GrpcStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
@@ -94,6 +97,18 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     }
 
     public abstract Builder setStorageRetryStrategy(StorageRetryStrategy storageRetryStrategy);
+
+    /**
+     * @see BlobWriteSessionConfig
+     * @see BlobWriteSessionConfigs
+     * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+     * @see HttpStorageDefaults#getDefaultStorageWriterConfig()
+     * @see GrpcStorageDefaults#getDefaultStorageWriterConfig()
+     * @since 2.37.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public abstract StorageOptions.Builder setBlobWriteSessionConfig(
+        @NonNull BlobWriteSessionConfig blobWriteSessionConfig);
 
     @Override
     public abstract StorageOptions build();
