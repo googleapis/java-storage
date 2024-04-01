@@ -599,6 +599,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
+      return b -> {
+        b.getObjectChecksumsBuilder().setCrc32C(val);
+        return b;
+      };
+    }
+
+    @Override
     public int hashCode() {
       return Objects.hash(val);
     }
@@ -747,6 +755,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
         return b;
@@ -1046,6 +1062,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<ReadObjectRequest.Builder> readObject() {
       return b -> b.setIfGenerationMatch(val);
     }
@@ -1107,6 +1131,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<ReadObjectRequest.Builder> readObject() {
       return b -> b.setIfGenerationNotMatch(val);
     }
@@ -1151,6 +1183,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setKmsKey(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().getResourceBuilder().setKmsKey(val);
         return b;
@@ -1218,6 +1258,15 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
+      return b -> {
+        b.getObjectChecksumsBuilder()
+            .setMd5Hash(ByteString.copyFrom(BaseEncoding.base64().decode(val)));
+        return b;
+      };
+    }
+
+    @Override
     public int hashCode() {
       return Objects.hash(val);
     }
@@ -1246,6 +1295,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().setIfMetagenerationMatch(val);
         return b;
@@ -1331,6 +1388,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().setIfMetagenerationNotMatch(val);
         return b;
@@ -1446,6 +1511,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setPredefinedAcl(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().setPredefinedAcl(val);
         return b;
@@ -1698,6 +1771,14 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<BidiWriteObjectRequest.Builder> bidiWriteObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(val);
         return b;
