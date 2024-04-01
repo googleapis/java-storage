@@ -87,7 +87,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       defaultValue = "0")
   int warmup;
 
-  @Option(names = "-bidi", description = "If bidi should be enabled")
+  @Option(names = "-bidi_enabled", description = "If bidi should be enabled")
   boolean bidiEnabled;
 
   Path tempDir;
