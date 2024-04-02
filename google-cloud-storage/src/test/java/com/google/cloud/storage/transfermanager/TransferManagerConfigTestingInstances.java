@@ -28,9 +28,8 @@ public final class TransferManagerConfigTestingInstances {
   public static TransferManagerConfig defaults(StorageOptions options) {
     return TransferManagerConfig.newBuilder()
         .setAllowDivideAndConquerDownload(false)
-        .setMaxWorkers(1)
+        .setMaxWorkers(5)
         .setPerWorkerBufferSize(512 * 1024)
-        .setQos(DefaultQos.of(2 * 1024 * 1024))
         .setStorageOptions(options)
         .build();
   }

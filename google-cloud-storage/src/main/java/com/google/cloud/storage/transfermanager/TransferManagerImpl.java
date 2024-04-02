@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import static com.google.cloud.BaseServiceException.UNKNOWN_CODE;
+
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
@@ -23,18 +25,28 @@ import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BlobWriteSessionConfigs;
+import com.google.cloud.storage.GrpcStorageOptions;
+import com.google.cloud.storage.HttpStorageOptions;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
@@ -50,12 +62,16 @@ final class TransferManagerImpl implements TransferManager {
   private final Qos qos;
   private final Storage storage;
 
-  TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
+  private final Deque<ParallelCompositeUploadCallable> pcuQueue;
+  private final Object pcuPollerSync = new Object(); // TODO: ben share lock code with sydney
+  private volatile ApiFuture<?> pcuPoller;
+
+  TransferManagerImpl(TransferManagerConfig transferManagerConfig, Qos qos) {
     this.transferManagerConfig = transferManagerConfig;
     this.executor =
         MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers()));
-    this.qos = transferManagerConfig.getQos();
+    this.qos = qos;
     StorageOptions storageOptions = transferManagerConfig.getStorageOptions();
     String userAgent = storageOptions.getUserAgent();
     if (userAgent == null || !userAgent.contains(USER_AGENT_ENTRY)) {
@@ -67,6 +83,26 @@ final class TransferManagerImpl implements TransferManager {
                       ImmutableMap.of("User-Agent", USER_AGENT_ENTRY + LIBRARY_VERSION)))
               .build();
     }
+    // Create the blobWriteSessionConfig for ParallelCompositeUpload
+    ParallelCompositeUploadBlobWriteSessionConfig pcuConfig =
+        BlobWriteSessionConfigs.parallelCompositeUpload()
+            .withExecutorSupplier(ExecutorSupplier.useExecutor(executor));
+    if (storageOptions instanceof GrpcStorageOptions
+        && transferManagerConfig.isAllowParallelCompositeUpload()) {
+      storageOptions =
+          ((GrpcStorageOptions) storageOptions)
+              .toBuilder()
+              .setBlobWriteSessionConfig(pcuConfig)
+              .build();
+    } else if (storageOptions instanceof HttpStorageOptions
+        && transferManagerConfig.isAllowParallelCompositeUpload()) {
+      storageOptions =
+          ((HttpStorageOptions) storageOptions)
+              .toBuilder()
+              .setBlobWriteSessionConfig(pcuConfig)
+              .build();
+    }
+    pcuQueue = new ArrayDeque<>();
     this.storage = storageOptions.getService();
   }
 
@@ -79,7 +115,8 @@ final class TransferManagerImpl implements TransferManager {
 
   @Override
   @BetaApi
-  public @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config) {
+  public @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config)
+      throws IOException {
     Storage.BlobWriteOption[] opts =
         config.getWriteOptsPerRequest().toArray(new BlobWriteOption[0]);
     List<ApiFuture<UploadResult>> uploadTasks = new ArrayList<>();
@@ -87,10 +124,25 @@ final class TransferManagerImpl implements TransferManager {
       if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
       String blobName = TransferManagerUtils.createBlobName(config, file);
       BlobInfo blobInfo = BlobInfo.newBuilder(config.getBucketName(), blobName).build();
-      UploadCallable callable =
-          new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
-      uploadTasks.add(convert(executor.submit(callable)));
-    }
+        if (transferManagerConfig.isAllowParallelCompositeUpload()
+            && qos.parallelCompositeUpload(Files.size(file))) {
+          ParallelCompositeUploadCallable callable =
+              new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
+          pcuQueue.push(callable);
+          uploadTasks.add(callable.getResult());
+          if (pcuPoller == null) {
+            synchronized (pcuPollerSync) {
+              if (pcuPoller == null) {
+                pcuPoller = convert(executor.submit(new PCUPoller()));
+              }
+            }
+          }
+        } else {
+          UploadCallable callable =
+              new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
+          uploadTasks.add(convert(executor.submit(callable)));
+        }
+      }
     return UploadJob.newBuilder()
         .setParallelUploadConfig(config)
         .setUploadResults(ImmutableList.copyOf(uploadTasks))
@@ -189,6 +241,33 @@ final class TransferManagerImpl implements TransferManager {
 
     public static Range of(long begin, long end) {
       return new Range(begin, end);
+    }
+  }
+
+  private final class PCUPoller implements Runnable {
+
+    @Override
+    public void run() {
+      ParallelCompositeUploadCallable poll;
+      do {
+        poll = pcuQueue.poll();
+        if (poll == null) {
+          // todo: ben make this safe
+          pcuPoller = null;
+          return;
+        }
+
+        try {
+          UploadResult ignore = poll.call();
+          // We should never throw an exception here but if we do it should be
+          // a StorageException
+        } catch (ExecutionException e) {
+          throw new StorageException(UNKNOWN_CODE, e.getMessage(), e);
+        } catch (InterruptedException e) {
+          throw new StorageException(UNKNOWN_CODE, e.getMessage(), e);
+        }
+
+      } while (poll != null);
     }
   }
 }

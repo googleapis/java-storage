@@ -34,21 +34,18 @@ public final class TransferManagerConfig {
   private final boolean allowParallelCompositeUpload;
 
   private final StorageOptions storageOptions;
-  private final Qos qos;
 
   TransferManagerConfig(
       int maxWorkers,
       int perWorkerBufferSize,
       boolean allowDivideAndConquerDownload,
       boolean allowParallelCompositeUpload,
-      StorageOptions storageOptions,
-      Qos qos) {
+      StorageOptions storageOptions) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
     this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
     this.allowParallelCompositeUpload = allowParallelCompositeUpload;
     this.storageOptions = storageOptions;
-    this.qos = qos;
   }
 
   /**
@@ -105,8 +102,11 @@ public final class TransferManagerConfig {
   /** The service object for {@link TransferManager} */
   @BetaApi
   public TransferManager getService() {
-    return new TransferManagerImpl(this);
+    return new TransferManagerImpl(this,
+        DefaultQos.of(this));
   }
+
+
 
   @BetaApi
   public Builder toBuilder() {
@@ -115,13 +115,9 @@ public final class TransferManagerConfig {
         .setAllowParallelCompositeUpload(allowParallelCompositeUpload)
         .setMaxWorkers(maxWorkers)
         .setPerWorkerBufferSize(perWorkerBufferSize)
-        .setQos(qos)
         .setStorageOptions(storageOptions);
   }
 
-  Qos getQos() {
-    return qos;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -179,7 +175,6 @@ public final class TransferManagerConfig {
     private boolean allowParallelCompositeUpload;
 
     private StorageOptions storageOptions;
-    private Qos qos;
 
     private Builder() {
       this.perWorkerBufferSize = 16 * 1024 * 1024;
@@ -187,7 +182,6 @@ public final class TransferManagerConfig {
       this.allowDivideAndConquerDownload = false;
       this.allowParallelCompositeUpload = false;
       this.storageOptions = StorageOptions.getDefaultInstance();
-      this.qos = DefaultQos.of();
     }
 
     /**
@@ -244,8 +238,8 @@ public final class TransferManagerConfig {
      * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
     @BetaApi
-    public Builder setAllowParallelCompositeUpload(boolean allowDivideAndConquerDownload) {
-      this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+    public Builder setAllowParallelCompositeUpload(boolean allowParallelCompositeUpload) {
+      this.allowParallelCompositeUpload = allowParallelCompositeUpload;
       return this;
     }
 
@@ -263,12 +257,6 @@ public final class TransferManagerConfig {
       return this;
     }
 
-    @BetaApi
-    Builder setQos(Qos qos) {
-      this.qos = qos;
-      return this;
-    }
-
     /**
      * Creates a TransferManagerConfig object.
      *
@@ -281,8 +269,7 @@ public final class TransferManagerConfig {
           perWorkerBufferSize,
           allowDivideAndConquerDownload,
           allowParallelCompositeUpload,
-          storageOptions,
-          qos);
+          storageOptions);
     }
   }
 }
