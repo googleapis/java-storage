@@ -9,6 +9,7 @@ Java idiomatic client for [Cloud Storage][product-docs].
 - [Client Library Documentation][javadocs]
 
 
+
 ## Quickstart
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
@@ -97,6 +98,13 @@ to add `google-cloud-storage` as a dependency in your code.
 
 See the [Cloud Storage client library docs][javadocs] to learn how to
 use this Cloud Storage Client Library.
+
+## About Storage Control
+
+The [Storage Control API][storage-control-reference] lets you perform metadata-specific, control plane, and long-running operations.
+
+The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
+
 
 
 #### Creating an authorized service object
@@ -418,6 +426,7 @@ Java is a registered trademark of Oracle and/or its affiliates.
 
 [product-docs]: https://cloud.google.com/storage
 [javadocs]: https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history
+[storage-control-reference] https://cloud.google.com/storage/docs/reference/rpc/
 [kokoro-badge-image-1]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java7.svg
 [kokoro-badge-link-1]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java7.html
 [kokoro-badge-image-2]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java8.svg
