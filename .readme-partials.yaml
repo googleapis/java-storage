@@ -1,4 +1,10 @@
 custom_content: |
+  ## About Storage Control
+  
+  The [Storage Control API][storage-control-reference] lets you perform metadata-specific, control plane, and long-running operations.
+  
+  The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
+  
   #### Creating an authorized service object
 
   To make authenticated requests to Google Cloud Storage, you must create a service object with credentials. You can
