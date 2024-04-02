@@ -27,7 +27,7 @@ public class QuickstartStorageControlSample {
     String bucketName = args[0]; // "your-bucket-name";
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
-    try(StorageControlClient storageControlClient = StorageControlClient.create()) {
+    try (StorageControlClient storageControlClient = StorageControlClient.create()) {
       GetStorageLayoutRequest request = GetStorageLayoutRequest.newBuilder()
           // Set project to "_" to signify global bucket
           .setName(StorageLayoutName.format("_", bucketName))
