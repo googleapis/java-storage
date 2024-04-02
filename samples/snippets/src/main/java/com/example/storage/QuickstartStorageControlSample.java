@@ -25,12 +25,16 @@ import com.google.storage.control.v2.StorageLayoutName;
 public class QuickstartStorageControlSample {
   public static void main(String... args) throws Exception {
     String bucketName = args[0]; // "your-bucket-name";
-    StorageControlClient storageControlClient = StorageControlClient.create();
-    GetStorageLayoutRequest request = GetStorageLayoutRequest.newBuilder()
-        .setName(StorageLayoutName.format("_", bucketName))
-        .build();
-    StorageLayout response = storageControlClient.getStorageLayout(request);
-    System.out.printf("Performed getStorageLayout request for %s", response.getName());
+
+    // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
+    try(StorageControlClient storageControlClient = StorageControlClient.create()) {
+      GetStorageLayoutRequest request = GetStorageLayoutRequest.newBuilder()
+          // Set project to "_" to signify global bucket
+          .setName(StorageLayoutName.format("_", bucketName))
+          .build();
+      StorageLayout response = storageControlClient.getStorageLayout(request);
+      System.out.printf("Performed getStorageLayout request for %s", response.getName());
+    }
   }
 }
 // [END storage_control_quickstart_sample]
