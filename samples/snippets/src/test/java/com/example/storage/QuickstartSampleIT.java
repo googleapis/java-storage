@@ -18,9 +18,11 @@ package com.example.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
+import com.google.storage.control.v2.StorageLayoutName;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
@@ -72,5 +74,16 @@ public class QuickstartSampleIT {
     QuickstartGrpcDpSample.main(bucketName);
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
+  }
+
+  @Test
+  public void testQuickstartStorageControl() throws Exception {
+    Storage storageClient = StorageOptions.getDefaultInstance().getService();
+    storageClient.create(BucketInfo.of(bucketName));
+    QuickstartStorageControlSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got)
+        .contains(String.format("Performed getStorageLayout request for %s",
+            StorageLayoutName.format("_", bucketName)));
   }
 }

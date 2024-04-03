@@ -32,6 +32,11 @@
       <artifactId>google-cloud-storage</artifactId>
       <version>2.36.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage-control</artifactId>
+      <version>2.36.0-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
+    </dependency>
     <!-- [END storage_install_without_bom] -->
 
     <dependency>
@@ -63,6 +68,12 @@
       <artifactId>google-cloud-pubsub</artifactId>
       <version>1.127.2</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage-control</artifactId>
+      <version>2.36.1-alpha</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
