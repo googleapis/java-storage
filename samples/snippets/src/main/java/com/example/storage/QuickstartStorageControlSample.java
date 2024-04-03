@@ -17,6 +17,9 @@
 package com.example.storage;
 
 // [START storage_control_quickstart_sample]
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.StorageControlClient;
 import com.google.storage.control.v2.StorageLayout;
@@ -25,6 +28,9 @@ import com.google.storage.control.v2.StorageLayoutName;
 public class QuickstartStorageControlSample {
   public static void main(String... args) throws Exception {
     String bucketName = args[0]; // "your-bucket-name";
+    // Use the storage client to first create the bucket
+    Storage storageClient = StorageOptions.getDefaultInstance().getService();
+    storageClient.create(BucketInfo.of(bucketName));
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
