@@ -18,6 +18,7 @@ package com.example.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
@@ -76,6 +77,8 @@ public class QuickstartSampleIT {
 
   @Test
   public void testQuickstartStorageControl() throws Exception {
+    Storage storageClient = StorageOptions.getDefaultInstance().getService();
+    storageClient.create(BucketInfo.of(bucketName));
     QuickstartStorageControlSample.main(bucketName);
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got)

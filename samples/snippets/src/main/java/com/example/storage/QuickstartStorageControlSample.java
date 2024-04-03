@@ -28,9 +28,6 @@ import com.google.storage.control.v2.StorageLayoutName;
 public class QuickstartStorageControlSample {
   public static void main(String... args) throws Exception {
     String bucketName = args[0]; // "your-bucket-name";
-    // Use the storage client to first create the bucket
-    Storage storageClient = StorageOptions.getDefaultInstance().getService();
-    storageClient.create(BucketInfo.of(bucketName));
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
