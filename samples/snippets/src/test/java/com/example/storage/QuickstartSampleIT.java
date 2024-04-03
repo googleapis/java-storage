@@ -22,6 +22,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
+import com.google.storage.control.v2.StorageLayoutName;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
@@ -82,6 +83,7 @@ public class QuickstartSampleIT {
     QuickstartStorageControlSample.main(bucketName);
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got)
-        .contains(String.format("Performed getStorageLayout request for %s", bucketName));
+        .contains(String.format("Performed getStorageLayout request for %s",
+            StorageLayoutName.format("_", bucketName)));
   }
 }

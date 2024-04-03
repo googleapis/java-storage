@@ -17,9 +17,6 @@
 package com.example.storage;
 
 // [START storage_control_quickstart_sample]
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.StorageControlClient;
 import com.google.storage.control.v2.StorageLayout;
