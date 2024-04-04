@@ -1031,7 +1031,6 @@ public final class GrpcStorageOptions extends StorageOptions
         String unsafeByteOperationsClassName =
             messageLiteClassName.substring(0, messageLiteClassName.lastIndexOf('.') + 1)
                 + "UnsafeByteOperations";
-        System.out.println(unsafeByteOperationsClassName);
         Class<?> unsafeByteOperationsClass = Class.forName(unsafeByteOperationsClassName);
         unsafeByteOperationsClassExists = (unsafeByteOperationsClass != null);
       } catch (ClassNotFoundException ex) {
