@@ -34,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+
 public class ITTransferManagerSamples {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static Storage storage;
@@ -57,17 +58,17 @@ public class ITTransferManagerSamples {
   }
   @Test
   public void uploadFiles() throws Exception {
-      File tmpFile = File.createTempFile("file", ".txt");
-      File tmpFile2 = File.createTempFile("file2", ".txt");
-      File tmpFile3 = File.createTempFile("file3", ".txt");
-      List<Path> files =
-          ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
-      String bucketName = BUCKET;
-      UploadMany.uploadManyFiles(bucketName, files);
-      String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-      assertThat(snippetOutput.contains("file.txt")).isTrue();
-      assertThat(snippetOutput.contains("file2.txt")).isTrue();
-      assertThat(snippetOutput.contains("file3.txt")).isTrue();
+    File tmpFile = File.createTempFile("file", ".txt");
+    File tmpFile2 = File.createTempFile("file2", ".txt");
+    File tmpFile3 = File.createTempFile("file3", ".txt");
+    List<Path> files =
+        ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
+    String bucketName = BUCKET;
+    UploadMany.uploadManyFiles(bucketName, files);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput.contains("file.txt")).isTrue();
+    assertThat(snippetOutput.contains("file2.txt")).isTrue();
+    assertThat(snippetOutput.contains("file3.txt")).isTrue();
   }
 
   @Test

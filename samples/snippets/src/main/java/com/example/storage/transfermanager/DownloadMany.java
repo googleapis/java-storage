@@ -24,9 +24,11 @@ import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import java.nio.file.Path;
 import java.util.List;
+
 class DownloadMany {
 
-  public static void downloadManyBlobs(String projectId, String bucketName, List<BlobInfo> blobs, Path destinationDirectory) {
+  public static void downloadManyBlobs(String projectId, String bucketName,
+      List<BlobInfo> blobs, Path destinationDirectory) {
 
     TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
     ParallelDownloadConfig parallelDownloadConfig = ParallelDownloadConfig.newBuilder()
@@ -39,7 +41,8 @@ class DownloadMany {
         .getDownloadResults();
 
     for (DownloadResult result : results) {
-      System.out.println("Download of " + result.getInput().getName() + " completed with status " + result.getStatus());
+      System.out.println("Download of " + result.getInput().getName()
+          + " completed with status " + result.getStatus());
     }
 
   }

@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
 class UploadDirectory {
 
   public static void uploadDirectoryContents(String bucketName, Path sourceDirectory)
@@ -41,7 +42,7 @@ class UploadDirectory {
     List<Path> filePaths = new ArrayList<>();
     // Get all files in the directory
     // try-with-resource to ensure pathStream is closed
-    try(Stream<Path> pathStream = Files.walk(sourceDirectory)) {
+    try (Stream<Path> pathStream = Files.walk(sourceDirectory)) {
       pathStream.filter(Files::isRegularFile)
           .forEach(filePaths::add);
     }
@@ -49,7 +50,8 @@ class UploadDirectory {
         .uploadFiles(filePaths, parallelUploadConfig)
         .getUploadResults();
     for (UploadResult result : results) {
-      System.out.println("Upload for " + result.getInput().getName() + " completed with status " + result.getStatus());
+      System.out.println("Upload for " + result.getInput().getName()
+          + " completed with status " + result.getStatus());
     }
   }
 

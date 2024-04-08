@@ -38,7 +38,8 @@ class UploadMany {
         .uploadFiles(files, parallelUploadConfig)
         .getUploadResults();
     for (UploadResult result : results) {
-      System.out.println("Upload for " + result.getInput().getName() + " completed with status " + result.getStatus());
+      System.out.println("Upload for " + result.getInput().getName()
+          + " completed with status " + result.getStatus());
     }
   }
 }
