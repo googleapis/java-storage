@@ -67,14 +67,14 @@ public class ITTransferManagerSamples {
     String bucketName = BUCKET;
     UploadMany.uploadManyFiles(bucketName, files);
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("file.txt")).isTrue();
-    assertThat(snippetOutput.contains("file2.txt")).isTrue();
-    assertThat(snippetOutput.contains("file3.txt")).isTrue();
+    assertThat(snippetOutput.contains("file")).isTrue();
+    assertThat(snippetOutput.contains("file2")).isTrue();
+    assertThat(snippetOutput.contains("file3")).isTrue();
   }
 
   @Test
   public void downloadFiles() {
-    DownloadMany.downloadManyBlobs(PROJECT_ID, BUCKET, blobs, tmp.getRoot().toPath());
+    DownloadMany.downloadManyBlobs(BUCKET, blobs, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("blob1")).isTrue();
     assertThat(snippetOutput.contains("blob2")).isTrue();

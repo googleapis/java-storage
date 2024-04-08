@@ -27,7 +27,7 @@ import java.util.List;
 
 class DownloadMany {
 
-  public static void downloadManyBlobs(String projectId, String bucketName,
+  public static void downloadManyBlobs(String bucketName,
       List<BlobInfo> blobs, Path destinationDirectory) {
 
     TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
