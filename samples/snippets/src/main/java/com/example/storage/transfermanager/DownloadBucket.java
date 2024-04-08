@@ -27,9 +27,11 @@ import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+
 class DownloadBucket {
 
-  public static void downloadBucketContents(String projectId, String bucketName, Path destinationDirectory) {
+  public static void downloadBucketContents(String projectId,
+      String bucketName, Path destinationDirectory) {
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     List<BlobInfo> blobs = storage
         .list(bucketName)
@@ -47,7 +49,9 @@ class DownloadBucket {
         .getDownloadResults();
 
     for (DownloadResult result : results) {
-      System.out.println("Download of " + result.getInput().getName() + " completed with status " + result.getStatus());
+      System.out.println("Download of " + result.getInput().getName()
+          + " completed with status "
+          + result.getStatus());
     }
 
   }
