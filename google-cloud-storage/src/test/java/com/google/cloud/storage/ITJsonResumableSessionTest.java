@@ -98,7 +98,7 @@ public final class ITJsonResumableSessionTest {
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
           if (range1.getHeaderValue().equals(contentRange)) {
-            resp.headers().set(RANGE, ByteRangeSpec.explicit(0L, _256KiBL).getHttpRangeHeader());
+            return new DefaultFullHttpResponse(req.protocolVersion(), SERVICE_UNAVAILABLE);
           } else if (range2.getHeaderValue().equals(contentRange)) {
             resp.headers().set(RANGE, ByteRangeSpec.explicit(0L, _256KiBL).getHttpRangeHeader());
           } else {
