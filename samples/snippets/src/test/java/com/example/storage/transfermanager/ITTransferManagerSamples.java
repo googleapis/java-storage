@@ -52,9 +52,11 @@ public class ITTransferManagerSamples {
     blobs = Arrays.asList(BlobInfo.newBuilder(BUCKET, "blob1").build(),
         BlobInfo.newBuilder(BUCKET, "blob2").build(),
         BlobInfo.newBuilder(BUCKET, "blob3").build());
-    for (BlobInfo blob : blobs)
+    for (BlobInfo blob : blobs) {
       storage.create(blob);
+    }
   }
+  
   @Test
   public void uploadFiles() throws Exception {
     File tmpFile = File.createTempFile("file", ".txt");
@@ -69,7 +71,7 @@ public class ITTransferManagerSamples {
     assertThat(snippetOutput.contains("file2.txt")).isTrue();
     assertThat(snippetOutput.contains("file3.txt")).isTrue();
   }
-  
+
   @Test
   public void downloadFiles() {
     DownloadMany.downloadManyBlobs(PROJECT_ID, BUCKET, blobs, tmp.getRoot().toPath());
