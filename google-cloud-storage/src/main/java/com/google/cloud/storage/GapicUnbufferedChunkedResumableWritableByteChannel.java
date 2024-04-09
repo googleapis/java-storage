@@ -120,7 +120,10 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
 
     long begin = writeCtx.getConfirmedBytes().get();
     RewindableContent content = RewindableContent.of(srcs, srcsOffset, srcsLength);
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, finalize);
+    if (data.length == 0) {
+      return 0;
+    }
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
