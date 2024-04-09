@@ -109,10 +109,9 @@ final class JsonResumableSessionPutTask
           success = true;
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else if (ackRange.endOffset() < effectiveEnd) {
-          StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_9.toStorageException(uploadId, response);
-          span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
-          throw se;
+          rewindTo(ackRange.endOffset());
+          success = true;
+          return ResumableOperationResult.incremental(ackRange.endOffset());
         } else {
           StorageException se =
               JsonResumableSessionFailureScenario.SCENARIO_7.toStorageException(uploadId, response);

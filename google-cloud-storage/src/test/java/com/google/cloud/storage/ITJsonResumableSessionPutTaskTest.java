@@ -113,51 +113,6 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h4>S.9</h4>
-   *
-   * Partial successful append to session
-   *
-   * <p>The client has sent N bytes, the server confirmed N bytes as committed. The client sends K
-   * bytes starting at offset N. The server responds with only N + L with 0 &lt;= L &lt; K bytes as
-   * committed.
-   */
-  @Test
-  public void scenario9() throws Exception {
-
-    HttpRequestHandler handler =
-        req -> {
-          String contentRangeString = req.headers().get(CONTENT_RANGE);
-          HttpContentRange parse = HttpContentRange.parse(contentRangeString);
-          long endInclusive = ((HttpContentRange.HasRange<?>) parse).range().endOffsetInclusive();
-          FullHttpResponse resp =
-              new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
-          ByteRangeSpec range = ByteRangeSpec.explicitClosed(0L, endInclusive - 1);
-          resp.headers().set(HttpHeaderNames.RANGE, range.getHttpRangeHeader());
-          return resp;
-        };
-
-    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
-
-      AtomicLong confirmedBytes = new AtomicLong(-1L);
-
-      JsonResumableSessionPutTask task =
-          new JsonResumableSessionPutTask(
-              httpClientContext,
-              uploadUrl,
-              RewindableContent.empty(),
-              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
-
-      StorageException se = assertThrows(StorageException.class, task::call);
-      assertThat(se.getCode()).isEqualTo(503);
-      assertThat(confirmedBytes.get()).isEqualTo(-1L);
-    }
-  }
-
-  /**
-   *
-   *
    * <h4>S.7</h4>
    *
    * GCS Acknowledges more bytes than were sent in the PUT
