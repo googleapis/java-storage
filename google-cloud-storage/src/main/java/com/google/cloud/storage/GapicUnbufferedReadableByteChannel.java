@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.ApiFuture;
@@ -38,8 +37,6 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
@@ -231,4 +228,3 @@ final class GapicUnbufferedReadableByteChannel
     }
   }
 }
-
