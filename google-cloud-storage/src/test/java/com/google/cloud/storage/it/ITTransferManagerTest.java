@@ -57,7 +57,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.crypto.Data;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -357,7 +356,8 @@ public class ITTransferManagerTest {
         TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, size)) {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucket.getName()).build();
-      UploadJob job = transferManager.uploadFiles(
+      UploadJob job =
+          transferManager.uploadFiles(
               Collections.singletonList(tmpFile.getPath()), parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
@@ -380,18 +380,18 @@ public class ITTransferManagerTest {
         TmpFile tmpFile3 = DataGenerator.base64Characters().tempFile(baseDir, smallFileSize)) {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucket.getName()).build();
-      List<Path> files = ImmutableList.of(tmpFile.getPath(), tmpfile2.getPath(), tmpFile3.getPath());
+      List<Path> files =
+          ImmutableList.of(tmpFile.getPath(), tmpfile2.getPath(), tmpFile3.getPath());
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults).hasSize(3);
       assertThat(
-          uploadResults.stream()
-              .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
-              .collect(Collectors.toList()))
+              uploadResults.stream()
+                  .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
+                  .collect(Collectors.toList()))
           .hasSize(3);
     }
   }
-
 
   @Test
   public void downloadNonexistentBucket() throws Exception {

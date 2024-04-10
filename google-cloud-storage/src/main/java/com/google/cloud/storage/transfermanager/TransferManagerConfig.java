@@ -102,11 +102,8 @@ public final class TransferManagerConfig {
   /** The service object for {@link TransferManager} */
   @BetaApi
   public TransferManager getService() {
-    return new TransferManagerImpl(this,
-        DefaultQos.of(this));
+    return new TransferManagerImpl(this, DefaultQos.of(this));
   }
-
-
 
   @BetaApi
   public Builder toBuilder() {
@@ -117,7 +114,6 @@ public final class TransferManagerConfig {
         .setPerWorkerBufferSize(perWorkerBufferSize)
         .setStorageOptions(storageOptions);
   }
-
 
   @Override
   public boolean equals(Object o) {

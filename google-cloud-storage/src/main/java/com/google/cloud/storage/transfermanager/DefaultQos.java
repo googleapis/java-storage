@@ -22,7 +22,10 @@ final class DefaultQos implements Qos {
   private final long parallelCompositeUploadThreshold;
   private boolean threadThresholdMet;
 
-  private DefaultQos(long divideAndConquerThreshold, long parallelCompositeUploadThreshold, boolean threadThresholdMet) {
+  private DefaultQos(
+      long divideAndConquerThreshold,
+      long parallelCompositeUploadThreshold,
+      boolean threadThresholdMet) {
     this.divideAndConquerThreshold = divideAndConquerThreshold;
     this.parallelCompositeUploadThreshold = parallelCompositeUploadThreshold;
     this.threadThresholdMet = threadThresholdMet;
@@ -38,13 +41,15 @@ final class DefaultQos implements Qos {
     return threadThresholdMet && objectSize > parallelCompositeUploadThreshold;
   }
 
-  static DefaultQos of(long divideAndConquerThreshold, long parallelCompositeUploadThreshold, boolean threadThresholdMet) {
+  static DefaultQos of(
+      long divideAndConquerThreshold,
+      long parallelCompositeUploadThreshold,
+      boolean threadThresholdMet) {
     return of(divideAndConquerThreshold, parallelCompositeUploadThreshold, threadThresholdMet);
   }
 
   static DefaultQos of(TransferManagerConfig config) {
-    return new DefaultQos(128L * 1024 * 1024,
-        4L * config.getPerWorkerBufferSize(),
-        config.getMaxWorkers() > 2);
+    return new DefaultQos(
+        128L * 1024 * 1024, 4L * config.getPerWorkerBufferSize(), config.getMaxWorkers() > 2);
   }
 }

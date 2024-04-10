@@ -124,25 +124,25 @@ final class TransferManagerImpl implements TransferManager {
       if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
       String blobName = TransferManagerUtils.createBlobName(config, file);
       BlobInfo blobInfo = BlobInfo.newBuilder(config.getBucketName(), blobName).build();
-        if (transferManagerConfig.isAllowParallelCompositeUpload()
-            && qos.parallelCompositeUpload(Files.size(file))) {
-          ParallelCompositeUploadCallable callable =
-              new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
-          pcuQueue.push(callable);
-          uploadTasks.add(callable.getResult());
-          if (pcuPoller == null) {
-            synchronized (pcuPollerSync) {
-              if (pcuPoller == null) {
-                pcuPoller = convert(executor.submit(new PCUPoller()));
-              }
+      if (transferManagerConfig.isAllowParallelCompositeUpload()
+          && qos.parallelCompositeUpload(Files.size(file))) {
+        ParallelCompositeUploadCallable callable =
+            new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
+        pcuQueue.push(callable);
+        uploadTasks.add(callable.getResult());
+        if (pcuPoller == null) {
+          synchronized (pcuPollerSync) {
+            if (pcuPoller == null) {
+              pcuPoller = convert(executor.submit(new PCUPoller()));
             }
           }
-        } else {
-          UploadCallable callable =
-              new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
-          uploadTasks.add(convert(executor.submit(callable)));
         }
+      } else {
+        UploadCallable callable =
+            new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
+        uploadTasks.add(convert(executor.submit(callable)));
       }
+    }
     return UploadJob.newBuilder()
         .setParallelUploadConfig(config)
         .setUploadResults(ImmutableList.copyOf(uploadTasks))
