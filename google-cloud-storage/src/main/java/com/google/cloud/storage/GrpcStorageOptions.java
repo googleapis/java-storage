@@ -688,7 +688,6 @@ public final class GrpcStorageOptions extends StorageOptions
           Tuple<StorageSettings, Opts<UserProject>> t = grpcStorageOptions.resolveSettingsAndOpts();
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
-          StorageClient client;
           if (ZeroCopyReadinessChecker.isReady()) {
             StorageStubSettings stubSettings =
                 (StorageStubSettings) storageSettings.getStubSettings();
@@ -698,7 +697,7 @@ public final class GrpcStorageOptions extends StorageOptions
             InternalZeroCopyGrpcStorageStub stub =
                 new InternalZeroCopyGrpcStorageStub(
                     stubSettings, clientContext, grpcStorageCallableFactory);
-            client = new InternalStorageClient(stub);
+            StorageClient client = new InternalStorageClient(stub);
             return new GrpcStorageImpl(
                 grpcStorageOptions,
                 client,
@@ -706,7 +705,7 @@ public final class GrpcStorageOptions extends StorageOptions
                 grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
                 defaultOpts);
           } else {
-            client = StorageClient.create(storageSettings);
+            StorageClient client = StorageClient.create(storageSettings);
             return new GrpcStorageImpl(
                 grpcStorageOptions,
                 client,
