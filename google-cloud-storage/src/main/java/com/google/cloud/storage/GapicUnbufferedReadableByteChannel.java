@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
