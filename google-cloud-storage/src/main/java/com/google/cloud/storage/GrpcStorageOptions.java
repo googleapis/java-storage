@@ -1003,7 +1003,7 @@ public final class GrpcStorageOptions extends StorageOptions
     }
   }
 
-  static class ZeroCopyReadinessChecker {
+  static final class ZeroCopyReadinessChecker {
     private static final boolean isZeroCopyReady;
 
     static {
@@ -1021,7 +1021,7 @@ public final class GrpcStorageOptions extends StorageOptions
         Class<?> detachableClass = Class.forName(detachableClassName);
         detachableClassExists = (detachableClass != null);
       } catch (ClassNotFoundException ex) {
-        // Should cause false to be returned
+        // leaves detachableClassExists false
       }
       // Check whether com.google.protobuf.UnsafeByteOperations exists?
       boolean unsafeByteOperationsClassExists = false;
@@ -1034,7 +1034,7 @@ public final class GrpcStorageOptions extends StorageOptions
         Class<?> unsafeByteOperationsClass = Class.forName(unsafeByteOperationsClassName);
         unsafeByteOperationsClassExists = (unsafeByteOperationsClass != null);
       } catch (ClassNotFoundException ex) {
-        // Should cause false to be returned
+        // leaves unsafeByteOperationsClassExists false
       }
       isZeroCopyReady = detachableClassExists && unsafeByteOperationsClassExists;
     }
