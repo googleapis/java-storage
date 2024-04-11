@@ -16,7 +16,6 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.Storage;
@@ -29,6 +28,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
   private final Storage storage;
@@ -41,8 +42,6 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
 
   private final Storage.BlobWriteOption[] opts;
 
-  private final SettableApiFuture<UploadResult> result;
-
   public ParallelCompositeUploadCallable(
       Storage storage,
       BlobInfo originalBlob,
@@ -54,25 +53,13 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
     this.sourceFile = sourceFile;
     this.parallelUploadConfig = parallelUploadConfig;
     this.opts = opts;
-    this.result = SettableApiFuture.create();
   }
 
-  public ApiFuture<UploadResult> getResult() {
-    return result;
+  public UploadResult call() {
+    return uploadPCU();
   }
 
-  public UploadResult call() throws ExecutionException, InterruptedException {
-    try {
-      UploadResult uploadResult = uploadPCU();
-      result.set(uploadResult);
-      return uploadResult;
-    } catch (Exception e) {
-      result.setException(e);
-      throw e;
-    }
-  }
-
-  private UploadResult uploadPCU() throws ExecutionException, InterruptedException {
+  private UploadResult uploadPCU() {
     BlobWriteSession session = storage.blobWriteSession(originalBlob, opts);
     try (WritableByteChannel writableByteChannel = session.open();
         FileChannel fc = FileChannel.open(sourceFile, StandardOpenOption.READ)) {
@@ -92,9 +79,16 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
           .setException(e)
           .build();
     }
-    BlobInfo newBlob = session.getResult().get();
-    return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-        .setUploadedBlob(newBlob)
-        .build();
+    try {
+      ApiFuture<BlobInfo> result = session.getResult();
+      BlobInfo newBlob = result.get(10, TimeUnit.SECONDS);
+      return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
+          .setUploadedBlob(newBlob)
+          .build();
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+          .setException(e)
+          .build();
+    }
   }
 }

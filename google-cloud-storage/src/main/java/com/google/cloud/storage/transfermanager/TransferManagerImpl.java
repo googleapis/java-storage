@@ -16,12 +16,11 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import static com.google.cloud.BaseServiceException.UNKNOWN_CODE;
-
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.ListenableFutureToApiFuture;
+import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -32,7 +31,6 @@ import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -46,7 +44,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
@@ -62,8 +59,9 @@ final class TransferManagerImpl implements TransferManager {
   private final Qos qos;
   private final Storage storage;
 
-  private final Deque<ParallelCompositeUploadCallable> pcuQueue;
-  private final Object pcuPollerSync = new Object(); // TODO: ben share lock code with sydney
+  private final Deque<PendingPcuTask> pcuQueue;
+  // define a unique object which we can use to synchronize modification of pcuPoller
+  private final Object pcuPollerSync = new Object();
   private volatile ApiFuture<?> pcuPoller;
 
   TransferManagerImpl(TransferManagerConfig transferManagerConfig, Qos qos) {
@@ -128,15 +126,10 @@ final class TransferManagerImpl implements TransferManager {
           && qos.parallelCompositeUpload(Files.size(file))) {
         ParallelCompositeUploadCallable callable =
             new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
-        pcuQueue.push(callable);
-        uploadTasks.add(callable.getResult());
-        if (pcuPoller == null) {
-          synchronized (pcuPollerSync) {
-            if (pcuPoller == null) {
-              pcuPoller = convert(executor.submit(new PCUPoller()));
-            }
-          }
-        }
+        SettableApiFuture<UploadResult> resultFuture = SettableApiFuture.create();
+        pcuQueue.push(new PendingPcuTask(callable, resultFuture));
+        uploadTasks.add(resultFuture);
+        schedulePcuPoller();
       } else {
         UploadCallable callable =
             new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
@@ -203,6 +196,26 @@ final class TransferManagerImpl implements TransferManager {
         .build();
   }
 
+  private void schedulePcuPoller() {
+    if (pcuPoller == null) {
+      synchronized (pcuPollerSync) {
+        if (pcuPoller == null) {
+          pcuPoller = convert(executor.submit(new PcuPoller()));
+        }
+      }
+    }
+  }
+
+  private void deschedulePcuPoller() {
+    if (pcuPoller != null) {
+      synchronized (pcuPollerSync) {
+        if (pcuPoller != null) {
+          pcuPoller = null;
+        }
+      }
+    }
+  }
+
   private static <T> ApiFuture<T> convert(ListenableFuture<T> lf) {
     return new ListenableFutureToApiFuture<>(lf);
   }
@@ -244,30 +257,41 @@ final class TransferManagerImpl implements TransferManager {
     }
   }
 
-  private final class PCUPoller implements Runnable {
+  /**
+   * When performing a Parallel composite upload, the thread pool we perform work on is shared as
+   * the PCU worker pool. Because of this, if we submit our work to the executor service and take
+   * all the threads waiting for PCU uploads to complete, the PCU work doesn't have any threads
+   * available to itself.
+   *
+   * This class represents a single worker that will be submitted to the executor service and will
+   * poll a queue to process a single PCU at a time, leaving any other threads free for PCU work.
+   */
+  private final class PcuPoller implements Runnable {
 
     @Override
     public void run() {
-      ParallelCompositeUploadCallable poll;
       do {
-        poll = pcuQueue.poll();
+        PendingPcuTask poll = pcuQueue.poll();
         if (poll == null) {
-          // todo: ben make this safe
-          pcuPoller = null;
+          deschedulePcuPoller();
           return;
         }
 
-        try {
-          UploadResult ignore = poll.call();
-          // We should never throw an exception here but if we do it should be
-          // a StorageException
-        } catch (ExecutionException e) {
-          throw new StorageException(UNKNOWN_CODE, e.getMessage(), e);
-        } catch (InterruptedException e) {
-          throw new StorageException(UNKNOWN_CODE, e.getMessage(), e);
-        }
+        UploadResult result = poll.callable.call();
+        poll.resultFuture.set(result);
 
-      } while (poll != null);
+      } while (true);
+    }
+  }
+
+  private static final class PendingPcuTask {
+    private final ParallelCompositeUploadCallable callable;
+    private final SettableApiFuture<UploadResult> resultFuture;
+
+    private PendingPcuTask(ParallelCompositeUploadCallable callable,
+        SettableApiFuture<UploadResult> resultFuture) {
+      this.callable = callable;
+      this.resultFuture = resultFuture;
     }
   }
 }
