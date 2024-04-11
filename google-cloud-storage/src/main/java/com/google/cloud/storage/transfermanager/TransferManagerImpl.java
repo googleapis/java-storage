@@ -25,8 +25,6 @@ import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
-import com.google.cloud.storage.GrpcStorageOptions;
-import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.Storage;
@@ -82,23 +80,11 @@ final class TransferManagerImpl implements TransferManager {
               .build();
     }
     // Create the blobWriteSessionConfig for ParallelCompositeUpload
-    ParallelCompositeUploadBlobWriteSessionConfig pcuConfig =
-        BlobWriteSessionConfigs.parallelCompositeUpload()
-            .withExecutorSupplier(ExecutorSupplier.useExecutor(executor));
-    if (storageOptions instanceof GrpcStorageOptions
-        && transferManagerConfig.isAllowParallelCompositeUpload()) {
-      storageOptions =
-          ((GrpcStorageOptions) storageOptions)
-              .toBuilder()
-              .setBlobWriteSessionConfig(pcuConfig)
-              .build();
-    } else if (storageOptions instanceof HttpStorageOptions
-        && transferManagerConfig.isAllowParallelCompositeUpload()) {
-      storageOptions =
-          ((HttpStorageOptions) storageOptions)
-              .toBuilder()
-              .setBlobWriteSessionConfig(pcuConfig)
-              .build();
+    if (transferManagerConfig.isAllowParallelCompositeUpload()) {
+      ParallelCompositeUploadBlobWriteSessionConfig pcuConfig =
+          BlobWriteSessionConfigs.parallelCompositeUpload()
+              .withExecutorSupplier(ExecutorSupplier.useExecutor(executor));
+      storageOptions = storageOptions.toBuilder().setBlobWriteSessionConfig(pcuConfig).build();
     }
     pcuQueue = new ArrayDeque<>();
     this.storage = storageOptions.getService();
