@@ -46,6 +46,7 @@ public class ITTransferManagerSamples {
   @Rule
   public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
+  @Rule public final TemporaryFolder tmpDirectory = new TemporaryFolder();
 
   @BeforeClass
   public static void beforeClass() {
@@ -77,7 +78,6 @@ public class ITTransferManagerSamples {
 
   @Test
   public void uploadDirectory() throws IOException {
-    TemporaryFolder tmpDirectory = new TemporaryFolder();
     File tmpFile = tmpDirectory.newFile("fileDirUpload.txt");
     File tmpFile2 = tmpDirectory.newFile("fileDirUpload2.txt");
     File tmpFile3 = tmpDirectory.newFile("fileDirUpload3.txt");
