@@ -19,6 +19,7 @@ package com.example.storage.transfermanager;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
@@ -26,7 +27,9 @@ import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -55,6 +58,7 @@ public class ITTransferManagerSamples {
     for (BlobInfo blob : blobs) {
       storage.create(blob);
     }
+
   }
   
   @Test
@@ -64,12 +68,41 @@ public class ITTransferManagerSamples {
     File tmpFile3 = File.createTempFile("file3", ".txt");
     List<Path> files =
         ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
-    String bucketName = BUCKET;
-    UploadMany.uploadManyFiles(bucketName, files);
+    UploadMany.uploadManyFiles(BUCKET, files);
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("file")).isTrue();
     assertThat(snippetOutput.contains("file2")).isTrue();
     assertThat(snippetOutput.contains("file3")).isTrue();
+  }
+
+  @Test
+  public void uploadDirectory() throws IOException {
+    TemporaryFolder tmpDirectory = new TemporaryFolder();
+    File tmpFile = tmpDirectory.newFile("fileDirUpload.txt");
+    File tmpFile2 = tmpDirectory.newFile("fileDirUpload2.txt");
+    File tmpFile3 = tmpDirectory.newFile("fileDirUpload3.txt");
+    UploadDirectory.uploadDirectoryContents(BUCKET, tmpDirectory.getRoot().toPath());
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput.contains("fileDirUpload.txt")).isTrue();
+    assertThat(snippetOutput.contains("fileDirUpload2.txt")).isTrue();
+    assertThat(snippetOutput.contains("fileDirUpload3.txt")).isTrue();
+  }
+
+  @Test
+  public void downloadBucket() {
+    String downloadFullBucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(BucketInfo.of(downloadFullBucketName));
+    List<BlobInfo> bucketBlobs = Arrays.asList(BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
+        BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
+        BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
+    for (BlobInfo blob : blobs) {
+      storage.create(blob);
+    }
+    DownloadBucket.downloadBucketContents(PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput.contains("blob1")).isTrue();
+    assertThat(snippetOutput.contains("blob2")).isTrue();
+    assertThat(snippetOutput.contains("blob3")).isTrue();
   }
 
   @Test
