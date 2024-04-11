@@ -74,6 +74,8 @@ public class ITTransferManagerTest {
   private static final Comparator<DownloadResult> comp2 =
       Comparator.comparing(DownloadResult::getInput, comp);
 
+  private static final long CHUNK_THRESHOLD = 2L * 1024 * 1024;
+
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
@@ -106,8 +108,8 @@ public class ITTransferManagerTest {
         writeChannel.write(content);
       }
     }
-    long size = 2L * 1024 * 1024;
-    size = size + 100L;
+    // We make this size just a bit bigger than the threshold.
+    long size = CHUNK_THRESHOLD + 100L;
     ByteBuffer chunkedContent = DataGenerator.base64Characters().genByteBuffer(size);
     try (WriteChannel writeChannel = storage.writer(blobInfoChunking)) {
       writeChannel.write(chunkedContent);
@@ -338,6 +340,56 @@ public class ITTransferManagerTest {
       } finally {
         cleanUpFiles(downloadResults);
       }
+    }
+  }
+
+  @Test
+  public void uploadFilesAllowPCU() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowParallelCompositeUpload(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    long size = CHUNK_THRESHOLD + 100L;
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, size)) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucket.getName()).build();
+      UploadJob job =
+          transferManager.uploadFiles(
+              Collections.singletonList(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
+    }
+  }
+
+  @Test
+  public void uploadFilesAllowMultiplePCUAndSmallerFiles() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowParallelCompositeUpload(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    long largeFileSize = CHUNK_THRESHOLD + 100L;
+    long smallFileSize = CHUNK_THRESHOLD - 100L;
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, largeFileSize);
+        TmpFile tmpfile2 = DataGenerator.base64Characters().tempFile(baseDir, largeFileSize);
+        TmpFile tmpFile3 = DataGenerator.base64Characters().tempFile(baseDir, smallFileSize)) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucket.getName()).build();
+      List<Path> files =
+          ImmutableList.of(tmpFile.getPath(), tmpfile2.getPath(), tmpFile3.getPath());
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults).hasSize(3);
+      assertThat(
+              uploadResults.stream()
+                  .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
+                  .collect(Collectors.toList()))
+          .hasSize(3);
     }
   }
 

@@ -19,9 +19,16 @@ package com.google.cloud.storage.transfermanager;
 final class DefaultQos implements Qos {
 
   private final long divideAndConquerThreshold;
+  private final long parallelCompositeUploadThreshold;
+  private boolean threadThresholdMet;
 
-  private DefaultQos(long divideAndConquerThreshold) {
+  private DefaultQos(
+      long divideAndConquerThreshold,
+      long parallelCompositeUploadThreshold,
+      boolean threadThresholdMet) {
     this.divideAndConquerThreshold = divideAndConquerThreshold;
+    this.parallelCompositeUploadThreshold = parallelCompositeUploadThreshold;
+    this.threadThresholdMet = threadThresholdMet;
   }
 
   @Override
@@ -29,11 +36,13 @@ final class DefaultQos implements Qos {
     return objectSize > divideAndConquerThreshold;
   }
 
-  static DefaultQos of() {
-    return of(128L * 1024 * 1024);
+  @Override
+  public boolean parallelCompositeUpload(long objectSize) {
+    return threadThresholdMet && objectSize > parallelCompositeUploadThreshold;
   }
 
-  static DefaultQos of(long divideAndConquerThreshold) {
-    return new DefaultQos(divideAndConquerThreshold);
+  static DefaultQos of(TransferManagerConfig config) {
+    return new DefaultQos(
+        128L * 1024 * 1024, 4L * config.getPerWorkerBufferSize(), config.getMaxWorkers() > 2);
   }
 }
