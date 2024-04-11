@@ -84,18 +84,19 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -989,16 +990,42 @@ public final class GrpcStorageOptions extends StorageOptions
 
     @Override
     public void close() throws IOException {
-      unclosedStreams
-          .values()
-          .forEach(
-              s -> {
-                try {
-                  s.close();
-                } catch (IOException e) {
-                  throw new UncheckedIOException(e);
-                }
-              });
+      closeAllStreams(unclosedStreams.values());
+    }
+
+    /**
+     * In the event closing the streams results in multiple streams throwing IOExceptions, collect
+     * them all as suppressed exceptions on the first occurrence.
+     */
+    @VisibleForTesting
+    static void closeAllStreams(Collection<InputStream> inputStreams) throws IOException {
+      IOException ioException =
+          inputStreams.stream()
+              .map(
+                  stream -> {
+                    try {
+                      stream.close();
+                      return null;
+                    } catch (IOException e) {
+                      return e;
+                    }
+                  })
+              .filter(Objects::nonNull)
+              .reduce(
+                  null,
+                  (l, r) -> {
+                    if (l != null) {
+                      l.addSuppressed(r);
+                      return l;
+                    } else {
+                      return r;
+                    }
+                  },
+                  (l, r) -> l);
+
+      if (ioException != null) {
+        throw ioException;
+      }
     }
   }
 

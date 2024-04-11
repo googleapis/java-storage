@@ -16,12 +16,14 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.GrpcStorageOptions.ReadObjectResponseZeroCopyMessageMarshaller;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ContentRange;
@@ -32,11 +34,14 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.internal.ReadableBuffer;
 import io.grpc.internal.ReadableBuffers;
 import java.io.Closeable;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 public class ZeroCopyMarshallerTest {
@@ -132,5 +137,88 @@ public class ZeroCopyMarshallerTest {
     ResponseContentLifecycleHandle nullHandle = new ResponseContentLifecycleHandle(RESPONSE, null);
     nullHandle.close();
     // No NullPointerException means test passes
+  }
+
+  @Test
+  public void testMarshallerClose_clean() throws IOException {
+    CloseAuditingInputStream stream1 =
+        CloseAuditingInputStream.of(createInputStream(RESPONSE.toByteArray(), true));
+    CloseAuditingInputStream stream2 =
+        CloseAuditingInputStream.of(createInputStream(RESPONSE.toByteArray(), true));
+    CloseAuditingInputStream stream3 =
+        CloseAuditingInputStream.of(createInputStream(RESPONSE.toByteArray(), true));
+
+    ReadObjectResponseZeroCopyMessageMarshaller.closeAllStreams(
+        ImmutableList.of(stream1, stream2, stream3));
+
+    assertThat(stream1.closed).isTrue();
+    assertThat(stream2.closed).isTrue();
+    assertThat(stream3.closed).isTrue();
+  }
+
+  @SuppressWarnings("resource")
+  @Test
+  public void testMarshallerClose_multipleIoExceptions() {
+    CloseAuditingInputStream stream1 =
+        new CloseAuditingInputStream(null) {
+          @Override
+          void onClose() throws IOException {
+            throw new IOException("Kaboom stream1");
+          }
+        };
+    CloseAuditingInputStream stream2 =
+        new CloseAuditingInputStream(null) {
+          @Override
+          void onClose() throws IOException {
+            throw new IOException("Kaboom stream2");
+          }
+        };
+    CloseAuditingInputStream stream3 =
+        new CloseAuditingInputStream(null) {
+          @Override
+          void onClose() throws IOException {
+            throw new IOException("Kaboom stream3");
+          }
+        };
+
+    IOException ioException =
+        assertThrows(
+            IOException.class,
+            () ->
+                ReadObjectResponseZeroCopyMessageMarshaller.closeAllStreams(
+                    ImmutableList.of(stream1, stream2, stream3)));
+
+    assertThat(stream1.closed).isTrue();
+    assertThat(stream2.closed).isTrue();
+    assertThat(stream3.closed).isTrue();
+
+    assertThat(ioException).hasMessageThat().isEqualTo("Kaboom stream1");
+    List<String> messages =
+        Arrays.stream(ioException.getSuppressed())
+            .map(Throwable::getMessage)
+            .collect(Collectors.toList());
+    assertThat(messages).isEqualTo(ImmutableList.of("Kaboom stream2", "Kaboom stream3"));
+  }
+
+  private static class CloseAuditingInputStream extends FilterInputStream {
+
+    private boolean closed = false;
+
+    private CloseAuditingInputStream(InputStream in) {
+      super(in);
+    }
+
+    public static CloseAuditingInputStream of(InputStream in) {
+      return new CloseAuditingInputStream(in);
+    }
+
+    @Override
+    public void close() throws IOException {
+      closed = true;
+      onClose();
+      super.close();
+    }
+
+    void onClose() throws IOException {}
   }
 }
