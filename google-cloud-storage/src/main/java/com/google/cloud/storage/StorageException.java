@@ -118,6 +118,9 @@ public final class StorageException extends BaseHttpServiceException {
     if (t instanceof ApiException) {
       return asStorageException((ApiException) t);
     }
+    if (t.getCause() instanceof ApiException) {
+      return asStorageException((ApiException) t.getCause());
+    }
     return getStorageException(t);
   }
 

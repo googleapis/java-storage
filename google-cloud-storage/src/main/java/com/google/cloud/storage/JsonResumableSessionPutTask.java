@@ -120,7 +120,7 @@ final class JsonResumableSessionPutTask
         }
       } else if (finalizing && JsonResumableSessionFailureScenario.isOk(code)) {
         @Nullable StorageObject storageObject;
-        @Nullable BigInteger actualSize;
+        BigInteger actualSize = BigInteger.ZERO;
 
         Long contentLength = response.getHeaders().getContentLength();
         String contentType = response.getHeaders().getContentType();
@@ -130,7 +130,12 @@ final class JsonResumableSessionPutTask
         boolean isJson = contentType != null && contentType.startsWith("application/json");
         if (isJson) {
           storageObject = response.parseAs(StorageObject.class);
-          actualSize = storageObject != null ? storageObject.getSize() : null;
+          if (storageObject != null) {
+            BigInteger size = storageObject.getSize();
+            if (size != null) {
+              actualSize = size;
+            }
+          }
         } else if ((contentLength == null || contentLength == 0) && storedContentLength != null) {
           // when a signed url is used, the finalize response is empty
           response.ignore();
@@ -150,7 +155,6 @@ final class JsonResumableSessionPutTask
         int compare = expectedSize.compareTo(actualSize);
         if (compare == 0) {
           success = true;
-          //noinspection DataFlowIssue  compareTo result will filter out actualSize == null
           return ResumableOperationResult.complete(storageObject, actualSize.longValue());
         } else if (compare > 0) {
           StorageException se =

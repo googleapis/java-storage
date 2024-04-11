@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A session to write an object to Google Cloud Storage.
@@ -50,6 +51,10 @@ public interface BlobWriteSession {
    * <p>Upon calling {@link WritableByteChannel#close()} the object creation will be finalized, and
    * {@link #getResult()}s future should resolve.
    *
+   * <p>The returned {@code WritableByteChannel} can throw IOExceptions from any of its usual
+   * methods. Any {@link IOException} thrown can have a cause of a {@link StorageException}.
+   * However, not all {@code IOExceptions} will have {@code StorageException}s.
+   *
    * @throws IOException When creating the {@link WritableByteChannel} if an unrecoverable
    *     underlying IOException occurs it can be rethrown
    * @throws IllegalStateException if open is called more than once
@@ -65,6 +70,10 @@ public interface BlobWriteSession {
    * <p>This future will not resolve until: 1. The object is successfully finalized and created in
    * Google Cloud Storage 2. A terminal failure occurs, the terminal failure will become the
    * exception result
+   *
+   * <p>If a terminal failure is encountered, calling either {@link ApiFuture#get()} or {@link
+   * ApiFuture#get(long, TimeUnit)} will result in an {@link
+   * java.util.concurrent.ExecutionException} with a cause that is the {@link StorageException}.
    *
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
