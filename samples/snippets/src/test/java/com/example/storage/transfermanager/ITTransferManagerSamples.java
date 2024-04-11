@@ -92,13 +92,15 @@ public class ITTransferManagerSamples {
   public void downloadBucket() {
     String downloadFullBucketName = RemoteStorageHelper.generateBucketName();
     storage.create(BucketInfo.of(downloadFullBucketName));
-    List<BlobInfo> bucketBlobs = Arrays.asList(BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
+    List<BlobInfo> bucketBlobs = Arrays.asList(
+        BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
         BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
         BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
     for (BlobInfo blob : blobs) {
       storage.create(blob);
     }
-    DownloadBucket.downloadBucketContents(PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
+    DownloadBucket
+        .downloadBucketContents(PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("blob1")).isTrue();
     assertThat(snippetOutput.contains("blob2")).isTrue();
