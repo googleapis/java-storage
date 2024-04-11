@@ -263,8 +263,9 @@ final class TransferManagerImpl implements TransferManager {
    * all the threads waiting for PCU uploads to complete, the PCU work doesn't have any threads
    * available to itself.
    *
-   * This class represents a single worker that will be submitted to the executor service and will
-   * poll a queue to process a single PCU at a time, leaving any other threads free for PCU work.
+   * <p>This class represents a single worker that will be submitted to the executor service and
+   * will poll a queue to process a single PCU at a time, leaving any other threads free for PCU
+   * work.
    */
   private final class PcuPoller implements Runnable {
 
@@ -288,8 +289,8 @@ final class TransferManagerImpl implements TransferManager {
     private final ParallelCompositeUploadCallable callable;
     private final SettableApiFuture<UploadResult> resultFuture;
 
-    private PendingPcuTask(ParallelCompositeUploadCallable callable,
-        SettableApiFuture<UploadResult> resultFuture) {
+    private PendingPcuTask(
+        ParallelCompositeUploadCallable callable, SettableApiFuture<UploadResult> resultFuture) {
       this.callable = callable;
       this.resultFuture = resultFuture;
     }
