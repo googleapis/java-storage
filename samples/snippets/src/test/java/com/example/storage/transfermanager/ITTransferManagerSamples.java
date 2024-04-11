@@ -96,15 +96,15 @@ public class ITTransferManagerSamples {
         BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
         BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
         BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
-    for (BlobInfo blob : blobs) {
+    for (BlobInfo blob : bucketBlobs) {
       storage.create(blob);
     }
     DownloadBucket
         .downloadBucketContents(PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("blob1")).isTrue();
-    assertThat(snippetOutput.contains("blob2")).isTrue();
-    assertThat(snippetOutput.contains("blob3")).isTrue();
+    assertThat(snippetOutput.contains("bucketb1")).isTrue();
+    assertThat(snippetOutput.contains("bucketb2")).isTrue();
+    assertThat(snippetOutput.contains("bucketb3")).isTrue();
   }
 
   @Test
