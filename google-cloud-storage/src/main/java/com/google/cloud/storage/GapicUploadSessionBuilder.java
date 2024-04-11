@@ -49,7 +49,7 @@ final class GapicUploadSessionBuilder {
   }
 
   ApiFuture<ResumableWrite> resumableWrite(
-      UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
+      UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> callable,
       WriteObjectRequest writeObjectRequest) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
@@ -65,9 +65,16 @@ final class GapicUploadSessionBuilder {
     Function<String, WriteObjectRequest> f =
         uploadId ->
             writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
-    return ApiFutures.transform(
-        x.futureCall(req),
-        (resp) -> new ResumableWrite(req, resp, f),
+    ApiFuture<ResumableWrite> futureResumableWrite =
+        ApiFutures.transform(
+            callable.futureCall(req),
+            (resp) -> new ResumableWrite(req, resp, f),
+            MoreExecutors.directExecutor());
+    // make sure we wrap any failure as a storage exception
+    return ApiFutures.catchingAsync(
+        futureResumableWrite,
+        Throwable.class,
+        throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
         MoreExecutors.directExecutor());
   }
 

@@ -71,4 +71,11 @@
     <className>com/google/cloud/storage/transfermanager/TransferManagerConfig$Builder</className>
     <method>* setAllowDivideAndConquer(boolean)</method>
   </difference>
+
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/StorageOptions$Builder</className>
+    <method>com.google.cloud.storage.StorageOptions$Builder setBlobWriteSessionConfig(com.google.cloud.storage.BlobWriteSessionConfig)</method>
+  </difference>
+
 </differences>
