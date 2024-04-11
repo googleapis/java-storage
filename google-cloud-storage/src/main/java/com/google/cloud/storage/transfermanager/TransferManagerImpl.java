@@ -38,10 +38,10 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
@@ -86,7 +86,7 @@ final class TransferManagerImpl implements TransferManager {
               .withExecutorSupplier(ExecutorSupplier.useExecutor(executor));
       storageOptions = storageOptions.toBuilder().setBlobWriteSessionConfig(pcuConfig).build();
     }
-    pcuQueue = new ArrayDeque<>();
+    this.pcuQueue = new ConcurrentLinkedDeque<>();
     this.storage = storageOptions.getService();
   }
 
@@ -113,7 +113,7 @@ final class TransferManagerImpl implements TransferManager {
         ParallelCompositeUploadCallable callable =
             new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
         SettableApiFuture<UploadResult> resultFuture = SettableApiFuture.create();
-        pcuQueue.push(new PendingPcuTask(callable, resultFuture));
+        pcuQueue.add(new PendingPcuTask(callable, resultFuture));
         uploadTasks.add(resultFuture);
         schedulePcuPoller();
       } else {
