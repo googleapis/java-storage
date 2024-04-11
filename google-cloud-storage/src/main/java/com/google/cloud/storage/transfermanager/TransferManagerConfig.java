@@ -83,6 +83,18 @@ public final class TransferManagerConfig {
    * chunking will be beneficial
    *
    * @see Builder#setAllowParallelCompositeUpload(boolean)
+   *
+   * Note:
+   * Performing parallel composite uploads costs more money.
+   * <a href="https://cloud.google.com/storage/pricing#operations-by-class">Class A</a>
+   * operations are performed to create each part and to perform each compose. If a storage
+   * tier other than
+   *<a href="https://cloud.google.com/storage/docs/storage-classes"><code>STANDARD</code></a>
+   * is used, early deletion fees apply to deletion of the parts.
+   *
+   * Please see the <a href="https://cloud.google.com/storage/docs/parallel-composite-uploads">
+   * Parallel composite uploads</a> documentation for a more in depth explanation of the
+   * limitations of Parallel composite uploads.
    */
   @BetaApi
   public boolean isAllowParallelCompositeUpload() {
