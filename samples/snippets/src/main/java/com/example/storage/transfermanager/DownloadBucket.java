@@ -30,31 +30,32 @@ import java.util.stream.Collectors;
 
 class DownloadBucket {
 
-  public static void downloadBucketContents(String projectId,
-      String bucketName, Path destinationDirectory) {
+  public static void downloadBucketContents(
+      String projectId, String bucketName, Path destinationDirectory) {
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    List<BlobInfo> blobs = storage
-        .list(bucketName)
-        .streamAll()
-        .map(blob -> blob.asBlobInfo())
-        .collect(Collectors.toList());
+    List<BlobInfo> blobs =
+        storage
+            .list(bucketName)
+            .streamAll()
+            .map(blob -> blob.asBlobInfo())
+            .collect(Collectors.toList());
     TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
-    ParallelDownloadConfig parallelDownloadConfig = ParallelDownloadConfig.newBuilder()
-        .setBucketName(bucketName)
-        .setDownloadDirectory(destinationDirectory)
-        .build();
+    ParallelDownloadConfig parallelDownloadConfig =
+        ParallelDownloadConfig.newBuilder()
+            .setBucketName(bucketName)
+            .setDownloadDirectory(destinationDirectory)
+            .build();
 
-    List<DownloadResult> results  = transferManager
-        .downloadBlobs(blobs, parallelDownloadConfig)
-        .getDownloadResults();
+    List<DownloadResult> results =
+        transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
     for (DownloadResult result : results) {
-      System.out.println("Download of " + result.getInput().getName()
-          + " completed with status "
-          + result.getStatus());
+      System.out.println(
+          "Download of "
+              + result.getInput().getName()
+              + " completed with status "
+              + result.getStatus());
     }
-
   }
-
 }
 // [END storage_transfer_manager_download_bucket]

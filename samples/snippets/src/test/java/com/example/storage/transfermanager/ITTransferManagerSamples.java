@@ -19,7 +19,6 @@ package com.example.storage.transfermanager;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
@@ -29,7 +28,6 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -37,14 +35,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-
 public class ITTransferManagerSamples {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static Storage storage;
   private static List<BlobInfo> blobs;
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-  @Rule
-  public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
   @Rule public final TemporaryFolder tmpDirectory = new TemporaryFolder();
 
@@ -53,22 +49,22 @@ public class ITTransferManagerSamples {
     RemoteStorageHelper helper = RemoteStorageHelper.create();
     storage = helper.getOptions().getService();
     storage.create(BucketInfo.of(BUCKET));
-    blobs = Arrays.asList(BlobInfo.newBuilder(BUCKET, "blob1").build(),
-        BlobInfo.newBuilder(BUCKET, "blob2").build(),
-        BlobInfo.newBuilder(BUCKET, "blob3").build());
+    blobs =
+        Arrays.asList(
+            BlobInfo.newBuilder(BUCKET, "blob1").build(),
+            BlobInfo.newBuilder(BUCKET, "blob2").build(),
+            BlobInfo.newBuilder(BUCKET, "blob3").build());
     for (BlobInfo blob : blobs) {
       storage.create(blob);
     }
-
   }
-  
+
   @Test
   public void uploadFiles() throws Exception {
     File tmpFile = File.createTempFile("file", ".txt");
     File tmpFile2 = File.createTempFile("file2", ".txt");
     File tmpFile3 = File.createTempFile("file3", ".txt");
-    List<Path> files =
-        ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
+    List<Path> files = ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
     UploadMany.uploadManyFiles(BUCKET, files);
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("file")).isTrue();
@@ -92,15 +88,16 @@ public class ITTransferManagerSamples {
   public void downloadBucket() {
     String downloadFullBucketName = RemoteStorageHelper.generateBucketName();
     storage.create(BucketInfo.of(downloadFullBucketName));
-    List<BlobInfo> bucketBlobs = Arrays.asList(
-        BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
-        BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
-        BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
+    List<BlobInfo> bucketBlobs =
+        Arrays.asList(
+            BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
+            BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
+            BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
     for (BlobInfo blob : bucketBlobs) {
       storage.create(blob);
     }
-    DownloadBucket
-        .downloadBucketContents(PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
+    DownloadBucket.downloadBucketContents(
+        PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("bucketb1")).isTrue();
     assertThat(snippetOutput.contains("bucketb2")).isTrue();
@@ -115,5 +112,4 @@ public class ITTransferManagerSamples {
     assertThat(snippetOutput.contains("blob2")).isTrue();
     assertThat(snippetOutput.contains("blob3")).isTrue();
   }
-
 }
