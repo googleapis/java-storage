@@ -48,19 +48,23 @@ final class GapicDownloadSessionBuilder {
    * ultimately produced channel will not do any retries of its own.
    */
   public ReadableByteChannelSessionBuilder byteChannel(
-      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read) {
-    return new ReadableByteChannelSessionBuilder(read);
+      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ResponseContentLifecycleManager responseContentLifecycleManager) {
+    return new ReadableByteChannelSessionBuilder(read, responseContentLifecycleManager);
   }
 
   public static final class ReadableByteChannelSessionBuilder {
 
     private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+    private final ResponseContentLifecycleManager responseContentLifecycleManager;
     private boolean autoGzipDecompression;
     private Hasher hasher;
 
     private ReadableByteChannelSessionBuilder(
-        ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read) {
+        ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+        ResponseContentLifecycleManager responseContentLifecycleManager) {
       this.read = read;
+      this.responseContentLifecycleManager = responseContentLifecycleManager;
       this.hasher = Hasher.noop();
       this.autoGzipDecompression = false;
     }
@@ -100,11 +104,13 @@ final class GapicDownloadSessionBuilder {
       return (object, resultFuture) -> {
         if (autoGzipDecompression) {
           return new GzipReadableByteChannel(
-              new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher),
+              new GapicUnbufferedReadableByteChannel(
+                  resultFuture, read, object, hasher, responseContentLifecycleManager),
               ApiFutures.transform(
                   resultFuture, Object::getContentEncoding, MoreExecutors.directExecutor()));
         } else {
-          return new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher);
+          return new GapicUnbufferedReadableByteChannel(
+              resultFuture, read, object, hasher, responseContentLifecycleManager);
         }
       };
     }
