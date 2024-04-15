@@ -27,19 +27,18 @@ import java.util.List;
 
 class UploadMany {
 
-  public static void uploadManyFiles(String bucketName, List<Path> files)
-      throws IOException {
+  public static void uploadManyFiles(String bucketName, List<Path> files) throws IOException {
     TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
-    ParallelUploadConfig parallelUploadConfig = ParallelUploadConfig
-        .newBuilder()
-        .setBucketName(bucketName)
-        .build();
-    List<UploadResult> results = transferManager
-        .uploadFiles(files, parallelUploadConfig)
-        .getUploadResults();
+    ParallelUploadConfig parallelUploadConfig =
+        ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+    List<UploadResult> results =
+        transferManager.uploadFiles(files, parallelUploadConfig).getUploadResults();
     for (UploadResult result : results) {
-      System.out.println("Upload for " + result.getInput().getName()
-          + " completed with status " + result.getStatus());
+      System.out.println(
+          "Upload for "
+              + result.getInput().getName()
+              + " completed with status "
+              + result.getStatus());
     }
   }
 }
