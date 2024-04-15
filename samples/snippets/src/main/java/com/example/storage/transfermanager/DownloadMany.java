@@ -27,25 +27,26 @@ import java.util.List;
 
 class DownloadMany {
 
-  public static void downloadManyBlobs(String bucketName,
-      List<BlobInfo> blobs, Path destinationDirectory) {
+  public static void downloadManyBlobs(
+      String bucketName, List<BlobInfo> blobs, Path destinationDirectory) {
 
     TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
-    ParallelDownloadConfig parallelDownloadConfig = ParallelDownloadConfig.newBuilder()
-        .setBucketName(bucketName)
-        .setDownloadDirectory(destinationDirectory)
-        .build();
+    ParallelDownloadConfig parallelDownloadConfig =
+        ParallelDownloadConfig.newBuilder()
+            .setBucketName(bucketName)
+            .setDownloadDirectory(destinationDirectory)
+            .build();
 
-    List<DownloadResult> results  = transferManager
-        .downloadBlobs(blobs, parallelDownloadConfig)
-        .getDownloadResults();
+    List<DownloadResult> results =
+        transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
     for (DownloadResult result : results) {
-      System.out.println("Download of " + result.getInput().getName()
-          + " completed with status " + result.getStatus());
+      System.out.println(
+          "Download of "
+              + result.getInput().getName()
+              + " completed with status "
+              + result.getStatus());
     }
-
   }
-
 }
 // [END storage_transfer_manager_download_many]

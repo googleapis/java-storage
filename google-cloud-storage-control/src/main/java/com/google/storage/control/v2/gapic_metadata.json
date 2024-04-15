@@ -13,17 +13,29 @@
             "CreateFolder": {
               "methods": ["createFolder", "createFolder", "createFolder", "createFolderCallable"]
             },
+            "CreateManagedFolder": {
+              "methods": ["createManagedFolder", "createManagedFolder", "createManagedFolder", "createManagedFolderCallable"]
+            },
             "DeleteFolder": {
               "methods": ["deleteFolder", "deleteFolder", "deleteFolder", "deleteFolderCallable"]
             },
+            "DeleteManagedFolder": {
+              "methods": ["deleteManagedFolder", "deleteManagedFolder", "deleteManagedFolder", "deleteManagedFolderCallable"]
+            },
             "GetFolder": {
               "methods": ["getFolder", "getFolder", "getFolder", "getFolderCallable"]
+            },
+            "GetManagedFolder": {
+              "methods": ["getManagedFolder", "getManagedFolder", "getManagedFolder", "getManagedFolderCallable"]
             },
             "GetStorageLayout": {
               "methods": ["getStorageLayout", "getStorageLayout", "getStorageLayout", "getStorageLayoutCallable"]
             },
             "ListFolders": {
               "methods": ["listFolders", "listFolders", "listFolders", "listFoldersPagedCallable", "listFoldersCallable"]
+            },
+            "ListManagedFolders": {
+              "methods": ["listManagedFolders", "listManagedFolders", "listManagedFolders", "listManagedFoldersPagedCallable", "listManagedFoldersCallable"]
             },
             "RenameFolder": {
               "methods": ["renameFolderAsync", "renameFolderAsync", "renameFolderAsync", "renameFolderOperationCallable", "renameFolderCallable"]

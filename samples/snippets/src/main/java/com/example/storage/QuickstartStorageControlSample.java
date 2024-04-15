@@ -28,10 +28,11 @@ public class QuickstartStorageControlSample {
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      GetStorageLayoutRequest request = GetStorageLayoutRequest.newBuilder()
-          // Set project to "_" to signify global bucket
-          .setName(StorageLayoutName.format("_", bucketName))
-          .build();
+      GetStorageLayoutRequest request =
+          GetStorageLayoutRequest.newBuilder()
+              // Set project to "_" to signify global bucket
+              .setName(StorageLayoutName.format("_", bucketName))
+              .build();
       StorageLayout response = storageControlClient.getStorageLayout(request);
       System.out.printf("Performed getStorageLayout request for %s", response.getName());
     }

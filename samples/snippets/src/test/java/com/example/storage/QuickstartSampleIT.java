@@ -83,7 +83,9 @@ public class QuickstartSampleIT {
     QuickstartStorageControlSample.main(bucketName);
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got)
-        .contains(String.format("Performed getStorageLayout request for %s",
-            StorageLayoutName.format("_", bucketName)));
+        .contains(
+            String.format(
+                "Performed getStorageLayout request for %s",
+                StorageLayoutName.format("_", bucketName)));
   }
 }
