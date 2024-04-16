@@ -53,11 +53,6 @@ If you are using Maven without the BOM, add this to your dependencies:
   <artifactId>google-cloud-storage-control</artifactId>
   <version>2.36.0-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
-<dependency>
-  <groupId>com.google.cloud</groupId>
-  <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.36.0-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
-</dependency>
 
 ```
 
