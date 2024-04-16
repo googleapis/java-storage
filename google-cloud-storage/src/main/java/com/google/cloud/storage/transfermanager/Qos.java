@@ -19,4 +19,6 @@ package com.google.cloud.storage.transfermanager;
 interface Qos {
 
   boolean divideAndConquer(long objectSize);
+
+  boolean parallelCompositeUpload(long objectSize);
 }

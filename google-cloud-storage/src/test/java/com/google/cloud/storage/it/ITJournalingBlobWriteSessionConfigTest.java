@@ -24,7 +24,6 @@ import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
-import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.JournalingBlobWriteSessionConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -75,7 +74,9 @@ public final class ITJournalingBlobWriteSessionConfigTest {
     JournalingBlobWriteSessionConfig journaling =
         BlobWriteSessionConfigs.journaling(ImmutableList.of(tempDir));
     journalingStorage =
-        ((GrpcStorageOptions.Builder) this.storage.getOptions().toBuilder())
+        this.storage
+            .getOptions()
+            .toBuilder()
             .setBlobWriteSessionConfig(journaling)
             .build()
             .getService();

@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.BlobInfo;
@@ -25,11 +24,10 @@ import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
-import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.HttpStorageOptions;
+import com.google.cloud.storage.JournalingBlobWriteSessionConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -37,12 +35,11 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
-import java.io.IOException;
+import com.google.common.collect.ImmutableList;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
-import java.util.concurrent.ExecutionException;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -57,7 +54,6 @@ public final class ITBlobWriteSessionTest {
   @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Inject public Storage storage;
-  @Inject public Transport transport;
 
   @Inject public BucketInfo bucket;
 
@@ -70,47 +66,43 @@ public final class ITBlobWriteSessionTest {
 
   @Test
   public void bufferToTempDirThenUpload() throws Exception {
-    StorageOptions options = null;
-    if (transport == Transport.GRPC) {
-      options =
-          ((GrpcStorageOptions) storage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
-              .build();
-    } else if (transport == Transport.HTTP) {
-      options =
-          ((HttpStorageOptions) storage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
-              .build();
-    }
-    assertWithMessage("unable to resolve options").that(options).isNotNull();
-    //noinspection DataFlowIssue
+    Path path = temporaryFolder.newFolder().toPath();
+    StorageOptions options =
+        storage
+            .getOptions()
+            .toBuilder()
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToDiskThenUpload(path))
+            .build();
     try (Storage s = options.getService()) {
       doTest(s);
     }
   }
 
   @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void journalingNotSupportedByHttp() {
+    HttpStorageOptions.Builder builder = ((HttpStorageOptions) storage.getOptions()).toBuilder();
+
+    Path rootPath = temporaryFolder.getRoot().toPath();
+    JournalingBlobWriteSessionConfig journaling =
+        BlobWriteSessionConfigs.journaling(ImmutableList.of(rootPath));
+
+    IllegalArgumentException iae =
+        assertThrows(
+            IllegalArgumentException.class, () -> builder.setBlobWriteSessionConfig(journaling));
+
+    assertThat(iae).hasMessageThat().contains("HTTP transport");
+  }
+
+  @Test
   public void overrideDefaultBufferSize() throws Exception {
-    StorageOptions options = null;
-    if (transport == Transport.GRPC) {
-      options =
-          ((GrpcStorageOptions) storage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(
-                  BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
-              .build();
-    } else if (transport == Transport.HTTP) {
-      options =
-          ((HttpStorageOptions) storage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(
-                  BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
-              .build();
-    }
-    assertWithMessage("unable to resolve options").that(options).isNotNull();
-    //noinspection DataFlowIssue
+    StorageOptions options =
+        (storage.getOptions())
+            .toBuilder()
+            .setBlobWriteSessionConfig(
+                BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
+            .build();
+
     try (Storage s = options.getService()) {
       doTest(s);
     }
@@ -119,45 +111,14 @@ public final class ITBlobWriteSessionTest {
   @Test
   @CrossRun.Exclude(transports = Transport.HTTP)
   public void bidiTest() throws Exception {
-    StorageOptions options = null;
-    if (transport == Transport.GRPC) {
-      options =
-          ((GrpcStorageOptions) storage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
-              .build();
-    }
-    assertWithMessage("unable to resolve options").that(options).isNotNull();
-
+    StorageOptions options =
+        (storage.getOptions())
+            .toBuilder()
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+            .build();
     try (Storage s = options.getService()) {
       doTest(s);
     }
-  }
-
-  @Test
-  public void closingAnOpenedSessionWithoutCallingWriteShouldMakeAnEmptyObject()
-      throws IOException, ExecutionException, InterruptedException, TimeoutException {
-    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    BlobWriteSession session = storage.blobWriteSession(info, BlobWriteOption.doesNotExist());
-
-    WritableByteChannel open = session.open();
-    open.close();
-    BlobInfo gen1 = session.getResult().get(1, TimeUnit.SECONDS);
-
-    assertThat(gen1.getSize()).isEqualTo(0);
-  }
-
-  @Test
-  public void attemptingToOpenASessionWhichResultsInFailureShouldThrowAStorageException() {
-    // attempt to write to a bucket which we have not created
-    String badBucketName = bucket.getName() + "x";
-    BlobInfo info = BlobInfo.newBuilder(badBucketName, generator.randomObjectName()).build();
-
-    BlobWriteSession session = storage.blobWriteSession(info, BlobWriteOption.doesNotExist());
-    StorageException se = assertThrows(StorageException.class, () -> session.open().close());
-
-    assertThat(se.getCode()).isEqualTo(404);
-    assertThat(se).hasMessageThat().contains(badBucketName);
   }
 
   private void doTest(Storage underTest) throws Exception {

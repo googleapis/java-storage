@@ -32,6 +32,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
 import java.util.Map;
@@ -203,23 +205,24 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
     }
 
     @Override
-    public WBC open() {
-      try {
-        return WritableByteChannelSession.super.open();
-      } catch (Exception e) {
-        throw StorageException.coalesce(e);
-      }
-    }
-
-    @Override
     public ApiFuture<WBC> openAsync() {
-      return delegate.openAsync();
+      return ApiFutures.catchingAsync(
+          delegate.openAsync(),
+          Throwable.class,
+          throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
+          MoreExecutors.directExecutor());
     }
 
     @Override
     public ApiFuture<BlobInfo> getResult() {
-      return ApiFutures.transform(
-          delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
+      ApiFuture<BlobInfo> decodeResult =
+          ApiFutures.transform(
+              delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
+      return ApiFutures.catchingAsync(
+          decodeResult,
+          Throwable.class,
+          throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
+          MoreExecutors.directExecutor());
     }
   }
 
@@ -233,7 +236,55 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
 
     @Override
     public ApiFuture<BufferedWritableByteChannel> openAsync() {
-      return lazy.getSession().openAsync();
+      // make sure the errors coming out of the BufferedWritableByteChannel are either IOException
+      // or StorageException
+      return ApiFutures.transform(
+          lazy.getSession().openAsync(),
+          delegate ->
+              new BufferedWritableByteChannel() {
+                @Override
+                public int write(ByteBuffer src) throws IOException {
+                  try {
+                    return delegate.write(src);
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public void flush() throws IOException {
+                  try {
+                    delegate.flush();
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public boolean isOpen() {
+                  try {
+                    return delegate.isOpen();
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public void close() throws IOException {
+                  try {
+                    delegate.close();
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+              },
+          MoreExecutors.directExecutor());
     }
 
     @Override

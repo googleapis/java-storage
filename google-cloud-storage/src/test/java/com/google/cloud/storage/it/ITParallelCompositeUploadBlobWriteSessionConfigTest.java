@@ -18,7 +18,6 @@ package com.google.cloud.storage.it;
 
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.gax.paging.Page;
@@ -30,8 +29,6 @@ import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
-import com.google.cloud.storage.GrpcStorageOptions;
-import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
@@ -119,22 +116,8 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
             // let our fixtures take care of cleaning things
             .withPartCleanupStrategy(PartCleanupStrategy.never());
 
-    StorageOptions storageOptions = null;
-    if (transport == Transport.GRPC) {
-      storageOptions =
-          ((GrpcStorageOptions) injectedStorage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(pcu)
-              .build();
-    } else if (transport == Transport.HTTP) {
-      storageOptions =
-          ((HttpStorageOptions) injectedStorage.getOptions())
-              .toBuilder()
-              .setBlobWriteSessionConfig(pcu)
-              .build();
-    }
-    assertWithMessage("unable to resolve options").that(storageOptions).isNotNull();
-    //noinspection DataFlowIssue
+    StorageOptions storageOptions =
+        injectedStorage.getOptions().toBuilder().setBlobWriteSessionConfig(pcu).build();
     storage = storageOptions.getService();
     rand = new Random();
   }
