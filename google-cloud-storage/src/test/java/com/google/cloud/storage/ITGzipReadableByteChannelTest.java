@@ -124,7 +124,9 @@ public class ITGzipReadableByteChannelTest {
       UnbufferedReadableByteChannelSession<Object> session =
           ResumableMedia.gapic()
               .read()
-              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .byteChannel(
+                  storageClient.getInstance().readObjectCallable(),
+                  ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(true)
               .unbuffered()
@@ -143,7 +145,9 @@ public class ITGzipReadableByteChannelTest {
       UnbufferedReadableByteChannelSession<Object> session =
           ResumableMedia.gapic()
               .read()
-              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .byteChannel(
+                  storageClient.getInstance().readObjectCallable(),
+                  ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(false)
               .unbuffered()
@@ -193,7 +197,9 @@ public class ITGzipReadableByteChannelTest {
       UnbufferedReadableByteChannelSession<Object> session =
           ResumableMedia.gapic()
               .read()
-              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .byteChannel(
+                  storageClient.getInstance().readObjectCallable(),
+                  ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(true)
               .unbuffered()
@@ -212,7 +218,9 @@ public class ITGzipReadableByteChannelTest {
       UnbufferedReadableByteChannelSession<Object> session =
           ResumableMedia.gapic()
               .read()
-              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .byteChannel(
+                  storageClient.getInstance().readObjectCallable(),
+                  ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(false)
               .unbuffered()
@@ -231,7 +239,9 @@ public class ITGzipReadableByteChannelTest {
       UnbufferedReadableByteChannelSession<Object> session =
           ResumableMedia.gapic()
               .read()
-              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .byteChannel(
+                  storageClient.getInstance().readObjectCallable(),
+                  ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .unbuffered()
               .setReadObjectRequest(reqCompressed)
@@ -314,7 +324,7 @@ public class ITGzipReadableByteChannelTest {
         ReadableByteChannelSession<?, Object> session =
             ResumableMedia.gapic()
                 .read()
-                .byteChannel(sc.readObjectCallable())
+                .byteChannel(sc.readObjectCallable(), ResponseContentLifecycleManager.noop())
                 .setHasher(Hasher.noop())
                 .setAutoGzipDecompression(true)
                 .unbuffered()

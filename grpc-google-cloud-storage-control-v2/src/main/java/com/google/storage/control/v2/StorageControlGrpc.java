@@ -298,6 +298,193 @@ public final class StorageControlGrpc {
     return getGetStorageLayoutMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateManagedFolderRequest,
+          com.google.storage.control.v2.ManagedFolder>
+      getCreateManagedFolderMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateManagedFolder",
+      requestType = com.google.storage.control.v2.CreateManagedFolderRequest.class,
+      responseType = com.google.storage.control.v2.ManagedFolder.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateManagedFolderRequest,
+          com.google.storage.control.v2.ManagedFolder>
+      getCreateManagedFolderMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.CreateManagedFolderRequest,
+            com.google.storage.control.v2.ManagedFolder>
+        getCreateManagedFolderMethod;
+    if ((getCreateManagedFolderMethod = StorageControlGrpc.getCreateManagedFolderMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getCreateManagedFolderMethod = StorageControlGrpc.getCreateManagedFolderMethod)
+            == null) {
+          StorageControlGrpc.getCreateManagedFolderMethod =
+              getCreateManagedFolderMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.CreateManagedFolderRequest,
+                          com.google.storage.control.v2.ManagedFolder>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "CreateManagedFolder"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.CreateManagedFolderRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ManagedFolder.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("CreateManagedFolder"))
+                      .build();
+        }
+      }
+    }
+    return getCreateManagedFolderMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DeleteManagedFolderRequest, com.google.protobuf.Empty>
+      getDeleteManagedFolderMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteManagedFolder",
+      requestType = com.google.storage.control.v2.DeleteManagedFolderRequest.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DeleteManagedFolderRequest, com.google.protobuf.Empty>
+      getDeleteManagedFolderMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.DeleteManagedFolderRequest, com.google.protobuf.Empty>
+        getDeleteManagedFolderMethod;
+    if ((getDeleteManagedFolderMethod = StorageControlGrpc.getDeleteManagedFolderMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getDeleteManagedFolderMethod = StorageControlGrpc.getDeleteManagedFolderMethod)
+            == null) {
+          StorageControlGrpc.getDeleteManagedFolderMethod =
+              getDeleteManagedFolderMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.DeleteManagedFolderRequest,
+                          com.google.protobuf.Empty>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DeleteManagedFolder"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.DeleteManagedFolderRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.protobuf.Empty.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("DeleteManagedFolder"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteManagedFolderMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetManagedFolderRequest,
+          com.google.storage.control.v2.ManagedFolder>
+      getGetManagedFolderMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetManagedFolder",
+      requestType = com.google.storage.control.v2.GetManagedFolderRequest.class,
+      responseType = com.google.storage.control.v2.ManagedFolder.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetManagedFolderRequest,
+          com.google.storage.control.v2.ManagedFolder>
+      getGetManagedFolderMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetManagedFolderRequest,
+            com.google.storage.control.v2.ManagedFolder>
+        getGetManagedFolderMethod;
+    if ((getGetManagedFolderMethod = StorageControlGrpc.getGetManagedFolderMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetManagedFolderMethod = StorageControlGrpc.getGetManagedFolderMethod) == null) {
+          StorageControlGrpc.getGetManagedFolderMethod =
+              getGetManagedFolderMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetManagedFolderRequest,
+                          com.google.storage.control.v2.ManagedFolder>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetManagedFolder"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetManagedFolderRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ManagedFolder.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("GetManagedFolder"))
+                      .build();
+        }
+      }
+    }
+    return getGetManagedFolderMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListManagedFoldersRequest,
+          com.google.storage.control.v2.ListManagedFoldersResponse>
+      getListManagedFoldersMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListManagedFolders",
+      requestType = com.google.storage.control.v2.ListManagedFoldersRequest.class,
+      responseType = com.google.storage.control.v2.ListManagedFoldersResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListManagedFoldersRequest,
+          com.google.storage.control.v2.ListManagedFoldersResponse>
+      getListManagedFoldersMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.ListManagedFoldersRequest,
+            com.google.storage.control.v2.ListManagedFoldersResponse>
+        getListManagedFoldersMethod;
+    if ((getListManagedFoldersMethod = StorageControlGrpc.getListManagedFoldersMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getListManagedFoldersMethod = StorageControlGrpc.getListManagedFoldersMethod)
+            == null) {
+          StorageControlGrpc.getListManagedFoldersMethod =
+              getListManagedFoldersMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.ListManagedFoldersRequest,
+                          com.google.storage.control.v2.ListManagedFoldersResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListManagedFolders"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListManagedFoldersRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListManagedFoldersResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("ListManagedFolders"))
+                      .build();
+        }
+      }
+    }
+    return getListManagedFoldersMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static StorageControlStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<StorageControlStub> factory =
@@ -433,6 +620,63 @@ public final class StorageControlGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getGetStorageLayoutMethod(), responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new managed folder.
+     * </pre>
+     */
+    default void createManagedFolder(
+        com.google.storage.control.v2.CreateManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCreateManagedFolderMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty managed folder.
+     * </pre>
+     */
+    default void deleteManagedFolder(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDeleteManagedFolderMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified managed folder.
+     * </pre>
+     */
+    default void getManagedFolder(
+        com.google.storage.control.v2.GetManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetManagedFolderMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of managed folders for a given bucket.
+     * </pre>
+     */
+    default void listManagedFolders(
+        com.google.storage.control.v2.ListManagedFoldersRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListManagedFoldersResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getListManagedFoldersMethod(), responseObserver);
+    }
   }
 
   /**
@@ -565,6 +809,71 @@ public final class StorageControlGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new managed folder.
+     * </pre>
+     */
+    public void createManagedFolder(
+        com.google.storage.control.v2.CreateManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateManagedFolderMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty managed folder.
+     * </pre>
+     */
+    public void deleteManagedFolder(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteManagedFolderMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified managed folder.
+     * </pre>
+     */
+    public void getManagedFolder(
+        com.google.storage.control.v2.GetManagedFolderRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetManagedFolderMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of managed folders for a given bucket.
+     * </pre>
+     */
+    public void listManagedFolders(
+        com.google.storage.control.v2.ListManagedFoldersRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListManagedFoldersResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListManagedFoldersMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /**
@@ -664,6 +973,58 @@ public final class StorageControlGrpc {
         com.google.storage.control.v2.GetStorageLayoutRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetStorageLayoutMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new managed folder.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ManagedFolder createManagedFolder(
+        com.google.storage.control.v2.CreateManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty managed folder.
+     * </pre>
+     */
+    public com.google.protobuf.Empty deleteManagedFolder(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified managed folder.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ManagedFolder getManagedFolder(
+        com.google.storage.control.v2.GetManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of managed folders for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListManagedFoldersResponse listManagedFolders(
+        com.google.storage.control.v2.ListManagedFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
     }
   }
 
@@ -767,6 +1128,61 @@ public final class StorageControlGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetStorageLayoutMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.ManagedFolder>
+        createManagedFolder(com.google.storage.control.v2.CreateManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateManagedFolderMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
+        deleteManagedFolder(com.google.storage.control.v2.DeleteManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteManagedFolderMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.ManagedFolder>
+        getManagedFolder(com.google.storage.control.v2.GetManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetManagedFolderMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of managed folders for a given bucket.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.ListManagedFoldersResponse>
+        listManagedFolders(com.google.storage.control.v2.ListManagedFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListManagedFoldersMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_FOLDER = 0;
@@ -775,6 +1191,10 @@ public final class StorageControlGrpc {
   private static final int METHODID_LIST_FOLDERS = 3;
   private static final int METHODID_RENAME_FOLDER = 4;
   private static final int METHODID_GET_STORAGE_LAYOUT = 5;
+  private static final int METHODID_CREATE_MANAGED_FOLDER = 6;
+  private static final int METHODID_DELETE_MANAGED_FOLDER = 7;
+  private static final int METHODID_GET_MANAGED_FOLDER = 8;
+  private static final int METHODID_LIST_MANAGED_FOLDERS = 9;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -823,6 +1243,30 @@ public final class StorageControlGrpc {
           serviceImpl.getStorageLayout(
               (com.google.storage.control.v2.GetStorageLayoutRequest) request,
               (io.grpc.stub.StreamObserver<com.google.storage.control.v2.StorageLayout>)
+                  responseObserver);
+          break;
+        case METHODID_CREATE_MANAGED_FOLDER:
+          serviceImpl.createManagedFolder(
+              (com.google.storage.control.v2.CreateManagedFolderRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder>)
+                  responseObserver);
+          break;
+        case METHODID_DELETE_MANAGED_FOLDER:
+          serviceImpl.deleteManagedFolder(
+              (com.google.storage.control.v2.DeleteManagedFolderRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_GET_MANAGED_FOLDER:
+          serviceImpl.getManagedFolder(
+              (com.google.storage.control.v2.GetManagedFolderRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.ManagedFolder>)
+                  responseObserver);
+          break;
+        case METHODID_LIST_MANAGED_FOLDERS:
+          serviceImpl.listManagedFolders(
+              (com.google.storage.control.v2.ListManagedFoldersRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.google.storage.control.v2.ListManagedFoldersResponse>)
                   responseObserver);
           break;
         default:
@@ -881,6 +1325,33 @@ public final class StorageControlGrpc {
                     com.google.storage.control.v2.GetStorageLayoutRequest,
                     com.google.storage.control.v2.StorageLayout>(
                     service, METHODID_GET_STORAGE_LAYOUT)))
+        .addMethod(
+            getCreateManagedFolderMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.CreateManagedFolderRequest,
+                    com.google.storage.control.v2.ManagedFolder>(
+                    service, METHODID_CREATE_MANAGED_FOLDER)))
+        .addMethod(
+            getDeleteManagedFolderMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.DeleteManagedFolderRequest,
+                    com.google.protobuf.Empty>(service, METHODID_DELETE_MANAGED_FOLDER)))
+        .addMethod(
+            getGetManagedFolderMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetManagedFolderRequest,
+                    com.google.storage.control.v2.ManagedFolder>(
+                    service, METHODID_GET_MANAGED_FOLDER)))
+        .addMethod(
+            getListManagedFoldersMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.ListManagedFoldersRequest,
+                    com.google.storage.control.v2.ListManagedFoldersResponse>(
+                    service, METHODID_LIST_MANAGED_FOLDERS)))
         .build();
   }
 
@@ -938,6 +1409,10 @@ public final class StorageControlGrpc {
                       .addMethod(getListFoldersMethod())
                       .addMethod(getRenameFolderMethod())
                       .addMethod(getGetStorageLayoutMethod())
+                      .addMethod(getCreateManagedFolderMethod())
+                      .addMethod(getDeleteManagedFolderMethod())
+                      .addMethod(getGetManagedFolderMethod())
+                      .addMethod(getListManagedFoldersMethod())
                       .build();
         }
       }

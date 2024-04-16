@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 
@@ -30,14 +31,20 @@ final class BlobWriteSessions {
 
   static final class WritableByteChannelSessionAdapter implements BlobWriteSession {
     private final WritableByteChannelSession<?, BlobInfo> delegate;
+    private boolean open;
 
     private WritableByteChannelSessionAdapter(WritableByteChannelSession<?, BlobInfo> delegate) {
       this.delegate = delegate;
+      open = false;
     }
 
     @Override
     public WritableByteChannel open() throws IOException {
-      return delegate.open();
+      synchronized (this) {
+        Preconditions.checkState(!open, "already open");
+        open = true;
+        return delegate.open();
+      }
     }
 
     @Override

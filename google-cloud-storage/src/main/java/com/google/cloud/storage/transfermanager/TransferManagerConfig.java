@@ -34,21 +34,18 @@ public final class TransferManagerConfig {
   private final boolean allowParallelCompositeUpload;
 
   private final StorageOptions storageOptions;
-  private final Qos qos;
 
   TransferManagerConfig(
       int maxWorkers,
       int perWorkerBufferSize,
       boolean allowDivideAndConquerDownload,
       boolean allowParallelCompositeUpload,
-      StorageOptions storageOptions,
-      Qos qos) {
+      StorageOptions storageOptions) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
     this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
     this.allowParallelCompositeUpload = allowParallelCompositeUpload;
     this.storageOptions = storageOptions;
-    this.qos = qos;
   }
 
   /**
@@ -86,6 +83,15 @@ public final class TransferManagerConfig {
    * chunking will be beneficial
    *
    * @see Builder#setAllowParallelCompositeUpload(boolean)
+   *     <p>Note: Performing parallel composite uploads costs more money. <a
+   *     href="https://cloud.google.com/storage/pricing#operations-by-class">Class A</a> operations
+   *     are performed to create each part and to perform each compose. If a storage tier other than
+   *     <a href="https://cloud.google.com/storage/docs/storage-classes"><code>STANDARD</code></a>
+   *     is used, early deletion fees apply to deletion of the parts.
+   *     <p>Please see the <a
+   *     href="https://cloud.google.com/storage/docs/parallel-composite-uploads">Parallel composite
+   *     uploads</a> documentation for a more in depth explanation of the limitations of Parallel
+   *     composite uploads.
    */
   @BetaApi
   public boolean isAllowParallelCompositeUpload() {
@@ -105,7 +111,7 @@ public final class TransferManagerConfig {
   /** The service object for {@link TransferManager} */
   @BetaApi
   public TransferManager getService() {
-    return new TransferManagerImpl(this);
+    return new TransferManagerImpl(this, DefaultQos.of(this));
   }
 
   @BetaApi
@@ -115,12 +121,7 @@ public final class TransferManagerConfig {
         .setAllowParallelCompositeUpload(allowParallelCompositeUpload)
         .setMaxWorkers(maxWorkers)
         .setPerWorkerBufferSize(perWorkerBufferSize)
-        .setQos(qos)
         .setStorageOptions(storageOptions);
-  }
-
-  Qos getQos() {
-    return qos;
   }
 
   @Override
@@ -179,7 +180,6 @@ public final class TransferManagerConfig {
     private boolean allowParallelCompositeUpload;
 
     private StorageOptions storageOptions;
-    private Qos qos;
 
     private Builder() {
       this.perWorkerBufferSize = 16 * 1024 * 1024;
@@ -187,7 +187,6 @@ public final class TransferManagerConfig {
       this.allowDivideAndConquerDownload = false;
       this.allowParallelCompositeUpload = false;
       this.storageOptions = StorageOptions.getDefaultInstance();
-      this.qos = DefaultQos.of();
     }
 
     /**
@@ -244,8 +243,8 @@ public final class TransferManagerConfig {
      * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
     @BetaApi
-    public Builder setAllowParallelCompositeUpload(boolean allowDivideAndConquerDownload) {
-      this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+    public Builder setAllowParallelCompositeUpload(boolean allowParallelCompositeUpload) {
+      this.allowParallelCompositeUpload = allowParallelCompositeUpload;
       return this;
     }
 
@@ -263,12 +262,6 @@ public final class TransferManagerConfig {
       return this;
     }
 
-    @BetaApi
-    Builder setQos(Qos qos) {
-      this.qos = qos;
-      return this;
-    }
-
     /**
      * Creates a TransferManagerConfig object.
      *
@@ -281,8 +274,7 @@ public final class TransferManagerConfig {
           perWorkerBufferSize,
           allowDivideAndConquerDownload,
           allowParallelCompositeUpload,
-          storageOptions,
-          qos);
+          storageOptions);
     }
   }
 }

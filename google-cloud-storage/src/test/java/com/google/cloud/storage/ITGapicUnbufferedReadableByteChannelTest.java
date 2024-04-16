@@ -127,7 +127,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           .withDefaultCallContext(
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
-                      Hasher.noop()));
+                      Hasher.noop(),
+                      ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
         c.read(ByteBuffer.wrap(actualBytes));
@@ -155,7 +156,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           .withDefaultCallContext(
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
-                      Hasher.noop()));
+                      Hasher.noop(),
+                      ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(actualBytes, 2);
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -213,7 +215,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           .withDefaultCallContext(
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
-                      Hasher.noop()));
+                      Hasher.noop(),
+                      ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
         IOException ioException =
@@ -260,7 +263,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           .withDefaultCallContext(
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
-                      Hasher.enabled()));
+                      Hasher.enabled(),
+                      ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
         IOException ioException =
@@ -299,7 +303,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           .withDefaultCallContext(
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
-                      Hasher.enabled()));
+                      Hasher.enabled(),
+                      ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[41];
       //noinspection resource
       UnbufferedReadableByteChannel c = session.open();

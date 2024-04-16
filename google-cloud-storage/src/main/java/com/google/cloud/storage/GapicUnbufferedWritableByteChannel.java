@@ -92,7 +92,12 @@ final class GapicUnbufferedWritableByteChannel<
         throw e;
       }
     } else {
-      flusher.close(null);
+      try {
+        flusher.close(null);
+      } catch (RuntimeException e) {
+        resultFuture.setException(e);
+        throw e;
+      }
     }
     open = false;
   }
