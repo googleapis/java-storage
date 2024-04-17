@@ -19,7 +19,6 @@ package com.google.cloud.storage.conformance.retry;
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.blobCopyWithStorage;
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.bucketCopyWithStorage;
 import static com.google.cloud.storage.conformance.retry.Ctx.ctx;
-import static com.google.cloud.storage.conformance.retry.ITRetryConformanceTest.RetryTestCaseResolver.lift;
 import static com.google.cloud.storage.conformance.retry.State.empty;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Objects.requireNonNull;
@@ -168,12 +167,7 @@ public class ITRetryConformanceTest {
               .setMappings(new RpcMethodMappings())
               .setProjectId("conformance-tests")
               .setHost(testBench.getBaseUri().replaceAll("https?://", ""))
-              .setTestAllowFilter(
-                  RetryTestCaseResolver.includeAll()
-                      .and(
-                          (lift(trc -> trc.getTransport() == Transport.GRPC)
-                                  .and((m, trc) -> m == RpcMethod.storage.buckets.setIamPolicy))
-                              .negate()))
+              .setTestAllowFilter(RetryTestCaseResolver.includeAll())
               .build();
 
       List<RetryTestCase> retryTestCases;

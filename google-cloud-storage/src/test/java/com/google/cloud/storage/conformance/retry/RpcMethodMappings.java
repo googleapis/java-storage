@@ -685,6 +685,7 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(240, buckets.setIamPolicy)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withSetup(ResourceSetup.defaultSetup.andThen(Rpc.bucketIamPolicy))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -694,7 +695,7 @@ final class RpcMethodMappings {
                                         .setIamPolicy(
                                             state.getBucket().getName(),
                                             Policy.newBuilder()
-                                                .setEtag("h??")
+                                                .setEtag(state.getPolicy().getEtag())
                                                 .setVersion(3)
                                                 .setBindings(
                                                     ImmutableList.of(
