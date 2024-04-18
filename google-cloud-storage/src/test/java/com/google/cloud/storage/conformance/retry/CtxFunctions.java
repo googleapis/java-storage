@@ -136,6 +136,10 @@ final class CtxFunctions {
   static final class Rpc {
     static final CtxFunction createEmptyBlob =
         (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().create(state.getBlobInfo())));
+    static final CtxFunction bucketIamPolicy =
+        (ctx, c) ->
+            ctx.map(
+                state -> state.with(ctx.getStorage().getIamPolicy(state.getBucket().getName())));
   }
 
   static final class ResourceSetup {
