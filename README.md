@@ -75,7 +75,7 @@ If you are using SBT, add this to your dependencies:
 
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1"
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1-alpha" <!-- {x-version-update:google-cloud-storage:current} -->
+libraryDependencies += "com.google.cloud" % "google-cloud-storage-control" % "2.36.1-alpha" <!-- {x-version-update:google-cloud-storage:current} -->
 ```
 <!-- {x-version-update-end} -->
 
