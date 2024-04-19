@@ -46,12 +46,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.36.1</version>
+  <version>2.37.0</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.36.1-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.37.0</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
@@ -59,20 +59,20 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:26.37.0')
+implementation platform('com.google.cloud:libraries-bom:2.37.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.36.1'
+implementation 'com.google.cloud:google-cloud-storage:2.37.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.37.0"
 ```
 <!-- {x-version-update-end} -->
 

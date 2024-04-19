@@ -1,5 +1,41 @@
 # Changelog
 
+## [2.37.0](https://github.com/googleapis/java-storage/compare/v2.36.1...v2.37.0) (2024-04-19)
+
+
+### Features
+
+* Adds a ZeroCopy response marshaller for grpc ReadObject handling ([#2489](https://github.com/googleapis/java-storage/issues/2489)) ([8c7404d](https://github.com/googleapis/java-storage/commit/8c7404dea8ef16a7b61accad4fe614e033a5ad2c))
+* Port BufferToDiskThenUpload to work with HttpStorageOptions ([#2473](https://github.com/googleapis/java-storage/issues/2473)) ([d84e255](https://github.com/googleapis/java-storage/commit/d84e25559afecc27026c7f4fe7aeaf0d0ce705b4))
+* Port DefaultBlobWriteSessionConfig to work with HttpStorageOptions ([#2472](https://github.com/googleapis/java-storage/issues/2472)) ([e5772a4](https://github.com/googleapis/java-storage/commit/e5772a4f4ec5d747fcd403477a35ceeb94492280))
+* Port ParallelCompositeUploadBlobWriteSessionConfig to work with HttpStorageOptions ([#2474](https://github.com/googleapis/java-storage/issues/2474)) ([3bf6026](https://github.com/googleapis/java-storage/commit/3bf60264f47aad8101bb4b4cff9cc0449cf1c4f3))
+* Transfer Manager ParallelCompositeUploads ([#2494](https://github.com/googleapis/java-storage/issues/2494)) ([8b54549](https://github.com/googleapis/java-storage/commit/8b5454910c74563c9598f9d5cc23fa509ec749d9))
+
+
+### Bug Fixes
+
+* Ensure all BlobWriteSession types conform to the semantics specified in BlobWriteSession ([#2482](https://github.com/googleapis/java-storage/issues/2482)) ([d47afcf](https://github.com/googleapis/java-storage/commit/d47afcfe2bcb2e7e266a5197456b6f9661e91004))
+* Fix BidiBlobWriteSessionConfigs to respect preconditions ([#2481](https://github.com/googleapis/java-storage/issues/2481)) ([955d78a](https://github.com/googleapis/java-storage/commit/955d78af0fecd4b65506df4bfd44fc683e23c2ec))
+* Update ApiaryUnbufferedWritableByteChannel to be graceful of non-quantum aligned write calls ([#2493](https://github.com/googleapis/java-storage/issues/2493)) ([f548335](https://github.com/googleapis/java-storage/commit/f5483356a3ba6327a712ef2f5534b61a649174df))
+* Update BidiBlobWriteSessionConfig to respect a provided bufferSize ([#2471](https://github.com/googleapis/java-storage/issues/2471)) ([e1fb857](https://github.com/googleapis/java-storage/commit/e1fb8577e6b7a36981fb78937fe8c5dd606a4c2a))
+* Update grpc handling of IAM Policy etag to account for base64 encoding ([#2499](https://github.com/googleapis/java-storage/issues/2499)) ([032f2f2](https://github.com/googleapis/java-storage/commit/032f2f2693c6c75cc4ae0339be805c0bb94fa064))
+* Update Grpc Retry Conformance after new additions to testbench ([#2309](https://github.com/googleapis/java-storage/issues/2309)) ([09043c5](https://github.com/googleapis/java-storage/commit/09043c5587ae9e6adeb425f5c2f7c4f65ec5e20e))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240319-2.0.0 ([#2460](https://github.com/googleapis/java-storage/issues/2460)) ([9c2ee90](https://github.com/googleapis/java-storage/commit/9c2ee909d02fef5afc201589f5ced4062e2f14e8))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.28.1 ([#2467](https://github.com/googleapis/java-storage/issues/2467)) ([c12f329](https://github.com/googleapis/java-storage/commit/c12f3290a029c25cdac458cda44835c0a43c33e7))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.29.0 ([#2502](https://github.com/googleapis/java-storage/issues/2502)) ([7ed8446](https://github.com/googleapis/java-storage/commit/7ed8446dcbff165408331df97e2d15a1cd70b7be))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.43.0 ([#2459](https://github.com/googleapis/java-storage/issues/2459)) ([2dc4748](https://github.com/googleapis/java-storage/commit/2dc4748353be4fe06ec7df2e413ed5752d350f8b))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.44.0 ([#2497](https://github.com/googleapis/java-storage/issues/2497)) ([9b0253c](https://github.com/googleapis/java-storage/commit/9b0253ca1a03d6a90a1008794b00c6825d26ff0c))
+
+
+### Documentation
+
+* Add summary and reference docs for Storage Control API to readme ([#2485](https://github.com/googleapis/java-storage/issues/2485)) ([70fd088](https://github.com/googleapis/java-storage/commit/70fd088975280ed9a650ca09825ccb28297d89f7))
+* Create Samples for transfer manager ([#2492](https://github.com/googleapis/java-storage/issues/2492)) ([e2030b2](https://github.com/googleapis/java-storage/commit/e2030b281d45b69840962e0a80c4b6b85e300b20))
+
 ## [2.36.1](https://github.com/googleapis/java-storage/compare/v2.36.0...v2.36.1) (2024-03-20)
 
 
