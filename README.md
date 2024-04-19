@@ -62,17 +62,20 @@ If you are using Gradle 5.x or later, add this to your dependencies:
 implementation platform('com.google.cloud:libraries-bom:26.37.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
+implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
 implementation 'com.google.cloud:google-cloud-storage:2.36.1'
+implementation 'com.google.cloud:google-cloud-storage-control:2.36.1-alpha' <!-- {x-version-update:google-cloud-storage:current} -->
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1-alpha" <!-- {x-version-update:google-cloud-storage:current} -->
 ```
 <!-- {x-version-update-end} -->
 
