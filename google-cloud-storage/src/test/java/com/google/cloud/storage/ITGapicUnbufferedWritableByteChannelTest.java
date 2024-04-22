@@ -27,7 +27,6 @@ import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteCtx.SimpleWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
-import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -52,13 +51,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 
 public final class ITGapicUnbufferedWritableByteChannelTest {
@@ -125,7 +121,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final WriteObjectResponse resp5 =
       WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
 
-  private static final WriteObjectRequestBuilderFactory reqFactory =
+  private static final ResumableWrite reqFactory =
       new ResumableWrite(startReq, startResp, TestUtils.onlyUploadId());
 
   @Test
@@ -182,16 +178,15 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
     try (FakeServer fake = FakeServer.of(service);
         StorageClient sc = StorageClient.create(fake.storageSettings())) {
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
-      GapicUnbufferedWritableByteChannel<?> c =
-          new GapicUnbufferedWritableByteChannel<>(
+      GapicUnbufferedChunkedResumableWritableByteChannel c =
+          new GapicUnbufferedChunkedResumableWritableByteChannel(
               result,
               segmenter,
+              sc.writeObjectCallable(),
               reqFactory,
-              WriteFlushStrategy.fsyncEveryFlush(
-                  sc.writeObjectCallable(),
-                  RetryingDependencies.attemptOnce(),
-                  Retrying.neverRetry(),
-                  Retrying::newCallContext));
+              RetryingDependencies.attemptOnce(),
+              Retrying.neverRetry(),
+              Retrying::newCallContext);
       ArrayList<String> debugMessages = new ArrayList<>();
       try {
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
@@ -266,21 +261,20 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
     try (FakeServer fake = FakeServer.of(service);
         StorageClient sc = StorageClient.create(fake.storageSettings())) {
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
-      try (GapicUnbufferedWritableByteChannel<?> c =
-          new GapicUnbufferedWritableByteChannel<>(
+      try (GapicUnbufferedChunkedResumableWritableByteChannel c =
+          new GapicUnbufferedChunkedResumableWritableByteChannel(
               result,
               segmenter,
+              sc.writeObjectCallable(),
               reqFactory,
-              WriteFlushStrategy.fsyncEveryFlush(
-                  sc.writeObjectCallable(),
-                  TestUtils.defaultRetryingDeps(),
-                  new BasicResultRetryAlgorithm<Object>() {
-                    @Override
-                    public boolean shouldRetry(Throwable t, Object ignore) {
-                      return TestUtils.findThrowable(DataLossException.class, t) != null;
-                    }
-                  },
-                  Retrying::newCallContext))) {
+              TestUtils.defaultRetryingDeps(),
+              new BasicResultRetryAlgorithm<Object>() {
+                @Override
+                public boolean shouldRetry(Throwable t, Object ignore) {
+                  return TestUtils.findThrowable(DataLossException.class, t) != null;
+                }
+              },
+              Retrying::newCallContext)) {
         writeCtx = c.getWriteCtx();
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
         c.write(buffers.get(0));
@@ -308,37 +302,38 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
   @Test
   public void resumableUpload_finalizeWhenWriteAndCloseCalledEvenWhenQuantumAligned()
-      throws IOException {
-    SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
-
-    AtomicReference<List<WriteObjectRequest>> actualFlush = new AtomicReference<>();
-    WriteObjectRequest closeRequestSentinel =
-        WriteObjectRequest.newBuilder().setUploadId("sentinel").build();
-    AtomicReference<WriteObjectRequest> actualClose = new AtomicReference<>(closeRequestSentinel);
-    GapicUnbufferedWritableByteChannel<?> c =
-        new GapicUnbufferedWritableByteChannel<>(
-            result,
-            segmenter,
-            reqFactory,
-            (bucketName, committedTotalBytesCallback, onSuccessCallback) ->
-                new Flusher() {
-                  @Override
-                  public void flush(@NonNull List<WriteObjectRequest> segments) {
-                    actualFlush.compareAndSet(null, segments);
-                  }
-
-                  @Override
-                  public void close(@Nullable WriteObjectRequest req) {
-                    actualClose.compareAndSet(closeRequestSentinel, req);
-                  }
-                });
-
-    long written = c.writeAndClose(ByteBuffer.wrap(bytes));
-
-    assertThat(written).isEqualTo(40);
-    assertThat(actualFlush.get()).isEqualTo(ImmutableList.of(req1, req2, req3, req4, req5));
-    // calling close is okay, as long as the provided request is null
-    assertThat(actualClose.get()).isAnyOf(closeRequestSentinel, null);
+      throws IOException, InterruptedException, ExecutionException {
+    ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes =
+        ImmutableMap.<List<WriteObjectRequest>, WriteObjectResponse>builder()
+            .put(
+                ImmutableList.of(
+                    req1,
+                    req2.toBuilder().clearUploadId().build(),
+                    req3.toBuilder().clearUploadId().build(),
+                    req4.toBuilder().clearUploadId().build(),
+                    req5.toBuilder().clearUploadId().build()),
+                resp5)
+            .build();
+    StorageImplBase service = new DirectWriteService(writes);
+    try (FakeServer fake = FakeServer.of(service);
+        StorageClient sc = StorageClient.create(fake.storageSettings())) {
+      SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
+      GapicUnbufferedChunkedResumableWritableByteChannel c =
+          new GapicUnbufferedChunkedResumableWritableByteChannel(
+              result,
+              segmenter,
+              sc.writeObjectCallable(),
+              reqFactory,
+              RetryingDependencies.attemptOnce(),
+              Retrying.neverRetry(),
+              Retrying::newCallContext);
+      try {
+        int written = c.writeAndClose(ByteBuffer.wrap(bytes));
+        assertThat(written).isEqualTo(bytes.length);
+      } catch (PermissionDeniedException ignore) {
+      }
+      assertThat(result.get()).isEqualTo(resp5);
+    }
   }
 
   static class DirectWriteService extends StorageImplBase {

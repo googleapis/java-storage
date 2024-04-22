@@ -323,12 +323,24 @@ final class GapicWritableByteChannelSessionBuilder {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
-            bindFunction(
-                    fsyncEvery
-                        ? WriteFlushStrategy.fsyncEveryFlush(
-                            write, deps, alg, Retrying::newCallContext)
-                        : WriteFlushStrategy.fsyncOnClose(write),
-                    ResumableWrite::identity)
+            lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  if (fsyncEvery) {
+                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
+                        result,
+                        getChunkSegmenter(),
+                        write,
+                        ResumableWrite.identity(start),
+                        deps,
+                        alg,
+                        Retrying::newCallContext);
+                  } else {
+                    return new GapicUnbufferedWritableByteChannel<>(
+                        result,
+                        getChunkSegmenter(),
+                        ResumableWrite.identity(start),
+                        WriteFlushStrategy.fsyncOnClose(write));
+                  }
+                })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -355,12 +367,24 @@ final class GapicWritableByteChannelSessionBuilder {
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
-            bindFunction(
-                    fsyncEvery
-                        ? WriteFlushStrategy.fsyncEveryFlush(
-                            write, deps, alg, Retrying::newCallContext)
-                        : WriteFlushStrategy.fsyncOnClose(write),
-                    ResumableWrite::identity)
+            lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  if (fsyncEvery) {
+                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
+                        result,
+                        getChunkSegmenter(),
+                        write,
+                        ResumableWrite.identity(start),
+                        deps,
+                        alg,
+                        Retrying::newCallContext);
+                  } else {
+                    return new GapicUnbufferedWritableByteChannel<>(
+                        result,
+                        getChunkSegmenter(),
+                        ResumableWrite.identity(start),
+                        WriteFlushStrategy.fsyncOnClose(write));
+                  }
+                })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
