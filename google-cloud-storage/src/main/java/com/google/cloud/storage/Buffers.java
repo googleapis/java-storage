@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -162,7 +161,11 @@ final class Buffers {
   }
 
   static long totalRemaining(ByteBuffer[] buffers, int offset, int length) {
-    ByteBuffer[] sub = Arrays.copyOfRange(buffers, offset, length);
-    return Arrays.stream(sub).mapToLong(Buffer::remaining).sum();
+    long totalRemaning = 0;
+    for (int i = offset; i < length; i++) {
+      ByteBuffer buffer = buffers[i];
+      totalRemaning += buffer.remaining();
+    }
+    return totalRemaning;
   }
 }
