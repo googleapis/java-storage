@@ -25,6 +25,7 @@ import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.WriteCtx.SimpleWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.common.collect.ImmutableList;
@@ -149,7 +150,8 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
     WriteObjectResponse resp = resp5;
 
     WriteObjectRequest base = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
-    WriteObjectRequestBuilderFactory reqFactory = WriteObjectRequestBuilderFactory.simple(base);
+    SimpleWriteObjectRequestBuilderFactory reqFactory =
+        WriteObjectRequestBuilderFactory.simple(base);
 
     StorageImplBase service =
         new DirectWriteService(
@@ -157,12 +159,9 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
     try (FakeServer fake = FakeServer.of(service);
         StorageClient sc = StorageClient.create(fake.storageSettings())) {
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
-      try (GapicUnbufferedWritableByteChannel<?> c =
-          new GapicUnbufferedWritableByteChannel<>(
-              result,
-              segmenter,
-              reqFactory,
-              WriteFlushStrategy.fsyncOnClose(sc.writeObjectCallable()))) {
+      try (GapicUnbufferedDirectWritableByteChannel c =
+          new GapicUnbufferedDirectWritableByteChannel(
+              result, segmenter, sc.writeObjectCallable(), reqFactory)) {
         c.write(ByteBuffer.wrap(bytes));
       }
       assertThat(result.get()).isEqualTo(resp);

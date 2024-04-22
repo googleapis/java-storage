@@ -39,6 +39,7 @@ import com.google.storage.v2.WriteObjectResponse;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicWritableByteChannelSessionBuilder {
 
@@ -113,6 +114,17 @@ final class GapicWritableByteChannelSessionBuilder {
     return new JournalingResumableUploadBuilder();
   }
 
+  private @NonNull ChunkSegmenter getChunkSegmenter() {
+    // it is theoretically possible that the setter methods for the following variables could
+    // be called again between when this method is invoked and the resulting function is invoked.
+    // To ensure we are using the specified values at the point in time they are bound to the
+    // function read them into local variables which will be closed over rather than the class
+    // fields.
+    ByteStringStrategy boundStrategy = byteStringStrategy;
+    Hasher boundHasher = hasher;
+    return new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE);
+  }
+
   /**
    * When constructing any of our channel sessions, there is always a {@link
    * GapicUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction which
@@ -139,6 +151,15 @@ final class GapicWritableByteChannelSessionBuilder {
             new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
             f.apply(start),
             flusherFactory);
+  }
+
+  private static <StartT>
+      BiFunction<StartT, SettableApiFuture<WriteObjectResponse>, UnbufferedWritableByteChannel>
+          lift(
+              BiFunction<
+                      StartT, SettableApiFuture<WriteObjectResponse>, UnbufferedWritableByteChannel>
+                  func) {
+    return func;
   }
 
   final class DirectUploadBuilder {
@@ -189,9 +210,12 @@ final class GapicWritableByteChannelSessionBuilder {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new UnbufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-            bindFunction(
-                    WriteFlushStrategy.fsyncOnClose(write),
-                    WriteObjectRequestBuilderFactory::simple)
+            lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
+                    new GapicUnbufferedDirectWritableByteChannel(
+                        resultFuture,
+                        getChunkSegmenter(),
+                        write,
+                        WriteObjectRequestBuilderFactory.simple(start)))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -214,9 +238,12 @@ final class GapicWritableByteChannelSessionBuilder {
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new BufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-            bindFunction(
-                    WriteFlushStrategy.fsyncOnClose(write),
-                    WriteObjectRequestBuilderFactory::simple)
+            lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
+                    new GapicUnbufferedDirectWritableByteChannel(
+                        resultFuture,
+                        getChunkSegmenter(),
+                        write,
+                        WriteObjectRequestBuilderFactory.simple(start)))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
