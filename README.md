@@ -31,10 +31,6 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage</artifactId>
   </dependency>
-  <dependency>
-    <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-storage-control</artifactId>
-  </dependency>
 
 ```
 
@@ -47,11 +43,6 @@ If you are using Maven without the BOM, add this to your dependencies:
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
   <version>2.36.1</version>
-</dependency>
-<dependency>
-  <groupId>com.google.cloud</groupId>
-  <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.36.1-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
