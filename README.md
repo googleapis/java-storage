@@ -31,6 +31,10 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage</artifactId>
   </dependency>
+  <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+  </dependency>
 
 ```
 
@@ -43,6 +47,11 @@ If you are using Maven without the BOM, add this to your dependencies:
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
   <version>2.36.1</version>
+</dependency>
+<dependency>
+  <groupId>com.google.cloud</groupId>
+  <artifactId>google-cloud-storage-control</artifactId>
+  <version>2.36.1-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
@@ -104,6 +113,48 @@ use this Cloud Storage Client Library.
 The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) lets you perform metadata-specific, control plane, and long-running operations.
 
 The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
+
+If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>libraries-bom</artifactId>
+            <version>26.37.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+</dependency>
+```
+
+If you are using Maven without the BOM, add this to your dependencies:
+<!-- {x-version-update-start:google-cloud-storage:released} -->
+```xml
+<dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+    <version>2.36.1-alpha</version><!-- {x-version-update:google-cloud-storage:current} -->
+</dependency>
+```
+
+If you are using Gradle 5.x or later, add this to your dependencies:
+```Groovy
+implementation platform('com.google.cloud:libraries-bom:26.37.0')
+implementation 'com.google.cloud:google-cloud-storage-control'
+```
+If you are using Gradle without BOM, add this to your dependencies:
+
+```Groovy
+implementation 'com.google.cloud:google-cloud-storage-control:2.36.1-alpha' <!-- {x-version-update:google-cloud-storage:current} -->
+```
 
 #### Creating an authorized service object
 
