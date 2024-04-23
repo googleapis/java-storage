@@ -21,15 +21,12 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
-import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
-import com.google.storage.v2.WriteObjectRequest;
-import com.google.storage.v2.WriteObjectResponse;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -54,28 +51,6 @@ final class WriteFlushStrategy {
   private WriteFlushStrategy() {}
 
   /**
-   * Create a {@link Flusher} which will "fsync" every time {@link Flusher#flush(List)} is called
-   * along with {@link Flusher#close(WriteObjectRequest)}.
-   */
-  static FlusherFactory fsyncEveryFlush(
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
-      Supplier<GrpcCallContext> baseContextSupplier) {
-    return (String bucketName,
-        LongConsumer committedTotalBytesCallback,
-        Consumer<WriteObjectResponse> onSuccessCallback) ->
-        new FsyncEveryFlusher(
-            write,
-            deps,
-            alg,
-            bucketName,
-            committedTotalBytesCallback,
-            onSuccessCallback,
-            baseContextSupplier);
-  }
-
-  /**
    * Create a {@link BidiFlusher} which will keep a bidirectional stream open, flushing and sending
    * the appropriate signals to GCS when the buffer is full.
    */
@@ -97,20 +72,6 @@ final class WriteFlushStrategy {
             baseContextSupplier);
   }
 
-  /**
-   * Create a {@link Flusher} which will "fsync" only on {@link Flusher#close(WriteObjectRequest)}.
-   * Calls to {@link Flusher#flush(List)} will be sent but not synced.
-   *
-   * @see FlusherFactory#newFlusher(String, LongConsumer, Consumer)
-   */
-  static FlusherFactory fsyncOnClose(
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
-    return (String bucketName,
-        LongConsumer committedTotalBytesCallback,
-        Consumer<WriteObjectResponse> onSuccessCallback) ->
-        new FsyncOnClose(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
-  }
-
   static GrpcCallContext contextWithBucketName(String bucketName, GrpcCallContext baseContext) {
     if (bucketName != null && !bucketName.isEmpty()) {
       return baseContext.withExtraHeaders(
@@ -118,32 +79,6 @@ final class WriteFlushStrategy {
               "x-goog-request-params", ImmutableList.of(String.format("bucket=%s", bucketName))));
     }
     return baseContext;
-  }
-
-  /**
-   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
-   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
-   * messages.
-   */
-  private static WriteObjectRequest possiblyPairDownRequest(
-      WriteObjectRequest message, boolean firstMessageOfStream) {
-    if (firstMessageOfStream && message.getWriteOffset() == 0) {
-      return message;
-    }
-
-    WriteObjectRequest.Builder b = message.toBuilder();
-    if (!firstMessageOfStream) {
-      b.clearUploadId();
-    }
-
-    if (message.getWriteOffset() > 0) {
-      b.clearWriteObjectSpec();
-    }
-
-    if (message.getWriteOffset() > 0 && !message.getFinishWrite()) {
-      b.clearObjectChecksums();
-    }
-    return b.build();
   }
 
   private static BidiWriteObjectRequest possiblyPairDownBidiRequest(
@@ -168,25 +103,6 @@ final class WriteFlushStrategy {
   }
 
   @FunctionalInterface
-  interface FlusherFactory {
-    /**
-     * @param committedTotalBytesCallback Callback to signal the total number of bytes committed by
-     *     this flusher.
-     * @param onSuccessCallback Callback to signal success, and provide the final response.
-     */
-    Flusher newFlusher(
-        String bucketName,
-        LongConsumer committedTotalBytesCallback,
-        Consumer<WriteObjectResponse> onSuccessCallback);
-  }
-
-  interface Flusher {
-    void flush(@NonNull List<WriteObjectRequest> segments);
-
-    void close(@Nullable WriteObjectRequest req);
-  }
-
-  @FunctionalInterface
   interface BidiFlusherFactory {
     /**
      * @param committedTotalBytesCallback Callback to signal the total number of bytes committed by
@@ -203,65 +119,6 @@ final class WriteFlushStrategy {
     void flush(@NonNull List<BidiWriteObjectRequest> segments);
 
     void close(@Nullable BidiWriteObjectRequest req);
-  }
-
-  private static final class FsyncEveryFlusher implements Flusher {
-
-    private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
-    private final RetryingDependencies deps;
-    private final ResultRetryAlgorithm<?> alg;
-    private final String bucketName;
-    private final LongConsumer sizeCallback;
-    private final Consumer<WriteObjectResponse> completeCallback;
-    private final Supplier<GrpcCallContext> baseContextSupplier;
-
-    private FsyncEveryFlusher(
-        ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-        RetryingDependencies deps,
-        ResultRetryAlgorithm<?> alg,
-        String bucketName,
-        LongConsumer sizeCallback,
-        Consumer<WriteObjectResponse> completeCallback,
-        Supplier<GrpcCallContext> baseContextSupplier) {
-      this.write = write;
-      this.deps = deps;
-      this.alg = alg;
-      this.bucketName = bucketName;
-      this.sizeCallback = sizeCallback;
-      this.completeCallback = completeCallback;
-      this.baseContextSupplier = baseContextSupplier;
-    }
-
-    public void flush(@NonNull List<WriteObjectRequest> segments) {
-      Retrying.run(
-          deps,
-          alg,
-          () -> {
-            Observer observer = new Observer(sizeCallback, completeCallback);
-            GrpcCallContext internalContext =
-                contextWithBucketName(bucketName, baseContextSupplier.get());
-            ApiStreamObserver<WriteObjectRequest> write =
-                this.write.withDefaultCallContext(internalContext).clientStreamingCall(observer);
-
-            boolean first = true;
-            for (WriteObjectRequest message : segments) {
-              message = possiblyPairDownRequest(message, first);
-
-              write.onNext(message);
-              first = false;
-            }
-            write.onCompleted();
-            observer.await();
-            return null;
-          },
-          Decoder.identity());
-    }
-
-    public void close(@Nullable WriteObjectRequest req) {
-      if (req != null) {
-        flush(ImmutableList.of(req));
-      }
-    }
   }
 
   public static final class DefaultBidiFlusher implements BidiFlusher {
@@ -335,123 +192,6 @@ final class WriteFlushStrategy {
                     .withDefaultCallContext(internalContext)
                     .bidiStreamingCall(responseObserver);
           }
-        }
-      }
-    }
-  }
-
-  private static final class FsyncOnClose implements Flusher {
-
-    private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
-    private final String bucketName;
-    private final Observer responseObserver;
-
-    private volatile ApiStreamObserver<WriteObjectRequest> stream;
-    private boolean first = true;
-
-    private FsyncOnClose(
-        ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-        String bucketName,
-        LongConsumer sizeCallback,
-        Consumer<WriteObjectResponse> completeCallback) {
-      this.write = write;
-      this.bucketName = bucketName;
-      this.responseObserver = new Observer(sizeCallback, completeCallback);
-    }
-
-    @Override
-    public void flush(@NonNull List<WriteObjectRequest> segments) {
-      ensureOpen();
-      for (WriteObjectRequest message : segments) {
-        message = possiblyPairDownRequest(message, first);
-
-        stream.onNext(message);
-        first = false;
-      }
-    }
-
-    @Override
-    public void close(@Nullable WriteObjectRequest message) {
-      ensureOpen();
-      if (message != null) {
-        message = possiblyPairDownRequest(message, first);
-        stream.onNext(message);
-      }
-      stream.onCompleted();
-      responseObserver.await();
-    }
-
-    private void ensureOpen() {
-      if (stream == null) {
-        synchronized (this) {
-          if (stream == null) {
-            GrpcCallContext internalContext =
-                contextWithBucketName(bucketName, GrpcCallContext.createDefault());
-            stream =
-                this.write
-                    .withDefaultCallContext(internalContext)
-                    .clientStreamingCall(responseObserver);
-          }
-        }
-      }
-    }
-  }
-
-  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
-
-    private final LongConsumer sizeCallback;
-    private final Consumer<WriteObjectResponse> completeCallback;
-
-    private final SettableApiFuture<Void> invocationHandle;
-    private volatile WriteObjectResponse last;
-
-    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
-      this.sizeCallback = sizeCallback;
-      this.completeCallback = completeCallback;
-      this.invocationHandle = SettableApiFuture.create();
-    }
-
-    @Override
-    public void onNext(WriteObjectResponse value) {
-      // incremental update
-      if (value.hasPersistedSize()) {
-        sizeCallback.accept(value.getPersistedSize());
-      } else if (value.hasResource()) {
-        sizeCallback.accept(value.getResource().getSize());
-      }
-      last = value;
-    }
-
-    /**
-     * observed exceptions so far
-     *
-     * <ol>
-     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
-     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
-     *   <li>{@link io.grpc.StatusRuntimeException}
-     * </ol>
-     */
-    @Override
-    public void onError(Throwable t) {
-      invocationHandle.setException(t);
-    }
-
-    @Override
-    public void onCompleted() {
-      if (last != null && last.hasResource()) {
-        completeCallback.accept(last);
-      }
-      invocationHandle.set(null);
-    }
-
-    void await() {
-      try {
-        invocationHandle.get();
-      } catch (InterruptedException | ExecutionException e) {
-        if (e.getCause() instanceof RuntimeException) {
-          throw (RuntimeException) e.getCause();
-        } else {
-          throw new RuntimeException(e);
         }
       }
     }
