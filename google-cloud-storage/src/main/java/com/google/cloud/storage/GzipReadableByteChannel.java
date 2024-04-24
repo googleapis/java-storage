@@ -54,9 +54,9 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
       // try to determine if the underlying data coming out of `source` is gzip
       byte[] firstByte = new byte[1];
       ByteBuffer wrap = ByteBuffer.wrap(firstByte);
-      // Step 1: initiate a read of the first 4 bytes of the object
+      // Step 1: initiate a read of the first byte of the object
       //   this will have minimal overhead as the messages coming from gcs are inherently windowed
-      //   if the object size is between 5 and 2MiB the remaining bytes will be held in the channel
+      //   if the object size is between 2 and 2MiB the remaining bytes will be held in the channel
       //   for later read.
       source.read(wrap);
       try {
