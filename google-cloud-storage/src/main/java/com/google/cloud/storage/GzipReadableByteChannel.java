@@ -36,6 +36,7 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
 
   private boolean retEOF = false;
   private ScatteringByteChannel delegate;
+  private ByteBuffer leftovers;
 
   GzipReadableByteChannel(UnbufferedReadableByteChannel source, ApiFuture<String> contentEncoding) {
     this.source = source;
@@ -51,8 +52,8 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
     // if our delegate is null, that means this is the first read attempt
     if (delegate == null) {
       // try to determine if the underlying data coming out of `source` is gzip
-      byte[] first4 = new byte[4]; // 4 bytes = 32-bits
-      final ByteBuffer wrap = ByteBuffer.wrap(first4);
+      byte[] firstByte = new byte[1];
+      ByteBuffer wrap = ByteBuffer.wrap(firstByte);
       // Step 1: initiate a read of the first 4 bytes of the object
       //   this will have minimal overhead as the messages coming from gcs are inherently windowed
       //   if the object size is between 5 and 2MiB the remaining bytes will be held in the channel
@@ -65,13 +66,13 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
         //   this will have a copy impact as we are no longer controlling all the buffers
         if ("gzip".equals(contentEncoding) || "x-gzip".equals(contentEncoding)) {
           // to wire gzip decompression into the byte path:
-          // Create an input stream of the first4 bytes we already read
-          ByteArrayInputStream first4again = new ByteArrayInputStream(first4);
+          // Create an input stream of the firstByte bytes we already read
+          ByteArrayInputStream firstByteAgain = new ByteArrayInputStream(firstByte);
           // Create an InputStream facade of source
           InputStream sourceInputStream = Channels.newInputStream(source);
-          // create a new InputStream with the first4 bytes prepended to source
+          // create a new InputStream with the firstByte bytes prepended to source
           SequenceInputStream first4AndSource =
-              new SequenceInputStream(first4again, sourceInputStream);
+              new SequenceInputStream(firstByteAgain, sourceInputStream);
           // add gzip decompression
           GZIPInputStream decompress =
               new GZIPInputStream(new OptimisticAvailabilityInputStream(first4AndSource));
@@ -84,14 +85,22 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
           // to source
           wrap.flip();
           bytesRead += Buffers.copy(wrap, dsts, offset, length);
+          if (wrap.hasRemaining()) {
+            leftovers = wrap;
+          }
           delegate = source;
         }
       } catch (InterruptedException | ExecutionException e) {
         throw new IOException(e);
       }
+    } else if (leftovers != null && leftovers.hasRemaining()) {
+      bytesRead += Buffers.copy(leftovers, dsts, offset, length);
+      if (!leftovers.hasRemaining()) {
+        leftovers = null;
+      }
     }
 
-    // Because we're pre-reading a few bytes of the object in order to determine if we need to
+    // Because we're pre-reading a byte of the object in order to determine if we need to
     // plumb in gzip decompress, there is the possibility we will reach EOF while probing.
     // In order to maintain correctness of EOF propagation, determine if we will need to signal EOF
     // upon the next read.
