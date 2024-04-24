@@ -23,11 +23,14 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BlobWriteSession;
+import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITObjectChecksumSupportTest.ChecksummedTestContentProvider;
@@ -47,8 +50,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -75,6 +80,7 @@ public final class ITObjectChecksumSupportTest {
     @Override
     public ImmutableList<?> parameters() {
       DataGenerator gen = DataGenerator.base64Characters();
+      int _256KiB = 256 * 1024;
       int _2MiB = 2 * 1024 * 1024;
       int _24MiB = 24 * 1024 * 1024;
 
@@ -84,7 +90,9 @@ public final class ITObjectChecksumSupportTest {
           // med, multiple messages single stream when resumable
           ChecksummedTestContent.of(gen.genBytes(_2MiB + 3)),
           // large, multiple messages and multiple streams when resumable
-          ChecksummedTestContent.of(gen.genBytes(_24MiB + 5)));
+          ChecksummedTestContent.of(gen.genBytes(_24MiB + 5)),
+          // quantum aligned number of bytes
+          ChecksummedTestContent.of(gen.genBytes(_2MiB * 8 + _256KiB)));
     }
   }
 
@@ -281,5 +289,68 @@ public final class ITObjectChecksumSupportTest {
 
     Blob blob = storage.get(blobId);
     assertThat(blob.getMd5()).isEqualTo(content.getMd5Base64());
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.HTTP)
+  public void testCrc32cValidated_bidiWrite_expectSuccess() throws Exception {
+    String blobName = generator.randomObjectName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
+
+    byte[] bytes = content.getBytes();
+
+    StorageOptions optionsWithBidi =
+        this.storage
+            .getOptions()
+            .toBuilder()
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+            .build();
+
+    try (Storage storage = optionsWithBidi.getService()) {
+      BlobWriteSession session =
+          storage.blobWriteSession(
+              blobInfo, BlobWriteOption.doesNotExist(), BlobWriteOption.crc32cMatch());
+
+      try (ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(bytes));
+          WritableByteChannel dst = session.open()) {
+        ByteStreams.copy(src, dst);
+      }
+
+      BlobInfo gen1 = session.getResult().get(5, TimeUnit.SECONDS);
+      assertThat(gen1.getCrc32c()).isEqualTo(content.getCrc32cBase64());
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.HTTP)
+  public void testCrc32cValidated_bidiWrite_expectFailure() throws Exception {
+    String blobName = generator.randomObjectName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
+
+    byte[] bytes = content.concat('x');
+
+    StorageOptions optionsWithBidi =
+        this.storage
+            .getOptions()
+            .toBuilder()
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+            .build();
+
+    try (Storage storage = optionsWithBidi.getService()) {
+      BlobWriteSession session =
+          storage.blobWriteSession(
+              blobInfo, BlobWriteOption.doesNotExist(), BlobWriteOption.crc32cMatch());
+
+      WritableByteChannel dst = session.open();
+      try (ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(bytes))) {
+        ByteStreams.copy(src, dst);
+      }
+
+      StorageException expected = assertThrows(StorageException.class, dst::close);
+
+      assertThat(expected.getCode()).isEqualTo(400);
+    }
   }
 }
