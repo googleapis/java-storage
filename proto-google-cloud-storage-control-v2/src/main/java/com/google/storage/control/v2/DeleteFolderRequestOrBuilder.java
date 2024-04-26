@@ -114,8 +114,7 @@ public interface DeleteFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>
@@ -130,8 +129,7 @@ public interface DeleteFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>

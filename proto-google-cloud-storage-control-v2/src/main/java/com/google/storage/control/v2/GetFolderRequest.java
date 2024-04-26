@@ -23,7 +23,9 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for GetFolder.
+ * Request message for GetFolder. This operation is only applicable to a
+ * hierarchical namespace enabled bucket.
+ * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.GetFolderRequest}
@@ -449,7 +451,9 @@ public final class GetFolderRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * Request message for GetFolder.
+   * Request message for GetFolder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket.
+   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.GetFolderRequest}

@@ -23,7 +23,9 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for CreateFolder.
+ * Request message for CreateFolder. This operation is only applicable to a
+ * hierarchical namespace enabled bucket.
+ * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
@@ -74,7 +76,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside.
+   * Required. Name of the bucket in which the folder will reside. The bucket
+   * must be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>
@@ -99,7 +102,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside.
+   * Required. Name of the bucket in which the folder will reside. The bucket
+   * must be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>
@@ -266,8 +270,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>
@@ -293,8 +296,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>
@@ -520,7 +522,9 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request message for CreateFolder.
+   * Request message for CreateFolder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket.
+   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
@@ -776,7 +780,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside.
+     * Required. Name of the bucket in which the folder will reside. The bucket
+     * must be a hierarchical namespace enabled bucket.
      * </pre>
      *
      * <code>
@@ -800,7 +805,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside.
+     * Required. Name of the bucket in which the folder will reside. The bucket
+     * must be a hierarchical namespace enabled bucket.
      * </pre>
      *
      * <code>
@@ -824,7 +830,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside.
+     * Required. Name of the bucket in which the folder will reside. The bucket
+     * must be a hierarchical namespace enabled bucket.
      * </pre>
      *
      * <code>
@@ -847,7 +854,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside.
+     * Required. Name of the bucket in which the folder will reside. The bucket
+     * must be a hierarchical namespace enabled bucket.
      * </pre>
      *
      * <code>
@@ -866,7 +874,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside.
+     * Required. Name of the bucket in which the folder will reside. The bucket
+     * must be a hierarchical namespace enabled bucket.
      * </pre>
      *
      * <code>
@@ -1296,8 +1305,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted. This request is only
-     * idempotent if a `request_id` is provided.
+     * format, but other formats are still accepted.
      * </pre>
      *
      * <code>
@@ -1322,8 +1330,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted. This request is only
-     * idempotent if a `request_id` is provided.
+     * format, but other formats are still accepted.
      * </pre>
      *
      * <code>
@@ -1348,8 +1355,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted. This request is only
-     * idempotent if a `request_id` is provided.
+     * format, but other formats are still accepted.
      * </pre>
      *
      * <code>
@@ -1373,8 +1379,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted. This request is only
-     * idempotent if a `request_id` is provided.
+     * format, but other formats are still accepted.
      * </pre>
      *
      * <code>
@@ -1394,8 +1399,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted. This request is only
-     * idempotent if a `request_id` is provided.
+     * format, but other formats are still accepted.
      * </pre>
      *
      * <code>

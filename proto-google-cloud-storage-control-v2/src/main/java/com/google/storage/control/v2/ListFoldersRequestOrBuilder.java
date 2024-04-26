@@ -28,7 +28,8 @@ public interface ListFoldersRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which to look for folders.
+   * Required. Name of the bucket in which to look for folders. The bucket must
+   * be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>
@@ -42,7 +43,8 @@ public interface ListFoldersRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which to look for folders.
+   * Required. Name of the bucket in which to look for folders. The bucket must
+   * be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>

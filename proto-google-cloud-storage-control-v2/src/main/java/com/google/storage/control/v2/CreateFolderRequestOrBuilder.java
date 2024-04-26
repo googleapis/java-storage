@@ -28,7 +28,8 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside.
+   * Required. Name of the bucket in which the folder will reside. The bucket
+   * must be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>
@@ -42,7 +43,8 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside.
+   * Required. Name of the bucket in which the folder will reside. The bucket
+   * must be a hierarchical namespace enabled bucket.
    * </pre>
    *
    * <code>
@@ -152,8 +154,7 @@ public interface CreateFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>
@@ -168,8 +169,7 @@ public interface CreateFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted. This request is only
-   * idempotent if a `request_id` is provided.
+   * format, but other formats are still accepted.
    * </pre>
    *
    * <code>

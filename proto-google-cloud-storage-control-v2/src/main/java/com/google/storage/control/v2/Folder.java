@@ -23,7 +23,9 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * A folder.
+ * A folder resource. This resource can only exist in a hierarchical namespace
+ * enabled bucket.
+ * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.Folder}
@@ -514,7 +516,9 @@ public final class Folder extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A folder.
+   * A folder resource. This resource can only exist in a hierarchical namespace
+   * enabled bucket.
+   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.Folder}

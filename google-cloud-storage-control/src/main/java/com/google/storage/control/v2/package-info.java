@@ -15,7 +15,7 @@
  */
 
 /**
- * A client to Cloud Storage API
+ * A client to Storage Control API
  *
  * <p>The interfaces provided are listed below, along with usage samples.
  *
