@@ -17,6 +17,7 @@
 
 package com.example.storage.transfermanager;
 
+// [START storage_transfer_manager_upload_chunks_concurrently]
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-// [START storage_transfer_manager_upload_chunks_concurrently]
 class AllowParallelCompositeUpload {
 
   public static void parallelCompositeUploadAllowed(String bucketName, List<Path> files)

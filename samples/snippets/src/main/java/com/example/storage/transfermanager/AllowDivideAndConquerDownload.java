@@ -17,6 +17,7 @@
 
 package com.example.storage.transfermanager;
 
+// [START storage_transfer_manager_download_chunks_concurrently]
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.transfermanager.DownloadResult;
 import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
@@ -24,8 +25,6 @@ import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import java.nio.file.Path;
 import java.util.List;
-
-// [START storage_transfer_manager_download_chunks_concurrently]
 class AllowDivideAndConquerDownload {
 
   public static void divideAndConquerDownloadAllowed(List<BlobInfo> blobs,
@@ -50,3 +49,4 @@ class AllowDivideAndConquerDownload {
 
   }
 }
+// [END storage_transfer_manager_download_chunks_concurrently]
