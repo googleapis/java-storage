@@ -60,11 +60,13 @@ import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import com.google.type.Expr;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -117,6 +119,11 @@ final class GrpcConversions {
   private final Codec<BucketInfo.HierarchicalNamespace, Bucket.HierarchicalNamespace>
       hierarchicalNamespaceCodec =
           Codec.of(this::hierarchicalNamespaceEncode, this::hierarchicalNamespaceDecode);
+
+  private final Codec<ByteString, String> byteStringB64StringCodec =
+      Codec.of(
+          bs -> Base64.getEncoder().encodeToString(bs.toByteArray()),
+          s -> ByteString.copyFrom(Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8))));
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
@@ -1048,7 +1055,7 @@ final class GrpcConversions {
 
   private com.google.iam.v1.Policy policyEncode(Policy from) {
     com.google.iam.v1.Policy.Builder to = com.google.iam.v1.Policy.newBuilder();
-    ifNonNull(from.getEtag(), ByteString::copyFromUtf8, to::setEtag);
+    ifNonNull(from.getEtag(), byteStringB64StringCodec::decode, to::setEtag);
     ifNonNull(from.getVersion(), to::setVersion);
     from.getBindingsList().stream().map(bindingCodec::encode).forEach(to::addBindings);
     return to.build();
@@ -1058,7 +1065,7 @@ final class GrpcConversions {
     Policy.Builder to = Policy.newBuilder();
     ByteString etag = from.getEtag();
     if (!etag.isEmpty()) {
-      to.setEtag(etag.toStringUtf8());
+      to.setEtag(byteStringB64StringCodec.encode(etag));
     }
     to.setVersion(from.getVersion());
     List<com.google.iam.v1.Binding> bindingsList = from.getBindingsList();

@@ -117,6 +117,7 @@ public class ITRetryConformanceTest {
   public void tearDown() throws Throwable {
     LOGGER.fine("Running teardown...");
     if (ctx != null) {
+      ctx = ctx.leftMap(s -> nonTestStorage);
       getReplaceStorageInObjectsFromCtx()
           .andThen(mapping.getTearDown())
           .apply(ctx, testRetryConformance);
@@ -166,9 +167,7 @@ public class ITRetryConformanceTest {
               .setMappings(new RpcMethodMappings())
               .setProjectId("conformance-tests")
               .setHost(testBench.getBaseUri().replaceAll("https?://", ""))
-              .setTestAllowFilter(
-                  RetryTestCaseResolver.includeAll()
-                      .and(RetryTestCaseResolver.lift(trc -> trc.getTransport() == Transport.HTTP)))
+              .setTestAllowFilter(RetryTestCaseResolver.includeAll())
               .build();
 
       List<RetryTestCase> retryTestCases;

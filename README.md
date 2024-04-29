@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.34.0</version>
+      <version>26.37.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -30,6 +30,10 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
   <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
   </dependency>
 
 ```
@@ -42,7 +46,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.36.0</version>
+  <version>2.36.1</version>
+</dependency>
+<dependency>
+  <groupId>com.google.cloud</groupId>
+  <artifactId>google-cloud-storage-control</artifactId>
+  <version>2.37.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
@@ -50,20 +59,20 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:26.35.0')
+implementation platform('com.google.cloud:libraries-bom:26.37.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.36.1'
+implementation 'com.google.cloud:google-cloud-storage:2.37.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.36.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.37.0"
 ```
 <!-- {x-version-update-end} -->
 
@@ -104,6 +113,48 @@ use this Cloud Storage Client Library.
 The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) lets you perform metadata-specific, control plane, and long-running operations.
 
 The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
+
+If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>libraries-bom</artifactId>
+            <version>26.37.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+</dependency>
+```
+
+If you are using Maven without the BOM, add this to your dependencies:
+<!-- {x-version-update-start:google-cloud-storage:released} -->
+```xml
+<dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+    <version>2.36.1-alpha</version><!-- {x-version-update:google-cloud-storage:released} -->
+</dependency>
+```
+
+If you are using Gradle 5.x or later, add this to your dependencies:
+```Groovy
+implementation platform('com.google.cloud:libraries-bom:26.37.0')
+implementation 'com.google.cloud:google-cloud-storage-control'
+```
+If you are using Gradle without BOM, add this to your dependencies:
+
+```Groovy
+implementation 'com.google.cloud:google-cloud-storage-control:2.36.1-alpha' <!-- {x-version-update:google-cloud-storage:released} -->
+```
 
 #### Creating an authorized service object
 
@@ -233,6 +284,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Quickstart Grpc Dp Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartGrpcDpSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartGrpcDpSample.java) |
 | Quickstart Grpc Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartGrpcSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartGrpcSample.java) |
 | Quickstart Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) |
+| Quickstart Storage Control Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartStorageControlSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartStorageControlSample.java) |
 | Add Bucket Default Owner | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketDefaultOwner.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketDefaultOwner.java) |
 | Add Bucket Iam Conditional Binding | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamConditionalBinding.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamConditionalBinding.java) |
 | Add Bucket Iam Member | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamMember.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamMember.java) |
@@ -337,6 +389,10 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Upload Kms Encrypted Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadKmsEncryptedObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadKmsEncryptedObject.java) |
 | Upload Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadObject.java) |
 | Upload Object From Memory | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadObjectFromMemory.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadObjectFromMemory.java) |
+| Download Bucket | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadBucket.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadBucket.java) |
+| Download Many | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadMany.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadMany.java) |
+| Upload Directory | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/UploadDirectory.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/UploadDirectory.java) |
+| Upload Many | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/UploadMany.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/UploadMany.java) |
 
 
 
@@ -436,7 +492,7 @@ Java is a registered trademark of Oracle and/or its affiliates.
 [kokoro-badge-link-5]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java11.html
 [stability-image]: https://img.shields.io/badge/stability-stable-green
 [maven-version-image]: https://img.shields.io/maven-central/v/com.google.cloud/google-cloud-storage.svg
-[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.36.1
+[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.37.0
 [authentication]: https://github.com/googleapis/google-cloud-java#authentication
 [auth-scopes]: https://developers.google.com/identity/protocols/oauth2/scopes
 [predefined-iam-roles]: https://cloud.google.com/iam/docs/understanding-roles#predefined_roles

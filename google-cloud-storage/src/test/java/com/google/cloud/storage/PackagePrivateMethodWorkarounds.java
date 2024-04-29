@@ -20,7 +20,6 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
-import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -40,23 +39,11 @@ public final class PackagePrivateMethodWorkarounds {
   private PackagePrivateMethodWorkarounds() {}
 
   public static Bucket bucketCopyWithStorage(Bucket b, Storage s) {
-    BucketInfo.BuilderImpl builder =
-        (BuilderImpl)
-            Conversions.json()
-                .bucketInfo()
-                .decode(Conversions.json().bucketInfo().encode(b))
-                .toBuilder();
-    return new Bucket(s, builder);
+    return b.asBucket(s);
   }
 
   public static Blob blobCopyWithStorage(Blob b, Storage s) {
-    BlobInfo.BuilderImpl builder =
-        (BlobInfo.BuilderImpl)
-            Conversions.json()
-                .blobInfo()
-                .decode(Conversions.json().blobInfo().encode(b))
-                .toBuilder();
-    return new Blob(s, builder);
+    return b.asBlob(s);
   }
 
   public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {

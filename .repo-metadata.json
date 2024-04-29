@@ -15,5 +15,6 @@
   "requires_billing": true,
   "library_type": "GAPIC_COMBO",
   "extra_versioned_modules": "gapic-google-cloud-storage-v2",
-  "excluded_poms": "google-cloud-storage-bom,google-cloud-storage"
+  "excluded_poms": "google-cloud-storage-bom,google-cloud-storage",
+  "recommended_package": "com.google.cloud.storage"
 }
