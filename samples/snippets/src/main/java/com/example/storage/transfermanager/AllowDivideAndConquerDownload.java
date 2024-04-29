@@ -28,7 +28,7 @@ import java.util.List;
 // [START storage_transfer_manager_download_chunks_concurrently]
 class AllowDivideAndConquerDownload {
 
-  public static void allowDivideAndConquerDownload(List<BlobInfo> blobs,
+  public static void divideAndConquerDownloadAllowed(List<BlobInfo> blobs,
       String bucketName, Path destinationDirectory) {
     TransferManager transferManager = TransferManagerConfig.newBuilder()
         .setAllowDivideAndConquer(true)
