@@ -25,6 +25,7 @@ import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import java.nio.file.Path;
 import java.util.List;
+
 class AllowDivideAndConquerDownload {
 
   public static void divideAndConquerDownloadAllowed(List<BlobInfo> blobs,

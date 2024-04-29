@@ -134,7 +134,7 @@ public class ITTransferManagerSamples {
   @Test
   public void downloadAllowDivideAndConquer() {
     AllowDivideAndConquerDownload
-        .divideAndConquerDownloadAllowed(blobs, BUCKET,tmp.getRoot().toPath());
+        .divideAndConquerDownloadAllowed(blobs, BUCKET, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("blob1")).isTrue();
     assertThat(snippetOutput.contains("blob2")).isTrue();
