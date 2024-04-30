@@ -4825,7 +4825,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   default BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
     return throwGrpcOnly(fmtMethodName("blobWriteSession", BlobInfo.class, BlobWriteOption.class));
   }
