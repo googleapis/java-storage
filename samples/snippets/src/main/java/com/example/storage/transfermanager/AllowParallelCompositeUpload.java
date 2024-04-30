@@ -32,7 +32,7 @@ class AllowParallelCompositeUpload {
       throws IOException {
     TransferManager transferManager = TransferManagerConfig
         .newBuilder()
-        .setAllowDivideAndConquer(true)
+        .setAllowParallelCompositeUpload(true)
         .build()
         .getService();
     ParallelUploadConfig parallelUploadConfig =
