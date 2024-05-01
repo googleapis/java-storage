@@ -31,7 +31,7 @@ class AllowDivideAndConquerDownload {
   public static void divideAndConquerDownloadAllowed(List<BlobInfo> blobs,
       String bucketName, Path destinationDirectory) {
     TransferManager transferManager = TransferManagerConfig.newBuilder()
-        .setAllowDivideAndConquer(true)
+        .setAllowDivideAndConquerDownload(true)
         .build()
         .getService();
     ParallelDownloadConfig parallelDownloadConfig = ParallelDownloadConfig.newBuilder()
