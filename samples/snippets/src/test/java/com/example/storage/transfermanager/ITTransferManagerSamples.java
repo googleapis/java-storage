@@ -25,11 +25,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,6 +47,7 @@ public class ITTransferManagerSamples {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static Storage storage;
   private static List<BlobInfo> blobs;
+  private static List<BlobInfo> bigBlob;
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
@@ -107,6 +116,25 @@ public class ITTransferManagerSamples {
   @Test
   public void downloadFiles() {
     DownloadMany.downloadManyBlobs(BUCKET, blobs, tmp.getRoot().toPath());
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput.contains("blob1")).isTrue();
+    assertThat(snippetOutput.contains("blob2")).isTrue();
+    assertThat(snippetOutput.contains("blob3")).isTrue();
+  }
+
+  @Test
+  public void uploadAllowPCU() throws IOException {
+    File tmpFile = tmpDirectory.newFile("fileDirUpload.txt");
+    AllowParallelCompositeUpload
+        .parallelCompositeUploadAllowed(BUCKET, Collections.singletonList(tmpFile.toPath()));
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput.contains("fileDirUpload.txt")).isTrue();
+  }
+
+  @Test
+  public void downloadAllowDivideAndConquer() {
+    AllowDivideAndConquerDownload
+        .divideAndConquerDownloadAllowed(blobs, BUCKET, tmp.getRoot().toPath());
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(snippetOutput.contains("blob1")).isTrue();
     assertThat(snippetOutput.contains("blob2")).isTrue();
