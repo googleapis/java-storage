@@ -2906,16 +2906,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
-   * Uploads {@code path} to the blob using {@code ResumableSession}. By default any
-   * MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * Uploads {@code path} to the blob using {@code ResumableSession}. By default any MD5 and CRC32C
+   * values in the given {@code blobInfo} are ignored unless requested via the {@link
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
    * not supported. Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">
    * non-editable metadata</a>, such as generation or metageneration, will be ignored even if it's
    * present in the provided BlobInfo object.
    *
-   * <p>This method used to preallocate a buffer, but since v2.25.0, it uses a
-   * ResumableSession and no longer needs it. The bufferSize parameter is still present
-   * for binary compatibility, but is now ignored.
+   * <p>This method used to preallocate a buffer, but since v2.25.0, it uses a ResumableSession and
+   * no longer needs it. The bufferSize parameter is still present for binary compatibility, but is
+   * now ignored.
    *
    * <p>Example of uploading a humongous file:
    *
