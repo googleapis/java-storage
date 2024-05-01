@@ -28,6 +28,7 @@ import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import java.io.IOException;
 import java.time.Clock;
+import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -62,6 +63,23 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
    */
   public int getBufferSize() {
     return bufferSize;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof BidiBlobWriteSessionConfig)) {
+      return false;
+    }
+    BidiBlobWriteSessionConfig that = (BidiBlobWriteSessionConfig) o;
+    return bufferSize == that.bufferSize;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(bufferSize);
   }
 
   @Override

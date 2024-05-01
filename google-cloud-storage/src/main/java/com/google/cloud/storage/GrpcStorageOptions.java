@@ -346,12 +346,30 @@ public final class GrpcStorageOptions extends StorageOptions
 
   @Override
   public int hashCode() {
-    return baseHashCode();
+    return Objects.hash(
+        retryAlgorithmManager,
+        terminationAwaitDuration,
+        attemptDirectPath,
+        grpcInterceptorProvider,
+        blobWriteSessionConfig,
+        baseHashCode());
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return obj instanceof GrpcStorageOptions && baseEquals((GrpcStorageOptions) obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof GrpcStorageOptions)) {
+      return false;
+    }
+    GrpcStorageOptions that = (GrpcStorageOptions) o;
+    return attemptDirectPath == that.attemptDirectPath
+        && Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
+        && Objects.equals(terminationAwaitDuration, that.terminationAwaitDuration)
+        && Objects.equals(grpcInterceptorProvider, that.grpcInterceptorProvider)
+        && Objects.equals(blobWriteSessionConfig, that.blobWriteSessionConfig)
+        && this.baseEquals(that);
   }
 
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
@@ -399,6 +417,12 @@ public final class GrpcStorageOptions extends StorageOptions
 
     Builder(StorageOptions options) {
       super(options);
+      GrpcStorageOptions gso = (GrpcStorageOptions) options;
+      this.storageRetryStrategy = gso.getRetryAlgorithmManager().retryStrategy;
+      this.terminationAwaitDuration = gso.getTerminationAwaitDuration();
+      this.attemptDirectPath = gso.attemptDirectPath;
+      this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
+      this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
     }
 
     /**

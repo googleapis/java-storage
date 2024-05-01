@@ -35,7 +35,7 @@ import java.util.Objects;
 final class HttpRetryAlgorithmManager implements Serializable {
 
   private static final long serialVersionUID = -3301856948991518651L;
-  private final StorageRetryStrategy retryStrategy;
+  final StorageRetryStrategy retryStrategy;
 
   HttpRetryAlgorithmManager(StorageRetryStrategy retryStrategy) {
     this.retryStrategy = retryStrategy;

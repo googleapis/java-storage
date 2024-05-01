@@ -84,4 +84,16 @@
     <className>com/google/cloud/storage/WriteFlushStrategy$DefaultBidiFlusher</className>
   </difference>
 
+  <!-- BlobWriteSessionConfig is package-private extendable only, allow hashCode/equals -->
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BlobWriteSessionConfig</className>
+    <method>int hashCode()</method>
+  </difference>
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BlobWriteSessionConfig</className>
+    <method>boolean equals(java.lang.Object)</method>
+  </difference>
+
 </differences>

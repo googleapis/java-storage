@@ -45,6 +45,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Collector;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -87,6 +88,25 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
   JournalingBlobWriteSessionConfig(ImmutableList<Path> paths, boolean includeLoggingSink) {
     this.paths = paths;
     this.includeLoggingSink = includeLoggingSink;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof JournalingBlobWriteSessionConfig)) {
+      return false;
+    }
+    JournalingBlobWriteSessionConfig that = (JournalingBlobWriteSessionConfig) o;
+    return includeLoggingSink == that.includeLoggingSink
+        && Objects.equals(paths, that.paths)
+        && Objects.equals(absolutePaths, that.absolutePaths);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(paths, includeLoggingSink, absolutePaths);
   }
 
   @VisibleForTesting

@@ -43,6 +43,12 @@ public abstract class BlobWriteSessionConfig implements Serializable {
   @InternalApi
   BlobWriteSessionConfig() {}
 
+  @Override
+  public abstract int hashCode();
+
+  @Override
+  public abstract boolean equals(Object obj);
+
   @InternalApi
   abstract WriterFactory createFactory(Clock clock) throws IOException;
 

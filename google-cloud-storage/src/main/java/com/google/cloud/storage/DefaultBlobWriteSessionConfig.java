@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 
@@ -103,6 +104,23 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
         "chunkSize must be >= %d",
         ByteSizeConstants._256KiB);
     return new DefaultBlobWriteSessionConfig(chunkSize);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof DefaultBlobWriteSessionConfig)) {
+      return false;
+    }
+    DefaultBlobWriteSessionConfig that = (DefaultBlobWriteSessionConfig) o;
+    return chunkSize == that.chunkSize;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(chunkSize);
   }
 
   @Override

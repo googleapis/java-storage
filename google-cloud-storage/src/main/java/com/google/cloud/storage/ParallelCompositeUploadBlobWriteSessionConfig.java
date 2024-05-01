@@ -46,6 +46,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -277,6 +278,35 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         PartMetadataFieldDecorator.noOp());
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ParallelCompositeUploadBlobWriteSessionConfig)) {
+      return false;
+    }
+    ParallelCompositeUploadBlobWriteSessionConfig that =
+        (ParallelCompositeUploadBlobWriteSessionConfig) o;
+    return maxPartsPerCompose == that.maxPartsPerCompose
+        && Objects.equals(executorSupplier, that.executorSupplier)
+        && Objects.equals(bufferAllocationStrategy, that.bufferAllocationStrategy)
+        && Objects.equals(partNamingStrategy, that.partNamingStrategy)
+        && Objects.equals(partCleanupStrategy, that.partCleanupStrategy)
+        && Objects.equals(partMetadataFieldDecorator, that.partMetadataFieldDecorator);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        maxPartsPerCompose,
+        executorSupplier,
+        bufferAllocationStrategy,
+        partNamingStrategy,
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
+  }
+
   @InternalApi
   @Override
   WriterFactory createFactory(Clock clock) throws IOException {
@@ -346,6 +376,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       BufferHandlePool get() {
         return BufferHandlePool.simple(capacity);
       }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof SimpleBufferAllocationStrategy)) {
+          return false;
+        }
+        SimpleBufferAllocationStrategy that = (SimpleBufferAllocationStrategy) o;
+        return capacity == that.capacity;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(capacity);
+      }
     }
 
     private static class FixedPoolBufferAllocationStrategy extends BufferAllocationStrategy {
@@ -362,6 +409,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       @Override
       BufferHandlePool get() {
         return BufferHandlePool.fixedPool(bufferCount, bufferCapacity);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof FixedPoolBufferAllocationStrategy)) {
+          return false;
+        }
+        FixedPoolBufferAllocationStrategy that = (FixedPoolBufferAllocationStrategy) o;
+        return bufferCount == that.bufferCount && bufferCapacity == that.bufferCapacity;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(bufferCount, bufferCapacity);
       }
     }
   }
@@ -441,6 +505,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         return executor;
       }
 
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof SuppliedExecutorSupplier)) {
+          return false;
+        }
+        SuppliedExecutorSupplier that = (SuppliedExecutorSupplier) o;
+        return Objects.equals(executor, that.executor);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(executor);
+      }
+
       private void writeObject(ObjectOutputStream out) throws IOException {
         throw new java.io.InvalidClassException(this.getClass().getName() + "; Not serializable");
       }
@@ -469,6 +550,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       Executor get() {
         ThreadFactory threadFactory = newThreadFactory();
         return Executors.newFixedThreadPool(poolSize, threadFactory);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof FixedSupplier)) {
+          return false;
+        }
+        FixedSupplier that = (FixedSupplier) o;
+        return poolSize == that.poolSize;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(poolSize);
       }
     }
   }
@@ -613,6 +711,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + partRange
             + ".part";
       }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof WithPrefix)) {
+          return false;
+        }
+        WithPrefix that = (WithPrefix) o;
+        return Objects.equals(prefix, that.prefix);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(prefix);
+      }
     }
 
     static final class WithObjectLevelPrefix extends PartNamingStrategy {
@@ -641,6 +756,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + FIELD_SEPARATOR
             + partRange
             + ".part";
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof WithObjectLevelPrefix)) {
+          return false;
+        }
+        WithObjectLevelPrefix that = (WithObjectLevelPrefix) o;
+        return Objects.equals(prefix, that.prefix);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(prefix);
       }
     }
 
@@ -726,6 +858,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
           return builder.setCustomTimeOffsetDateTime(futureTime);
         };
       }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof CustomTimeInFuture)) {
+          return false;
+        }
+        CustomTimeInFuture that = (CustomTimeInFuture) o;
+        return Objects.equals(duration, that.duration);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(duration);
+      }
     }
 
     private static final class NoOp extends PartMetadataFieldDecorator {
@@ -769,6 +918,24 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     boolean isDeleteAllOnError() {
       return deleteAllOnError;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof PartCleanupStrategy)) {
+        return false;
+      }
+      PartCleanupStrategy that = (PartCleanupStrategy) o;
+      return deletePartsOnSuccess == that.deletePartsOnSuccess
+          && deleteAllOnError == that.deleteAllOnError;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(deletePartsOnSuccess, deleteAllOnError);
     }
 
     /**
