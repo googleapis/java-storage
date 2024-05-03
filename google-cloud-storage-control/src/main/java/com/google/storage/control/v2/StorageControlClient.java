@@ -1387,7 +1387,7 @@ public class StorageControlClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
    *   storageControlClient.deleteManagedFolder(name);
    * }
    * }</pre>
@@ -1417,7 +1417,7 @@ public class StorageControlClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString();
+   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString();
    *   storageControlClient.deleteManagedFolder(name);
    * }
    * }</pre>
@@ -1447,7 +1447,7 @@ public class StorageControlClient implements BackgroundResource {
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
    *   DeleteManagedFolderRequest request =
    *       DeleteManagedFolderRequest.newBuilder()
-   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setAllowNonEmpty(true)
@@ -1479,7 +1479,7 @@ public class StorageControlClient implements BackgroundResource {
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
    *   DeleteManagedFolderRequest request =
    *       DeleteManagedFolderRequest.newBuilder()
-   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setAllowNonEmpty(true)
@@ -1509,7 +1509,7 @@ public class StorageControlClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
    *   ManagedFolder response = storageControlClient.getManagedFolder(name);
    * }
    * }</pre>
@@ -1537,7 +1537,7 @@ public class StorageControlClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString();
+   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString();
    *   ManagedFolder response = storageControlClient.getManagedFolder(name);
    * }
    * }</pre>
@@ -1566,7 +1566,7 @@ public class StorageControlClient implements BackgroundResource {
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
    *   GetManagedFolderRequest request =
    *       GetManagedFolderRequest.newBuilder()
-   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setRequestId("requestId693933066")
@@ -1597,7 +1597,7 @@ public class StorageControlClient implements BackgroundResource {
    * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
    *   GetManagedFolderRequest request =
    *       GetManagedFolderRequest.newBuilder()
-   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setRequestId("requestId693933066")

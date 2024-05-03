@@ -30,11 +30,11 @@ class AllowParallelCompositeUpload {
 
   public static void parallelCompositeUploadAllowed(String bucketName, List<Path> files)
       throws IOException {
-    TransferManager transferManager = TransferManagerConfig
-        .newBuilder()
-        .setAllowParallelCompositeUpload(true)
-        .build()
-        .getService();
+    TransferManager transferManager =
+        TransferManagerConfig.newBuilder()
+            .setAllowParallelCompositeUpload(true)
+            .build()
+            .getService();
     ParallelUploadConfig parallelUploadConfig =
         ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
     List<UploadResult> results =

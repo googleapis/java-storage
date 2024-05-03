@@ -29,9 +29,9 @@ import javax.annotation.Generated;
 // AUTO-GENERATED DOCUMENTATION AND CLASS.
 @Generated("by gapic-generator-java")
 public class ManagedFolderName implements ResourceName {
-  private static final PathTemplate PROJECT_BUCKET_MANAGEDFOLDER =
+  private static final PathTemplate PROJECT_BUCKET_MANAGED_FOLDER =
       PathTemplate.createWithoutUrlEncoding(
-          "projects/{project}/buckets/{bucket}/managedFolders/{managedFolder=**}");
+          "projects/{project}/buckets/{bucket}/managedFolders/{managed_folder=**}");
   private volatile Map<String, String> fieldValuesMap;
   private final String project;
   private final String bucket;
@@ -92,9 +92,9 @@ public class ManagedFolderName implements ResourceName {
       return null;
     }
     Map<String, String> matchMap =
-        PROJECT_BUCKET_MANAGEDFOLDER.validatedMatch(
+        PROJECT_BUCKET_MANAGED_FOLDER.validatedMatch(
             formattedString, "ManagedFolderName.parse: formattedString not in valid format");
-    return of(matchMap.get("project"), matchMap.get("bucket"), matchMap.get("managedFolder"));
+    return of(matchMap.get("project"), matchMap.get("bucket"), matchMap.get("managed_folder"));
   }
 
   public static List<ManagedFolderName> parseList(List<String> formattedStrings) {
@@ -118,7 +118,7 @@ public class ManagedFolderName implements ResourceName {
   }
 
   public static boolean isParsableFrom(String formattedString) {
-    return PROJECT_BUCKET_MANAGEDFOLDER.matches(formattedString);
+    return PROJECT_BUCKET_MANAGED_FOLDER.matches(formattedString);
   }
 
   @Override
@@ -134,7 +134,7 @@ public class ManagedFolderName implements ResourceName {
             fieldMapBuilder.put("bucket", bucket);
           }
           if (managedFolder != null) {
-            fieldMapBuilder.put("managedFolder", managedFolder);
+            fieldMapBuilder.put("managed_folder", managedFolder);
           }
           fieldValuesMap = fieldMapBuilder.build();
         }
@@ -149,8 +149,8 @@ public class ManagedFolderName implements ResourceName {
 
   @Override
   public String toString() {
-    return PROJECT_BUCKET_MANAGEDFOLDER.instantiate(
-        "project", project, "bucket", bucket, "managedFolder", managedFolder);
+    return PROJECT_BUCKET_MANAGED_FOLDER.instantiate(
+        "project", project, "bucket", bucket, "managed_folder", managedFolder);
   }
 
   @Override
@@ -179,7 +179,7 @@ public class ManagedFolderName implements ResourceName {
     return h;
   }
 
-  /** Builder for projects/{project}/buckets/{bucket}/managedFolders/{managedFolder=&#42;&#42;}. */
+  /** Builder for projects/{project}/buckets/{bucket}/managedFolders/{managed_folder=&#42;&#42;}. */
   public static class Builder {
     private String project;
     private String bucket;

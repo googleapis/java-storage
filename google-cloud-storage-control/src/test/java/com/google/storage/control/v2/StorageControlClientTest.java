@@ -615,7 +615,7 @@ public class StorageControlClientTest {
   public void createManagedFolderTest() throws Exception {
     ManagedFolder expectedResponse =
         ManagedFolder.newBuilder()
-            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
             .setMetageneration(1048558813)
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
@@ -663,7 +663,7 @@ public class StorageControlClientTest {
   public void createManagedFolderTest2() throws Exception {
     ManagedFolder expectedResponse =
         ManagedFolder.newBuilder()
-            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
             .setMetageneration(1048558813)
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
@@ -712,7 +712,7 @@ public class StorageControlClientTest {
     Empty expectedResponse = Empty.newBuilder().build();
     mockStorageControl.addResponse(expectedResponse);
 
-    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
 
     client.deleteManagedFolder(name);
 
@@ -733,7 +733,7 @@ public class StorageControlClientTest {
     mockStorageControl.addException(exception);
 
     try {
-      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
       client.deleteManagedFolder(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
@@ -779,14 +779,14 @@ public class StorageControlClientTest {
   public void getManagedFolderTest() throws Exception {
     ManagedFolder expectedResponse =
         ManagedFolder.newBuilder()
-            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
             .setMetageneration(1048558813)
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
             .build();
     mockStorageControl.addResponse(expectedResponse);
 
-    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
 
     ManagedFolder actualResponse = client.getManagedFolder(name);
     Assert.assertEquals(expectedResponse, actualResponse);
@@ -808,7 +808,7 @@ public class StorageControlClientTest {
     mockStorageControl.addException(exception);
 
     try {
-      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]");
+      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
       client.getManagedFolder(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
@@ -820,7 +820,7 @@ public class StorageControlClientTest {
   public void getManagedFolderTest2() throws Exception {
     ManagedFolder expectedResponse =
         ManagedFolder.newBuilder()
-            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGEDFOLDER]").toString())
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
             .setMetageneration(1048558813)
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
