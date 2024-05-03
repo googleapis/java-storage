@@ -113,17 +113,6 @@ final class HttpWritableByteChannelSessionBuilder {
       return new BufferedResumableUploadBuilder(bufferHandle);
     }
 
-    /**
-     * When constructing any of our channel sessions, there is always a {@link
-     * GapicUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction
-     * which will instantiate the {@link GapicUnbufferedWritableByteChannel} when provided with a
-     * {@code StartT} value and a {@code SettableApiFuture<WriteObjectResponse>}.
-     *
-     * <p>As part of providing the function, the provided parameters {@code FlusherFactory} and
-     * {@code f} are "bound" into the returned function. In conjunction with the configured fields
-     * of this class a new instance of {@link GapicUnbufferedWritableByteChannel} can be
-     * constructed.
-     */
     private BiFunction<
             JsonResumableWrite, SettableApiFuture<StorageObject>, UnbufferedWritableByteChannel>
         bindFunction() {

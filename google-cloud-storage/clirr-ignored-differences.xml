@@ -78,4 +78,10 @@
     <method>com.google.cloud.storage.StorageOptions$Builder setBlobWriteSessionConfig(com.google.cloud.storage.BlobWriteSessionConfig)</method>
   </difference>
 
+  <!-- somehow clirr things a public class in a package-private class is part of the public api -->
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/cloud/storage/WriteFlushStrategy$DefaultBidiFlusher</className>
+  </difference>
+
 </differences>

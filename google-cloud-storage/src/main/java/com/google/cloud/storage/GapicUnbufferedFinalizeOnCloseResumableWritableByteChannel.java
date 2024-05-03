@@ -16,14 +16,15 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
+
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiStreamObserver;
+import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
-import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
-import com.google.cloud.storage.WriteFlushStrategy.Flusher;
-import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
@@ -34,33 +35,42 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class GapicUnbufferedWritableByteChannel<
-        RequestFactoryT extends WriteObjectRequestBuilderFactory>
+final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     implements UnbufferedWritableByteChannel {
 
   private final SettableApiFuture<WriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
+  private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
 
-  private final WriteCtx<RequestFactoryT> writeCtx;
-  private final Flusher flusher;
+  private final WriteCtx<ResumableWrite> writeCtx;
+
+  private final Observer responseObserver;
+  private volatile ApiStreamObserver<WriteObjectRequest> stream;
 
   private boolean open = true;
+  private boolean first = true;
   private boolean finished = false;
 
-  GapicUnbufferedWritableByteChannel(
+  GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
       SettableApiFuture<WriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
-      RequestFactoryT requestFactory,
-      FlusherFactory flusherFactory) {
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+      ResumableWrite requestFactory) {
+    String bucketName = requestFactory.bucketName();
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
 
+    GrpcCallContext internalContext =
+        contextWithBucketName(bucketName, GrpcCallContext.createDefault());
+    this.write = write.withDefaultCallContext(internalContext);
+
     this.writeCtx = new WriteCtx<>(requestFactory);
-    this.flusher =
-        flusherFactory.newFlusher(
-            requestFactory.bucketName(), writeCtx.getConfirmedBytes()::set, resultFuture::set);
+    this.responseObserver = new Observer(writeCtx.getConfirmedBytes()::set, resultFuture::set);
   }
 
   @Override
@@ -82,10 +92,12 @@ final class GapicUnbufferedWritableByteChannel<
 
   @Override
   public void close() throws IOException {
+    ApiStreamObserver<WriteObjectRequest> openedStream = openedStream();
     if (!finished) {
       WriteObjectRequest message = finishMessage();
       try {
-        flusher.close(message);
+        openedStream.onNext(message);
+        openedStream.onCompleted();
         finished = true;
       } catch (RuntimeException e) {
         resultFuture.setException(e);
@@ -93,18 +105,14 @@ final class GapicUnbufferedWritableByteChannel<
       }
     } else {
       try {
-        flusher.close(null);
+        openedStream.onCompleted();
       } catch (RuntimeException e) {
         resultFuture.setException(e);
         throw e;
       }
     }
     open = false;
-  }
-
-  @VisibleForTesting
-  WriteCtx<RequestFactoryT> getWriteCtx() {
-    return writeCtx;
+    responseObserver.await();
   }
 
   private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
@@ -117,6 +125,7 @@ final class GapicUnbufferedWritableByteChannel<
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
+    ApiStreamObserver<WriteObjectRequest> openedStream = openedStream();
     int bytesConsumed = 0;
     for (ChunkSegment datum : data) {
       Crc32cLengthKnown crc32c = datum.getCrc32c();
@@ -145,7 +154,8 @@ final class GapicUnbufferedWritableByteChannel<
         finished = true;
       }
 
-      WriteObjectRequest build = builder.build();
+      WriteObjectRequest build = possiblyPairDownRequest(builder, first).build();
+      first = false;
       messages.add(build);
       bytesConsumed += contentSize;
     }
@@ -155,7 +165,9 @@ final class GapicUnbufferedWritableByteChannel<
     }
 
     try {
-      flusher.flush(messages);
+      for (WriteObjectRequest message : messages) {
+        openedStream.onNext(message);
+      }
     } catch (RuntimeException e) {
       resultFuture.setException(e);
       throw e;
@@ -176,5 +188,96 @@ final class GapicUnbufferedWritableByteChannel<
     }
     WriteObjectRequest message = b.build();
     return message;
+  }
+
+  private ApiStreamObserver<WriteObjectRequest> openedStream() {
+    if (stream == null) {
+      synchronized (this) {
+        if (stream == null) {
+          stream = write.clientStreamingCall(responseObserver);
+        }
+      }
+    }
+    return stream;
+  }
+
+  /**
+   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
+   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
+   * messages.
+   */
+  private static WriteObjectRequest.Builder possiblyPairDownRequest(
+      WriteObjectRequest.Builder b, boolean firstMessageOfStream) {
+    if (firstMessageOfStream && b.getWriteOffset() == 0) {
+      return b;
+    }
+    if (b.getWriteOffset() > 0) {
+      b.clearWriteObjectSpec();
+    }
+
+    if (b.getWriteOffset() > 0 && !b.getFinishWrite()) {
+      b.clearObjectChecksums();
+    }
+    return b;
+  }
+
+  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
+
+    private final LongConsumer sizeCallback;
+    private final Consumer<WriteObjectResponse> completeCallback;
+
+    private final SettableApiFuture<Void> invocationHandle;
+    private volatile WriteObjectResponse last;
+
+    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
+      this.sizeCallback = sizeCallback;
+      this.completeCallback = completeCallback;
+      this.invocationHandle = SettableApiFuture.create();
+    }
+
+    @Override
+    public void onNext(WriteObjectResponse value) {
+      // incremental update
+      if (value.hasPersistedSize()) {
+        sizeCallback.accept(value.getPersistedSize());
+      } else if (value.hasResource()) {
+        sizeCallback.accept(value.getResource().getSize());
+      }
+      last = value;
+    }
+
+    /**
+     * observed exceptions so far
+     *
+     * <ol>
+     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
+     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
+     *   <li>{@link io.grpc.StatusRuntimeException}
+     * </ol>
+     */
+    @Override
+    public void onError(Throwable t) {
+      invocationHandle.setException(t);
+    }
+
+    @Override
+    public void onCompleted() {
+      if (last != null && last.hasResource()) {
+        completeCallback.accept(last);
+      }
+      invocationHandle.set(null);
+    }
+
+    void await() {
+      try {
+        invocationHandle.get();
+      } catch (InterruptedException | ExecutionException e) {
+        if (e.getCause() instanceof RuntimeException) {
+          throw (RuntimeException) e.getCause();
+        } else {
+          throw new RuntimeException(e);
+        }
+      }
+    }
   }
 }

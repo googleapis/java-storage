@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.WriteFlushStrategy.contextWithBucketName;
+import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;

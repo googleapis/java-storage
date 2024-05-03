@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,62 +22,66 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiStreamObserver;
-import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
-import com.google.storage.v2.BidiWriteObjectRequest;
-import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.WriteObjectRequest;
+import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
-  private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
+final class GapicUnbufferedChunkedResumableWritableByteChannel
+    implements UnbufferedWritableByteChannel {
+
+  private final SettableApiFuture<WriteObjectResponse> resultFuture;
+  private final ChunkSegmenter chunkSegmenter;
+  private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
+
+  private final String bucketName;
+  private final WriteCtx<ResumableWrite> writeCtx;
   private final RetryingDependencies deps;
   private final ResultRetryAlgorithm<?> alg;
-  private final String bucketName;
   private final Supplier<GrpcCallContext> baseContextSupplier;
-  private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
-  private final ChunkSegmenter chunkSegmenter;
+  private final LongConsumer sizeCallback;
+  private final Consumer<WriteObjectResponse> completeCallback;
 
-  private final BidiWriteCtx<BidiResumableWrite> writeCtx;
-  private final BidiObserver responseObserver;
-
-  private volatile ApiStreamObserver<BidiWriteObjectRequest> stream;
   private boolean open = true;
-  private boolean first = true;
   private boolean finished = false;
 
-  GapicBidiUnbufferedWritableByteChannel(
-      BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
+  GapicUnbufferedChunkedResumableWritableByteChannel(
+      SettableApiFuture<WriteObjectResponse> resultFuture,
+      @NonNull ChunkSegmenter chunkSegmenter,
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+      ResumableWrite requestFactory,
       RetryingDependencies deps,
       ResultRetryAlgorithm<?> alg,
-      SettableApiFuture<BidiWriteObjectResponse> resultFuture,
-      ChunkSegmenter chunkSegmenter,
-      BidiResumableWrite requestFactory,
       Supplier<GrpcCallContext> baseContextSupplier) {
+    this.resultFuture = resultFuture;
+    this.chunkSegmenter = chunkSegmenter;
     this.write = write;
+    this.bucketName = requestFactory.bucketName();
+    this.writeCtx = new WriteCtx<>(requestFactory);
     this.deps = deps;
     this.alg = alg;
     this.baseContextSupplier = baseContextSupplier;
-    this.bucketName = requestFactory.bucketName();
-    this.resultFuture = resultFuture;
-    this.chunkSegmenter = chunkSegmenter;
-
-    this.writeCtx = new BidiWriteCtx<>(requestFactory);
-    this.responseObserver = new BidiObserver();
+    this.sizeCallback = writeCtx.getConfirmedBytes()::set;
+    this.completeCallback = resultFuture::set;
   }
 
   @Override
@@ -86,10 +90,10 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   }
 
   @Override
-  public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
-    long written = internalWrite(srcs, offset, length, true);
+  public long writeAndClose(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    long write = internalWrite(srcs, srcsOffset, srcsLength, true);
     close();
-    return written;
+    return write;
   }
 
   @Override
@@ -99,30 +103,17 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
   @Override
   public void close() throws IOException {
-    if (!open) {
-      return;
-    }
-    ApiStreamObserver<BidiWriteObjectRequest> openedStream = openedStream();
-    if (!finished) {
-      BidiWriteObjectRequest message = finishMessage();
+    if (open && !finished) {
+      WriteObjectRequest message = finishMessage(true);
       try {
-        openedStream.onNext(message);
+        flush(ImmutableList.of(message));
         finished = true;
-        openedStream.onCompleted();
       } catch (RuntimeException e) {
         resultFuture.setException(e);
         throw e;
       }
-    } else {
-      openedStream.onCompleted();
     }
-    responseObserver.await();
     open = false;
-  }
-
-  @VisibleForTesting
-  BidiWriteCtx<BidiResumableWrite> getWriteCtx() {
-    return writeCtx;
   }
 
   private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
@@ -133,8 +124,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
 
-    List<BidiWriteObjectRequest> messages = new ArrayList<>();
+    List<WriteObjectRequest> messages = new ArrayList<>();
 
+    boolean first = true;
     int bytesConsumed = 0;
     for (ChunkSegment datum : data) {
       Crc32cLengthKnown crc32c = datum.getCrc32c();
@@ -149,7 +141,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       if (crc32c != null) {
         checksummedData.setCrc32C(crc32c.getValue());
       }
-      BidiWriteObjectRequest.Builder builder =
+      WriteObjectRequest.Builder builder =
           writeCtx
               .newRequestBuilder()
               .setWriteOffset(offset)
@@ -163,13 +155,13 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         finished = true;
       }
 
-      BidiWriteObjectRequest build = possiblyPairDownBidiRequest(builder, first).build();
+      WriteObjectRequest build = possiblyPairDownRequest(builder, first).build();
       first = false;
       messages.add(build);
       bytesConsumed += contentSize;
     }
     if (finalize && !finished) {
-      messages.add(finishMessage());
+      messages.add(finishMessage(first));
       finished = true;
     }
 
@@ -184,64 +176,48 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   }
 
   @NonNull
-  private BidiWriteObjectRequest finishMessage() {
+  private WriteObjectRequest finishMessage(boolean first) {
     long offset = writeCtx.getTotalSentBytes().get();
     Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
-    BidiWriteObjectRequest.Builder b =
+    WriteObjectRequest.Builder b =
         writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
     if (crc32cValue != null) {
       b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
     }
-    BidiWriteObjectRequest message = b.build();
+    WriteObjectRequest message = possiblyPairDownRequest(b, first).build();
     return message;
   }
 
-  private ApiStreamObserver<BidiWriteObjectRequest> openedStream() {
-    if (stream == null) {
-      synchronized (this) {
-        if (stream == null) {
-          GrpcCallContext internalContext =
-              contextWithBucketName(bucketName, baseContextSupplier.get());
-          stream =
-              this.write
-                  .withDefaultCallContext(internalContext)
-                  .bidiStreamingCall(responseObserver);
-          responseObserver.sem.drainPermits();
-        }
-      }
-    }
-    return stream;
-  }
+  private void flush(@NonNull List<WriteObjectRequest> segments) {
+    GrpcCallContext internalContext = contextWithBucketName(bucketName, baseContextSupplier.get());
+    ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> callable =
+        write.withDefaultCallContext(internalContext);
 
-  private void flush(@NonNull List<BidiWriteObjectRequest> segments) {
     Retrying.run(
         deps,
         alg,
         () -> {
-          try {
-            ApiStreamObserver<BidiWriteObjectRequest> opened = openedStream();
-            for (BidiWriteObjectRequest message : segments) {
-              opened.onNext(message);
-            }
-            if (!finished) {
-              BidiWriteObjectRequest message =
-                  BidiWriteObjectRequest.newBuilder().setFlush(true).setStateLookup(true).build();
-              opened.onNext(message);
-            }
-            responseObserver.await();
-            return null;
-          } catch (Exception e) {
-            stream = null;
-            first = true;
-            throw e;
+          Observer observer = new Observer(sizeCallback, completeCallback);
+          ApiStreamObserver<WriteObjectRequest> write = callable.clientStreamingCall(observer);
+
+          for (WriteObjectRequest message : segments) {
+            write.onNext(message);
           }
+          write.onCompleted();
+          observer.await();
+          return null;
         },
         Decoder.identity());
   }
 
-  private static BidiWriteObjectRequest.Builder possiblyPairDownBidiRequest(
-      BidiWriteObjectRequest.Builder b, boolean firstMessageOfStream) {
+  /**
+   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
+   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
+   * messages.
+   */
+  private static WriteObjectRequest.Builder possiblyPairDownRequest(
+      WriteObjectRequest.Builder b, boolean firstMessageOfStream) {
     if (firstMessageOfStream && b.getWriteOffset() == 0) {
       return b;
     }
@@ -260,58 +236,67 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     return b;
   }
 
-  private class BidiObserver implements ApiStreamObserver<BidiWriteObjectResponse> {
+  @VisibleForTesting
+  WriteCtx<?> getWriteCtx() {
+    return writeCtx;
+  }
 
-    private final Semaphore sem;
-    private volatile BidiWriteObjectResponse last;
-    private volatile RuntimeException previousError;
+  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
 
-    private BidiObserver() {
-      this.sem = new Semaphore(0);
+    private final LongConsumer sizeCallback;
+    private final Consumer<WriteObjectResponse> completeCallback;
+
+    private final SettableApiFuture<Void> invocationHandle;
+    private volatile WriteObjectResponse last;
+
+    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
+      this.sizeCallback = sizeCallback;
+      this.completeCallback = completeCallback;
+      this.invocationHandle = SettableApiFuture.create();
     }
 
     @Override
-    public void onNext(BidiWriteObjectResponse value) {
+    public void onNext(WriteObjectResponse value) {
       // incremental update
       if (value.hasPersistedSize()) {
-        writeCtx.getConfirmedBytes().set((value.getPersistedSize()));
+        sizeCallback.accept(value.getPersistedSize());
       } else if (value.hasResource()) {
-        writeCtx.getConfirmedBytes().set(value.getResource().getSize());
+        sizeCallback.accept(value.getResource().getSize());
       }
-      sem.release();
       last = value;
     }
 
+    /**
+     * observed exceptions so far
+     *
+     * <ol>
+     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
+     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
+     *   <li>{@link io.grpc.StatusRuntimeException}
+     * </ol>
+     */
     @Override
     public void onError(Throwable t) {
-      if (t instanceof RuntimeException) {
-        previousError = (RuntimeException) t;
-      }
-      sem.release();
+      invocationHandle.setException(t);
     }
 
     @Override
     public void onCompleted() {
       if (last != null && last.hasResource()) {
-        resultFuture.set(last);
+        completeCallback.accept(last);
       }
-      sem.release();
+      invocationHandle.set(null);
     }
 
     void await() {
       try {
-        sem.acquire();
-      } catch (InterruptedException e) {
+        invocationHandle.get();
+      } catch (InterruptedException | ExecutionException e) {
         if (e.getCause() instanceof RuntimeException) {
           throw (RuntimeException) e.getCause();
         } else {
           throw new RuntimeException(e);
         }
-      }
-      RuntimeException err = previousError;
-      if (err != null) {
-        previousError = null;
-        throw err;
       }
     }
   }
