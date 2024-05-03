@@ -28,26 +28,28 @@ import java.util.List;
 
 class AllowDivideAndConquerDownload {
 
-  public static void divideAndConquerDownloadAllowed(List<BlobInfo> blobs,
-      String bucketName, Path destinationDirectory) {
-    TransferManager transferManager = TransferManagerConfig.newBuilder()
-        .setAllowDivideAndConquerDownload(true)
-        .build()
-        .getService();
-    ParallelDownloadConfig parallelDownloadConfig = ParallelDownloadConfig.newBuilder()
-        .setBucketName(bucketName)
-        .setDownloadDirectory(destinationDirectory)
-        .build();
-    List<DownloadResult> results = transferManager
-        .downloadBlobs(blobs, parallelDownloadConfig)
-        .getDownloadResults();
+  public static void divideAndConquerDownloadAllowed(
+      List<BlobInfo> blobs, String bucketName, Path destinationDirectory) {
+    TransferManager transferManager =
+        TransferManagerConfig.newBuilder()
+            .setAllowDivideAndConquerDownload(true)
+            .build()
+            .getService();
+    ParallelDownloadConfig parallelDownloadConfig =
+        ParallelDownloadConfig.newBuilder()
+            .setBucketName(bucketName)
+            .setDownloadDirectory(destinationDirectory)
+            .build();
+    List<DownloadResult> results =
+        transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
     for (DownloadResult result : results) {
-      System.out.println("Download of " + result.getInput().getName()
-          + " completed with status "
-          + result.getStatus());
+      System.out.println(
+          "Download of "
+              + result.getInput().getName()
+              + " completed with status "
+              + result.getStatus());
     }
-
   }
 }
 // [END storage_transfer_manager_download_chunks_concurrently]
