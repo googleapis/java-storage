@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Clock;
+import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -93,12 +94,21 @@ public class HttpStorageOptions extends StorageOptions {
 
   @Override
   public int hashCode() {
-    return baseHashCode();
+    return Objects.hash(retryAlgorithmManager, blobWriteSessionConfig, baseHashCode());
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return obj instanceof HttpStorageOptions && baseEquals((HttpStorageOptions) obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof HttpStorageOptions)) {
+      return false;
+    }
+    HttpStorageOptions that = (HttpStorageOptions) o;
+    return Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
+        && Objects.equals(blobWriteSessionConfig, that.blobWriteSessionConfig)
+        && this.baseEquals(that);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -133,6 +143,9 @@ public class HttpStorageOptions extends StorageOptions {
 
     Builder(StorageOptions options) {
       super(options);
+      HttpStorageOptions hso = (HttpStorageOptions) options;
+      this.storageRetryStrategy = hso.retryAlgorithmManager.retryStrategy;
+      this.blobWriteSessionConfig = hso.blobWriteSessionConfig;
     }
 
     @Override
