@@ -84,10 +84,10 @@ final class TransferManagerImpl implements TransferManager {
       ParallelCompositeUploadBlobWriteSessionConfig pcuConfig =
           BlobWriteSessionConfigs.parallelCompositeUpload()
               .withExecutorSupplier(ExecutorSupplier.useExecutor(executor))
-              .withBufferAllocationStrategy(BufferAllocationStrategy.fixedPool(
-                  transferManagerConfig.getMaxWorkers(),
-                  transferManagerConfig.getPerWorkerBufferSize()))
-          ;
+              .withBufferAllocationStrategy(
+                  BufferAllocationStrategy.fixedPool(
+                      transferManagerConfig.getMaxWorkers(),
+                      transferManagerConfig.getPerWorkerBufferSize()));
       storageOptions = storageOptions.toBuilder().setBlobWriteSessionConfig(pcuConfig).build();
     }
     this.pcuQueue = new ConcurrentLinkedDeque<>();
