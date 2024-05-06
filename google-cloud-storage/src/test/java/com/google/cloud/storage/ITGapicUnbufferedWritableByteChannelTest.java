@@ -183,7 +183,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              reqFactory,
+              new WriteCtx<>(reqFactory),
               RetryingDependencies.attemptOnce(),
               Retrying.neverRetry(),
               Retrying::newCallContext);
@@ -266,7 +266,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              reqFactory,
+              new WriteCtx<>(reqFactory),
               TestUtils.defaultRetryingDeps(),
               new BasicResultRetryAlgorithm<Object>() {
                 @Override
@@ -323,7 +323,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              reqFactory,
+              new WriteCtx<>(reqFactory),
               RetryingDependencies.attemptOnce(),
               Retrying.neverRetry(),
               Retrying::newCallContext);

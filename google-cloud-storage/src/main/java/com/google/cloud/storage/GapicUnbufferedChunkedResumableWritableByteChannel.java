@@ -23,6 +23,7 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
@@ -41,10 +42,9 @@ import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GapicUnbufferedChunkedResumableWritableByteChannel
     implements UnbufferedWritableByteChannel {
@@ -58,30 +58,26 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
   private final RetryingDependencies deps;
   private final ResultRetryAlgorithm<?> alg;
   private final Supplier<GrpcCallContext> baseContextSupplier;
-  private final LongConsumer sizeCallback;
-  private final Consumer<WriteObjectResponse> completeCallback;
 
-  private boolean open = true;
+  private volatile boolean open = true;
   private boolean finished = false;
 
   GapicUnbufferedChunkedResumableWritableByteChannel(
       SettableApiFuture<WriteObjectResponse> resultFuture,
       @NonNull ChunkSegmenter chunkSegmenter,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      ResumableWrite requestFactory,
+      WriteCtx<ResumableWrite> writeCtx,
       RetryingDependencies deps,
       ResultRetryAlgorithm<?> alg,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
     this.write = write;
-    this.bucketName = requestFactory.bucketName();
-    this.writeCtx = new WriteCtx<>(requestFactory);
+    this.bucketName = writeCtx.getRequestFactory().bucketName();
+    this.writeCtx = writeCtx;
     this.deps = deps;
     this.alg = alg;
     this.baseContextSupplier = baseContextSupplier;
-    this.sizeCallback = writeCtx.getConfirmedBytes()::set;
-    this.completeCallback = resultFuture::set;
   }
 
   @Override
@@ -106,7 +102,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
     if (open && !finished) {
       WriteObjectRequest message = finishMessage(true);
       try {
-        flush(ImmutableList.of(message));
+        flush(ImmutableList.of(message), null, true);
         finished = true;
       } catch (RuntimeException e) {
         resultFuture.setException(e);
@@ -122,12 +118,13 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
       throw new ClosedChannelException();
     }
 
+    long begin = writeCtx.getConfirmedBytes().get();
+    RewindableContent content = RewindableContent.of(srcs, srcsOffset, srcsLength);
     ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
     boolean first = true;
-    int bytesConsumed = 0;
     for (ChunkSegment datum : data) {
       Crc32cLengthKnown crc32c = datum.getCrc32c();
       ByteString b = datum.getB();
@@ -144,8 +141,13 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
       WriteObjectRequest.Builder builder =
           writeCtx
               .newRequestBuilder()
+              .clearWriteObjectSpec()
+              .clearObjectChecksums()
               .setWriteOffset(offset)
               .setChecksummedData(checksummedData.build());
+      if (!first) {
+        builder.clearUploadId();
+      }
       if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
         if (cumulative != null) {
@@ -155,10 +157,9 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
         finished = true;
       }
 
-      WriteObjectRequest build = possiblyPairDownRequest(builder, first).build();
+      WriteObjectRequest build = builder.build();
       first = false;
       messages.add(build);
-      bytesConsumed += contentSize;
     }
     if (finalize && !finished) {
       messages.add(finishMessage(first));
@@ -166,12 +167,15 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
     }
 
     try {
-      flush(messages);
+      flush(messages, content, finalize);
     } catch (RuntimeException e) {
       resultFuture.setException(e);
       throw e;
     }
 
+    long end = writeCtx.getConfirmedBytes().get();
+
+    long bytesConsumed = end - begin;
     return bytesConsumed;
   }
 
@@ -182,14 +186,20 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
 
     WriteObjectRequest.Builder b =
         writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
+    if (!first) {
+      b.clearUploadId();
+    }
     if (crc32cValue != null) {
       b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
     }
-    WriteObjectRequest message = possiblyPairDownRequest(b, first).build();
+    WriteObjectRequest message = b.build();
     return message;
   }
 
-  private void flush(@NonNull List<WriteObjectRequest> segments) {
+  private void flush(
+      @NonNull List<WriteObjectRequest> segments,
+      @Nullable RewindableContent content,
+      boolean finalizing) {
     GrpcCallContext internalContext = contextWithBucketName(bucketName, baseContextSupplier.get());
     ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> callable =
         write.withDefaultCallContext(internalContext);
@@ -198,7 +208,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
         deps,
         alg,
         () -> {
-          Observer observer = new Observer(sizeCallback, completeCallback);
+          Observer observer = new Observer(content, finalizing);
           ApiStreamObserver<WriteObjectRequest> write = callable.clientStreamingCall(observer);
 
           for (WriteObjectRequest message : segments) {
@@ -211,81 +221,93 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
         Decoder.identity());
   }
 
-  /**
-   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
-   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
-   * messages.
-   */
-  private static WriteObjectRequest.Builder possiblyPairDownRequest(
-      WriteObjectRequest.Builder b, boolean firstMessageOfStream) {
-    if (firstMessageOfStream && b.getWriteOffset() == 0) {
-      return b;
-    }
-
-    if (!firstMessageOfStream) {
-      b.clearUploadId();
-    }
-
-    if (b.getWriteOffset() > 0) {
-      b.clearWriteObjectSpec();
-    }
-
-    if (b.getWriteOffset() > 0 && !b.getFinishWrite()) {
-      b.clearObjectChecksums();
-    }
-    return b;
-  }
-
   @VisibleForTesting
   WriteCtx<?> getWriteCtx() {
     return writeCtx;
   }
 
-  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
+  class Observer implements ApiStreamObserver<WriteObjectResponse> {
 
-    private final LongConsumer sizeCallback;
-    private final Consumer<WriteObjectResponse> completeCallback;
+    private final RewindableContent content;
+    private final boolean finalizing;
 
     private final SettableApiFuture<Void> invocationHandle;
     private volatile WriteObjectResponse last;
 
-    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
-      this.sizeCallback = sizeCallback;
-      this.completeCallback = completeCallback;
+    Observer(@Nullable RewindableContent content, boolean finalizing) {
+      this.content = content;
+      this.finalizing = finalizing;
       this.invocationHandle = SettableApiFuture.create();
     }
 
     @Override
     public void onNext(WriteObjectResponse value) {
-      // incremental update
-      if (value.hasPersistedSize()) {
-        sizeCallback.accept(value.getPersistedSize());
-      } else if (value.hasResource()) {
-        sizeCallback.accept(value.getResource().getSize());
-      }
       last = value;
     }
 
-    /**
-     * observed exceptions so far
-     *
-     * <ol>
-     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
-     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
-     *   <li>{@link io.grpc.StatusRuntimeException}
-     * </ol>
-     */
     @Override
     public void onError(Throwable t) {
-      invocationHandle.setException(t);
+      if (t instanceof OutOfRangeException) {
+        OutOfRangeException oore = (OutOfRangeException) t;
+        open = false;
+        invocationHandle.setException(
+            ResumableSessionFailureScenario.SCENARIO_5.toStorageException());
+      } else {
+        invocationHandle.setException(t);
+      }
     }
 
     @Override
     public void onCompleted() {
-      if (last != null && last.hasResource()) {
-        completeCallback.accept(last);
+      try {
+        if (last == null) {
+          throw new StorageException(
+              0, "onComplete without preceding onNext, unable to determine success.");
+        } else if (!finalizing && last.hasPersistedSize()) { // incremental
+          long totalSentBytes = writeCtx.getTotalSentBytes().get();
+          long persistedSize = last.getPersistedSize();
+
+          if (totalSentBytes == persistedSize) {
+            writeCtx.getConfirmedBytes().set(persistedSize);
+          } else if (persistedSize < totalSentBytes) {
+            long delta = totalSentBytes - persistedSize;
+            // rewind our content and any state that my have run ahead of the actual ack'd bytes
+            content.rewindTo(delta);
+            writeCtx.getTotalSentBytes().set(persistedSize);
+            writeCtx.getConfirmedBytes().set(persistedSize);
+          } else {
+            throw ResumableSessionFailureScenario.SCENARIO_7.toStorageException();
+          }
+        } else if (finalizing && last.hasResource()) {
+          long totalSentBytes = writeCtx.getTotalSentBytes().get();
+          long finalSize = last.getResource().getSize();
+          if (totalSentBytes == finalSize) {
+            writeCtx.getConfirmedBytes().set(finalSize);
+            resultFuture.set(last);
+          } else if (finalSize < totalSentBytes) {
+            throw ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException();
+          } else {
+            throw ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException();
+          }
+        } else if (!finalizing && last.hasResource()) {
+          throw ResumableSessionFailureScenario.SCENARIO_1.toStorageException();
+        } else if (finalizing && last.hasPersistedSize()) {
+          long totalSentBytes = writeCtx.getTotalSentBytes().get();
+          long persistedSize = last.getPersistedSize();
+          if (persistedSize < totalSentBytes) {
+            throw ResumableSessionFailureScenario.SCENARIO_3.toStorageException();
+          } else {
+            throw ResumableSessionFailureScenario.SCENARIO_2.toStorageException();
+          }
+        } else {
+          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException();
+        }
+      } catch (Throwable se) {
+        open = false;
+        invocationHandle.setException(se);
+      } finally {
+        invocationHandle.set(null);
       }
-      invocationHandle.set(null);
     }
 
     void await() {

@@ -61,6 +61,19 @@ abstract class RewindableContent extends AbstractHttpContent {
     return new ByteBufferContent(buffers);
   }
 
+  public static RewindableContent of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {
+    Preconditions.checkNotNull(srcs, "srcs must be non null");
+    if (!(0 <= srcsOffset && srcsOffset <= srcs.length)) {
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "srcsOffset out of bounds (0 <= %d && %d <= %d)",
+              srcsOffset, srcsOffset, srcs.length));
+    }
+    Preconditions.checkArgument(srcsLength >= 0, "srcsLength >= 0 (%d >= 0)", srcsLength);
+    int end = srcsOffset + srcsLength;
+    return new ByteBufferContent(Arrays.copyOfRange(srcs, srcsOffset, end));
+  }
+
   static RewindableContent of(Path path) throws IOException {
     return new PathRewindableContent(path);
   }
