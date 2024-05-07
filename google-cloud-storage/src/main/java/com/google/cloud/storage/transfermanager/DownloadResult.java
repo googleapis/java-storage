@@ -19,7 +19,6 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BlobInfo;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
@@ -33,7 +32,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class DownloadResult {
   static final Comparator<DownloadResult> COMPARATOR =
       Comparator.comparingInt(dr -> dr.getStatus().ordinal());
@@ -59,7 +57,6 @@ public final class DownloadResult {
    *
    * @see Builder#setInput(BlobInfo)
    */
-  @BetaApi
   public @NonNull BlobInfo getInput() {
     return input;
   }
@@ -70,7 +67,6 @@ public final class DownloadResult {
    *
    * @see Builder#setOutputDestination(Path)
    */
-  @BetaApi
   public @NonNull Path getOutputDestination() {
     checkState(
         status == TransferStatus.SUCCESS,
@@ -85,7 +81,6 @@ public final class DownloadResult {
    * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
    */
-  @BetaApi
   public @NonNull TransferStatus getStatus() {
     return status;
   }
@@ -97,7 +92,6 @@ public final class DownloadResult {
    *
    * @see Builder#setException(Exception)
    */
-  @BetaApi
   public @NonNull Exception getException() {
     checkState(
         status == TransferStatus.FAILED_TO_FINISH || status == TransferStatus.FAILED_TO_START,
@@ -136,7 +130,6 @@ public final class DownloadResult {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder(@NonNull BlobInfo blobInfo, @NonNull TransferStatus status) {
     return new Builder(blobInfo, status);
   }
@@ -146,7 +139,6 @@ public final class DownloadResult {
    *
    * @see DownloadResult
    */
-  @BetaApi
   public static final class Builder {
 
     private @NonNull BlobInfo input;
@@ -165,7 +157,6 @@ public final class DownloadResult {
      * @see DownloadResult#getInput()
      * @return the instance of the Builder with the value for input modified.
      */
-    @BetaApi
     public Builder setInput(@NonNull BlobInfo input) {
       this.input = input;
       return this;
@@ -178,7 +169,6 @@ public final class DownloadResult {
      * @see DownloadResult#getOutputDestination()
      * @return the instance of the Builder with the value for outputDestination modified.
      */
-    @BetaApi
     public Builder setOutputDestination(@NonNull Path outputDestination) {
       this.outputDestination = outputDestination;
       return this;
@@ -190,7 +180,6 @@ public final class DownloadResult {
      * @see TransferStatus
      * @return the instance of the Builder with the value for status modified.
      */
-    @BetaApi
     public Builder setStatus(@NonNull TransferStatus status) {
       this.status = status;
       return this;
@@ -204,7 +193,6 @@ public final class DownloadResult {
      * @see DownloadResult#getException()
      * @return the instance of the Builder with the value for exception modified.
      */
-    @BetaApi
     public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
@@ -215,7 +203,6 @@ public final class DownloadResult {
      *
      * @return {@link DownloadResult}
      */
-    @BetaApi
     public DownloadResult build() {
       checkNotNull(input);
       checkNotNull(status);

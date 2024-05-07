@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -34,7 +33,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class UploadJob {
 
   @NonNull private final List<ApiFuture<UploadResult>> uploadResults;
@@ -55,7 +53,6 @@ public final class UploadJob {
    *
    * @see Builder#setUploadResults(List)
    */
-  @BetaApi
   public List<UploadResult> getUploadResults() {
     return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(uploadResults));
   }
@@ -65,7 +62,6 @@ public final class UploadJob {
    *
    * @see Builder#setParallelUploadConfig(ParallelUploadConfig)
    */
-  @BetaApi
   public ParallelUploadConfig getParallelUploadConfig() {
     return parallelUploadConfig;
   }
@@ -96,7 +92,6 @@ public final class UploadJob {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -106,7 +101,6 @@ public final class UploadJob {
    *
    * @see UploadJob
    */
-  @BetaApi
   public static final class Builder {
 
     private @NonNull List<ApiFuture<UploadResult>> uploadResults;
@@ -123,7 +117,6 @@ public final class UploadJob {
      * @return the instance of the Builder with UploadResults modified.
      * @see UploadJob#getUploadResults()
      */
-    @BetaApi
     public Builder setUploadResults(@NonNull List<ApiFuture<UploadResult>> uploadResults) {
       this.uploadResults = ImmutableList.copyOf(uploadResults);
       return this;
@@ -135,7 +128,6 @@ public final class UploadJob {
      * @return the instance of the Builder with ParallelUploadConfig modified.
      * @see UploadJob#getParallelUploadConfig()
      */
-    @BetaApi
     public Builder setParallelUploadConfig(@NonNull ParallelUploadConfig parallelUploadConfig) {
       this.parallelUploadConfig = parallelUploadConfig;
       return this;
@@ -146,7 +138,6 @@ public final class UploadJob {
      *
      * @return {@link UploadJob}
      */
-    @BetaApi
     public UploadJob build() {
       checkNotNull(uploadResults);
       checkNotNull(parallelUploadConfig);

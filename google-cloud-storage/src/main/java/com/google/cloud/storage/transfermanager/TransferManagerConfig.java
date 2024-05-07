@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
@@ -26,7 +25,6 @@ import java.util.Objects;
  *
  * @see Builder
  */
-@BetaApi
 public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
@@ -53,7 +51,6 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setMaxWorkers(int)
    */
-  @BetaApi
   public int getMaxWorkers() {
     return maxWorkers;
   }
@@ -63,7 +60,6 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setPerWorkerBufferSize(int)
    */
-  @BetaApi
   public int getPerWorkerBufferSize() {
     return perWorkerBufferSize;
   }
@@ -74,7 +70,6 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setAllowDivideAndConquerDownload(boolean)
    */
-  @BetaApi
   public boolean isAllowDivideAndConquerDownload() {
     return allowDivideAndConquerDownload;
   }
@@ -93,7 +88,6 @@ public final class TransferManagerConfig {
    *     uploads</a> documentation for a more in depth explanation of the limitations of Parallel
    *     composite uploads.
    */
-  @BetaApi
   public boolean isAllowParallelCompositeUpload() {
     return allowParallelCompositeUpload;
   }
@@ -103,18 +97,15 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setStorageOptions(StorageOptions)
    */
-  @BetaApi
   public StorageOptions getStorageOptions() {
     return storageOptions;
   }
 
   /** The service object for {@link TransferManager} */
-  @BetaApi
   public TransferManager getService() {
     return new TransferManagerImpl(this, DefaultQos.of(this));
   }
 
-  @BetaApi
   public Builder toBuilder() {
     return new Builder()
         .setAllowDivideAndConquerDownload(allowDivideAndConquerDownload)
@@ -161,7 +152,6 @@ public final class TransferManagerConfig {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -171,7 +161,6 @@ public final class TransferManagerConfig {
    *
    * @see TransferManagerConfig
    */
-  @BetaApi
   public static class Builder {
 
     private int maxWorkers;
@@ -198,7 +187,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getMaxWorkers()
      */
-    @BetaApi
     public Builder setMaxWorkers(int maxWorkers) {
       this.maxWorkers = maxWorkers;
       return this;
@@ -212,7 +200,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getPerWorkerBufferSize()
      */
-    @BetaApi
     public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
       this.perWorkerBufferSize = perWorkerBufferSize;
       return this;
@@ -227,7 +214,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
      * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
-    @BetaApi
     public Builder setAllowDivideAndConquerDownload(boolean allowDivideAndConquerDownload) {
       this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
       return this;
@@ -242,7 +228,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
      * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
-    @BetaApi
     public Builder setAllowParallelCompositeUpload(boolean allowParallelCompositeUpload) {
       this.allowParallelCompositeUpload = allowParallelCompositeUpload;
       return this;
@@ -256,7 +241,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for storageOptions modified.
      * @see TransferManagerConfig#getStorageOptions()
      */
-    @BetaApi
     public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
       return this;
@@ -267,7 +251,6 @@ public final class TransferManagerConfig {
      *
      * @return {@link TransferManagerConfig}
      */
-    @BetaApi
     public TransferManagerConfig build() {
       return new TransferManagerConfig(
           maxWorkers,

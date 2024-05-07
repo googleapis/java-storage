@@ -18,7 +18,6 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -33,7 +32,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class ParallelDownloadConfig {
 
   @NonNull private final String stripPrefix;
@@ -57,7 +55,6 @@ public final class ParallelDownloadConfig {
    *
    * @see Builder#setStripPrefix(String)
    */
-  @BetaApi
   public @NonNull String getStripPrefix() {
     return stripPrefix;
   }
@@ -67,7 +64,6 @@ public final class ParallelDownloadConfig {
    *
    * @see Builder#setDownloadDirectory(Path)
    */
-  @BetaApi
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
   }
@@ -77,7 +73,6 @@ public final class ParallelDownloadConfig {
    *
    * @see Builder#setBucketName(String)
    */
-  @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
   }
@@ -88,7 +83,6 @@ public final class ParallelDownloadConfig {
    *
    * @see Builder#setOptionsPerRequest(List)
    */
-  @BetaApi
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
     return optionsPerRequest;
   }
@@ -128,12 +122,10 @@ public final class ParallelDownloadConfig {
    *
    * @see ParallelDownloadConfig
    */
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
 
-  @BetaApi
   public static final class Builder {
 
     @NonNull private String stripPrefix;
@@ -155,7 +147,6 @@ public final class ParallelDownloadConfig {
      * @return the builder instance with the value for stripPrefix modified.
      * @see ParallelDownloadConfig#getStripPrefix()
      */
-    @BetaApi
     public Builder setStripPrefix(String stripPrefix) {
       this.stripPrefix = stripPrefix;
       return this;
@@ -167,7 +158,6 @@ public final class ParallelDownloadConfig {
      * @return the builder instance with the value for downloadDirectory modified.
      * @see ParallelDownloadConfig#getDownloadDirectory()
      */
-    @BetaApi
     public Builder setDownloadDirectory(Path downloadDirectory) {
       this.downloadDirectory = downloadDirectory;
       return this;
@@ -179,7 +169,6 @@ public final class ParallelDownloadConfig {
      * @return the builder instance with the value for bucketName modified.
      * @see ParallelDownloadConfig#getBucketName()
      */
-    @BetaApi
     public Builder setBucketName(String bucketName) {
       this.bucketName = bucketName;
       return this;
@@ -192,7 +181,6 @@ public final class ParallelDownloadConfig {
      * @return the builder instance with the value for OptionsPerRequest modified.
      * @see ParallelDownloadConfig#getOptionsPerRequest()
      */
-    @BetaApi
     public Builder setOptionsPerRequest(List<BlobSourceOption> optionsPerRequest) {
       this.optionsPerRequest = ImmutableList.copyOf(optionsPerRequest);
       return this;
@@ -203,7 +191,6 @@ public final class ParallelDownloadConfig {
      *
      * @return {@link ParallelDownloadConfig}
      */
-    @BetaApi
     public ParallelDownloadConfig build() {
       checkNotNull(bucketName);
       checkNotNull(stripPrefix);
