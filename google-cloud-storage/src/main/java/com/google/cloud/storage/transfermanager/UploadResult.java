@@ -19,7 +19,6 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BlobInfo;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
@@ -31,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class UploadResult {
 
   @NonNull private final BlobInfo input;
@@ -55,7 +53,6 @@ public final class UploadResult {
    *
    * @see Builder#setInput(BlobInfo)
    */
-  @BetaApi
   public @NonNull BlobInfo getInput() {
     return input;
   }
@@ -66,7 +63,6 @@ public final class UploadResult {
    * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
    */
-  @BetaApi
   public @NonNull TransferStatus getStatus() {
     return status;
   }
@@ -77,7 +73,6 @@ public final class UploadResult {
    *
    * @see Builder#setUploadedBlob(BlobInfo)
    */
-  @BetaApi
   public @NonNull BlobInfo getUploadedBlob() {
     checkState(
         status == TransferStatus.SUCCESS,
@@ -93,7 +88,6 @@ public final class UploadResult {
    *
    * @see Builder#setException(Exception)
    */
-  @BetaApi
   public @NonNull Exception getException() {
     checkState(
         status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH,
@@ -132,7 +126,6 @@ public final class UploadResult {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
     return new Builder(input, status);
   }
@@ -142,7 +135,6 @@ public final class UploadResult {
    *
    * @see UploadResult
    */
-  @BetaApi
   public static final class Builder {
 
     private @NonNull BlobInfo input;
@@ -161,7 +153,6 @@ public final class UploadResult {
      * @return the Builder instance with the value for BlobInfo modified.
      * @see UploadResult#getInput()
      */
-    @BetaApi
     public Builder setInput(@NonNull BlobInfo input) {
       this.input = input;
       return this;
@@ -174,7 +165,6 @@ public final class UploadResult {
      * @see TransferStatus
      * @see UploadResult#getStatus()
      */
-    @BetaApi
     public Builder setStatus(@NonNull TransferStatus status) {
       this.status = status;
       return this;
@@ -186,7 +176,6 @@ public final class UploadResult {
      *
      * @return the Builder instance with the value for uploadedBlob modified.
      */
-    @BetaApi
     public Builder setUploadedBlob(@NonNull BlobInfo uploadedBlob) {
       this.uploadedBlob = uploadedBlob;
       return this;
@@ -200,7 +189,6 @@ public final class UploadResult {
      * @see UploadResult#getException()
      * @return the Builder instance with the value for exception modified.
      */
-    @BetaApi
     public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
@@ -211,7 +199,6 @@ public final class UploadResult {
      *
      * @return {@link UploadResult}
      */
-    @BetaApi
     public UploadResult build() {
       checkNotNull(input);
       checkNotNull(status);

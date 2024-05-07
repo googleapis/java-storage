@@ -18,7 +18,6 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -31,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class ParallelUploadConfig {
 
   private final boolean skipIfExists;
@@ -57,7 +55,6 @@ public final class ParallelUploadConfig {
    *
    * @see Builder#setSkipIfExists(boolean)
    */
-  @BetaApi
   public boolean isSkipIfExists() {
     return skipIfExists;
   }
@@ -67,7 +64,6 @@ public final class ParallelUploadConfig {
    *
    * @see Builder#setPrefix(String)
    */
-  @BetaApi
   public @NonNull String getPrefix() {
     return prefix;
   }
@@ -77,7 +73,6 @@ public final class ParallelUploadConfig {
    *
    * @see Builder#setBucketName(String)
    */
-  @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
   }
@@ -87,7 +82,6 @@ public final class ParallelUploadConfig {
    *
    * @see Builder#setWriteOptsPerRequest(List)
    */
-  @BetaApi
   public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
     return writeOptsPerRequest;
   }
@@ -122,7 +116,6 @@ public final class ParallelUploadConfig {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -141,7 +134,6 @@ public final class ParallelUploadConfig {
    *
    * @see ParallelUploadConfig
    */
-  @BetaApi
   public static final class Builder {
 
     private boolean skipIfExists;
@@ -162,7 +154,6 @@ public final class ParallelUploadConfig {
      * @return the builder instance with the value for skipIfExists modified.
      * @see ParallelUploadConfig#isSkipIfExists()
      */
-    @BetaApi
     public Builder setSkipIfExists(boolean skipIfExists) {
       this.skipIfExists = skipIfExists;
       return this;
@@ -174,7 +165,6 @@ public final class ParallelUploadConfig {
      * @return the builder instance with the value for prefix modified.
      * @see ParallelUploadConfig#getPrefix()
      */
-    @BetaApi
     public Builder setPrefix(@NonNull String prefix) {
       this.prefix = prefix;
       return this;
@@ -186,7 +176,6 @@ public final class ParallelUploadConfig {
      * @return the builder instance with the value for bucketName modified.
      * @see ParallelUploadConfig#getBucketName()
      */
-    @BetaApi
     public Builder setBucketName(@NonNull String bucketName) {
       this.bucketName = bucketName;
       return this;
@@ -199,7 +188,6 @@ public final class ParallelUploadConfig {
      * @return the builder instance with the value for WriteOptsPerRequest modified.
      * @see ParallelUploadConfig#getWriteOptsPerRequest()
      */
-    @BetaApi
     public Builder setWriteOptsPerRequest(@NonNull List<BlobWriteOption> writeOptsPerRequest) {
       this.writeOptsPerRequest = writeOptsPerRequest;
       return this;
@@ -210,7 +198,6 @@ public final class ParallelUploadConfig {
      *
      * @return {@link ParallelUploadConfig}
      */
-    @BetaApi
     public ParallelUploadConfig build() {
       checkNotNull(prefix);
       checkNotNull(bucketName);

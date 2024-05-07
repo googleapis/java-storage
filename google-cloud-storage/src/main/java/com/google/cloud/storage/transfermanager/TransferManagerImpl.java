@@ -18,7 +18,6 @@ package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.FixedHeaderProvider;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-@BetaApi
 final class TransferManagerImpl implements TransferManager {
 
   private static final String USER_AGENT_ENTRY = "gcloud-tm/";
@@ -103,7 +101,6 @@ final class TransferManagerImpl implements TransferManager {
   }
 
   @Override
-  @BetaApi
   public @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config)
       throws IOException {
     Storage.BlobWriteOption[] opts =
@@ -134,7 +131,6 @@ final class TransferManagerImpl implements TransferManager {
   }
 
   @Override
-  @BetaApi
   public @NonNull DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config) {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);

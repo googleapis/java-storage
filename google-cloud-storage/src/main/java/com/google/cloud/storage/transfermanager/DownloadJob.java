@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -34,7 +33,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @see Builder
  */
-@BetaApi
 public final class DownloadJob {
 
   @NonNull private final List<ApiFuture<DownloadResult>> downloadResults;
@@ -55,7 +53,6 @@ public final class DownloadJob {
    *
    * @see Builder#setDownloadResults(List)
    */
-  @BetaApi
   public @NonNull List<DownloadResult> getDownloadResults() {
     return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(downloadResults));
   }
@@ -65,7 +62,6 @@ public final class DownloadJob {
    *
    * @see Builder#setParallelDownloadConfig(ParallelDownloadConfig)
    */
-  @BetaApi
   public @NonNull ParallelDownloadConfig getParallelDownloadConfig() {
     return parallelDownloadConfig;
   }
@@ -96,7 +92,6 @@ public final class DownloadJob {
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -106,7 +101,6 @@ public final class DownloadJob {
    *
    * @see DownloadJob
    */
-  @BetaApi
   public static final class Builder {
 
     private @NonNull List<ApiFuture<DownloadResult>> downloadResults;
@@ -122,7 +116,6 @@ public final class DownloadJob {
      * @return the instance of the Builder with DownloadResults modified.
      * @see DownloadJob#getDownloadResults()
      */
-    @BetaApi
     public Builder setDownloadResults(@NonNull List<ApiFuture<DownloadResult>> downloadResults) {
       this.downloadResults = ImmutableList.copyOf(downloadResults);
       return this;
@@ -134,7 +127,6 @@ public final class DownloadJob {
      * @return the instance of the Builder with ParallelDownloadConfig modified.
      * @see DownloadJob#getParallelDownloadConfig()
      */
-    @BetaApi
     public Builder setParallelDownloadConfig(
         @NonNull ParallelDownloadConfig parallelDownloadConfig) {
       this.parallelDownloadConfig = parallelDownloadConfig;
@@ -146,7 +138,6 @@ public final class DownloadJob {
      *
      * @return {@link DownloadJob}
      */
-    @BetaApi
     public DownloadJob build() {
       checkNotNull(downloadResults);
       checkNotNull(parallelDownloadConfig);
