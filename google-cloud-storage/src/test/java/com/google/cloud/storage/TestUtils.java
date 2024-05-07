@@ -103,9 +103,9 @@ public final class TestUtils {
   }
 
   public static ApiException apiException(Code code, String message) {
-    StatusRuntimeException statusRuntimeException = code.toStatus().asRuntimeException();
-    DebugInfo debugInfo =
-        DebugInfo.newBuilder().setDetail("forced failure |~| " + code.name() + message).build();
+    StatusRuntimeException statusRuntimeException =
+        code.toStatus().withDescription(message).asRuntimeException();
+    DebugInfo debugInfo = DebugInfo.newBuilder().setDetail(message).build();
     ErrorDetails errorDetails =
         ErrorDetails.builder().setRawErrorMessages(ImmutableList.of(Any.pack(debugInfo))).build();
     return ApiExceptionFactory.createException(

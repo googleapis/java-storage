@@ -299,13 +299,13 @@ final class GapicWritableByteChannelSessionBuilder {
                         result,
                         getChunkSegmenter(),
                         write,
-                        ResumableWrite.identity(start),
+                        new WriteCtx<>(start),
                         deps,
                         alg,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, ResumableWrite.identity(start));
+                        result, getChunkSegmenter(), write, start);
                   }
                 })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
@@ -340,13 +340,13 @@ final class GapicWritableByteChannelSessionBuilder {
                         result,
                         getChunkSegmenter(),
                         write,
-                        ResumableWrite.identity(start),
+                        new WriteCtx<>(start),
                         deps,
                         alg,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, ResumableWrite.identity(start));
+                        result, getChunkSegmenter(), write, start);
                   }
                 })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))

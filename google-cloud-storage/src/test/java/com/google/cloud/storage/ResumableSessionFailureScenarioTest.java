@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.JsonResumableSessionFailureScenario.isContinue;
-import static com.google.cloud.storage.JsonResumableSessionFailureScenario.isOk;
+import static com.google.cloud.storage.ResumableSessionFailureScenario.isContinue;
+import static com.google.cloud.storage.ResumableSessionFailureScenario.isOk;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.client.http.EmptyContent;
@@ -33,7 +33,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 
-public final class JsonResumableSessionFailureScenarioTest {
+public final class ResumableSessionFailureScenarioTest {
   private static final GsonFactory gson = GsonFactory.getDefaultInstance();
 
   @Test
@@ -64,7 +64,7 @@ public final class JsonResumableSessionFailureScenarioTest {
     resp.getHeaders().setContentType("text/plain; charset=utf-8").setContentLength(5L);
 
     StorageException storageException =
-        JsonResumableSessionFailureScenario.SCENARIO_1.toStorageException(
+        ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
             "uploadId",
             resp,
             new Cause(),
@@ -105,7 +105,7 @@ public final class JsonResumableSessionFailureScenarioTest {
         .setContentLength((long) bytes.length);
 
     StorageException storageException =
-        JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+        ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
             "uploadId", resp, null, () -> json);
 
     assertThat(storageException.getCode()).isEqualTo(0);
@@ -128,7 +128,7 @@ public final class JsonResumableSessionFailureScenarioTest {
         .setContentLength(0L);
 
     StorageException storageException =
-        JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+        ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
             "uploadId", resp, null, () -> null);
 
     assertThat(storageException.getCode()).isEqualTo(0);
@@ -151,7 +151,7 @@ public final class JsonResumableSessionFailureScenarioTest {
     resp.getHeaders().set("X-Goog-Gcs-Idempotency-Token", "5").setContentLength(0L);
 
     StorageException storageException =
-        JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+        ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
             "uploadId", resp, null, () -> null);
 
     assertThat(storageException.getCode()).isEqualTo(0);

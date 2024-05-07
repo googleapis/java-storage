@@ -32,7 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @ParametersAreNonnullByDefault
-enum JsonResumableSessionFailureScenario {
+enum ResumableSessionFailureScenario {
   // TODO: send more bytes than are in the Content-Range header
   SCENARIO_0(BaseServiceException.UNKNOWN_CODE, null, "Unknown Error"),
   SCENARIO_0_1(BaseServiceException.UNKNOWN_CODE, null, "Response not application/json."),
@@ -87,7 +87,7 @@ enum JsonResumableSessionFailureScenario {
   @Nullable private final String reason;
   private final String message;
 
-  JsonResumableSessionFailureScenario(int code, @Nullable String reason, String message) {
+  ResumableSessionFailureScenario(int code, @Nullable String reason, String message) {
     this.code = code;
     this.reason = reason;
     this.message = message;
@@ -116,11 +116,15 @@ enum JsonResumableSessionFailureScenario {
     return toStorageException(code, message, reason, uploadId, resp, cause, contentCallable);
   }
 
+  StorageException toStorageException() {
+    return new StorageException(code, message, reason, null);
+  }
+
   static StorageException toStorageException(
       HttpResponse response, HttpResponseException cause, String uploadId) {
     String statusMessage = cause.getStatusMessage();
     StorageException se =
-        JsonResumableSessionFailureScenario.toStorageException(
+        ResumableSessionFailureScenario.toStorageException(
             cause.getStatusCode(),
             String.format(
                 "%d %s", cause.getStatusCode(), statusMessage == null ? "" : statusMessage),
