@@ -139,13 +139,19 @@ public final class StorageException extends BaseHttpServiceException {
     }
     // If there is a gRPC exception in our cause change pull it's error message up to be our
     // message otherwise, create a generic error message with the status code.
-    String statusCodeName = statusCode.getCode().name();
-    String statusExceptionMessage = getStatusExceptionMessage(apiEx);
-
-    String message;
-    if (statusExceptionMessage != null) {
-      message = statusCodeName + ": " + statusExceptionMessage;
-    } else {
+    String message = null;
+    if (apiEx.getCause() != null) {
+      Throwable cause = apiEx.getCause();
+      if (cause instanceof StatusRuntimeException || cause instanceof StatusException) {
+        message = cause.getMessage();
+      }
+      // if not a grpc exception fall through to the default handling
+    }
+    if (message == null && apiEx.getMessage() != null) {
+      message = apiEx.getMessage();
+    }
+    if (message == null) {
+      String statusCodeName = statusCode.getCode().name();
       message = "Error: " + statusCodeName;
     }
 
@@ -195,19 +201,6 @@ public final class StorageException extends BaseHttpServiceException {
       return ApiExceptions.callAndTranslateApiException(f);
     } catch (Exception e) {
       throw StorageException.coalesce(e);
-    }
-  }
-
-  @Nullable
-  private static String getStatusExceptionMessage(Exception apiEx) {
-    if (apiEx.getMessage() != null) {
-      return apiEx.getMessage();
-    } else {
-      Throwable cause = apiEx.getCause();
-      if (cause instanceof StatusRuntimeException || cause instanceof StatusException) {
-        return cause.getMessage();
-      }
-      return null;
     }
   }
 

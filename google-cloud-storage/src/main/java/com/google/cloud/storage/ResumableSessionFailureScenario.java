@@ -16,19 +16,31 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.ifNonNull;
+
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.StorageException.IOExceptionCallable;
 import com.google.common.io.CharStreams;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.WriteObjectRequest;
+import com.google.storage.v2.WriteObjectResponse;
+import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @ParametersAreNonnullByDefault
@@ -69,6 +81,10 @@ enum ResumableSessionFailureScenario {
   private static final String PREFIX_I = "\t|< ";
   private static final String PREFIX_O = "\t|> ";
   private static final String PREFIX_X = "\t|  ";
+  // define some constants for tab widths that are more compressed that the literals
+  private static final String T1 = "\t";
+  private static final String T2 = "\t\t";
+  private static final String T3 = "\t\t\t";
 
   private static final Predicate<String> includedHeaders =
       matches("Content-Length")
@@ -78,6 +94,7 @@ enum ResumableSessionFailureScenario {
           .or(matches("Range"))
           .or(startsWith("X-Goog-Stored-"))
           .or(matches("X-Goog-GCS-Idempotency-Token"))
+          .or(matches("X-Goog-request-params"))
           .or(matches("X-GUploader-UploadID"));
 
   private static final Predicate<Map.Entry<String, ?>> includeHeader =
@@ -116,8 +133,12 @@ enum ResumableSessionFailureScenario {
     return toStorageException(code, message, reason, uploadId, resp, cause, contentCallable);
   }
 
-  StorageException toStorageException() {
-    return new StorageException(code, message, reason, null);
+  StorageException toStorageException(
+      @NonNull List<@NonNull WriteObjectRequest> reqs,
+      @Nullable WriteObjectResponse resp,
+      @NonNull GrpcCallContext context,
+      @Nullable Throwable cause) {
+    return toStorageException(code, message, reason, reqs, resp, context, cause);
   }
 
   static StorageException toStorageException(
@@ -134,6 +155,102 @@ enum ResumableSessionFailureScenario {
             cause,
             () -> null);
     return se;
+  }
+
+  static StorageException toStorageException(
+      int code,
+      String message,
+      @Nullable String reason,
+      @NonNull List<@NonNull WriteObjectRequest> reqs,
+      @Nullable WriteObjectResponse resp,
+      @NonNull GrpcCallContext context,
+      @Nullable Throwable cause) {
+    final StringBuilder sb = new StringBuilder();
+    sb.append(message);
+    // request context
+    Map<String, List<String>> extraHeaders = context.getExtraHeaders();
+    recordHeadersTo(extraHeaders, PREFIX_O, sb);
+    int length = reqs.size();
+    for (int i = 0; i < length; i++) {
+      if (i == 0) {
+        sb.append("\n").append(PREFIX_O).append("[");
+      } else {
+        sb.append(",");
+      }
+      WriteObjectRequest req = reqs.get(i);
+      sb.append("\n").append(PREFIX_O).append(T1).append(req.getClass().getName()).append("{");
+      if (req.hasUploadId()) {
+        sb.append("\n").append(PREFIX_O).append(T2).append("upload_id: ").append(req.getUploadId());
+      }
+      long writeOffset = req.getWriteOffset();
+      if (req.hasChecksummedData()) {
+        ChecksummedData checksummedData = req.getChecksummedData();
+        sb.append("\n").append(PREFIX_O).append(T2);
+        sb.append(
+            String.format(
+                "checksummed_data: {range: [%d:%d]",
+                writeOffset, writeOffset + checksummedData.getContent().size()));
+        if (checksummedData.hasCrc32C()) {
+          sb.append(", crc32c: ").append(checksummedData.getCrc32C());
+        }
+        sb.append("}");
+      } else {
+        sb.append("\n").append(PREFIX_O).append(T2).append("write_offset: ").append(writeOffset);
+      }
+      if (req.getFinishWrite()) {
+        sb.append("\n").append(PREFIX_O).append(T2).append("finish_write: true");
+      }
+      if (req.hasObjectChecksums()) {
+        ObjectChecksums objectChecksums = req.getObjectChecksums();
+        sb.append("\n").append(PREFIX_O).append(T2).append("object_checksums: ").append("{");
+        fmt(objectChecksums, PREFIX_O, T3, sb);
+        sb.append("\n").append(PREFIX_O).append(T2).append("}");
+      }
+      sb.append("\n").append(PREFIX_O).append("\t}");
+      if (i == length - 1) {
+        sb.append("\n").append(PREFIX_O).append("]");
+      }
+    }
+
+    sb.append("\n").append(PREFIX_X);
+
+    // response context
+    if (resp != null) {
+      sb.append("\n").append(PREFIX_I).append(resp.getClass().getName()).append("{");
+      fmt(resp, PREFIX_I, T1, sb);
+      sb.append("\n").append(PREFIX_I).append("}");
+      sb.append("\n").append(PREFIX_X);
+    }
+
+    if (cause != null) {
+      if (cause instanceof ApiException) {
+        ApiException apiException = (ApiException) cause;
+        Throwable cause1 = apiException.getCause();
+        if (cause1 instanceof StatusRuntimeException) {
+          StatusRuntimeException statusRuntimeException = (StatusRuntimeException) cause1;
+          sb.append("\n").append(PREFIX_I).append(statusRuntimeException.getStatus());
+          ifNonNull(
+              statusRuntimeException.getTrailers(),
+              t -> sb.append("\n").append(PREFIX_I).append(t));
+        } else {
+          sb.append("\n")
+              .append(PREFIX_I)
+              .append("code: ")
+              .append(apiException.getStatusCode().toString());
+          ifNonNull(
+              apiException.getReason(),
+              r -> sb.append("\n").append(PREFIX_I).append("reason: ").append(r));
+          ifNonNull(
+              apiException.getDomain(),
+              d -> sb.append("\n").append(PREFIX_I).append("domain: ").append(d));
+          ifNonNull(
+              apiException.getErrorDetails(),
+              e -> sb.append("\n").append(PREFIX_I).append("errorDetails: ").append(e));
+        }
+        sb.append("\n").append(PREFIX_X);
+      }
+    }
+    return new StorageException(code, sb.toString(), reason, cause);
   }
 
   static StorageException toStorageException(
@@ -213,14 +330,21 @@ enum ResumableSessionFailureScenario {
   }
 
   private static void recordHeaderTo(HttpHeaders h, String prefix, StringBuilder sb) {
-    h.entrySet().stream()
-        .filter(includeHeader)
-        .forEach(
-            e -> {
-              String key = e.getKey();
-              String value = headerValueToString(e.getValue());
-              sb.append("\n").append(prefix).append(key).append(": ").append(value);
-            });
+    h.entrySet().stream().filter(includeHeader).forEach(writeHeaderValue(prefix, sb));
+  }
+
+  private static void recordHeadersTo(
+      Map<String, List<String>> headers, String prefix, StringBuilder sb) {
+    headers.entrySet().stream().filter(includeHeader).forEach(writeHeaderValue(prefix, sb));
+  }
+
+  private static <V> Consumer<Map.Entry<String, V>> writeHeaderValue(
+      String prefix, StringBuilder sb) {
+    return e -> {
+      String key = e.getKey();
+      String value = headerValueToString(e.getValue());
+      sb.append("\n").append(prefix).append(key).append(": ").append(value);
+    };
   }
 
   private static String headerValueToString(Object o) {
@@ -232,5 +356,19 @@ enum ResumableSessionFailureScenario {
     }
 
     return o.toString();
+  }
+
+  private static void fmt(
+      MessageOrBuilder msg,
+      @SuppressWarnings("SameParameterValue") String prefix,
+      String indentation,
+      StringBuilder sb) {
+    String string = msg.toString();
+    // drop the final new line before prefixing
+    string = string.replaceAll("\n$", "");
+    sb.append("\n")
+        .append(prefix)
+        .append(indentation)
+        .append(string.replaceAll("\r?\n", "\n" + prefix + indentation));
   }
 }

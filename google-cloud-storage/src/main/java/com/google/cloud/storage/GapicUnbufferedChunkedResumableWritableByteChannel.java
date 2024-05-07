@@ -21,6 +21,7 @@ import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.OutOfRangeException;
@@ -208,14 +209,19 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
         deps,
         alg,
         () -> {
-          Observer observer = new Observer(content, finalizing);
+          Observer observer = new Observer(content, finalizing, segments, internalContext);
           ApiStreamObserver<WriteObjectRequest> write = callable.clientStreamingCall(observer);
 
           for (WriteObjectRequest message : segments) {
             write.onNext(message);
           }
           write.onCompleted();
-          observer.await();
+          try {
+            observer.await();
+          } catch (Throwable t) {
+            t.addSuppressed(new AsyncStorageTaskException());
+            throw t;
+          }
           return null;
         },
         Decoder.identity());
@@ -230,13 +236,21 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
 
     private final RewindableContent content;
     private final boolean finalizing;
+    private final List<WriteObjectRequest> segments;
+    private final GrpcCallContext context;
 
     private final SettableApiFuture<Void> invocationHandle;
     private volatile WriteObjectResponse last;
 
-    Observer(@Nullable RewindableContent content, boolean finalizing) {
+    Observer(
+        @Nullable RewindableContent content,
+        boolean finalizing,
+        @NonNull List<WriteObjectRequest> segments,
+        GrpcCallContext context) {
       this.content = content;
       this.finalizing = finalizing;
+      this.segments = segments;
+      this.context = context;
       this.invocationHandle = SettableApiFuture.create();
     }
 
@@ -250,10 +264,20 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
       if (t instanceof OutOfRangeException) {
         OutOfRangeException oore = (OutOfRangeException) t;
         open = false;
-        invocationHandle.setException(
-            ResumableSessionFailureScenario.SCENARIO_5.toStorageException());
-      } else {
-        invocationHandle.setException(t);
+        StorageException storageException =
+            ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                segments, null, context, oore);
+        invocationHandle.setException(storageException);
+      } else if (t instanceof ApiException) {
+        // use StorageExceptions logic to translate from ApiException to our status codes ensuring
+        // things fall in line with our retry handlers.
+        // This is suboptimal, as it will initialize a second exception, however this is the
+        // unusual case, and it should not cause a significant overhead given its rarity.
+        StorageException tmp = StorageException.asStorageException((ApiException) t);
+        StorageException storageException =
+            ResumableSessionFailureScenario.toStorageException(
+                tmp.getCode(), tmp.getMessage(), tmp.getReason(), segments, null, context, t);
+        invocationHandle.setException(storageException);
       }
     }
 
@@ -276,7 +300,8 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
             writeCtx.getTotalSentBytes().set(persistedSize);
             writeCtx.getConfirmedBytes().set(persistedSize);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_7.toStorageException();
+            throw ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
+                segments, last, context, null);
           }
         } else if (finalizing && last.hasResource()) {
           long totalSentBytes = writeCtx.getTotalSentBytes().get();
@@ -285,22 +310,28 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
             writeCtx.getConfirmedBytes().set(finalSize);
             resultFuture.set(last);
           } else if (finalSize < totalSentBytes) {
-            throw ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException();
+            throw ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+                segments, last, context, null);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException();
+            throw ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+                segments, last, context, null);
           }
         } else if (!finalizing && last.hasResource()) {
-          throw ResumableSessionFailureScenario.SCENARIO_1.toStorageException();
+          throw ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
+              segments, last, context, null);
         } else if (finalizing && last.hasPersistedSize()) {
           long totalSentBytes = writeCtx.getTotalSentBytes().get();
           long persistedSize = last.getPersistedSize();
           if (persistedSize < totalSentBytes) {
-            throw ResumableSessionFailureScenario.SCENARIO_3.toStorageException();
+            throw ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
+                segments, last, context, null);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_2.toStorageException();
+            throw ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
+                segments, last, context, null);
           }
         } else {
-          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException();
+          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+              segments, last, context, null);
         }
       } catch (Throwable se) {
         open = false;
