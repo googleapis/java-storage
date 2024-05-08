@@ -16,8 +16,12 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._256KiB;
+import static com.google.cloud.storage.ByteSizeConstants._512KiB;
+import static com.google.cloud.storage.ResumableSessionFailureScenario.SCENARIO_1;
 import static com.google.cloud.storage.ResumableSessionFailureScenario.isContinue;
 import static com.google.cloud.storage.ResumableSessionFailureScenario.isOk;
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.client.http.EmptyContent;
@@ -26,8 +30,24 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.testing.http.MockHttpTransport;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.storage.it.ChecksummedTestContent;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.protobuf.ByteString;
+import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.WriteObjectRequest;
+import com.google.storage.v2.WriteObjectResponse;
+import io.grpc.Metadata;
+import io.grpc.Status.Code;
+import io.grpc.StatusRuntimeException;
+import io.grpc.internal.GrpcUtil;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -156,6 +176,117 @@ public final class ResumableSessionFailureScenarioTest {
 
     assertThat(storageException.getCode()).isEqualTo(0);
     assertThat(storageException).hasMessageThat().contains("|< x-goog-gcs-idempotency-token: 5");
+  }
+
+  @Test
+  public void grpc_response() throws Exception {
+    ChecksummedTestContent content =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_256KiB));
+    WriteObjectRequest req1 =
+        WriteObjectRequest.newBuilder()
+            .setUploadId("uploadId")
+            .setChecksummedData(
+                ChecksummedData.newBuilder()
+                    .setContent(
+                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
+                    .build())
+            .build();
+    WriteObjectRequest req2 =
+        WriteObjectRequest.newBuilder()
+            .setWriteOffset(_256KiB)
+            .setChecksummedData(
+                ChecksummedData.newBuilder()
+                    .setContent(ByteString.copyFrom(content.getBytes()))
+                    .setCrc32C(content.getCrc32c())
+                    .build())
+            .build();
+    WriteObjectRequest req3 =
+        WriteObjectRequest.newBuilder()
+            .setWriteOffset(_512KiB)
+            .setFinishWrite(true)
+            .setObjectChecksums(
+                ObjectChecksums.newBuilder()
+                    .setCrc32C(345)
+                    .setMd5Hash(ByteString.copyFromUtf8("asdf"))
+                    .build())
+            .build();
+    WriteObjectResponse resp1 =
+        WriteObjectResponse.newBuilder()
+            .setResource(Object.newBuilder().setName("obj").setSize(_512KiB).build())
+            .build();
+    GrpcCallContext context =
+        GrpcCallContext.createDefault()
+            .withExtraHeaders(
+                ImmutableMap.of(
+                    "x-goog-request-params",
+                    ImmutableList.of("bucket=projects/_/bucket/bucket-name")));
+    StorageException se =
+        SCENARIO_1.toStorageException(ImmutableList.of(req1, req2, req3), resp1, context, null);
+    assertAll(
+        () ->
+            assertThat(se)
+                .hasMessageThat()
+                .contains("x-goog-request-params: bucket=projects/_/bucket/bucket-name"),
+        () -> assertThat(se).hasMessageThat().contains("upload_id: "),
+        () -> assertThat(se).hasMessageThat().contains("0:262144"),
+        () -> assertThat(se).hasMessageThat().contains(", crc32c: "), // from ChecksummedData
+        () -> assertThat(se).hasMessageThat().contains("write_offset: "),
+        () -> assertThat(se).hasMessageThat().contains("finish_write: "),
+        () -> assertThat(se).hasMessageThat().contains("object_checksums: "),
+        () -> assertThat(se).hasMessageThat().contains("crc32c: "), // from object_checksums
+        () -> assertThat(se).hasMessageThat().contains("md5_hash: "),
+        () -> assertThat(se).hasMessageThat().contains("resource {"));
+  }
+
+  @Test
+  public void grpc_apiException() throws Exception {
+    WriteObjectRequest req1 =
+        WriteObjectRequest.newBuilder()
+            .setUploadId("uploadId")
+            .setChecksummedData(
+                ChecksummedData.newBuilder()
+                    .setContent(
+                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
+                    .build())
+            .build();
+    GrpcCallContext context = Retrying.newCallContext();
+    Code code = Code.FAILED_PRECONDITION;
+    Metadata trailers = new Metadata();
+    trailers.put(GrpcUtil.USER_AGENT_KEY, "test-class/");
+    StatusRuntimeException statusRuntimeException =
+        code.toStatus().withDescription("precondition did not hold").asRuntimeException(trailers);
+    ApiException apiException =
+        ApiExceptionFactory.createException(statusRuntimeException, GrpcStatusCode.of(code), true);
+
+    StorageException se =
+        SCENARIO_1.toStorageException(ImmutableList.of(req1), null, context, apiException);
+    assertAll(
+        () -> assertThat(se).hasMessageThat().contains("upload_id: "),
+        () -> assertThat(se).hasMessageThat().contains("0:262144"),
+        () -> assertThat(se).hasMessageThat().doesNotContain("WriteObjectResponse"),
+        () -> assertThat(se).hasMessageThat().contains("Status{code=FAILED_PRECONDITION"),
+        () -> assertThat(se).hasMessageThat().contains("user-agent=test-class/"));
+  }
+
+  @Test
+  public void grpc_nonApiException() throws Exception {
+    WriteObjectRequest req1 =
+        WriteObjectRequest.newBuilder()
+            .setUploadId("uploadId")
+            .setChecksummedData(
+                ChecksummedData.newBuilder()
+                    .setContent(
+                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
+                    .build())
+            .build();
+    GrpcCallContext context = Retrying.newCallContext();
+    Cause cause = new Cause();
+    StorageException se =
+        SCENARIO_1.toStorageException(ImmutableList.of(req1), null, context, cause);
+    assertAll(
+        () -> assertThat(se).hasMessageThat().contains("upload_id: "),
+        () -> assertThat(se).hasMessageThat().contains("0:262144"),
+        () -> assertThat(se).hasMessageThat().doesNotContain("WriteObjectResponse"));
   }
 
   private static final class Cause extends RuntimeException {
