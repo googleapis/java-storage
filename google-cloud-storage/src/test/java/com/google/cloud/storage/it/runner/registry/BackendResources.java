@@ -26,6 +26,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -119,12 +120,17 @@ final class BackendResources implements ManagedLifecycle {
                 new StorageInstance(
                     backend == Backend.TEST_BENCH
                         ? StorageOptions.grpc()
+                            .setGrpcInterceptorProvider(
+                                GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                             .setCredentials(NoCredentials.getInstance())
                             // TODO: improve this
                             .setHost(Registry.getInstance().testBench().getGRPCBaseUri())
                             .setProjectId("test-project-id")
                             .build()
-                        : StorageOptions.grpc().build(),
+                        : StorageOptions.grpc()
+                            .setGrpcInterceptorProvider(
+                                GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+                            .build(),
                     protectedBucketNames));
     TestRunScopedInstance<BucketInfoShim> bucket =
         TestRunScopedInstance.of(
