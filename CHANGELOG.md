@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.38.0](https://github.com/googleapis/java-storage/compare/v2.37.0...v2.38.0) (2024-05-09)
+
+
+### Features
+
+* Promoted google-cloud-storage-control to beta ([#2531](https://github.com/googleapis/java-storage/issues/2531)) ([09f7191](https://github.com/googleapis/java-storage/commit/09f719194fd9296ecb21758096b8e65eb208dfc2))
+
+
+### Bug Fixes
+
+* Add strict client side response validation for gRPC chunked resumable uploads ([#2527](https://github.com/googleapis/java-storage/issues/2527)) ([c1d1f4a](https://github.com/googleapis/java-storage/commit/c1d1f4a5c88d27296f69df0a832659e2b1eb9ca0))
+* An existing resource pattern value `projects/{project}/buckets/{bucket}/managedFolders/{managedFolder=**}` to resource definition `storage.googleapis.com/ManagedFolder` is removed ([#2524](https://github.com/googleapis/java-storage/issues/2524)) ([7d7f526](https://github.com/googleapis/java-storage/commit/7d7f5263f7e7f5357c5970c68c4d6ff117fc9e93))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.39.0 ([#2501](https://github.com/googleapis/java-storage/issues/2501)) ([518d4be](https://github.com/googleapis/java-storage/commit/518d4beefdc3738fd19168baccd4016dd002d4fa))
+* ParallelCompositeUpload in Transfer Manager hangs when encountering OOM ([#2526](https://github.com/googleapis/java-storage/issues/2526)) ([67a7c6b](https://github.com/googleapis/java-storage/commit/67a7c6b6582b5afab9272b32e01897d009e7c0bf))
+* Update grpc WriteObject response handling to provide context when a failure happens ([#2532](https://github.com/googleapis/java-storage/issues/2532)) ([170a3f5](https://github.com/googleapis/java-storage/commit/170a3f54c8ccb6af108c35992e652c07ebb1109c))
+* Update GzipReadableByteChannel to be tolerant of one byte reads ([#2512](https://github.com/googleapis/java-storage/issues/2512)) ([87b63f4](https://github.com/googleapis/java-storage/commit/87b63f4995f7b9654f40a9585996ec4a73235858))
+* Update StorageOptions to carry forward fields that aren't part of ServiceOptions ([#2521](https://github.com/googleapis/java-storage/issues/2521)) ([b84654e](https://github.com/googleapis/java-storage/commit/b84654e79ee53087badc0315ea3fb2d1b0b9ca57))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.30.0 ([#2523](https://github.com/googleapis/java-storage/issues/2523)) ([3e573f7](https://github.com/googleapis/java-storage/commit/3e573f79b3935e423e200537549507ab1f252ada))
+* Update dependency info.picocli:picocli to v4.7.6 ([#2535](https://github.com/googleapis/java-storage/issues/2535)) ([f26888a](https://github.com/googleapis/java-storage/commit/f26888ab1467d6bbcad9bfced9360daa4abd2824))
+
+
+### Documentation
+
+* Add in Transfer Manager chunked upload/download samples ([#2518](https://github.com/googleapis/java-storage/issues/2518)) ([d1f6bcc](https://github.com/googleapis/java-storage/commit/d1f6bccc2c9b5da5c4ff196711c5cd410649d60f))
+* Update readme to include gradle instructions for storage control ([#2503](https://github.com/googleapis/java-storage/issues/2503)) ([50ac93b](https://github.com/googleapis/java-storage/commit/50ac93b6b61806911737e389253739436dfb515c))
+* Update TransportCompatibility annotation for Storage#blobWriteSession ([#2520](https://github.com/googleapis/java-storage/issues/2520)) ([b7d673c](https://github.com/googleapis/java-storage/commit/b7d673cbac52407d470eace9d08e1cea2584da30))
+
 ## [2.37.0](https://github.com/googleapis/java-storage/compare/v2.36.1...v2.37.0) (2024-04-19)
 
 
