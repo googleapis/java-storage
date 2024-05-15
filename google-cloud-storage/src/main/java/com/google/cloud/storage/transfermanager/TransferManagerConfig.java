@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
@@ -106,7 +108,12 @@ public final class TransferManagerConfig {
     return storageOptions;
   }
 
-  public PartNamingStrategy getPartNamingStrategy() {
+  /**
+   * Part Naming Strategy to be used during Parallel Composite Uploads
+   *
+   * @see Builder#setParallelCompositeUploadPartNamingStrategy(PartNamingStrategy)
+   */
+  public PartNamingStrategy getParallelCompositeUploadPartNamingStrategy() {
     return partNamingStrategy;
   }
 
@@ -257,8 +264,17 @@ public final class TransferManagerConfig {
       return this;
     }
 
+    /**
+     * Part Naming Strategy that Transfer Manager will use during Parallel Composite Upload
+     *
+     * <p><i>Default Value:</i> {@link PartNamingStrategy#noPrefix()}
+     *
+     * @return the instance of Builder with the value for PartNamingStrategy modified.
+     * @see TransferManagerConfig#getParallelCompositeUploadPartNamingStrategy()
+     */
     public Builder setParallelCompositeUploadPartNamingStrategy(
         PartNamingStrategy partNamingStrategy) {
+      checkNotNull(partNamingStrategy);
       this.partNamingStrategy = partNamingStrategy;
       return this;
     }
