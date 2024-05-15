@@ -87,7 +87,8 @@ final class TransferManagerImpl implements TransferManager {
                   BufferAllocationStrategy.fixedPool(
                       transferManagerConfig.getMaxWorkers(),
                       transferManagerConfig.getPerWorkerBufferSize()))
-              .withPartNamingStrategy(transferManagerConfig.getPartNamingStrategy());
+              .withPartNamingStrategy(
+                  transferManagerConfig.getParallelCompositeUploadPartNamingStrategy());
       storageOptions = storageOptions.toBuilder().setBlobWriteSessionConfig(pcuConfig).build();
     }
     this.pcuQueue = new ConcurrentLinkedDeque<>();
