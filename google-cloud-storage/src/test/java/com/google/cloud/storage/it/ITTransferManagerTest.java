@@ -23,6 +23,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -138,6 +139,28 @@ public class ITTransferManagerTest {
                   .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
                   .collect(Collectors.toList()))
           .hasSize(3);
+    }
+  }
+
+  @Test
+  public void uploadFilesPartNaming() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowParallelCompositeUpload(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .setParallelCompositeUploadPartNamingStrategy(PartNamingStrategy.prefix("not-root"))
+            .build();
+    long size = CHUNK_THRESHOLD + 100L;
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, size)) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucket.getName()).build();
+      UploadJob job =
+          transferManager.uploadFiles(
+              Collections.singletonList(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
     }
   }
 
