@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
+import com.google.api.core.ApiFunction;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
@@ -47,6 +48,8 @@ import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
+import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
+import com.google.cloud.opentelemetry.metric.MetricConfiguration;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -54,6 +57,7 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -79,6 +83,7 @@ import io.grpc.KnownLength;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
+import io.grpc.opentelemetry.GrpcOpenTelemetry;
 import io.grpc.protobuf.ProtoUtils;
 import java.io.Closeable;
 import java.io.IOException;
@@ -98,6 +103,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
+import io.opentelemetry.instrumentation.resources.OsResource;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.autoconfigure.ResourceConfiguration;
+import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.export.MetricExporter;
+import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.semconv.ResourceAttributes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.threeten.bp.Duration;
@@ -287,6 +303,74 @@ public final class GrpcStorageOptions extends StorageOptions
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
+    MetricExporter cloudMonitoringExporter =
+            GoogleCloudMetricExporter.createWithConfiguration(MetricConfiguration.builder()
+                    // TODO: Blocked by support in exporter project
+                    //  .setPrefix("storage.googleapis.com/")
+                    //  .setUseServiceTimeSeries(true)
+                    .build());
+
+    // Now set up PeriodicMetricReader to use this Exporter
+    SdkMeterProvider provider = SdkMeterProvider.builder()
+            .registerMetricReader(
+                    // Set collection interval to 20 seconds.
+                    // See https://cloud.google.com/monitoring/quotas#custom_metrics_quotas
+                    // Rate at which data can be written to a single time series: one point each 10
+                    // seconds.
+                    PeriodicMetricReader.builder(cloudMonitoringExporter)
+                            .setInterval(java.time.Duration.ofSeconds(20))
+                            .build())
+            .addResource(Resource.getDefault()
+                    .merge(OsResource.get())
+                    .merge(Resource.create(Attributes.builder()
+                            .put("namespace", "gcs_client_instance")
+                            .put("job", "")
+                            .put("task_id", "")
+                            .build()))).build();
+
+//    monitored_resource.set_type("generic_task");
+//    auto& labels = *monitored_resource.mutable_labels();
+//    // project_id untouched
+//    // location untouched
+//    labels["namespace"] = "gcs_client_instance";
+//    labels["job"] = labels["host_id"];
+//    labels["task_id"] = labels["instance_id"];
+//    labels.erase("cloud_platform");
+//    labels.erase("host_id");
+//    labels.erase("api");
+
+    OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder().setMeterProvider(provider).build();
+    // TODO: add openTelemetrySdk.shutdown(); support
+    GrpcOpenTelemetry grpcOpenTelemetry = GrpcOpenTelemetry.newBuilder().sdk(openTelemetrySdk)
+            .enableMetrics(Arrays.asList(
+                    "grpc.lb.wrr.rr_fallback",
+                    "grpc.lb.wrr.endpoint_weight_not_yet_usable",
+                    "grpc.lb.wrr.endpoint_weight_stale",
+                    "grpc.lb.wrr.endpoint_weights",
+                    "grpc.lb.rls.cache_entries",
+                    "grpc.lb.rls.cache_size",
+                    "grpc.lb.rls.default_target_picks",
+                    "grpc.lb.rls.target_picks",
+                    "grpc.lb.rls.failed_picks"
+                    // These don't exist yet, but you'll want them in a later release
+//                    "grpc.xds_client.connected",
+//                    "grpc.xds_client.server_failure",
+//                    "grpc.xds_client.resource_updates_valid",
+//                    "grpc.xds_client.resource_updates_invalid",
+//                    "grpc.xds_client.resources"
+            ))
+            .build();
+    // TODO: Is there another way of doing this?
+    ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator = channelProviderBuilder.getChannelConfigurator();
+    channelProviderBuilder.setChannelConfigurator(b -> {
+      System.out.println("Called Managed Channel Builder");
+      grpcOpenTelemetry.configureChannelBuilder(b);
+      if (channelConfigurator != null) {
+        return channelConfigurator.apply(b);
+      }
+      return b;
+    });
+
     builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
