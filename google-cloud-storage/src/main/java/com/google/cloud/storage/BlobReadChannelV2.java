@@ -51,10 +51,15 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
   }
 
   @Override
-  public synchronized RestorableState<ReadChannel> capture() {
-    ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
-    return new BlobReadChannelV2State(
-        apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
+  public RestorableState<ReadChannel> capture() {
+    lock.lock();
+    try {
+      ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
+      return new BlobReadChannelV2State(
+          apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
+    } finally {
+      lock.unlock();
+    }
   }
 
   protected LazyReadChannel<?, StorageObject> newLazyReadChannel() {

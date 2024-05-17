@@ -1052,7 +1052,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
                 storageInternal,
                 info,
                 opts);
-        return ApiFutures.immediateFuture(channel);
+        return ApiFutures.immediateFuture(
+            StorageByteChannels.writable().createSynchronized(channel));
       }
 
       @Override

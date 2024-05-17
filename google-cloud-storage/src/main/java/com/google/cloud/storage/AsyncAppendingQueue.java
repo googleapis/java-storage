@@ -38,6 +38,7 @@ import java.util.PriorityQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -66,6 +67,7 @@ final class AsyncAppendingQueue<@NonNull T> implements AutoCloseable {
   private final AtomicReference<Throwable> shortCircuitFailure;
   private final ApiFutureCallback<T> shortCircuitRegistrationCallback;
 
+  private final ReentrantLock lock;
   private volatile State state;
 
   private AsyncAppendingQueue(
@@ -85,26 +87,32 @@ final class AsyncAppendingQueue<@NonNull T> implements AutoCloseable {
                 shortCircuitFailure.compareAndSet(null, throwable);
               }
             };
+    lock = new ReentrantLock();
   }
 
   synchronized AsyncAppendingQueue<T> append(ApiFuture<T> value) throws ShortCircuitException {
-    checkState(state.isOpen(), "already closed");
-    Throwable throwable = shortCircuitFailure.get();
-    if (throwable != null) {
-      ShortCircuitException shortCircuitException = new ShortCircuitException(throwable);
-      finalResult.cancel(true);
-      throw shortCircuitException;
-    }
-    checkNotNull(value, "value must not be null");
+    lock.lock();
+    try {
+      checkState(state.isOpen(), "already closed");
+      Throwable throwable = shortCircuitFailure.get();
+      if (throwable != null) {
+        ShortCircuitException shortCircuitException = new ShortCircuitException(throwable);
+        finalResult.cancel(true);
+        throw shortCircuitException;
+      }
+      checkNotNull(value, "value must not be null");
 
-    Element<T> newElement = newElement(value);
-    queue.offer(newElement);
-    boolean isFull = queue.size() == maxElementsPerCompact;
-    if (isFull) {
-      Element<T> compact = compact(exec);
-      queue.offer(compact);
+      Element<T> newElement = newElement(value);
+      queue.offer(newElement);
+      boolean isFull = queue.size() == maxElementsPerCompact;
+      if (isFull) {
+        Element<T> compact = compact(exec);
+        queue.offer(compact);
+      }
+      return this;
+    } finally {
+      lock.unlock();
     }
-    return this;
   }
 
   ApiFuture<T> getResult() {
@@ -117,34 +125,39 @@ final class AsyncAppendingQueue<@NonNull T> implements AutoCloseable {
 
   @Override
   public synchronized void close() {
-    if (!state.isOpen()) {
-      return;
+    lock.lock();
+    try {
+      if (!state.isOpen()) {
+        return;
+      }
+      state = State.CLOSING;
+
+      if (queue.isEmpty()) {
+        NoSuchElementException neverAppendedTo = new NoSuchElementException("Never appended to");
+        finalResult.setException(neverAppendedTo);
+        throw neverAppendedTo;
+      } else {
+        Element<T> transform = compact(exec);
+
+        ApiFutures.addCallback(
+            transform.getValue(),
+            new ApiFutureCallback<T>() {
+              @Override
+              public void onFailure(Throwable err) {
+                finalResult.setException(err);
+              }
+
+              @Override
+              public void onSuccess(T t) {
+                finalResult.set(t);
+              }
+            },
+            exec);
+      }
+      state = State.CLOSED;
+    } finally {
+      lock.unlock();
     }
-    state = State.CLOSING;
-
-    if (queue.isEmpty()) {
-      NoSuchElementException neverAppendedTo = new NoSuchElementException("Never appended to");
-      finalResult.setException(neverAppendedTo);
-      throw neverAppendedTo;
-    } else {
-      Element<T> transform = compact(exec);
-
-      ApiFutures.addCallback(
-          transform.getValue(),
-          new ApiFutureCallback<T>() {
-            @Override
-            public void onFailure(Throwable err) {
-              finalResult.setException(err);
-            }
-
-            @Override
-            public void onSuccess(T t) {
-              finalResult.set(t);
-            }
-          },
-          exec);
-    }
-    state = State.CLOSED;
   }
 
   @NonNull
