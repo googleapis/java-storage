@@ -90,7 +90,7 @@ final class AsyncAppendingQueue<@NonNull T> implements AutoCloseable {
     lock = new ReentrantLock();
   }
 
-  synchronized AsyncAppendingQueue<T> append(ApiFuture<T> value) throws ShortCircuitException {
+  AsyncAppendingQueue<T> append(ApiFuture<T> value) throws ShortCircuitException {
     lock.lock();
     try {
       checkState(state.isOpen(), "already closed");
@@ -124,7 +124,7 @@ final class AsyncAppendingQueue<@NonNull T> implements AutoCloseable {
   }
 
   @Override
-  public synchronized void close() {
+  public void close() {
     lock.lock();
     try {
       if (!state.isOpen()) {
