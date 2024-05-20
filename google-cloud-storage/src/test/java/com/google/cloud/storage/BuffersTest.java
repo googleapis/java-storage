@@ -113,8 +113,6 @@ public final class BuffersTest {
               return -1;
             }
             int bytesToRead = acceptSequence[i];
-            System.out.println("bytesToRead = " + bytesToRead);
-
             if (bytesToRead > 0) {
               long copy =
                   Buffers.copy(DataGenerator.base64Characters().genByteBuffer(bytesToRead), dst);
