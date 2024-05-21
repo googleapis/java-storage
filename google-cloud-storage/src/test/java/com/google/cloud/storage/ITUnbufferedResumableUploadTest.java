@@ -18,7 +18,9 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ITUnbufferedResumableUploadTest.ObjectSizes;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -36,6 +38,11 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersPr
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
+import com.google.storage.v2.Object;
+import com.google.storage.v2.StorageClient;
+import com.google.storage.v2.WriteObjectRequest;
+import com.google.storage.v2.WriteObjectResponse;
+import com.google.storage.v2.WriteObjectSpec;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -103,8 +110,13 @@ public final class ITUnbufferedResumableUploadTest {
     ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
 
     UnbufferedWritableByteChannel open = session.open();
-    int written = open.write(b);
-    assertThat(written).isEqualTo(objectSize);
+    int written1 = open.write(b);
+    assertThat(written1).isEqualTo(objectSize);
+    assertThat(b.remaining()).isEqualTo(additional);
+
+    // no bytes should be consumed if less than 256KiB
+    int written2 = open.write(b);
+    assertThat(written2).isEqualTo(0);
     assertThat(b.remaining()).isEqualTo(additional);
 
     int writtenAndClose = open.writeAndClose(b);
@@ -113,5 +125,71 @@ public final class ITUnbufferedResumableUploadTest {
 
     StorageObject storageObject = session.getResult().get(2, TimeUnit.SECONDS);
     assertThat(storageObject.getSize()).isEqualTo(BigInteger.valueOf(size));
+  }
+
+  @Test
+  @Exclude(transports = Transport.HTTP)
+  public void grpc() throws Exception {
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    Opts<ObjectTargetOpt> opts = Opts.empty();
+    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+
+    Object object = Conversions.grpc().blobInfo().encode(updated);
+    Object.Builder objectBuilder =
+        object
+            .toBuilder()
+            // required if the data is changing
+            .clearChecksums()
+            // trimmed to shave payload size
+            .clearGeneration()
+            .clearMetageneration()
+            .clearSize()
+            .clearCreateTime()
+            .clearUpdateTime();
+    WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
+
+    WriteObjectRequest.Builder requestBuilder =
+        WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
+
+    WriteObjectRequest request = opts.writeObjectRequest().apply(requestBuilder).build();
+
+    GrpcCallContext merge = Retrying.newCallContext();
+    StorageClient storageClient = PackagePrivateMethodWorkarounds.maybeGetStorageClient(storage);
+    assertThat(storageClient).isNotNull();
+    ApiFuture<ResumableWrite> start =
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(
+                storageClient.startResumableWriteCallable().withDefaultCallContext(merge), request);
+
+    UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(storageClient.writeObjectCallable())
+            .resumable()
+            .unbuffered()
+            .setStartAsync(start)
+            .build();
+
+    int additional = 13;
+    long size = objectSize + additional;
+    ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
+
+    UnbufferedWritableByteChannel open = session.open();
+    int written1 = open.write(b);
+    assertThat(written1).isEqualTo(objectSize);
+    assertThat(b.remaining()).isEqualTo(additional);
+
+    // no bytes should be consumed if less than 256KiB
+    int written2 = open.write(b);
+    assertThat(written2).isEqualTo(0);
+    assertThat(b.remaining()).isEqualTo(additional);
+
+    int writtenAndClose = open.writeAndClose(b);
+    assertThat(writtenAndClose).isEqualTo(additional);
+    open.close();
+    WriteObjectResponse resp = session.getResult().get(2, TimeUnit.SECONDS);
+    assertThat(resp.getResource().getSize()).isEqualTo(size);
   }
 }
