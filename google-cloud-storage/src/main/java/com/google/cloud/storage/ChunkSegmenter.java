@@ -18,7 +18,10 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import com.google.common.math.IntMath;
 import com.google.protobuf.ByteString;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -40,6 +43,13 @@ final class ChunkSegmenter {
 
   @VisibleForTesting
   ChunkSegmenter(Hasher hasher, ByteStringStrategy bss, int maxSegmentSize, int blockSize) {
+    int mod = maxSegmentSize % blockSize;
+    Preconditions.checkArgument(
+        mod == 0,
+        "maxSegmentSize % blockSize == 0 (%s % %s == %s)",
+        maxSegmentSize,
+        blockSize,
+        mod);
     this.hasher = hasher;
     this.bss = bss;
     this.maxSegmentSize = maxSegmentSize;
@@ -79,30 +89,90 @@ final class ChunkSegmenter {
   }
 
   ChunkSegment[] segmentBuffers(ByteBuffer[] bbs, int offset, int length) {
+    return segmentBuffers(bbs, offset, length, true);
+  }
+
+  ChunkSegment[] segmentBuffers(
+      ByteBuffer[] bbs, int offset, int length, boolean allowUnalignedBlocks) {
+    // turn this into a single branch, rather than multiple that would need to be checked each
+    // element of the iteration
+    if (allowUnalignedBlocks) {
+      return segmentWithUnaligned(bbs, offset, length);
+    } else {
+      return segmentWithoutUnaligned(bbs, offset, length);
+    }
+  }
+
+  private ChunkSegment[] segmentWithUnaligned(ByteBuffer[] bbs, int offset, int length) {
     Deque<ChunkSegment> data = new ArrayDeque<>();
 
     for (int i = offset; i < length; i++) {
       ByteBuffer buffer = bbs[i];
       int remaining;
       while ((remaining = buffer.remaining()) > 0) {
-        // either no chunk or most recent chunk is full, start a new one
-        ChunkSegment peekLast = data.peekLast();
-        if (peekLast == null || peekLast.b.size() == maxSegmentSize) {
-          int limit = Math.min(remaining, maxSegmentSize);
-          ChunkSegment datum = newSegment(buffer, limit);
-          data.addLast(datum);
-        } else {
-          ChunkSegment chunkSoFar = data.pollLast();
-          //noinspection ConstantConditions -- covered by peekLast check above
-          int limit = Math.min(remaining, maxSegmentSize - chunkSoFar.b.size());
-          ChunkSegment datum = newSegment(buffer, limit);
-          ChunkSegment plus = chunkSoFar.concat(datum);
-          data.addLast(plus);
-        }
+        consumeBytes(data, remaining, buffer);
       }
     }
 
     return data.toArray(new ChunkSegment[0]);
+  }
+
+  private ChunkSegment[] segmentWithoutUnaligned(ByteBuffer[] bbs, int offset, int length) {
+    Deque<ChunkSegment> data = new ArrayDeque<>();
+
+    final long totalRemaining = Buffers.totalRemaining(bbs, offset, length);
+    long consumedSoFar = 0;
+
+    int currentBlockPending = blockSize;
+
+    for (int i = offset; i < length; i++) {
+      ByteBuffer buffer = bbs[i];
+      int remaining;
+      while ((remaining = buffer.remaining()) > 0) {
+        long overallRemaining = totalRemaining - consumedSoFar;
+        if (overallRemaining < blockSize && currentBlockPending == blockSize) {
+          break;
+        }
+
+        int numBytesConsumable;
+        if (remaining >= blockSize) {
+          int blockCount = IntMath.divide(remaining, blockSize, RoundingMode.DOWN);
+          numBytesConsumable = blockCount * blockSize;
+        } else if (currentBlockPending < blockSize) {
+          numBytesConsumable = currentBlockPending;
+          currentBlockPending = blockSize;
+        } else {
+          numBytesConsumable = remaining;
+          currentBlockPending = currentBlockPending - remaining;
+        }
+        if (numBytesConsumable <= 0) {
+          continue;
+        }
+
+        consumedSoFar += consumeBytes(data, numBytesConsumable, buffer);
+      }
+    }
+
+    return data.toArray(new ChunkSegment[0]);
+  }
+
+  private long consumeBytes(Deque<ChunkSegment> data, int numBytesConsumable, ByteBuffer buffer) {
+    // either no chunk or most recent chunk is full, start a new one
+    ChunkSegment peekLast = data.peekLast();
+    if (peekLast == null || peekLast.b.size() == maxSegmentSize) {
+      int limit = Math.min(numBytesConsumable, maxSegmentSize);
+      ChunkSegment datum = newSegment(buffer, limit);
+      data.addLast(datum);
+      return limit;
+    } else {
+      ChunkSegment chunkSoFar = data.pollLast();
+      //noinspection ConstantConditions -- covered by peekLast check above
+      int limit = Math.min(numBytesConsumable, maxSegmentSize - chunkSoFar.b.size());
+      ChunkSegment datum = newSegment(buffer, limit);
+      ChunkSegment plus = chunkSoFar.concat(datum);
+      data.addLast(plus);
+      return limit;
+    }
   }
 
   private ChunkSegment newSegment(ByteBuffer buffer, int limit) {
