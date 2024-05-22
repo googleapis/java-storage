@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.39.0](https://github.com/googleapis/java-storage/compare/v2.38.0...v2.39.0) (2024-05-22)
+
+
+### Features
+
+* Plumb PartNamingStrategy for Parallel Composite Uploads in Transfer Manager ([#2547](https://github.com/googleapis/java-storage/issues/2547)) ([79d721d](https://github.com/googleapis/java-storage/commit/79d721dc44d1c5f4b2df3697f62b958a3b9b999c))
+
+
+### Bug Fixes
+
+* Update GapicUnbufferedChunkedResumableWritableByteChannel to be tolerant of non-quantum writes ([#2537](https://github.com/googleapis/java-storage/issues/2537)) ([1701fde](https://github.com/googleapis/java-storage/commit/1701fde04a80aa8ce97c5e762158406024456782))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.30.1 ([#2550](https://github.com/googleapis/java-storage/issues/2550)) ([e9807ec](https://github.com/googleapis/java-storage/commit/e9807ecda46615c8d1108bcea7a25ecba8154b6c))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.10.2 ([#2552](https://github.com/googleapis/java-storage/issues/2552)) ([a207829](https://github.com/googleapis/java-storage/commit/a207829040c176909141de100e4273f5aa32e78f))
+
 ## [2.38.0](https://github.com/googleapis/java-storage/compare/v2.37.0...v2.38.0) (2024-05-09)
 
 
