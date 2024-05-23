@@ -15,17 +15,22 @@
  */
 
 package com.example.storage.managedfolders;
+
 // [START storage_control_managed_folder_get]
 
+import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.ManagedFolder;
+import com.google.storage.control.v2.ManagedFolderName;
 import com.google.storage.control.v2.StorageControlClient;
 
 class GetManagedFolder {
 
-  public static void managedFolderGet(String managedFolderName) throws Exception {
+  public static void managedFolderGet(String bucketName, String managedFolderId) throws Exception {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      ManagedFolder managedFolder = storageControlClient.getManagedFolder(managedFolderName);
+      ManagedFolder managedFolder = storageControlClient.getManagedFolder(
+          // Set project to "_" to signify global bucket
+          ManagedFolderName.of("_", bucketName, managedFolderId));
       System.out.printf("Got Managed Folder %s", managedFolder.getName());
     }
   }

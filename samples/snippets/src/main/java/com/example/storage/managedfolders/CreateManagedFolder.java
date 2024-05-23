@@ -15,20 +15,29 @@
  */
 
 package com.example.storage.managedfolders;
+
 // [START storage_control_managed_folder_create]
 
+import com.google.storage.control.v2.BucketName;
+import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.StorageControlClient;
 
-class CreateManagedFolder {
-  public static void managedFolderCreate(String bucketName,
-      String managedFolderName, String managedFolderId) throws Exception {
+public class CreateManagedFolder {
+  public static void main(String... args) throws Exception {
+    String bucketName = args[0]; // "your-bucket-name";
+    String managedFolderId = args[1]; // "your-managed-folder"
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      ManagedFolder managedFolder = ManagedFolder.newBuilder().setName(managedFolderName).build();
-      ManagedFolder response = storageControlClient.createManagedFolder(bucketName, managedFolder, managedFolderId);
-      System.out.printf("Created Managed Folder %s", response.getName());
+      CreateManagedFolderRequest request =
+          CreateManagedFolderRequest.newBuilder()
+              // Set project to "_" to signify global bucket
+              .setParent(BucketName.format("_", bucketName))
+          .setManagedFolder(ManagedFolder.newBuilder().build())
+          .setManagedFolderId(managedFolderId).build();
+      String response = storageControlClient.createManagedFolder(request).getName();
+      System.out.printf("Performed createManagedFolder request for %s", response);
     }
   }
 }

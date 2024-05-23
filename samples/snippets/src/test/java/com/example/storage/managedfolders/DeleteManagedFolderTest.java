@@ -25,8 +25,9 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
-import com.google.storage.control.v2.DeleteManagedFolderRequest;
-import com.google.storage.control.v2.ManagedFolderName;
+import com.google.storage.control.v2.BucketName;
+import com.google.storage.control.v2.CreateManagedFolderRequest;
+import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.StorageControlClient;
 import java.io.IOException;
 import java.util.UUID;
@@ -35,7 +36,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class CreateManagedFolderTest {
+public class DeleteManagedFolderTest {
 
   @Rule
   public StdOutCaptureRule stdOut = new StdOutCaptureRule();
@@ -54,27 +55,28 @@ public class CreateManagedFolderTest {
     managedFolderId = "new-managed-folder-" + UUID.randomUUID();
     BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName)
         .setIamConfiguration(
-        IamConfiguration
-            .newBuilder()
-            .setIsUniformBucketLevelAccessEnabled(true)
-        .build()).build();
+            IamConfiguration
+                .newBuilder()
+                .setIsUniformBucketLevelAccessEnabled(true)
+                .build()).build();
     bucket = storage.create(bucketInfo);
+    storageControl.createManagedFolder(
+        CreateManagedFolderRequest.newBuilder()
+            // Set project to "_" to signify global bucket
+            .setParent(BucketName.format("_", bucketName))
+            .setManagedFolder(ManagedFolder.newBuilder().build())
+            .setManagedFolderId(managedFolderId).build());
   }
 
   @After
   public void tearDown() {
-    storageControl.deleteManagedFolder(
-        DeleteManagedFolderRequest.newBuilder().setName(
-            ManagedFolderName.format("_", bucketName, managedFolderId)
-        ).build());
     storage.delete(bucketName);
   }
 
   @Test
-  public void testCreateManagedFolder() throws Exception {
-    CreateManagedFolder.main(bucketName, managedFolderId);
+  public void testDeleteManagedFolder() throws Exception {
+    DeleteManagedFolder.managedFolderDelete(bucketName, managedFolderId);
     String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format(managedFolderId));
   }
 }
-

@@ -15,17 +15,21 @@
  */
 
 package com.example.storage.managedfolders;
+
 // [START storage_control_managed_folder_delete]
 
-import com.google.storage.control.v2.ManagedFolder;
+import com.google.storage.control.v2.ManagedFolderName;
 import com.google.storage.control.v2.StorageControlClient;
 
 class DeleteManagedFolder {
-  public static void managedFolderDelete(String managedFolderName) throws Exception {
+  public static void managedFolderDelete(String bucketName, String managedFolderId)
+      throws Exception {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      storageControlClient.deleteManagedFolder(managedFolderName);
-      System.out.printf("Deleted Managed Folder %s", managedFolderName);
+      storageControlClient.deleteManagedFolder(
+          // Set project to "_" to signify global bucket
+          ManagedFolderName.of("_", bucketName, managedFolderId));
+      System.out.printf("Deleted Managed Folder %s", managedFolderId);
     }
   }
 

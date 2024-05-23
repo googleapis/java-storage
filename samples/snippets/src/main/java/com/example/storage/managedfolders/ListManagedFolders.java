@@ -15,8 +15,10 @@
  */
 
 package com.example.storage.managedfolders;
+
 // [START storage_control_managed_folder_list]
 
+import com.google.storage.control.v2.BucketName;
 import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.StorageControlClient;
 
@@ -26,9 +28,10 @@ class ListManagedFolders {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
       Iterable<ManagedFolder> managedFolders = storageControlClient
-          .listManagedFolders(bucketName)
+          // Set project to "_" to signify global bucket
+          .listManagedFolders(BucketName.of("_", bucketName))
           .iterateAll();
-      for(ManagedFolder folder : managedFolders) {
+      for (ManagedFolder folder : managedFolders) {
         System.out.printf("%s bucket has managed folder %s", bucketName, folder.getName());
       }
     }
