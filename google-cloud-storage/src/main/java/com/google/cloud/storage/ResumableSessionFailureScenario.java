@@ -64,11 +64,11 @@ enum ResumableSessionFailureScenario {
   SCENARIO_4_1(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Finalized resumable session, but object size less than expected."),
+      "Finalized upload, but object size less than expected."),
   SCENARIO_4_2(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Finalized resumable session, but object size greater than expected."),
+      "Finalized upload, but object size greater than expected."),
   SCENARIO_5(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
