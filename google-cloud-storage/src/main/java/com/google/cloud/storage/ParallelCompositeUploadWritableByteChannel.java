@@ -166,7 +166,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   }
 
   @Override
-  public synchronized int write(ByteBuffer src) throws IOException {
+  public int write(ByteBuffer src) throws IOException {
     if (!open) {
       throw new ClosedChannelException();
     }
@@ -190,12 +190,12 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   }
 
   @Override
-  public synchronized boolean isOpen() {
+  public boolean isOpen() {
     return open;
   }
 
   @Override
-  public synchronized void flush() throws IOException {
+  public void flush() throws IOException {
     if (current != null) {
       ByteBuffer buf = current.getBufferHandle().get();
       internalFlush(buf);
@@ -203,7 +203,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   }
 
   @Override
-  public synchronized void close() throws IOException {
+  public void close() throws IOException {
     if (!open) {
       return;
     }

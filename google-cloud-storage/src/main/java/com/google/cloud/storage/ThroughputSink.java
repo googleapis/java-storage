@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 /**
@@ -348,15 +349,22 @@ interface ThroughputSink {
   final class ThroughputMovingWindowThroughputSink implements ThroughputSink {
     private final ThroughputMovingWindow w;
     private final Clock clock;
+    private final ReentrantLock lock;
 
     private ThroughputMovingWindowThroughputSink(ThroughputMovingWindow w, Clock clock) {
       this.w = w;
       this.clock = clock;
+      this.lock = new ReentrantLock();
     }
 
     @Override
-    public synchronized void recordThroughput(Record r) {
-      w.add(r.end, Throughput.of(r.getNumBytes(), r.getDuration()));
+    public void recordThroughput(Record r) {
+      lock.lock();
+      try {
+        w.add(r.end, Throughput.of(r.getNumBytes(), r.getDuration()));
+      } finally {
+        lock.unlock();
+      }
     }
 
     @Override
