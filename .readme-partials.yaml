@@ -32,7 +32,7 @@ custom_content: |
   <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage-control</artifactId>
-      <version>2.39.0-beta</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+      <version>2.39.1-beta-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage-control:current} -->
   </dependency>
   ```
   
@@ -44,7 +44,7 @@ custom_content: |
   If you are using Gradle without BOM, add this to your dependencies:
   
   ```Groovy
-  implementation 'com.google.cloud:google-cloud-storage-control:2.39.0-beta' <!-- {x-version-update:google-cloud-storage-control:current} -->
+  implementation 'com.google.cloud:google-cloud-storage-control:2.39.1-beta-SNAPSHOT' <!-- {x-version-update:google-cloud-storage-control:current} -->
   ```
   
   #### Creating an authorized service object
