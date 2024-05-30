@@ -21,14 +21,17 @@ import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
@@ -38,6 +41,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
@@ -47,18 +51,18 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
   private final RetryingDependencies deps;
   private final ResultRetryAlgorithm<?> alg;
-  private final String bucketName;
-  private final Supplier<GrpcCallContext> baseContextSupplier;
   private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
 
   private final BidiWriteCtx<BidiResumableWrite> writeCtx;
+  private final GrpcCallContext context;
   private final BidiObserver responseObserver;
 
   private volatile ApiStreamObserver<BidiWriteObjectRequest> stream;
   private boolean open = true;
   private boolean first = true;
   private boolean finished = false;
+  private volatile BidiWriteObjectRequest lastWrittenRequest;
 
   GapicBidiUnbufferedWritableByteChannel(
       BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
@@ -71,13 +75,13 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     this.write = write;
     this.deps = deps;
     this.alg = alg;
-    this.baseContextSupplier = baseContextSupplier;
-    this.bucketName = writeCtx.getRequestFactory().bucketName();
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
 
     this.writeCtx = writeCtx;
     this.responseObserver = new BidiObserver();
+    String bucketName = writeCtx.getRequestFactory().bucketName();
+    this.context = contextWithBucketName(bucketName, baseContextSupplier.get());
   }
 
   @Override
@@ -102,22 +106,22 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     if (!open) {
       return;
     }
-    ApiStreamObserver<BidiWriteObjectRequest> openedStream = openedStream();
-    if (!finished) {
-      BidiWriteObjectRequest message = finishMessage();
-      try {
-        openedStream.onNext(message);
-        finished = true;
-        openedStream.onCompleted();
-      } catch (RuntimeException e) {
-        resultFuture.setException(e);
-        throw e;
+    try {
+      if (!finished) {
+        BidiWriteObjectRequest message = finishMessage();
+        lastWrittenRequest = message;
+        flush(Collections.singletonList(message));
+      } else {
+        if (stream != null) {
+          stream.onCompleted();
+        }
       }
-    } else {
-      openedStream.onCompleted();
+      responseObserver.await();
+    } finally {
+      open = false;
+      stream = null;
+      lastWrittenRequest = null;
     }
-    responseObserver.await();
-    open = false;
   }
 
   @VisibleForTesting
@@ -183,6 +187,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     try {
       flush(messages);
     } catch (RuntimeException e) {
+      open = false;
       resultFuture.setException(e);
       throw e;
     }
@@ -208,12 +213,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     if (stream == null) {
       synchronized (this) {
         if (stream == null) {
-          GrpcCallContext internalContext =
-              contextWithBucketName(bucketName, baseContextSupplier.get());
-          stream =
-              this.write
-                  .withDefaultCallContext(internalContext)
-                  .bidiStreamingCall(responseObserver);
+          stream = this.write.bidiStreamingCall(responseObserver, context);
           responseObserver.sem.drainPermits();
         }
       }
@@ -230,6 +230,10 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
             ApiStreamObserver<BidiWriteObjectRequest> opened = openedStream();
             for (BidiWriteObjectRequest message : segments) {
               opened.onNext(message);
+              lastWrittenRequest = message;
+            }
+            if (lastWrittenRequest.getFinishWrite()) {
+              opened.onCompleted();
             }
             responseObserver.await();
             return null;
@@ -254,19 +258,89 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     @Override
     public void onNext(BidiWriteObjectResponse value) {
-      // incremental update
-      if (value.hasPersistedSize()) {
-        writeCtx.getConfirmedBytes().set((value.getPersistedSize()));
-      } else if (value.hasResource()) {
-        writeCtx.getConfirmedBytes().set(value.getResource().getSize());
+      boolean finalizing = lastWrittenRequest.getFinishWrite();
+      if (!finalizing && value.hasPersistedSize()) { // incremental
+        long totalSentBytes = writeCtx.getTotalSentBytes().get();
+        long persistedSize = value.getPersistedSize();
+
+        if (totalSentBytes == persistedSize) {
+          writeCtx.getConfirmedBytes().set(persistedSize);
+          last = value;
+          sem.release();
+          // } else if (persistedSize < totalSentBytes) {
+          //   long delta = totalSentBytes - persistedSize;
+          //   // rewind our content and any state that my have run ahead of the actual ack'd bytes
+          //   content.rewindTo(delta);
+          //   writeCtx.getTotalSentBytes().set(persistedSize);
+          //   writeCtx.getConfirmedBytes().set(persistedSize);
+        } else {
+          onError(
+              ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), value, context, null));
+        }
+      } else if (finalizing && value.hasResource()) {
+        long totalSentBytes = writeCtx.getTotalSentBytes().get();
+        long finalSize = value.getResource().getSize();
+        if (totalSentBytes == finalSize) {
+          writeCtx.getConfirmedBytes().set(finalSize);
+          last = value;
+          sem.release();
+        } else if (finalSize < totalSentBytes) {
+          onError(
+              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), value, context, null));
+        } else {
+          onError(
+              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), value, context, null));
+        }
+      } else if (!finalizing && value.hasResource()) {
+        onError(
+            ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
+                ImmutableList.of(lastWrittenRequest), value, context, null));
+      } else if (finalizing && value.hasPersistedSize()) {
+        long totalSentBytes = writeCtx.getTotalSentBytes().get();
+        long persistedSize = value.getPersistedSize();
+        if (persistedSize < totalSentBytes) {
+          onError(
+              ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), value, context, null));
+        } else {
+          onError(
+              ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), value, context, null));
+        }
+      } else {
+        onError(
+            ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+                ImmutableList.of(lastWrittenRequest), value, context, null));
       }
-      sem.release();
-      last = value;
     }
 
     @Override
     public void onError(Throwable t) {
-      if (t instanceof RuntimeException) {
+      if (t instanceof OutOfRangeException) {
+        OutOfRangeException oore = (OutOfRangeException) t;
+        open = false;
+        previousError =
+            ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                ImmutableList.of(lastWrittenRequest), null, context, oore);
+      } else if (t instanceof ApiException) {
+        // use StorageExceptions logic to translate from ApiException to our status codes ensuring
+        // things fall in line with our retry handlers.
+        // This is suboptimal, as it will initialize a second exception, however this is the
+        // unusual case, and it should not cause a significant overhead given its rarity.
+        StorageException tmp = StorageException.asStorageException((ApiException) t);
+        previousError =
+            ResumableSessionFailureScenario.toStorageException(
+                tmp.getCode(),
+                tmp.getMessage(),
+                tmp.getReason(),
+                ImmutableList.of(lastWrittenRequest),
+                null,
+                context,
+                t);
+      } else if (t instanceof RuntimeException) {
         previousError = (RuntimeException) t;
       }
       sem.release();
