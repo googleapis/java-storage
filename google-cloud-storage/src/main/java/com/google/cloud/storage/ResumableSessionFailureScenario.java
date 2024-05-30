@@ -222,7 +222,6 @@ enum ResumableSessionFailureScenario {
       }
     }
     StorageException se = new StorageException(code, sb.toString(), reason, cause);
-    se.printStackTrace();
     return se;
   }
 

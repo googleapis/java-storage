@@ -838,9 +838,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
   }
 
   static class BidiWriteService extends StorageImplBase {
-    private static final Logger LOGGER =
-        Logger.getLogger(
-            ITGapicUnbufferedWritableByteChannelTest.DirectWriteService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BidiWriteService.class.getName());
     private final BiConsumer<StreamObserver<BidiWriteObjectResponse>, List<BidiWriteObjectRequest>>
         c;
 

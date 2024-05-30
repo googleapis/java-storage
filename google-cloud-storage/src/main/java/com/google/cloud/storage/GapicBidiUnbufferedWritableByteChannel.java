@@ -37,6 +37,7 @@ import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
+import io.grpc.Status;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -63,6 +64,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   private boolean first = true;
   private boolean finished = false;
   private volatile BidiWriteObjectRequest lastWrittenRequest;
+  private volatile RewindableContent currentContent;
 
   GapicBidiUnbufferedWritableByteChannel(
       BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
@@ -114,9 +116,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       } else {
         if (stream != null) {
           stream.onCompleted();
+          responseObserver.await();
         }
       }
-      responseObserver.await();
     } finally {
       open = false;
       stream = null;
@@ -135,11 +137,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       throw new ClosedChannelException();
     }
 
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
+    long begin = writeCtx.getConfirmedBytes().get();
+    currentContent = RewindableContent.of(srcs, srcsOffset, srcsLength);
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, finalize);
+    if (data.length == 0) {
+      currentContent = null;
+      return 0;
+    }
 
     List<BidiWriteObjectRequest> messages = new ArrayList<>();
 
-    int bytesConsumed = 0;
     for (int i = 0; i < data.length; i++) {
       ChunkSegment datum = data[i];
       Crc32cLengthKnown crc32c = datum.getCrc32c();
@@ -177,7 +184,6 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
       BidiWriteObjectRequest build = builder.build();
       messages.add(build);
-      bytesConsumed += contentSize;
     }
     if (finalize && !finished) {
       messages.add(finishMessage());
@@ -192,6 +198,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       throw e;
     }
 
+    long end = writeCtx.getConfirmedBytes().get();
+
+    long bytesConsumed = end - begin;
     return bytesConsumed;
   }
 
@@ -213,8 +222,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     if (stream == null) {
       synchronized (this) {
         if (stream == null) {
-          stream = this.write.bidiStreamingCall(responseObserver, context);
-          responseObserver.sem.drainPermits();
+          responseObserver.reset();
+          stream =
+              new GracefulOutboundStream(this.write.bidiStreamingCall(responseObserver, context));
         }
       }
     }
@@ -237,10 +247,11 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
             }
             responseObserver.await();
             return null;
-          } catch (Exception e) {
+          } catch (Throwable t) {
             stream = null;
             first = true;
-            throw e;
+            t.addSuppressed(new AsyncStorageTaskException());
+            throw t;
           }
         },
         Decoder.identity());
@@ -250,6 +261,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     private final Semaphore sem;
     private volatile BidiWriteObjectResponse last;
+    private volatile StorageException clientDetectedError;
     private volatile RuntimeException previousError;
 
     private BidiObserver() {
@@ -265,16 +277,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
         if (totalSentBytes == persistedSize) {
           writeCtx.getConfirmedBytes().set(persistedSize);
-          last = value;
-          sem.release();
-          // } else if (persistedSize < totalSentBytes) {
-          //   long delta = totalSentBytes - persistedSize;
-          //   // rewind our content and any state that my have run ahead of the actual ack'd bytes
-          //   content.rewindTo(delta);
-          //   writeCtx.getTotalSentBytes().set(persistedSize);
-          //   writeCtx.getConfirmedBytes().set(persistedSize);
+          ok(value);
+        } else if (persistedSize < totalSentBytes) {
+          long delta = totalSentBytes - persistedSize;
+          // rewind our content and any state that my have run ahead of the actual ack'd bytes
+          currentContent.rewindTo(delta);
+          writeCtx.getTotalSentBytes().set(persistedSize);
+          writeCtx.getConfirmedBytes().set(persistedSize);
+          ok(value);
         } else {
-          onError(
+          clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
@@ -283,35 +295,34 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         long finalSize = value.getResource().getSize();
         if (totalSentBytes == finalSize) {
           writeCtx.getConfirmedBytes().set(finalSize);
-          last = value;
-          sem.release();
+          ok(value);
         } else if (finalSize < totalSentBytes) {
-          onError(
+          clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         } else {
-          onError(
+          clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
       } else if (!finalizing && value.hasResource()) {
-        onError(
+        clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
                 ImmutableList.of(lastWrittenRequest), value, context, null));
       } else if (finalizing && value.hasPersistedSize()) {
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
         long persistedSize = value.getPersistedSize();
         if (persistedSize < totalSentBytes) {
-          onError(
+          clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         } else {
-          onError(
+          clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
       } else {
-        onError(
+        clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
                 ImmutableList.of(lastWrittenRequest), value, context, null));
       }
@@ -321,10 +332,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     public void onError(Throwable t) {
       if (t instanceof OutOfRangeException) {
         OutOfRangeException oore = (OutOfRangeException) t;
-        open = false;
-        previousError =
+        clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
-                ImmutableList.of(lastWrittenRequest), null, context, oore);
+                ImmutableList.of(lastWrittenRequest), null, context, oore));
       } else if (t instanceof ApiException) {
         // use StorageExceptions logic to translate from ApiException to our status codes ensuring
         // things fall in line with our retry handlers.
@@ -340,16 +350,36 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
                 null,
                 context,
                 t);
+        sem.release();
       } else if (t instanceof RuntimeException) {
         previousError = (RuntimeException) t;
+        sem.release();
       }
-      sem.release();
     }
 
     @Override
     public void onCompleted() {
       if (last != null && last.hasResource()) {
         resultFuture.set(last);
+      }
+      sem.release();
+    }
+
+    private void ok(BidiWriteObjectResponse value) {
+      last = value;
+      sem.release();
+    }
+
+    private void clientDetectedError(StorageException storageException) {
+      open = false;
+      clientDetectedError = storageException;
+      // yes, check that previousError is not the same instance as e
+      if (previousError != null && previousError != storageException) {
+        storageException.addSuppressed(previousError);
+        previousError = null;
+      }
+      if (previousError == null) {
+        previousError = storageException;
       }
       sem.release();
     }
@@ -364,11 +394,69 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
           throw new RuntimeException(e);
         }
       }
+      StorageException e = clientDetectedError;
       RuntimeException err = previousError;
+      clientDetectedError = null;
+      previousError = null;
+      if ((e != null || err != null) && stream != null) {
+        if (lastWrittenRequest.getFinishWrite()) {
+          stream.onCompleted();
+        } else {
+          stream.onError(Status.CANCELLED.asRuntimeException());
+        }
+      }
+      if (e != null) {
+        throw e;
+      }
       if (err != null) {
-        previousError = null;
         throw err;
       }
+    }
+
+    public void reset() {
+      sem.drainPermits();
+      last = null;
+      clientDetectedError = null;
+      previousError = null;
+    }
+  }
+
+  /**
+   * Prevent "already half-closed" if we previously called onComplete but then detect an error and
+   * call onError
+   */
+  private static final class GracefulOutboundStream
+      implements ApiStreamObserver<BidiWriteObjectRequest> {
+
+    private final ApiStreamObserver<BidiWriteObjectRequest> delegate;
+    private volatile boolean closing;
+
+    private GracefulOutboundStream(ApiStreamObserver<BidiWriteObjectRequest> delegate) {
+      this.delegate = delegate;
+      this.closing = false;
+    }
+
+    @Override
+    public void onNext(BidiWriteObjectRequest value) {
+      delegate.onNext(value);
+    }
+
+    @Override
+    public void onError(Throwable t) {
+      if (closing) {
+        return;
+      }
+      closing = true;
+      delegate.onError(t);
+    }
+
+    @Override
+    public void onCompleted() {
+      if (closing) {
+        return;
+      }
+      closing = true;
+      delegate.onCompleted();
     }
   }
 }
