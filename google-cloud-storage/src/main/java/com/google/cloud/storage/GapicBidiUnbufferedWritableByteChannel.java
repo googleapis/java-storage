@@ -136,7 +136,8 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     List<BidiWriteObjectRequest> messages = new ArrayList<>();
 
     int bytesConsumed = 0;
-    for (ChunkSegment datum : data) {
+    for (int i = 0; i < data.length; i++) {
+      ChunkSegment datum = data[i];
       Crc32cLengthKnown crc32c = datum.getCrc32c();
       ByteString b = datum.getB();
       int contentSize = b.size();
@@ -149,11 +150,14 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       if (crc32c != null) {
         checksummedData.setCrc32C(crc32c.getValue());
       }
-      BidiWriteObjectRequest.Builder builder =
-          writeCtx
-              .newRequestBuilder()
-              .setWriteOffset(offset)
-              .setChecksummedData(checksummedData.build());
+      BidiWriteObjectRequest.Builder builder = writeCtx.newRequestBuilder();
+      if (!first) {
+        builder.clearUploadId();
+        builder.clearObjectChecksums();
+      } else {
+        first = false;
+      }
+      builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
       if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
         if (cumulative != null) {
@@ -163,8 +167,11 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         finished = true;
       }
 
-      BidiWriteObjectRequest build = possiblyPairDownBidiRequest(builder, first).build();
-      first = false;
+      if (i == data.length - 1 && !finished) {
+        builder.setFlush(true).setStateLookup(true);
+      }
+
+      BidiWriteObjectRequest build = builder.build();
       messages.add(build);
       bytesConsumed += contentSize;
     }
@@ -224,11 +231,6 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
             for (BidiWriteObjectRequest message : segments) {
               opened.onNext(message);
             }
-            if (!finished) {
-              BidiWriteObjectRequest message =
-                  BidiWriteObjectRequest.newBuilder().setFlush(true).setStateLookup(true).build();
-              opened.onNext(message);
-            }
             responseObserver.await();
             return null;
           } catch (Exception e) {
@@ -238,26 +240,6 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
           }
         },
         Decoder.identity());
-  }
-
-  private static BidiWriteObjectRequest.Builder possiblyPairDownBidiRequest(
-      BidiWriteObjectRequest.Builder b, boolean firstMessageOfStream) {
-    if (firstMessageOfStream && b.getWriteOffset() == 0) {
-      return b;
-    }
-
-    if (!firstMessageOfStream) {
-      b.clearUploadId();
-    }
-
-    if (b.getWriteOffset() > 0) {
-      b.clearWriteObjectSpec();
-    }
-
-    if (b.getWriteOffset() > 0 && !b.getFinishWrite()) {
-      b.clearObjectChecksums();
-    }
-    return b;
   }
 
   private class BidiObserver implements ApiStreamObserver<BidiWriteObjectResponse> {
