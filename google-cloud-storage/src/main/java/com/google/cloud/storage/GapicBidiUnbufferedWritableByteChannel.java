@@ -66,17 +66,17 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       ResultRetryAlgorithm<?> alg,
       SettableApiFuture<BidiWriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
-      BidiResumableWrite requestFactory,
+      BidiWriteCtx<BidiResumableWrite> writeCtx,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.write = write;
     this.deps = deps;
     this.alg = alg;
     this.baseContextSupplier = baseContextSupplier;
-    this.bucketName = requestFactory.bucketName();
+    this.bucketName = writeCtx.getRequestFactory().bucketName();
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
 
-    this.writeCtx = new BidiWriteCtx<>(requestFactory);
+    this.writeCtx = writeCtx;
     this.responseObserver = new BidiObserver();
   }
 
