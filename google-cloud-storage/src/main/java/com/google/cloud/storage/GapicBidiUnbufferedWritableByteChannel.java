@@ -179,7 +179,12 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       }
 
       if (i == data.length - 1 && !finished) {
-        builder.setFlush(true).setStateLookup(true);
+        if (finalize) {
+          builder.setFinishWrite(true);
+          finished = true;
+        } else {
+          builder.setFlush(true).setStateLookup(true);
+        }
       }
 
       BidiWriteObjectRequest build = builder.build();
@@ -209,8 +214,11 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     long offset = writeCtx.getTotalSentBytes().get();
     Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
-    BidiWriteObjectRequest.Builder b =
-        writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
+    BidiWriteObjectRequest.Builder b = writeCtx.newRequestBuilder();
+    if (!first) {
+      b.clearUploadId().clearObjectChecksums();
+    }
+    b.setFinishWrite(true).setWriteOffset(offset);
     if (crc32cValue != null) {
       b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
     }
@@ -312,7 +320,12 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       } else if (finalizing && value.hasPersistedSize()) {
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
         long persistedSize = value.getPersistedSize();
-        if (persistedSize < totalSentBytes) {
+        // if a flush: true, state_lookup: true message is in the stream along with a
+        // finish_write: true, GCS can respond with the incremental update, gracefully handle this
+        // message
+        if (totalSentBytes == persistedSize) {
+          writeCtx.getConfirmedBytes().set(persistedSize);
+        } else if (persistedSize < totalSentBytes) {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));

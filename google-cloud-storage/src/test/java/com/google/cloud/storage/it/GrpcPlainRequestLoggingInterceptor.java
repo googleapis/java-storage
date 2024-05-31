@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
@@ -112,6 +113,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       return fmtProto((WriteObjectRequest) obj);
     } else if (obj instanceof BidiWriteObjectRequest) {
       return fmtProto((BidiWriteObjectRequest) obj);
+    } else if (obj instanceof ReadObjectResponse) {
+      return fmtProto((ReadObjectResponse) obj);
     } else if (obj instanceof MessageOrBuilder) {
       return fmtProto((MessageOrBuilder) obj);
     } else {
@@ -146,6 +149,22 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         BidiWriteObjectRequest.Builder b = msg.toBuilder();
+        ByteString snip = ByteString.copyFromUtf8(String.format("<snip (%d)>", content.size()));
+        ByteString trim = content.substring(0, 20).concat(snip);
+        b.getChecksummedDataBuilder().setContent(trim);
+
+        return b.build().toString();
+      }
+    }
+    return msg.toString();
+  }
+
+  @NonNull
+  static String fmtProto(@NonNull ReadObjectResponse msg) {
+    if (msg.hasChecksummedData()) {
+      ByteString content = msg.getChecksummedData().getContent();
+      if (content.size() > 20) {
+        ReadObjectResponse.Builder b = msg.toBuilder();
         ByteString snip = ByteString.copyFromUtf8(String.format("<snip (%d)>", content.size()));
         ByteString trim = content.substring(0, 20).concat(snip);
         b.getChecksummedDataBuilder().setContent(trim);
