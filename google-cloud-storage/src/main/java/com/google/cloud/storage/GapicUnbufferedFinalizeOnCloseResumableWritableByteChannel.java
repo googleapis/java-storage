@@ -20,11 +20,13 @@ import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
@@ -33,8 +35,6 @@ import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -53,6 +53,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
   private boolean open = true;
   private boolean first = true;
   private boolean finished = false;
+  private volatile WriteObjectRequest lastWrittenRequest;
 
   GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
       SettableApiFuture<WriteObjectResponse> resultFuture,
@@ -68,7 +69,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     this.write = write.withDefaultCallContext(internalContext);
 
     this.writeCtx = writeCtx;
-    this.responseObserver = new Observer();
+    this.responseObserver = new Observer(internalContext);
   }
 
   @Override
@@ -90,27 +91,24 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
 
   @Override
   public void close() throws IOException {
-    ApiStreamObserver<WriteObjectRequest> openedStream = openedStream();
-    if (!finished) {
-      WriteObjectRequest message = finishMessage();
-      try {
-        openedStream.onNext(message);
-        openedStream.onCompleted();
-        finished = true;
-      } catch (RuntimeException e) {
-        resultFuture.setException(e);
-        throw e;
-      }
-    } else {
-      try {
-        openedStream.onCompleted();
-      } catch (RuntimeException e) {
-        resultFuture.setException(e);
-        throw e;
-      }
+    if (!open) {
+      return;
     }
     open = false;
-    responseObserver.await();
+    ApiStreamObserver<WriteObjectRequest> openedStream = openedStream();
+    try {
+      if (!finished) {
+        WriteObjectRequest message = finishMessage();
+        lastWrittenRequest = message;
+        openedStream.onNext(message);
+        finished = true;
+      }
+      openedStream.onCompleted();
+      responseObserver.await();
+    } catch (RuntimeException e) {
+      resultFuture.setException(e);
+      throw e;
+    }
   }
 
   private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
@@ -124,52 +122,50 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
       return 0;
     }
 
-    List<WriteObjectRequest> messages = new ArrayList<>();
-
     ApiStreamObserver<WriteObjectRequest> openedStream = openedStream();
     int bytesConsumed = 0;
-    for (ChunkSegment datum : data) {
-      Crc32cLengthKnown crc32c = datum.getCrc32c();
-      ByteString b = datum.getB();
-      int contentSize = b.size();
-      long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
-      Crc32cLengthKnown cumulative =
-          writeCtx
-              .getCumulativeCrc32c()
-              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
-      ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
-      if (crc32c != null) {
-        checksummedData.setCrc32C(crc32c.getValue());
-      }
-      WriteObjectRequest.Builder builder = writeCtx.newRequestBuilder();
-      if (!first) {
-        builder.clearUploadId();
-        builder.clearWriteObjectSpec();
-        builder.clearObjectChecksums();
-      }
-      builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
-      if (!datum.isOnlyFullBlocks()) {
-        builder.setFinishWrite(true);
-        if (cumulative != null) {
-          builder.setObjectChecksums(
-              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
-        }
-        finished = true;
-      }
-
-      WriteObjectRequest build = builder.build();
-      first = false;
-      messages.add(build);
-      bytesConsumed += contentSize;
-    }
-    if (finalize && !finished) {
-      messages.add(finishMessage());
-      finished = true;
-    }
-
     try {
-      for (WriteObjectRequest message : messages) {
-        openedStream.onNext(message);
+      for (int i = 0; i < data.length; i++) {
+        ChunkSegment datum = data[i];
+        Crc32cLengthKnown crc32c = datum.getCrc32c();
+        ByteString b = datum.getB();
+        int contentSize = b.size();
+        long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
+        Crc32cLengthKnown cumulative =
+            writeCtx
+                .getCumulativeCrc32c()
+                .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
+        ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
+        if (crc32c != null) {
+          checksummedData.setCrc32C(crc32c.getValue());
+        }
+        WriteObjectRequest.Builder builder = writeCtx.newRequestBuilder();
+        if (!first) {
+          builder.clearUploadId();
+          builder.clearWriteObjectSpec();
+          builder.clearObjectChecksums();
+        }
+        builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
+        if (!datum.isOnlyFullBlocks() || (finalize && i + 1 == data.length)) {
+          builder.setFinishWrite(true);
+          if (cumulative != null) {
+            builder.setObjectChecksums(
+                ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
+          }
+          finished = true;
+        }
+
+        WriteObjectRequest build = builder.build();
+        first = false;
+        lastWrittenRequest = build;
+        openedStream.onNext(build);
+        bytesConsumed += contentSize;
+      }
+      if (finalize && !finished) {
+        WriteObjectRequest finishMessage = finishMessage();
+        lastWrittenRequest = finishMessage;
+        openedStream.onNext(finishMessage);
+        finished = true;
       }
     } catch (RuntimeException e) {
       resultFuture.setException(e);
@@ -206,35 +202,100 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
 
   class Observer implements ApiStreamObserver<WriteObjectResponse> {
 
+    private final GrpcCallContext context;
+
     private final SettableApiFuture<Void> invocationHandle;
     private volatile WriteObjectResponse last;
 
-    Observer() {
+    Observer(GrpcCallContext context) {
+      this.context = context;
       this.invocationHandle = SettableApiFuture.create();
     }
 
     @Override
     public void onNext(WriteObjectResponse value) {
-      // incremental update
-      if (value.hasPersistedSize()) {
-        writeCtx.getConfirmedBytes().set(value.getPersistedSize());
-      } else if (value.hasResource()) {
-        writeCtx.getConfirmedBytes().set(value.getResource().getSize());
-      }
       last = value;
     }
 
     @Override
     public void onError(Throwable t) {
-      invocationHandle.setException(t);
+      if (t instanceof ApiException) {
+        // use StorageExceptions logic to translate from ApiException to our status codes ensuring
+        // things fall in line with our retry handlers.
+        // This is suboptimal, as it will initialize a second exception, however this is the
+        // unusual case, and it should not cause a significant overhead given its rarity.
+        StorageException tmp = StorageException.asStorageException((ApiException) t);
+        StorageException storageException =
+            ResumableSessionFailureScenario.toStorageException(
+                tmp.getCode(),
+                tmp.getMessage(),
+                tmp.getReason(),
+                ImmutableList.of(lastWrittenRequest),
+                null,
+                context,
+                t);
+        resultFuture.setException(storageException);
+        invocationHandle.setException(storageException);
+      } else {
+        resultFuture.setException(t);
+        invocationHandle.setException(t);
+      }
     }
 
     @Override
     public void onCompleted() {
-      if (last != null && last.hasResource()) {
-        resultFuture.set(last);
+      boolean finalizing = lastWrittenRequest.getFinishWrite();
+      if (last == null) {
+        clientDetectedError(
+            ResumableSessionFailureScenario.toStorageException(
+                0,
+                "onComplete without preceding onNext, unable to determine success.",
+                "invalid",
+                ImmutableList.of(lastWrittenRequest),
+                null,
+                context,
+                null));
+      } else if (last.hasResource() /* && finalizing*/) {
+        long totalSentBytes = writeCtx.getTotalSentBytes().get();
+        long finalSize = last.getResource().getSize();
+        if (totalSentBytes == finalSize) {
+          ok(finalSize);
+        } else if (finalSize < totalSentBytes) {
+          clientDetectedError(
+              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), last, context, null));
+        } else {
+          clientDetectedError(
+              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+                  ImmutableList.of(lastWrittenRequest), last, context, null));
+        }
+      } else if (!finalizing || last.hasPersistedSize()) { // unexpected incremental response
+        clientDetectedError(
+            ResumableSessionFailureScenario.toStorageException(
+                0,
+                "Unexpected incremental response for finalizing request.",
+                "invalid",
+                ImmutableList.of(lastWrittenRequest),
+                last,
+                context,
+                null));
+      } else {
+        clientDetectedError(
+            ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+                ImmutableList.of(lastWrittenRequest), last, context, null));
       }
+    }
+
+    private void ok(long persistedSize) {
+      writeCtx.getConfirmedBytes().set(persistedSize);
+      resultFuture.set(last);
       invocationHandle.set(null);
+    }
+
+    private void clientDetectedError(StorageException storageException) {
+      open = false;
+      resultFuture.setException(storageException);
+      invocationHandle.setException(storageException);
     }
 
     void await() {
