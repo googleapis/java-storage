@@ -60,8 +60,8 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
       SettableApiFuture<WriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      ResumableWrite requestFactory) {
-    String bucketName = requestFactory.bucketName();
+      WriteCtx<ResumableWrite> writeCtx) {
+    String bucketName = writeCtx.getRequestFactory().bucketName();
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
 
@@ -69,7 +69,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
         contextWithBucketName(bucketName, GrpcCallContext.createDefault());
     this.write = write.withDefaultCallContext(internalContext);
 
-    this.writeCtx = new WriteCtx<>(requestFactory);
+    this.writeCtx = writeCtx;
     this.responseObserver = new Observer(writeCtx.getConfirmedBytes()::set, resultFuture::set);
   }
 
