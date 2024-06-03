@@ -36,8 +36,6 @@ import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.LongConsumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
@@ -70,7 +68,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     this.write = write.withDefaultCallContext(internalContext);
 
     this.writeCtx = writeCtx;
-    this.responseObserver = new Observer(writeCtx.getConfirmedBytes()::set, resultFuture::set);
+    this.responseObserver = new Observer();
   }
 
   @Override
@@ -122,6 +120,9 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     }
 
     ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
+    if (data.length == 0) {
+      return 0;
+    }
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
@@ -140,11 +141,13 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
       if (crc32c != null) {
         checksummedData.setCrc32C(crc32c.getValue());
       }
-      WriteObjectRequest.Builder builder =
-          writeCtx
-              .newRequestBuilder()
-              .setWriteOffset(offset)
-              .setChecksummedData(checksummedData.build());
+      WriteObjectRequest.Builder builder = writeCtx.newRequestBuilder();
+      if (!first) {
+        builder.clearUploadId();
+        builder.clearWriteObjectSpec();
+        builder.clearObjectChecksums();
+      }
+      builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
       if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
         if (cumulative != null) {
@@ -154,7 +157,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
         finished = true;
       }
 
-      WriteObjectRequest build = possiblyPairDownRequest(builder, first).build();
+      WriteObjectRequest build = builder.build();
       first = false;
       messages.add(build);
       bytesConsumed += contentSize;
@@ -201,37 +204,12 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     return stream;
   }
 
-  /**
-   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
-   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
-   * messages.
-   */
-  private static WriteObjectRequest.Builder possiblyPairDownRequest(
-      WriteObjectRequest.Builder b, boolean firstMessageOfStream) {
-    if (firstMessageOfStream && b.getWriteOffset() == 0) {
-      return b;
-    }
-    if (b.getWriteOffset() > 0) {
-      b.clearWriteObjectSpec();
-    }
-
-    if (b.getWriteOffset() > 0 && !b.getFinishWrite()) {
-      b.clearObjectChecksums();
-    }
-    return b;
-  }
-
-  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
-
-    private final LongConsumer sizeCallback;
-    private final Consumer<WriteObjectResponse> completeCallback;
+  class Observer implements ApiStreamObserver<WriteObjectResponse> {
 
     private final SettableApiFuture<Void> invocationHandle;
     private volatile WriteObjectResponse last;
 
-    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
-      this.sizeCallback = sizeCallback;
-      this.completeCallback = completeCallback;
+    Observer() {
       this.invocationHandle = SettableApiFuture.create();
     }
 
@@ -239,22 +217,13 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     public void onNext(WriteObjectResponse value) {
       // incremental update
       if (value.hasPersistedSize()) {
-        sizeCallback.accept(value.getPersistedSize());
+        writeCtx.getConfirmedBytes().set(value.getPersistedSize());
       } else if (value.hasResource()) {
-        sizeCallback.accept(value.getResource().getSize());
+        writeCtx.getConfirmedBytes().set(value.getResource().getSize());
       }
       last = value;
     }
 
-    /**
-     * observed exceptions so far
-     *
-     * <ol>
-     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
-     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
-     *   <li>{@link io.grpc.StatusRuntimeException}
-     * </ol>
-     */
     @Override
     public void onError(Throwable t) {
       invocationHandle.setException(t);
@@ -263,7 +232,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
     @Override
     public void onCompleted() {
       if (last != null && last.hasResource()) {
-        completeCallback.accept(last);
+        resultFuture.set(last);
       }
       invocationHandle.set(null);
     }
