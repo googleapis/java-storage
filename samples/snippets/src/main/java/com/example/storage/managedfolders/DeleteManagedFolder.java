@@ -26,10 +26,18 @@ class DeleteManagedFolder {
       throws Exception {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      storageControlClient.deleteManagedFolder(
-          // Set project to "_" to signify global bucket
-          ManagedFolderName.of("_", bucketName, managedFolderId));
-      System.out.printf("Deleted Managed Folder %s", managedFolderId);
+      // Set project to "_" to signify global bucket
+      BucketName resourceBucketName = BucketName.of("_", bucketName);
+      DeleteManagedFolderRequest deleteManagedFolderRequest = DeleteManagedFolderRequest.newBuilder()
+          .setName(
+              ManagedFolderName.format(
+                  resourceBucketName.getProject(),
+                  resourceBucketName.getBucket(),
+                  managedFolderId)
+          )
+          .build();
+      storageControlClient.deleteManagedFolder(deleteManagedFolderRequest);
+      System.out.printf("Deleted Managed Folder %s%n", managedFolderId);
     }
   }
 

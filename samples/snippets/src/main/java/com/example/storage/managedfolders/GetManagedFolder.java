@@ -28,10 +28,18 @@ class GetManagedFolder {
   public static void managedFolderGet(String bucketName, String managedFolderId) throws Exception {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      ManagedFolder managedFolder = storageControlClient.getManagedFolder(
-          // Set project to "_" to signify global bucket
-          ManagedFolderName.of("_", bucketName, managedFolderId));
-      System.out.printf("Got Managed Folder %s", managedFolder.getName());
+      // Set project to "_" to signify global bucket
+      BucketName resourceBucketName = BucketName.of("_", bucketName);
+      GetManagedFolderRequest getManagedFolderRequest =
+          GetManagedFolderRequest.newBuilder()
+              .setName(
+                  ManagedFolderName.format(
+                      resourceBucketName.getProject(),
+                      resourceBucketName.getBucket(),
+                      managedFolderId))
+              .build();
+      ManagedFolder managedFolder = storageControlClient.getManagedFolder(getManagedFolderRequest);
+      System.out.printf("Got Managed Folder %s%n", managedFolder.getName());
     }
   }
 

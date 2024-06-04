@@ -27,12 +27,15 @@ class ListManagedFolders {
   public static void managedFolderList(String bucketName) throws Exception {
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
-      Iterable<ManagedFolder> managedFolders = storageControlClient
-          // Set project to "_" to signify global bucket
-          .listManagedFolders(BucketName.of("_", bucketName))
-          .iterateAll();
+      ListManagedFoldersRequest listManagedFoldersRequest =
+          ListManagedFoldersRequest.newBuilder()
+              // Set project to "_" to signify global bucket
+              .setParent(BucketName.format("_", bucketName))
+              .build();
+      Iterable<ManagedFolder> managedFolders =
+          storageControlClient.listManagedFolders(listManagedFoldersRequest).iterateAll();
       for (ManagedFolder folder : managedFolders) {
-        System.out.printf("%s bucket has managed folder %s", bucketName, folder.getName());
+        System.out.printf("%s bucket has managed folder %s%n", bucketName, folder.getName());
       }
     }
   }
