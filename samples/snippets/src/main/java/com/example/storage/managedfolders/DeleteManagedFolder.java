@@ -17,7 +17,8 @@
 package com.example.storage.managedfolders;
 
 // [START storage_control_managed_folder_delete]
-
+import com.google.storage.control.v2.BucketName;
+import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.ManagedFolderName;
 import com.google.storage.control.v2.StorageControlClient;
 
@@ -28,7 +29,8 @@ class DeleteManagedFolder {
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
       // Set project to "_" to signify global bucket
       BucketName resourceBucketName = BucketName.of("_", bucketName);
-      DeleteManagedFolderRequest deleteManagedFolderRequest = DeleteManagedFolderRequest.newBuilder()
+      DeleteManagedFolderRequest deleteManagedFolderRequest =
+          DeleteManagedFolderRequest.newBuilder()
           .setName(
               ManagedFolderName.format(
                   resourceBucketName.getProject(),

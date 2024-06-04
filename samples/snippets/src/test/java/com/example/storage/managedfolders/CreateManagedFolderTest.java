@@ -73,7 +73,7 @@ public class CreateManagedFolderTest {
 
   @Test
   public void testCreateManagedFolder() throws Exception {
-    CreateManagedFolder.main(bucketName, managedFolderId);
+    CreateManagedFolder.managedFolderCreate(bucketName, managedFolderId);
     String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format(managedFolderId));
   }

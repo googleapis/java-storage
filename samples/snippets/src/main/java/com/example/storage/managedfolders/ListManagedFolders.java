@@ -19,6 +19,7 @@ package com.example.storage.managedfolders;
 // [START storage_control_managed_folder_list]
 
 import com.google.storage.control.v2.BucketName;
+import com.google.storage.control.v2.ListManagedFoldersRequest;
 import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.StorageControlClient;
 

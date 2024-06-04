@@ -24,9 +24,7 @@ import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.StorageControlClient;
 
 public class CreateManagedFolder {
-  public static void main(String... args) throws Exception {
-    String bucketName = args[0]; // "your-bucket-name";
-    String managedFolderId = args[1]; // "your-managed-folder"
+  public static void managedFolderCreate(String bucketName, String managedFolderId) throws Exception {
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
     try (StorageControlClient storageControlClient = StorageControlClient.create()) {
