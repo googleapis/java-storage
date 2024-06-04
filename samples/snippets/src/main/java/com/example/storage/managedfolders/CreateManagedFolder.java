@@ -37,7 +37,7 @@ public class CreateManagedFolder {
           .setManagedFolder(ManagedFolder.newBuilder().build())
           .setManagedFolderId(managedFolderId).build();
       String response = storageControlClient.createManagedFolder(request).getName();
-      System.out.printf("Performed createManagedFolder request for %s", response);
+      System.out.printf("Performed createManagedFolder request for %s%n", response);
     }
   }
 }
