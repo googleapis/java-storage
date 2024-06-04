@@ -71,6 +71,7 @@ public class DeleteManagedFolderTest {
   @After
   public void tearDown() {
     storage.delete(bucketName);
+    storageControl.shutdown();
   }
 
   @Test

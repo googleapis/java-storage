@@ -77,6 +77,7 @@ public class GetManagedFolderTest {
             ManagedFolderName.format("_", bucketName, managedFolderId)
         ).build());
     storage.delete(bucketName);
+    storageControl.shutdown();
   }
 
   @Test
