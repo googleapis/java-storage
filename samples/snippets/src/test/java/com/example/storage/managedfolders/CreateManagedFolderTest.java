@@ -37,8 +37,7 @@ import org.junit.Test;
 
 public class CreateManagedFolderTest {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   protected String bucketName;
   protected Storage storage;
@@ -52,21 +51,20 @@ public class CreateManagedFolderTest {
     storageControl = StorageControlClient.create();
     storage = StorageOptions.getDefaultInstance().getService();
     managedFolderId = "new-managed-folder-" + UUID.randomUUID();
-    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName)
-        .setIamConfiguration(
-        IamConfiguration
-            .newBuilder()
-            .setIsUniformBucketLevelAccessEnabled(true)
-        .build()).build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build())
+            .build();
     bucket = storage.create(bucketInfo);
   }
 
   @After
   public void tearDown() {
     storageControl.deleteManagedFolder(
-        DeleteManagedFolderRequest.newBuilder().setName(
-            ManagedFolderName.format("_", bucketName, managedFolderId)
-        ).build());
+        DeleteManagedFolderRequest.newBuilder()
+            .setName(ManagedFolderName.format("_", bucketName, managedFolderId))
+            .build());
     storage.delete(bucketName);
     storageControl.shutdown();
   }
@@ -78,4 +76,3 @@ public class CreateManagedFolderTest {
     assertThat(got).contains(String.format(managedFolderId));
   }
 }
-

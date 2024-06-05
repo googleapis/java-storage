@@ -38,8 +38,7 @@ import org.junit.Test;
 
 public class DeleteManagedFolderTest {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   protected String bucketName;
   protected Storage storage;
@@ -53,19 +52,19 @@ public class DeleteManagedFolderTest {
     storageControl = StorageControlClient.create();
     storage = StorageOptions.getDefaultInstance().getService();
     managedFolderId = "new-managed-folder-" + UUID.randomUUID();
-    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName)
-        .setIamConfiguration(
-            IamConfiguration
-                .newBuilder()
-                .setIsUniformBucketLevelAccessEnabled(true)
-                .build()).build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build())
+            .build();
     bucket = storage.create(bucketInfo);
     storageControl.createManagedFolder(
         CreateManagedFolderRequest.newBuilder()
             // Set project to "_" to signify global bucket
             .setParent(BucketName.format("_", bucketName))
             .setManagedFolder(ManagedFolder.newBuilder().build())
-            .setManagedFolderId(managedFolderId).build());
+            .setManagedFolderId(managedFolderId)
+            .build());
   }
 
   @After

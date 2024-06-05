@@ -33,8 +33,9 @@ public class CreateManagedFolder {
           CreateManagedFolderRequest.newBuilder()
               // Set project to "_" to signify global bucket
               .setParent(BucketName.format("_", bucketName))
-          .setManagedFolder(ManagedFolder.newBuilder().build())
-          .setManagedFolderId(managedFolderId).build();
+              .setManagedFolder(ManagedFolder.newBuilder().build())
+              .setManagedFolderId(managedFolderId)
+              .build();
       String response = storageControlClient.createManagedFolder(request).getName();
       System.out.printf("Performed createManagedFolder request for %s%n", response);
     }
