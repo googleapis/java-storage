@@ -43,7 +43,6 @@ class GetManagedFolder {
       System.out.printf("Got Managed Folder %s%n", managedFolder.getName());
     }
   }
-
 }
 
 // [END storage_control_managed_folder_get]
