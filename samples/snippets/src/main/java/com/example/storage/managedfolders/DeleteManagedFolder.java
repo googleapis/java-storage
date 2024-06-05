@@ -31,18 +31,16 @@ class DeleteManagedFolder {
       BucketName resourceBucketName = BucketName.of("_", bucketName);
       DeleteManagedFolderRequest deleteManagedFolderRequest =
           DeleteManagedFolderRequest.newBuilder()
-          .setName(
-              ManagedFolderName.format(
-                  resourceBucketName.getProject(),
-                  resourceBucketName.getBucket(),
-                  managedFolderId)
-          )
-          .build();
+              .setName(
+                  ManagedFolderName.format(
+                      resourceBucketName.getProject(),
+                      resourceBucketName.getBucket(),
+                      managedFolderId))
+              .build();
       storageControlClient.deleteManagedFolder(deleteManagedFolderRequest);
       System.out.printf("Deleted Managed Folder %s%n", managedFolderId);
     }
   }
-
 }
 
 // [END storage_control_managed_folder_delete]
