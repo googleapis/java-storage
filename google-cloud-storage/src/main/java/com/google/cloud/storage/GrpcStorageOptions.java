@@ -41,6 +41,7 @@ import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.auth.Credentials;
+import com.google.cloud.MonitoredResource;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceOptions;
@@ -50,6 +51,7 @@ import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
 import com.google.cloud.opentelemetry.metric.MetricConfiguration;
+import com.google.cloud.opentelemetry.metric.MonitoredResourceDescription;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -96,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -103,7 +106,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
 import io.opentelemetry.instrumentation.resources.OsResource;
@@ -303,12 +308,24 @@ public final class GrpcStorageOptions extends StorageOptions
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
+
+
+    GCPResourceProvider resourceProvider = new GCPResourceProvider();
+    Attributes detectedAttributes = resourceProvider.getAttributes();
+
+    MonitoredResourceDescription monitoredResourceDescription = new MonitoredResourceDescription("generic_task",
+            ImmutableSet.of("project_id", "location", "namespace", "job", "task_id"));
+            // Uncomment when gcs_client MR is available:
+            //new MonitoredResourceDescription(
+              //      "gcs_client", ImmutableSet.of("project_id", "location", "cloud_platform", "host_id", "instance_id", "api"));
+
     MetricExporter cloudMonitoringExporter =
             GoogleCloudMetricExporter.createWithConfiguration(MetricConfiguration.builder()
-                    // TODO: Blocked by support in exporter project
-                    //  .setPrefix("storage.googleapis.com/")
-                    //  .setUseServiceTimeSeries(true)
+                    .setMonitoredResourceDescription(monitoredResourceDescription)
+                    //.setUseServiceTimeSeries(true)
                     .build());
+
+
 
     // Now set up PeriodicMetricReader to use this Exporter
     SdkMeterProvider provider = SdkMeterProvider.builder()
@@ -320,26 +337,24 @@ public final class GrpcStorageOptions extends StorageOptions
                     PeriodicMetricReader.builder(cloudMonitoringExporter)
                             .setInterval(java.time.Duration.ofSeconds(20))
                             .build())
-            .addResource(Resource.getDefault()
-                    .merge(OsResource.get())
-                    .merge(Resource.create(Attributes.builder()
-                            .put("namespace", "gcs_client_instance")
-                            .put("job", "")
-                            .put("task_id", "")
-                            .build()))).build();
+            .setResource(Resource.create(Attributes.builder()
+                    .put("gcp.resource_type", "generic_task")
+                    .put("job", detectedAttributes.get(AttributeKey.stringKey("host.id")))
+                    .put("task_id", detectedAttributes.get(AttributeKey.stringKey("gcp.gce.instance.hostname")))
+                    .put("namespace", "gcs_client_instance")
+                    .put("location", detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
+                    .put("project_id", detectedAttributes.get(AttributeKey.stringKey("cloud.account.id")))
 
-//    monitored_resource.set_type("generic_task");
-//    auto& labels = *monitored_resource.mutable_labels();
-//    // project_id untouched
-//    // location untouched
-//    labels["namespace"] = "gcs_client_instance";
-//    labels["job"] = labels["host_id"];
-//    labels["task_id"] = labels["instance_id"];
-//    labels.erase("cloud_platform");
-//    labels.erase("host_id");
-//    labels.erase("api");
+                    /** Uncomment when gcs_client MR is available
+                            .put("cloud_platform", detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
+                            .put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")))
+                            .put("instance_id", UUID.randomUUID().toString())
+                            .put("api", "grpc")
+                     **/
+                            .build()))
+            .build();
 
-    OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder().setMeterProvider(provider).build();
+    OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder().setMeterProvider(provider).buildAndRegisterGlobal();
     // TODO: add openTelemetrySdk.shutdown(); support
     GrpcOpenTelemetry grpcOpenTelemetry = GrpcOpenTelemetry.newBuilder().sdk(openTelemetrySdk)
             .enableMetrics(Arrays.asList(

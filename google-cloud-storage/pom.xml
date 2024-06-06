@@ -127,19 +127,20 @@
     <!-- Open Telemetry dependencies -->
     <dependency>
       <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-api</artifactId>
-      <version>1.37.0</version>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk</artifactId>
       <version>1.37.0</version>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-opentelemetry</artifactId>
-      <version>1.64.0-SNAPSHOT</version>
+      <version>1.64.0</version>
     </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+      <version>1.37.0</version>
+    </dependency>
+
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-metrics</artifactId>
@@ -164,7 +165,7 @@
     <dependency>
       <groupId>com.google.cloud.opentelemetry</groupId>
       <artifactId>exporter-metrics</artifactId>
-      <version>0.28.0</version>
+      <version>0.29.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
@@ -318,6 +319,16 @@
 
   </dependencies>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.opentelemetry.semconv</groupId>
+        <artifactId>opentelemetry-semconv</artifactId>
+        <version>1.25.0-alpha</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -392,6 +403,38 @@
             <version>${surefire.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.google.cloud.storage.Main</mainClass>
+                </transformer>
+              </transformers>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>shaded</shadedClassifierName> <!-- Any name that makes sense -->
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
