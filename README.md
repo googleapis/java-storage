@@ -51,7 +51,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.39.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.40.0</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
@@ -141,19 +141,19 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
-    <version>2.39.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+    <version>2.40.0</version><!-- {x-version-update:google-cloud-storage-control:current} -->
 </dependency>
 ```
 
 If you are using Gradle 5.x or later, add this to your dependencies:
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.39.0')
+implementation platform('com.google.cloud:libraries-bom:2.40.0')
 implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage-control:2.39.1-SNAPSHOT' <!-- {x-version-update:google-cloud-storage-control:current} -->
+implementation 'com.google.cloud:google-cloud-storage-control:2.40.0' <!-- {x-version-update:google-cloud-storage-control:current} -->
 ```
 
 #### Creating an authorized service object
