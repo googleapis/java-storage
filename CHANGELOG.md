@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.40.0](https://github.com/googleapis/java-storage/compare/v2.39.0...v2.40.0) (2024-06-06)
+
+
+### Features
+
+* Promote google-cloud-storage-control to GA ([#2575](https://github.com/googleapis/java-storage/issues/2575)) ([129f188](https://github.com/googleapis/java-storage/commit/129f188a9877b3bd71db3b00ba3d8d6e4095fb67))
+
+
+### Bug Fixes
+
+* Reduce Java 21 Virtual Thread Pinning in IO operations ([#2553](https://github.com/googleapis/java-storage/issues/2553)) ([498fd0b](https://github.com/googleapis/java-storage/commit/498fd0b391c9d1d01c453fe31abea7890c0b498f))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.31.0 ([#2571](https://github.com/googleapis/java-storage/issues/2571)) ([67ce3d6](https://github.com/googleapis/java-storage/commit/67ce3d6505e1e48f496ab52884f5f5c2852aa445))
+* Update dependency net.jqwik:jqwik to v1.8.5 ([#2563](https://github.com/googleapis/java-storage/issues/2563)) ([88f7d86](https://github.com/googleapis/java-storage/commit/88f7d86d960aa6986cf41165d80d03a551502ec2))
+
+
+### Documentation
+
+* Managed Folders samples ([#2562](https://github.com/googleapis/java-storage/issues/2562)) ([5ffc1f2](https://github.com/googleapis/java-storage/commit/5ffc1f2fa75ac2e1c0022301e02b6ea6627faf03))
+* Update javadoc for createFrom ([#2522](https://github.com/googleapis/java-storage/issues/2522)) ([dc31e95](https://github.com/googleapis/java-storage/commit/dc31e95158e66d0eb4c85122edd29431a610a204))
+
 ## [2.39.0](https://github.com/googleapis/java-storage/compare/v2.38.0...v2.39.0) (2024-05-22)
 
 
