@@ -153,11 +153,14 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
         new DirectWriteService(
             ImmutableMap.of(ImmutableList.of(req1, req2, req3, req4, req5), resp));
     try (FakeServer fake = FakeServer.of(service);
-        StorageClient sc = StorageClient.create(fake.storageSettings())) {
+        StorageClient sc =
+            PackagePrivateMethodWorkarounds.maybeGetStorageClient(
+                fake.getGrpcStorageOptions().getService())) {
+      assertThat(sc).isNotNull();
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
       try (GapicUnbufferedDirectWritableByteChannel c =
           new GapicUnbufferedDirectWritableByteChannel(
-              result, segmenter, sc.writeObjectCallable(), reqFactory)) {
+              result, segmenter, sc.writeObjectCallable(), new WriteCtx<>(reqFactory))) {
         c.write(ByteBuffer.wrap(bytes));
       }
       assertThat(result.get()).isEqualTo(resp);

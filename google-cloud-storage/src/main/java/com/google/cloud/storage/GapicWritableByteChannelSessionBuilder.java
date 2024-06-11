@@ -185,7 +185,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         resultFuture,
                         getChunkSegmenter(),
                         write,
-                        WriteObjectRequestBuilderFactory.simple(start)))
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -213,7 +213,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         resultFuture,
                         getChunkSegmenter(),
                         write,
-                        WriteObjectRequestBuilderFactory.simple(start)))
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
