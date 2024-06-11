@@ -43,7 +43,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @InternalApi
 @ThreadSafe
-abstract class ByteRangeSpec implements Serializable {
+public abstract class ByteRangeSpec implements Serializable {
 
   public static final long EFFECTIVE_INFINITY = Long.MAX_VALUE;
 
@@ -111,19 +111,20 @@ abstract class ByteRangeSpec implements Serializable {
 
   protected abstract MoreObjects.ToStringHelper append(MoreObjects.ToStringHelper tsh);
 
-  static ByteRangeSpec nullRange() {
+  public static ByteRangeSpec nullRange() {
     return NullByteRangeSpec.INSTANCE;
   }
 
-  static ByteRangeSpec relativeLength(@Nullable Long beginOffset, @Nullable Long length) {
+  public static ByteRangeSpec relativeLength(@Nullable Long beginOffset, @Nullable Long length) {
     return create(beginOffset, length, RelativeByteRangeSpec::new);
   }
 
-  static ByteRangeSpec explicit(@Nullable Long beginOffset, @Nullable Long endOffsetExclusive) {
+  public static ByteRangeSpec explicit(
+      @Nullable Long beginOffset, @Nullable Long endOffsetExclusive) {
     return create(beginOffset, endOffsetExclusive, LeftClosedRightOpenByteRangeSpec::new);
   }
 
-  static ByteRangeSpec explicitClosed(
+  public static ByteRangeSpec explicitClosed(
       @Nullable Long beginOffset, @Nullable Long endOffsetInclusive) {
     return create(beginOffset, endOffsetInclusive, LeftClosedRightClosedByteRangeSpec::new);
   }

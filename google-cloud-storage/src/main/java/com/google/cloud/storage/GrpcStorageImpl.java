@@ -1449,6 +1449,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   @Override
+  public ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
+    throw new UnsupportedOperationException(
+        fmtMethodName("getBlobDescriptor", BlobId.class, BlobSourceOption.class));
+  }
+
+  @Override
   public GrpcStorageOptions getOptions() {
     return (GrpcStorageOptions) super.getOptions();
   }

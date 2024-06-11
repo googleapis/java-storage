@@ -21,6 +21,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.UnsafeByteOperations;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -40,6 +41,10 @@ public final class ChecksummedTestContent {
 
   public byte[] getBytes() {
     return bytes;
+  }
+
+  public byte[] getBytes(int beginIndex) {
+    return UnsafeByteOperations.unsafeWrap(bytes).substring(beginIndex).toByteArray();
   }
 
   public int getCrc32c() {

@@ -120,4 +120,11 @@
     <method>* moveObject(*)</method>
   </difference>
 
+  <!-- Not breaking, new method has a default implementation -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/Storage</className>
+    <method>com.google.api.core.ApiFuture getBlobDescriptor(com.google.cloud.storage.BlobId, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
+  </difference>
+
 </differences>

@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.InternalExtensionOnly;
@@ -5834,4 +5835,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob moveBlob(MoveBlobRequest request);
+
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  default ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
+    return throwGrpcOnly(fmtMethodName("getBlobDescriptor", BlobId.class, BlobSourceOption.class));
+  }
 }
