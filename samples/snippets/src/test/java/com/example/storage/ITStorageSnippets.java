@@ -69,7 +69,7 @@ public class ITStorageSnippets {
     if (storage != null) {
       boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 1, TimeUnit.MINUTES);
       if (!wasDeleted && log.isLoggable(Level.WARNING)) {
-        System.out.printf( "Deletion of bucket %s timed out, bucket is not empty", BUCKET);
+        log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
     }
   }
