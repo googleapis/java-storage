@@ -52,7 +52,7 @@ final class BidiResumableWrite implements BidiWriteObjectRequestBuilderFactory {
 
   @Override
   public BidiWriteObjectRequest.Builder newBuilder() {
-    return writeRequest.toBuilder();
+    return writeRequest.toBuilder().clearWriteObjectSpec();
   }
 
   @Override

@@ -26,11 +26,11 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.StorageException.IOExceptionCallable;
 import com.google.common.io.CharStreams;
-import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.Message;
+import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.WriteObjectRequest;
-import com.google.storage.v2.WriteObjectResponse;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,10 +81,6 @@ enum ResumableSessionFailureScenario {
   private static final String PREFIX_I = "\t|< ";
   private static final String PREFIX_O = "\t|> ";
   private static final String PREFIX_X = "\t|  ";
-  // define some constants for tab widths that are more compressed that the literals
-  private static final String T1 = "\t";
-  private static final String T2 = "\t\t";
-  private static final String T3 = "\t\t\t";
 
   private static final Predicate<String> includedHeaders =
       matches("Content-Length")
@@ -134,8 +130,10 @@ enum ResumableSessionFailureScenario {
   }
 
   StorageException toStorageException(
-      @NonNull List<@NonNull WriteObjectRequest> reqs,
-      @Nullable WriteObjectResponse resp,
+      /*In java List<WriteObjectRequest> is not a sub-type of List<Message> despite WriteObjectRequest being a Message.
+       * intentionally only define List so the compiler doesn't complain */
+      @SuppressWarnings("rawtypes") @NonNull List reqs,
+      @Nullable Message resp,
       @NonNull GrpcCallContext context,
       @Nullable Throwable cause) {
     return toStorageException(code, message, reason, reqs, resp, context, cause);
@@ -161,8 +159,8 @@ enum ResumableSessionFailureScenario {
       int code,
       String message,
       @Nullable String reason,
-      @NonNull List<@NonNull WriteObjectRequest> reqs,
-      @Nullable WriteObjectResponse resp,
+      @NonNull List reqs,
+      @Nullable Message resp,
       @NonNull GrpcCallContext context,
       @Nullable Throwable cause) {
     final StringBuilder sb = new StringBuilder();
@@ -177,35 +175,8 @@ enum ResumableSessionFailureScenario {
       } else {
         sb.append(",");
       }
-      WriteObjectRequest req = reqs.get(i);
-      sb.append("\n").append(PREFIX_O).append(T1).append(req.getClass().getName()).append("{");
-      if (req.hasUploadId()) {
-        sb.append("\n").append(PREFIX_O).append(T2).append("upload_id: ").append(req.getUploadId());
-      }
-      long writeOffset = req.getWriteOffset();
-      if (req.hasChecksummedData()) {
-        ChecksummedData checksummedData = req.getChecksummedData();
-        sb.append("\n").append(PREFIX_O).append(T2);
-        sb.append(
-            String.format(
-                "checksummed_data: {range: [%d:%d]",
-                writeOffset, writeOffset + checksummedData.getContent().size()));
-        if (checksummedData.hasCrc32C()) {
-          sb.append(", crc32c: ").append(checksummedData.getCrc32C());
-        }
-        sb.append("}");
-      } else {
-        sb.append("\n").append(PREFIX_O).append(T2).append("write_offset: ").append(writeOffset);
-      }
-      if (req.getFinishWrite()) {
-        sb.append("\n").append(PREFIX_O).append(T2).append("finish_write: true");
-      }
-      if (req.hasObjectChecksums()) {
-        ObjectChecksums objectChecksums = req.getObjectChecksums();
-        sb.append("\n").append(PREFIX_O).append(T2).append("object_checksums: ").append("{");
-        fmt(objectChecksums, PREFIX_O, T3, sb);
-        sb.append("\n").append(PREFIX_O).append(T2).append("}");
-      }
+      Message req = (Message) reqs.get(i);
+      fmt(req, PREFIX_O, Indentation.T1, sb);
       sb.append("\n").append(PREFIX_O).append("\t}");
       if (i == length - 1) {
         sb.append("\n").append(PREFIX_O).append("]");
@@ -217,7 +188,7 @@ enum ResumableSessionFailureScenario {
     // response context
     if (resp != null) {
       sb.append("\n").append(PREFIX_I).append(resp.getClass().getName()).append("{");
-      fmt(resp, PREFIX_I, T1, sb);
+      fmt(resp, PREFIX_I, Indentation.T1, sb);
       sb.append("\n").append(PREFIX_I).append("}");
       sb.append("\n").append(PREFIX_X);
     }
@@ -250,7 +221,8 @@ enum ResumableSessionFailureScenario {
         sb.append("\n").append(PREFIX_X);
       }
     }
-    return new StorageException(code, sb.toString(), reason, cause);
+    StorageException se = new StorageException(code, sb.toString(), reason, cause);
+    return se;
   }
 
   static StorageException toStorageException(
@@ -359,16 +331,122 @@ enum ResumableSessionFailureScenario {
   }
 
   private static void fmt(
-      MessageOrBuilder msg,
+      Message msg,
       @SuppressWarnings("SameParameterValue") String prefix,
-      String indentation,
+      Indentation indentation,
       StringBuilder sb) {
-    String string = msg.toString();
-    // drop the final new line before prefixing
-    string = string.replaceAll("\n$", "");
-    sb.append("\n")
-        .append(prefix)
-        .append(indentation)
-        .append(string.replaceAll("\r?\n", "\n" + prefix + indentation));
+    if (msg instanceof WriteObjectRequest) {
+      WriteObjectRequest req = (WriteObjectRequest) msg;
+      fmtWriteObjectRequest(req, prefix, indentation, sb);
+    } else if (msg instanceof BidiWriteObjectRequest) {
+      BidiWriteObjectRequest req = (BidiWriteObjectRequest) msg;
+      fmtBidiWriteObjectRequest(req, prefix, indentation, sb);
+    } else {
+      String string = msg.toString();
+      // drop the final new line before prefixing
+      string = string.replaceAll("\n$", "");
+      sb.append("\n")
+          .append(prefix)
+          .append(indentation)
+          .append(string.replaceAll("\r?\n", "\n" + prefix + indentation.indentation));
+    }
+  }
+
+  private static void fmtWriteObjectRequest(
+      WriteObjectRequest req, String prefix, Indentation t1, StringBuilder sb) {
+    Indentation t2 = t1.indent();
+    Indentation t3 = t2.indent();
+    sb.append("\n").append(prefix).append(t1).append(req.getClass().getName()).append("{");
+    if (req.hasUploadId()) {
+      sb.append("\n").append(prefix).append(t2).append("upload_id: ").append(req.getUploadId());
+    }
+    long writeOffset = req.getWriteOffset();
+    if (req.hasChecksummedData()) {
+      ChecksummedData checksummedData = req.getChecksummedData();
+      sb.append("\n").append(prefix).append(t2);
+      sb.append(
+          String.format(
+              "checksummed_data: {range: [%d:%d]",
+              writeOffset, writeOffset + checksummedData.getContent().size()));
+      if (checksummedData.hasCrc32C()) {
+        sb.append(", crc32c: ").append(checksummedData.getCrc32C());
+      }
+      sb.append("}");
+    } else {
+      sb.append("\n").append(prefix).append(t2).append("write_offset: ").append(writeOffset);
+    }
+    if (req.getFinishWrite()) {
+      sb.append("\n").append(prefix).append(t2).append("finish_write: true");
+    }
+    if (req.hasObjectChecksums()) {
+      ObjectChecksums objectChecksums = req.getObjectChecksums();
+      sb.append("\n").append(prefix).append(t2).append("object_checksums: ").append("{");
+      fmt(objectChecksums, prefix, t3, sb);
+      sb.append("\n").append(prefix).append(t2).append("}");
+    }
+  }
+
+  private static void fmtBidiWriteObjectRequest(
+      BidiWriteObjectRequest req, String prefix, Indentation t1, StringBuilder sb) {
+    Indentation t2 = t1.indent();
+    Indentation t3 = t2.indent();
+    sb.append("\n").append(prefix).append(t1).append(req.getClass().getName()).append("{");
+    if (req.hasUploadId()) {
+      sb.append("\n").append(prefix).append(t2).append("upload_id: ").append(req.getUploadId());
+    }
+    long writeOffset = req.getWriteOffset();
+    if (req.hasChecksummedData()) {
+      ChecksummedData checksummedData = req.getChecksummedData();
+      sb.append("\n").append(prefix).append(t2);
+      sb.append(
+          String.format(
+              "checksummed_data: {range: [%d:%d]",
+              writeOffset, writeOffset + checksummedData.getContent().size()));
+      if (checksummedData.hasCrc32C()) {
+        sb.append(", crc32c: ").append(checksummedData.getCrc32C());
+      }
+      sb.append("}");
+    } else {
+      sb.append("\n").append(prefix).append(t2).append("write_offset: ").append(writeOffset);
+    }
+    if (req.getFlush()) {
+      sb.append("\n").append(prefix).append(t2).append("flush: true");
+    }
+    if (req.getStateLookup()) {
+      sb.append("\n").append(prefix).append(t2).append("state_lookup: true");
+    }
+    if (req.getFinishWrite()) {
+      sb.append("\n").append(prefix).append(t2).append("finish_write: true");
+    }
+    if (req.hasObjectChecksums()) {
+      ObjectChecksums objectChecksums = req.getObjectChecksums();
+      sb.append("\n").append(prefix).append(t2).append("object_checksums: ").append("{");
+      fmt(objectChecksums, prefix, t3, sb);
+      sb.append("\n").append(prefix).append(t2).append("}");
+    }
+  }
+
+  enum Indentation {
+    T1("\t"),
+    T2("\t\t"),
+    T3("\t\t\t"),
+    T4("\t\t\t\t"),
+    ;
+
+    private final String indentation;
+
+    Indentation(String indentation) {
+      this.indentation = indentation;
+    }
+
+    Indentation indent() {
+      int ordinal = ordinal();
+      return values()[ordinal + 1];
+    }
+
+    @Override
+    public String toString() {
+      return indentation;
+    }
   }
 }

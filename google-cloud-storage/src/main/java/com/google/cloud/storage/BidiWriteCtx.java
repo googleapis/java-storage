@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
-
 import com.google.cloud.storage.BidiWriteCtx.BidiWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.storage.v2.BidiWriteObjectRequest;
@@ -84,36 +82,5 @@ final class BidiWriteCtx<RequestFactoryT extends BidiWriteObjectRequestBuilderFa
 
     @Nullable
     String bucketName();
-
-    static BidiSimpleWriteObjectRequestBuilderFactory simple(BidiWriteObjectRequest req) {
-      return new BidiSimpleWriteObjectRequestBuilderFactory(req);
-    }
-  }
-
-  static final class BidiSimpleWriteObjectRequestBuilderFactory
-      implements BidiWriteObjectRequestBuilderFactory {
-    private final BidiWriteObjectRequest req;
-
-    private BidiSimpleWriteObjectRequestBuilderFactory(BidiWriteObjectRequest req) {
-      this.req = req;
-    }
-
-    @Override
-    public BidiWriteObjectRequest.Builder newBuilder() {
-      return req.toBuilder();
-    }
-
-    @Override
-    public @Nullable String bucketName() {
-      if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
-        return req.getWriteObjectSpec().getResource().getBucket();
-      }
-      return null;
-    }
-
-    @Override
-    public String toString() {
-      return "SimpleBidiWriteObjectRequestBuilderFactory{" + "req=" + fmtProto(req) + '}';
-    }
   }
 }
