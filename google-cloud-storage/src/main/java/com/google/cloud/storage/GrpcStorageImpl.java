@@ -796,7 +796,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     //  3. wrap the result in another future container before constructing the BlobWriteChannel
     ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
     return new GrpcBlobWriteChannel(
-        storageClient.writeObjectCallable(),
+        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
         getOptions(),
         retryAlgorithmManager.idempotent(),
         () -> wrapped,
