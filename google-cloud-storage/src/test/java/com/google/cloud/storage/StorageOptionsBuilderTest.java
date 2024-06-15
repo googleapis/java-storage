@@ -71,11 +71,13 @@ public final class StorageOptionsBuilderTest {
 
   @Test
   public void testGrpcUniverseDomainMatchesHost() throws Exception {
-    Storage storage = StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build().getService();
+    Storage storage =
+        StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build().getService();
     assertAll(
-            () -> assertThat(storage.getOptions().getUniverseDomain().equals("my-universe-domain.com")),
-            () -> assertThat(storage.getOptions().getHost().equals("https://storage.my-universe-domain.com"))
-    );
+        () -> assertThat(storage.getOptions().getUniverseDomain().equals("my-universe-domain.com")),
+        () ->
+            assertThat(
+                storage.getOptions().getHost().equals("https://storage.my-universe-domain.com")));
   }
 
   private static class MyStorageRetryStrategy implements StorageRetryStrategy {

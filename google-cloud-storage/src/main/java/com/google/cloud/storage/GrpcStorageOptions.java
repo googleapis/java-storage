@@ -600,8 +600,8 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     @Override
     public GrpcStorageOptions build() {
-      GrpcStorageOptions options =  new GrpcStorageOptions(this, defaults());
-      if(options.getUniverseDomain() != null) {
+      GrpcStorageOptions options = new GrpcStorageOptions(this, defaults());
+      if (options.getUniverseDomain() != null) {
         this.setHost("https://storage." + options.getUniverseDomain());
         return new GrpcStorageOptions(this, defaults());
       }
