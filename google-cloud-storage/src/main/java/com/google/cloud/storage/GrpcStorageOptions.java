@@ -85,6 +85,20 @@ import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import io.grpc.opentelemetry.GrpcOpenTelemetry;
 import io.grpc.protobuf.ProtoUtils;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.internal.StringUtils;
+import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.metrics.Aggregation;
+import io.opentelemetry.sdk.metrics.InstrumentSelector;
+import io.opentelemetry.sdk.metrics.InstrumentType;
+import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.SdkMeterProviderBuilder;
+import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.export.MetricExporter;
+import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+import io.opentelemetry.sdk.resources.Resource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,21 +120,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.internal.StringUtils;
-import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.metrics.Aggregation;
-import io.opentelemetry.sdk.metrics.InstrumentSelector;
-import io.opentelemetry.sdk.metrics.InstrumentType;
-import io.opentelemetry.sdk.metrics.SdkMeterProvider;
-import io.opentelemetry.sdk.metrics.SdkMeterProviderBuilder;
-import io.opentelemetry.sdk.metrics.View;
-import io.opentelemetry.sdk.metrics.export.MetricExporter;
-import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
-import io.opentelemetry.sdk.resources.Resource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.threeten.bp.Duration;
@@ -313,7 +312,7 @@ public final class GrpcStorageOptions extends StorageOptions
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
 
-    if(enableMetrics) {
+    if (enableMetrics) {
       enableGrpcMetrics(channelProviderBuilder, endpoint);
     }
 
@@ -367,13 +366,18 @@ public final class GrpcStorageOptions extends StorageOptions
     return Tuple.of(builder.build(), defaultOpts);
   }
 
-  private void enableGrpcMetrics(InstantiatingGrpcChannelProvider.Builder channelProviderBuilder, String endpoint) {
+  private void enableGrpcMetrics(
+      InstantiatingGrpcChannelProvider.Builder channelProviderBuilder, String endpoint) {
     String metricServiceEndpoint = getCloudMonitoringEndpoint(endpoint);
     SdkMeterProvider provider = createMeterProvider(metricServiceEndpoint);
 
-    OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder().setMeterProvider(provider).buildAndRegisterGlobal();
-    GrpcOpenTelemetry grpcOpenTelemetry = GrpcOpenTelemetry.newBuilder().sdk(openTelemetrySdk)
-            .enableMetrics(Arrays.asList(
+    OpenTelemetrySdk openTelemetrySdk =
+        OpenTelemetrySdk.builder().setMeterProvider(provider).buildAndRegisterGlobal();
+    GrpcOpenTelemetry grpcOpenTelemetry =
+        GrpcOpenTelemetry.newBuilder()
+            .sdk(openTelemetrySdk)
+            .enableMetrics(
+                Arrays.asList(
                     "grpc.lb.wrr.rr_fallback",
                     "grpc.lb.wrr.endpoint_weight_not_yet_usable",
                     "grpc.lb.wrr.endpoint_weight_stale",
@@ -387,17 +391,18 @@ public final class GrpcStorageOptions extends StorageOptions
                     "grpc.xds_client.server_failure",
                     "grpc.xds_client.resource_updates_valid",
                     "grpc.xds_client.resource_updates_invalid",
-                    "grpc.xds_client.resources"
-            ))
+                    "grpc.xds_client.resources"))
             .build();
-    ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator = channelProviderBuilder.getChannelConfigurator();
-    channelProviderBuilder.setChannelConfigurator(b -> {
-      grpcOpenTelemetry.configureChannelBuilder(b);
-      if (channelConfigurator != null) {
-        return channelConfigurator.apply(b);
-      }
-      return b;
-    });
+    ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator =
+        channelProviderBuilder.getChannelConfigurator();
+    channelProviderBuilder.setChannelConfigurator(
+        b -> {
+          grpcOpenTelemetry.configureChannelBuilder(b);
+          if (channelConfigurator != null) {
+            return channelConfigurator.apply(b);
+          }
+          return b;
+        });
   }
 
   @VisibleForTesting
@@ -407,23 +412,22 @@ public final class GrpcStorageOptions extends StorageOptions
     String universeDomain = this.getUniverseDomain();
 
     // use contains instead of equals because endpoint has a port in it
-    if(universeDomain != null && endpoint.contains("storage." + universeDomain)) {
+    if (universeDomain != null && endpoint.contains("storage." + universeDomain)) {
       metricServiceEndpoint = "monitoring." + universeDomain;
-    }
-    else if(!endpoint.contains("storage.googleapis.com")) {
+    } else if (!endpoint.contains("storage.googleapis.com")) {
       String canonicalEndpoint = "storage.googleapis.com";
       String privateEndpoint = "private.googleapis.com";
       String restrictedEndpoint = "restricted.googleapis.com";
-      if(universeDomain != null) {
+      if (universeDomain != null) {
         canonicalEndpoint = "storage." + universeDomain;
         privateEndpoint = "private." + universeDomain;
         restrictedEndpoint = "restricted." + universeDomain;
       }
-      String match = ImmutableList.of(canonicalEndpoint, privateEndpoint, restrictedEndpoint)
-              .stream()
+      String match =
+          ImmutableList.of(canonicalEndpoint, privateEndpoint, restrictedEndpoint).stream()
               .filter(s -> endpoint.contains(s) || endpoint.contains("google-c2p:///" + s))
               .collect(Collectors.joining());
-      if(!StringUtils.isNullOrEmpty(match)) {
+      if (!StringUtils.isNullOrEmpty(match)) {
         metricServiceEndpoint = match;
       }
     }
@@ -435,64 +439,91 @@ public final class GrpcStorageOptions extends StorageOptions
     GCPResourceProvider resourceProvider = new GCPResourceProvider();
     Attributes detectedAttributes = resourceProvider.getAttributes();
 
-    MonitoredResourceDescription monitoredResourceDescription = new MonitoredResourceDescription("generic_task",
+    MonitoredResourceDescription monitoredResourceDescription =
+        new MonitoredResourceDescription(
+            "generic_task",
             ImmutableSet.of("project_id", "location", "namespace", "job", "task_id"));
     // When the gcs_client MR is available, do this instead:
-    //new MonitoredResourceDescription(
-    //      "gcs_client", ImmutableSet.of("project_id", "location", "cloud_platform", "host_id", "instance_id", "api"));
-
+    // new MonitoredResourceDescription(
+    //      "gcs_client", ImmutableSet.of("project_id", "location", "cloud_platform", "host_id",
+    // "instance_id", "api"));
 
     MetricExporter cloudMonitoringExporter =
-            GoogleCloudMetricExporter.createWithConfiguration(MetricConfiguration.builder()
-                    .setMonitoredResourceDescription(monitoredResourceDescription)
-                    .setMetricServiceEndpoint(metricServiceEndpoint )
-                    //.setUseServiceTimeSeries(true)
-                    .build());
+        GoogleCloudMetricExporter.createWithConfiguration(
+            MetricConfiguration.builder()
+                .setMonitoredResourceDescription(monitoredResourceDescription)
+                .setMetricServiceEndpoint(metricServiceEndpoint)
+                // .setUseServiceTimeSeries(true)
+                .build());
 
     String projectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
-    SdkMeterProviderBuilder providerBuilder = SdkMeterProvider.builder()
+    SdkMeterProviderBuilder providerBuilder =
+        SdkMeterProvider.builder()
             .registerMetricReader(
-                    // Set collection interval to 20 seconds.
-                    // See https://cloud.google.com/monitoring/quotas#custom_metrics_quotas
-                    // Rate at which data can be written to a single time series: one point each 10
-                    // seconds.
-                    PeriodicMetricReader.builder(cloudMonitoringExporter)
-                            .setInterval(java.time.Duration.ofSeconds(20))
-                            .build())
-            .setResource(Resource.create(Attributes.builder()
-                    .put("gcp.resource_type", "generic_task")
-                    .put("job", detectedAttributes.get(AttributeKey.stringKey("host.id")))
-                    .put("task_id", detectedAttributes.get(AttributeKey.stringKey("gcp.gce.instance.hostname")))
-                    .put("namespace", "gcs_client_instance")
-                    .put("location", detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
-                    .put("project_id", projectId == null ? this.getProjectId() : projectId)
+                // Set collection interval to 20 seconds.
+                // See https://cloud.google.com/monitoring/quotas#custom_metrics_quotas
+                // Rate at which data can be written to a single time series: one point each 10
+                // seconds.
+                PeriodicMetricReader.builder(cloudMonitoringExporter)
+                    .setInterval(java.time.Duration.ofSeconds(20))
+                    .build())
+            .setResource(
+                Resource.create(
+                    Attributes.builder()
+                        .put("gcp.resource_type", "generic_task")
+                        .put("job", detectedAttributes.get(AttributeKey.stringKey("host.id")))
+                        .put(
+                            "task_id",
+                            detectedAttributes.get(
+                                AttributeKey.stringKey("gcp.gce.instance.hostname")))
+                        .put("namespace", "gcs_client_instance")
+                        .put(
+                            "location",
+                            detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
+                        .put("project_id", projectId == null ? this.getProjectId() : projectId)
 
-                    /** Uncomment when gcs_client MR is available
-                     .put("cloud_platform", detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
-                     .put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")))
-                     .put("instance_id", UUID.randomUUID().toString())
-                     .put("api", "grpc")
-                     **/
-                    .build()));
+                        /**
+                         * Uncomment when gcs_client MR is available .put("cloud_platform",
+                         * detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
+                         * .put("host_id",
+                         * detectedAttributes.get(AttributeKey.stringKey("host.id")))
+                         * .put("instance_id", UUID.randomUUID().toString()) .put("api", "grpc")
+                         */
+                        .build()));
 
-    addHistogramView(providerBuilder, latencyHistogramBoundaries(), "grpc.client.attempt.duration", "s");
-    addHistogramView(providerBuilder, sizeHistogramBoundaries(), "grpc.client.attempt.rcvd_total_compressed_message_size", "By");
-    addHistogramView(providerBuilder, sizeHistogramBoundaries(), "grpc.client.attempt.sent_total_compressed_message_size", "By");
+    addHistogramView(
+        providerBuilder, latencyHistogramBoundaries(), "grpc.client.attempt.duration", "s");
+    addHistogramView(
+        providerBuilder,
+        sizeHistogramBoundaries(),
+        "grpc.client.attempt.rcvd_total_compressed_message_size",
+        "By");
+    addHistogramView(
+        providerBuilder,
+        sizeHistogramBoundaries(),
+        "grpc.client.attempt.sent_total_compressed_message_size",
+        "By");
 
     return providerBuilder.build();
   }
 
-  private void addHistogramView(SdkMeterProviderBuilder provider, List<Double> boundaries, String name, String unit) {
-    InstrumentSelector instrumentSelector = InstrumentSelector.builder()
+  private void addHistogramView(
+      SdkMeterProviderBuilder provider, List<Double> boundaries, String name, String unit) {
+    InstrumentSelector instrumentSelector =
+        InstrumentSelector.builder()
             .setType(InstrumentType.HISTOGRAM)
             .setUnit(unit)
             .setName(name)
             .setMeterName("grpc-java")
             .setMeterSchemaUrl("")
             .build();
-    View view = View.builder()
+    View view =
+        View.builder()
             .setName(name)
-            .setDescription("A view of " + name + " with histogram boundaries more appropriate for Google Cloud Storage RPCs")
+            .setDescription(
+                "A view of "
+                    + name
+                    + " with histogram boundaries more appropriate for Google Cloud Storage RPCs")
             .setAggregation(Aggregation.explicitBucketHistogram(boundaries))
             .build();
     provider.registerView(instrumentSelector, view);
@@ -503,18 +534,19 @@ public final class GrpcStorageOptions extends StorageOptions
     BigDecimal boundary = new BigDecimal(0, MathContext.UNLIMITED);
     BigDecimal increment = new BigDecimal("0.002", MathContext.UNLIMITED); // 2ms
 
-    // 2ms buckets for the first 100ms, so we can have higher resolution for uploads and downloads in the
+    // 2ms buckets for the first 100ms, so we can have higher resolution for uploads and downloads
+    // in the
     // 100 KiB range
-    for(int i = 0; i != 50; i++) {
+    for (int i = 0; i != 50; i++) {
       boundaries.add(boundary.doubleValue());
       boundary = boundary.add(increment);
     }
 
     // For the remaining buckets do 10 10ms, 10 20ms, and so on, up until 5 minutes
-    increment = new BigDecimal("0.01", MathContext.UNLIMITED); //10 ms
-    for(int i = 0; i != 150 && boundary.compareTo(new BigDecimal(300)) < 1; i++) {
+    increment = new BigDecimal("0.01", MathContext.UNLIMITED); // 10 ms
+    for (int i = 0; i != 150 && boundary.compareTo(new BigDecimal(300)) < 1; i++) {
       boundaries.add(boundary.doubleValue());
-      if(i != 0 && i % 10 == 0) {
+      if (i != 0 && i % 10 == 0) {
         increment = increment.multiply(new BigDecimal(2));
       }
       boundary = boundary.add(increment);
@@ -534,9 +566,9 @@ public final class GrpcStorageOptions extends StorageOptions
 
     // 128 KiB increments up to 4MiB, then exponential growth
     while (boundaries.size() < 200 && boundary <= 16 * gb) {
-      boundaries.add((double)boundary);
+      boundaries.add((double) boundary);
       boundary += increment;
-      if(boundary >= 4 * mb) {
+      if (boundary >= 4 * mb) {
         increment *= 2;
       }
     }
@@ -665,9 +697,9 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
     /**
-     * Option for whether this client should emit metrics to Cloud Monitoring.
-     * Enabled by default. Emitting metrics is free and requires minimal CPU
-     * and memory, but can be disabled by setting this to false.
+     * Option for whether this client should emit metrics to Cloud Monitoring. Enabled by default.
+     * Emitting metrics is free and requires minimal CPU and memory, but can be disabled by setting
+     * this to false.
      *
      * @since 2.41.0 This new api is in preview and is subject to breaking changes.
      */

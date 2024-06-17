@@ -77,7 +77,7 @@ public final class ITGrpcTest {
   }
 
   @Test
-  public void listBlobs() throws InterruptedException {
+  public void listBlobs() {
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
     String prefix = generator.randomObjectName();
     List<Blob> blobs =
@@ -90,15 +90,13 @@ public final class ITGrpcTest {
     List<String> expected =
         blobs.stream().map(Blob::getName).collect(ImmutableList.toImmutableList());
 
-    while(true) {
-      Page<Blob> list = storage.list(bucketInfo.getName(), BlobListOption.prefix(prefix));
-      Thread.sleep(1000);
-    }
-//      ImmutableList<String> actual =
-//              StreamSupport.stream(list.iterateAll().spliterator(), false)
-//                      .map(Blob::getName)
-//                      .collect(ImmutableList.toImmutableList());
-//    assertThat(actual).isEqualTo(expected);
+    Page<Blob> list = storage.list(bucketInfo.getName(), BlobListOption.prefix(prefix));
+    ImmutableList<String> actual =
+        StreamSupport.stream(list.iterateAll().spliterator(), false)
+            .map(Blob::getName)
+            .collect(ImmutableList.toImmutableList());
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
