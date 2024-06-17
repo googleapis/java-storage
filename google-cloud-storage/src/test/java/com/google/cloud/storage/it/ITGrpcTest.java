@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.paging.Page;
@@ -38,6 +39,7 @@ import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.CreateHmacKeyOption;
 import com.google.cloud.storage.Storage.ListHmacKeysOption;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -245,5 +247,15 @@ public final class ITGrpcTest {
     } finally {
       s.delete(bucket.getName());
     }
+  }
+  @Test
+  public void testGrpcUniverseDomainMatchesHost() throws Exception {
+    Storage storage =
+            StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build().getService();
+    assertAll(
+            () -> assertThat(storage.getOptions().getUniverseDomain().equals("my-universe-domain.com")),
+            () ->
+                    assertThat(
+                            storage.getOptions().getHost().equals("https://storage.my-universe-domain.com")));
   }
 }
