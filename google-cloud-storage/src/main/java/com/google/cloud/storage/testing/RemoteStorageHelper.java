@@ -99,7 +99,7 @@ public class RemoteStorageHelper {
                   }
                   forceDelete(storage, bucket.getName());
                 } catch (Exception e) {
-                  // Ignore the exception, maybe the bucket is being deleted by someone else.
+                  log.info("Failed to clean buckets " + e.getMessage());
                 }
               }
             }
@@ -298,6 +298,7 @@ public class RemoteStorageHelper {
           }
           return true;
         } catch (StorageException e) {
+          log.warning("Caught exception in Delete Bucket Task" + e.getMessage());
           if (e.getCode() == 409) {
             try {
               Thread.sleep(500);

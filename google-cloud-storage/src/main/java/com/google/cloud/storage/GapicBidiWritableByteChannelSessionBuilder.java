@@ -155,7 +155,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                             resultFuture,
                             new ChunkSegmenter(
                                 boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-                            start,
+                            new BidiWriteCtx<>(start),
                             Retrying::newCallContext))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));

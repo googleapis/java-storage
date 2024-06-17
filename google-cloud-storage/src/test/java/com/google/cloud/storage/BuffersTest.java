@@ -16,10 +16,15 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.security.SecureRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 public final class BuffersTest {
@@ -71,5 +76,88 @@ public final class BuffersTest {
   public void allocateAligned_evenlyDivisible_capacityGtAlignment() {
     ByteBuffer b1 = Buffers.allocateAligned(8, 4);
     assertThat(b1.capacity()).isEqualTo(8);
+  }
+
+  @Test
+  public void fillFrom_handles_0SizeRead_someBytesRead() throws Exception {
+    byte[] bytes = new byte[14];
+    ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+    byte[] expected =
+        new byte[] {
+          (byte) 'A',
+          (byte) 'B',
+          (byte) 'C',
+          (byte) 'A',
+          (byte) 'B',
+          (byte) 'A',
+          (byte) 'A',
+          (byte) 'A',
+          (byte) 'B',
+          (byte) 'A',
+          (byte) 'B',
+          (byte) 'C',
+          (byte) 0,
+          (byte) 0
+        };
+
+    int[] acceptSequence = new int[] {3, 2, 1, 0, 0, 1, 2, 3};
+    AtomicInteger readCount = new AtomicInteger(0);
+
+    ReadableByteChannel c =
+        new ReadableByteChannel() {
+          @Override
+          public int read(ByteBuffer dst) throws IOException {
+            int i = readCount.getAndIncrement();
+            if (i == acceptSequence.length) {
+              return -1;
+            }
+            int bytesToRead = acceptSequence[i];
+            if (bytesToRead > 0) {
+              long copy =
+                  Buffers.copy(DataGenerator.base64Characters().genByteBuffer(bytesToRead), dst);
+              assertThat(copy).isEqualTo(bytesToRead);
+            }
+
+            return bytesToRead;
+          }
+
+          @Override
+          public boolean isOpen() {
+            return true;
+          }
+
+          @Override
+          public void close() throws IOException {}
+        };
+    int filled = Buffers.fillFrom(buf, c);
+
+    assertAll(
+        () -> assertThat(filled).isEqualTo(12),
+        () -> assertThat(xxd(bytes)).isEqualTo(xxd(expected)));
+  }
+
+  @Test
+  public void fillFrom_handles_0SizeRead_noBytesRead() throws Exception {
+    ByteBuffer buf = ByteBuffer.allocate(3);
+
+    ReadableByteChannel c =
+        new ReadableByteChannel() {
+          @Override
+          public int read(ByteBuffer dst) throws IOException {
+            return -1;
+          }
+
+          @Override
+          public boolean isOpen() {
+            return true;
+          }
+
+          @Override
+          public void close() throws IOException {}
+        };
+    int filled = Buffers.fillFrom(buf, c);
+
+    assertThat(filled).isEqualTo(-1);
   }
 }

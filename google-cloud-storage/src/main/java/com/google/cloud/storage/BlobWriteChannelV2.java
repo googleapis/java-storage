@@ -38,27 +38,32 @@ final class BlobWriteChannelV2 extends BaseStorageWriteChannel<StorageObject> {
   }
 
   @Override
-  public synchronized RestorableState<WriteChannel> capture() {
-    final byte[] bufferSnapshot;
-    BufferHandle handle = getBufferHandle();
-    if (handle.position() > 0) {
-      ByteBuffer byteBuffer = handle.get();
-      // duplicate so we don't actually modify the existing instance
-      ByteBuffer dup = byteBuffer.duplicate();
-      dup.flip();
-      int remaining = dup.remaining();
-      bufferSnapshot = new byte[remaining];
-      dup.get(bufferSnapshot);
-    } else {
-      bufferSnapshot = new byte[0];
+  public RestorableState<WriteChannel> capture() {
+    lock.lock();
+    try {
+      final byte[] bufferSnapshot;
+      BufferHandle handle = getBufferHandle();
+      if (handle.position() > 0) {
+        ByteBuffer byteBuffer = handle.get();
+        // duplicate so we don't actually modify the existing instance
+        ByteBuffer dup = byteBuffer.duplicate();
+        dup.flip();
+        int remaining = dup.remaining();
+        bufferSnapshot = new byte[remaining];
+        dup.get(bufferSnapshot);
+      } else {
+        bufferSnapshot = new byte[0];
+      }
+      return new BlobWriteChannelV2State(
+          blobChannelContext.getStorageOptions(),
+          start,
+          getCommittedPosition(),
+          isOpen(),
+          getChunkSize(),
+          bufferSnapshot);
+    } finally {
+      lock.unlock();
     }
-    return new BlobWriteChannelV2State(
-        blobChannelContext.getStorageOptions(),
-        start,
-        getCommittedPosition(),
-        isOpen(),
-        getChunkSize(),
-        bufferSnapshot);
   }
 
   @Override
@@ -80,6 +85,7 @@ final class BlobWriteChannelV2 extends BaseStorageWriteChannel<StorageObject> {
 
   static final class BlobWriteChannelV2State
       implements RestorableState<WriteChannel>, Serializable {
+
     private static final long serialVersionUID = -1901664719924133474L;
 
     private final HttpStorageOptions options;

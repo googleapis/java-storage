@@ -23,6 +23,8 @@ import static com.google.cloud.storage.it.runner.registry.RegistryApplicabilityP
 
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.GrpcStorageOptions;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -43,36 +45,10 @@ final class BackendResources implements ManagedLifecycle {
   private BackendResources(
       Backend backend,
       ProtectedBucketNames protectedBucketNames,
-      TestRunScopedInstance<StorageInstance> storageJson,
-      TestRunScopedInstance<StorageInstance> storageGrpc,
-      TestRunScopedInstance<BucketInfoShim> bucket,
-      TestRunScopedInstance<BucketInfoShim> bucketRequesterPays,
-      TestRunScopedInstance<ObjectsFixture> objectsFixture,
-      TestRunScopedInstance<ObjectsFixture> objectsFixtureRequesterPays,
-      TestRunScopedInstance<KmsFixture> kmsFixture) {
+      ImmutableList<RegistryEntry<?>> registryEntries) {
     this.backend = backend;
     this.protectedBucketNames = protectedBucketNames;
-    this.registryEntries =
-        ImmutableList.of(
-            RegistryEntry.of(
-                4, Storage.class, storageJson, transportAndBackendAre(Transport.HTTP, backend)),
-            RegistryEntry.of(
-                5, Storage.class, storageGrpc, transportAndBackendAre(Transport.GRPC, backend)),
-            RegistryEntry.of(
-                6,
-                BucketInfo.class,
-                bucketRequesterPays,
-                backendIs(backend).and(isRequesterPaysBucket())),
-            RegistryEntry.of(
-                7, BucketInfo.class, bucket, backendIs(backend).and(isDefaultBucket())),
-            RegistryEntry.of(
-                8, ObjectsFixture.class, objectsFixture, backendIs(backend).and(isDefaultBucket())),
-            RegistryEntry.of(
-                9,
-                ObjectsFixture.class,
-                objectsFixtureRequesterPays,
-                backendIs(backend).and(isRequesterPaysBucket())),
-            RegistryEntry.of(10, KmsFixture.class, kmsFixture, backendIs(backend)));
+    this.registryEntries = registryEntries;
   }
 
   public ImmutableList<RegistryEntry<?>> getRegistryEntries() {
@@ -97,41 +73,53 @@ final class BackendResources implements ManagedLifecycle {
     return MoreObjects.toStringHelper(this).add("backend", backend).toString();
   }
 
+  @SuppressWarnings("SwitchStatementWithTooFewBranches")
   static BackendResources of(Backend backend) {
     ProtectedBucketNames protectedBucketNames = new ProtectedBucketNames();
     TestRunScopedInstance<StorageInstance> storageJson =
         TestRunScopedInstance.of(
             "STORAGE_JSON_" + backend.name(),
-            () ->
-                new StorageInstance(
-                    backend == Backend.TEST_BENCH
-                        ? StorageOptions.http()
-                            .setCredentials(NoCredentials.getInstance())
-                            // TODO: improve this
-                            .setHost(Registry.getInstance().testBench().getBaseUri())
-                            .setProjectId("test-project-id")
-                            .build()
-                        : StorageOptions.http().build(),
-                    protectedBucketNames));
+            () -> {
+              HttpStorageOptions.Builder optionsBuilder;
+              switch (backend) {
+                case TEST_BENCH:
+                  optionsBuilder =
+                      StorageOptions.http()
+                          .setCredentials(NoCredentials.getInstance())
+                          .setHost(Registry.getInstance().testBench().getBaseUri())
+                          .setProjectId("test-project-id");
+                  break;
+                default: // PROD, java8 doesn't have exhaustive checking for enum switch
+                  optionsBuilder = StorageOptions.http();
+                  break;
+              }
+              HttpStorageOptions built = optionsBuilder.build();
+              return new StorageInstance(built, protectedBucketNames);
+            });
     TestRunScopedInstance<StorageInstance> storageGrpc =
         TestRunScopedInstance.of(
             "STORAGE_GRPC_" + backend.name(),
-            () ->
-                new StorageInstance(
-                    backend == Backend.TEST_BENCH
-                        ? StorageOptions.grpc()
-                            .setGrpcInterceptorProvider(
-                                GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                            .setCredentials(NoCredentials.getInstance())
-                            // TODO: improve this
-                            .setHost(Registry.getInstance().testBench().getGRPCBaseUri())
-                            .setProjectId("test-project-id")
-                            .build()
-                        : StorageOptions.grpc()
-                            .setGrpcInterceptorProvider(
-                                GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                            .build(),
-                    protectedBucketNames));
+            () -> {
+              GrpcStorageOptions.Builder optionsBuilder;
+              switch (backend) {
+                case TEST_BENCH:
+                  optionsBuilder =
+                      StorageOptions.grpc()
+                          .setCredentials(NoCredentials.getInstance())
+                          .setHost(Registry.getInstance().testBench().getGRPCBaseUri())
+                          .setProjectId("test-project-id");
+                  break;
+                default: // PROD, java8 doesn't have exhaustive checking for enum switch
+                  optionsBuilder = StorageOptions.grpc();
+                  break;
+              }
+              GrpcStorageOptions built =
+                  optionsBuilder
+                      .setGrpcInterceptorProvider(
+                          GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+                      .build();
+              return new StorageInstance(built, protectedBucketNames);
+            });
     TestRunScopedInstance<BucketInfoShim> bucket =
         TestRunScopedInstance.of(
             "BUCKET_" + backend.name(),
@@ -154,7 +142,7 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "OBJECTS_FIXTURE_" + backend.name(),
             () -> new ObjectsFixture(storageJson.get().getStorage(), bucket.get().getBucketInfo()));
-    TestRunScopedInstance<ObjectsFixture> objectsFixtureRequesterPays =
+    TestRunScopedInstance<ObjectsFixture> objectsFixtureRp =
         TestRunScopedInstance.of(
             "OBJECTS_FIXTURE_REQUESTER_PAYS_" + backend.name(),
             () ->
@@ -166,12 +154,25 @@ final class BackendResources implements ManagedLifecycle {
     return new BackendResources(
         backend,
         protectedBucketNames,
-        storageJson,
-        storageGrpc,
-        bucket,
-        bucketRp,
-        objectsFixture,
-        objectsFixtureRequesterPays,
-        kmsFixture);
+        ImmutableList.of(
+            RegistryEntry.of(
+                40, Storage.class, storageJson, transportAndBackendAre(Transport.HTTP, backend)),
+            RegistryEntry.of(
+                50, Storage.class, storageGrpc, transportAndBackendAre(Transport.GRPC, backend)),
+            RegistryEntry.of(
+                60, BucketInfo.class, bucketRp, backendIs(backend).and(isRequesterPaysBucket())),
+            RegistryEntry.of(
+                70, BucketInfo.class, bucket, backendIs(backend).and(isDefaultBucket())),
+            RegistryEntry.of(
+                80,
+                ObjectsFixture.class,
+                objectsFixture,
+                backendIs(backend).and(isDefaultBucket())),
+            RegistryEntry.of(
+                90,
+                ObjectsFixture.class,
+                objectsFixtureRp,
+                backendIs(backend).and(isRequesterPaysBucket())),
+            RegistryEntry.of(100, KmsFixture.class, kmsFixture, backendIs(backend))));
   }
 }

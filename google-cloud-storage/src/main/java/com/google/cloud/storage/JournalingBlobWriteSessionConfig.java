@@ -23,6 +23,7 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.RecoveryFileManager.RecoveryVolumeSinkFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -34,6 +35,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.ServiceConstants.Values;
+import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -184,16 +186,20 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
       if (storage instanceof GrpcStorageImpl) {
         GrpcStorageImpl grpcStorage = (GrpcStorageImpl) storage;
         RecoveryFile recoveryFile = recoveryFileManager.newRecoveryFile(info);
+        GrpcCallContext grpcCallContext =
+            opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
         ApiFuture<ResumableWrite> f =
             grpcStorage.startResumableWrite(
-                GrpcCallContext.createDefault(), grpcStorage.getWriteObjectRequest(info, opts));
+                grpcCallContext, grpcStorage.getWriteObjectRequest(info, opts));
         ApiFuture<WriteCtx<ResumableWrite>> start =
             ApiFutures.transform(f, WriteCtx::new, MoreExecutors.directExecutor());
 
+        ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
+            grpcStorage.storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
         BufferedWritableByteChannelSession<WriteObjectResponse> session =
             ResumableMedia.gapic()
                 .write()
-                .byteChannel(grpcStorage.storageClient.writeObjectCallable())
+                .byteChannel(write)
                 .setHasher(Hasher.noop())
                 .setByteStringStrategy(ByteStringStrategy.copy())
                 .journaling()

@@ -16,18 +16,24 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.google.protobuf.ByteString;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Example;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
@@ -56,6 +62,113 @@ final class ChunkSegmenterTest {
     assertThat(dataTotalSize).isEqualTo(td.totalSize);
     assertThat(data).hasLength(td.expectedChunkCount);
     assertThat(reduce).isAnyOf(Optional.empty(), Optional.of(Crc32cValue.of(td.allCrc32c.asInt())));
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Given 64 bytes, maxSegmentSize: 10, blockSize: 5
+   * 0                                                              64
+   * |---------------------------------------------------------------|
+   *   Produce 6 10-byte segments
+   * |---------|---------|---------|---------|---------|---------|
+   * </pre>
+   */
+  @Example
+  void allowUnalignedBlocks_false_1() {
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 10, 5);
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(64);
+    List<ByteString> expected =
+        ImmutableList.of(
+            ByteString.copyFrom(bytes, 0, 10),
+            ByteString.copyFrom(bytes, 10, 10),
+            ByteString.copyFrom(bytes, 20, 10),
+            ByteString.copyFrom(bytes, 30, 10),
+            ByteString.copyFrom(bytes, 40, 10),
+            ByteString.copyFrom(bytes, 50, 10));
+
+    ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+    ChunkSegment[] segments = segmenter.segmentBuffers(new ByteBuffer[] {buf}, 0, 1, false);
+    assertThat(buf.remaining()).isEqualTo(4);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Given 64 bytes, maxSegmentSize: 14, blockSize: 7
+   * 0                                                              64
+   * |---------------------------------------------------------------|
+   *   Produce 4 14-byte segments, and one 7 byte segment
+   * |-------------|-------------|-------------|-------------|------|
+   * </pre>
+   */
+  @Example
+  void allowUnalignedBlocks_false_2() throws Exception {
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 14, 7);
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(64);
+    List<ByteString> expected =
+        ImmutableList.of(
+            ByteString.copyFrom(bytes, 0, 14),
+            ByteString.copyFrom(bytes, 14, 14),
+            ByteString.copyFrom(bytes, 28, 14),
+            ByteString.copyFrom(bytes, 42, 14),
+            ByteString.copyFrom(bytes, 56, 7));
+
+    ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+    ChunkSegment[] segments = segmenter.segmentBuffers(new ByteBuffer[] {buf}, 0, 1, false);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertAll(
+        () -> assertThat(buf.remaining()).isEqualTo(1),
+        () -> assertThat(actual).isEqualTo(expected));
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Given 60 bytes in one buffer and 4 bytes in a second buffer, maxSegmentSize: 14, blockSize: 7
+   * 0                                                          60   4
+   * |-----------------------------------------------------------|---|
+   *   Produce 4 14-byte segments, and one 7 byte segment
+   * |-------------|-------------|-------------|-------------|------|
+   * </pre>
+   */
+  @Example
+  void allowUnalignedBlocks_false_3() throws Exception {
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 14, 7);
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(64);
+    List<ByteString> expected =
+        ImmutableList.of(
+            ByteString.copyFrom(bytes, 0, 14),
+            ByteString.copyFrom(bytes, 14, 14),
+            ByteString.copyFrom(bytes, 28, 14),
+            ByteString.copyFrom(bytes, 42, 14),
+            ByteString.copyFrom(bytes, 56, 7));
+
+    ByteBuffer buf1 = ByteBuffer.wrap(bytes, 0, 60);
+    ByteBuffer buf2 = ByteBuffer.wrap(bytes, 60, 4);
+
+    ChunkSegment[] segments = segmenter.segmentBuffers(new ByteBuffer[] {buf1, buf2}, 0, 2, false);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertAll(
+        () -> assertThat(buf1.remaining()).isEqualTo(0),
+        () -> assertThat(buf2.remaining()).isEqualTo(1),
+        () -> assertThat(actual).isEqualTo(expected));
   }
 
   @Provide("TestData")

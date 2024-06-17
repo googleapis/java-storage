@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.NoCredentials;
+import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.storage.v2.StorageGrpc;
 import com.google.storage.v2.StorageSettings;
 import io.grpc.Server;
@@ -58,6 +59,7 @@ final class FakeServer implements AutoCloseable {
             .setHost("http://" + endpoint)
             .setProjectId("test-proj")
             .setCredentials(NoCredentials.getInstance())
+            .setGrpcInterceptorProvider(GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
             .build();
     return new FakeServer(server, grpcStorageOptions);
   }
