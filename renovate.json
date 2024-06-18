@@ -111,6 +111,13 @@
       ],
       "semanticCommitType": "test",
       "semanticCommitScope": "deps"
+    },
+    {
+      "packagePatterns": [
+        "^io.grpc.opentelemetry:",
+        "^io.grpc:grpc-opentelemetry:",
+        "^com.google.cloud.opentelemetry:"
+      ]
     }
   ],
   "semanticCommits": true,

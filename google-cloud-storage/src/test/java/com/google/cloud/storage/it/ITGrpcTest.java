@@ -59,7 +59,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    backends = {Backend.PROD},
+    backends = {Backend.TEST_BENCH},
     transports = {Transport.GRPC})
 public final class ITGrpcTest {
 

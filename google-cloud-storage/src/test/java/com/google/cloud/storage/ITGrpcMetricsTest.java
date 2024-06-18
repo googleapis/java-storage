@@ -1,13 +1,27 @@
+/*
+ * Copyright 2024 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
-import com.google.cloud.storage.it.runner.annotations.CrossRun;
-import io.opentelemetry.api.GlobalOpenTelemetry;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,14 +30,11 @@ import org.junit.runner.RunWith;
 public class ITGrpcMetricsTest {
   @Test
   public void testGrpcMetrics() {
-    GlobalOpenTelemetry
-        .resetForTest(); // avoids problems with "GlobalOpenTelemetry.set has already been called"
     GrpcStorageOptions grpcStorageOptions = StorageOptions.grpc().build();
-    assertThat(grpcStorageOptions.getCloudMonitoringEndpoint("storage.googleapis.com:443"))
+    assertThat(OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("storage.googleapis.com:443", "storage.googleapis.com"))
         .isEqualTo("monitoring.googleapis.com:443");
 
-    SdkMeterProvider provider =
-        grpcStorageOptions.createMeterProvider("monitoring.googleapis.com:443");
+    SdkMeterProvider provider = OpenTelemetryBootstrappingUtils.createMeterProvider("monitoring.googleapis.com:443", grpcStorageOptions.getProjectId());
 
 
     /*
@@ -48,36 +59,22 @@ public class ITGrpcMetricsTest {
 
   @Test
   public void testGrpcMetrics_universeDomain() {
-    GlobalOpenTelemetry.resetForTest();
-    Storage storage =
-        StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build().getService();
-    Assert.assertEquals(
-        "monitoring.my-universe-domain.com:443",
-        ((GrpcStorageOptions) storage.getOptions())
-            .getCloudMonitoringEndpoint("storage.my-universe-domain.com:443"));
+    assertThat(
+        "monitoring.my-universe-domain.com:443").isEqualTo(
+        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("storage.my-universe-domain.com:443", "my-universe-domain.com"));
   }
 
   @Test
   public void testGrpcMetrics_private() {
-    GlobalOpenTelemetry.resetForTest();
-    Storage storage =
-        StorageOptions.grpc().setHost("https://private.googleapis.com").build().getService();
-
-    Assert.assertEquals(
-        "private.googleapis.com:443",
-        ((GrpcStorageOptions) storage.getOptions())
-            .getCloudMonitoringEndpoint("private.googleapis.com:443"));
+    assertThat(
+        "private.googleapis.com:443").isEqualTo(
+        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("private.googleapis.com:443", null));
   }
 
   @Test
   public void testGrpcMetrics_restricted() {
-    GlobalOpenTelemetry.resetForTest();
-    Storage storage =
-        StorageOptions.grpc().setHost("https://restricted.googleapis.com").build().getService();
-
-    Assert.assertEquals(
-        "restricted.googleapis.com:443",
-        ((GrpcStorageOptions) storage.getOptions())
-            .getCloudMonitoringEndpoint("restricted.googleapis.com:443"));
+    assertThat(
+        "restricted.googleapis.com:443").isEqualTo(
+        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("restricted.googleapis.com:443", null));
   }
 }
