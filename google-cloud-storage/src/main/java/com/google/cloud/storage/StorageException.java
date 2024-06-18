@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
@@ -28,6 +29,7 @@ import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.TextFormat;
 import io.grpc.StatusException;
 import io.grpc.StatusRuntimeException;
@@ -126,6 +128,14 @@ public final class StorageException extends BaseHttpServiceException {
       return asStorageException((ApiException) t.getCause());
     }
     return getStorageException(t);
+  }
+
+  static <T> ApiFuture<T> coalesceAsync(ApiFuture<T> originalFuture) {
+    return ApiFutures.catchingAsync(
+        originalFuture,
+        Throwable.class,
+        throwable -> ApiFutures.immediateFailedFuture(coalesce(throwable)),
+        MoreExecutors.directExecutor());
   }
 
   static StorageException asStorageException(ApiException apiEx) {

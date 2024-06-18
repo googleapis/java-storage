@@ -38,6 +38,7 @@ import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
@@ -78,6 +79,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectResponse;
+import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
@@ -128,6 +132,8 @@ import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -166,6 +172,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
+  final Executor executor;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -186,6 +193,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = Suppliers.memoize(() -> UnifiedOpts.projectId(options.getProjectId()));
+    this.executor = Executors.newCachedThreadPool();
   }
 
   @Override
@@ -1450,8 +1458,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
-    throw new UnsupportedOperationException(
-        fmtMethodName("getBlobDescriptor", BlobId.class, BlobSourceOption.class));
+    Object object = codecs.blobId().encode(id);
+
+    BidiReadObjectSpec.Builder spec =
+        BidiReadObjectSpec.newBuilder().setBucket(object.getBucket()).setObject(object.getName());
+
+    long generation = object.getGeneration();
+    if (generation > 0) {
+      spec.setGeneration(generation);
+    }
+    BidiReadObjectRequest.Builder b = BidiReadObjectRequest.newBuilder();
+    b.setReadObjectSpec(spec);
+    BidiReadObjectRequest req = b.build();
+
+    BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        storageClient.bidiReadObjectCallable();
+
+    GrpcCallContext context =
+        GrpcUtils.contextWithBucketName(object.getBucket(), GrpcCallContext.createDefault());
+
+    return BlobDescriptorImpl.create(req, context, callable, executor);
   }
 
   @Override

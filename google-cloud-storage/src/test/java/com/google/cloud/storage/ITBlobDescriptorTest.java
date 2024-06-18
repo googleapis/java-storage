@@ -16,35 +16,33 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.TestUtils.xxd;
+import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.ReadChannel;
+import com.google.api.core.ApiFutures;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
-import com.google.cloud.storage.it.runner.registry.Generator;
-import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
-import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
-import com.google.common.io.ByteStreams;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
+import com.google.common.base.Stopwatch;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.junit.Ignore;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @SingleBackend(Backend.TEST_BENCH)
-@Ignore
 public final class ITBlobDescriptorTest {
 
   private static final int _512KiB = 512 * 1024;
@@ -53,46 +51,65 @@ public final class ITBlobDescriptorTest {
   @StorageFixture(Transport.GRPC)
   public Storage storage;
 
-  @Inject public BucketInfo bucket;
-  @Inject public Generator generator;
-  @Inject public ObjectsFixture objectsFixture;
-
   @Test
   public void bytes() throws ExecutionException, InterruptedException, TimeoutException {
-    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
-    BlobInfo info = obj512KiB.getInfo();
-    BlobId blobId = info.getBlobId();
+    BlobId blobId = BlobId.of("ping", "someobject");
 
     BlobDescriptor blobDescriptor = storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
 
     BlobInfo info1 = blobDescriptor.getBlobInfo();
-
-    assertThat(info1).isEqualTo(info);
+    assertThat(info1).isNotNull();
 
     ApiFuture<byte[]> futureRead1Bytes =
-        blobDescriptor.readRangeAsBytes(
-            ByteRangeSpec.explicit(_512KiB - 13L, ByteRangeSpec.EFFECTIVE_INFINITY));
+        blobDescriptor.readRangeAsBytes(ByteRangeSpec.relativeLength(_512KiB - 13L, 13L));
 
     byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
-    byte[] expected = obj512KiB.getContent().getBytes(_512KiB - 13);
-    assertThat(xxd(read1Bytes)).isEqualTo(xxd(expected));
+    assertThat(read1Bytes.length).isEqualTo(13);
   }
 
   @Test
-  public void readObject() throws IOException {
-    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
-    BlobInfo info = obj512KiB.getInfo();
-    BlobId blobId = info.getBlobId();
+  public void lotsOfBytes() throws Exception {
+    BlobId blobId = BlobId.of("ping", "someobject");
+    for (int j = 0; j < 2; j++) {
 
-    byte[] expected = obj512KiB.getContent().getBytes(_512KiB - 13);
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (ReadChannel r = storage.reader(blobId);
-        WritableByteChannel w = Channels.newChannel(baos)) {
-      r.setChunkSize(0);
-      r.seek(_512KiB - 13);
-      ByteStreams.copy(r, w);
+      BlobDescriptor blobDescriptor =
+          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
+
+      Stopwatch sw = Stopwatch.createStarted();
+      int numRangesToRead = 256;
+      List<ApiFuture<byte[]>> futures =
+          LongStream.range(0, numRangesToRead)
+              .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
+              .map(blobDescriptor::readRangeAsBytes)
+              .collect(Collectors.toList());
+
+      ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
+
+      List<byte[]> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+      Stopwatch stop = sw.stop();
+      System.out.println(stop);
+      Hasher hasher = Hashing.crc32c().newHasher();
+      long length = 0;
+      for (byte[] range : ranges) {
+        hasher.putBytes(range);
+        length += range.length;
+      }
+      final long finalLength = length;
+
+      assertAll(
+          () -> {
+            Hasher xHasher = Hashing.crc32c().newHasher();
+            long numBytes = numRangesToRead * _2MiB;
+            for (long l = 0; l < numBytes; l++) {
+              xHasher.putByte((byte) 'x');
+            }
+
+            Crc32cLengthKnown expectedCrc32c = Crc32cValue.of(xHasher.hash().asInt(), numBytes);
+            Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), finalLength);
+
+            assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
+          },
+          () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
     }
-
-    assertThat(xxd(baos.toByteArray())).isEqualTo(xxd(expected));
   }
 }

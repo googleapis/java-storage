@@ -47,6 +47,12 @@ public final class ChecksummedTestContent {
     return UnsafeByteOperations.unsafeWrap(bytes).substring(beginIndex).toByteArray();
   }
 
+  public byte[] getBytes(int beginIndex, int length) {
+    return UnsafeByteOperations.unsafeWrap(bytes)
+        .substring(beginIndex, beginIndex + length)
+        .toByteArray();
+  }
+
   public int getCrc32c() {
     return crc32c;
   }
