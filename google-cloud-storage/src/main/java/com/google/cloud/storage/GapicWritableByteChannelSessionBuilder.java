@@ -185,7 +185,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         resultFuture,
                         getChunkSegmenter(),
                         write,
-                        WriteObjectRequestBuilderFactory.simple(start)))
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -213,7 +213,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         resultFuture,
                         getChunkSegmenter(),
                         write,
-                        WriteObjectRequestBuilderFactory.simple(start)))
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -305,7 +305,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, start);
+                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
                   }
                 })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
@@ -346,7 +346,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, start);
+                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
                   }
                 })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))

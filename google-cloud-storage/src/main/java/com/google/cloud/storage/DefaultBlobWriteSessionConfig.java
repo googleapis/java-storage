@@ -159,7 +159,10 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                           grpc.startResumableWrite(grpcCallContext, req);
                       return ResumableMedia.gapic()
                           .write()
-                          .byteChannel(grpc.storageClient.writeObjectCallable())
+                          .byteChannel(
+                              grpc.storageClient
+                                  .writeObjectCallable()
+                                  .withDefaultCallContext(grpcCallContext))
                           .setHasher(Hasher.noop())
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()

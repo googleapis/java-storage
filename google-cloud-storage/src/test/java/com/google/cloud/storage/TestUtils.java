@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -314,5 +315,13 @@ public final class TestUtils {
         .filter(f -> !f.equals(Storage.BucketField.OBJECT_RETENTION))
         .collect(ImmutableSet.toImmutableSet())
         .toArray(new Storage.BucketField[0]);
+  }
+
+  public static <T> Optional<T> last(List<T> l) {
+    if (l.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.of(l.get(l.size() - 1));
+    }
   }
 }

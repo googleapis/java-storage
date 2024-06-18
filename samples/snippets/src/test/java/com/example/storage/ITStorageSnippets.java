@@ -67,12 +67,6 @@ public class ITStorageSnippets {
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
-      // In beforeClass, we make buckets auto-delete blobs older than a day old.
-      // Here, delete all buckets older than 2 days. They should already be empty and easy.
-      long cleanTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(2);
-      long cleanTimeout = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1);
-      RemoteStorageHelper.cleanBuckets(storage, cleanTime, cleanTimeout);
-
       boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 1, TimeUnit.MINUTES);
       if (!wasDeleted && log.isLoggable(Level.WARNING)) {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);

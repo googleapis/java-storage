@@ -2906,18 +2906,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
-   * Uploads {@code path} to the blob using {@link #writer} and {@code bufferSize}. By default any
-   * MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * Uploads {@code path} to the blob using {@code ResumableSession}. By default any MD5 and CRC32C
+   * values in the given {@code blobInfo} are ignored unless requested via the {@link
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
    * not supported. Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">
    * non-editable metadata</a>, such as generation or metageneration, will be ignored even if it's
    * present in the provided BlobInfo object.
    *
-   * <p>{@link #createFrom(BlobInfo, Path, BlobWriteOption...)} invokes this method with a buffer
-   * size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
-   * performance but require more memory. This can cause an OutOfMemoryError or add significant
-   * garbage collection overhead. Smaller buffer sizes reduce memory consumption, that is noticeable
-   * when uploading many objects in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
+   * <p>This method used to preallocate a buffer, but since v2.25.0, it uses a ResumableSession and
+   * no longer needs it. The bufferSize parameter is still present for binary compatibility, but is
+   * now ignored.
    *
    * <p>Example of uploading a humongous file:
    *
@@ -2925,14 +2923,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("video/webm").build();
    *
-   * int largeBufferSize = 150 * 1024 * 1024;
    * Path file = Paths.get("humongous.file");
-   * storage.createFrom(blobInfo, file, largeBufferSize);
+   * storage.createFrom(blobInfo, file, 0);
    * }</pre>
    *
    * @param blobInfo blob to create
    * @param path file to upload
-   * @param bufferSize size of the buffer I/O operations
+   * @param bufferSize ignored field, still present for compatibility purposes
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
