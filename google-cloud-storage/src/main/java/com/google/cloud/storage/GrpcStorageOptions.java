@@ -291,7 +291,8 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     if (enableMetrics) {
-      OpenTelemetryBootstrappingUtils.enableGrpcMetrics(channelProviderBuilder, endpoint, this.getProjectId(), this.getUniverseDomain());
+      OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
+          channelProviderBuilder, endpoint, this.getProjectId(), this.getUniverseDomain());
     }
 
     builder.setTransportChannelProvider(channelProviderBuilder.build());
@@ -466,10 +467,9 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
     /**
-     * Option for whether this client should emit internal gRPC client internal metrics to Cloud Monitoring.
-     * To disable metric reporting, set this to false.
-     * True by default.
-     * Emitting metrics is free and requires minimal CPU and memory.
+     * Option for whether this client should emit internal gRPC client internal metrics to Cloud
+     * Monitoring. To disable metric reporting, set this to false. True by default. Emitting metrics
+     * is free and requires minimal CPU and memory.
      *
      * @since 2.41.0 This new api is in preview and is subject to breaking changes.
      */
