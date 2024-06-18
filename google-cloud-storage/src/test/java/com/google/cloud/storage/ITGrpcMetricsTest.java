@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
-import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import org.junit.Assert;
@@ -24,7 +23,6 @@ public class ITGrpcMetricsTest {
 
     SdkMeterProvider provider =
         grpcStorageOptions.createMeterProvider("monitoring.googleapis.com:443");
-
 
     /*
      * SDKMeterProvider doesn't expose the relevant fields we want to test, but they are present in
