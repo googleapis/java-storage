@@ -1,23 +1,8 @@
 gapic_generator_version: 2.41.0
-protoc_version: '25.3'
 googleapis_commitish: b2c018cb067ab01cb5db2170b73a82caef173ae4
 libraries_bom_version: 26.38.0
-template_excludes:
-  - '.kokoro/nightly/integration.cfg'
-  - '.kokoro/nightly/java11-integration.cfg'
-  - '.kokoro/nightly/samples.cfg'
-  - '.kokoro/presubmit/integration.cfg'
-  - '.kokoro/presubmit/samples.cfg'
-  - '.kokoro/presubmit/graalvm-native.cfg'
-  - '.kokoro/presubmit/graalvm-native-17.cfg'
-  - '.kokoro/requirements.in'
-  - '.kokoro/requirements.txt'
-  - '.github/trusted-contribution.yml'
-  - '.github/workflows/auto-release.yaml'
-  - 'CONTRIBUTING.md'
-  - 'renovate.json'
 libraries:
-  - api_shortname: "storage"
+  - api_shortname: storage
     name_pretty: "Cloud Storage"
     product_documentation: "https://cloud.google.com/storage"
     client_documentation: "https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history"
