@@ -63,6 +63,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
 import com.google.protobuf.UnsafeByteOperations;
@@ -101,6 +102,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 */
@@ -925,7 +927,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private static final class InternalZeroCopyGrpcStorageStub extends GrpcStorageStub
       implements AutoCloseable {
-    private final ReadObjectResponseZeroCopyMessageMarshaller getObjectMediaResponseMarshaller;
+    private final ZeroCopyResponseMarshaller<ReadObjectResponse> getObjectMediaResponseMarshaller;
 
     private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse>
         serverStreamingCallable;
@@ -938,7 +940,9 @@ public final class GrpcStorageOptions extends StorageOptions
       super(settings, clientContext, callableFactory);
 
       this.getObjectMediaResponseMarshaller =
-          new ReadObjectResponseZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
+          new ZeroCopyResponseMarshaller<>(
+              ReadObjectResponse.getDefaultInstance(),
+              StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
 
       MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
           MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
@@ -973,39 +977,41 @@ public final class GrpcStorageOptions extends StorageOptions
   }
 
   @VisibleForTesting
-  static class ReadObjectResponseZeroCopyMessageMarshaller
-      implements MethodDescriptor.PrototypeMarshaller<ReadObjectResponse>,
-          ResponseContentLifecycleManager,
+  static class ZeroCopyResponseMarshaller<Response extends Message>
+      implements MethodDescriptor.PrototypeMarshaller<Response>,
+          ResponseContentLifecycleManager<Response>,
           Closeable {
-    private final Map<ReadObjectResponse, InputStream> unclosedStreams;
-    private final Parser<ReadObjectResponse> parser;
-    private final MethodDescriptor.PrototypeMarshaller<ReadObjectResponse> baseMarshaller;
+    private final Map<Response, InputStream> unclosedStreams;
+    private final Parser<Response> parser;
+    private final MethodDescriptor.PrototypeMarshaller<Response> baseMarshaller;
+    private final Function<Response, List<ByteBuffer>> toByteBuffersFunction;
 
-    ReadObjectResponseZeroCopyMessageMarshaller(ReadObjectResponse defaultInstance) {
-      parser = defaultInstance.getParserForType();
+    ZeroCopyResponseMarshaller(
+        Response defaultInstance, Function<Response, List<ByteBuffer>> toByteBuffersFunction) {
+      parser = (Parser<Response>) defaultInstance.getParserForType();
       baseMarshaller =
-          (MethodDescriptor.PrototypeMarshaller<ReadObjectResponse>)
-              ProtoUtils.marshaller(defaultInstance);
+          (MethodDescriptor.PrototypeMarshaller<Response>) ProtoUtils.marshaller(defaultInstance);
+      this.toByteBuffersFunction = toByteBuffersFunction;
       unclosedStreams = Collections.synchronizedMap(new IdentityHashMap<>());
     }
 
     @Override
-    public Class<ReadObjectResponse> getMessageClass() {
+    public Class<Response> getMessageClass() {
       return baseMarshaller.getMessageClass();
     }
 
     @Override
-    public ReadObjectResponse getMessagePrototype() {
+    public Response getMessagePrototype() {
       return baseMarshaller.getMessagePrototype();
     }
 
     @Override
-    public InputStream stream(ReadObjectResponse value) {
+    public InputStream stream(Response value) {
       return baseMarshaller.stream(value);
     }
 
     @Override
-    public ReadObjectResponse parse(InputStream stream) {
+    public Response parse(InputStream stream) {
       CodedInputStream cis = null;
       try {
         if (stream instanceof KnownLength
@@ -1036,7 +1042,7 @@ public final class GrpcStorageOptions extends StorageOptions
       }
       if (cis != null) {
         // fast path (no memory copy)
-        ReadObjectResponse message;
+        Response message;
         try {
           message = parseFrom(cis);
         } catch (InvalidProtocolBufferException ipbe) {
@@ -1053,9 +1059,8 @@ public final class GrpcStorageOptions extends StorageOptions
       }
     }
 
-    private ReadObjectResponse parseFrom(CodedInputStream stream)
-        throws InvalidProtocolBufferException {
-      ReadObjectResponse message = parser.parseFrom(stream);
+    private Response parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
+      Response message = parser.parseFrom(stream);
       try {
         stream.checkLastTagWas(0);
         return message;
@@ -1066,9 +1071,9 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     @Override
-    public ResponseContentLifecycleHandle get(ReadObjectResponse response) {
+    public ResponseContentLifecycleHandle get(Response response) {
       InputStream stream = unclosedStreams.remove(response);
-      return new ResponseContentLifecycleHandle(response, stream);
+      return ResponseContentLifecycleHandle.create(response, toByteBuffersFunction, stream);
     }
 
     @Override

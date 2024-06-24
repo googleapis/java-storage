@@ -16,18 +16,35 @@
 
 package com.google.cloud.storage;
 
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.storage.v2.BucketAccessControl;
+import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.ReadObjectResponse;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class StorageV2ProtoUtils {
 
+  static final Function<ReadObjectResponse, List<ByteBuffer>>
+      READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION =
+          response -> {
+            if (response.hasChecksummedData()) {
+              ChecksummedData checksummedData = response.getChecksummedData();
+              if (!checksummedData.getContent().isEmpty()) {
+                return response.getChecksummedData().getContent().asReadOnlyByteBufferList();
+              }
+            }
+            return ImmutableList.of();
+          };
   private static final String VALIDATION_TEMPLATE =
       "offset >= 0 && limit >= 0 (%s >= 0 && %s >= 0)";
 

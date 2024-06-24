@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.google.cloud.storage.GrpcStorageOptions.ReadObjectResponseZeroCopyMessageMarshaller;
+import com.google.cloud.storage.GrpcStorageOptions.ZeroCopyResponseMarshaller;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
@@ -61,8 +61,10 @@ public class ZeroCopyMarshallerTest {
           .setChecksummedData(getChecksummedData(data, Hasher.enabled()))
           .build();
 
-  private ReadObjectResponseZeroCopyMessageMarshaller createMarshaller() {
-    return new ReadObjectResponseZeroCopyMessageMarshaller(ReadObjectResponse.getDefaultInstance());
+  private ZeroCopyResponseMarshaller<ReadObjectResponse> createMarshaller() {
+    return new ZeroCopyResponseMarshaller<>(
+        ReadObjectResponse.getDefaultInstance(),
+        StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
   }
 
   private byte[] dropLastOneByte(byte[] bytes) {
@@ -78,7 +80,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void testParseOnFastPath() throws IOException {
     InputStream stream = createInputStream(response.toByteArray(), true);
-    ReadObjectResponseZeroCopyMessageMarshaller marshaller = createMarshaller();
+    ZeroCopyResponseMarshaller<ReadObjectResponse> marshaller = createMarshaller();
     ReadObjectResponse response = marshaller.parse(stream);
     assertEquals(response, this.response);
     ResponseContentLifecycleHandle stream2 = marshaller.get(response);
@@ -92,7 +94,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void testParseOnSlowPath() throws IOException {
     InputStream stream = createInputStream(response.toByteArray(), false);
-    ReadObjectResponseZeroCopyMessageMarshaller marshaller = createMarshaller();
+    ZeroCopyResponseMarshaller<ReadObjectResponse> marshaller = createMarshaller();
     ReadObjectResponse response = marshaller.parse(stream);
     assertEquals(response, this.response);
     ResponseContentLifecycleHandle stream2 = marshaller.get(response);
@@ -103,7 +105,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void testParseBrokenMessageOnFastPath() {
     InputStream stream = createInputStream(dropLastOneByte(response.toByteArray()), true);
-    ReadObjectResponseZeroCopyMessageMarshaller marshaller = createMarshaller();
+    ZeroCopyResponseMarshaller<ReadObjectResponse> marshaller = createMarshaller();
     assertThrows(
         StatusRuntimeException.class,
         () -> {
@@ -114,7 +116,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void testParseBrokenMessageOnSlowPath() {
     InputStream stream = createInputStream(dropLastOneByte(response.toByteArray()), false);
-    ReadObjectResponseZeroCopyMessageMarshaller marshaller = createMarshaller();
+    ZeroCopyResponseMarshaller<ReadObjectResponse> marshaller = createMarshaller();
     assertThrows(
         StatusRuntimeException.class,
         () -> {
@@ -128,12 +130,17 @@ public class ZeroCopyMarshallerTest {
     Closeable verifyClosed = () -> wasClosedCalled.set(true);
 
     ResponseContentLifecycleHandle handle =
-        new ResponseContentLifecycleHandle(response, verifyClosed);
+        ResponseContentLifecycleHandle.create(
+            response,
+            StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION,
+            verifyClosed);
     handle.close();
 
     assertTrue(wasClosedCalled.get());
 
-    ResponseContentLifecycleHandle nullHandle = new ResponseContentLifecycleHandle(response, null);
+    ResponseContentLifecycleHandle nullHandle =
+        ResponseContentLifecycleHandle.create(
+            response, StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION, null);
     nullHandle.close();
     // No NullPointerException means test passes
   }
@@ -147,8 +154,7 @@ public class ZeroCopyMarshallerTest {
     CloseAuditingInputStream stream3 =
         CloseAuditingInputStream.of(createInputStream(response.toByteArray(), true));
 
-    ReadObjectResponseZeroCopyMessageMarshaller.closeAllStreams(
-        ImmutableList.of(stream1, stream2, stream3));
+    ZeroCopyResponseMarshaller.closeAllStreams(ImmutableList.of(stream1, stream2, stream3));
 
     assertThat(stream1.closed).isTrue();
     assertThat(stream2.closed).isTrue();
@@ -184,7 +190,7 @@ public class ZeroCopyMarshallerTest {
         assertThrows(
             IOException.class,
             () ->
-                ReadObjectResponseZeroCopyMessageMarshaller.closeAllStreams(
+                ZeroCopyResponseMarshaller.closeAllStreams(
                     ImmutableList.of(stream1, stream2, stream3)));
 
     assertThat(stream1.closed).isTrue();

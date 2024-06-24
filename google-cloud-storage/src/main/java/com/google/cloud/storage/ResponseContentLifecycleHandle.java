@@ -15,11 +15,11 @@
  */
 package com.google.cloud.storage;
 
-import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class ResponseContentLifecycleHandle implements Closeable {
@@ -27,10 +27,17 @@ final class ResponseContentLifecycleHandle implements Closeable {
 
   private final List<ByteBuffer> buffers;
 
-  ResponseContentLifecycleHandle(ReadObjectResponse resp, @Nullable Closeable dispose) {
+  private ResponseContentLifecycleHandle(List<ByteBuffer> buffers, @Nullable Closeable dispose) {
     this.dispose = dispose;
+    this.buffers = buffers;
+  }
 
-    this.buffers = resp.getChecksummedData().getContent().asReadOnlyByteBufferList();
+  static <Response> ResponseContentLifecycleHandle create(
+      Response response,
+      Function<Response, List<ByteBuffer>> toBuffersFunction,
+      @Nullable Closeable dispose) {
+    List<ByteBuffer> buffers = toBuffersFunction.apply(response);
+    return new ResponseContentLifecycleHandle(buffers, dispose);
   }
 
   void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
