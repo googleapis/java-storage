@@ -23,13 +23,19 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.GrpcStorageOptions.ZeroCopyResponseMarshaller;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
+import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ContentRange;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.ReadObjectResponse;
+import io.grpc.Detachable;
+import io.grpc.HasByteBuffer;
+import io.grpc.KnownLength;
 import io.grpc.StatusRuntimeException;
 import io.grpc.internal.ReadableBuffer;
 import io.grpc.internal.ReadableBuffers;
@@ -41,7 +47,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.junit.Test;
 
 public class ZeroCopyMarshallerTest {
@@ -71,10 +79,11 @@ public class ZeroCopyMarshallerTest {
     return Arrays.copyOfRange(bytes, 0, bytes.length - 1);
   }
 
-  private InputStream createInputStream(byte[] bytes, boolean isZeroCopyable) {
+  private <IS extends InputStream & KnownLength & Detachable & HasByteBuffer> IS createInputStream(
+      byte[] bytes, boolean isZeroCopyable) {
     ReadableBuffer buffer =
         isZeroCopyable ? ReadableBuffers.wrap(ByteBuffer.wrap(bytes)) : ReadableBuffers.wrap(bytes);
-    return ReadableBuffers.openStream(buffer, true);
+    return (IS) ReadableBuffers.openStream(buffer, true);
   }
 
   @Test
@@ -205,16 +214,146 @@ public class ZeroCopyMarshallerTest {
     assertThat(messages).isEqualTo(ImmutableList.of("Kaboom stream2", "Kaboom stream3"));
   }
 
-  private static class CloseAuditingInputStream extends FilterInputStream {
+  @Test
+  public void refCounting_closingLastBorrowedChildRefShouldCloseHandleWhenHandlePreviouslyClosed()
+      throws IOException {
+    try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
+        new ZeroCopyResponseMarshaller<>(
+            ChecksummedData.getDefaultInstance(),
+            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+
+      ChecksummedTestContent testContent =
+          ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(17));
+
+      ChecksummedData orig = testContent.asChecksummedData();
+
+      // load our proto message into the marshaller
+      byte[] serialized = orig.toByteArray();
+      CloseAuditingInputStream<?> inputStream =
+          CloseAuditingInputStream.of(createInputStream(serialized, true));
+
+      ChecksummedData parsed = marshaller.parse(inputStream);
+      assertThat(inputStream.closed).isFalse();
+
+      // now get the lifecycle management handle for the parsed instance
+      ResponseContentLifecycleHandle handle = marshaller.get(parsed);
+      assertThat(inputStream.closed).isFalse();
+
+      ChildRef ref1 = handle.borrow();
+      ChildRef ref2 = handle.borrow();
+      ChildRef ref3 = handle.borrow();
+      assertThat(inputStream.closed).isFalse();
+      handle.close();
+      assertThat(inputStream.closed).isFalse();
+      ref1.close();
+      assertThat(inputStream.closed).isFalse();
+      ref2.close();
+      assertThat(inputStream.closed).isFalse();
+      ref3.close();
+      assertThat(inputStream.closed).isTrue();
+    }
+  }
+
+  @Test
+  public void refCounting_mustBeOpenToBorrow() throws IOException {
+    try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
+        new ZeroCopyResponseMarshaller<>(
+            ChecksummedData.getDefaultInstance(),
+            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+
+      ChecksummedTestContent testContent =
+          ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(17));
+
+      ChecksummedData orig = testContent.asChecksummedData();
+
+      // load our proto message into the marshaller
+      byte[] serialized = orig.toByteArray();
+      CloseAuditingInputStream<?> inputStream =
+          CloseAuditingInputStream.of(createInputStream(serialized, true));
+
+      ChecksummedData parsed = marshaller.parse(inputStream);
+      assertThat(inputStream.closed).isFalse();
+
+      // now get the lifecycle management handle for the parsed instance
+      ResponseContentLifecycleHandle handle = marshaller.get(parsed);
+      handle.close();
+      assertThat(inputStream.closed).isTrue();
+
+      assertThrows(IllegalStateException.class, handle::borrow);
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void refCounting_handleCloseOnlyHappensIfOpen() throws IOException {
+    try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
+        new ZeroCopyResponseMarshaller<>(
+            ChecksummedData.getDefaultInstance(),
+            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+
+      AtomicInteger closeCount = new AtomicInteger(0);
+      ChecksummedTestContent testContent =
+          ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(17));
+
+      ChecksummedData orig = testContent.asChecksummedData();
+
+      // load our proto message into the marshaller
+      byte[] serialized = orig.toByteArray();
+      CloseAuditingInputStream inputStream =
+          new CloseAuditingInputStream(createInputStream(serialized, true)) {
+            @Override
+            public void close() throws IOException {
+              closeCount.getAndIncrement();
+              super.close();
+            }
+          };
+
+      ChecksummedData parsed = marshaller.parse(inputStream);
+      assertThat(inputStream.closed).isFalse();
+
+      // now get the lifecycle management handle for the parsed instance
+      ResponseContentLifecycleHandle handle = marshaller.get(parsed);
+      handle.close();
+      assertThat(inputStream.closed).isTrue();
+      handle.close();
+      assertThat(closeCount.get()).isEqualTo(1);
+    }
+  }
+
+  // gRPC doesn't have a public InputStream subclass that implements all of these interfaces
+  // use generics to constrain things using multiple inheritance notation. Then, our class
+  // implements the same interfaces to allow use within zero-copy marshaller.
+  private static class CloseAuditingInputStream<
+          IS extends InputStream & KnownLength & Detachable & HasByteBuffer>
+      extends FilterInputStream implements KnownLength, Detachable, HasByteBuffer {
 
     private boolean closed = false;
+    private final IS delegate;
 
-    private CloseAuditingInputStream(InputStream in) {
+    private CloseAuditingInputStream(IS in) {
       super(in);
+      this.delegate = in;
     }
 
-    public static CloseAuditingInputStream of(InputStream in) {
-      return new CloseAuditingInputStream(in);
+    @Override
+    public InputStream detach() {
+      return this;
+    }
+
+    @Override
+    public boolean byteBufferSupported() {
+      return delegate.byteBufferSupported();
+    }
+
+    @Nullable
+    @Override
+    public ByteBuffer getByteBuffer() {
+      return delegate.getByteBuffer();
+    }
+
+    public static <IS extends InputStream & KnownLength & Detachable & HasByteBuffer>
+        CloseAuditingInputStream<IS> of(IS in) {
+      return new CloseAuditingInputStream<>(in);
     }
 
     @Override
