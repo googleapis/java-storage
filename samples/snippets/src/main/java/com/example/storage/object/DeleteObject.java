@@ -38,11 +38,17 @@ public class DeleteObject {
       System.out.println("The object " + objectName + " wasn't found in " + bucketName);
       return;
     }
-    // Permanently deletes a blob, even if object versioning is enabled.
-    // If object versioning is enabled you can use
-    // storage.delete(BlobId.of(bucketName, objectName));
-    // to mark an object as non-current
-    storage.delete(blob.getBlobId());
+    BlobId idWithGeneration = blob.getBlobId();
+    // Deletes the blob specified by its id. When the generation is present and non-null it will be
+    // specified in the request.
+    // If versioning is enabled on the bucket and the generation is present, only that version of
+    // the object will be deleted.
+    // If instead you want to delete the current version, the generation should be dropped by
+    // performing the following before calling delete.
+    // BlobId idWithoutGeneration =
+    //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
+    storage.delete(idWithGeneration);
+
 
     System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
   }
