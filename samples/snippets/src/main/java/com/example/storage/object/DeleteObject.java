@@ -49,7 +49,6 @@ public class DeleteObject {
     //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
     storage.delete(idWithGeneration);
 
-
     System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
   }
 }
