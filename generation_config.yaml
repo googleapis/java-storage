@@ -3,23 +3,23 @@ googleapis_commitish: b2c018cb067ab01cb5db2170b73a82caef173ae4
 libraries_bom_version: 26.38.0
 libraries:
   - api_shortname: storage
-    name_pretty: "Cloud Storage"
-    product_documentation: "https://cloud.google.com/storage"
-    client_documentation: "https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history"
-    api_description: "is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally."
-    issue_tracker: "https://issuetracker.google.com/savedsearches/559782"
-    release_level: "stable"
-    language: "java"
-    repo: "googleapis/java-storage"
-    repo_short: "java-storage"
-    distribution_name: "com.google.cloud:google-cloud-storage"
-    codeowner_team: "@googleapis/cloud-storage-dpe"
-    api_id: "storage.googleapis.com"
+    name_pretty: Cloud Storage
+    product_documentation: https://cloud.google.com/storage
+    client_documentation: https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history
+    api_description: is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally.
+    issue_tracker: https://issuetracker.google.com/savedsearches/559782
+    release_level: stable
+    language: java
+    repo: googleapis/java-storage
+    repo_short: java-storage
+    distribution_name: com.google.cloud:google-cloud-storage
+    codeowner_team: @googleapis/cloud-storage-dpe
+    api_id: storage.googleapis.com
     requires_billing: true
-    library_type: "GAPIC_COMBO"
-    extra_versioned_modules: "gapic-google-cloud-storage-v2"
-    excluded_poms: "google-cloud-storage-bom,google-cloud-storage"
-    recommended_package: "com.google.cloud.storage"
+    library_type: GAPIC_COMBO
+    extra_versioned_modules: gapic-google-cloud-storage-v2
+    excluded_poms: google-cloud-storage-bom,google-cloud-storage
+    recommended_package: com.google.cloud.storage
     GAPICs:
       - proto_path: google/storage/v2
       - proto_path: google/storage/control/v2
