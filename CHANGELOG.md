@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.40.1](https://github.com/googleapis/java-storage/compare/v2.40.0...v2.40.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* Add a workaround to make sure grpc clients' hosts always match their universe domain ([#2588](https://github.com/googleapis/java-storage/issues/2588)) ([87bf737](https://github.com/googleapis/java-storage/commit/87bf7371b6c4300b0f306ca36d1918d52adf721b))
+* Include x-goog-user-project on resumable upload puts for grpc transport ([#2586](https://github.com/googleapis/java-storage/issues/2586)) ([6f2f504](https://github.com/googleapis/java-storage/commit/6f2f5045bb7c1dabdd9b1c19ce7d2b02163c0eb8))
+* Update grpc bidi resumable uploads to validate ack'd object size ([#2570](https://github.com/googleapis/java-storage/issues/2570)) ([5c9cecf](https://github.com/googleapis/java-storage/commit/5c9cecf04ceb3858d58b4e2e487ffd1dddf933ab))
+* Update grpc finalize on close resumable uploads to validate ack'd object size ([#2572](https://github.com/googleapis/java-storage/issues/2572)) ([55a6d15](https://github.com/googleapis/java-storage/commit/55a6d155e4c6a4c33f22ec87ff0b9f6ccfab7a83))
+* Update grpc single-shot uploads to validate ack'd object size ([#2567](https://github.com/googleapis/java-storage/issues/2567)) ([65c8808](https://github.com/googleapis/java-storage/commit/65c8808da9094365171f165dcf0654f56cf51207))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240524-2.0.0 ([#2565](https://github.com/googleapis/java-storage/issues/2565)) ([d193243](https://github.com/googleapis/java-storage/commit/d193243e1bcc41d09d46f9aa521ed5dd1b374b52))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240621-2.0.0 ([#2596](https://github.com/googleapis/java-storage/issues/2596)) ([73b8753](https://github.com/googleapis/java-storage/commit/73b8753c244ca8ac9605c1430251b6aebaf82905))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.32.0 ([#2597](https://github.com/googleapis/java-storage/issues/2597)) ([25940a4](https://github.com/googleapis/java-storage/commit/25940a4e8c8f178dcfb35ef7c77748650d7b1639))
+
+
+### Documentation
+
+* Add Hierarchical Namespace Bucket and Folders samples ([#2583](https://github.com/googleapis/java-storage/issues/2583)) ([3030081](https://github.com/googleapis/java-storage/commit/30300815f2faeef5780877dd74e2f8381b4a8caa)), closes [#2569](https://github.com/googleapis/java-storage/issues/2569)
+* Remove allowlist note from Folders RPCs ([#2593](https://github.com/googleapis/java-storage/issues/2593)) ([82161de](https://github.com/googleapis/java-storage/commit/82161dedfb1962f39f5186ac6d8443046d6b1e88))
+* Update DeleteObject Sample to be clearer on object versioning behavior ([#2595](https://github.com/googleapis/java-storage/issues/2595)) ([79b7cf0](https://github.com/googleapis/java-storage/commit/79b7cf05326ea135c552cbeee1b97e7ff115189f))
+
 ## [2.40.0](https://github.com/googleapis/java-storage/compare/v2.39.0...v2.40.0) (2024-06-06)
 
 
