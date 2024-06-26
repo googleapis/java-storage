@@ -16,6 +16,7 @@
 package com.google.cloud.storage;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Suppliers;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -23,18 +24,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class ResponseContentLifecycleHandle implements Closeable {
   @Nullable private final Closeable dispose;
 
-  private final List<ByteBuffer> buffers;
+  private final Supplier<List<ByteBuffer>> lazyBuffers;
   private final AtomicBoolean open;
   private final AtomicInteger refs;
 
-  private ResponseContentLifecycleHandle(List<ByteBuffer> buffers, @Nullable Closeable dispose) {
+  private ResponseContentLifecycleHandle(
+      Supplier<List<ByteBuffer>> lazyBuffers, @Nullable Closeable dispose) {
     this.dispose = dispose;
-    this.buffers = buffers;
+    this.lazyBuffers = lazyBuffers;
     this.open = new AtomicBoolean(true);
     this.refs = new AtomicInteger(1);
   }
@@ -43,8 +46,9 @@ final class ResponseContentLifecycleHandle implements Closeable {
       Response response,
       Function<Response, List<ByteBuffer>> toBuffersFunction,
       @Nullable Closeable dispose) {
-    List<ByteBuffer> buffers = toBuffersFunction.apply(response);
-    return new ResponseContentLifecycleHandle(buffers, dispose);
+    Supplier<List<ByteBuffer>> lazyBuffers =
+        Suppliers.memoize(() -> toBuffersFunction.apply(response));
+    return new ResponseContentLifecycleHandle(lazyBuffers, dispose);
   }
 
   ChildRef borrow() {
@@ -55,6 +59,7 @@ final class ResponseContentLifecycleHandle implements Closeable {
   }
 
   void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
+    List<ByteBuffer> buffers = lazyBuffers.get();
     for (ByteBuffer b : buffers) {
       long copiedBytes = Buffers.copy(b, dsts, offset, length);
       c.advance(copiedBytes);
@@ -63,6 +68,7 @@ final class ResponseContentLifecycleHandle implements Closeable {
   }
 
   boolean hasRemaining() {
+    List<ByteBuffer> buffers = lazyBuffers.get();
     for (ByteBuffer b : buffers) {
       if (b.hasRemaining()) return true;
     }

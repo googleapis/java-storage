@@ -24,6 +24,8 @@ import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
@@ -57,8 +59,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     long readId = state.readIdSeq.getAndIncrement();
     SettableApiFuture<byte[]> future = SettableApiFuture.create();
     OutstandingReadToArray value =
-        new OutstandingReadToArray(
-            readId, range.beginOffset(), range.length(), new ByteArrayOutputStream(), future);
+        new OutstandingReadToArray(readId, range.beginOffset(), range.length(), future);
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder()
             .addReadRanges(
@@ -82,11 +83,13 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
       BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
+      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
       Executor executor) {
     SettableApiFuture<Void> pendingOpen = SettableApiFuture.create();
     BlobDescriptorState state = new BlobDescriptorState(openRequest);
     BlobDescriptorResponseObserver responseObserver =
-        new BlobDescriptorResponseObserver(pendingOpen, state, executor);
+        new BlobDescriptorResponseObserver(
+            pendingOpen, state, executor, bidiResponseContentLifecycleManager);
     ClientStream<BidiReadObjectRequest> requestStream =
         callable.splitCall(responseObserver, context);
     BlobDescriptorStreamPair stream = new BlobDescriptorStreamPair(requestStream, responseObserver);
@@ -119,14 +122,21 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     private StreamController controller;
     private final BlobDescriptorState state;
     private final Executor exec;
+    private final ResponseContentLifecycleManager<BidiReadObjectResponse>
+        bidiResponseContentLifecycleManager;
 
     private final SettableApiFuture<Void> openSignal;
 
     public BlobDescriptorResponseObserver(
-        SettableApiFuture<Void> openSignal, BlobDescriptorState state, Executor exec) {
+        SettableApiFuture<Void> openSignal,
+        BlobDescriptorState state,
+        Executor exec,
+        ResponseContentLifecycleManager<BidiReadObjectResponse>
+            bidiResponseContentLifecycleManager) {
       this.openSignal = openSignal;
       this.state = state;
       this.exec = exec;
+      this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
     }
 
     @Override
@@ -139,32 +149,39 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     @Override
     protected void onResponseImpl(BidiReadObjectResponse response) {
       controller.request(1);
-      if (response.hasMetadata()) {
-        state.metadata.set(response.getMetadata());
-        openSignal.set(null);
-      }
-      if (response.hasReadHandle()) {
-        state.ref.set(response.getReadHandle());
-        openSignal.set(null);
-      }
-      List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
-      if (rangeData.isEmpty()) {
-        return;
-      }
-      for (ObjectRangeData d : rangeData) {
-        long id = d.getReadRange().getReadId();
-        OutstandingReadToArray read = state.outstandingReads.get(id);
-        if (read == null) {
-          continue;
+      try (ResponseContentLifecycleHandle handle =
+          bidiResponseContentLifecycleManager.get(response)) {
+        if (response.hasMetadata()) {
+          state.metadata.set(response.getMetadata());
+          openSignal.set(null);
         }
-        ByteString content = d.getChecksummedData().getContent();
-        read.accept(content);
-        if (d.getRangeEnd()) {
-          state.outstandingReads.remove(id);
-          // invoke eof on exec, the resolving future could have a downstream callback
-          // that we don't want to block this grpc thread
-          exec.execute(read::eof);
+        if (response.hasReadHandle()) {
+          state.ref.set(response.getReadHandle());
+          openSignal.set(null);
         }
+        List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
+        if (rangeData.isEmpty()) {
+          return;
+        }
+        for (ObjectRangeData d : rangeData) {
+          long id = d.getReadRange().getReadId();
+          OutstandingReadToArray read = state.outstandingReads.get(id);
+          if (read == null) {
+            continue;
+          }
+          ByteString content = d.getChecksummedData().getContent();
+          ChildRef childRef = handle.borrow();
+          read.accept(childRef, content);
+          if (d.getRangeEnd()) {
+            state.outstandingReads.remove(id);
+            // invoke eof on exec, the resolving future could have a downstream callback
+            // that we don't want to block this grpc thread
+            exec.execute(read::eof);
+          }
+        }
+      } catch (IOException e) {
+        // TODO: sync this up with stream restarts when the time comes
+        throw StorageException.coalesce(e);
       }
     }
 
@@ -179,33 +196,27 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     }
   }
 
-  // todo: handle zero-copy lifecycle integration
-  private static final class OutstandingReadToArray {
+  @VisibleForTesting
+  static final class OutstandingReadToArray {
     private final long readId;
     private final long readOffset;
     private final long readLimit;
     private final ByteArrayOutputStream bytes;
     private final SettableApiFuture<byte[]> complete;
 
-    private OutstandingReadToArray(
-        long readId,
-        long readOffset,
-        long readLimit,
-        ByteArrayOutputStream bytes,
-        SettableApiFuture<byte[]> complete) {
+    @VisibleForTesting
+    OutstandingReadToArray(
+        long readId, long readOffset, long readLimit, SettableApiFuture<byte[]> complete) {
       this.readId = readId;
       this.readOffset = readOffset;
       this.readLimit = readLimit;
-      this.bytes = bytes;
+      this.bytes = new ByteArrayOutputStream();
       this.complete = complete;
     }
 
-    public void accept(ByteString bytes) {
-      try {
+    public void accept(ChildRef childRef, ByteString bytes) throws IOException {
+      try (ChildRef autoclose = childRef) {
         bytes.writeTo(this.bytes);
-      } catch (IOException e) {
-        // ByteArrayOutputStream doesn't throw IOException
-        throw new RuntimeException(e);
       }
     }
 

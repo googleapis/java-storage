@@ -99,6 +99,7 @@ import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
@@ -167,7 +168,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
-  final ResponseContentLifecycleManager responseContentLifecycleManager;
+  final ResponseContentLifecycleManager<ReadObjectResponse> responseContentLifecycleManager;
+  final ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
@@ -181,12 +183,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   GrpcStorageImpl(
       GrpcStorageOptions options,
       StorageClient storageClient,
-      ResponseContentLifecycleManager responseContentLifecycleManager,
+      ResponseContentLifecycleManager<ReadObjectResponse> responseContentLifecycleManager,
+      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
       WriterFactory writerFactory,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
     this.responseContentLifecycleManager = responseContentLifecycleManager;
+    this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
     this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
@@ -1477,7 +1481,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext context =
         GrpcUtils.contextWithBucketName(object.getBucket(), GrpcCallContext.createDefault());
 
-    return BlobDescriptorImpl.create(req, context, callable, executor);
+    return BlobDescriptorImpl.create(
+        req, context, callable, bidiResponseContentLifecycleManager, executor);
   }
 
   @Override

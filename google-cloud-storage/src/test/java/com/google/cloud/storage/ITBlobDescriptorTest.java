@@ -87,7 +87,7 @@ public final class ITBlobDescriptorTest {
 
       List<byte[]> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
       Stopwatch stop = sw.stop();
-      System.out.println(stop);
+      System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
       Hasher hasher = Hashing.crc32c().newHasher();
       long length = 0;
       for (byte[] range : ranges) {

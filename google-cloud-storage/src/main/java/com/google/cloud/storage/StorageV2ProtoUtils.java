@@ -21,6 +21,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Printer;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectAccessControl;
@@ -45,6 +46,12 @@ final class StorageV2ProtoUtils {
             }
             return ImmutableList.of();
           };
+  static final Function<BidiReadObjectResponse, List<ByteBuffer>>
+      BIDI_READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION =
+          response -> {
+            throw new StorageException(0, "unsupported", "unsupported", null);
+          };
+
   private static final String VALIDATION_TEMPLATE =
       "offset >= 0 && limit >= 0 (%s >= 0 && %s >= 0)";
 

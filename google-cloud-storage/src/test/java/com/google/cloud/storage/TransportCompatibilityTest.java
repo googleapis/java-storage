@@ -40,7 +40,10 @@ public final class TransportCompatibilityTest {
     @SuppressWarnings("resource")
     Storage s =
         new GrpcStorageImpl(
-            options, null, ResponseContentLifecycleManager.noop(), null, Opts.empty());
+            options, null,
+            ResponseContentLifecycleManager.noop(),
+            ResponseContentLifecycleManager.noopBidiReadObjectResponse(),
+            null, Opts.empty());
     ImmutableList<String> messages =
         Stream.<Supplier<?>>of(
                 s::batch,

@@ -33,10 +33,12 @@ import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.rpc.NoHeaderProvider;
 import com.google.api.gax.rpc.RequestParamsBuilder;
+import com.google.api.gax.rpc.RequestParamsExtractor;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
@@ -59,6 +61,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedInputStream;
@@ -67,6 +70,8 @@ import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
 import com.google.protobuf.UnsafeByteOperations;
+import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.StorageClient;
@@ -103,6 +108,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 */
@@ -757,6 +763,7 @@ public final class GrpcStorageOptions extends StorageOptions
    */
   @InternalApi
   public static class GrpcStorageFactory implements StorageFactory {
+    private static final Logger LOGGER = Logger.getLogger(GrpcStorageFactory.class.getName());
 
     /**
      * Internal implementation detail, only public to allow for {@link java.io.Serializable}
@@ -788,6 +795,7 @@ public final class GrpcStorageOptions extends StorageOptions
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
           if (ZeroCopyReadinessChecker.isReady()) {
+            LOGGER.config("zero-copy protobuf deserialization available, using it");
             StorageStubSettings stubSettings =
                 (StorageStubSettings) storageSettings.getStubSettings();
             ClientContext clientContext = ClientContext.create(stubSettings);
@@ -801,18 +809,22 @@ public final class GrpcStorageOptions extends StorageOptions
                 new GrpcStorageImpl(
                     grpcStorageOptions,
                     client,
-                    stub.getObjectMediaResponseMarshaller,
+                    stub.readObjectResponseMarshaller,
+                    stub.bidiReadObjectResponseMarshaller,
                     grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
                     defaultOpts);
             return OtelStorageDecorator.decorate(
                 grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
           } else {
+            LOGGER.config(
+                "zero-copy protobuf deserialization unavailable, proceeding with default");
             StorageClient client = StorageClient.create(storageSettings);
             GrpcStorageImpl grpcStorage =
                 new GrpcStorageImpl(
                     grpcStorageOptions,
                     client,
                     ResponseContentLifecycleManager.noop(),
+                    ResponseContentLifecycleManager.noopBidiReadObjectResponse(),
                     grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
                     defaultOpts);
             return OtelStorageDecorator.decorate(
@@ -911,7 +923,11 @@ public final class GrpcStorageOptions extends StorageOptions
       try {
         // GrpcStorageStub#close() is final and we can't override it
         // instead hook in here to close out the zero-copy marshaller
-        getStub().getObjectMediaResponseMarshaller.close();
+        //noinspection EmptyTryBlock
+        try (ZeroCopyResponseMarshaller<ReadObjectResponse> ignore1 = getStub().readObjectResponseMarshaller;
+            ZeroCopyResponseMarshaller<BidiReadObjectResponse> ignore2 = getStub().bidiReadObjectResponseMarshaller) {
+          // use try-with to do the close dance for us
+        }
       } catch (IOException e) {
         throw new RuntimeException(e);
       } finally {
@@ -925,12 +941,25 @@ public final class GrpcStorageOptions extends StorageOptions
     }
   }
 
+  // DanglingJavadocs are for breadcrumbs to source of copied generated code
+  @SuppressWarnings("DanglingJavadoc")
   private static final class InternalZeroCopyGrpcStorageStub extends GrpcStorageStub
       implements AutoCloseable {
-    private final ZeroCopyResponseMarshaller<ReadObjectResponse> getObjectMediaResponseMarshaller;
 
-    private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse>
-        serverStreamingCallable;
+    private static final RequestParamsExtractor<BidiReadObjectRequest>
+        EMPTY_REQUEST_PARAMS_EXTRACTOR = request -> ImmutableMap.of();
+
+    /** @see GrpcStorageStub#READ_OBJECT_0_PATH_TEMPLATE */
+    private static final PathTemplate READ_OBJECT_0_PATH_TEMPLATE =
+        PathTemplate.create("{bucket=**}");
+
+    private final ZeroCopyResponseMarshaller<ReadObjectResponse> readObjectResponseMarshaller;
+    private final ZeroCopyResponseMarshaller<BidiReadObjectResponse>
+        bidiReadObjectResponseMarshaller;
+
+    private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable;
+    private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectCallable;
 
     private InternalZeroCopyGrpcStorageStub(
         StorageStubSettings settings,
@@ -939,18 +968,34 @@ public final class GrpcStorageOptions extends StorageOptions
         throws IOException {
       super(settings, clientContext, callableFactory);
 
-      this.getObjectMediaResponseMarshaller =
+      this.readObjectResponseMarshaller =
           new ZeroCopyResponseMarshaller<>(
               ReadObjectResponse.getDefaultInstance(),
               StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
 
+      this.bidiReadObjectResponseMarshaller =
+          new ZeroCopyResponseMarshaller<>(
+              BidiReadObjectResponse.getDefaultInstance(),
+              StorageV2ProtoUtils.BIDI_READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
+
+      /** @see GrpcStorageStub#readObjectMethodDescriptor */
       MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
           MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
               .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName("google.storage.v2.Storage/ReadObject")
               .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
-              .setResponseMarshaller(getObjectMediaResponseMarshaller)
+              .setResponseMarshaller(readObjectResponseMarshaller)
               .build();
+      /** @see GrpcStorageStub#bidiReadObjectMethodDescriptor */
+      MethodDescriptor<BidiReadObjectRequest, BidiReadObjectResponse>
+          bidiReadObjectMethodDescriptor =
+              MethodDescriptor.<BidiReadObjectRequest, BidiReadObjectResponse>newBuilder()
+                  .setType(MethodDescriptor.MethodType.BIDI_STREAMING)
+                  .setFullMethodName("google.storage.v2.Storage/BidiReadObject")
+                  .setRequestMarshaller(
+                      ProtoUtils.marshaller(BidiReadObjectRequest.getDefaultInstance()))
+                  .setResponseMarshaller(bidiReadObjectResponseMarshaller)
+                  .build();
 
       GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
           GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
@@ -958,21 +1003,36 @@ public final class GrpcStorageOptions extends StorageOptions
               .setParamsExtractor(
                   request -> {
                     RequestParamsBuilder builder = RequestParamsBuilder.create();
-                    // todo: this is fragile to proto annotation changes, and would require manual
-                    // maintenance
-                    builder.add(request.getBucket(), "bucket", PathTemplate.create("{bucket=**}"));
+                    // todo: this is fragile to proto annotation changes
+                    builder.add(request.getBucket(), "bucket", READ_OBJECT_0_PATH_TEMPLATE);
                     return builder.build();
                   })
               .build();
 
-      this.serverStreamingCallable =
+      GrpcCallSettings<BidiReadObjectRequest, BidiReadObjectResponse>
+          bidiReadObjectTransportSettings =
+              GrpcCallSettings.<BidiReadObjectRequest, BidiReadObjectResponse>newBuilder()
+                  .setMethodDescriptor(bidiReadObjectMethodDescriptor)
+                  .setParamsExtractor(EMPTY_REQUEST_PARAMS_EXTRACTOR)
+                  .build();
+
+      this.readObjectCallable =
           callableFactory.createServerStreamingCallable(
               readObjectTransportSettings, settings.readObjectSettings(), clientContext);
+      this.bidiReadObjectCallable =
+          callableFactory.createBidiStreamingCallable(
+              bidiReadObjectTransportSettings, settings.bidiReadObjectSettings(), clientContext);
     }
 
     @Override
     public ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable() {
-      return serverStreamingCallable;
+      return readObjectCallable;
+    }
+
+    @Override
+    public BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectCallable() {
+      return bidiReadObjectCallable;
     }
   }
 
