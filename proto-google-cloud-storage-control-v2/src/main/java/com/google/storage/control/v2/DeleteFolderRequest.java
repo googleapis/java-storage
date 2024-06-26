@@ -25,7 +25,6 @@ package com.google.storage.control.v2;
  * <pre>
  * Request message for DeleteFolder. This operation is only applicable to a
  * hierarchical namespace enabled bucket.
- * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.DeleteFolderRequest}
@@ -453,7 +452,6 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
    * <pre>
    * Request message for DeleteFolder. This operation is only applicable to a
    * hierarchical namespace enabled bucket.
-   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.DeleteFolderRequest}

@@ -25,7 +25,6 @@ package com.google.storage.control.v2;
  * <pre>
  * Request message for ListFolders. This operation is only applicable to a
  * hierarchical namespace enabled bucket.
- * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.ListFoldersRequest}
@@ -707,7 +706,6 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
    * <pre>
    * Request message for ListFolders. This operation is only applicable to a
    * hierarchical namespace enabled bucket.
-   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.ListFoldersRequest}

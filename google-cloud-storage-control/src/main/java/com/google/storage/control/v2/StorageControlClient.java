@@ -70,7 +70,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> CreateFolder</td>
- *      <td><p> Creates a new folder. This operation is only applicable to a hierarchical namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.</td>
+ *      <td><p> Creates a new folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -89,7 +89,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> DeleteFolder</td>
- *      <td><p> Permanently deletes an empty folder. This operation is only applicable to a hierarchical namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.</td>
+ *      <td><p> Permanently deletes an empty folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -108,7 +108,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetFolder</td>
- *      <td><p> Returns metadata for the specified folder. This operation is only applicable to a hierarchical namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.</td>
+ *      <td><p> Returns metadata for the specified folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -127,7 +127,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ListFolders</td>
- *      <td><p> Retrieves a list of folders. This operation is only applicable to a hierarchical namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.</td>
+ *      <td><p> Retrieves a list of folders. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -147,7 +147,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> RenameFolder</td>
- *      <td><p> Renames a source folder to a destination folder. This operation is only applicable to a hierarchical namespace enabled bucket. During a rename, the source and destination folders are locked until the long running operation completes. Hierarchical namespace buckets are in allowlist preview.</td>
+ *      <td><p> Renames a source folder to a destination folder. This operation is only applicable to a hierarchical namespace enabled bucket. During a rename, the source and destination folders are locked until the long running operation completes.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -366,7 +366,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
-   * bucket. Hierarchical namespace buckets are in allowlist preview.
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -408,7 +408,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
-   * bucket. Hierarchical namespace buckets are in allowlist preview.
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -450,7 +450,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
-   * bucket. Hierarchical namespace buckets are in allowlist preview.
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -483,7 +483,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
-   * bucket. Hierarchical namespace buckets are in allowlist preview.
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -515,7 +515,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -544,7 +544,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -572,7 +572,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -604,7 +604,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -635,7 +635,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -664,7 +664,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -692,7 +692,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -724,7 +724,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
-   * namespace enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -755,7 +755,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
-   * enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -788,7 +788,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
-   * enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -818,7 +818,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
-   * enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -856,7 +856,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
-   * enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -895,7 +895,7 @@ public class StorageControlClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
-   * enabled bucket. Hierarchical namespace buckets are in allowlist preview.
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -940,8 +940,7 @@ public class StorageControlClient implements BackgroundResource {
   /**
    * Renames a source folder to a destination folder. This operation is only applicable to a
    * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
-   * locked until the long running operation completes. Hierarchical namespace buckets are in
-   * allowlist preview.
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -977,8 +976,7 @@ public class StorageControlClient implements BackgroundResource {
   /**
    * Renames a source folder to a destination folder. This operation is only applicable to a
    * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
-   * locked until the long running operation completes. Hierarchical namespace buckets are in
-   * allowlist preview.
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -1014,8 +1012,7 @@ public class StorageControlClient implements BackgroundResource {
   /**
    * Renames a source folder to a destination folder. This operation is only applicable to a
    * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
-   * locked until the long running operation completes. Hierarchical namespace buckets are in
-   * allowlist preview.
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -1050,8 +1047,7 @@ public class StorageControlClient implements BackgroundResource {
   /**
    * Renames a source folder to a destination folder. This operation is only applicable to a
    * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
-   * locked until the long running operation completes. Hierarchical namespace buckets are in
-   * allowlist preview.
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -1086,8 +1082,7 @@ public class StorageControlClient implements BackgroundResource {
   /**
    * Renames a source folder to a destination folder. This operation is only applicable to a
    * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
-   * locked until the long running operation completes. Hierarchical namespace buckets are in
-   * allowlist preview.
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *

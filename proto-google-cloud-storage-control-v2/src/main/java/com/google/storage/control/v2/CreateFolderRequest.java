@@ -25,7 +25,6 @@ package com.google.storage.control.v2;
  * <pre>
  * Request message for CreateFolder. This operation is only applicable to a
  * hierarchical namespace enabled bucket.
- * Hierarchical namespace buckets are in allowlist preview.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
@@ -524,7 +523,6 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    * <pre>
    * Request message for CreateFolder. This operation is only applicable to a
    * hierarchical namespace enabled bucket.
-   * Hierarchical namespace buckets are in allowlist preview.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
