@@ -42,12 +42,13 @@ public class DeleteObject {
     BlobId idWithGeneration = blob.getBlobId();
     // Deletes the blob specified by its id. When the generation is present and non-null it will be
     // specified in the request.
-    // If versioning is enabled on the bucket and the generation is present, only that version of
-    // the object will be deleted.
+    // If versioning is enabled on the bucket and the generation is present in the delete request,
+    // only the version of the object with the matching generation will be deleted.
     // If instead you want to delete the current version, the generation should be dropped by
-    // performing the following before calling delete.
+    // performing the following.
     // BlobId idWithoutGeneration =
     //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
+    // storage.delete(idWithoutGeneration);
     storage.delete(idWithGeneration);
 
     System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
