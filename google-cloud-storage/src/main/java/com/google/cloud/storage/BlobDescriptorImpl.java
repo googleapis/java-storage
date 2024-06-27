@@ -22,6 +22,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
+import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
@@ -38,17 +39,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
 
-  private final BlobDescriptorStreamPair stream;
+  private final BlobDescriptorStream stream;
   private final BlobDescriptorState state;
   private final BlobInfo info;
 
-  private BlobDescriptorImpl(BlobDescriptorStreamPair stream, BlobDescriptorState state) {
+  private BlobDescriptorImpl(BlobDescriptorStream stream, BlobDescriptorState state) {
     this.stream = stream;
     this.state = state;
     this.info = Conversions.grpc().blobInfo().decode(state.metadata.get());
@@ -63,7 +67,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(value.makeReadRange()).build();
     state.outstandingReads.put(readId, value);
-    stream.requestStream.send(request);
+    stream.send(request);
     return future;
   }
 
@@ -78,34 +82,136 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
       Executor executor) {
-    SettableApiFuture<Void> pendingOpen = SettableApiFuture.create();
     BlobDescriptorState state = new BlobDescriptorState(openRequest);
+
     BlobDescriptorResponseObserver responseObserver =
-        new BlobDescriptorResponseObserver(
-            pendingOpen, state, executor, bidiResponseContentLifecycleManager);
-    ClientStream<BidiReadObjectRequest> requestStream =
-        callable.splitCall(responseObserver, context);
-    BlobDescriptorStreamPair stream = new BlobDescriptorStreamPair(requestStream, responseObserver);
+        new BlobDescriptorResponseObserver(state, executor, bidiResponseContentLifecycleManager);
+
+    BlobDescriptorStream stream = new BlobDescriptorStream(callable, context, responseObserver);
+
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
-        ApiFutures.transform(
-            pendingOpen, nowOpen -> new BlobDescriptorImpl(stream, state), executor);
-    stream.getRequestStream().send(openRequest);
+        ApiFutures.transform(stream, nowOpen -> new BlobDescriptorImpl(stream, state), executor);
+    stream.send(openRequest);
     return StorageException.coalesceAsync(blobDescriptorFuture);
   }
 
-  private static final class BlobDescriptorStreamPair {
-    private final ClientStream<BidiReadObjectRequest> requestStream;
-    private final BlobDescriptorResponseObserver responseObserver;
+  private static final class BlobDescriptorStream
+      implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void> {
+    private final SettableApiFuture<Void> openSignal;
 
-    BlobDescriptorStreamPair(
-        ClientStream<BidiReadObjectRequest> requestStream,
+    private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable;
+    private final GrpcCallContext context;
+    private final ResponseObserver<BidiReadObjectResponse> responseObserver;
+    private final OpenMonitorResponseObserver openMonitorResponseObserver;
+
+    private volatile ClientStream<BidiReadObjectRequest> requestStream;
+
+    public BlobDescriptorStream(
+        BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
+        GrpcCallContext context,
         BlobDescriptorResponseObserver responseObserver) {
-      this.requestStream = requestStream;
+      this.callable = callable;
+      this.context = context;
       this.responseObserver = responseObserver;
+      this.openMonitorResponseObserver = new OpenMonitorResponseObserver(responseObserver);
+      this.openSignal = SettableApiFuture.create();
     }
 
     public ClientStream<BidiReadObjectRequest> getRequestStream() {
-      return requestStream;
+      if (requestStream != null) {
+        return requestStream;
+      } else {
+        synchronized (this) {
+          if (requestStream == null) {
+            requestStream = callable.splitCall(openMonitorResponseObserver, context);
+          }
+          return requestStream;
+        }
+      }
+    }
+
+    @Override
+    public void send(BidiReadObjectRequest request) {
+      getRequestStream().send(request);
+    }
+
+    @Override
+    public void closeSendWithError(Throwable t) {
+      getRequestStream().closeSendWithError(t);
+    }
+
+    @Override
+    public void closeSend() {
+      getRequestStream().closeSend();
+    }
+
+    @Override
+    public boolean isSendReady() {
+      return getRequestStream().isSendReady();
+    }
+
+    @Override
+    public void addListener(Runnable listener, Executor executor) {
+      openSignal.addListener(listener, executor);
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+      return openSignal.cancel(mayInterruptIfRunning);
+    }
+
+    @Override
+    public Void get() throws InterruptedException, ExecutionException {
+      return openSignal.get();
+    }
+
+    @Override
+    public Void get(long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
+      return openSignal.get(timeout, unit);
+    }
+
+    @Override
+    public boolean isCancelled() {
+      return openSignal.isCancelled();
+    }
+
+    @Override
+    public boolean isDone() {
+      return openSignal.isDone();
+    }
+
+    private class OpenMonitorResponseObserver
+        extends StateCheckingResponseObserver<BidiReadObjectResponse> {
+
+      private final BlobDescriptorResponseObserver responseObserver;
+
+      private OpenMonitorResponseObserver(BlobDescriptorResponseObserver responseObserver) {
+        this.responseObserver = responseObserver;
+      }
+
+      @Override
+      protected void onStartImpl(StreamController controller) {
+        responseObserver.onStartImpl(controller);
+      }
+
+      @Override
+      protected void onResponseImpl(BidiReadObjectResponse response) {
+        responseObserver.onResponseImpl(response);
+        openSignal.set(null);
+      }
+
+      @Override
+      protected void onErrorImpl(Throwable t) {
+        responseObserver.onErrorImpl(t);
+        openSignal.setException(t);
+      }
+
+      @Override
+      protected void onCompleteImpl() {
+        responseObserver.onCompleteImpl();
+        openSignal.set(null);
+      }
     }
   }
 
@@ -118,15 +224,11 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     private final ResponseContentLifecycleManager<BidiReadObjectResponse>
         bidiResponseContentLifecycleManager;
 
-    private final SettableApiFuture<Void> openSignal;
-
-    public BlobDescriptorResponseObserver(
-        SettableApiFuture<Void> openSignal,
+    private BlobDescriptorResponseObserver(
         BlobDescriptorState state,
         Executor exec,
         ResponseContentLifecycleManager<BidiReadObjectResponse>
             bidiResponseContentLifecycleManager) {
-      this.openSignal = openSignal;
       this.state = state;
       this.exec = exec;
       this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
@@ -146,11 +248,9 @@ final class BlobDescriptorImpl implements BlobDescriptor {
           bidiResponseContentLifecycleManager.get(response)) {
         if (response.hasMetadata()) {
           state.metadata.set(response.getMetadata());
-          openSignal.set(null);
         }
         if (response.hasReadHandle()) {
           state.ref.set(response.getReadHandle());
-          openSignal.set(null);
         }
         List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
         if (rangeData.isEmpty()) {
@@ -180,14 +280,10 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     }
 
     @Override
-    protected void onErrorImpl(Throwable t) {
-      openSignal.setException(t);
-    }
+    protected void onErrorImpl(Throwable t) {}
 
     @Override
-    protected void onCompleteImpl() {
-      openSignal.set(null);
-    }
+    protected void onCompleteImpl() {}
   }
 
   @VisibleForTesting

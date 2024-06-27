@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -72,8 +73,7 @@ public final class ITBlobDescriptorTest {
     BlobId blobId = BlobId.of("ping", "someobject");
     for (int j = 0; j < 2; j++) {
 
-      BlobDescriptor blobDescriptor =
-          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
+      BlobDescriptor blobDescriptor = storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
 
       Stopwatch sw = Stopwatch.createStarted();
       int numRangesToRead = 256;
@@ -111,5 +111,19 @@ public final class ITBlobDescriptorTest {
           },
           () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
     }
+  }
+
+  @Test
+  public void readFromBucketThatDoesNotExistShouldRaiseStorageExceptionWith404() {
+    BlobId blobId = BlobId.of("gcs-grpc-team-bucket-that-does-not-exist", "someobject");
+
+    ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(blobId);
+
+    ExecutionException ee =
+        assertThrows(ExecutionException.class, () -> futureBlobDescriptor.get(5, TimeUnit.SECONDS));
+
+    assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
+    StorageException cause = (StorageException) ee.getCause();
+    assertThat(cause.getCode()).isEqualTo(404);
   }
 }
