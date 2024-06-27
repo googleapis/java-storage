@@ -61,14 +61,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     OutstandingReadToArray value =
         new OutstandingReadToArray(readId, range.beginOffset(), range.length(), future);
     BidiReadObjectRequest request =
-        BidiReadObjectRequest.newBuilder()
-            .addReadRanges(
-                ReadRange.newBuilder()
-                    .setReadId(readId)
-                    .setReadOffset(range.beginOffset())
-                    .setReadLength(range.length())
-                    .build())
-            .build();
+        BidiReadObjectRequest.newBuilder().addReadRanges(value.makeReadRange()).build();
     state.outstandingReads.put(readId, value);
     stream.requestStream.send(request);
     return future;
@@ -173,10 +166,11 @@ final class BlobDescriptorImpl implements BlobDescriptor {
           ChildRef childRef = handle.borrow();
           read.accept(childRef, content);
           if (d.getRangeEnd()) {
-            state.outstandingReads.remove(id);
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
             exec.execute(read::eof);
+            // don't remove the outstanding read until the future has been resolved
+            state.outstandingReads.remove(id);
           }
         }
       } catch (IOException e) {
@@ -199,8 +193,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   @VisibleForTesting
   static final class OutstandingReadToArray {
     private final long readId;
-    private final long readOffset;
-    private final long readLimit;
+    private final ReadCursor readCursor;
     private final ByteArrayOutputStream bytes;
     private final SettableApiFuture<byte[]> complete;
 
@@ -208,20 +201,29 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     OutstandingReadToArray(
         long readId, long readOffset, long readLimit, SettableApiFuture<byte[]> complete) {
       this.readId = readId;
-      this.readOffset = readOffset;
-      this.readLimit = readLimit;
+      this.readCursor = new ReadCursor(readOffset, readOffset + readLimit);
       this.bytes = new ByteArrayOutputStream();
       this.complete = complete;
     }
 
     public void accept(ChildRef childRef, ByteString bytes) throws IOException {
       try (ChildRef autoclose = childRef) {
+        int size = bytes.size();
         bytes.writeTo(this.bytes);
+        readCursor.advance(size);
       }
     }
 
     public void eof() {
       complete.set(bytes.toByteArray());
+    }
+
+    public ReadRange makeReadRange() {
+      return ReadRange.newBuilder()
+          .setReadId(readId)
+          .setReadOffset(readCursor.position())
+          .setReadLength(readCursor.remaining())
+          .build();
     }
   }
 
