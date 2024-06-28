@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.33.0</version>
+      <version>26.42.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -30,6 +30,10 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
   <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
   </dependency>
 
 ```
@@ -42,7 +46,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.33.0</version>
+  <version>2.40.0</version>
+</dependency>
+<dependency>
+  <groupId>com.google.cloud</groupId>
+  <artifactId>google-cloud-storage-control</artifactId>
+  <version>2.40.1</version><!-- {x-version-update:google-cloud-storage:current} -->
 </dependency>
 
 ```
@@ -98,6 +107,54 @@ to add `google-cloud-storage` as a dependency in your code.
 See the [Cloud Storage client library docs][javadocs] to learn how to
 use this Cloud Storage Client Library.
 
+
+## About Storage Control
+
+The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) lets you perform metadata-specific, control plane, and long-running operations.
+
+The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
+
+If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>libraries-bom</artifactId>
+            <version>26.37.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+</dependency>
+```
+
+If you are using Maven without the BOM, add this to your dependencies:
+<!-- {x-version-update-start:google-cloud-storage:released} -->
+```xml
+<dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-storage-control</artifactId>
+    <version>2.40.1</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+</dependency>
+```
+
+If you are using Gradle 5.x or later, add this to your dependencies:
+```Groovy
+implementation platform('com.google.cloud:libraries-bom:2.40.1')
+implementation 'com.google.cloud:google-cloud-storage-control'
+```
+If you are using Gradle without BOM, add this to your dependencies:
+
+```Groovy
+implementation 'com.google.cloud:google-cloud-storage-control:2.40.1' <!-- {x-version-update:google-cloud-storage-control:current} -->
+```
 
 #### Creating an authorized service object
 
@@ -227,6 +284,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Quickstart Grpc Dp Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartGrpcDpSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartGrpcDpSample.java) |
 | Quickstart Grpc Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartGrpcSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartGrpcSample.java) |
 | Quickstart Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) |
+| Quickstart Storage Control Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/QuickstartStorageControlSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartStorageControlSample.java) |
 | Add Bucket Default Owner | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketDefaultOwner.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketDefaultOwner.java) |
 | Add Bucket Iam Conditional Binding | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamConditionalBinding.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamConditionalBinding.java) |
 | Add Bucket Iam Member | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamMember.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/AddBucketIamMember.java) |
@@ -285,12 +343,22 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Set Public Access Prevention Enforced | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetPublicAccessPreventionEnforced.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetPublicAccessPreventionEnforced.java) |
 | Set Public Access Prevention Inherited | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetPublicAccessPreventionInherited.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetPublicAccessPreventionInherited.java) |
 | Set Retention Policy | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetRetentionPolicy.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetRetentionPolicy.java) |
+| Create Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/CreateFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/CreateFolder.java) |
+| Create Hierarchical Namespace Bucket | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/CreateHierarchicalNamespaceBucket.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/CreateHierarchicalNamespaceBucket.java) |
+| Delete Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/DeleteFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/DeleteFolder.java) |
+| Get Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/GetFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/GetFolder.java) |
+| List Folders | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/ListFolders.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/ListFolders.java) |
+| Rename Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/control/v2/RenameFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/control/v2/RenameFolder.java) |
 | Activate Hmac Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/ActivateHmacKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/ActivateHmacKey.java) |
 | Create Hmac Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/CreateHmacKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/CreateHmacKey.java) |
 | Deactivate Hmac Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/DeactivateHmacKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/DeactivateHmacKey.java) |
 | Delete Hmac Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/DeleteHmacKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/DeleteHmacKey.java) |
 | Get Hmac Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/GetHmacKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/GetHmacKey.java) |
 | List Hmac Keys | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/hmac/ListHmacKeys.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/hmac/ListHmacKeys.java) |
+| Create Managed Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/managedfolders/CreateManagedFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/managedfolders/CreateManagedFolder.java) |
+| Delete Managed Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/managedfolders/DeleteManagedFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/managedfolders/DeleteManagedFolder.java) |
+| Get Managed Folder | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/managedfolders/GetManagedFolder.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/managedfolders/GetManagedFolder.java) |
+| List Managed Folders | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/managedfolders/ListManagedFolders.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/managedfolders/ListManagedFolders.java) |
 | Add File Owner | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/AddFileOwner.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/AddFileOwner.java) |
 | Batch Set Object Metadata | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/BatchSetObjectMetadata.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/BatchSetObjectMetadata.java) |
 | Change Object Csek To Kms | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ChangeObjectCsekToKms.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ChangeObjectCsekToKms.java) |
@@ -331,6 +399,12 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Upload Kms Encrypted Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadKmsEncryptedObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadKmsEncryptedObject.java) |
 | Upload Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadObject.java) |
 | Upload Object From Memory | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/UploadObjectFromMemory.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/UploadObjectFromMemory.java) |
+| Allow Divide And Conquer Download | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/AllowDivideAndConquerDownload.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/AllowDivideAndConquerDownload.java) |
+| Allow Parallel Composite Upload | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/AllowParallelCompositeUpload.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/AllowParallelCompositeUpload.java) |
+| Download Bucket | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadBucket.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadBucket.java) |
+| Download Many | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadMany.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/DownloadMany.java) |
+| Upload Directory | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/UploadDirectory.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/UploadDirectory.java) |
+| Upload Many | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/transfermanager/UploadMany.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/transfermanager/UploadMany.java) |
 
 
 

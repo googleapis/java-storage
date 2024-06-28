@@ -55,7 +55,7 @@ import java.util.Collection;
  *       full or close. Buffer size is configurable via
  *       {@link DefaultBlobWriteSessionConfig#withChunkSize(int)}
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>The network will only be used for the following operations:
  *     <ol>
  *       <li>Creating the Resumable Upload Session</li>
@@ -86,7 +86,7 @@ import java.util.Collection;
  *       Buffer bytes to a temporary file on disk. On {@link WritableByteChannel#close() close()}
  *       upload the entire files contents to Cloud Storage. Delete the temporary file.
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>
  *       <ol>
  *         <li>A Resumable Upload Session will be used to upload the file on disk.</li>
@@ -142,7 +142,7 @@ import java.util.Collection;
  *       Break the stream of bytes into smaller part objects uploading each part in parallel. Then
  *       composing the parts together to make the ultimate object.
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>
  *       <ol>
  *         <li>
@@ -241,7 +241,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static DefaultBlobWriteSessionConfig getDefault() {
     return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);
   }
@@ -272,7 +272,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BlobWriteSessionConfig bufferToTempDirThenUpload() throws IOException {
     return bufferToDiskThenUpload(
         Paths.get(System.getProperty("java.io.tmpdir"), "google-cloud-storage"));
@@ -289,7 +289,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Path path) throws IOException {
     return bufferToDiskThenUpload(ImmutableList.of(path));
   }
@@ -308,7 +308,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Collection<Path> paths)
       throws IOException {
     return new BufferToDiskThenUpload(ImmutableList.copyOf(paths), false);
@@ -342,7 +342,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static ParallelCompositeUploadBlobWriteSessionConfig parallelCompositeUpload() {
     return ParallelCompositeUploadBlobWriteSessionConfig.withDefaults();
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,6 +179,91 @@ public class MockStorageControlImpl extends StorageControlImplBase {
                   "Unrecognized response type %s for method GetStorageLayout, expected %s or %s",
                   response == null ? "null" : response.getClass().getName(),
                   StorageLayout.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void createManagedFolder(
+      CreateManagedFolderRequest request, StreamObserver<ManagedFolder> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof ManagedFolder) {
+      requests.add(request);
+      responseObserver.onNext(((ManagedFolder) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method CreateManagedFolder, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  ManagedFolder.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void deleteManagedFolder(
+      DeleteManagedFolderRequest request, StreamObserver<Empty> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof Empty) {
+      requests.add(request);
+      responseObserver.onNext(((Empty) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method DeleteManagedFolder, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  Empty.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void getManagedFolder(
+      GetManagedFolderRequest request, StreamObserver<ManagedFolder> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof ManagedFolder) {
+      requests.add(request);
+      responseObserver.onNext(((ManagedFolder) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method GetManagedFolder, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  ManagedFolder.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void listManagedFolders(
+      ListManagedFoldersRequest request,
+      StreamObserver<ListManagedFoldersResponse> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof ListManagedFoldersResponse) {
+      requests.add(request);
+      responseObserver.onNext(((ListManagedFoldersResponse) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method ListManagedFolders, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  ListManagedFoldersResponse.class.getName(),
                   Exception.class.getName())));
     }
   }

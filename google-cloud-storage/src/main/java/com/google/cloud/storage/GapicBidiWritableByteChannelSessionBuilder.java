@@ -30,7 +30,6 @@ import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ServiceConstants.Values;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 final class GapicBidiWritableByteChannelSessionBuilder {
 
@@ -76,36 +75,6 @@ final class GapicBidiWritableByteChannelSessionBuilder {
     this.byteStringStrategy =
         requireNonNull(byteStringStrategy, "byteStringStrategy must be non null");
     return this;
-  }
-
-  /**
-   * When constructing a bidi channel session, there is always a {@link
-   * GapicBidiUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction
-   * which will instantiate the {@link GapicBidiUnbufferedWritableByteChannel} when provided with a
-   * {@code StartT} value and a {@code SettableApiFuture<BidiWriteObjectResponse>}.
-   *
-   * <p>As part of providing the function, the provided parameters {@code BidiFlusherFactory} and
-   * {@code f} are "bound" into the returned function. In conjunction with the configured fields of
-   * this class a new instance of {@link GapicBidiUnbufferedWritableByteChannel} can be constructed.
-   */
-  private <StartT, RequestFactoryT extends BidiWriteCtx.BidiWriteObjectRequestBuilderFactory>
-      BiFunction<StartT, SettableApiFuture<BidiWriteObjectResponse>, UnbufferedWritableByteChannel>
-          bindFunction(
-              WriteFlushStrategy.BidiFlusherFactory flusherFactory,
-              Function<StartT, RequestFactoryT> f) {
-    // it is theoretically possible that the setter methods for the following variables could
-    // be called again between when this method is invoked and the resulting function is invoked.
-    // To ensure we are using the specified values at the point in time they are bound to the
-    // function read them into local variables which will be closed over rather than the class
-    // fields.
-    ByteStringStrategy boundStrategy = byteStringStrategy;
-    Hasher boundHasher = hasher;
-    return (start, resultFuture) ->
-        new GapicBidiUnbufferedWritableByteChannel<>(
-            resultFuture,
-            new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-            f.apply(start),
-            flusherFactory);
   }
 
   GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder resumable() {
@@ -164,12 +133,30 @@ final class GapicBidiWritableByteChannelSessionBuilder {
       }
 
       BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
+        // it is theoretically possible that the setter methods for the following variables could
+        // be called again between when this method is invoked and the resulting function is
+        // invoked.
+        // To ensure we are using the specified values at the point in time they are bound to the
+        // function read them into local variables which will be closed over rather than the class
+        // fields.
+        ByteStringStrategy boundStrategy = byteStringStrategy;
+        Hasher boundHasher = hasher;
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
-            bindFunction(
-                    WriteFlushStrategy.defaultBidiFlusher(
-                        write, deps, alg, Retrying::newCallContext),
-                    BidiResumableWrite::identity)
+            ((BiFunction<
+                        BidiResumableWrite,
+                        SettableApiFuture<BidiWriteObjectResponse>,
+                        UnbufferedWritableByteChannel>)
+                    (start, resultFuture) ->
+                        new GapicBidiUnbufferedWritableByteChannel(
+                            write,
+                            deps,
+                            alg,
+                            resultFuture,
+                            new ChunkSegmenter(
+                                boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+                            new BidiWriteCtx<>(start),
+                            Retrying::newCallContext))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }

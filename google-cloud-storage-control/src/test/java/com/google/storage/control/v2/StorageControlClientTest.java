@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.google.storage.control.v2;
 
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
+import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
@@ -604,6 +605,340 @@ public class StorageControlClientTest {
     try {
       String name = "name3373707";
       client.getStorageLayout(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void createManagedFolderTest() throws Exception {
+    ManagedFolder expectedResponse =
+        ManagedFolder.newBuilder()
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+            .setMetageneration(1048558813)
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+    ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+    String managedFolderId = "managedFolderId-2027084056";
+
+    ManagedFolder actualResponse =
+        client.createManagedFolder(parent, managedFolder, managedFolderId);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateManagedFolderRequest actualRequest = ((CreateManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertEquals(managedFolder, actualRequest.getManagedFolder());
+    Assert.assertEquals(managedFolderId, actualRequest.getManagedFolderId());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createManagedFolderExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+      String managedFolderId = "managedFolderId-2027084056";
+      client.createManagedFolder(parent, managedFolder, managedFolderId);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void createManagedFolderTest2() throws Exception {
+    ManagedFolder expectedResponse =
+        ManagedFolder.newBuilder()
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+            .setMetageneration(1048558813)
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String parent = "parent-995424086";
+    ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+    String managedFolderId = "managedFolderId-2027084056";
+
+    ManagedFolder actualResponse =
+        client.createManagedFolder(parent, managedFolder, managedFolderId);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateManagedFolderRequest actualRequest = ((CreateManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertEquals(managedFolder, actualRequest.getManagedFolder());
+    Assert.assertEquals(managedFolderId, actualRequest.getManagedFolderId());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createManagedFolderExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+      String managedFolderId = "managedFolderId-2027084056";
+      client.createManagedFolder(parent, managedFolder, managedFolderId);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void deleteManagedFolderTest() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+
+    client.deleteManagedFolder(name);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteManagedFolderRequest actualRequest = ((DeleteManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteManagedFolderExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+      client.deleteManagedFolder(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void deleteManagedFolderTest2() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    client.deleteManagedFolder(name);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteManagedFolderRequest actualRequest = ((DeleteManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteManagedFolderExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.deleteManagedFolder(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getManagedFolderTest() throws Exception {
+    ManagedFolder expectedResponse =
+        ManagedFolder.newBuilder()
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+            .setMetageneration(1048558813)
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+
+    ManagedFolder actualResponse = client.getManagedFolder(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetManagedFolderRequest actualRequest = ((GetManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getManagedFolderExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+      client.getManagedFolder(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getManagedFolderTest2() throws Exception {
+    ManagedFolder expectedResponse =
+        ManagedFolder.newBuilder()
+            .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+            .setMetageneration(1048558813)
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    ManagedFolder actualResponse = client.getManagedFolder(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetManagedFolderRequest actualRequest = ((GetManagedFolderRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getManagedFolderExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getManagedFolder(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listManagedFoldersTest() throws Exception {
+    ManagedFolder responsesElement = ManagedFolder.newBuilder().build();
+    ListManagedFoldersResponse expectedResponse =
+        ListManagedFoldersResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllManagedFolders(Arrays.asList(responsesElement))
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+
+    ListManagedFoldersPagedResponse pagedListResponse = client.listManagedFolders(parent);
+
+    List<ManagedFolder> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getManagedFoldersList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListManagedFoldersRequest actualRequest = ((ListManagedFoldersRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listManagedFoldersExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      client.listManagedFolders(parent);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listManagedFoldersTest2() throws Exception {
+    ManagedFolder responsesElement = ManagedFolder.newBuilder().build();
+    ListManagedFoldersResponse expectedResponse =
+        ListManagedFoldersResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllManagedFolders(Arrays.asList(responsesElement))
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String parent = "parent-995424086";
+
+    ListManagedFoldersPagedResponse pagedListResponse = client.listManagedFolders(parent);
+
+    List<ManagedFolder> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getManagedFoldersList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListManagedFoldersRequest actualRequest = ((ListManagedFoldersRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listManagedFoldersExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      client.listManagedFolders(parent);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.

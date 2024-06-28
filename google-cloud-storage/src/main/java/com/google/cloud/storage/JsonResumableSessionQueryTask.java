@@ -55,7 +55,7 @@ final class JsonResumableSessionQueryTask
       response = req.execute();
 
       int code = response.getStatusCode();
-      if (JsonResumableSessionFailureScenario.isOk(code)) {
+      if (ResumableSessionFailureScenario.isOk(code)) {
         @Nullable StorageObject storageObject;
         @Nullable BigInteger actualSize;
 
@@ -74,7 +74,7 @@ final class JsonResumableSessionQueryTask
           storageObject = null;
         } else {
           response.ignore();
-          throw JsonResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
+          throw ResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
               uploadId, response, null, () -> null);
         }
         if (actualSize != null) {
@@ -84,13 +84,13 @@ final class JsonResumableSessionQueryTask
             return ResumableOperationResult.incremental(actualSize.longValue());
           }
         } else {
-          throw JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
               uploadId,
               response,
               null,
               () -> storageObject != null ? storageObject.toString() : null);
         }
-      } else if (JsonResumableSessionFailureScenario.isContinue(code)) {
+      } else if (ResumableSessionFailureScenario.isContinue(code)) {
         String range1 = response.getHeaders().getRange();
         if (range1 != null) {
           ByteRangeSpec range = ByteRangeSpec.parse(range1);
@@ -110,23 +110,22 @@ final class JsonResumableSessionQueryTask
         // a 503 with plain text content
         // Attempt to detect this very loosely as to minimize impact of modified error message
         // This is accurate circa 2023-06
-        if ((!JsonResumableSessionFailureScenario.isOk(code)
-                && !JsonResumableSessionFailureScenario.isContinue(code))
+        if ((!ResumableSessionFailureScenario.isOk(code)
+                && !ResumableSessionFailureScenario.isContinue(code))
             && contentType != null
             && contentType.startsWith("text/plain")) {
           String errorMessage = cause.getContent().toLowerCase(Locale.US);
           if (errorMessage.contains("content-range")) {
-            throw JsonResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+            throw ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
                 uploadId, response, cause, cause::getContent);
           }
         }
-        throw JsonResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
+        throw ResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
       }
     } catch (StorageException se) {
       throw se;
     } catch (Exception e) {
-      throw JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
-          uploadId, response, e);
+      throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(uploadId, response, e);
     } finally {
       if (response != null) {
         try {

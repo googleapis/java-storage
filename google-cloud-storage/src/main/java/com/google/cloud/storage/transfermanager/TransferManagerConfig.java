@@ -16,7 +16,9 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.api.core.BetaApi;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
@@ -26,26 +28,29 @@ import java.util.Objects;
  *
  * @see Builder
  */
-@BetaApi
 public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
-  private final boolean allowDivideAndConquer;
+  private final boolean allowDivideAndConquerDownload;
+  private final boolean allowParallelCompositeUpload;
+
+  private final PartNamingStrategy partNamingStrategy;
 
   private final StorageOptions storageOptions;
-  private final Qos qos;
 
   TransferManagerConfig(
       int maxWorkers,
       int perWorkerBufferSize,
-      boolean allowDivideAndConquer,
-      StorageOptions storageOptions,
-      Qos qos) {
+      boolean allowDivideAndConquerDownload,
+      boolean allowParallelCompositeUpload,
+      PartNamingStrategy partNamingStrategy,
+      StorageOptions storageOptions) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
-    this.allowDivideAndConquer = allowDivideAndConquer;
+    this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+    this.allowParallelCompositeUpload = allowParallelCompositeUpload;
+    this.partNamingStrategy = partNamingStrategy;
     this.storageOptions = storageOptions;
-    this.qos = qos;
   }
 
   /**
@@ -53,7 +58,6 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setMaxWorkers(int)
    */
-  @BetaApi
   public int getMaxWorkers() {
     return maxWorkers;
   }
@@ -63,7 +67,6 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setPerWorkerBufferSize(int)
    */
-  @BetaApi
   public int getPerWorkerBufferSize() {
     return perWorkerBufferSize;
   }
@@ -72,11 +75,28 @@ public final class TransferManagerConfig {
    * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
    * chunking will be beneficial
    *
-   * @see Builder#setAllowDivideAndConquer(boolean)
+   * @see Builder#setAllowDivideAndConquerDownload(boolean)
    */
-  @BetaApi
-  public boolean isAllowDivideAndConquer() {
-    return allowDivideAndConquer;
+  public boolean isAllowDivideAndConquerDownload() {
+    return allowDivideAndConquerDownload;
+  }
+  /**
+   * Whether to allow Transfer Manager to perform Parallel Composite Uploads if it determines
+   * chunking will be beneficial
+   *
+   * @see Builder#setAllowParallelCompositeUpload(boolean)
+   *     <p>Note: Performing parallel composite uploads costs more money. <a
+   *     href="https://cloud.google.com/storage/pricing#operations-by-class">Class A</a> operations
+   *     are performed to create each part and to perform each compose. If a storage tier other than
+   *     <a href="https://cloud.google.com/storage/docs/storage-classes"><code>STANDARD</code></a>
+   *     is used, early deletion fees apply to deletion of the parts.
+   *     <p>Please see the <a
+   *     href="https://cloud.google.com/storage/docs/parallel-composite-uploads">Parallel composite
+   *     uploads</a> documentation for a more in depth explanation of the limitations of Parallel
+   *     composite uploads.
+   */
+  public boolean isAllowParallelCompositeUpload() {
+    return allowParallelCompositeUpload;
   }
 
   /**
@@ -84,29 +104,31 @@ public final class TransferManagerConfig {
    *
    * @see Builder#setStorageOptions(StorageOptions)
    */
-  @BetaApi
   public StorageOptions getStorageOptions() {
     return storageOptions;
   }
 
-  /** The service object for {@link TransferManager} */
-  @BetaApi
-  public TransferManager getService() {
-    return new TransferManagerImpl(this);
+  /**
+   * Part Naming Strategy to be used during Parallel Composite Uploads
+   *
+   * @see Builder#setParallelCompositeUploadPartNamingStrategy(PartNamingStrategy)
+   */
+  public PartNamingStrategy getParallelCompositeUploadPartNamingStrategy() {
+    return partNamingStrategy;
   }
 
-  @BetaApi
+  /** The service object for {@link TransferManager} */
+  public TransferManager getService() {
+    return new TransferManagerImpl(this, DefaultQos.of(this));
+  }
+
   public Builder toBuilder() {
     return new Builder()
-        .setAllowDivideAndConquer(allowDivideAndConquer)
+        .setAllowDivideAndConquerDownload(allowDivideAndConquerDownload)
+        .setAllowParallelCompositeUpload(allowParallelCompositeUpload)
         .setMaxWorkers(maxWorkers)
         .setPerWorkerBufferSize(perWorkerBufferSize)
-        .setQos(qos)
         .setStorageOptions(storageOptions);
-  }
-
-  Qos getQos() {
-    return qos;
   }
 
   @Override
@@ -120,13 +142,19 @@ public final class TransferManagerConfig {
     TransferManagerConfig that = (TransferManagerConfig) o;
     return maxWorkers == that.maxWorkers
         && perWorkerBufferSize == that.perWorkerBufferSize
-        && allowDivideAndConquer == that.allowDivideAndConquer
+        && allowDivideAndConquerDownload == that.allowDivideAndConquerDownload
+        && allowParallelCompositeUpload == that.allowParallelCompositeUpload
         && Objects.equals(storageOptions, that.storageOptions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions);
+    return Objects.hash(
+        maxWorkers,
+        perWorkerBufferSize,
+        allowDivideAndConquerDownload,
+        allowParallelCompositeUpload,
+        storageOptions);
   }
 
   @Override
@@ -134,12 +162,12 @@ public final class TransferManagerConfig {
     return MoreObjects.toStringHelper(this)
         .add("maxWorkers", maxWorkers)
         .add("perWorkerBufferSize", perWorkerBufferSize)
-        .add("allowChunking", allowDivideAndConquer)
+        .add("allowDivideAndConquerDownload", allowDivideAndConquerDownload)
+        .add("allowParallelCompositeUpload", allowParallelCompositeUpload)
         .add("storageOptions", storageOptions)
         .toString();
   }
 
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -149,22 +177,23 @@ public final class TransferManagerConfig {
    *
    * @see TransferManagerConfig
    */
-  @BetaApi
   public static class Builder {
 
     private int maxWorkers;
     private int perWorkerBufferSize;
-    private boolean allowDivideAndConquer;
+    private boolean allowDivideAndConquerDownload;
+    private boolean allowParallelCompositeUpload;
 
     private StorageOptions storageOptions;
-    private Qos qos;
+    private PartNamingStrategy partNamingStrategy;
 
     private Builder() {
       this.perWorkerBufferSize = 16 * 1024 * 1024;
       this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
-      this.allowDivideAndConquer = false;
+      this.allowDivideAndConquerDownload = false;
+      this.allowParallelCompositeUpload = false;
       this.storageOptions = StorageOptions.getDefaultInstance();
-      this.qos = DefaultQos.of();
+      this.partNamingStrategy = PartNamingStrategy.noPrefix();
     }
 
     /**
@@ -176,7 +205,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getMaxWorkers()
      */
-    @BetaApi
     public Builder setMaxWorkers(int maxWorkers) {
       this.maxWorkers = maxWorkers;
       return this;
@@ -190,7 +218,6 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getPerWorkerBufferSize()
      */
-    @BetaApi
     public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
       this.perWorkerBufferSize = perWorkerBufferSize;
       return this;
@@ -202,12 +229,25 @@ public final class TransferManagerConfig {
      *
      * <p><i>Default Value:</i> false
      *
-     * @return the instance of Builder with the value for allowDivideAndConquer modified.
-     * @see TransferManagerConfig#isAllowDivideAndConquer()
+     * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
+     * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
      */
-    @BetaApi
-    public Builder setAllowDivideAndConquer(boolean allowDivideAndConquer) {
-      this.allowDivideAndConquer = allowDivideAndConquer;
+    public Builder setAllowDivideAndConquerDownload(boolean allowDivideAndConquerDownload) {
+      this.allowDivideAndConquerDownload = allowDivideAndConquerDownload;
+      return this;
+    }
+
+    /**
+     * Whether to allow Transfer Manager to perform Parallel Composite Uploads if it determines
+     * chunking will be beneficial
+     *
+     * <p><i>Default Value:</i> false
+     *
+     * @return the instance of Builder with the value for allowDivideAndConquerDownload modified.
+     * @see TransferManagerConfig#isAllowDivideAndConquerDownload()
+     */
+    public Builder setAllowParallelCompositeUpload(boolean allowParallelCompositeUpload) {
+      this.allowParallelCompositeUpload = allowParallelCompositeUpload;
       return this;
     }
 
@@ -219,15 +259,23 @@ public final class TransferManagerConfig {
      * @return the instance of Builder with the value for storageOptions modified.
      * @see TransferManagerConfig#getStorageOptions()
      */
-    @BetaApi
     public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
       return this;
     }
 
-    @BetaApi
-    Builder setQos(Qos qos) {
-      this.qos = qos;
+    /**
+     * Part Naming Strategy that Transfer Manager will use during Parallel Composite Upload
+     *
+     * <p><i>Default Value:</i> {@link PartNamingStrategy#noPrefix()}
+     *
+     * @return the instance of Builder with the value for PartNamingStrategy modified.
+     * @see TransferManagerConfig#getParallelCompositeUploadPartNamingStrategy()
+     */
+    public Builder setParallelCompositeUploadPartNamingStrategy(
+        PartNamingStrategy partNamingStrategy) {
+      checkNotNull(partNamingStrategy);
+      this.partNamingStrategy = partNamingStrategy;
       return this;
     }
 
@@ -236,10 +284,14 @@ public final class TransferManagerConfig {
      *
      * @return {@link TransferManagerConfig}
      */
-    @BetaApi
     public TransferManagerConfig build() {
       return new TransferManagerConfig(
-          maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions, qos);
+          maxWorkers,
+          perWorkerBufferSize,
+          allowDivideAndConquerDownload,
+          allowParallelCompositeUpload,
+          partNamingStrategy,
+          storageOptions);
     }
   }
 }

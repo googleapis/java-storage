@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
@@ -30,14 +31,20 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.time.Clock;
+import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
 @BetaApi
@@ -52,7 +59,8 @@ public class HttpStorageOptions extends StorageOptions {
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
-  private final RetryDependenciesAdapter retryDepsAdapter;
+  private transient RetryDependenciesAdapter retryDepsAdapter;
+  private final BlobWriteSessionConfig blobWriteSessionConfig;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -61,6 +69,7 @@ public class HttpStorageOptions extends StorageOptions {
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
     retryDepsAdapter = new RetryDependenciesAdapter();
+    blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
 
   @Override
@@ -85,12 +94,26 @@ public class HttpStorageOptions extends StorageOptions {
 
   @Override
   public int hashCode() {
-    return baseHashCode();
+    return Objects.hash(retryAlgorithmManager, blobWriteSessionConfig, baseHashCode());
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return obj instanceof HttpStorageOptions && baseEquals((HttpStorageOptions) obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof HttpStorageOptions)) {
+      return false;
+    }
+    HttpStorageOptions that = (HttpStorageOptions) o;
+    return Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
+        && Objects.equals(blobWriteSessionConfig, that.blobWriteSessionConfig)
+        && this.baseEquals(that);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    this.retryDepsAdapter = new RetryDependenciesAdapter();
   }
 
   public static HttpStorageOptions.Builder newBuilder() {
@@ -113,11 +136,16 @@ public class HttpStorageOptions extends StorageOptions {
   public static class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
+    private BlobWriteSessionConfig blobWriteSessionConfig =
+        HttpStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
     Builder() {}
 
     Builder(StorageOptions options) {
       super(options);
+      HttpStorageOptions hso = (HttpStorageOptions) options;
+      this.storageRetryStrategy = hso.retryAlgorithmManager.retryStrategy;
+      this.blobWriteSessionConfig = hso.blobWriteSessionConfig;
     }
 
     @Override
@@ -211,6 +239,24 @@ public class HttpStorageOptions extends StorageOptions {
       return this;
     }
 
+    /**
+     * @see BlobWriteSessionConfig
+     * @see BlobWriteSessionConfigs
+     * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+     * @see HttpStorageDefaults#getDefaultStorageWriterConfig()
+     * @since 2.29.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public HttpStorageOptions.Builder setBlobWriteSessionConfig(
+        @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
+      requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      checkArgument(
+          blobWriteSessionConfig instanceof BlobWriteSessionConfig.HttpCompatible,
+          "The provided instance of BlobWriteSessionConfig is not compatible with this HTTP transport.");
+      this.blobWriteSessionConfig = blobWriteSessionConfig;
+      return this;
+    }
+
     @Override
     public HttpStorageOptions build() {
       return new HttpStorageOptions(this, defaults());
@@ -241,6 +287,12 @@ public class HttpStorageOptions extends StorageOptions {
 
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
+    }
+
+    /** @since 2.29.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
+      return BlobWriteSessionConfigs.getDefault();
     }
   }
 
@@ -280,7 +332,14 @@ public class HttpStorageOptions extends StorageOptions {
     public Storage create(StorageOptions options) {
       if (options instanceof HttpStorageOptions) {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
-        return new StorageImpl(httpStorageOptions);
+        Clock clock = Clock.systemUTC();
+        try {
+          return new StorageImpl(
+              httpStorageOptions, httpStorageOptions.blobWriteSessionConfig.createFactory(clock));
+        } catch (IOException e) {
+          throw new IllegalStateException(
+              "Unable to instantiate HTTP com.google.cloud.storage.Storage client.", e);
+        }
       } else {
         throw new IllegalArgumentException("Only HttpStorageOptions supported");
       }
@@ -345,8 +404,7 @@ public class HttpStorageOptions extends StorageOptions {
    * We don't yet want to make HttpStorageOptions itself implement {@link RetryingDependencies} but
    * we do need use it in a couple places, for those we create this adapter.
    */
-  private final class RetryDependenciesAdapter implements RetryingDependencies, Serializable {
-
+  private final class RetryDependenciesAdapter implements RetryingDependencies {
     private RetryDependenciesAdapter() {}
 
     @Override

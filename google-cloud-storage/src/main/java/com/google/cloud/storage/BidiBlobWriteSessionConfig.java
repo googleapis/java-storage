@@ -17,19 +17,32 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.cloud.storage.DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession;
+import com.google.cloud.storage.DefaultBlobWriteSessionConfig.LazySession;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import java.io.IOException;
-import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
+import java.util.Objects;
+import javax.annotation.concurrent.Immutable;
 
-public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
+/**
+ * Perform a resumable upload, uploading at most {@code bufferSize} bytes each flush.
+ *
+ * <p>Configuration of buffer size can be performed via {@link
+ * BidiBlobWriteSessionConfig#withBufferSize(int)}.
+ *
+ * @since 2.34.0 This new api is in preview and is subject to breaking changes.
+ */
+@Immutable
+@BetaApi
+@TransportCompatibility({Transport.GRPC})
+public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
     implements BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = -903533790705476197L;
 
@@ -53,8 +66,25 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof BidiBlobWriteSessionConfig)) {
+      return false;
+    }
+    BidiBlobWriteSessionConfig that = (BidiBlobWriteSessionConfig) o;
+    return bufferSize == that.bufferSize;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(bufferSize);
+  }
+
+  @Override
   WriterFactory createFactory(Clock clock) throws IOException {
-    return new Factory(ByteSizeConstants._16MiB);
+    return new Factory(bufferSize);
   }
 
   @InternalApi
@@ -123,58 +153,5 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
         "bufferSize must be >= %d",
         ByteSizeConstants._256KiB);
     return new BidiBlobWriteSessionConfig(bufferSize);
-  }
-
-  private static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
-      implements WritableByteChannelSession<WBC, BlobInfo> {
-
-    private final WritableByteChannelSession<WBC, T> delegate;
-    private final Conversions.Decoder<T, BlobInfo> decoder;
-
-    private DecoratedWritableByteChannelSession(
-        WritableByteChannelSession<WBC, T> delegate, Conversions.Decoder<T, BlobInfo> decoder) {
-      this.delegate = delegate;
-      this.decoder = decoder;
-    }
-
-    @Override
-    public WBC open() {
-      try {
-        return WritableByteChannelSession.super.open();
-      } catch (Exception e) {
-        throw StorageException.coalesce(e);
-      }
-    }
-
-    @Override
-    public ApiFuture<WBC> openAsync() {
-      return delegate.openAsync();
-    }
-
-    @Override
-    public ApiFuture<BlobInfo> getResult() {
-      return ApiFutures.transform(
-          delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
-    }
-  }
-
-  private static final class LazySession<R>
-      implements WritableByteChannelSession<
-          BufferedWritableByteChannelSession.BufferedWritableByteChannel, R> {
-    private final LazyWriteChannel<R> lazy;
-
-    private LazySession(LazyWriteChannel<R> lazy) {
-      this.lazy = lazy;
-    }
-
-    @Override
-    public ApiFuture<BufferedWritableByteChannelSession.BufferedWritableByteChannel> openAsync() {
-      return lazy.getSession().openAsync();
-    }
-
-    @Override
-    public ApiFuture<R> getResult() {
-      return lazy.getSession().getResult();
-    }
   }
 }

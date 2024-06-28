@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.google.storage.control.v2.stub;
 
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
+import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.core.BackgroundResourceAggregation;
@@ -32,12 +33,18 @@ import com.google.longrunning.Operation;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
 import com.google.storage.control.v2.CreateFolderRequest;
+import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
+import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.Folder;
 import com.google.storage.control.v2.GetFolderRequest;
+import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
+import com.google.storage.control.v2.ListManagedFoldersRequest;
+import com.google.storage.control.v2.ListManagedFoldersResponse;
+import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
 import com.google.storage.control.v2.StorageLayout;
@@ -109,6 +116,47 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setResponseMarshaller(ProtoUtils.marshaller(StorageLayout.getDefaultInstance()))
               .build();
 
+  private static final MethodDescriptor<CreateManagedFolderRequest, ManagedFolder>
+      createManagedFolderMethodDescriptor =
+          MethodDescriptor.<CreateManagedFolderRequest, ManagedFolder>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/CreateManagedFolder")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(CreateManagedFolderRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(ManagedFolder.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<DeleteManagedFolderRequest, Empty>
+      deleteManagedFolderMethodDescriptor =
+          MethodDescriptor.<DeleteManagedFolderRequest, Empty>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/DeleteManagedFolder")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(DeleteManagedFolderRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<GetManagedFolderRequest, ManagedFolder>
+      getManagedFolderMethodDescriptor =
+          MethodDescriptor.<GetManagedFolderRequest, ManagedFolder>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/GetManagedFolder")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(GetManagedFolderRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(ManagedFolder.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<ListManagedFoldersRequest, ListManagedFoldersResponse>
+      listManagedFoldersMethodDescriptor =
+          MethodDescriptor.<ListManagedFoldersRequest, ListManagedFoldersResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/ListManagedFolders")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(ListManagedFoldersRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(ListManagedFoldersResponse.getDefaultInstance()))
+              .build();
+
   private final UnaryCallable<CreateFolderRequest, Folder> createFolderCallable;
   private final UnaryCallable<DeleteFolderRequest, Empty> deleteFolderCallable;
   private final UnaryCallable<GetFolderRequest, Folder> getFolderCallable;
@@ -119,6 +167,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
   private final OperationCallable<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationCallable;
   private final UnaryCallable<GetStorageLayoutRequest, StorageLayout> getStorageLayoutCallable;
+  private final UnaryCallable<CreateManagedFolderRequest, ManagedFolder>
+      createManagedFolderCallable;
+  private final UnaryCallable<DeleteManagedFolderRequest, Empty> deleteManagedFolderCallable;
+  private final UnaryCallable<GetManagedFolderRequest, ManagedFolder> getManagedFolderCallable;
+  private final UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse>
+      listManagedFoldersCallable;
+  private final UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
+      listManagedFoldersPagedCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -136,6 +192,14 @@ public class GrpcStorageControlStub extends StorageControlStub {
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate GET_STORAGE_LAYOUT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate CREATE_MANAGED_FOLDER_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate DELETE_MANAGED_FOLDER_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate GET_MANAGED_FOLDER_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate LIST_MANAGED_FOLDERS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
 
   public static final GrpcStorageControlStub create(StorageControlStubSettings settings)
       throws IOException {
@@ -277,6 +341,82 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   return requestBuilder.build();
                 })
             .build();
+    GrpcCallSettings<CreateManagedFolderRequest, ManagedFolder>
+        createManagedFolderTransportSettings =
+            GrpcCallSettings.<CreateManagedFolderRequest, ManagedFolder>newBuilder()
+                .setMethodDescriptor(createManagedFolderMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getParent(), "bucket", CREATE_MANAGED_FOLDER_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      CreateManagedFolderRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
+    GrpcCallSettings<DeleteManagedFolderRequest, Empty> deleteManagedFolderTransportSettings =
+        GrpcCallSettings.<DeleteManagedFolderRequest, Empty>newBuilder()
+            .setMethodDescriptor(deleteManagedFolderMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", DELETE_MANAGED_FOLDER_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  DeleteManagedFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<GetManagedFolderRequest, ManagedFolder> getManagedFolderTransportSettings =
+        GrpcCallSettings.<GetManagedFolderRequest, ManagedFolder>newBuilder()
+            .setMethodDescriptor(getManagedFolderMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", GET_MANAGED_FOLDER_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  GetManagedFolderRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<ListManagedFoldersRequest, ListManagedFoldersResponse>
+        listManagedFoldersTransportSettings =
+            GrpcCallSettings.<ListManagedFoldersRequest, ListManagedFoldersResponse>newBuilder()
+                .setMethodDescriptor(listManagedFoldersMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getParent(), "bucket", LIST_MANAGED_FOLDERS_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      ListManagedFoldersRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
 
     this.createFolderCallable =
         callableFactory.createUnaryCallable(
@@ -305,6 +445,29 @@ public class GrpcStorageControlStub extends StorageControlStub {
     this.getStorageLayoutCallable =
         callableFactory.createUnaryCallable(
             getStorageLayoutTransportSettings, settings.getStorageLayoutSettings(), clientContext);
+    this.createManagedFolderCallable =
+        callableFactory.createUnaryCallable(
+            createManagedFolderTransportSettings,
+            settings.createManagedFolderSettings(),
+            clientContext);
+    this.deleteManagedFolderCallable =
+        callableFactory.createUnaryCallable(
+            deleteManagedFolderTransportSettings,
+            settings.deleteManagedFolderSettings(),
+            clientContext);
+    this.getManagedFolderCallable =
+        callableFactory.createUnaryCallable(
+            getManagedFolderTransportSettings, settings.getManagedFolderSettings(), clientContext);
+    this.listManagedFoldersCallable =
+        callableFactory.createUnaryCallable(
+            listManagedFoldersTransportSettings,
+            settings.listManagedFoldersSettings(),
+            clientContext);
+    this.listManagedFoldersPagedCallable =
+        callableFactory.createPagedCallable(
+            listManagedFoldersTransportSettings,
+            settings.listManagedFoldersSettings(),
+            clientContext);
 
     this.backgroundResources =
         new BackgroundResourceAggregation(clientContext.getBackgroundResources());
@@ -353,6 +516,33 @@ public class GrpcStorageControlStub extends StorageControlStub {
   @Override
   public UnaryCallable<GetStorageLayoutRequest, StorageLayout> getStorageLayoutCallable() {
     return getStorageLayoutCallable;
+  }
+
+  @Override
+  public UnaryCallable<CreateManagedFolderRequest, ManagedFolder> createManagedFolderCallable() {
+    return createManagedFolderCallable;
+  }
+
+  @Override
+  public UnaryCallable<DeleteManagedFolderRequest, Empty> deleteManagedFolderCallable() {
+    return deleteManagedFolderCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetManagedFolderRequest, ManagedFolder> getManagedFolderCallable() {
+    return getManagedFolderCallable;
+  }
+
+  @Override
+  public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse>
+      listManagedFoldersCallable() {
+    return listManagedFoldersCallable;
+  }
+
+  @Override
+  public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
+      listManagedFoldersPagedCallable() {
+    return listManagedFoldersPagedCallable;
   }
 
   @Override

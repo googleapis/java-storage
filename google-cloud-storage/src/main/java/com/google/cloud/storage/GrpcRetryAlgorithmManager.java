@@ -17,9 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.common.base.MoreObjects;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
@@ -41,6 +43,7 @@ import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.UpdateBucketRequest;
@@ -48,11 +51,12 @@ import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import java.io.Serializable;
+import java.util.Objects;
 
 final class GrpcRetryAlgorithmManager implements Serializable {
 
   private static final long serialVersionUID = 3084833873820431477L;
-  private final StorageRetryStrategy retryStrategy;
+  final StorageRetryStrategy retryStrategy;
 
   GrpcRetryAlgorithmManager(StorageRetryStrategy retryStrategy) {
     this.retryStrategy = retryStrategy;
@@ -85,11 +89,11 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteBucketRequest req) {
-    return retryStrategy.getNonidempotentHandler();
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteHmacKeyRequest req) {
-    return retryStrategy.getNonidempotentHandler();
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteNotificationConfigRequest req) {
@@ -120,6 +124,10 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(GetObjectRequest req) {
+    return retryStrategy.getIdempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getFor(RestoreObjectRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
 
@@ -163,8 +171,11 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(SetIamPolicyRequest req) {
-    // TODO: etag
-    return retryStrategy.getNonidempotentHandler();
+    if (req.getPolicy().getEtag().equals(ByteString.empty())) {
+      return retryStrategy.getNonidempotentHandler();
+    } else {
+      return retryStrategy.getIdempotentHandler();
+    }
   }
 
   public ResultRetryAlgorithm<?> getFor(StartResumableWriteRequest req) {
@@ -207,5 +218,27 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return req.getWriteObjectSpec().hasIfGenerationMatch()
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof GrpcRetryAlgorithmManager)) {
+      return false;
+    }
+    GrpcRetryAlgorithmManager that = (GrpcRetryAlgorithmManager) o;
+    return Objects.equals(retryStrategy, that.retryStrategy);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(retryStrategy);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("retryStrategy", retryStrategy).toString();
   }
 }

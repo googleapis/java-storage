@@ -31,7 +31,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>libraries-bom</artifactId>
-        <version>26.33.0</version>
+        <version>26.42.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -42,6 +42,10 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage-control</artifactId>
     </dependency>
     <!-- [END storage_install_with_bom] -->
 
@@ -54,7 +58,7 @@
     <dependency>
       <groupId>com.google.truth</groupId>
       <artifactId>truth</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -72,7 +76,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-pubsub</artifactId>
-      <version>1.126.6</version>
+      <version>1.131.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

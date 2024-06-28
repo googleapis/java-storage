@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package com.google.storage.control.v2;
 
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
+import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
 import com.google.api.core.ApiFunction;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
@@ -114,6 +114,29 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     return ((StorageControlStubSettings) getStubSettings()).getStorageLayoutSettings();
   }
 
+  /** Returns the object with the settings used for calls to createManagedFolder. */
+  public UnaryCallSettings<CreateManagedFolderRequest, ManagedFolder>
+      createManagedFolderSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).createManagedFolderSettings();
+  }
+
+  /** Returns the object with the settings used for calls to deleteManagedFolder. */
+  public UnaryCallSettings<DeleteManagedFolderRequest, Empty> deleteManagedFolderSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).deleteManagedFolderSettings();
+  }
+
+  /** Returns the object with the settings used for calls to getManagedFolder. */
+  public UnaryCallSettings<GetManagedFolderRequest, ManagedFolder> getManagedFolderSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).getManagedFolderSettings();
+  }
+
+  /** Returns the object with the settings used for calls to listManagedFolders. */
+  public PagedCallSettings<
+          ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
+      listManagedFoldersSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).listManagedFoldersSettings();
+  }
+
   public static final StorageControlSettings create(StorageControlStubSettings stub)
       throws IOException {
     return new StorageControlSettings.Builder(stub.toBuilder()).build();
@@ -148,7 +171,6 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     return StorageControlStubSettings.defaultTransportChannelProvider();
   }
 
-  @BetaApi("The surface for customizing headers is not stable yet and may change in the future.")
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
     return StorageControlStubSettings.defaultApiClientHeaderProviderBuilder();
   }
@@ -248,6 +270,31 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     public UnaryCallSettings.Builder<GetStorageLayoutRequest, StorageLayout>
         getStorageLayoutSettings() {
       return getStubSettingsBuilder().getStorageLayoutSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to createManagedFolder. */
+    public UnaryCallSettings.Builder<CreateManagedFolderRequest, ManagedFolder>
+        createManagedFolderSettings() {
+      return getStubSettingsBuilder().createManagedFolderSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to deleteManagedFolder. */
+    public UnaryCallSettings.Builder<DeleteManagedFolderRequest, Empty>
+        deleteManagedFolderSettings() {
+      return getStubSettingsBuilder().deleteManagedFolderSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to getManagedFolder. */
+    public UnaryCallSettings.Builder<GetManagedFolderRequest, ManagedFolder>
+        getManagedFolderSettings() {
+      return getStubSettingsBuilder().getManagedFolderSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to listManagedFolders. */
+    public PagedCallSettings.Builder<
+            ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
+        listManagedFoldersSettings() {
+      return getStubSettingsBuilder().listManagedFoldersSettings();
     }
 
     @Override

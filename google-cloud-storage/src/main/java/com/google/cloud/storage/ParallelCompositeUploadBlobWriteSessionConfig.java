@@ -42,12 +42,16 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.UnaryOperator;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -115,9 +119,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Immutable
 @BetaApi
-@TransportCompatibility({Transport.GRPC})
+@TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig
-    implements BlobWriteSessionConfig.GrpcCompatible {
+    implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
 
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;
@@ -125,18 +129,21 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   private final BufferAllocationStrategy bufferAllocationStrategy;
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
+  private final PartMetadataFieldDecorator partMetadataFieldDecorator;
 
   private ParallelCompositeUploadBlobWriteSessionConfig(
       int maxPartsPerCompose,
       ExecutorSupplier executorSupplier,
       BufferAllocationStrategy bufferAllocationStrategy,
       PartNamingStrategy partNamingStrategy,
-      PartCleanupStrategy partCleanupStrategy) {
+      PartCleanupStrategy partCleanupStrategy,
+      PartMetadataFieldDecorator partMetadataFieldDecorator) {
     this.maxPartsPerCompose = maxPartsPerCompose;
     this.executorSupplier = executorSupplier;
     this.bufferAllocationStrategy = bufferAllocationStrategy;
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
+    this.partMetadataFieldDecorator = partMetadataFieldDecorator;
   }
 
   @InternalApi
@@ -150,7 +157,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
-        partCleanupStrategy);
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   /**
@@ -170,7 +178,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
-        partCleanupStrategy);
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   /**
@@ -191,7 +200,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
-        partCleanupStrategy);
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   /**
@@ -211,7 +221,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
-        partCleanupStrategy);
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   /**
@@ -231,7 +242,29 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         executorSupplier,
         bufferAllocationStrategy,
         partNamingStrategy,
-        partCleanupStrategy);
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
+  }
+
+  /**
+   * Specify a Part Metadata Field decorator, this will manipulate the metadata associated with part
+   * objects, the ultimate object metadata will remain unchanged.
+   *
+   * <p><i>Default: </i> {@link PartMetadataFieldDecorator#noOp()}
+   *
+   * @since 2.36.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public ParallelCompositeUploadBlobWriteSessionConfig withPartMetadataFieldDecorator(
+      PartMetadataFieldDecorator partMetadataFieldDecorator) {
+    checkNotNull(partMetadataFieldDecorator, "partMetadataFieldDecorator must be non null");
+    return new ParallelCompositeUploadBlobWriteSessionConfig(
+        maxPartsPerCompose,
+        executorSupplier,
+        bufferAllocationStrategy,
+        partNamingStrategy,
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   @BetaApi
@@ -241,7 +274,37 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         ExecutorSupplier.cachedPool(),
         BufferAllocationStrategy.simple(ByteSizeConstants._16MiB),
         PartNamingStrategy.noPrefix(),
-        PartCleanupStrategy.always());
+        PartCleanupStrategy.always(),
+        PartMetadataFieldDecorator.noOp());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ParallelCompositeUploadBlobWriteSessionConfig)) {
+      return false;
+    }
+    ParallelCompositeUploadBlobWriteSessionConfig that =
+        (ParallelCompositeUploadBlobWriteSessionConfig) o;
+    return maxPartsPerCompose == that.maxPartsPerCompose
+        && Objects.equals(executorSupplier, that.executorSupplier)
+        && Objects.equals(bufferAllocationStrategy, that.bufferAllocationStrategy)
+        && Objects.equals(partNamingStrategy, that.partNamingStrategy)
+        && Objects.equals(partCleanupStrategy, that.partCleanupStrategy)
+        && Objects.equals(partMetadataFieldDecorator, that.partMetadataFieldDecorator);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        maxPartsPerCompose,
+        executorSupplier,
+        bufferAllocationStrategy,
+        partNamingStrategy,
+        partCleanupStrategy,
+        partMetadataFieldDecorator);
   }
 
   @InternalApi
@@ -249,7 +312,10 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   WriterFactory createFactory(Clock clock) throws IOException {
     Executor executor = executorSupplier.get();
     BufferHandlePool bufferHandlePool = bufferAllocationStrategy.get();
-    return new ParallelCompositeUploadWriterFactory(clock, executor, bufferHandlePool);
+    PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance =
+        partMetadataFieldDecorator.newInstance(clock);
+    return new ParallelCompositeUploadWriterFactory(
+        clock, executor, bufferHandlePool, partMetadataFieldDecoratorInstance);
   }
 
   /**
@@ -277,6 +343,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static BufferAllocationStrategy simple(int capacity) {
+      checkArgument(capacity > 0, "bufferCapacity must be > 0");
       return new SimpleBufferAllocationStrategy(capacity);
     }
 
@@ -291,6 +358,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static BufferAllocationStrategy fixedPool(int bufferCount, int bufferCapacity) {
+      checkArgument(bufferCount > 0, "bufferCount must be > 0");
+      checkArgument(bufferCapacity > 0, "bufferCapacity must be > 0");
       return new FixedPoolBufferAllocationStrategy(bufferCount, bufferCapacity);
     }
 
@@ -306,6 +375,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       @Override
       BufferHandlePool get() {
         return BufferHandlePool.simple(capacity);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof SimpleBufferAllocationStrategy)) {
+          return false;
+        }
+        SimpleBufferAllocationStrategy that = (SimpleBufferAllocationStrategy) o;
+        return capacity == that.capacity;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(capacity);
       }
     }
 
@@ -323,6 +409,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       @Override
       BufferHandlePool get() {
         return BufferHandlePool.fixedPool(bufferCount, bufferCapacity);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof FixedPoolBufferAllocationStrategy)) {
+          return false;
+        }
+        FixedPoolBufferAllocationStrategy that = (FixedPoolBufferAllocationStrategy) o;
+        return bufferCount == that.bufferCount && bufferCapacity == that.bufferCapacity;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(bufferCount, bufferCapacity);
       }
     }
   }
@@ -361,6 +464,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier fixedPool(int poolSize) {
+      checkArgument(poolSize > 0, "poolSize must be > 0");
       return new FixedSupplier(poolSize);
     }
 
@@ -401,6 +505,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
         return executor;
       }
 
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof SuppliedExecutorSupplier)) {
+          return false;
+        }
+        SuppliedExecutorSupplier that = (SuppliedExecutorSupplier) o;
+        return Objects.equals(executor, that.executor);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(executor);
+      }
+
       private void writeObject(ObjectOutputStream out) throws IOException {
         throw new java.io.InvalidClassException(this.getClass().getName() + "; Not serializable");
       }
@@ -429,6 +550,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       Executor get() {
         ThreadFactory threadFactory = newThreadFactory();
         return Executors.newFixedThreadPool(poolSize, threadFactory);
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof FixedSupplier)) {
+          return false;
+        }
+        FixedSupplier that = (FixedSupplier) o;
+        return poolSize == that.poolSize;
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(poolSize);
       }
     }
   }
@@ -573,6 +711,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + partRange
             + ".part";
       }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof WithPrefix)) {
+          return false;
+        }
+        WithPrefix that = (WithPrefix) o;
+        return Objects.equals(prefix, that.prefix);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(prefix);
+      }
     }
 
     static final class WithObjectLevelPrefix extends PartNamingStrategy {
@@ -602,6 +757,23 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + partRange
             + ".part";
       }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof WithObjectLevelPrefix)) {
+          return false;
+        }
+        WithObjectLevelPrefix that = (WithObjectLevelPrefix) o;
+        return Objects.equals(prefix, that.prefix);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(prefix);
+      }
     }
 
     static final class NoPrefix extends PartNamingStrategy {
@@ -612,7 +784,10 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
 
       @Override
-      protected String fmtFields(String randomKey, String nameDigest, String partRange) {
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
         return randomKey
             + FIELD_SEPARATOR
             // todo: do we want to
@@ -624,6 +799,96 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             + FIELD_SEPARATOR
             + partRange
             + ".part";
+      }
+    }
+  }
+
+  /**
+   * A Decorator which is used to manipulate metadata fields, specifically on the part objects
+   * created in a Parallel Composite Upload
+   *
+   * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
+   * @since 2.36.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @Immutable
+  public abstract static class PartMetadataFieldDecorator implements Serializable {
+
+    abstract PartMetadataFieldDecoratorInstance newInstance(Clock clock);
+
+    /**
+     * A decorator that is used to manipulate the Custom Time Metadata field of part files. {@link
+     * BlobInfo#getCustomTimeOffsetDateTime()}
+     *
+     * <p>When provided with a duration, a time in the future will be calculated for each part
+     * object upon upload, this new value can be used in OLM rules to cleanup abandoned part files.
+     *
+     * <p>See [CustomTime OLM
+     * documentation](https://cloud.google.com/storage/docs/lifecycle#dayssincecustomtime)
+     *
+     * @see #withPartMetadataFieldDecorator(PartMetadataFieldDecorator)
+     * @since 2.36.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static PartMetadataFieldDecorator setCustomTimeInFuture(Duration timeInFuture) {
+      checkNotNull(timeInFuture, "timeInFuture must not be null");
+      return new CustomTimeInFuture(timeInFuture);
+    }
+
+    @BetaApi
+    public static PartMetadataFieldDecorator noOp() {
+      return NoOp.INSTANCE;
+    }
+
+    @BetaApi
+    private static final class CustomTimeInFuture extends PartMetadataFieldDecorator {
+      private static final long serialVersionUID = -6213742554954751892L;
+      private final Duration duration;
+
+      CustomTimeInFuture(Duration duration) {
+        this.duration = duration;
+      }
+
+      @Override
+      PartMetadataFieldDecoratorInstance newInstance(Clock clock) {
+        return builder -> {
+          OffsetDateTime futureTime =
+              OffsetDateTime.from(
+                  clock.instant().plus(duration).atZone(clock.getZone()).toOffsetDateTime());
+          return builder.setCustomTimeOffsetDateTime(futureTime);
+        };
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof CustomTimeInFuture)) {
+          return false;
+        }
+        CustomTimeInFuture that = (CustomTimeInFuture) o;
+        return Objects.equals(duration, that.duration);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(duration);
+      }
+    }
+
+    private static final class NoOp extends PartMetadataFieldDecorator {
+      private static final long serialVersionUID = -4569486383992999205L;
+      private static final NoOp INSTANCE = new NoOp();
+
+      @Override
+      PartMetadataFieldDecoratorInstance newInstance(Clock clock) {
+        return builder -> builder;
+      }
+
+      /** prevent java serialization from using a new instance */
+      private Object readResolve() {
+        return INSTANCE;
       }
     }
   }
@@ -653,6 +918,24 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     boolean isDeleteAllOnError() {
       return deleteAllOnError;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof PartCleanupStrategy)) {
+        return false;
+      }
+      PartCleanupStrategy that = (PartCleanupStrategy) o;
+      return deletePartsOnSuccess == that.deletePartsOnSuccess
+          && deleteAllOnError == that.deleteAllOnError;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(deletePartsOnSuccess, deleteAllOnError);
     }
 
     /**
@@ -705,6 +988,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
   }
 
+  interface PartMetadataFieldDecoratorInstance extends UnaryOperator<BlobInfo.Builder> {}
+
   private abstract static class Factory<T> implements Serializable {
     private static final long serialVersionUID = 271806144227661056L;
 
@@ -718,12 +1003,17 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     private final Clock clock;
     private final Executor executor;
     private final BufferHandlePool bufferHandlePool;
+    private final PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance;
 
     private ParallelCompositeUploadWriterFactory(
-        Clock clock, Executor executor, BufferHandlePool bufferHandlePool) {
+        Clock clock,
+        Executor executor,
+        BufferHandlePool bufferHandlePool,
+        PartMetadataFieldDecoratorInstance partMetadataFieldDecoratorInstance) {
       this.clock = clock;
       this.executor = executor;
       this.bufferHandlePool = bufferHandlePool;
+      this.partMetadataFieldDecoratorInstance = partMetadataFieldDecoratorInstance;
     }
 
     @Override
@@ -757,11 +1047,13 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
                 partNamingStrategy,
                 partCleanupStrategy,
                 maxPartsPerCompose,
+                partMetadataFieldDecoratorInstance,
                 result,
                 storageInternal,
                 info,
                 opts);
-        return ApiFutures.immediateFuture(channel);
+        return ApiFutures.immediateFuture(
+            StorageByteChannels.writable().createSynchronized(channel));
       }
 
       @Override

@@ -30,12 +30,14 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
 
   private final Decoder<T, BlobInfo> objectDecoder;
   private final SettableApiFuture<T> result;
+  protected final ReentrantLock lock;
 
   private long position;
   private boolean open;
@@ -55,27 +57,39 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
   protected BaseStorageWriteChannel(Decoder<T, BlobInfo> objectDecoder) {
     this.objectDecoder = objectDecoder;
     this.result = SettableApiFuture.create();
+    this.lock = new ReentrantLock();
     this.open = true;
     this.chunkSize = _16MiB;
     this.writeCalledAtLeastOnce = false;
   }
 
   @Override
-  public final synchronized void setChunkSize(int chunkSize) {
-    Preconditions.checkArgument(chunkSize > 0, "chunkSize must be > 0, received %d", chunkSize);
-    Preconditions.checkState(
-        bufferHandle == null || bufferHandle.position() == 0,
-        "unable to change chunk size with data buffered");
-    this.chunkSize = chunkSize;
+  public final void setChunkSize(int chunkSize) {
+    lock.lock();
+    try {
+      Preconditions.checkArgument(chunkSize > 0, "chunkSize must be > 0, received %d", chunkSize);
+      Preconditions.checkState(
+          bufferHandle == null || bufferHandle.position() == 0,
+          "unable to change chunk size with data buffered");
+      this.chunkSize = chunkSize;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
-  public final synchronized boolean isOpen() {
-    return open;
+  public final boolean isOpen() {
+    lock.lock();
+    try {
+      return open;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
-  public final synchronized void close() throws IOException {
+  public final void close() throws IOException {
+    lock.lock();
     try {
       if (open && !writeCalledAtLeastOnce) {
         this.write(ByteBuffer.allocate(0));
@@ -85,28 +99,34 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
       }
     } finally {
       open = false;
+      lock.unlock();
     }
   }
 
   @Override
-  public final synchronized int write(ByteBuffer src) throws IOException {
-    if (!open) {
-      throw new ClosedChannelException();
-    }
-    writeCalledAtLeastOnce = true;
+  public final int write(ByteBuffer src) throws IOException {
+    lock.lock();
     try {
-      BufferedWritableByteChannel tmp = internalGetLazyChannel().getChannel();
-      if (!tmp.isOpen()) {
-        return 0;
+      if (!open) {
+        throw new ClosedChannelException();
       }
-      int write = tmp.write(src);
-      return write;
-    } catch (StorageException e) {
-      throw new IOException(e);
-    } catch (IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
+      writeCalledAtLeastOnce = true;
+      try {
+        BufferedWritableByteChannel tmp = internalGetLazyChannel().getChannel();
+        if (!tmp.isOpen()) {
+          return 0;
+        }
+        int write = tmp.write(src);
+        return write;
+      } catch (StorageException e) {
+        throw new IOException(e);
+      } catch (IOException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new IOException(StorageException.coalesce(e));
+      }
+    } finally {
+      lock.unlock();
     }
   }
 

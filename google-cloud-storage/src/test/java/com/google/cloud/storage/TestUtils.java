@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -103,9 +104,9 @@ public final class TestUtils {
   }
 
   public static ApiException apiException(Code code, String message) {
-    StatusRuntimeException statusRuntimeException = code.toStatus().asRuntimeException();
-    DebugInfo debugInfo =
-        DebugInfo.newBuilder().setDetail("forced failure |~| " + code.name() + message).build();
+    StatusRuntimeException statusRuntimeException =
+        code.toStatus().withDescription(message).asRuntimeException();
+    DebugInfo debugInfo = DebugInfo.newBuilder().setDetail(message).build();
     ErrorDetails errorDetails =
         ErrorDetails.builder().setRawErrorMessages(ImmutableList.of(Any.pack(debugInfo))).build();
     return ApiExceptionFactory.createException(
@@ -314,5 +315,13 @@ public final class TestUtils {
         .filter(f -> !f.equals(Storage.BucketField.OBJECT_RETENTION))
         .collect(ImmutableSet.toImmutableSet())
         .toArray(new Storage.BucketField[0]);
+  }
+
+  public static <T> Optional<T> last(List<T> l) {
+    if (l.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.of(l.get(l.size() - 1));
+    }
   }
 }

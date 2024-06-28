@@ -44,6 +44,8 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String PROJECT_NUMBER = System.getenv("GOOGLE_CLOUD_PROJECT_NUMBER");
+
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
   private static final String TOPIC =
       String.format("projects/%s/topics/new-topic-delete-%s", PROJECT, ID);
@@ -62,8 +64,15 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
       GetIamPolicyRequest getIamPolicyRequest =
           GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
       com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
-      Binding binding =
-          Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
+      // For available bindings identities, see
+      // https://cloud.google.com/iam/docs/overview#concepts_related_identity
+      String member =
+          PROJECT_NUMBER != null
+              ? "serviceAccount:service-"
+                  + PROJECT_NUMBER
+                  + "@gs-project-accounts.iam.gserviceaccount.com"
+              : "allAuthenticatedUsers";
+      Binding binding = Binding.newBuilder().setRole("roles/owner").addMembers(member).build();
       SetIamPolicyRequest setIamPolicyRequest =
           SetIamPolicyRequest.newBuilder()
               .setResource(TOPIC)

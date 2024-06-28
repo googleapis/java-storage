@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BlobInfo;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -27,7 +27,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * <p>Transfer Manager handles Parallel Uploads and Parallel Downloads.
  */
-@BetaApi
 public interface TransferManager extends AutoCloseable {
 
   /**
@@ -56,9 +55,8 @@ public interface TransferManager extends AutoCloseable {
    *
    * @return an {@link UploadJob}
    */
-  @BetaApi
   @NonNull
-  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config);
+  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config) throws IOException;
 
   /**
    * Downloads a list of blobs in parallel. This operation will not block the invoking thread,
@@ -88,7 +86,6 @@ public interface TransferManager extends AutoCloseable {
    *
    * @return a {@link DownloadJob}
    */
-  @BetaApi
   @NonNull
   DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config);
 }

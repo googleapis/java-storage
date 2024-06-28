@@ -159,8 +159,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HIERARCHICAL_NAMESPACE("hierarchicalNamespace", "hierarchical_namespace"),
     @TransportCompatibility({Transport.HTTP})
-    OBJECT_RETENTION("objectRetention");
+    OBJECT_RETENTION("objectRetention"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    SOFT_DELETE_POLICY("softDeletePolicy", "soft_delete_policy");
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
@@ -260,7 +266,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption"),
     @TransportCompatibility({Transport.HTTP})
-    RETENTION("retention");
+    RETENTION("retention"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    SOFT_DELETE_TIME("softDeleteTime", "soft_delete_time"),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HARD_DELETE_TIME("hardDeleteTime", "hard_delete_time");
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 
@@ -1570,6 +1582,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for whether the request should return a soft-deleted object. If an object
+     * has been soft-deleted (Deleted while a Soft Delete Policy) is in place, this must be true or
+     * the request will return null.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobGetOption softDeleted(boolean softDeleted) {
+      return new BlobGetOption(UnifiedOpts.softDeleted(softDeleted));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -1601,6 +1623,61 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @BetaApi
     public static BlobGetOption[] dedupe(BlobGetOption[] array, BlobGetOption... os) {
       return Option.dedupe(BlobGetOption[]::new, array, os);
+    }
+  }
+
+  /** Class for specifying blob restore options * */
+  class BlobRestoreOption extends Option<ObjectSourceOpt> {
+
+    private static final long serialVersionUID = 1922118465380110958L;
+
+    BlobRestoreOption(ObjectSourceOpt opt) {
+      super(opt);
+    }
+
+    /**
+     * Returns an option for blob's data generation match. If this option is used the request will
+     * fail if generation does not match.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption generationMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.generationMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's data generation mismatch. If this option is used the request
+     * will fail if blob's generation matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption generationNotMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.generationNotMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's metageneration match. If this option is used the request will
+     * fail if blob's metageneration does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption metagenerationMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.metagenerationMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's metageneration mismatch. If this option is used the request will
+     * fail if blob's metageneration matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption metagenerationNotMatch(long generation) {
+      return new BlobRestoreOption(UnifiedOpts.metagenerationNotMatch(generation));
+    }
+
+    /**
+     * Returns an option for whether the restored object should copy the access controls of the
+     * source object.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption copySourceAcl(boolean copySourceAcl) {
+      return new BlobRestoreOption(UnifiedOpts.copySourceAcl(copySourceAcl));
     }
   }
 
@@ -1789,6 +1866,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for whether to include all Folders (including empty Folders) in response.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption includeFolders(boolean includeFolders) {
+      return new BlobListOption(UnifiedOpts.includeFoldersAsPrefixes(includeFolders));
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *
@@ -1825,6 +1910,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
                       .map(f -> NamedField.prefixed("items/", f)))
               .collect(ImmutableSet.toImmutableSet());
       return new BlobListOption(UnifiedOpts.fields(set));
+    }
+
+    /** Returns an option for whether the list result should include soft-deleted objects. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption softDeleted(boolean softDeleted) {
+      return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
     }
 
     /**
@@ -2815,18 +2906,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
-   * Uploads {@code path} to the blob using {@link #writer} and {@code bufferSize}. By default any
-   * MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * Uploads {@code path} to the blob using {@code ResumableSession}. By default any MD5 and CRC32C
+   * values in the given {@code blobInfo} are ignored unless requested via the {@link
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
    * not supported. Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">
    * non-editable metadata</a>, such as generation or metageneration, will be ignored even if it's
    * present in the provided BlobInfo object.
    *
-   * <p>{@link #createFrom(BlobInfo, Path, BlobWriteOption...)} invokes this method with a buffer
-   * size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
-   * performance but require more memory. This can cause an OutOfMemoryError or add significant
-   * garbage collection overhead. Smaller buffer sizes reduce memory consumption, that is noticeable
-   * when uploading many objects in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
+   * <p>This method used to preallocate a buffer, but since v2.25.0, it uses a ResumableSession and
+   * no longer needs it. The bufferSize parameter is still present for binary compatibility, but is
+   * now ignored.
    *
    * <p>Example of uploading a humongous file:
    *
@@ -2834,14 +2923,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("video/webm").build();
    *
-   * int largeBufferSize = 150 * 1024 * 1024;
    * Path file = Paths.get("humongous.file");
-   * storage.createFrom(blobInfo, file, largeBufferSize);
+   * storage.createFrom(blobInfo, file, 0);
    * }</pre>
    *
    * @param blobInfo blob to create
    * @param path file to upload
-   * @param bufferSize size of the buffer I/O operations
+   * @param bufferSize ignored field, still present for compatibility purposes
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
@@ -3031,6 +3119,23 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob get(BlobId blob);
+
+  /**
+   * Restores a soft-deleted object to full object status and returns the object. Note that you must
+   * specify a generation to use this method.
+   *
+   * <p>Example of restoring an object.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * long generation = 42;
+   * BlobId blobId = BlobId.of(bucketName, blobName, gen);
+   * Blob blob = storage.restore(blobId);
+   * }</pre>
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  Blob restore(BlobId blob, BlobRestoreOption... options);
 
   /**
    * Lists the project's buckets.
@@ -4717,7 +4822,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   default BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
     return throwGrpcOnly(fmtMethodName("blobWriteSession", BlobInfo.class, BlobWriteOption.class));
   }

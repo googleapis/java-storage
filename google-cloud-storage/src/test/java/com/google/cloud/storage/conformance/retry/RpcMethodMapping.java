@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceTeardown;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
@@ -42,7 +43,6 @@ import org.junit.AssumptionViolatedException;
  */
 @Immutable
 final class RpcMethodMapping {
-
   private final int mappingId;
   private final RpcMethod method;
   private final Predicate<TestRetryConformance> applicable;
@@ -105,6 +105,14 @@ final class RpcMethodMapping {
             matchExpectedCode = true;
           }
           if (instructions.contains("return-reset-connection") && code == 0) {
+            matchExpectedCode = true;
+          }
+          // testbench resetting the connection is turned into an UNAVAILABLE in grpc, which we then
+          // map to 503. Add graceful handling here, since we can't disambiguate between reset
+          // connection and 503 from the service.
+          if (c.getTransport() == Transport.GRPC
+              && instructions.contains("return-reset-connection")
+              && code == 503) {
             matchExpectedCode = true;
           }
 

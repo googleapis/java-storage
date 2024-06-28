@@ -84,12 +84,4 @@ final class ResumableWrite implements WriteObjectRequestBuilderFactory {
   public int hashCode() {
     return Objects.hash(req, res);
   }
-
-  /**
-   * Helper function which is more specific than {@link Function#identity()}. Constraining the input
-   * and output to be exactly {@link ResumableWrite}.
-   */
-  static ResumableWrite identity(ResumableWrite w) {
-    return w;
-  }
 }

@@ -41,6 +41,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collector;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -59,9 +60,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
  */
 @Immutable
 @BetaApi
-@TransportCompatibility({Transport.GRPC})
+@TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
-    implements BlobWriteSessionConfig.GrpcCompatible {
+    implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**
@@ -79,6 +80,25 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
   BufferToDiskThenUpload(ImmutableList<Path> paths, boolean includeLoggingSink) throws IOException {
     this.paths = paths;
     this.includeLoggingSink = includeLoggingSink;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof BufferToDiskThenUpload)) {
+      return false;
+    }
+    BufferToDiskThenUpload that = (BufferToDiskThenUpload) o;
+    return includeLoggingSink == that.includeLoggingSink
+        && Objects.equals(paths, that.paths)
+        && Objects.equals(absolutePaths, that.absolutePaths);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(paths, includeLoggingSink, absolutePaths);
   }
 
   @VisibleForTesting

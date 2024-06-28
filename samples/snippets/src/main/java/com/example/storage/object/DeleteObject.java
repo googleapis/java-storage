@@ -18,6 +18,7 @@ package com.example.storage.object;
 
 // [START storage_delete_file]
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
@@ -38,16 +39,19 @@ public class DeleteObject {
       System.out.println("The object " + objectName + " wasn't found in " + bucketName);
       return;
     }
+    BlobId idWithGeneration = blob.getBlobId();
+    // Deletes the blob specified by its id. When the generation is present and non-null it will be
+    // specified in the request.
+    // If versioning is enabled on the bucket and the generation is present in the delete request,
+    // only the version of the object with the matching generation will be deleted.
+    // If instead you want to delete the current version, the generation should be dropped by
+    // performing the following.
+    // BlobId idWithoutGeneration =
+    //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
+    // storage.delete(idWithoutGeneration);
+    storage.delete(idWithGeneration);
 
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request to upload returns a 412 error if
-    // the object's generation number does not match your precondition.
-    Storage.BlobSourceOption precondition =
-        Storage.BlobSourceOption.generationMatch(blob.getGeneration());
-
-    storage.delete(bucketName, objectName, precondition);
-
-    System.out.println("Object " + objectName + " was deleted from " + bucketName);
+    System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
   }
 }
 // [END storage_delete_file]

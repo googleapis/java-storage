@@ -21,17 +21,24 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -55,9 +62,9 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @BetaApi
-@TransportCompatibility({Transport.GRPC})
+@TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
-    implements BlobWriteSessionConfig.GrpcCompatible {
+    implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = -6873740918589930633L;
 
   private final int chunkSize;
@@ -100,6 +107,23 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof DefaultBlobWriteSessionConfig)) {
+      return false;
+    }
+    DefaultBlobWriteSessionConfig that = (DefaultBlobWriteSessionConfig) o;
+    return chunkSize == that.chunkSize;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(chunkSize);
+  }
+
+  @Override
   @InternalApi
   WriterFactory createFactory(Clock clock) {
     return new Factory(chunkSize);
@@ -135,7 +159,10 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                           grpc.startResumableWrite(grpcCallContext, req);
                       return ResumableMedia.gapic()
                           .write()
-                          .byteChannel(grpc.storageClient.writeObjectCallable())
+                          .byteChannel(
+                              grpc.storageClient
+                                  .writeObjectCallable()
+                                  .withDefaultCallContext(grpcCallContext))
                           .setHasher(Hasher.noop())
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()
@@ -146,6 +173,39 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                           .build();
                     })),
             WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
+      } else if (s instanceof StorageImpl) {
+        StorageImpl json = (StorageImpl) s;
+
+        return new DecoratedWritableByteChannelSession<>(
+            new LazySession<>(
+                new LazyWriteChannel<>(
+                    () -> {
+                      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+                      BlobInfo.Builder builder = info.toBuilder().setMd5(null).setCrc32c(null);
+                      BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+
+                      StorageObject encode = Conversions.json().blobInfo().encode(updated);
+                      Supplier<String> uploadIdSupplier =
+                          ResumableMedia.startUploadForBlobInfo(
+                              json.getOptions(),
+                              updated,
+                              optionsMap,
+                              json.retryAlgorithmManager.getForResumableUploadSessionCreate(
+                                  optionsMap));
+                      ApiFuture<JsonResumableWrite> startAsync =
+                          ApiFutures.immediateFuture(
+                              JsonResumableWrite.of(
+                                  encode, optionsMap, uploadIdSupplier.get(), 0L));
+
+                      return ResumableMedia.http()
+                          .write()
+                          .byteChannel(HttpClientContext.from(json.storageRpc))
+                          .resumable()
+                          .buffered(BufferHandle.allocate(chunkSize))
+                          .setStartAsync(startAsync)
+                          .build();
+                    })),
+            Conversions.json().blobInfo());
       } else {
         throw new IllegalStateException(
             "Unknown Storage implementation: " + s.getClass().getName());
@@ -153,50 +213,99 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
     }
   }
 
-  private static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
+  static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
       implements WritableByteChannelSession<WBC, BlobInfo> {
 
     private final WritableByteChannelSession<WBC, T> delegate;
     private final Decoder<T, BlobInfo> decoder;
 
-    private DecoratedWritableByteChannelSession(
+    DecoratedWritableByteChannelSession(
         WritableByteChannelSession<WBC, T> delegate, Decoder<T, BlobInfo> decoder) {
       this.delegate = delegate;
       this.decoder = decoder;
     }
 
     @Override
-    public WBC open() {
-      try {
-        return WritableByteChannelSession.super.open();
-      } catch (Exception e) {
-        throw StorageException.coalesce(e);
-      }
-    }
-
-    @Override
     public ApiFuture<WBC> openAsync() {
-      return delegate.openAsync();
+      return ApiFutures.catchingAsync(
+          delegate.openAsync(),
+          Throwable.class,
+          throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
+          MoreExecutors.directExecutor());
     }
 
     @Override
     public ApiFuture<BlobInfo> getResult() {
-      return ApiFutures.transform(
-          delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
+      ApiFuture<BlobInfo> decodeResult =
+          ApiFutures.transform(
+              delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
+      return ApiFutures.catchingAsync(
+          decodeResult,
+          Throwable.class,
+          throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
+          MoreExecutors.directExecutor());
     }
   }
 
-  private static final class LazySession<R>
+  static final class LazySession<R>
       implements WritableByteChannelSession<BufferedWritableByteChannel, R> {
     private final LazyWriteChannel<R> lazy;
 
-    private LazySession(LazyWriteChannel<R> lazy) {
+    LazySession(LazyWriteChannel<R> lazy) {
       this.lazy = lazy;
     }
 
     @Override
     public ApiFuture<BufferedWritableByteChannel> openAsync() {
-      return lazy.getSession().openAsync();
+      // make sure the errors coming out of the BufferedWritableByteChannel are either IOException
+      // or StorageException
+      return ApiFutures.transform(
+          lazy.getSession().openAsync(),
+          delegate ->
+              new BufferedWritableByteChannel() {
+                @Override
+                public int write(ByteBuffer src) throws IOException {
+                  try {
+                    return delegate.write(src);
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public void flush() throws IOException {
+                  try {
+                    delegate.flush();
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public boolean isOpen() {
+                  try {
+                    return delegate.isOpen();
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+
+                @Override
+                public void close() throws IOException {
+                  try {
+                    delegate.close();
+                  } catch (IOException e) {
+                    throw e;
+                  } catch (Exception e) {
+                    throw StorageException.coalesce(e);
+                  }
+                }
+              },
+          MoreExecutors.directExecutor());
     }
 
     @Override

@@ -4,7 +4,7 @@
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-parent</artifactId>
   <packaging>pom</packaging>
-  <version>2.34.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.40.1</version><!-- {x-version-update:google-cloud-storage:current} -->
   <name>Storage Parent</name>
   <url>https://github.com/googleapis/java-storage</url>
   <description>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.google.cloud</groupId>
     <artifactId>sdk-platform-java-config</artifactId>
-    <version>3.25.0</version>
+    <version>3.32.0</version>
   </parent>
 
   <developers>
@@ -76,23 +76,17 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-storage</artifactId>
-        <version>2.34.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+        <version>2.40.1</version><!-- {x-version-update:google-cloud-storage:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-storage</artifactId>
-        <version>v1-rev20240209-2.0.0</version>
+        <version>v1-rev20240621-2.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-pubsub</artifactId>
-        <version>1.126.6</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>4.3</version>
+        <version>1.131.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -100,49 +94,36 @@
         <artifactId>mockito-core</artifactId>
         <version>4.11.0</version>
         <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <!-- explicitly defined below -->
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.objenesis</groupId>
-        <artifactId>objenesis</artifactId>
-        <version>3.3</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>proto-google-cloud-storage-v2</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:proto-google-cloud-storage-v2:current} -->
+        <version>2.40.1-alpha</version><!-- {x-version-update:proto-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>grpc-google-cloud-storage-v2</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
+        <version>2.40.1-alpha</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>gapic-google-cloud-storage-v2</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
+        <version>2.40.1-alpha</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>grpc-google-cloud-storage-control-v2</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-control-v2:current} -->
+        <version>2.40.1</version><!-- {x-version-update:grpc-google-cloud-storage-control-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>proto-google-cloud-storage-control-v2</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:proto-google-cloud-storage-control-v2:current} -->
+        <version>2.40.1</version><!-- {x-version-update:proto-google-cloud-storage-control-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-storage-control</artifactId>
-        <version>2.34.1-alpha-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+        <version>2.40.1</version><!-- {x-version-update:google-cloud-storage-control:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
@@ -185,7 +166,7 @@
       <dependency>
         <groupId>com.google.truth</groupId>
         <artifactId>truth</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.2</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>

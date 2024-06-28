@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> CreateFolder</td>
- *      <td><p> Creates a new folder.</td>
+ *      <td><p> Creates a new folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -89,7 +89,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> DeleteFolder</td>
- *      <td><p> Permanently deletes an empty folder.</td>
+ *      <td><p> Permanently deletes an empty folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -108,7 +108,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetFolder</td>
- *      <td><p> Returns metadata for the specified folder.</td>
+ *      <td><p> Returns metadata for the specified folder. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -127,7 +127,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ListFolders</td>
- *      <td><p> Retrieves a list of folders for a given bucket.</td>
+ *      <td><p> Retrieves a list of folders. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -147,7 +147,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> RenameFolder</td>
- *      <td><p> Renames a source folder to a destination folder. During a rename, the source and destination folders are locked until the long running operation completes.</td>
+ *      <td><p> Renames a source folder to a destination folder. This operation is only applicable to a hierarchical namespace enabled bucket. During a rename, the source and destination folders are locked until the long running operation completes.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -181,6 +181,83 @@ import javax.annotation.Generated;
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
  *           <li><p> getStorageLayoutCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateManagedFolder</td>
+ *      <td><p> Creates a new managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createManagedFolder(CreateManagedFolderRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> createManagedFolder(BucketName parent, ManagedFolder managedFolder, String managedFolderId)
+ *           <li><p> createManagedFolder(String parent, ManagedFolder managedFolder, String managedFolderId)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createManagedFolderCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteManagedFolder</td>
+ *      <td><p> Permanently deletes an empty managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteManagedFolder(DeleteManagedFolderRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteManagedFolder(ManagedFolderName name)
+ *           <li><p> deleteManagedFolder(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteManagedFolderCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetManagedFolder</td>
+ *      <td><p> Returns metadata for the specified managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getManagedFolder(GetManagedFolderRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getManagedFolder(ManagedFolderName name)
+ *           <li><p> getManagedFolder(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getManagedFolderCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListManagedFolders</td>
+ *      <td><p> Retrieves a list of managed folders for a given bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listManagedFolders(ListManagedFoldersRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listManagedFolders(BucketName parent)
+ *           <li><p> listManagedFolders(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listManagedFoldersPagedCallable()
+ *           <li><p> listManagedFoldersCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -288,7 +365,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a new folder.
+   * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -306,11 +384,15 @@ public class StorageControlClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. Name of the bucket in which the folder will reside.
+   * @param parent Required. Name of the bucket in which the folder will reside. The bucket must be
+   *     a hierarchical namespace enabled bucket.
    * @param folder Required. Properties of the new folder being created. The bucket and name of the
    *     folder are specified in the parent and folder_id fields, respectively. Populating those
    *     fields in `folder` will result in an error.
-   * @param folderId Required. The absolute path of the folder, using a single `/` as delimiter.
+   * @param folderId Required. The full name of a folder, including all its parent folders. Folders
+   *     use single '/' characters as a delimiter. The folder_id must end with a slash. For example,
+   *     the folder_id of "books/biographies/" would create a new "biographies/" folder under the
+   *     "books/" folder.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Folder createFolder(BucketName parent, Folder folder, String folderId) {
@@ -325,7 +407,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a new folder.
+   * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -343,11 +426,15 @@ public class StorageControlClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. Name of the bucket in which the folder will reside.
+   * @param parent Required. Name of the bucket in which the folder will reside. The bucket must be
+   *     a hierarchical namespace enabled bucket.
    * @param folder Required. Properties of the new folder being created. The bucket and name of the
    *     folder are specified in the parent and folder_id fields, respectively. Populating those
    *     fields in `folder` will result in an error.
-   * @param folderId Required. The absolute path of the folder, using a single `/` as delimiter.
+   * @param folderId Required. The full name of a folder, including all its parent folders. Folders
+   *     use single '/' characters as a delimiter. The folder_id must end with a slash. For example,
+   *     the folder_id of "books/biographies/" would create a new "biographies/" folder under the
+   *     "books/" folder.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Folder createFolder(String parent, Folder folder, String folderId) {
@@ -362,7 +449,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a new folder.
+   * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -394,7 +482,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a new folder.
+   * Creates a new folder. This operation is only applicable to a hierarchical namespace enabled
+   * bucket.
    *
    * <p>Sample code:
    *
@@ -425,7 +514,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty folder.
+   * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -453,7 +543,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty folder.
+   * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -480,7 +571,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty folder.
+   * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -511,7 +603,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty folder.
+   * Permanently deletes an empty folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -541,7 +634,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Returns metadata for the specified folder.
+   * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -569,7 +663,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Returns metadata for the specified folder.
+   * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -596,7 +691,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Returns metadata for the specified folder.
+   * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -627,7 +723,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Returns metadata for the specified folder.
+   * Returns metadata for the specified folder. This operation is only applicable to a hierarchical
+   * namespace enabled bucket.
    *
    * <p>Sample code:
    *
@@ -657,7 +754,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of folders for a given bucket.
+   * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -675,7 +773,8 @@ public class StorageControlClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. Name of the bucket in which to look for folders.
+   * @param parent Required. Name of the bucket in which to look for folders. The bucket must be a
+   *     hierarchical namespace enabled bucket.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFoldersPagedResponse listFolders(BucketName parent) {
@@ -688,7 +787,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of folders for a given bucket.
+   * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -706,7 +806,8 @@ public class StorageControlClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. Name of the bucket in which to look for folders.
+   * @param parent Required. Name of the bucket in which to look for folders. The bucket must be a
+   *     hierarchical namespace enabled bucket.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFoldersPagedResponse listFolders(String parent) {
@@ -716,7 +817,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of folders for a given bucket.
+   * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -753,7 +855,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of folders for a given bucket.
+   * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -791,7 +894,8 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of folders for a given bucket.
+   * Retrieves a list of folders. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
    *
    * <p>Sample code:
    *
@@ -834,8 +938,9 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Renames a source folder to a destination folder. During a rename, the source and destination
-   * folders are locked until the long running operation completes.
+   * Renames a source folder to a destination folder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -869,8 +974,9 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Renames a source folder to a destination folder. During a rename, the source and destination
-   * folders are locked until the long running operation completes.
+   * Renames a source folder to a destination folder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -904,8 +1010,9 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Renames a source folder to a destination folder. During a rename, the source and destination
-   * folders are locked until the long running operation completes.
+   * Renames a source folder to a destination folder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -938,8 +1045,9 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Renames a source folder to a destination folder. During a rename, the source and destination
-   * folders are locked until the long running operation completes.
+   * Renames a source folder to a destination folder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -972,8 +1080,9 @@ public class StorageControlClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Renames a source folder to a destination folder. During a rename, the source and destination
-   * folders are locked until the long running operation completes.
+   * Renames a source folder to a destination folder. This operation is only applicable to a
+   * hierarchical namespace enabled bucket. During a rename, the source and destination folders are
+   * locked until the long running operation completes.
    *
    * <p>Sample code:
    *
@@ -1117,6 +1226,560 @@ public class StorageControlClient implements BackgroundResource {
     return stub.getStorageLayoutCallable();
   }
 
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+   *   String managedFolderId = "managedFolderId-2027084056";
+   *   ManagedFolder response =
+   *       storageControlClient.createManagedFolder(parent, managedFolder, managedFolderId);
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of the bucket this managed folder belongs to.
+   * @param managedFolder Required. Properties of the managed folder being created. The bucket and
+   *     managed folder names are specified in the `parent` and `managed_folder_id` fields.
+   *     Populating these fields in `managed_folder` will result in an error.
+   * @param managedFolderId Required. The name of the managed folder. It uses a single `/` as
+   *     delimiter and leading and trailing `/` are allowed.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder createManagedFolder(
+      BucketName parent, ManagedFolder managedFolder, String managedFolderId) {
+    CreateManagedFolderRequest request =
+        CreateManagedFolderRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .setManagedFolder(managedFolder)
+            .setManagedFolderId(managedFolderId)
+            .build();
+    return createManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   ManagedFolder managedFolder = ManagedFolder.newBuilder().build();
+   *   String managedFolderId = "managedFolderId-2027084056";
+   *   ManagedFolder response =
+   *       storageControlClient.createManagedFolder(parent, managedFolder, managedFolderId);
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of the bucket this managed folder belongs to.
+   * @param managedFolder Required. Properties of the managed folder being created. The bucket and
+   *     managed folder names are specified in the `parent` and `managed_folder_id` fields.
+   *     Populating these fields in `managed_folder` will result in an error.
+   * @param managedFolderId Required. The name of the managed folder. It uses a single `/` as
+   *     delimiter and leading and trailing `/` are allowed.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder createManagedFolder(
+      String parent, ManagedFolder managedFolder, String managedFolderId) {
+    CreateManagedFolderRequest request =
+        CreateManagedFolderRequest.newBuilder()
+            .setParent(parent)
+            .setManagedFolder(managedFolder)
+            .setManagedFolderId(managedFolderId)
+            .build();
+    return createManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   CreateManagedFolderRequest request =
+   *       CreateManagedFolderRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setManagedFolder(ManagedFolder.newBuilder().build())
+   *           .setManagedFolderId("managedFolderId-2027084056")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ManagedFolder response = storageControlClient.createManagedFolder(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder createManagedFolder(CreateManagedFolderRequest request) {
+    return createManagedFolderCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   CreateManagedFolderRequest request =
+   *       CreateManagedFolderRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setManagedFolder(ManagedFolder.newBuilder().build())
+   *           .setManagedFolderId("managedFolderId-2027084056")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<ManagedFolder> future =
+   *       storageControlClient.createManagedFolderCallable().futureCall(request);
+   *   // Do something.
+   *   ManagedFolder response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<CreateManagedFolderRequest, ManagedFolder>
+      createManagedFolderCallable() {
+    return stub.createManagedFolderCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes an empty managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+   *   storageControlClient.deleteManagedFolder(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the managed folder. Format:
+   *     `projects/{project}/buckets/{bucket}/managedFolders/{managedFolder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void deleteManagedFolder(ManagedFolderName name) {
+    DeleteManagedFolderRequest request =
+        DeleteManagedFolderRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    deleteManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes an empty managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString();
+   *   storageControlClient.deleteManagedFolder(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the managed folder. Format:
+   *     `projects/{project}/buckets/{bucket}/managedFolders/{managedFolder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void deleteManagedFolder(String name) {
+    DeleteManagedFolderRequest request =
+        DeleteManagedFolderRequest.newBuilder().setName(name).build();
+    deleteManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes an empty managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DeleteManagedFolderRequest request =
+   *       DeleteManagedFolderRequest.newBuilder()
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setAllowNonEmpty(true)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   storageControlClient.deleteManagedFolder(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void deleteManagedFolder(DeleteManagedFolderRequest request) {
+    deleteManagedFolderCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes an empty managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DeleteManagedFolderRequest request =
+   *       DeleteManagedFolderRequest.newBuilder()
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setAllowNonEmpty(true)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<Empty> future =
+   *       storageControlClient.deleteManagedFolderCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<DeleteManagedFolderRequest, Empty> deleteManagedFolderCallable() {
+    return stub.deleteManagedFolderCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns metadata for the specified managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ManagedFolderName name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]");
+   *   ManagedFolder response = storageControlClient.getManagedFolder(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the managed folder. Format:
+   *     `projects/{project}/buckets/{bucket}/managedFolders/{managedFolder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder getManagedFolder(ManagedFolderName name) {
+    GetManagedFolderRequest request =
+        GetManagedFolderRequest.newBuilder().setName(name == null ? null : name.toString()).build();
+    return getManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns metadata for the specified managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString();
+   *   ManagedFolder response = storageControlClient.getManagedFolder(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the managed folder. Format:
+   *     `projects/{project}/buckets/{bucket}/managedFolders/{managedFolder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder getManagedFolder(String name) {
+    GetManagedFolderRequest request = GetManagedFolderRequest.newBuilder().setName(name).build();
+    return getManagedFolder(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns metadata for the specified managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetManagedFolderRequest request =
+   *       GetManagedFolderRequest.newBuilder()
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ManagedFolder response = storageControlClient.getManagedFolder(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ManagedFolder getManagedFolder(GetManagedFolderRequest request) {
+    return getManagedFolderCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns metadata for the specified managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetManagedFolderRequest request =
+   *       GetManagedFolderRequest.newBuilder()
+   *           .setName(ManagedFolderName.of("[PROJECT]", "[BUCKET]", "[MANAGED_FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<ManagedFolder> future =
+   *       storageControlClient.getManagedFolderCallable().futureCall(request);
+   *   // Do something.
+   *   ManagedFolder response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetManagedFolderRequest, ManagedFolder> getManagedFolderCallable() {
+    return stub.getManagedFolderCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of managed folders for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   for (ManagedFolder element : storageControlClient.listManagedFolders(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of the bucket this managed folder belongs to.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListManagedFoldersPagedResponse listManagedFolders(BucketName parent) {
+    ListManagedFoldersRequest request =
+        ListManagedFoldersRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .build();
+    return listManagedFolders(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of managed folders for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   for (ManagedFolder element : storageControlClient.listManagedFolders(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of the bucket this managed folder belongs to.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListManagedFoldersPagedResponse listManagedFolders(String parent) {
+    ListManagedFoldersRequest request =
+        ListManagedFoldersRequest.newBuilder().setParent(parent).build();
+    return listManagedFolders(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of managed folders for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListManagedFoldersRequest request =
+   *       ListManagedFoldersRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setPrefix("prefix-980110702")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   for (ManagedFolder element : storageControlClient.listManagedFolders(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListManagedFoldersPagedResponse listManagedFolders(
+      ListManagedFoldersRequest request) {
+    return listManagedFoldersPagedCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of managed folders for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListManagedFoldersRequest request =
+   *       ListManagedFoldersRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setPrefix("prefix-980110702")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<ManagedFolder> future =
+   *       storageControlClient.listManagedFoldersPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (ManagedFolder element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
+      listManagedFoldersPagedCallable() {
+    return stub.listManagedFoldersPagedCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of managed folders for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListManagedFoldersRequest request =
+   *       ListManagedFoldersRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setPrefix("prefix-980110702")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   while (true) {
+   *     ListManagedFoldersResponse response =
+   *         storageControlClient.listManagedFoldersCallable().call(request);
+   *     for (ManagedFolder element : response.getManagedFoldersList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse>
+      listManagedFoldersCallable() {
+    return stub.listManagedFoldersCallable();
+  }
+
   @Override
   public final void close() {
     stub.close();
@@ -1217,6 +1880,86 @@ public class StorageControlClient implements BackgroundResource {
     protected ListFoldersFixedSizeCollection createCollection(
         List<ListFoldersPage> pages, int collectionSize) {
       return new ListFoldersFixedSizeCollection(pages, collectionSize);
+    }
+  }
+
+  public static class ListManagedFoldersPagedResponse
+      extends AbstractPagedListResponse<
+          ListManagedFoldersRequest,
+          ListManagedFoldersResponse,
+          ManagedFolder,
+          ListManagedFoldersPage,
+          ListManagedFoldersFixedSizeCollection> {
+
+    public static ApiFuture<ListManagedFoldersPagedResponse> createAsync(
+        PageContext<ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder> context,
+        ApiFuture<ListManagedFoldersResponse> futureResponse) {
+      ApiFuture<ListManagedFoldersPage> futurePage =
+          ListManagedFoldersPage.createEmptyPage().createPageAsync(context, futureResponse);
+      return ApiFutures.transform(
+          futurePage,
+          input -> new ListManagedFoldersPagedResponse(input),
+          MoreExecutors.directExecutor());
+    }
+
+    private ListManagedFoldersPagedResponse(ListManagedFoldersPage page) {
+      super(page, ListManagedFoldersFixedSizeCollection.createEmptyCollection());
+    }
+  }
+
+  public static class ListManagedFoldersPage
+      extends AbstractPage<
+          ListManagedFoldersRequest,
+          ListManagedFoldersResponse,
+          ManagedFolder,
+          ListManagedFoldersPage> {
+
+    private ListManagedFoldersPage(
+        PageContext<ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder> context,
+        ListManagedFoldersResponse response) {
+      super(context, response);
+    }
+
+    private static ListManagedFoldersPage createEmptyPage() {
+      return new ListManagedFoldersPage(null, null);
+    }
+
+    @Override
+    protected ListManagedFoldersPage createPage(
+        PageContext<ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder> context,
+        ListManagedFoldersResponse response) {
+      return new ListManagedFoldersPage(context, response);
+    }
+
+    @Override
+    public ApiFuture<ListManagedFoldersPage> createPageAsync(
+        PageContext<ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder> context,
+        ApiFuture<ListManagedFoldersResponse> futureResponse) {
+      return super.createPageAsync(context, futureResponse);
+    }
+  }
+
+  public static class ListManagedFoldersFixedSizeCollection
+      extends AbstractFixedSizeCollection<
+          ListManagedFoldersRequest,
+          ListManagedFoldersResponse,
+          ManagedFolder,
+          ListManagedFoldersPage,
+          ListManagedFoldersFixedSizeCollection> {
+
+    private ListManagedFoldersFixedSizeCollection(
+        List<ListManagedFoldersPage> pages, int collectionSize) {
+      super(pages, collectionSize);
+    }
+
+    private static ListManagedFoldersFixedSizeCollection createEmptyCollection() {
+      return new ListManagedFoldersFixedSizeCollection(null, 0);
+    }
+
+    @Override
+    protected ListManagedFoldersFixedSizeCollection createCollection(
+        List<ListManagedFoldersPage> pages, int collectionSize) {
+      return new ListManagedFoldersFixedSizeCollection(pages, collectionSize);
     }
   }
 }

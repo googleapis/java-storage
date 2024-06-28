@@ -201,7 +201,9 @@ public final class ITBlobReadMaskTest {
               new Args<>(BlobField.UPDATED, LazyAssertion.equal()),
               new Args<>(
                   BlobField.RETENTION,
-                  LazyAssertion.skip("TODO: jesse fill in buganizer bug here")));
+                  LazyAssertion.skip("TODO: jesse fill in buganizer bug here")),
+              new Args<>(BlobField.SOFT_DELETE_TIME, LazyAssertion.equal()),
+              new Args<>(BlobField.HARD_DELETE_TIME, LazyAssertion.equal()));
       List<String> argsDefined =
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());
 

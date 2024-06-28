@@ -36,6 +36,7 @@ import com.google.cloud.storage.BlobWriteChannelV2.BlobWriteChannelV2State;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartMetadataFieldDecorator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
@@ -55,6 +56,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
@@ -388,9 +390,15 @@ public class SerializationTest extends BaseSerializationTest {
             .withBufferAllocationStrategy(BufferAllocationStrategy.fixedPool(1, 3))
             .withPartCleanupStrategy(PartCleanupStrategy.never())
             .withPartNamingStrategy(PartNamingStrategy.prefix("prefix"))
-            .withExecutorSupplier(ExecutorSupplier.fixedPool(5));
+            .withExecutorSupplier(ExecutorSupplier.fixedPool(5))
+            .withPartMetadataFieldDecorator(
+                PartMetadataFieldDecorator.setCustomTimeInFuture(Duration.ofMinutes(10)));
     ParallelCompositeUploadBlobWriteSessionConfig pcu2copy = serializeAndDeserialize(pcu2);
     assertThat(pcu2copy).isNotNull();
+
+    PartMetadataFieldDecorator noop = PartMetadataFieldDecorator.noOp();
+    PartMetadataFieldDecorator noopCopy = serializeAndDeserialize(noop);
+    assertThat(noopCopy).isSameInstanceAs(noop);
 
     InvalidClassException invalidClassException =
         assertThrows(

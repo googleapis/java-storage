@@ -30,7 +30,6 @@ import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
-import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ServiceConstants.Values;
@@ -38,7 +37,7 @@ import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicWritableByteChannelSessionBuilder {
 
@@ -113,19 +112,7 @@ final class GapicWritableByteChannelSessionBuilder {
     return new JournalingResumableUploadBuilder();
   }
 
-  /**
-   * When constructing any of our channel sessions, there is always a {@link
-   * GapicUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction which
-   * will instantiate the {@link GapicUnbufferedWritableByteChannel} when provided with a {@code
-   * StartT} value and a {@code SettableApiFuture<WriteObjectResponse>}.
-   *
-   * <p>As part of providing the function, the provided parameters {@code FlusherFactory} and {@code
-   * f} are "bound" into the returned function. In conjunction with the configured fields of this
-   * class a new instance of {@link GapicUnbufferedWritableByteChannel} can be constructed.
-   */
-  private <StartT, RequestFactoryT extends WriteObjectRequestBuilderFactory>
-      BiFunction<StartT, SettableApiFuture<WriteObjectResponse>, UnbufferedWritableByteChannel>
-          bindFunction(FlusherFactory flusherFactory, Function<StartT, RequestFactoryT> f) {
+  private @NonNull ChunkSegmenter getChunkSegmenter() {
     // it is theoretically possible that the setter methods for the following variables could
     // be called again between when this method is invoked and the resulting function is invoked.
     // To ensure we are using the specified values at the point in time they are bound to the
@@ -133,12 +120,16 @@ final class GapicWritableByteChannelSessionBuilder {
     // fields.
     ByteStringStrategy boundStrategy = byteStringStrategy;
     Hasher boundHasher = hasher;
-    return (start, resultFuture) ->
-        new GapicUnbufferedWritableByteChannel<>(
-            resultFuture,
-            new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-            f.apply(start),
-            flusherFactory);
+    return new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE);
+  }
+
+  private static <StartT>
+      BiFunction<StartT, SettableApiFuture<WriteObjectResponse>, UnbufferedWritableByteChannel>
+          lift(
+              BiFunction<
+                      StartT, SettableApiFuture<WriteObjectResponse>, UnbufferedWritableByteChannel>
+                  func) {
+    return func;
   }
 
   final class DirectUploadBuilder {
@@ -189,9 +180,12 @@ final class GapicWritableByteChannelSessionBuilder {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new UnbufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-            bindFunction(
-                    WriteFlushStrategy.fsyncOnClose(write),
-                    WriteObjectRequestBuilderFactory::simple)
+            lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
+                    new GapicUnbufferedDirectWritableByteChannel(
+                        resultFuture,
+                        getChunkSegmenter(),
+                        write,
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -214,9 +208,12 @@ final class GapicWritableByteChannelSessionBuilder {
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new BufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-            bindFunction(
-                    WriteFlushStrategy.fsyncOnClose(write),
-                    WriteObjectRequestBuilderFactory::simple)
+            lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
+                    new GapicUnbufferedDirectWritableByteChannel(
+                        resultFuture,
+                        getChunkSegmenter(),
+                        write,
+                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -296,12 +293,21 @@ final class GapicWritableByteChannelSessionBuilder {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
-            bindFunction(
-                    fsyncEvery
-                        ? WriteFlushStrategy.fsyncEveryFlush(
-                            write, deps, alg, Retrying::newCallContext)
-                        : WriteFlushStrategy.fsyncOnClose(write),
-                    ResumableWrite::identity)
+            lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  if (fsyncEvery) {
+                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
+                        result,
+                        getChunkSegmenter(),
+                        write,
+                        new WriteCtx<>(start),
+                        deps,
+                        alg,
+                        Retrying::newCallContext);
+                  } else {
+                    return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
+                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                  }
+                })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -328,12 +334,21 @@ final class GapicWritableByteChannelSessionBuilder {
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
-            bindFunction(
-                    fsyncEvery
-                        ? WriteFlushStrategy.fsyncEveryFlush(
-                            write, deps, alg, Retrying::newCallContext)
-                        : WriteFlushStrategy.fsyncOnClose(write),
-                    ResumableWrite::identity)
+            lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  if (fsyncEvery) {
+                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
+                        result,
+                        getChunkSegmenter(),
+                        write,
+                        new WriteCtx<>(start),
+                        deps,
+                        alg,
+                        Retrying::newCallContext);
+                  } else {
+                    return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
+                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                  }
+                })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }

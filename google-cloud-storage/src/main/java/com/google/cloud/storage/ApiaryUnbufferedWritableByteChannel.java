@@ -96,30 +96,32 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
     }
     RewindableContent content = RewindableContent.of(Utils.subArray(srcs, offset, length));
     long available = content.getLength();
+    // as long as request has at least 256KiB GCS will accept bytes in 256KiB increments,
+    // however if a request is smaller than 256KiB it MUST be the finalization request.
+    if (!finalize && available < ByteSizeConstants._256KiB) {
+      return 0;
+    }
     long newFinalByteOffset = cumulativeByteCount + available;
     final HttpContentRange header;
     ByteRangeSpec rangeSpec = ByteRangeSpec.explicit(cumulativeByteCount, newFinalByteOffset);
-    boolean quantumAligned = available % ByteSizeConstants._256KiB == 0;
-    if (quantumAligned && finalize) {
+    if (finalize) {
       header = HttpContentRange.of(rangeSpec, newFinalByteOffset);
       finished = true;
-    } else if (quantumAligned) {
+    } else {
       header = HttpContentRange.of(rangeSpec);
-    } else { // not quantum aligned, have to finalize
-      header = HttpContentRange.of(rangeSpec, newFinalByteOffset);
-      finished = true;
     }
     try {
       ResumableOperationResult<@Nullable StorageObject> operationResult =
           session.put(content, header);
       long persistedSize = operationResult.getPersistedSize();
       committedBytesCallback.accept(persistedSize);
+      long written = persistedSize - cumulativeByteCount;
       this.cumulativeByteCount = persistedSize;
       if (finished) {
         StorageObject storageObject = operationResult.getObject();
         result.set(storageObject);
       }
-      return available;
+      return written;
     } catch (Exception e) {
       result.setException(e);
       throw StorageException.coalesce(e);

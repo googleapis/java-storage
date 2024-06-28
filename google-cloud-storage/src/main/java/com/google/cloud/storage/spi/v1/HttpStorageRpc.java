@@ -43,6 +43,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
+import com.google.api.services.storage.Storage.Objects.Compose;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.model.Bucket;
@@ -459,6 +460,8 @@ public class HttpStorageRpc implements StorageRpc {
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
+              .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options))
+              .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options))
               .execute();
       Iterable<StorageObject> storageObjects =
           Iterables.concat(
@@ -540,7 +543,8 @@ public class HttpStorageRpc implements StorageRpc {
         .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
         .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
         .setFields(Option.FIELDS.getString(options))
-        .setUserProject(Option.USER_PROJECT.getString(options));
+        .setUserProject(Option.USER_PROJECT.getString(options))
+        .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options));
   }
 
   @Override
@@ -549,6 +553,36 @@ public class HttpStorageRpc implements StorageRpc {
     Scope scope = tracer.withSpan(span);
     try {
       return getCall(object, options).execute();
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return null;
+      }
+      throw serviceException;
+    } finally {
+      scope.close();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
+  }
+
+  @Override
+  public StorageObject restore(StorageObject object, Map<Option, ?> options) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_RESTORE_OBJECT);
+    Scope scope = tracer.withSpan(span);
+    try {
+      Storage.Objects.Restore restore =
+          storage.objects().restore(object.getBucket(), object.getName(), object.getGeneration());
+      return restore
+          .setProjection(DEFAULT_PROJECTION)
+          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+          .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
+          .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+          .setCopySourceAcl(Option.COPY_SOURCE_ACL.getBoolean(options))
+          .setUserProject(Option.USER_PROJECT.getString(options))
+          .setFields(Option.FIELDS.getString(options))
+          .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -722,13 +756,15 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_COMPOSE);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objects()
-          .compose(target.getBucket(), target.getName(), request)
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(targetOptions))
-          .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
-          .setUserProject(Option.USER_PROJECT.getString(targetOptions))
-          .execute();
+      Compose compose =
+          storage
+              .objects()
+              .compose(target.getBucket(), target.getName(), request)
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(targetOptions))
+              .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
+              .setUserProject(Option.USER_PROJECT.getString(targetOptions));
+      setEncryptionHeaders(compose.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, targetOptions);
+      return compose.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);

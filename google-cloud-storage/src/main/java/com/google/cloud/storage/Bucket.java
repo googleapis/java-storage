@@ -749,6 +749,18 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy) {
+      infoBuilder.setSoftDeletePolicy(softDeletePolicy);
+      return this;
+    }
+
+    @Override
+    public Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace) {
+      infoBuilder.setHierarchicalNamespace(hierarchicalNamespace);
+      return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
@@ -1081,6 +1093,28 @@ public class Bucket extends BucketInfo {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob get(String blob, BlobGetOption... options) {
     return storage.get(BlobId.of(getName(), blob), options);
+  }
+
+  /**
+   * Returns the requested blob in this bucket of a specific generation or {@code null} if not
+   * found.
+   *
+   * <p>Example of getting a blob of a specific in the bucket.
+   *
+   * <pre>{@code
+   * String blobName = "my_blob_name";
+   * long generation = 42;
+   * Blob blob = bucket.get(blobName, generation);
+   * }</pre>
+   *
+   * @param blob name of the requested blob
+   * @param generation the generation to get
+   * @param options blob search options
+   * @throws StorageException upon failure
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  public Blob get(String blob, Long generation, BlobGetOption... options) {
+    return storage.get(BlobId.of(getName(), blob, generation), options);
   }
 
   /**

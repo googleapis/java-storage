@@ -101,7 +101,7 @@ final class JsonResumableSessionPutTask
 
       int code = response.getStatusCode();
 
-      if (!finalizing && JsonResumableSessionFailureScenario.isContinue(code)) {
+      if (!finalizing && ResumableSessionFailureScenario.isContinue(code)) {
         long effectiveEnd = ((HttpContentRange.HasRange<?>) contentRange).range().endOffset();
         @Nullable String range = response.getHeaders().getRange();
         ByteRangeSpec ackRange = ByteRangeSpec.parse(range);
@@ -109,19 +109,18 @@ final class JsonResumableSessionPutTask
           success = true;
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else if (ackRange.endOffset() < effectiveEnd) {
-          StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_9.toStorageException(uploadId, response);
-          span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
-          throw se;
+          rewindTo(ackRange.endOffset());
+          success = true;
+          return ResumableOperationResult.incremental(ackRange.endOffset());
         } else {
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_7.toStorageException(uploadId, response);
+              ResumableSessionFailureScenario.SCENARIO_7.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
-      } else if (finalizing && JsonResumableSessionFailureScenario.isOk(code)) {
+      } else if (finalizing && ResumableSessionFailureScenario.isOk(code)) {
         @Nullable StorageObject storageObject;
-        @Nullable BigInteger actualSize;
+        BigInteger actualSize = BigInteger.ZERO;
 
         Long contentLength = response.getHeaders().getContentLength();
         String contentType = response.getHeaders().getContentType();
@@ -131,7 +130,12 @@ final class JsonResumableSessionPutTask
         boolean isJson = contentType != null && contentType.startsWith("application/json");
         if (isJson) {
           storageObject = response.parseAs(StorageObject.class);
-          actualSize = storageObject != null ? storageObject.getSize() : null;
+          if (storageObject != null) {
+            BigInteger size = storageObject.getSize();
+            if (size != null) {
+              actualSize = size;
+            }
+          }
         } else if ((contentLength == null || contentLength == 0) && storedContentLength != null) {
           // when a signed url is used, the finalize response is empty
           response.ignore();
@@ -141,7 +145,7 @@ final class JsonResumableSessionPutTask
         } else {
           response.ignore();
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
+              ResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
                   uploadId, response, null, () -> null);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
@@ -151,39 +155,38 @@ final class JsonResumableSessionPutTask
         int compare = expectedSize.compareTo(actualSize);
         if (compare == 0) {
           success = true;
-          //noinspection DataFlowIssue  compareTo result will filter out actualSize == null
           return ResumableOperationResult.complete(storageObject, actualSize.longValue());
         } else if (compare > 0) {
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
                   uploadId, response, null, toString(storageObject));
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         } else {
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
                   uploadId, response, null, toString(storageObject));
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
-      } else if (!finalizing && JsonResumableSessionFailureScenario.isOk(code)) {
+      } else if (!finalizing && ResumableSessionFailureScenario.isOk(code)) {
         StorageException se =
-            JsonResumableSessionFailureScenario.SCENARIO_1.toStorageException(uploadId, response);
+            ResumableSessionFailureScenario.SCENARIO_1.toStorageException(uploadId, response);
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
-      } else if (finalizing && JsonResumableSessionFailureScenario.isContinue(code)) {
+      } else if (finalizing && ResumableSessionFailureScenario.isContinue(code)) {
         // in order to finalize the content range must have a size, cast down to read it
         HttpContentRange.HasSize size = (HttpContentRange.HasSize) contentRange;
 
         ByteRangeSpec range = ByteRangeSpec.parse(response.getHeaders().getRange());
         if (range.endOffsetInclusive() < size.getSize()) {
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_3.toStorageException(uploadId, response);
+              ResumableSessionFailureScenario.SCENARIO_3.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         } else {
           StorageException se =
-              JsonResumableSessionFailureScenario.SCENARIO_2.toStorageException(uploadId, response);
+              ResumableSessionFailureScenario.SCENARIO_2.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
@@ -195,8 +198,8 @@ final class JsonResumableSessionPutTask
         // a 503 with plain text content
         // Attempt to detect this very loosely as to minimize impact of modified error message
         // This is accurate circa 2023-06
-        if ((!JsonResumableSessionFailureScenario.isOk(code)
-                && !JsonResumableSessionFailureScenario.isContinue(code))
+        if ((!ResumableSessionFailureScenario.isOk(code)
+                && !ResumableSessionFailureScenario.isContinue(code))
             && contentType != null
             && contentType.startsWith("text/plain")
             && contentLength != null
@@ -204,14 +207,14 @@ final class JsonResumableSessionPutTask
           String errorMessage = cause.getContent().toLowerCase(Locale.US);
           if (errorMessage.contains("content-range")) {
             StorageException se =
-                JsonResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
                     uploadId, response, cause, cause::getContent);
             span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
             throw se;
           }
         }
         StorageException se =
-            JsonResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
+            ResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
       }
@@ -224,7 +227,7 @@ final class JsonResumableSessionPutTask
       throw e;
     } catch (Exception e) {
       StorageException se =
-          JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(uploadId, response, e);
+          ResumableSessionFailureScenario.SCENARIO_0.toStorageException(uploadId, response, e);
       span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
       throw se;
     } finally {

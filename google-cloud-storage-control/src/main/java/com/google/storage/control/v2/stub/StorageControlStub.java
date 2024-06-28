@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.google.storage.control.v2.stub;
 
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
+import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.rpc.OperationCallable;
@@ -25,12 +26,18 @@ import com.google.longrunning.Operation;
 import com.google.longrunning.stub.OperationsStub;
 import com.google.protobuf.Empty;
 import com.google.storage.control.v2.CreateFolderRequest;
+import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
+import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.Folder;
 import com.google.storage.control.v2.GetFolderRequest;
+import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
+import com.google.storage.control.v2.ListManagedFoldersRequest;
+import com.google.storage.control.v2.ListManagedFoldersResponse;
+import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
 import com.google.storage.control.v2.StorageLayout;
@@ -80,6 +87,28 @@ public abstract class StorageControlStub implements BackgroundResource {
 
   public UnaryCallable<GetStorageLayoutRequest, StorageLayout> getStorageLayoutCallable() {
     throw new UnsupportedOperationException("Not implemented: getStorageLayoutCallable()");
+  }
+
+  public UnaryCallable<CreateManagedFolderRequest, ManagedFolder> createManagedFolderCallable() {
+    throw new UnsupportedOperationException("Not implemented: createManagedFolderCallable()");
+  }
+
+  public UnaryCallable<DeleteManagedFolderRequest, Empty> deleteManagedFolderCallable() {
+    throw new UnsupportedOperationException("Not implemented: deleteManagedFolderCallable()");
+  }
+
+  public UnaryCallable<GetManagedFolderRequest, ManagedFolder> getManagedFolderCallable() {
+    throw new UnsupportedOperationException("Not implemented: getManagedFolderCallable()");
+  }
+
+  public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
+      listManagedFoldersPagedCallable() {
+    throw new UnsupportedOperationException("Not implemented: listManagedFoldersPagedCallable()");
+  }
+
+  public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse>
+      listManagedFoldersCallable() {
+    throw new UnsupportedOperationException("Not implemented: listManagedFoldersCallable()");
   }
 
   @Override

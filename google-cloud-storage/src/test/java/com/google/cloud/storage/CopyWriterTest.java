@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package com.google.cloud.storage;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.google.cloud.RestorableState;
 import com.google.cloud.ServiceOptions;
@@ -32,10 +31,9 @@ import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteResponse;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class CopyWriterTest {
 
@@ -96,10 +94,9 @@ public class CopyWriterTest {
 
   @Before
   public void setUp() {
-    rpcFactoryMock = createMock(StorageRpcFactory.class);
-    storageRpcMock = createMock(StorageRpc.class);
-    expect(rpcFactoryMock.create(anyObject(StorageOptions.class))).andReturn(storageRpcMock);
-    replay(rpcFactoryMock);
+    rpcFactoryMock = Mockito.mock(StorageRpcFactory.class);
+    storageRpcMock = Mockito.mock(StorageRpc.class);
+    when(rpcFactoryMock.create(any(StorageOptions.class))).thenReturn(storageRpcMock);
     options =
         HttpStorageOptions.newBuilder()
             .setProjectId("projectid")
@@ -107,72 +104,61 @@ public class CopyWriterTest {
             .setRetrySettings(ServiceOptions.getNoRetrySettings())
             .build();
     result = new Blob(options.getService(), new BlobInfo.BuilderImpl(RESULT_INFO));
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    verify(rpcFactoryMock, storageRpcMock);
+    verify(rpcFactoryMock).create(any(StorageOptions.class));
   }
 
   @Test
   public void testRewriteWithObject() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
+        .thenReturn(RESPONSE_WITH_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
     assertEquals(42L, copyWriter.getBlobSize());
+    verify(storageRpcMock).continueRewrite(RESPONSE_WITH_OBJECT);
   }
 
   @Test
   public void testRewriteWithoutObject() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
-        .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
+        .thenReturn(RESPONSE_WITHOUT_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
     assertEquals(42L, copyWriter.getBlobSize());
+    verify(storageRpcMock).continueRewrite(RESPONSE_WITHOUT_OBJECT);
   }
 
   @Test
   public void testRewriteWithObjectMultipleRequests() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT);
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
+        .thenReturn(RESPONSE_WITH_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
     assertEquals(42L, copyWriter.getBlobSize());
+    verify(storageRpcMock, times(2)).continueRewrite(RESPONSE_WITH_OBJECT);
   }
 
   @Test
   public void testRewriteWithoutObjectMultipleRequests() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
-        .andReturn(RESPONSE_WITHOUT_OBJECT);
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
-        .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
+        .thenReturn(RESPONSE_WITHOUT_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
     assertEquals(42L, copyWriter.getBlobSize());
+    verify(storageRpcMock, times(2)).continueRewrite(RESPONSE_WITHOUT_OBJECT);
   }
 
   @Test
   public void testSaveAndRestoreWithObject() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT);
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
+        .thenReturn(RESPONSE_WITH_OBJECT, RESPONSE_WITH_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
@@ -184,15 +170,13 @@ public class CopyWriterTest {
     assertTrue(restoredRewriter.isDone());
     assertEquals(42L, restoredRewriter.getTotalBytesCopied());
     assertEquals(42L, restoredRewriter.getBlobSize());
+    verify(storageRpcMock, times(2)).continueRewrite(RESPONSE_WITH_OBJECT);
   }
 
   @Test
   public void testSaveAndRestoreWithoutObject() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
-        .andReturn(RESPONSE_WITHOUT_OBJECT);
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
-        .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
+        .thenReturn(RESPONSE_WITHOUT_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
@@ -204,13 +188,13 @@ public class CopyWriterTest {
     assertTrue(restoredRewriter.isDone());
     assertEquals(42L, restoredRewriter.getTotalBytesCopied());
     assertEquals(42L, restoredRewriter.getBlobSize());
+    verify(storageRpcMock, times(2)).continueRewrite(RESPONSE_WITHOUT_OBJECT);
   }
 
   @Test
   public void testSaveAndRestoreWithResult() {
-    EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
-        .andReturn(RESPONSE_WITH_OBJECT_DONE);
-    EasyMock.replay(storageRpcMock);
+    when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
+        .thenReturn(RESPONSE_WITH_OBJECT_DONE);
     copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     copyWriter.copyChunk();
     assertEquals(result, copyWriter.getResult());
@@ -223,5 +207,6 @@ public class CopyWriterTest {
     assertTrue(restoredRewriter.isDone());
     assertEquals(42L, restoredRewriter.getTotalBytesCopied());
     assertEquals(42L, restoredRewriter.getBlobSize());
+    verify(storageRpcMock).continueRewrite(RESPONSE_WITH_OBJECT);
   }
 }

@@ -3,6 +3,7 @@ handleGHRelease: true
 releaseType: java-yoshi
 extraFiles:
   - README.md
+  - .readme-partials.yaml
 branches:
   - bumpMinorPreMajor: true
     handleGHRelease: true
