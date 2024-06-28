@@ -28,24 +28,18 @@ import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
-import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
-import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
 
@@ -56,18 +50,18 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   private BlobDescriptorImpl(BlobDescriptorStream stream, BlobDescriptorState state) {
     this.stream = stream;
     this.state = state;
-    this.info = Conversions.grpc().blobInfo().decode(state.metadata.get());
+    this.info = Conversions.grpc().blobInfo().decode(state.getMetadata());
   }
 
   @Override
   public ApiFuture<byte[]> readRangeAsBytes(ByteRangeSpec range) {
-    long readId = state.readIdSeq.getAndIncrement();
+    long readId = state.newReadId();
     SettableApiFuture<byte[]> future = SettableApiFuture.create();
     OutstandingReadToArray value =
         new OutstandingReadToArray(readId, range.beginOffset(), range.length(), future);
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(value.makeReadRange()).build();
-    state.outstandingReads.put(readId, value);
+    state.putOutstandingRead(readId, value);
     stream.send(request);
     return future;
   }
@@ -248,10 +242,10 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
           bidiResponseContentLifecycleManager.get(response)) {
         if (response.hasMetadata()) {
-          state.metadata.set(response.getMetadata());
+          state.setMetadata(response.getMetadata());
         }
         if (response.hasReadHandle()) {
-          state.ref.set(response.getReadHandle());
+          state.setBidiReadHandle(response.getReadHandle());
         }
         List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
         if (rangeData.isEmpty()) {
@@ -260,7 +254,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
         for (int i = 0; i < rangeData.size(); i++) {
           ObjectRangeData d = rangeData.get(i);
           long id = d.getReadRange().getReadId();
-          OutstandingReadToArray read = state.outstandingReads.get(id);
+          OutstandingReadToArray read = state.getOutstandingRead(id);
           if (read == null) {
             continue;
           }
@@ -277,7 +271,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
                   try {
                     read.eof();
                     // don't remove the outstanding read until the future has been resolved
-                    state.outstandingReads.remove(id);
+                    state.removeOutstandingRead(id);
                   } catch (IOException e) {
                     // TODO: sync this up with stream restarts when the time comes
                     throw StorageException.coalesce(e);
@@ -338,22 +332,6 @@ final class BlobDescriptorImpl implements BlobDescriptor {
           .setReadOffset(readCursor.position())
           .setReadLength(readCursor.remaining())
           .build();
-    }
-  }
-
-  private static final class BlobDescriptorState {
-    private final BidiReadObjectRequest openRequest;
-    private final AtomicReference<BidiReadHandle> ref;
-    private final AtomicReference<Object> metadata;
-    private final AtomicLong readIdSeq;
-    private final Map<Long, OutstandingReadToArray> outstandingReads;
-
-    public BlobDescriptorState(BidiReadObjectRequest openRequest) {
-      this.openRequest = openRequest;
-      this.ref = new AtomicReference<>();
-      this.metadata = new AtomicReference<>();
-      this.readIdSeq = new AtomicLong(1);
-      this.outstandingReads = new ConcurrentHashMap<>();
     }
   }
 }
