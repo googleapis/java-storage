@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.GrpcStorageOptions.ZeroCopyResponseMarshaller;
-import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
@@ -163,7 +163,7 @@ public class ZeroCopyMarshallerTest {
     CloseAuditingInputStream stream3 =
         CloseAuditingInputStream.of(createInputStream(response.toByteArray(), true));
 
-    ZeroCopyResponseMarshaller.closeAllStreams(ImmutableList.of(stream1, stream2, stream3));
+    GrpcUtils.closeAll(ImmutableList.of(stream1, stream2, stream3));
 
     assertThat(stream1.closed).isTrue();
     assertThat(stream2.closed).isTrue();
@@ -198,9 +198,7 @@ public class ZeroCopyMarshallerTest {
     IOException ioException =
         assertThrows(
             IOException.class,
-            () ->
-                ZeroCopyResponseMarshaller.closeAllStreams(
-                    ImmutableList.of(stream1, stream2, stream3)));
+            () -> GrpcUtils.closeAll(ImmutableList.of(stream1, stream2, stream3)));
 
     assertThat(stream1.closed).isTrue();
     assertThat(stream2.closed).isTrue();
@@ -236,12 +234,12 @@ public class ZeroCopyMarshallerTest {
       assertThat(inputStream.closed).isFalse();
 
       // now get the lifecycle management handle for the parsed instance
-      ResponseContentLifecycleHandle handle = marshaller.get(parsed);
+      ResponseContentLifecycleHandle<ChecksummedData> handle = marshaller.get(parsed);
       assertThat(inputStream.closed).isFalse();
 
-      ChildRef ref1 = handle.borrow();
-      ChildRef ref2 = handle.borrow();
-      ChildRef ref3 = handle.borrow();
+      DisposableByteString ref1 = handle.borrow(ChecksummedData::getContent);
+      DisposableByteString ref2 = handle.borrow(ChecksummedData::getContent);
+      DisposableByteString ref3 = handle.borrow(ChecksummedData::getContent);
       assertThat(inputStream.closed).isFalse();
       handle.close();
       assertThat(inputStream.closed).isFalse();
@@ -275,11 +273,11 @@ public class ZeroCopyMarshallerTest {
       assertThat(inputStream.closed).isFalse();
 
       // now get the lifecycle management handle for the parsed instance
-      ResponseContentLifecycleHandle handle = marshaller.get(parsed);
+      ResponseContentLifecycleHandle<ChecksummedData> handle = marshaller.get(parsed);
       handle.close();
       assertThat(inputStream.closed).isTrue();
 
-      assertThrows(IllegalStateException.class, handle::borrow);
+      assertThrows(IllegalStateException.class, () -> handle.borrow(ChecksummedData::getContent));
     }
   }
 

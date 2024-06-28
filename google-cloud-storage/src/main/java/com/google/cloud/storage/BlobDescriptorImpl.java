@@ -34,8 +34,9 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -244,7 +245,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     @Override
     protected void onResponseImpl(BidiReadObjectResponse response) {
       controller.request(1);
-      try (ResponseContentLifecycleHandle handle =
+      try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
           bidiResponseContentLifecycleManager.get(response)) {
         if (response.hasMetadata()) {
           state.metadata.set(response.getMetadata());
@@ -256,21 +257,32 @@ final class BlobDescriptorImpl implements BlobDescriptor {
         if (rangeData.isEmpty()) {
           return;
         }
-        for (ObjectRangeData d : rangeData) {
+        for (int i = 0; i < rangeData.size(); i++) {
+          ObjectRangeData d = rangeData.get(i);
           long id = d.getReadRange().getReadId();
           OutstandingReadToArray read = state.outstandingReads.get(id);
           if (read == null) {
             continue;
           }
-          ByteString content = d.getChecksummedData().getContent();
-          ChildRef childRef = handle.borrow();
-          read.accept(childRef, content);
+          final int idx = i;
+          //noinspection rawtypes
+          ChildRef childRef =
+              handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
+          read.accept(childRef);
           if (d.getRangeEnd()) {
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
-            exec.execute(read::eof);
-            // don't remove the outstanding read until the future has been resolved
-            state.outstandingReads.remove(id);
+            exec.execute(
+                () -> {
+                  try {
+                    read.eof();
+                    // don't remove the outstanding read until the future has been resolved
+                    state.outstandingReads.remove(id);
+                  } catch (IOException e) {
+                    // TODO: sync this up with stream restarts when the time comes
+                    throw StorageException.coalesce(e);
+                  }
+                });
           }
         }
       } catch (IOException e) {
@@ -290,7 +302,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   static final class OutstandingReadToArray {
     private final long readId;
     private final ReadCursor readCursor;
-    private final ByteArrayOutputStream bytes;
+    private final List<ChildRef> childRefs;
     private final SettableApiFuture<byte[]> complete;
 
     @VisibleForTesting
@@ -298,20 +310,26 @@ final class BlobDescriptorImpl implements BlobDescriptor {
         long readId, long readOffset, long readLimit, SettableApiFuture<byte[]> complete) {
       this.readId = readId;
       this.readCursor = new ReadCursor(readOffset, readOffset + readLimit);
-      this.bytes = new ByteArrayOutputStream();
+      this.childRefs = Collections.synchronizedList(new ArrayList<>());
       this.complete = complete;
     }
 
-    public void accept(ChildRef childRef, ByteString bytes) throws IOException {
-      try (ChildRef autoclose = childRef) {
-        int size = bytes.size();
-        bytes.writeTo(this.bytes);
-        readCursor.advance(size);
-      }
+    public void accept(ChildRef childRef) throws IOException {
+      int size = childRef.byteString().size();
+      childRefs.add(childRef);
+      readCursor.advance(size);
     }
 
-    public void eof() {
-      complete.set(bytes.toByteArray());
+    public void eof() throws IOException {
+      try {
+        ByteString base = ByteString.empty();
+        for (ChildRef ref : childRefs) {
+          base = base.concat(ref.byteString());
+        }
+        complete.set(base.toByteArray());
+      } finally {
+        GrpcUtils.closeAll(childRefs);
+      }
     }
 
     public ReadRange makeReadRange() {

@@ -100,7 +100,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1133,40 +1132,14 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     @Override
-    public ResponseContentLifecycleHandle get(Response response) {
+    public ResponseContentLifecycleHandle<Response> get(Response response) {
       InputStream stream = unclosedStreams.remove(response);
       return ResponseContentLifecycleHandle.create(response, toByteBuffersFunction, stream);
     }
 
     @Override
     public void close() throws IOException {
-      closeAllStreams(unclosedStreams.values());
-    }
-
-    /**
-     * In the event closing the streams results in multiple streams throwing IOExceptions, collect
-     * them all as suppressed exceptions on the first occurrence.
-     */
-    @VisibleForTesting
-    static void closeAllStreams(Iterable<InputStream> inputStreams) throws IOException {
-      Iterator<InputStream> iterator = inputStreams.iterator();
-      IOException ioException = null;
-      while (iterator.hasNext()) {
-        InputStream next = iterator.next();
-        try {
-          next.close();
-        } catch (IOException e) {
-          if (ioException == null) {
-            ioException = e;
-          } else if (ioException != e) {
-            ioException.addSuppressed(e);
-          }
-        }
-      }
-
-      if (ioException != null) {
-        throw ioException;
-      }
+      GrpcUtils.closeAll(unclosedStreams.values());
     }
   }
 

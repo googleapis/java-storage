@@ -22,8 +22,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BlobDescriptorImpl.OutstandingReadToArray;
-import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
-import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadRange;
@@ -45,16 +43,17 @@ public final class BlobDescriptorTest {
     ByteString byteString = UnsafeByteOperations.unsafeWrap(genBytes);
     AtomicBoolean closed = new AtomicBoolean(false);
     Closeable close = () -> closed.set(true);
-    ResponseContentLifecycleHandle handle =
+    ResponseContentLifecycleHandle<ByteString> handle =
         ResponseContentLifecycleHandle.create(
             byteString, ByteString::asReadOnlyByteBufferList, close);
-    ChildRef childRef = handle.borrow();
+    ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
+        handle.borrow(Function.identity());
     handle.close();
 
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     OutstandingReadToArray outstandingReadToArray = new OutstandingReadToArray(1, 0, 137, complete);
 
-    outstandingReadToArray.accept(childRef, byteString);
+    outstandingReadToArray.accept(childRef);
     outstandingReadToArray.eof();
 
     String expectedBytes = xxd(genBytes);
@@ -72,17 +71,23 @@ public final class BlobDescriptorTest {
         () -> {
           throw new IOException(new Kaboom());
         };
-    ResponseContentLifecycleHandle handle =
+    ResponseContentLifecycleHandle<ByteString> handle =
         ResponseContentLifecycleHandle.create(
             byteString, ByteString::asReadOnlyByteBufferList, throwOnClose);
-    ChildRef childRef = handle.borrow();
+    ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
+        handle.borrow(Function.identity());
     handle.close();
 
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     OutstandingReadToArray outstandingReadToArray = new OutstandingReadToArray(1, 0, 137, complete);
 
     IOException ioException =
-        assertThrows(IOException.class, () -> outstandingReadToArray.accept(childRef, byteString));
+        assertThrows(
+            IOException.class,
+            () -> {
+              outstandingReadToArray.accept(childRef);
+              outstandingReadToArray.eof();
+            });
     assertThat(ioException).hasCauseThat().isInstanceOf(Kaboom.class);
   }
 
@@ -98,9 +103,12 @@ public final class BlobDescriptorTest {
         ReadRange.newBuilder().setReadId(readId).setReadOffset(0).setReadLength(137).build();
     assertThat(readRange1).isEqualTo(expectedReadRange1);
 
-    try (ResponseContentLifecycleHandle handle = noopContentHandle()) {
-      ByteString bytes = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(64));
-      read.accept(handle.borrow(), bytes);
+    ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(64));
+    ByteString bytes2 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(64));
+    ByteString bytes3 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
+
+    try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes1)) {
+      read.accept(handle.borrow(Function.identity()));
     }
 
     ReadRange readRange2 = read.makeReadRange();
@@ -108,9 +116,8 @@ public final class BlobDescriptorTest {
         ReadRange.newBuilder().setReadId(readId).setReadOffset(64).setReadLength(73).build();
     assertThat(readRange2).isEqualTo(expectedReadRange2);
 
-    try (ResponseContentLifecycleHandle handle = noopContentHandle()) {
-      ByteString bytes = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(64));
-      read.accept(handle.borrow(), bytes);
+    try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes2)) {
+      read.accept(handle.borrow(Function.identity()));
     }
 
     ReadRange readRange3 = read.makeReadRange();
@@ -118,9 +125,8 @@ public final class BlobDescriptorTest {
         ReadRange.newBuilder().setReadId(readId).setReadOffset(128).setReadLength(9).build();
     assertThat(readRange3).isEqualTo(expectedReadRange3);
 
-    try (ResponseContentLifecycleHandle handle = noopContentHandle()) {
-      ByteString bytes = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
-      read.accept(handle.borrow(), bytes);
+    try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes3)) {
+      read.accept(handle.borrow(Function.identity()));
       read.eof();
     }
 
@@ -133,8 +139,10 @@ public final class BlobDescriptorTest {
     assertThat(xxd(actualBytes)).isEqualTo(xxd(DataGenerator.base64Characters().genBytes(137)));
   }
 
-  private static ResponseContentLifecycleHandle noopContentHandle() {
-    return ResponseContentLifecycleHandle.create(ImmutableList.of(), Function.identity(), () -> {});
+  private static ResponseContentLifecycleHandle<ByteString> noopContentHandle(
+      ByteString byteString) {
+    return ResponseContentLifecycleHandle.create(
+        byteString, ByteString::asReadOnlyByteBufferList, () -> {});
   }
 
   private static final class Kaboom extends RuntimeException {

@@ -21,7 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 interface ResponseContentLifecycleManager<Response> extends Closeable {
-  ResponseContentLifecycleHandle get(Response response);
+  ResponseContentLifecycleHandle<Response> get(Response response);
 
   @Override
   default void close() throws IOException {}

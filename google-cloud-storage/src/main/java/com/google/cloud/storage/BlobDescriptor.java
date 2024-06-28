@@ -17,6 +17,9 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.protobuf.ByteString;
+import java.io.Closeable;
+import java.io.IOException;
 
 /** Blob Descriptor is to blob, what File Descriptor is to a file */
 public interface BlobDescriptor {
@@ -24,4 +27,13 @@ public interface BlobDescriptor {
   BlobInfo getBlobInfo();
 
   ApiFuture<byte[]> readRangeAsBytes(ByteRangeSpec range);
+
+  interface ZeroCopySupport {
+    interface DisposableByteString extends AutoCloseable, Closeable {
+      ByteString byteString();
+
+      @Override
+      void close() throws IOException;
+    }
+  }
 }

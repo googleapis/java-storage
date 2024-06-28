@@ -15,8 +15,10 @@
  */
 package com.google.cloud.storage;
 
+import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
+import com.google.protobuf.ByteString;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,7 +29,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class ResponseContentLifecycleHandle implements Closeable {
+final class ResponseContentLifecycleHandle<Response> implements Closeable {
+
+  private final Response response;
   @Nullable private final Closeable dispose;
 
   private final Supplier<List<ByteBuffer>> lazyBuffers;
@@ -35,25 +39,27 @@ final class ResponseContentLifecycleHandle implements Closeable {
   private final AtomicInteger refs;
 
   private ResponseContentLifecycleHandle(
-      Supplier<List<ByteBuffer>> lazyBuffers, @Nullable Closeable dispose) {
+      Response response,
+      Function<Response, List<ByteBuffer>> toBuffersFunction,
+      @Nullable Closeable dispose) {
+    this.response = response;
     this.dispose = dispose;
-    this.lazyBuffers = lazyBuffers;
+    this.lazyBuffers = Suppliers.memoize(() -> toBuffersFunction.apply(response));
     this.open = new AtomicBoolean(true);
     this.refs = new AtomicInteger(1);
   }
 
-  static <Response> ResponseContentLifecycleHandle create(
+  static <Response> ResponseContentLifecycleHandle<Response> create(
       Response response,
       Function<Response, List<ByteBuffer>> toBuffersFunction,
       @Nullable Closeable dispose) {
-    Supplier<List<ByteBuffer>> lazyBuffers =
-        Suppliers.memoize(() -> toBuffersFunction.apply(response));
-    return new ResponseContentLifecycleHandle(lazyBuffers, dispose);
+    return new ResponseContentLifecycleHandle<>(response, toBuffersFunction, dispose);
   }
 
-  ChildRef borrow() {
+  ChildRef borrow(Function<Response, ByteString> toByteStringFunction) {
     Preconditions.checkState(open.get(), "only able to borrow when open");
-    ChildRef childRef = new ChildRef();
+    Preconditions.checkNotNull(toByteStringFunction);
+    ChildRef childRef = new ChildRef(toByteStringFunction);
     refs.incrementAndGet();
     return childRef;
   }
@@ -91,7 +97,18 @@ final class ResponseContentLifecycleHandle implements Closeable {
     }
   }
 
-  final class ChildRef implements Closeable {
+  final class ChildRef implements Closeable, DisposableByteString {
+
+    private final Function<Response, ByteString> toByteStringFunction;
+
+    private ChildRef(Function<Response, ByteString> toByteStringFunction) {
+      this.toByteStringFunction = toByteStringFunction;
+    }
+
+    @Override
+    public ByteString byteString() {
+      return toByteStringFunction.apply(response);
+    }
 
     @Override
     public void close() throws IOException {
