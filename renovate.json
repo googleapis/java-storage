@@ -46,6 +46,7 @@
       "semanticCommitScope": null
     },
     {
+      "groupName": "maven plugins",
       "packagePatterns": [
         "^org.apache.maven",
         "^org.jacoco:",
@@ -58,8 +59,15 @@
       "semanticCommitScope": "deps"
     },
     {
+      "groupName": "storage release dependencies",
       "packagePatterns": [
         "^com.google.cloud:google-cloud-storage",
+        "^com.google.api.grpc:proto-google-cloud-storage-v2",
+        "^com.google.api.grpc:grpc-google-cloud-storage-v2",
+        "^com.google.api.grpc:gapic-google-cloud-storage-v2",
+        "^com.google.api.grpc:proto-google-cloud-storage-control-v2",
+        "^com.google.api.grpc:grpc-google-cloud-storage-control-v2",
+        "^com.google.cloud:google-cloud-storage-control",
         "^com.google.cloud:libraries-bom",
         "^com.google.cloud.samples:shared-configuration"
       ],
@@ -67,8 +75,11 @@
       "semanticCommitScope": "deps"
     },
     {
+      "groupName": "test libraries",
       "packagePatterns": [
         "^junit:junit",
+        "^org.junit",
+        "^net.jqwik",
         "^com.google.truth:truth",
         "^org.mockito:mockito-core",
         "^org.objenesis:objenesis",
