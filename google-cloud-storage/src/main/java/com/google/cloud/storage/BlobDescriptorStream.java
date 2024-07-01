@@ -24,6 +24,7 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.BlobDescriptorImpl.OutstandingReadToArray;
+import com.google.common.base.Preconditions;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.ObjectRangeData;
@@ -35,9 +36,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadObjectResponse>
-    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void> {
+    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
 
   private final SettableApiFuture<Void> openSignal;
+  private final SettableApiFuture<Void> closeSignal;
 
   private final BlobDescriptorState state;
   private final ResponseContentLifecycleManager<BidiReadObjectResponse>
@@ -47,8 +49,8 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
   private final GrpcCallContext context;
   private final OpenMonitorResponseObserver openMonitorResponseObserver;
 
-  private StreamController controller;
-
+  private volatile boolean open;
+  private volatile StreamController controller;
   private volatile ClientStream<BidiReadObjectRequest> requestStream;
 
   private BlobDescriptorStream(
@@ -64,6 +66,8 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
     this.context = context;
     this.openMonitorResponseObserver = new OpenMonitorResponseObserver();
     this.openSignal = SettableApiFuture.create();
+    this.closeSignal = SettableApiFuture.create();
+    this.open = true;
   }
 
   public ClientStream<BidiReadObjectRequest> getRequestStream() {
@@ -80,22 +84,48 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
   }
 
   @Override
+  public void close() throws IOException {
+    if (!open) {
+      return;
+    }
+
+    try {
+      cancel(true);
+      if (requestStream != null) {
+        requestStream.closeSend();
+        try {
+          closeSignal.get();
+        } catch (InterruptedException | ExecutionException e) {
+          throw new RuntimeException(e);
+        }
+        requestStream = null;
+      }
+    } finally {
+      open = false;
+    }
+  }
+
+  @Override
   public void send(BidiReadObjectRequest request) {
+    checkOpen();
     getRequestStream().send(request);
   }
 
   @Override
   public void closeSendWithError(Throwable t) {
+    checkOpen();
     getRequestStream().closeSendWithError(t);
   }
 
   @Override
   public void closeSend() {
+    checkOpen();
     getRequestStream().closeSend();
   }
 
   @Override
   public boolean isSendReady() {
+    checkOpen();
     return getRequestStream().isSendReady();
   }
 
@@ -192,6 +222,10 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
   @Override
   protected void onCompleteImpl() {}
 
+  private void checkOpen() {
+    Preconditions.checkState(open, "not open");
+  }
+
   private class OpenMonitorResponseObserver
       extends StateCheckingResponseObserver<BidiReadObjectResponse> {
 
@@ -212,12 +246,14 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
     protected void onErrorImpl(Throwable t) {
       BlobDescriptorStream.this.onErrorImpl(t);
       openSignal.setException(t);
+      closeSignal.setException(t);
     }
 
     @Override
     protected void onCompleteImpl() {
       BlobDescriptorStream.this.onCompleteImpl();
       openSignal.set(null);
+      closeSignal.set(null);
     }
   }
 

@@ -22,11 +22,14 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /** Blob Descriptor is to blob, what File Descriptor is to a file */
-public interface BlobDescriptor {
+public interface BlobDescriptor extends AutoCloseable, Closeable {
 
   BlobInfo getBlobInfo();
 
   ApiFuture<byte[]> readRangeAsBytes(ByteRangeSpec range);
+
+  @Override
+  void close() throws IOException;
 
   interface ZeroCopySupport {
     interface DisposableByteString extends AutoCloseable, Closeable {

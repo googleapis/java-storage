@@ -63,6 +63,11 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     return info;
   }
 
+  @Override
+  public void close() throws IOException {
+    stream.close();
+  }
+
   static ApiFuture<BlobDescriptor> create(
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
