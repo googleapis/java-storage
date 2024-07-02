@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BlobDescriptorImpl.OutstandingReadToArray;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.Object;
@@ -31,7 +30,7 @@ final class BlobDescriptorState {
   private final AtomicReference<BidiReadHandle> bidiReadHandle;
   private final AtomicReference<Object> metadata;
   private final AtomicLong readIdSeq;
-  private final Map<Long, OutstandingReadToArray> outstandingReads;
+  private final Map<Long, BlobDescriptorStreamRead> outstandingReads;
 
   BlobDescriptorState(BidiReadObjectRequest openRequest) {
     this.openRequest = openRequest;
@@ -61,11 +60,11 @@ final class BlobDescriptorState {
     return readIdSeq.getAndIncrement();
   }
 
-  OutstandingReadToArray getOutstandingRead(long key) {
+  BlobDescriptorStreamRead getOutstandingRead(long key) {
     return outstandingReads.get(key);
   }
 
-  void putOutstandingRead(long key, OutstandingReadToArray value) {
+  void putOutstandingRead(long key, BlobDescriptorStreamRead value) {
     outstandingReads.put(key, value);
   }
 

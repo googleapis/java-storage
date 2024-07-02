@@ -23,7 +23,6 @@ import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
-import com.google.cloud.storage.BlobDescriptorImpl.OutstandingReadToArray;
 import com.google.common.base.Preconditions;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
@@ -185,7 +184,7 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
       for (int i = 0; i < rangeData.size(); i++) {
         ObjectRangeData d = rangeData.get(i);
         long id = d.getReadRange().getReadId();
-        OutstandingReadToArray read = state.getOutstandingRead(id);
+        BlobDescriptorStreamRead read = state.getOutstandingRead(id);
         if (read == null) {
           continue;
         }

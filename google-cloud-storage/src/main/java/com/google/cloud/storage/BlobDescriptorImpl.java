@@ -21,16 +21,11 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.BidiStreamingCallable;
-import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.ByteString;
+import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
+import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
-import com.google.storage.v2.ReadRange;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executor;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
@@ -49,11 +44,23 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   public ApiFuture<byte[]> readRangeAsBytes(ByteRangeSpec range) {
     long readId = state.newReadId();
     SettableApiFuture<byte[]> future = SettableApiFuture.create();
-    OutstandingReadToArray value =
-        new OutstandingReadToArray(readId, range.beginOffset(), range.length(), future);
+    AccumulatingRead<byte[]> read =
+        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(readId, range, future);
     BidiReadObjectRequest request =
-        BidiReadObjectRequest.newBuilder().addReadRanges(value.makeReadRange()).build();
-    state.putOutstandingRead(readId, value);
+        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
+    state.putOutstandingRead(readId, read);
+    stream.send(request);
+    return future;
+  }
+
+  public ApiFuture<DisposableByteString> readRangeAsByteString(ByteRangeSpec range) {
+    long readId = state.newReadId();
+    SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
+    AccumulatingRead<DisposableByteString> read =
+        BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(readId, range, future);
+    BidiReadObjectRequest request =
+        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
+    state.putOutstandingRead(readId, read);
     stream.send(request);
     return future;
   }
@@ -84,48 +91,5 @@ final class BlobDescriptorImpl implements BlobDescriptor {
         ApiFutures.transform(stream, nowOpen -> new BlobDescriptorImpl(stream, state), executor);
     stream.send(openRequest);
     return StorageException.coalesceAsync(blobDescriptorFuture);
-  }
-
-  @VisibleForTesting
-  static final class OutstandingReadToArray {
-    private final long readId;
-    private final ReadCursor readCursor;
-    private final List<ChildRef> childRefs;
-    private final SettableApiFuture<byte[]> complete;
-
-    @VisibleForTesting
-    OutstandingReadToArray(
-        long readId, long readOffset, long readLimit, SettableApiFuture<byte[]> complete) {
-      this.readId = readId;
-      this.readCursor = new ReadCursor(readOffset, readOffset + readLimit);
-      this.childRefs = Collections.synchronizedList(new ArrayList<>());
-      this.complete = complete;
-    }
-
-    public void accept(ChildRef childRef) throws IOException {
-      int size = childRef.byteString().size();
-      childRefs.add(childRef);
-      readCursor.advance(size);
-    }
-
-    public void eof() throws IOException {
-      try {
-        ByteString base = ByteString.empty();
-        for (ChildRef ref : childRefs) {
-          base = base.concat(ref.byteString());
-        }
-        complete.set(base.toByteArray());
-      } finally {
-        GrpcUtils.closeAll(childRefs);
-      }
-    }
-
-    public ReadRange makeReadRange() {
-      return ReadRange.newBuilder()
-          .setReadId(readId)
-          .setReadOffset(readCursor.position())
-          .setReadLength(readCursor.remaining())
-          .build();
-    }
   }
 }

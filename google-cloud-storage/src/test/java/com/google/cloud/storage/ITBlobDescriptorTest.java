@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -33,6 +34,8 @@ import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
+import com.google.protobuf.ByteString;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -110,6 +113,55 @@ public final class ITBlobDescriptorTest {
             assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
           },
           () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
+    }
+  }
+
+  @Test
+  public void readRangeAsByteString() throws Exception {
+    BlobId blobId = BlobId.of("ping", "someobject");
+    for (int j = 0; j < 2; j++) {
+
+      try (BlobDescriptorImpl blobDescriptor =
+          (BlobDescriptorImpl) storage.getBlobDescriptor(blobId).get(2, TimeUnit.SECONDS)) {
+
+        int numRangesToRead = 256;
+        List<ApiFuture<DisposableByteString>> futures =
+            LongStream.range(0, numRangesToRead)
+                .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
+                .map(blobDescriptor::readRangeAsByteString)
+                .collect(Collectors.toList());
+
+        ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
+
+        List<DisposableByteString> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+        Hasher hasher = Hashing.crc32c().newHasher();
+        long length = 0;
+        for (DisposableByteString range : ranges) {
+          try (DisposableByteString disposable = range) {
+            ByteString byteString = disposable.byteString();
+            for (ByteBuffer byteBuffer : byteString.asReadOnlyByteBufferList()) {
+              hasher.putBytes(byteBuffer);
+            }
+            length += byteString.size();
+          }
+        }
+        final long finalLength = length;
+
+        assertAll(
+            () -> {
+              Hasher xHasher = Hashing.crc32c().newHasher();
+              long numBytes = numRangesToRead * _2MiB;
+              for (long l = 0; l < numBytes; l++) {
+                xHasher.putByte((byte) 'x');
+              }
+
+              Crc32cLengthKnown expectedCrc32c = Crc32cValue.of(xHasher.hash().asInt(), numBytes);
+              Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), finalLength);
+
+              assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
+            },
+            () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
+      }
     }
   }
 
