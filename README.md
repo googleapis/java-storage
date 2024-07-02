@@ -46,7 +46,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.40.0</version>
+  <version>2.40.1</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
