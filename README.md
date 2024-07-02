@@ -412,6 +412,10 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 
 To get help, follow the instructions in the [shared Troubleshooting document][troubleshooting].
 
+## Transport
+
+Cloud Storage uses gRPC for the transport layer.
+
 ## Supported Java Versions
 
 Java 8 or above is required for using this client.
