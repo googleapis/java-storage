@@ -1,6 +1,7 @@
 trustedContributors:
 - renovate-bot
 - gcf-owl-bot[bot]
+- release-please[bot]
 
 annotations:
 - type: comment
