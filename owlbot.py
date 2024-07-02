@@ -21,8 +21,8 @@ import synthtool.languages.java as java
 
 for library in s.get_staging_dirs():
   # put any special-case replacements here
-  if os.path.exists("owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json"):
-    os.remove("owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json")
+  # if os.path.exists("owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json"):
+  #  os.remove("owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json")
   s.move(library)
 
 s.remove_staging_dirs()
