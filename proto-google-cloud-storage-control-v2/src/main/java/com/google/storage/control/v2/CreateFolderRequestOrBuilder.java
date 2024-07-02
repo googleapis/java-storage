@@ -28,8 +28,7 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside. The bucket
-   * must be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which the folder will reside.
    * </pre>
    *
    * <code>
@@ -43,8 +42,7 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside. The bucket
-   * must be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which the folder will reside.
    * </pre>
    *
    * <code>
@@ -106,11 +104,7 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The full name of a folder, including all its parent folders.
-   * Folders use single '/' characters as a delimiter.
-   * The folder_id must end with a slash.
-   * For example, the folder_id of "books/biographies/" would create a new
-   * "biographies/" folder under the "books/" folder.
+   * Required. The absolute path of the folder, using a single `/` as delimiter.
    * </pre>
    *
    * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -122,11 +116,7 @@ public interface CreateFolderRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The full name of a folder, including all its parent folders.
-   * Folders use single '/' characters as a delimiter.
-   * The folder_id must end with a slash.
-   * For example, the folder_id of "books/biographies/" would create a new
-   * "biographies/" folder under the "books/" folder.
+   * Required. The absolute path of the folder, using a single `/` as delimiter.
    * </pre>
    *
    * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -154,7 +144,8 @@ public interface CreateFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>
@@ -169,7 +160,8 @@ public interface CreateFolderRequestOrBuilder
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>

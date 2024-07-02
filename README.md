@@ -102,7 +102,7 @@ to add `google-cloud-storage` as a dependency in your code.
 ## About Cloud Storage
 
 
-[Cloud Storage][product-docs] is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally.
+[Cloud Storage][product-docs] is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally. test
 
 See the [Cloud Storage client library docs][javadocs] to learn how to
 use this Cloud Storage Client Library.
@@ -411,6 +411,10 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 ## Troubleshooting
 
 To get help, follow the instructions in the [shared Troubleshooting document][troubleshooting].
+
+## Transport
+
+Cloud Storage uses gRPC for the transport layer.
 
 ## Supported Java Versions
 

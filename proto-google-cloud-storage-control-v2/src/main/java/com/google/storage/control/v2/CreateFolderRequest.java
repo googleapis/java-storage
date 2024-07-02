@@ -23,8 +23,7 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for CreateFolder. This operation is only applicable to a
- * hierarchical namespace enabled bucket.
+ * Request message for CreateFolder.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
@@ -75,8 +74,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside. The bucket
-   * must be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which the folder will reside.
    * </pre>
    *
    * <code>
@@ -101,8 +99,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Name of the bucket in which the folder will reside. The bucket
-   * must be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which the folder will reside.
    * </pre>
    *
    * <code>
@@ -190,11 +187,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The full name of a folder, including all its parent folders.
-   * Folders use single '/' characters as a delimiter.
-   * The folder_id must end with a slash.
-   * For example, the folder_id of "books/biographies/" would create a new
-   * "biographies/" folder under the "books/" folder.
+   * Required. The absolute path of the folder, using a single `/` as delimiter.
    * </pre>
    *
    * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -217,11 +210,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The full name of a folder, including all its parent folders.
-   * Folders use single '/' characters as a delimiter.
-   * The folder_id must end with a slash.
-   * For example, the folder_id of "books/biographies/" would create a new
-   * "biographies/" folder under the "books/" folder.
+   * Required. The absolute path of the folder, using a single `/` as delimiter.
    * </pre>
    *
    * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -269,7 +258,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>
@@ -295,7 +285,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>
@@ -521,8 +512,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request message for CreateFolder. This operation is only applicable to a
-   * hierarchical namespace enabled bucket.
+   * Request message for CreateFolder.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.CreateFolderRequest}
@@ -778,8 +768,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside. The bucket
-     * must be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which the folder will reside.
      * </pre>
      *
      * <code>
@@ -803,8 +792,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside. The bucket
-     * must be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which the folder will reside.
      * </pre>
      *
      * <code>
@@ -828,8 +816,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside. The bucket
-     * must be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which the folder will reside.
      * </pre>
      *
      * <code>
@@ -852,8 +839,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside. The bucket
-     * must be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which the folder will reside.
      * </pre>
      *
      * <code>
@@ -872,8 +858,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Name of the bucket in which the folder will reside. The bucket
-     * must be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which the folder will reside.
      * </pre>
      *
      * <code>
@@ -1120,11 +1105,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The full name of a folder, including all its parent folders.
-     * Folders use single '/' characters as a delimiter.
-     * The folder_id must end with a slash.
-     * For example, the folder_id of "books/biographies/" would create a new
-     * "biographies/" folder under the "books/" folder.
+     * Required. The absolute path of the folder, using a single `/` as delimiter.
      * </pre>
      *
      * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1146,11 +1127,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The full name of a folder, including all its parent folders.
-     * Folders use single '/' characters as a delimiter.
-     * The folder_id must end with a slash.
-     * For example, the folder_id of "books/biographies/" would create a new
-     * "biographies/" folder under the "books/" folder.
+     * Required. The absolute path of the folder, using a single `/` as delimiter.
      * </pre>
      *
      * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1172,11 +1149,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The full name of a folder, including all its parent folders.
-     * Folders use single '/' characters as a delimiter.
-     * The folder_id must end with a slash.
-     * For example, the folder_id of "books/biographies/" would create a new
-     * "biographies/" folder under the "books/" folder.
+     * Required. The absolute path of the folder, using a single `/` as delimiter.
      * </pre>
      *
      * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1197,11 +1170,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The full name of a folder, including all its parent folders.
-     * Folders use single '/' characters as a delimiter.
-     * The folder_id must end with a slash.
-     * For example, the folder_id of "books/biographies/" would create a new
-     * "biographies/" folder under the "books/" folder.
+     * Required. The absolute path of the folder, using a single `/` as delimiter.
      * </pre>
      *
      * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1218,11 +1187,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The full name of a folder, including all its parent folders.
-     * Folders use single '/' characters as a delimiter.
-     * The folder_id must end with a slash.
-     * For example, the folder_id of "books/biographies/" would create a new
-     * "biographies/" folder under the "books/" folder.
+     * Required. The absolute path of the folder, using a single `/` as delimiter.
      * </pre>
      *
      * <code>string folder_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1303,7 +1268,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1328,7 +1294,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1353,7 +1320,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1377,7 +1345,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1397,7 +1366,8 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>

@@ -23,8 +23,7 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for ListFolders. This operation is only applicable to a
- * hierarchical namespace enabled bucket.
+ * Request message for ListFolders.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.ListFoldersRequest}
@@ -78,8 +77,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Required. Name of the bucket in which to look for folders. The bucket must
-   * be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which to look for folders.
    * </pre>
    *
    * <code>
@@ -104,8 +102,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Required. Name of the bucket in which to look for folders. The bucket must
-   * be a hierarchical namespace enabled bucket.
+   * Required. Name of the bucket in which to look for folders.
    * </pre>
    *
    * <code>
@@ -704,8 +701,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Request message for ListFolders. This operation is only applicable to a
-   * hierarchical namespace enabled bucket.
+   * Request message for ListFolders.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.ListFoldersRequest}
@@ -992,8 +988,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. Name of the bucket in which to look for folders. The bucket must
-     * be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which to look for folders.
      * </pre>
      *
      * <code>
@@ -1017,8 +1012,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. Name of the bucket in which to look for folders. The bucket must
-     * be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which to look for folders.
      * </pre>
      *
      * <code>
@@ -1042,8 +1036,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. Name of the bucket in which to look for folders. The bucket must
-     * be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which to look for folders.
      * </pre>
      *
      * <code>
@@ -1066,8 +1059,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. Name of the bucket in which to look for folders. The bucket must
-     * be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which to look for folders.
      * </pre>
      *
      * <code>
@@ -1086,8 +1078,7 @@ public final class ListFoldersRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. Name of the bucket in which to look for folders. The bucket must
-     * be a hierarchical namespace enabled bucket.
+     * Required. Name of the bucket in which to look for folders.
      * </pre>
      *
      * <code>

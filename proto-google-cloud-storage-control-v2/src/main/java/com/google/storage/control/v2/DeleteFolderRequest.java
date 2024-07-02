@@ -23,8 +23,7 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for DeleteFolder. This operation is only applicable to a
- * hierarchical namespace enabled bucket.
+ * Request message for DeleteFolder.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.DeleteFolderRequest}
@@ -202,7 +201,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>
@@ -228,7 +228,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. A unique identifier for this request. UUID is the recommended
-   * format, but other formats are still accepted.
+   * format, but other formats are still accepted. This request is only
+   * idempotent if a `request_id` is provided.
    * </pre>
    *
    * <code>
@@ -450,8 +451,7 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request message for DeleteFolder. This operation is only applicable to a
-   * hierarchical namespace enabled bucket.
+   * Request message for DeleteFolder.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.DeleteFolderRequest}
@@ -946,7 +946,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -971,7 +972,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -996,7 +998,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1020,7 +1023,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>
@@ -1040,7 +1044,8 @@ public final class DeleteFolderRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. A unique identifier for this request. UUID is the recommended
-     * format, but other formats are still accepted.
+     * format, but other formats are still accepted. This request is only
+     * idempotent if a `request_id` is provided.
      * </pre>
      *
      * <code>

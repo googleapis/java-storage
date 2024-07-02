@@ -202,7 +202,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -269,7 +268,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -336,7 +334,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -409,7 +406,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -570,7 +566,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -638,7 +633,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -960,7 +954,6 @@ public class StorageClientTest {
             .setSatisfiesPzs(true)
             .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
-            .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1389,8 +1382,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1645,8 +1636,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1719,8 +1708,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1830,8 +1817,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1901,8 +1886,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1972,8 +1955,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2046,8 +2027,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2191,8 +2170,6 @@ public class StorageClientTest {
             .setOwner(Owner.newBuilder().build())
             .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
-            .setSoftDeleteTime(Timestamp.newBuilder().build())
-            .setHardDeleteTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 

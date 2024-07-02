@@ -17,7 +17,6 @@
 package com.google.storage.control.v2.stub;
 
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
-import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -51,18 +50,12 @@ import com.google.common.collect.Lists;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Empty;
 import com.google.storage.control.v2.CreateFolderRequest;
-import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
-import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.Folder;
 import com.google.storage.control.v2.GetFolderRequest;
-import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
-import com.google.storage.control.v2.ListManagedFoldersRequest;
-import com.google.storage.control.v2.ListManagedFoldersResponse;
-import com.google.storage.control.v2.ManagedFolder;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
 import com.google.storage.control.v2.StorageLayout;
@@ -129,13 +122,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
   private final OperationCallSettings<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationSettings;
   private final UnaryCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutSettings;
-  private final UnaryCallSettings<CreateManagedFolderRequest, ManagedFolder>
-      createManagedFolderSettings;
-  private final UnaryCallSettings<DeleteManagedFolderRequest, Empty> deleteManagedFolderSettings;
-  private final UnaryCallSettings<GetManagedFolderRequest, ManagedFolder> getManagedFolderSettings;
-  private final PagedCallSettings<
-          ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
-      listManagedFoldersSettings;
 
   private static final PagedListDescriptor<ListFoldersRequest, ListFoldersResponse, Folder>
       LIST_FOLDERS_PAGE_STR_DESC =
@@ -173,46 +159,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
             }
           };
 
-  private static final PagedListDescriptor<
-          ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder>
-      LIST_MANAGED_FOLDERS_PAGE_STR_DESC =
-          new PagedListDescriptor<
-              ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder>() {
-            @Override
-            public String emptyToken() {
-              return "";
-            }
-
-            @Override
-            public ListManagedFoldersRequest injectToken(
-                ListManagedFoldersRequest payload, String token) {
-              return ListManagedFoldersRequest.newBuilder(payload).setPageToken(token).build();
-            }
-
-            @Override
-            public ListManagedFoldersRequest injectPageSize(
-                ListManagedFoldersRequest payload, int pageSize) {
-              return ListManagedFoldersRequest.newBuilder(payload).setPageSize(pageSize).build();
-            }
-
-            @Override
-            public Integer extractPageSize(ListManagedFoldersRequest payload) {
-              return payload.getPageSize();
-            }
-
-            @Override
-            public String extractNextToken(ListManagedFoldersResponse payload) {
-              return payload.getNextPageToken();
-            }
-
-            @Override
-            public Iterable<ManagedFolder> extractResources(ListManagedFoldersResponse payload) {
-              return payload.getManagedFoldersList() == null
-                  ? ImmutableList.<ManagedFolder>of()
-                  : payload.getManagedFoldersList();
-            }
-          };
-
   private static final PagedListResponseFactory<
           ListFoldersRequest, ListFoldersResponse, ListFoldersPagedResponse>
       LIST_FOLDERS_PAGE_STR_FACT =
@@ -227,27 +173,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               PageContext<ListFoldersRequest, ListFoldersResponse, Folder> pageContext =
                   PageContext.create(callable, LIST_FOLDERS_PAGE_STR_DESC, request, context);
               return ListFoldersPagedResponse.createAsync(pageContext, futureResponse);
-            }
-          };
-
-  private static final PagedListResponseFactory<
-          ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
-      LIST_MANAGED_FOLDERS_PAGE_STR_FACT =
-          new PagedListResponseFactory<
-              ListManagedFoldersRequest,
-              ListManagedFoldersResponse,
-              ListManagedFoldersPagedResponse>() {
-            @Override
-            public ApiFuture<ListManagedFoldersPagedResponse> getFuturePagedResponse(
-                UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse> callable,
-                ListManagedFoldersRequest request,
-                ApiCallContext context,
-                ApiFuture<ListManagedFoldersResponse> futureResponse) {
-              PageContext<ListManagedFoldersRequest, ListManagedFoldersResponse, ManagedFolder>
-                  pageContext =
-                      PageContext.create(
-                          callable, LIST_MANAGED_FOLDERS_PAGE_STR_DESC, request, context);
-              return ListManagedFoldersPagedResponse.createAsync(pageContext, futureResponse);
             }
           };
 
@@ -286,29 +211,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
   /** Returns the object with the settings used for calls to getStorageLayout. */
   public UnaryCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutSettings() {
     return getStorageLayoutSettings;
-  }
-
-  /** Returns the object with the settings used for calls to createManagedFolder. */
-  public UnaryCallSettings<CreateManagedFolderRequest, ManagedFolder>
-      createManagedFolderSettings() {
-    return createManagedFolderSettings;
-  }
-
-  /** Returns the object with the settings used for calls to deleteManagedFolder. */
-  public UnaryCallSettings<DeleteManagedFolderRequest, Empty> deleteManagedFolderSettings() {
-    return deleteManagedFolderSettings;
-  }
-
-  /** Returns the object with the settings used for calls to getManagedFolder. */
-  public UnaryCallSettings<GetManagedFolderRequest, ManagedFolder> getManagedFolderSettings() {
-    return getManagedFolderSettings;
-  }
-
-  /** Returns the object with the settings used for calls to listManagedFolders. */
-  public PagedCallSettings<
-          ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
-      listManagedFoldersSettings() {
-    return listManagedFoldersSettings;
   }
 
   public StorageControlStub createStub() throws IOException {
@@ -398,10 +300,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     renameFolderSettings = settingsBuilder.renameFolderSettings().build();
     renameFolderOperationSettings = settingsBuilder.renameFolderOperationSettings().build();
     getStorageLayoutSettings = settingsBuilder.getStorageLayoutSettings().build();
-    createManagedFolderSettings = settingsBuilder.createManagedFolderSettings().build();
-    deleteManagedFolderSettings = settingsBuilder.deleteManagedFolderSettings().build();
-    getManagedFolderSettings = settingsBuilder.getManagedFolderSettings().build();
-    listManagedFoldersSettings = settingsBuilder.listManagedFoldersSettings().build();
   }
 
   /** Builder for StorageControlStubSettings. */
@@ -418,15 +316,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
         renameFolderOperationSettings;
     private final UnaryCallSettings.Builder<GetStorageLayoutRequest, StorageLayout>
         getStorageLayoutSettings;
-    private final UnaryCallSettings.Builder<CreateManagedFolderRequest, ManagedFolder>
-        createManagedFolderSettings;
-    private final UnaryCallSettings.Builder<DeleteManagedFolderRequest, Empty>
-        deleteManagedFolderSettings;
-    private final UnaryCallSettings.Builder<GetManagedFolderRequest, ManagedFolder>
-        getManagedFolderSettings;
-    private final PagedCallSettings.Builder<
-            ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
-        listManagedFoldersSettings;
     private static final ImmutableMap<String, ImmutableSet<StatusCode.Code>>
         RETRYABLE_CODE_DEFINITIONS;
 
@@ -488,10 +377,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       renameFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       renameFolderOperationSettings = OperationCallSettings.newBuilder();
       getStorageLayoutSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      createManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      deleteManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      getManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      listManagedFoldersSettings = PagedCallSettings.newBuilder(LIST_MANAGED_FOLDERS_PAGE_STR_FACT);
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -500,11 +385,7 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               getFolderSettings,
               listFoldersSettings,
               renameFolderSettings,
-              getStorageLayoutSettings,
-              createManagedFolderSettings,
-              deleteManagedFolderSettings,
-              getManagedFolderSettings,
-              listManagedFoldersSettings);
+              getStorageLayoutSettings);
       initDefaults(this);
     }
 
@@ -518,10 +399,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       renameFolderSettings = settings.renameFolderSettings.toBuilder();
       renameFolderOperationSettings = settings.renameFolderOperationSettings.toBuilder();
       getStorageLayoutSettings = settings.getStorageLayoutSettings.toBuilder();
-      createManagedFolderSettings = settings.createManagedFolderSettings.toBuilder();
-      deleteManagedFolderSettings = settings.deleteManagedFolderSettings.toBuilder();
-      getManagedFolderSettings = settings.getManagedFolderSettings.toBuilder();
-      listManagedFoldersSettings = settings.listManagedFoldersSettings.toBuilder();
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -530,11 +407,7 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               getFolderSettings,
               listFoldersSettings,
               renameFolderSettings,
-              getStorageLayoutSettings,
-              createManagedFolderSettings,
-              deleteManagedFolderSettings,
-              getManagedFolderSettings,
-              listManagedFoldersSettings);
+              getStorageLayoutSettings);
     }
 
     private static Builder createDefault() {
@@ -577,26 +450,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
 
       builder
           .getStorageLayoutSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .createManagedFolderSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
-
-      builder
-          .deleteManagedFolderSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
-
-      builder
-          .getManagedFolderSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .listManagedFoldersSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -679,31 +532,6 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     public UnaryCallSettings.Builder<GetStorageLayoutRequest, StorageLayout>
         getStorageLayoutSettings() {
       return getStorageLayoutSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to createManagedFolder. */
-    public UnaryCallSettings.Builder<CreateManagedFolderRequest, ManagedFolder>
-        createManagedFolderSettings() {
-      return createManagedFolderSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to deleteManagedFolder. */
-    public UnaryCallSettings.Builder<DeleteManagedFolderRequest, Empty>
-        deleteManagedFolderSettings() {
-      return deleteManagedFolderSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to getManagedFolder. */
-    public UnaryCallSettings.Builder<GetManagedFolderRequest, ManagedFolder>
-        getManagedFolderSettings() {
-      return getManagedFolderSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to listManagedFolders. */
-    public PagedCallSettings.Builder<
-            ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
-        listManagedFoldersSettings() {
-      return listManagedFoldersSettings;
     }
 
     @Override

@@ -23,8 +23,7 @@ package com.google.storage.control.v2;
  *
  *
  * <pre>
- * Request message for RenameFolder. This operation is only applicable to a
- * hierarchical namespace enabled bucket.
+ * Request message for RenameFolder.
  * </pre>
  *
  * Protobuf type {@code google.storage.control.v2.RenameFolderRequest}
@@ -513,8 +512,7 @@ public final class RenameFolderRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request message for RenameFolder. This operation is only applicable to a
-   * hierarchical namespace enabled bucket.
+   * Request message for RenameFolder.
    * </pre>
    *
    * Protobuf type {@code google.storage.control.v2.RenameFolderRequest}
