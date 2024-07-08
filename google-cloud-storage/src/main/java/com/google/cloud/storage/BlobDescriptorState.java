@@ -16,30 +16,42 @@
 
 package com.google.cloud.storage;
 
+import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ReadRange;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BlobDescriptorState {
 
   private final BidiReadObjectRequest openRequest;
-  private final AtomicReference<BidiReadHandle> bidiReadHandle;
-  private final AtomicReference<Object> metadata;
+  private final AtomicReference<@Nullable BidiReadHandle> bidiReadHandle;
+  private final AtomicReference<@Nullable String> routingToken;
+  private final AtomicReference<@MonotonicNonNull Object> metadata;
   private final AtomicLong readIdSeq;
   private final Map<Long, BlobDescriptorStreamRead> outstandingReads;
 
   BlobDescriptorState(BidiReadObjectRequest openRequest) {
     this.openRequest = openRequest;
     this.bidiReadHandle = new AtomicReference<>();
+    this.routingToken = new AtomicReference<>();
     this.metadata = new AtomicReference<>();
     this.readIdSeq = new AtomicLong(1);
     this.outstandingReads = new ConcurrentHashMap<>();
   }
 
+  BidiReadObjectRequest getOpenRequest() {
+    return openRequest;
+  }
+
+  @Nullable
   BidiReadHandle getBidiReadHandle() {
     return bidiReadHandle.get();
   }
@@ -60,6 +72,7 @@ final class BlobDescriptorState {
     return readIdSeq.getAndIncrement();
   }
 
+  @Nullable
   BlobDescriptorStreamRead getOutstandingRead(long key) {
     return outstandingReads.get(key);
   }
@@ -70,5 +83,20 @@ final class BlobDescriptorState {
 
   void removeOutstandingRead(long key) {
     outstandingReads.remove(key);
+  }
+
+  void setRoutingToken(String routingToken) {
+    this.routingToken.set(routingToken);
+  }
+
+  @Nullable
+  String getRoutingToken() {
+    return this.routingToken.get();
+  }
+
+  public List<ReadRange> getOutstandingReads() {
+    return outstandingReads.values().stream()
+        .map(BlobDescriptorStreamRead::makeReadRange)
+        .collect(ImmutableList.toImmutableList());
   }
 }

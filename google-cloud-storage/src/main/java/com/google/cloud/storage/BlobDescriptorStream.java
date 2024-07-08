@@ -19,14 +19,25 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
+import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.common.base.Preconditions;
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.rpc.Status;
+import com.google.storage.v2.BidiReadHandle;
+import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
+import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
+import io.grpc.Metadata;
+import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -34,11 +45,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadObjectResponse>
+final class BlobDescriptorStream
     implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
 
-  private final SettableApiFuture<Void> openSignal;
-  private final SettableApiFuture<Void> closeSignal;
+  private static final Metadata.Key<BidiReadObjectRedirectedError> REDIRECT_KEY =
+      Metadata.Key.of(
+          "redirect-bin",
+          ProtoUtils.metadataMarshaller(BidiReadObjectRedirectedError.getDefaultInstance()));
+  static final Metadata.Key<Status> GRPC_STATUS_DETAILS_KEY =
+      Metadata.Key.of(
+          "grpc-status-details-bin", ProtoUtils.metadataMarshaller(Status.getDefaultInstance()));
+
+  private final SettableApiFuture<Void> blobDescriptorResolveFuture;
 
   private final BlobDescriptorState state;
   private final ResponseContentLifecycleManager<BidiReadObjectResponse>
@@ -46,11 +64,11 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
   private final Executor executor;
   private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable;
   private final GrpcCallContext context;
-  private final OpenMonitorResponseObserver openMonitorResponseObserver;
 
   private volatile boolean open;
-  private volatile StreamController controller;
+  private volatile MonitoringResponseObserver monitoringResponseObserver;
   private volatile ClientStream<BidiReadObjectRequest> requestStream;
+  private volatile StreamController controller;
 
   private BlobDescriptorStream(
       BlobDescriptorState state,
@@ -63,9 +81,7 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
     this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
     this.callable = callable;
     this.context = context;
-    this.openMonitorResponseObserver = new OpenMonitorResponseObserver();
-    this.openSignal = SettableApiFuture.create();
-    this.closeSignal = SettableApiFuture.create();
+    this.blobDescriptorResolveFuture = SettableApiFuture.create();
     this.open = true;
   }
 
@@ -75,7 +91,9 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
     } else {
       synchronized (this) {
         if (requestStream == null) {
-          requestStream = callable.splitCall(openMonitorResponseObserver, context);
+          monitoringResponseObserver =
+              new MonitoringResponseObserver(new BidiReadObjectResponseObserver());
+          requestStream = callable.splitCall(monitoringResponseObserver, context);
         }
         return requestStream;
       }
@@ -92,11 +110,7 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
       cancel(true);
       if (requestStream != null) {
         requestStream.closeSend();
-        try {
-          closeSignal.get();
-        } catch (InterruptedException | ExecutionException e) {
-          throw new RuntimeException(e);
-        }
+        ApiFutureUtils.await(monitoringResponseObserver.closeSignal);
         requestStream = null;
       }
     } finally {
@@ -130,127 +144,214 @@ final class BlobDescriptorStream extends StateCheckingResponseObserver<BidiReadO
 
   @Override
   public void addListener(Runnable listener, Executor executor) {
-    openSignal.addListener(listener, executor);
+    blobDescriptorResolveFuture.addListener(listener, executor);
   }
 
   @Override
   public boolean cancel(boolean mayInterruptIfRunning) {
-    return openSignal.cancel(mayInterruptIfRunning);
+    return blobDescriptorResolveFuture.cancel(mayInterruptIfRunning);
   }
 
   @Override
   public Void get() throws InterruptedException, ExecutionException {
-    return openSignal.get();
+    return blobDescriptorResolveFuture.get();
   }
 
   @Override
   public Void get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
-    return openSignal.get(timeout, unit);
+    return blobDescriptorResolveFuture.get(timeout, unit);
   }
 
   @Override
   public boolean isCancelled() {
-    return openSignal.isCancelled();
+    return blobDescriptorResolveFuture.isCancelled();
   }
 
   @Override
   public boolean isDone() {
-    return openSignal.isDone();
+    return blobDescriptorResolveFuture.isDone();
   }
-
-  @Override
-  protected void onStartImpl(StreamController controller) {
-    this.controller = controller;
-    controller.disableAutoInboundFlowControl();
-    controller.request(2);
-  }
-
-  @Override
-  protected void onResponseImpl(BidiReadObjectResponse response) {
-    controller.request(1);
-    try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
-        bidiResponseContentLifecycleManager.get(response)) {
-      if (response.hasMetadata()) {
-        state.setMetadata(response.getMetadata());
-      }
-      if (response.hasReadHandle()) {
-        state.setBidiReadHandle(response.getReadHandle());
-      }
-      List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
-      if (rangeData.isEmpty()) {
-        return;
-      }
-      for (int i = 0; i < rangeData.size(); i++) {
-        ObjectRangeData d = rangeData.get(i);
-        long id = d.getReadRange().getReadId();
-        BlobDescriptorStreamRead read = state.getOutstandingRead(id);
-        if (read == null) {
-          continue;
-        }
-        final int idx = i;
-        //noinspection rawtypes
-        ResponseContentLifecycleHandle.ChildRef childRef =
-            handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
-        read.accept(childRef);
-        if (d.getRangeEnd()) {
-          // invoke eof on exec, the resolving future could have a downstream callback
-          // that we don't want to block this grpc thread
-          executor.execute(
-              () -> {
-                try {
-                  read.eof();
-                  // don't remove the outstanding read until the future has been resolved
-                  state.removeOutstandingRead(id);
-                } catch (IOException e) {
-                  // TODO: sync this up with stream restarts when the time comes
-                  throw StorageException.coalesce(e);
-                }
-              });
-        }
-      }
-    } catch (IOException e) {
-      // TODO: sync this up with stream restarts when the time comes
-      throw StorageException.coalesce(e);
-    }
-  }
-
-  @Override
-  protected void onErrorImpl(Throwable t) {}
-
-  @Override
-  protected void onCompleteImpl() {}
 
   private void checkOpen() {
     Preconditions.checkState(open, "not open");
   }
 
-  private class OpenMonitorResponseObserver
+  private void restart() {
+    requestStream = null;
+
+    BidiReadObjectRequest openRequest = state.getOpenRequest();
+    BidiReadObjectRequest.Builder b = openRequest.toBuilder().clearReadRanges();
+
+    String routingToken = state.getRoutingToken();
+    if (routingToken != null) {
+      b.getReadObjectSpecBuilder().setRoutingToken(routingToken);
+    }
+
+    BidiReadHandle bidiReadHandle = state.getBidiReadHandle();
+    if (bidiReadHandle != null) {
+      b.getReadObjectSpecBuilder().setReadHandle(bidiReadHandle);
+    }
+
+    b.addAllReadRanges(state.getOutstandingReads());
+    if (openRequest.getReadObjectSpec().getGeneration() <= 0) {
+      Object metadata = state.getMetadata();
+      if (metadata != null) {
+        b.getReadObjectSpecBuilder().setGeneration(metadata.getGeneration());
+      }
+    }
+
+    BidiReadObjectRequest restartRequest = b.build();
+    synchronized (this) {
+      ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream();
+      requestStream1.send(restartRequest);
+      // todo: put this in a retry loop
+      ApiFutureUtils.await(monitoringResponseObserver.openSignal);
+    }
+  }
+
+  private final class BidiReadObjectResponseObserver
       extends StateCheckingResponseObserver<BidiReadObjectResponse> {
 
-    private OpenMonitorResponseObserver() {}
+    private BidiReadObjectResponseObserver() {}
 
     @Override
-    protected void onStartImpl(StreamController controller) {
-      BlobDescriptorStream.this.onStartImpl(controller);
+    public void onStartImpl(StreamController controller) {
+      BlobDescriptorStream.this.controller = controller;
+      controller.disableAutoInboundFlowControl();
+      controller.request(2);
     }
 
     @Override
     protected void onResponseImpl(BidiReadObjectResponse response) {
-      BlobDescriptorStream.this.onResponseImpl(response);
-      openSignal.set(null);
+      controller.request(1);
+      try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
+          bidiResponseContentLifecycleManager.get(response)) {
+        if (response.hasMetadata()) {
+          state.setMetadata(response.getMetadata());
+        }
+        if (response.hasReadHandle()) {
+          state.setBidiReadHandle(response.getReadHandle());
+        }
+        List<ObjectRangeData> rangeData = response.getObjectDataRangesList();
+        if (rangeData.isEmpty()) {
+          return;
+        }
+        for (int i = 0; i < rangeData.size(); i++) {
+          ObjectRangeData d = rangeData.get(i);
+          long id = d.getReadRange().getReadId();
+          BlobDescriptorStreamRead read = state.getOutstandingRead(id);
+          if (read == null) {
+            continue;
+          }
+          final int idx = i;
+          //noinspection rawtypes
+          ResponseContentLifecycleHandle.ChildRef childRef =
+              handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
+          read.accept(childRef);
+          if (d.getRangeEnd()) {
+            // invoke eof on exec, the resolving future could have a downstream callback
+            // that we don't want to block this grpc thread
+            executor.execute(
+                () -> {
+                  try {
+                    read.eof();
+                    // don't remove the outstanding read until the future has been resolved
+                    state.removeOutstandingRead(id);
+                  } catch (IOException e) {
+                    // TODO: sync this up with stream restarts when the time comes
+                    throw StorageException.coalesce(e);
+                  }
+                });
+          }
+        }
+      } catch (IOException e) {
+        // TODO: sync this up with stream restarts when the time comes
+        throw StorageException.coalesce(e);
+      }
     }
 
     @Override
     protected void onErrorImpl(Throwable t) {
-      BlobDescriptorStream.this.onErrorImpl(t);
+      if (t instanceof ApiException) {
+        ApiException apiE = (ApiException) t;
+        // https://cloud.google.com/apis/design/errors
+        ErrorDetails errorDetails = apiE.getErrorDetails();
+
+        t = t.getCause();
+      }
+      if (t instanceof StatusRuntimeException) {
+        StatusRuntimeException sre = (StatusRuntimeException) t;
+        Metadata trailers = sre.getTrailers();
+        if (trailers != null) {
+          Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
+          if (status != null) {
+
+            List<Any> detailsList = status.getDetailsList();
+            for (Any any : detailsList) {
+              if (any.is(BidiReadObjectRedirectedError.class)) {
+                try {
+                  BidiReadObjectRedirectedError bidiReadObjectRedirectedError =
+                      any.unpack(BidiReadObjectRedirectedError.class);
+                  if (bidiReadObjectRedirectedError.hasReadHandle()) {
+                    state.setBidiReadHandle(bidiReadObjectRedirectedError.getReadHandle());
+                  }
+                  if (bidiReadObjectRedirectedError.hasRoutingToken()) {
+                    state.setRoutingToken(bidiReadObjectRedirectedError.getRoutingToken());
+                  }
+
+                  executor.execute(BlobDescriptorStream.this::restart);
+                  break;
+                } catch (InvalidProtocolBufferException e) {
+                  // ignore it, falling back to regular retry behavior
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    @Override
+    protected void onCompleteImpl() {}
+  }
+
+  private class MonitoringResponseObserver
+      extends StateCheckingResponseObserver<BidiReadObjectResponse> {
+    private final BidiReadObjectResponseObserver delegate;
+    private final SettableApiFuture<Void> openSignal;
+    private final SettableApiFuture<Void> closeSignal;
+
+    private MonitoringResponseObserver(BidiReadObjectResponseObserver delegate) {
+      this.delegate = delegate;
+      this.openSignal = SettableApiFuture.create();
+      this.closeSignal = SettableApiFuture.create();
+    }
+
+    @Override
+    protected void onStartImpl(StreamController controller) {
+      delegate.onStart(controller);
+    }
+
+    @Override
+    protected void onResponseImpl(BidiReadObjectResponse response) {
+      delegate.onResponse(response);
+      openSignal.set(null);
+      blobDescriptorResolveFuture.set(null);
+    }
+
+    @Override
+    protected void onErrorImpl(Throwable t) {
+      delegate.onError(t);
+      blobDescriptorResolveFuture.setException(t);
       openSignal.setException(t);
       closeSignal.setException(t);
     }
 
     @Override
     protected void onCompleteImpl() {
-      BlobDescriptorStream.this.onCompleteImpl();
+      delegate.onComplete();
+      blobDescriptorResolveFuture.set(null);
       openSignal.set(null);
       closeSignal.set(null);
     }
