@@ -58,9 +58,10 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
   @Override
   public DownloadSegment call() {
     long bytesCopied = -1L;
-    try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
-      FileChannel wc =
-          FileChannel.open(destPath, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+    try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts);
+        FileChannel wc =
+            FileChannel.open(destPath, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+      rc.setChunkSize(0);
       rc.seek(startPosition);
       rc.limit(endPosition);
       wc.position(startPosition);
