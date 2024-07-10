@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.GatheringByteChannel;
@@ -173,7 +172,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     private ByteBufferContent(ByteBuffer[] buffers) {
       this.buffers = buffers;
       this.positions = Arrays.stream(buffers).mapToInt(Buffers::position).toArray();
-      this.totalLength = Arrays.stream(buffers).mapToLong(Buffer::remaining).sum();
+      this.totalLength = Buffers.totalRemaining(buffers, 0, buffers.length);
       this.dirty = false;
     }
 
