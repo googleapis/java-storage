@@ -790,6 +790,9 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
               .setUserProject(Option.USER_PROJECT.getString(options));
       setEncryptionHeaders(getRequest.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+      if (Option.RETURN_RAW_INPUT_STREAM.getBoolean(options) != null) {
+        getRequest.setReturnRawInputStream(Option.RETURN_RAW_INPUT_STREAM.getBoolean(options));
+      }
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       getRequest.executeMedia().download(out);
       return out.toByteArray();
