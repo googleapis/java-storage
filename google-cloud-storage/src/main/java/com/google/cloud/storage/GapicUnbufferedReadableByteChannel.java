@@ -30,11 +30,9 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
-import java.util.Arrays;
 import java.util.Iterator;
 
 final class GapicUnbufferedReadableByteChannel
@@ -80,7 +78,7 @@ final class GapicUnbufferedReadableByteChannel
       throw new ClosedChannelException();
     }
 
-    long totalBufferCapacity = Arrays.stream(dsts).mapToLong(Buffer::remaining).sum();
+    long totalBufferCapacity = Buffers.totalRemaining(dsts, offset, length);
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
