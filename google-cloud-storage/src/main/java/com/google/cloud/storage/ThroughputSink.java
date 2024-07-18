@@ -18,14 +18,12 @@ package com.google.cloud.storage;
 
 import com.google.common.base.MoreObjects;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -262,7 +260,7 @@ interface ThroughputSink {
     @Override
     public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
       boolean exception = false;
-      long available = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+      long available = Buffers.totalRemaining(srcs, offset, length);
       Instant begin = clock.instant();
       try {
         return delegate.write(srcs, offset, length);
@@ -271,7 +269,7 @@ interface ThroughputSink {
         throw e;
       } finally {
         Instant end = clock.instant();
-        long remaining = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+        long remaining = Buffers.totalRemaining(srcs, offset, length);
         Record record = Record.of(available - remaining, begin, end, exception);
         sink.recordThroughput(record);
       }
@@ -280,7 +278,7 @@ interface ThroughputSink {
     @Override
     public long write(ByteBuffer[] srcs) throws IOException {
       boolean exception = false;
-      long available = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+      long available = Buffers.totalRemaining(srcs, 0, srcs.length);
       Instant begin = clock.instant();
       try {
         return delegate.write(srcs);
@@ -289,7 +287,7 @@ interface ThroughputSink {
         throw e;
       } finally {
         Instant end = clock.instant();
-        long remaining = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+        long remaining = Buffers.totalRemaining(srcs, 0, srcs.length);
         Record record = Record.of(available - remaining, begin, end, exception);
         sink.recordThroughput(record);
       }

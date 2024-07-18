@@ -52,14 +52,15 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
     Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     long bytesCopied = -1L;
     try (ReadChannel rc =
-        storage.reader(
-            BlobId.of(parallelDownloadConfig.getBucketName(), originalBlob.getName()), opts)) {
-      FileChannel wc =
-          FileChannel.open(
-              path,
-              StandardOpenOption.WRITE,
-              StandardOpenOption.CREATE,
-              StandardOpenOption.TRUNCATE_EXISTING);
+            storage.reader(
+                BlobId.of(parallelDownloadConfig.getBucketName(), originalBlob.getName()), opts);
+        FileChannel wc =
+            FileChannel.open(
+                path,
+                StandardOpenOption.WRITE,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING)) {
+      rc.setChunkSize(0);
       bytesCopied = ByteStreams.copy(rc, wc);
       if (originalBlob.getSize() != null) {
         if (bytesCopied != originalBlob.getSize()) {
