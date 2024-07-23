@@ -17,15 +17,29 @@
 package com.google.cloud.storage;
 
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.rpc.Status;
+import com.google.storage.v2.BidiReadObjectRedirectedError;
+import io.grpc.Metadata;
+import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.ProtoUtils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcUtils {
+
+  static final Metadata.Key<Status> GRPC_STATUS_DETAILS_KEY =
+      Metadata.Key.of(
+          "grpc-status-details-bin", ProtoUtils.metadataMarshaller(Status.getDefaultInstance()));
 
   private GrpcUtils() {}
 
@@ -71,5 +85,68 @@ final class GrpcUtils {
     if (ioException != null) {
       throw ioException;
     }
+  }
+
+  /**
+   * Returns {@code true} if the throwable is or is caused by a {@link StatusRuntimeException} that
+   * contains trailers, the trailers contain an entry {@code grpc-status-details-bin}, which
+   * contains a valid {@link Status}, and the status contains an entry in its details that is a
+   * {@link BidiReadObjectRedirectedError} (evaluated from index 0 to length). {@code false}
+   * otherwise.
+   */
+  static boolean isBidiReadObjectRedirect(Throwable t) {
+    if (t instanceof ApiException) {
+      t = t.getCause();
+    }
+    if (t instanceof StatusRuntimeException) {
+      StatusRuntimeException sre = (StatusRuntimeException) t;
+      Metadata trailers = sre.getTrailers();
+      if (trailers != null) {
+        Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
+        if (status != null) {
+          List<Any> detailsList = status.getDetailsList();
+          for (Any any : detailsList) {
+            if (any.is(BidiReadObjectRedirectedError.class)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns the first occurrence of a {@link BidiReadObjectRedirectedError} if the throwable is or
+   * is caused by a {@link StatusRuntimeException} that contains trailers, the trailers contain an
+   * entry {@code grpc-status-details-bin}, which contains a valid {@link Status}, and the status
+   * contains an entry in its details that is a {@link BidiReadObjectRedirectedError} (evaluated
+   * from index 0 to length). {@code null} otherwise.
+   */
+  @Nullable
+  static BidiReadObjectRedirectedError getBidiReadObjectRedirectedError(Throwable t) {
+    if (isBidiReadObjectRedirect(t)) {
+      if (t instanceof ApiException) {
+        t = t.getCause();
+      }
+      if (t instanceof StatusRuntimeException) {
+        StatusRuntimeException sre = (StatusRuntimeException) t;
+        Metadata trailers = sre.getTrailers();
+        //noinspection DataFlowIssue guarded by isBidiReadObjectRedirect
+        Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
+        //noinspection DataFlowIssue guarded by isBidiReadObjectRedirect
+        List<Any> detailsList = status.getDetailsList();
+        for (Any any : detailsList) {
+          if (any.is(BidiReadObjectRedirectedError.class)) {
+            try {
+              return any.unpack(BidiReadObjectRedirectedError.class);
+            } catch (InvalidProtocolBufferException e) {
+              // ignore it, falling back to regular retry behavior
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 }

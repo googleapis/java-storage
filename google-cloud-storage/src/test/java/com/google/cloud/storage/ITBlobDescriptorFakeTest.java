@@ -45,9 +45,6 @@ import org.junit.Test;
 
 public final class ITBlobDescriptorFakeTest {
 
-  static final Metadata.Key<byte[]> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of("grpc-status-details-bin", Metadata.BINARY_BYTE_MARSHALLER);
-
   /**
    *
    *
@@ -134,7 +131,7 @@ public final class ITBlobDescriptorFakeTest {
                           .build();
 
                   Metadata trailers = new Metadata();
-                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails.toByteArray());
+                  trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
                   StatusRuntimeException statusRuntimeException =
                       Status.UNAVAILABLE.withDescription("redirect").asRuntimeException(trailers);
                   respond.onError(statusRuntimeException);
@@ -171,11 +168,117 @@ public final class ITBlobDescriptorFakeTest {
       BlobId id = BlobId.of("b", "o");
       ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
 
-      try (BlobDescriptor bd = futureBlobDescriptor.get(300, TimeUnit.SECONDS)) {
+      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         byte[] actual =
             bd.readRangeAsBytes(ByteRangeSpec.relativeLength(10L, 10L)).get(1, TimeUnit.SECONDS);
 
         assertThat(xxd(actual)).isEqualTo(xxd(content.getBytes()));
+      }
+    }
+  }
+
+  /**
+   *
+   *
+   * <ol>
+   *   <li>Attempt to open blob descriptor
+   *   <li>server responds with a redirect
+   *   <li>expect a new stream open with the specified redirect token
+   * </ol>
+   */
+  @Test
+  public void bidiReadObjectRedirectedError_onOpen() throws Exception {
+    String routingToken = UUID.randomUUID().toString();
+    BidiReadHandle readHandle =
+        BidiReadHandle.newBuilder()
+            .setHandle(ByteString.copyFromUtf8(UUID.randomUUID().toString()))
+            .build();
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/b")
+                    .setObject("o")
+                    .build())
+            .build();
+    BidiReadObjectRequest req2 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/b")
+                    .setObject("o")
+                    .setReadHandle(readHandle)
+                    .setRoutingToken(routingToken)
+                    .build())
+            .build();
+
+    BidiReadObjectResponse res1 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .build();
+
+    StorageImplBase fake =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> respond) {
+            return new StreamObserver<BidiReadObjectRequest>() {
+              @Override
+              public void onNext(BidiReadObjectRequest value) {
+                if (req1.equals(value)) {
+                  BidiReadObjectRedirectedError redirect =
+                      BidiReadObjectRedirectedError.newBuilder()
+                          .setReadHandle(readHandle)
+                          .setRoutingToken(routingToken)
+                          .build();
+
+                  com.google.rpc.Status grpcStatusDetails =
+                      com.google.rpc.Status.newBuilder()
+                          .setCode(com.google.rpc.Code.UNAVAILABLE_VALUE)
+                          .setMessage("redirect")
+                          .addDetails(Any.pack(redirect))
+                          .build();
+
+                  Metadata trailers = new Metadata();
+                  trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  StatusRuntimeException statusRuntimeException =
+                      Status.UNAVAILABLE.withDescription("redirect").asRuntimeException(trailers);
+                  respond.onError(statusRuntimeException);
+                } else if (req2.equals(value)) {
+                  respond.onNext(res1);
+                } else {
+                  respond.onError(TestUtils.apiException(Code.UNIMPLEMENTED, "Unexpected request"));
+                }
+              }
+
+              @Override
+              public void onError(Throwable t) {
+                respond.onError(t);
+              }
+
+              @Override
+              public void onCompleted() {
+                respond.onCompleted();
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setGrpcInterceptorProvider(
+                    GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+        assertThat(bd).isNotNull();
       }
     }
   }

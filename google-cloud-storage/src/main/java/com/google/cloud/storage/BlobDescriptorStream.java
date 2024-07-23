@@ -19,25 +19,17 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
-import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.common.base.Preconditions;
-import com.google.protobuf.Any;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
-import io.grpc.Metadata;
-import io.grpc.StatusRuntimeException;
-import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -47,14 +39,6 @@ import java.util.concurrent.TimeoutException;
 
 final class BlobDescriptorStream
     implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
-
-  private static final Metadata.Key<BidiReadObjectRedirectedError> REDIRECT_KEY =
-      Metadata.Key.of(
-          "redirect-bin",
-          ProtoUtils.metadataMarshaller(BidiReadObjectRedirectedError.getDefaultInstance()));
-  static final Metadata.Key<Status> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of(
-          "grpc-status-details-bin", ProtoUtils.metadataMarshaller(Status.getDefaultInstance()));
 
   private final SettableApiFuture<Void> blobDescriptorResolveFuture;
 
@@ -273,42 +257,16 @@ final class BlobDescriptorStream
 
     @Override
     protected void onErrorImpl(Throwable t) {
-      if (t instanceof ApiException) {
-        ApiException apiE = (ApiException) t;
-        // https://cloud.google.com/apis/design/errors
-        ErrorDetails errorDetails = apiE.getErrorDetails();
-
-        t = t.getCause();
-      }
-      if (t instanceof StatusRuntimeException) {
-        StatusRuntimeException sre = (StatusRuntimeException) t;
-        Metadata trailers = sre.getTrailers();
-        if (trailers != null) {
-          Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
-          if (status != null) {
-
-            List<Any> detailsList = status.getDetailsList();
-            for (Any any : detailsList) {
-              if (any.is(BidiReadObjectRedirectedError.class)) {
-                try {
-                  BidiReadObjectRedirectedError bidiReadObjectRedirectedError =
-                      any.unpack(BidiReadObjectRedirectedError.class);
-                  if (bidiReadObjectRedirectedError.hasReadHandle()) {
-                    state.setBidiReadHandle(bidiReadObjectRedirectedError.getReadHandle());
-                  }
-                  if (bidiReadObjectRedirectedError.hasRoutingToken()) {
-                    state.setRoutingToken(bidiReadObjectRedirectedError.getRoutingToken());
-                  }
-
-                  executor.execute(BlobDescriptorStream.this::restart);
-                  break;
-                } catch (InvalidProtocolBufferException e) {
-                  // ignore it, falling back to regular retry behavior
-                }
-              }
-            }
-          }
+      BidiReadObjectRedirectedError bidiReadObjectRedirectedError =
+          GrpcUtils.getBidiReadObjectRedirectedError(t);
+      if (bidiReadObjectRedirectedError != null) {
+        if (bidiReadObjectRedirectedError.hasReadHandle()) {
+          state.setBidiReadHandle(bidiReadObjectRedirectedError.getReadHandle());
         }
+        if (bidiReadObjectRedirectedError.hasRoutingToken()) {
+          state.setRoutingToken(bidiReadObjectRedirectedError.getRoutingToken());
+        }
+        executor.execute(BlobDescriptorStream.this::restart);
       }
     }
 
@@ -342,10 +300,14 @@ final class BlobDescriptorStream
 
     @Override
     protected void onErrorImpl(Throwable t) {
-      delegate.onError(t);
-      blobDescriptorResolveFuture.setException(t);
-      openSignal.setException(t);
-      closeSignal.setException(t);
+      if (GrpcUtils.isBidiReadObjectRedirect(t)) {
+        delegate.onError(t);
+      } else {
+        delegate.onError(t);
+        blobDescriptorResolveFuture.setException(t);
+        openSignal.setException(t);
+        closeSignal.setException(t);
+      }
     }
 
     @Override
