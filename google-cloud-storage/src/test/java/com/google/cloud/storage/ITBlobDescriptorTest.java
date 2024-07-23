@@ -16,8 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._1MiB;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
@@ -25,16 +27,22 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
+import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
+import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
 import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -55,72 +63,99 @@ public final class ITBlobDescriptorTest {
   @StorageFixture(Transport.GRPC)
   public Storage storage;
 
+  @Inject public BucketInfo bucket;
+
+  @Inject public Generator generator;
+
+  @Inject public ObjectsFixture objectsFixture;
+
   @Test
-  public void bytes() throws ExecutionException, InterruptedException, TimeoutException {
-    BlobId blobId = BlobId.of("ping", "someobject");
+  public void bytes()
+      throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    byte[] expected = obj512KiB.getContent().getBytes(_512KiB - 13);
+    BlobId blobId = obj512KiB.getInfo().getBlobId();
 
-    BlobDescriptor blobDescriptor = storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
+    try (BlobDescriptor blobDescriptor =
+        storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
 
-    BlobInfo info1 = blobDescriptor.getBlobInfo();
-    assertThat(info1).isNotNull();
+      BlobInfo info1 = blobDescriptor.getBlobInfo();
+      assertThat(info1).isNotNull();
 
-    ApiFuture<byte[]> futureRead1Bytes =
-        blobDescriptor.readRangeAsBytes(ByteRangeSpec.relativeLength(_512KiB - 13L, 13L));
+      ApiFuture<byte[]> futureRead1Bytes =
+          blobDescriptor.readRangeAsBytes(ByteRangeSpec.relativeLength(_512KiB - 13L, 13L));
 
-    byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
-    assertThat(read1Bytes.length).isEqualTo(13);
+      byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
+      assertThat(read1Bytes.length).isEqualTo(13);
+
+      assertThat(xxd(read1Bytes)).isEqualTo(xxd(expected));
+    }
   }
 
   @Test
   public void lotsOfBytes() throws Exception {
-    BlobId blobId = BlobId.of("ping", "someobject");
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+
+    BlobInfo gen1 =
+        storage.create(
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+            testContent.getBytes(),
+            BlobTargetOption.doesNotExist());
+    BlobId blobId = gen1.getBlobId();
     for (int j = 0; j < 2; j++) {
 
-      BlobDescriptor blobDescriptor = storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS);
-
       Stopwatch sw = Stopwatch.createStarted();
-      int numRangesToRead = 256;
-      List<ApiFuture<byte[]>> futures =
-          LongStream.range(0, numRangesToRead)
-              .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
-              .map(blobDescriptor::readRangeAsBytes)
-              .collect(Collectors.toList());
+      try (BlobDescriptor blobDescriptor =
+          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
 
-      ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
+        int numRangesToRead = 256;
+        List<ApiFuture<byte[]>> futures =
+            LongStream.range(0, numRangesToRead)
+                .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
+                .map(blobDescriptor::readRangeAsBytes)
+                .collect(Collectors.toList());
 
-      List<byte[]> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
-      Stopwatch stop = sw.stop();
-      System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
-      Hasher hasher = Hashing.crc32c().newHasher();
-      long length = 0;
-      for (byte[] range : ranges) {
-        hasher.putBytes(range);
-        length += range.length;
+        ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
+
+        List<byte[]> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+        Stopwatch stop = sw.stop();
+        System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
+        Hasher hasher = Hashing.crc32c().newHasher();
+        long length = 0;
+        for (byte[] range : ranges) {
+          hasher.putBytes(range);
+          length += range.length;
+        }
+        final long finalLength = length;
+
+        assertAll(
+            () -> {
+              Crc32cLengthKnown expectedCrc32c =
+                  Crc32cValue.of(testContent.getCrc32c(), testContent.getBytes().length);
+              Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), finalLength);
+
+              assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
+            },
+            () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
       }
-      final long finalLength = length;
-
-      assertAll(
-          () -> {
-            Hasher xHasher = Hashing.crc32c().newHasher();
-            long numBytes = numRangesToRead * _2MiB;
-            for (long l = 0; l < numBytes; l++) {
-              xHasher.putByte((byte) 'x');
-            }
-
-            Crc32cLengthKnown expectedCrc32c = Crc32cValue.of(xHasher.hash().asInt(), numBytes);
-            Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), finalLength);
-
-            assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
-          },
-          () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
     }
   }
 
   @Test
   public void readRangeAsByteString() throws Exception {
-    BlobId blobId = BlobId.of("ping", "someobject");
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+
+    BlobInfo gen1 =
+        storage.create(
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+            testContent.getBytes(),
+            BlobTargetOption.doesNotExist());
+    BlobId blobId = gen1.getBlobId();
     for (int j = 0; j < 2; j++) {
 
+      Stopwatch sw = Stopwatch.createStarted();
       try (BlobDescriptorImpl blobDescriptor =
           (BlobDescriptorImpl) storage.getBlobDescriptor(blobId).get(2, TimeUnit.SECONDS)) {
 
@@ -134,6 +169,8 @@ public final class ITBlobDescriptorTest {
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
 
         List<DisposableByteString> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+        Stopwatch stop = sw.stop();
+        System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
         Hasher hasher = Hashing.crc32c().newHasher();
         long length = 0;
         for (DisposableByteString range : ranges) {
@@ -149,13 +186,8 @@ public final class ITBlobDescriptorTest {
 
         assertAll(
             () -> {
-              Hasher xHasher = Hashing.crc32c().newHasher();
-              long numBytes = numRangesToRead * _2MiB;
-              for (long l = 0; l < numBytes; l++) {
-                xHasher.putByte((byte) 'x');
-              }
-
-              Crc32cLengthKnown expectedCrc32c = Crc32cValue.of(xHasher.hash().asInt(), numBytes);
+              Crc32cLengthKnown expectedCrc32c =
+                  Crc32cValue.of(testContent.getCrc32c(), testContent.getBytes().length);
               Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), finalLength);
 
               assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
