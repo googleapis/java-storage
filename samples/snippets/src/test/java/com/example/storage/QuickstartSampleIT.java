@@ -70,7 +70,6 @@ public class QuickstartSampleIT {
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
 
-  @Ignore("https://github.com/googleapis/java-storage/issues/2612")
   @Test
   public void testQuickstartGrpcDp() throws Exception {
     QuickstartGrpcDpSample.main(bucketName);
