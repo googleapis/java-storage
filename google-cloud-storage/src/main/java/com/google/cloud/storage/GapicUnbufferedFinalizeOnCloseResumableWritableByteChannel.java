@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
+import static com.google.cloud.storage.Utils.nullSafeList;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -26,7 +27,6 @@ import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
-import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
@@ -230,7 +230,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),
-                ImmutableList.of(lastWrittenRequest),
+                nullSafeList(lastWrittenRequest),
                 null,
                 context,
                 t);
@@ -251,7 +251,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
                 0,
                 "onComplete without preceding onNext, unable to determine success.",
                 "invalid",
-                ImmutableList.of(lastWrittenRequest),
+                nullSafeList(lastWrittenRequest),
                 null,
                 context,
                 null));
@@ -263,11 +263,11 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
         } else if (finalSize < totalSentBytes) {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), last, context, null));
+                  nullSafeList(lastWrittenRequest), last, context, null));
         } else {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), last, context, null));
+                  nullSafeList(lastWrittenRequest), last, context, null));
         }
       } else if (!finalizing || last.hasPersistedSize()) { // unexpected incremental response
         clientDetectedError(
@@ -275,14 +275,14 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
                 0,
                 "Unexpected incremental response for finalizing request.",
                 "invalid",
-                ImmutableList.of(lastWrittenRequest),
+                nullSafeList(lastWrittenRequest),
                 last,
                 context,
                 null));
       } else {
         clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
-                ImmutableList.of(lastWrittenRequest), last, context, null));
+                nullSafeList(lastWrittenRequest), last, context, null));
       }
     }
 

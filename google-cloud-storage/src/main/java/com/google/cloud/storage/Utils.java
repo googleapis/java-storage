@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ApiCallContext;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
@@ -309,5 +310,13 @@ final class Utils {
   @NonNull
   static GrpcCallContext merge(@NonNull GrpcCallContext l, @NonNull GrpcCallContext r) {
     return (GrpcCallContext) l.merge(r);
+  }
+
+  static <T> ImmutableList<T> nullSafeList(@Nullable T t) {
+    if (t == null) {
+      return ImmutableList.of();
+    } else {
+      return ImmutableList.of(t);
+    }
   }
 }
