@@ -258,5 +258,6 @@ public final class ITGrpcTest {
         () ->
             assertThat(
                 storage.getOptions().getHost().equals("https://storage.my-universe-domain.com")));
+    storage.close();
   }
 }
