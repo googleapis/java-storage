@@ -17,10 +17,15 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.protobuf.ByteString;
+import com.google.rpc.Status;
 import com.google.storage.v2.ReadRange;
+import io.grpc.StatusRuntimeException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +49,8 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
   abstract void accept(ChildRef childRef) throws IOException;
 
   abstract void eof() throws IOException;
+
+  abstract void fail(Status status) throws IOException;
 
   final ReadRange makeReadRange() {
     return ReadRange.newBuilder()
@@ -80,6 +87,16 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
         long readId, long readOffset, long readLimit, SettableApiFuture<Result> complete) {
       super(readId, readOffset, readLimit);
       this.complete = complete;
+    }
+
+    @Override
+    void fail(Status status) throws IOException {
+      io.grpc.Status grpcStatus = io.grpc.Status.fromCodeValue(status.getCode());
+      StatusRuntimeException cause = grpcStatus.asRuntimeException();
+      ApiException apiException =
+          ApiExceptionFactory.createException(
+              cause, GrpcStatusCode.of(grpcStatus.getCode()), false);
+      complete.setException(apiException);
     }
   }
 

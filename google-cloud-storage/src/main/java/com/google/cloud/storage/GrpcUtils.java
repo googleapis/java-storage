@@ -18,11 +18,16 @@ package com.google.cloud.storage;
 
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.ResponseObserver;
+import com.google.api.gax.rpc.StateCheckingResponseObserver;
+import com.google.api.gax.rpc.StreamController;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import com.google.rpc.Status;
+import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
 import io.grpc.Metadata;
 import io.grpc.StatusRuntimeException;
@@ -88,35 +93,6 @@ final class GrpcUtils {
   }
 
   /**
-   * Returns {@code true} if the throwable is or is caused by a {@link StatusRuntimeException} that
-   * contains trailers, the trailers contain an entry {@code grpc-status-details-bin}, which
-   * contains a valid {@link Status}, and the status contains an entry in its details that is a
-   * {@link BidiReadObjectRedirectedError} (evaluated from index 0 to length). {@code false}
-   * otherwise.
-   */
-  static boolean isBidiReadObjectRedirect(Throwable t) {
-    if (t instanceof ApiException) {
-      t = t.getCause();
-    }
-    if (t instanceof StatusRuntimeException) {
-      StatusRuntimeException sre = (StatusRuntimeException) t;
-      Metadata trailers = sre.getTrailers();
-      if (trailers != null) {
-        Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
-        if (status != null) {
-          List<Any> detailsList = status.getDetailsList();
-          for (Any any : detailsList) {
-            if (any.is(BidiReadObjectRedirectedError.class)) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
    * Returns the first occurrence of a {@link BidiReadObjectRedirectedError} if the throwable is or
    * is caused by a {@link StatusRuntimeException} that contains trailers, the trailers contain an
    * entry {@code grpc-status-details-bin}, which contains a valid {@link Status}, and the status
@@ -125,28 +101,81 @@ final class GrpcUtils {
    */
   @Nullable
   static BidiReadObjectRedirectedError getBidiReadObjectRedirectedError(Throwable t) {
-    if (isBidiReadObjectRedirect(t)) {
-      if (t instanceof ApiException) {
-        t = t.getCause();
-      }
-      if (t instanceof StatusRuntimeException) {
-        StatusRuntimeException sre = (StatusRuntimeException) t;
-        Metadata trailers = sre.getTrailers();
-        //noinspection DataFlowIssue guarded by isBidiReadObjectRedirect
-        Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
-        //noinspection DataFlowIssue guarded by isBidiReadObjectRedirect
-        List<Any> detailsList = status.getDetailsList();
-        for (Any any : detailsList) {
-          if (any.is(BidiReadObjectRedirectedError.class)) {
-            try {
-              return any.unpack(BidiReadObjectRedirectedError.class);
-            } catch (InvalidProtocolBufferException e) {
-              // ignore it, falling back to regular retry behavior
-            }
-          }
+    return findFirstPackedAny(t, BidiReadObjectRedirectedError.class);
+  }
+
+  /**
+   * Returns the first occurrence of a {@link BidiReadObjectError} if the throwable is or is caused
+   * by a {@link StatusRuntimeException} that contains trailers, the trailers contain an entry
+   * {@code grpc-status-details-bin}, which contains a valid {@link Status}, and the status contains
+   * an entry in its details that is a {@link BidiReadObjectError} (evaluated from index 0 to
+   * length). {@code null} otherwise.
+   */
+  static BidiReadObjectError getBidiReadObjectError(Throwable t) {
+    return findFirstPackedAny(t, BidiReadObjectError.class);
+  }
+
+  @Nullable
+  private static <M extends Message> M findFirstPackedAny(Throwable t, Class<M> clazz) {
+    if (t instanceof ApiException) {
+      t = t.getCause();
+    }
+    if (!(t instanceof StatusRuntimeException)) {
+      return null;
+    }
+    StatusRuntimeException sre = (StatusRuntimeException) t;
+    Metadata trailers = sre.getTrailers();
+    if (trailers == null) {
+      return null;
+    }
+    Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
+    if (status == null) {
+      return null;
+    }
+    List<Any> detailsList = status.getDetailsList();
+    for (Any any : detailsList) {
+      if (any.is(clazz)) {
+        try {
+          return any.unpack(clazz);
+        } catch (InvalidProtocolBufferException e) {
+          // ignore it, falling back to regular retry behavior
         }
       }
     }
     return null;
+  }
+
+  static <R> StateCheckingResponseObserver<R> decorateAsStateChecking(
+      ResponseObserver<R> delegate) {
+    return new DecoratingStateCheckingResponseObserver<>(delegate);
+  }
+
+  private static final class DecoratingStateCheckingResponseObserver<Response>
+      extends StateCheckingResponseObserver<Response> {
+    private final ResponseObserver<Response> delegate;
+
+    private DecoratingStateCheckingResponseObserver(ResponseObserver<Response> delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    protected void onStartImpl(StreamController controller) {
+      delegate.onStart(controller);
+    }
+
+    @Override
+    protected void onResponseImpl(Response response) {
+      delegate.onResponse(response);
+    }
+
+    @Override
+    protected void onErrorImpl(Throwable t) {
+      delegate.onError(t);
+    }
+
+    @Override
+    protected void onCompleteImpl() {
+      delegate.onComplete();
+    }
   }
 }

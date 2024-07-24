@@ -263,6 +263,16 @@ public final class StorageException extends BaseHttpServiceException {
     void run() throws IOException;
   }
 
+  static Runnable liftToRunnable(IOExceptionRunnable ioer) {
+    return () -> {
+      try {
+        ioer.run();
+      } catch (IOException e) {
+        throw StorageException.coalesce(e);
+      }
+    };
+  }
+
   private static final class ApiExceptionErrorDetailsComment extends Throwable {
     private ApiExceptionErrorDetailsComment(String message) {
       super(message, null, true, false);

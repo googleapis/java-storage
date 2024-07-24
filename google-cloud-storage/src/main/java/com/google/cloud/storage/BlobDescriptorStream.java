@@ -21,21 +21,25 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
-import com.google.api.gax.rpc.StateCheckingResponseObserver;
+import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.common.base.Preconditions;
+import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadHandle;
+import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
+import com.google.storage.v2.ReadRangeError;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 final class BlobDescriptorStream
     implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
@@ -48,18 +52,22 @@ final class BlobDescriptorStream
   private final Executor executor;
   private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable;
   private final GrpcCallContext context;
+  private final int maxRedirectsAllowed;
 
   private volatile boolean open;
   private volatile MonitoringResponseObserver monitoringResponseObserver;
+  private volatile ResponseObserver<BidiReadObjectResponse> responseObserver;
   private volatile ClientStream<BidiReadObjectRequest> requestStream;
   private volatile StreamController controller;
+  private final AtomicInteger redirectCounter;
 
   private BlobDescriptorStream(
       BlobDescriptorState state,
       Executor executor,
       ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
       BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      GrpcCallContext context) {
+      GrpcCallContext context,
+      int maxRedirectsAllowed) {
     this.state = state;
     this.executor = executor;
     this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
@@ -67,6 +75,8 @@ final class BlobDescriptorStream
     this.context = context;
     this.blobDescriptorResolveFuture = SettableApiFuture.create();
     this.open = true;
+    this.redirectCounter = new AtomicInteger();
+    this.maxRedirectsAllowed = maxRedirectsAllowed;
   }
 
   public ClientStream<BidiReadObjectRequest> getRequestStream() {
@@ -77,7 +87,10 @@ final class BlobDescriptorStream
         if (requestStream == null) {
           monitoringResponseObserver =
               new MonitoringResponseObserver(new BidiReadObjectResponseObserver());
-          requestStream = callable.splitCall(monitoringResponseObserver, context);
+          responseObserver =
+              GrpcUtils.decorateAsStateChecking(
+                  new RedirectHandlingResponseObserver(monitoringResponseObserver));
+          requestStream = callable.splitCall(responseObserver, context);
         }
         return requestStream;
       }
@@ -105,7 +118,11 @@ final class BlobDescriptorStream
   @Override
   public void send(BidiReadObjectRequest request) {
     checkOpen();
-    getRequestStream().send(request);
+    if (requestStream == null) {
+      restart();
+    } else {
+      getRequestStream().send(request);
+    }
   }
 
   @Override
@@ -162,7 +179,7 @@ final class BlobDescriptorStream
   }
 
   private void restart() {
-    requestStream = null;
+    reset();
 
     BidiReadObjectRequest openRequest = state.getOpenRequest();
     BidiReadObjectRequest.Builder b = openRequest.toBuilder().clearReadRanges();
@@ -186,28 +203,28 @@ final class BlobDescriptorStream
     }
 
     BidiReadObjectRequest restartRequest = b.build();
-    synchronized (this) {
-      ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream();
-      requestStream1.send(restartRequest);
-      // todo: put this in a retry loop
-      ApiFutureUtils.await(monitoringResponseObserver.openSignal);
-    }
+    ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream();
+    requestStream1.send(restartRequest);
+  }
+
+  private void reset() {
+    requestStream = null;
   }
 
   private final class BidiReadObjectResponseObserver
-      extends StateCheckingResponseObserver<BidiReadObjectResponse> {
+      implements ResponseObserver<BidiReadObjectResponse> {
 
     private BidiReadObjectResponseObserver() {}
 
     @Override
-    public void onStartImpl(StreamController controller) {
+    public void onStart(StreamController controller) {
       BlobDescriptorStream.this.controller = controller;
       controller.disableAutoInboundFlowControl();
       controller.request(2);
     }
 
     @Override
-    protected void onResponseImpl(BidiReadObjectResponse response) {
+    public void onResponse(BidiReadObjectResponse response) {
       controller.request(1);
       try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
           bidiResponseContentLifecycleManager.get(response)) {
@@ -237,16 +254,12 @@ final class BlobDescriptorStream
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
             executor.execute(
-                () -> {
-                  try {
-                    read.eof();
-                    // don't remove the outstanding read until the future has been resolved
-                    state.removeOutstandingRead(id);
-                  } catch (IOException e) {
-                    // TODO: sync this up with stream restarts when the time comes
-                    throw StorageException.coalesce(e);
-                  }
-                });
+                StorageException.liftToRunnable(
+                    () -> {
+                      read.eof();
+                      // don't remove the outstanding read until the future has been resolved
+                      state.removeOutstandingRead(id);
+                    }));
           }
         }
       } catch (IOException e) {
@@ -256,27 +269,39 @@ final class BlobDescriptorStream
     }
 
     @Override
-    protected void onErrorImpl(Throwable t) {
-      BidiReadObjectRedirectedError bidiReadObjectRedirectedError =
-          GrpcUtils.getBidiReadObjectRedirectedError(t);
-      if (bidiReadObjectRedirectedError != null) {
-        if (bidiReadObjectRedirectedError.hasReadHandle()) {
-          state.setBidiReadHandle(bidiReadObjectRedirectedError.getReadHandle());
-        }
-        if (bidiReadObjectRedirectedError.hasRoutingToken()) {
-          state.setRoutingToken(bidiReadObjectRedirectedError.getRoutingToken());
-        }
-        executor.execute(BlobDescriptorStream.this::restart);
+    public void onError(Throwable t) {
+      BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
+      if (error == null) {
+        return;
       }
+
+      List<ReadRangeError> rangeErrors = error.getReadRangeErrorsList();
+      if (rangeErrors.isEmpty()) {
+        return;
+      }
+      for (ReadRangeError rangeError : rangeErrors) {
+        Status status = rangeError.getStatus();
+        long id = rangeError.getReadId();
+        BlobDescriptorStreamRead read = state.getOutstandingRead(id);
+        if (read == null) {
+          continue;
+        }
+        executor.execute(
+            StorageException.liftToRunnable(
+                () -> {
+                  read.fail(status);
+                  state.removeOutstandingRead(id);
+                }));
+      }
+      reset();
     }
 
     @Override
-    protected void onCompleteImpl() {}
+    public void onComplete() {}
   }
 
-  private class MonitoringResponseObserver
-      extends StateCheckingResponseObserver<BidiReadObjectResponse> {
-    private final BidiReadObjectResponseObserver delegate;
+  private class MonitoringResponseObserver implements ResponseObserver<BidiReadObjectResponse> {
+    private final BlobDescriptorStream.BidiReadObjectResponseObserver delegate;
     private final SettableApiFuture<Void> openSignal;
     private final SettableApiFuture<Void> closeSignal;
 
@@ -287,35 +312,81 @@ final class BlobDescriptorStream
     }
 
     @Override
-    protected void onStartImpl(StreamController controller) {
+    public void onStart(StreamController controller) {
       delegate.onStart(controller);
     }
 
     @Override
-    protected void onResponseImpl(BidiReadObjectResponse response) {
+    public void onResponse(BidiReadObjectResponse response) {
       delegate.onResponse(response);
       openSignal.set(null);
       blobDescriptorResolveFuture.set(null);
     }
 
     @Override
-    protected void onErrorImpl(Throwable t) {
-      if (GrpcUtils.isBidiReadObjectRedirect(t)) {
-        delegate.onError(t);
-      } else {
-        delegate.onError(t);
-        blobDescriptorResolveFuture.setException(t);
-        openSignal.setException(t);
-        closeSignal.setException(t);
-      }
+    public void onError(Throwable t) {
+      delegate.onError(t);
+      blobDescriptorResolveFuture.setException(t);
+      openSignal.setException(t);
+      closeSignal.setException(t);
     }
 
     @Override
-    protected void onCompleteImpl() {
+    public void onComplete() {
       delegate.onComplete();
       blobDescriptorResolveFuture.set(null);
       openSignal.set(null);
       closeSignal.set(null);
+    }
+  }
+
+  private final class RedirectHandlingResponseObserver
+      implements ResponseObserver<BidiReadObjectResponse> {
+    private final ResponseObserver<BidiReadObjectResponse> delegate;
+
+    private RedirectHandlingResponseObserver(ResponseObserver<BidiReadObjectResponse> delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public void onStart(StreamController controller) {
+      delegate.onStart(controller);
+    }
+
+    @Override
+    public void onResponse(BidiReadObjectResponse response) {
+      redirectCounter.set(0);
+      delegate.onResponse(response);
+    }
+
+    @Override
+    public void onError(Throwable t) {
+      BidiReadObjectRedirectedError error = GrpcUtils.getBidiReadObjectRedirectedError(t);
+      if (error == null) {
+        delegate.onError(t);
+        return;
+      }
+      int redirectCount = redirectCounter.incrementAndGet();
+      if (redirectCount > maxRedirectsAllowed) {
+        // attach the fact we're ignoring the redirect to the original exception as a suppressed
+        // Exception. The lower level handler can then perform its usual handling, but if things
+        // bubble all the way up to the invoker we'll be able to see it in a bug report.
+        t.addSuppressed(new MaxRedirectsExceededException(maxRedirectsAllowed, redirectCount));
+        delegate.onError(t);
+        return;
+      }
+      if (error.hasReadHandle()) {
+        state.setBidiReadHandle(error.getReadHandle());
+      }
+      if (error.hasRoutingToken()) {
+        state.setRoutingToken(error.getRoutingToken());
+      }
+      executor.execute(BlobDescriptorStream.this::restart);
+    }
+
+    @Override
+    public void onComplete() {
+      delegate.onComplete();
     }
   }
 
@@ -326,7 +397,21 @@ final class BlobDescriptorStream
       GrpcCallContext context,
       BlobDescriptorState state) {
 
+    int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
     return new BlobDescriptorStream(
-        state, executor, bidiResponseContentLifecycleManager, callable, context);
+        state,
+        executor,
+        bidiResponseContentLifecycleManager,
+        callable,
+        context,
+        maxRedirectsAllowed);
+  }
+
+  static final class MaxRedirectsExceededException extends RuntimeException {
+    private MaxRedirectsExceededException(int maxRedirectAllowed, int actualRedirects) {
+      super(
+          String.format(
+              "max redirects exceeded (max: %d, actual: %d)", maxRedirectAllowed, actualRedirects));
+    }
   }
 }
