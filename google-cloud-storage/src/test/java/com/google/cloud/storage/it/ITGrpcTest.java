@@ -251,12 +251,11 @@ public final class ITGrpcTest {
 
   @Test
   public void testGrpcUniverseDomainMatchesHost() throws Exception {
-    Storage storage =
-        StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build().getService();
+    StorageOptions storageOptions =
+        StorageOptions.grpc().setUniverseDomain("my-universe-domain.com").build();
     assertAll(
-        () -> assertThat(storage.getOptions().getUniverseDomain().equals("my-universe-domain.com")),
+        () -> assertThat(storageOptions.getUniverseDomain().equals("my-universe-domain.com")),
         () ->
-            assertThat(
-                storage.getOptions().getHost().equals("https://storage.my-universe-domain.com")));
+            assertThat(storageOptions.getHost().equals("https://storage.my-universe-domain.com")));
   }
 }
