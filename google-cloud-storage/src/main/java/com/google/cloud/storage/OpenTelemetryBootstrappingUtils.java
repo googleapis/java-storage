@@ -1,4 +1,4 @@
-package com.google.cloud.storage;/*
+/*
  * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,8 @@ package com.google.cloud.storage;/*
  * limitations under the License.
  */
 
+package com.google.cloud.storage;
+
 import com.google.api.core.ApiFunction;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
@@ -22,6 +24,7 @@ import com.google.cloud.opentelemetry.metric.MonitoredResourceDescription;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.opentelemetry.GrpcOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
@@ -42,10 +45,36 @@ import io.opentelemetry.sdk.resources.Resource;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OpenTelemetryBootstrappingUtils {
+
+    private static final Collection<String> METRICS_TO_ENABLE = ImmutableList.of(
+            "grpc.lb.wrr.rr_fallback",
+            "grpc.lb.wrr.endpoint_weight_not_yet_usable",
+            "grpc.lb.wrr.endpoint_weight_stale",
+            "grpc.lb.wrr.endpoint_weights",
+            "grpc.lb.rls.cache_entries",
+            "grpc.lb.rls.cache_size",
+            "grpc.lb.rls.default_target_picks",
+            "grpc.lb.rls.target_picks",
+            "grpc.lb.rls.failed_picks",
+            "grpc.xds_client.connected",
+            "grpc.xds_client.server_failure",
+            "grpc.xds_client.resource_updates_valid",
+            "grpc.xds_client.resource_updates_invalid",
+            "grpc.xds_client.resources");
+
+    private static final Collection<String> METRICS_ENABLED_BY_DEFAULT = ImmutableList.of(
+            "grpc.client.attempt.sent_total_compressed_message_size",
+            "grpc.client.attempt.rcvd_total_compressed_message_size",
+            "grpc.client.attempt.started",
+            "grpc.client.attempt.duration",
+            "grpc.client.call.duration"
+    );
 
     static void enableGrpcMetrics(
             InstantiatingGrpcChannelProvider.Builder channelProviderBuilder, String endpoint, String projectId, String universeDomain) {
@@ -57,22 +86,7 @@ public class OpenTelemetryBootstrappingUtils {
         GrpcOpenTelemetry grpcOpenTelemetry =
                 GrpcOpenTelemetry.newBuilder()
                         .sdk(openTelemetrySdk)
-                        .enableMetrics(
-                                ImmutableList.of(
-                                        "grpc.lb.wrr.rr_fallback",
-                                        "grpc.lb.wrr.endpoint_weight_not_yet_usable",
-                                        "grpc.lb.wrr.endpoint_weight_stale",
-                                        "grpc.lb.wrr.endpoint_weights",
-                                        "grpc.lb.rls.cache_entries",
-                                        "grpc.lb.rls.cache_size",
-                                        "grpc.lb.rls.default_target_picks",
-                                        "grpc.lb.rls.target_picks",
-                                        "grpc.lb.rls.failed_picks",
-                                        "grpc.xds_client.connected",
-                                        "grpc.xds_client.server_failure",
-                                        "grpc.xds_client.resource_updates_valid",
-                                        "grpc.xds_client.resource_updates_invalid",
-                                        "grpc.xds_client.resources"))
+                        .enableMetrics(METRICS_TO_ENABLE)
                         .build();
         ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator =
                 channelProviderBuilder.getChannelConfigurator();
@@ -119,68 +133,58 @@ public class OpenTelemetryBootstrappingUtils {
         Attributes detectedAttributes = resourceProvider.getAttributes();
 
         MonitoredResourceDescription monitoredResourceDescription =
-                new MonitoredResourceDescription(
-                        "generic_task",
-                        ImmutableSet.of("project_id", "location", "namespace", "job", "task_id"));
-        // When the gcs_client MR is available, do this instead:
-        // new MonitoredResourceDescription(
-        //      "gcs_client", ImmutableSet.of("project_id", "location", "cloud_platform", "host_id",
-        // "instance_id", "api"));
+        new MonitoredResourceDescription(
+              "storage.googleapis.com/Client", ImmutableSet.of("project_id", "location", "cloud_platform", "host_id",
+         "instance_id", "api"));
 
         MetricExporter cloudMonitoringExporter =
                 GoogleCloudMetricExporter.createWithConfiguration(
                         MetricConfiguration.builder()
                                 .setMonitoredResourceDescription(monitoredResourceDescription)
+                                .setInstrumentationLibraryLabelsEnabled(false)
                                 .setMetricServiceEndpoint(metricServiceEndpoint)
-                                // .setUseServiceTimeSeries(true)
+                                .setPrefix("storage.googleapis.com/client")
+                                .setUseServiceTimeSeries(true)
                                 .build());
 
         String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
-        SdkMeterProviderBuilder providerBuilder =
-                SdkMeterProvider.builder()
-                        .registerMetricReader(
-                                // Set collection interval to 20 seconds.
-                                // See https://cloud.google.com/monitoring/quotas#custom_metrics_quotas
-                                // Rate at which data can be written to a single time series: one point each 10
-                                // seconds.
-                                PeriodicMetricReader.builder(cloudMonitoringExporter)
-                                        .setInterval(java.time.Duration.ofSeconds(20))
-                                        .build())
-                        .setResource(
-                                Resource.create(
-                                        Attributes.builder()
-                                                .put("gcp.resource_type", "generic_task")
-                                                .put("job", detectedAttributes.get(AttributeKey.stringKey("host.id")))
-                                                .put(
-                                                        "task_id",
-                                                        detectedAttributes.get(
-                                                                AttributeKey.stringKey("gcp.gce.instance.hostname")))
-                                                .put("namespace", "gcs_client_instance")
-                                                .put(
-                                                        "location",
-                                                        detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
-                                                .put("project_id", detectedProjectId == null ? projectId : detectedProjectId)
+        SdkMeterProviderBuilder providerBuilder = SdkMeterProvider.builder();
 
-                                                /**
-                                                 * Uncomment when gcs_client MR is available .put("cloud_platform",
-                                                 * detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
-                                                 * .put("host_id",
-                                                 * detectedAttributes.get(AttributeKey.stringKey("host.id")))
-                                                 * .put("instance_id", UUID.randomUUID().toString()) .put("api", "grpc")
-                                                 */
-                                                .build()));
+        // This replaces the dots with slashes in each metric, which is the format needed for this monitored resource
+        for (String metric: ImmutableList.copyOf(Iterables.concat(METRICS_TO_ENABLE, METRICS_ENABLED_BY_DEFAULT))) {
+            providerBuilder.registerView(InstrumentSelector.builder().setName(metric).build(),
+                    View.builder().setName(metric.replace(".", "/")).build());
+        }
+        providerBuilder.registerMetricReader(
+                                PeriodicMetricReader.builder(cloudMonitoringExporter)
+                                        .setInterval(java.time.Duration.ofSeconds(60))
+                                        .build())
+                .setResource(
+                        Resource.create(
+                                Attributes.builder()
+                                        .put("gcp.resource_type", "storage.googleapis.com/Client")
+                                        .put(
+                                                "location",
+                                                detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
+                                        .put("project_id", detectedProjectId == null ? projectId : detectedProjectId)
+                                        .put("cloud_platform",
+                                                detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
+                                        .put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")))
+                                        .put("instance_id", UUID.randomUUID().toString())
+                                        .put("api", "grpc")
+                                        .build()));
 
         addHistogramView(
-                providerBuilder, latencyHistogramBoundaries(), "grpc.client.attempt.duration", "s");
+                providerBuilder, latencyHistogramBoundaries(), "grpc/client/attempt/duration", "s");
         addHistogramView(
                 providerBuilder,
                 sizeHistogramBoundaries(),
-                "grpc.client.attempt.rcvd_total_compressed_message_size",
+                "grpc/client/attempt/rcvd_total_compressed_message_size",
                 "By");
         addHistogramView(
                 providerBuilder,
                 sizeHistogramBoundaries(),
-                "grpc.client.attempt.sent_total_compressed_message_size",
+                "grpc/client/attempt/sent_total_compressed_message_size",
                 "By");
 
         return providerBuilder.build();
@@ -214,8 +218,7 @@ public class OpenTelemetryBootstrappingUtils {
         BigDecimal increment = new BigDecimal("0.002", MathContext.UNLIMITED); // 2ms
 
         // 2ms buckets for the first 100ms, so we can have higher resolution for uploads and downloads
-        // in the
-        // 100 KiB range
+        // in the 100 KiB range
         for (int i = 0; i != 50; i++) {
             boundaries.add(boundary.doubleValue());
             boundary = boundary.add(increment);
