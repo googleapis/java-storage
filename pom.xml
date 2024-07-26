@@ -58,6 +58,11 @@
   </properties>
 
   <dependencyManagement>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>3.25.4</version>
+      </dependency>
     <dependencies>
       <dependency>
         <groupId>com.google.cloud</groupId>
