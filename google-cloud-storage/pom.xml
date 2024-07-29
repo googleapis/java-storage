@@ -153,6 +153,11 @@
     </dependency>
 
     <dependency>
+    <groupId>io.opentelemetry.semconv</groupId>
+    <artifactId>opentelemetry-semconv</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.cloud.opentelemetry</groupId>
       <artifactId>exporter-metrics</artifactId>
     </dependency>
@@ -160,6 +165,11 @@
     <dependency>
       <groupId>io.opentelemetry.contrib</groupId>
       <artifactId>opentelemetry-gcp-resources</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
     </dependency>
 
     <!-- Access to exception for retry handling -->
@@ -342,6 +352,12 @@
               Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
               -->
               <dependency>org.junit.vintage:junit-vintage-engine</dependency>
+
+              <!--
+              These are needed at compile time, but it causes unused declared dependency errors
+              -->
+              <dependency>io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi</dependency>
+              <dependency>io.opentelemetry.semconv:opentelemetry-semconv</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>
