@@ -128,74 +128,60 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-opentelemetry</artifactId>
-      <version>1.64.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-api</artifactId>
-      <version>1.40.0</version>
     </dependency>
 
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-metrics</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-common</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-logs</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-context</artifactId>
-      <version>1.40.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-trace</artifactId>
-      <version>1.40.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.cloud.opentelemetry</groupId>
       <artifactId>detector-resources</artifactId>
-      <version>0.27.0-alpha</version>
     </dependency>
     <dependency>
       <groupId>com.google.cloud.opentelemetry</groupId>
       <artifactId>exporter-metrics</artifactId>
-      <version>0.31.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
       <artifactId>opentelemetry-resources</artifactId>
-      <version>2.5.0-alpha</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry.contrib</groupId>
       <artifactId>opentelemetry-gcp-resources</artifactId>
-      <version>1.36.0-alpha</version>
     </dependency>
 
     <!-- Access to exception for retry handling -->
@@ -338,15 +324,6 @@
     </dependency>
 
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.opentelemetry.semconv</groupId>
-        <artifactId>opentelemetry-semconv</artifactId>
-        <version>1.25.0-alpha</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <pluginManagement>

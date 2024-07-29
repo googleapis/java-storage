@@ -54,33 +54,72 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.cloud.shared-dependencies.version>3.25.0</google.cloud.shared-dependencies.version>
+    <google.cloud.shared-dependencies.version>3.31.0</google.cloud.shared-dependencies.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-bom</artifactId>
-        <version>1.64.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.cloud.opentelemetry</groupId>
-        <artifactId>exporter-metrics</artifactId>
-        <version>0.29.0</version>
-      </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-shared-dependencies</artifactId>
         <version>${google-cloud-shared-dependencies.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!--
+      Each of the following dependencies declares a dependency on opentelemtry-semconv,
+      but they differ in what version. Explicitly declare the version here to break the tie.
+      * com.google.cloud.opentelemetry:exporter-metrics
+      * com.google.cloud.opentelemetry:detector-resources
+      * io.opentelemetry.instrumentation:opentelemetry-resources
+      * io.opentelemetry.contrib:opentelemetry-gcp-resources
+      -->
+      <dependency>
+        <groupId>io.opentelemetry.semconv</groupId>
+        <artifactId>opentelemetry-semconv</artifactId>
+        <version>1.25.0-alpha</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.cloud.opentelemetry</groupId>
+        <artifactId>exporter-metrics</artifactId>
+        <version>0.31.0</version>
         <exclusions>
           <exclusion>
-            <groupId>io.grpc</groupId>
-            <artifactId>*</artifactId>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.google.cloud.opentelemetry</groupId>
+        <artifactId>detector-resources</artifactId>
+        <version>0.27.0-alpha</version>
+        <exclusions>
+          <exclusion>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-resources</artifactId>
+        <version>2.6.0-alpha</version>
+        <exclusions>
+          <exclusion>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry.contrib</groupId>
+        <artifactId>opentelemetry-gcp-resources</artifactId>
+        <version>1.37.0-alpha</version>
+        <exclusions>
+          <exclusion>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

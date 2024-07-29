@@ -113,9 +113,11 @@
       "semanticCommitScope": "deps"
     },
     {
+      "groupName": "OpenTelemetry extended dependencies",
       "packagePatterns": [
-        "^io.grpc.opentelemetry:",
-        "^io.grpc:grpc-opentelemetry:",
+        "^io.opentelemetry.semconv:",
+        "^io.opentelemetry.instrumentation:",
+        "^io.opentelemetry.contrib:",
         "^com.google.cloud.opentelemetry:"
       ]
     }
