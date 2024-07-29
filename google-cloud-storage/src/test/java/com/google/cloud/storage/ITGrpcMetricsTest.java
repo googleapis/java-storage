@@ -31,11 +31,14 @@ public class ITGrpcMetricsTest {
   @Test
   public void testGrpcMetrics() {
     GrpcStorageOptions grpcStorageOptions = StorageOptions.grpc().build();
-    assertThat(OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("storage.googleapis.com:443", "storage.googleapis.com"))
+    assertThat(
+            OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint(
+                "storage.googleapis.com:443", "storage.googleapis.com"))
         .isEqualTo("monitoring.googleapis.com:443");
 
-    SdkMeterProvider provider = OpenTelemetryBootstrappingUtils.createMeterProvider("monitoring.googleapis.com:443", grpcStorageOptions.getProjectId());
-
+    SdkMeterProvider provider =
+        OpenTelemetryBootstrappingUtils.createMeterProvider(
+            "monitoring.googleapis.com:443", grpcStorageOptions.getProjectId());
 
     /*
      * SDKMeterProvider doesn't expose the relevant fields we want to test, but they are present in
@@ -59,22 +62,25 @@ public class ITGrpcMetricsTest {
 
   @Test
   public void testGrpcMetrics_universeDomain() {
-    assertThat(
-        "monitoring.my-universe-domain.com:443").isEqualTo(
-        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("storage.my-universe-domain.com:443", "my-universe-domain.com"));
+    assertThat("monitoring.my-universe-domain.com:443")
+        .isEqualTo(
+            OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint(
+                "storage.my-universe-domain.com:443", "my-universe-domain.com"));
   }
 
   @Test
   public void testGrpcMetrics_private() {
-    assertThat(
-        "private.googleapis.com:443").isEqualTo(
-        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("private.googleapis.com:443", null));
+    assertThat("private.googleapis.com:443")
+        .isEqualTo(
+            OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint(
+                "private.googleapis.com:443", null));
   }
 
   @Test
   public void testGrpcMetrics_restricted() {
-    assertThat(
-        "restricted.googleapis.com:443").isEqualTo(
-        OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint("restricted.googleapis.com:443", null));
+    assertThat("restricted.googleapis.com:443")
+        .isEqualTo(
+            OpenTelemetryBootstrappingUtils.getCloudMonitoringEndpoint(
+                "restricted.googleapis.com:443", null));
   }
 }
