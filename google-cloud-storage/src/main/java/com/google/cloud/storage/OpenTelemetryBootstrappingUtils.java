@@ -135,6 +135,9 @@ final class OpenTelemetryBootstrappingUtils {
     GCPResourceProvider resourceProvider = new GCPResourceProvider();
     Attributes detectedAttributes = resourceProvider.getAttributes();
 
+    String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
+    String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
+
     MonitoredResourceDescription monitoredResourceDescription =
         new MonitoredResourceDescription(
             "storage.googleapis.com/Client",
@@ -149,9 +152,10 @@ final class OpenTelemetryBootstrappingUtils {
                 .setMetricServiceEndpoint(metricServiceEndpoint)
                 .setPrefix("storage.googleapis.com/client")
                 .setUseServiceTimeSeries(true)
+                .setProjectId(projectIdToUse)
                 .build());
 
-    String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
+
     SdkMeterProviderBuilder providerBuilder = SdkMeterProvider.builder();
 
     // This replaces the dots with slashes in each metric, which is the format needed for this
@@ -172,7 +176,7 @@ final class OpenTelemetryBootstrappingUtils {
                 Attributes.builder()
                     .put("gcp.resource_type", "storage.googleapis.com/Client")
                     .put("location", detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
-                    .put("project_id", projectId != null ? projectId : detectedProjectId)
+                    .put("project_id", projectIdToUse)
                     .put(
                         "cloud_platform",
                         detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))

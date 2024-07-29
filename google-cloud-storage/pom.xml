@@ -162,6 +162,11 @@
       <artifactId>opentelemetry-gcp-resources</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+    </dependency>
+
     <!-- Access to exception for retry handling -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -342,6 +347,11 @@
               Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
               -->
               <dependency>org.junit.vintage:junit-vintage-engine</dependency>
+
+              <!--
+              This is needed at compile time, but it causes unused declared dependency errors
+              -->
+              <dependency>io.opentelemetry:>opentelemetry-sdk-extension-autoconfigure-spi</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>

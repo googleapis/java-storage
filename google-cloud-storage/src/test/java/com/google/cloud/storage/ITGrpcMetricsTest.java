@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -48,7 +49,7 @@ public class ITGrpcMetricsTest {
      */
     String result = provider.toString();
 
-    assertThat(result).contains(grpcStorageOptions.getProjectId());
+    assertTrue(result.contains(grpcStorageOptions.getProjectId()) || result.contains(System.getenv("GOOGLE_CLOUD_PROJECT")));
 
     // This is the check for the Seconds histogram boundary. We can't practically check for every
     // boundary,
