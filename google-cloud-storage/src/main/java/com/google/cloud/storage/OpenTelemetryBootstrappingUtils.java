@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class OpenTelemetryBootstrappingUtils {
+final class OpenTelemetryBootstrappingUtils {
 
     private static final Collection<String> METRICS_TO_ENABLE = ImmutableList.of(
             "grpc.lb.wrr.rr_fallback",
@@ -82,7 +82,7 @@ public class OpenTelemetryBootstrappingUtils {
         SdkMeterProvider provider = createMeterProvider(metricServiceEndpoint, projectId);
 
         OpenTelemetrySdk openTelemetrySdk =
-                OpenTelemetrySdk.builder().setMeterProvider(provider).buildAndRegisterGlobal();
+                OpenTelemetrySdk.builder().setMeterProvider(provider).build();
         GrpcOpenTelemetry grpcOpenTelemetry =
                 GrpcOpenTelemetry.newBuilder()
                         .sdk(openTelemetrySdk)
