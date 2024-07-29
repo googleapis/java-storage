@@ -49,7 +49,9 @@ public class ITGrpcMetricsTest {
      */
     String result = provider.toString();
 
-    assertTrue(result.contains(grpcStorageOptions.getProjectId()) || result.contains(System.getenv("GOOGLE_CLOUD_PROJECT")));
+    assertTrue(
+        result.contains(grpcStorageOptions.getProjectId())
+            || result.contains(System.getenv("GOOGLE_CLOUD_PROJECT")));
 
     // This is the check for the Seconds histogram boundary. We can't practically check for every
     // boundary,

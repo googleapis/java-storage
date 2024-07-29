@@ -130,7 +130,7 @@ public final class GrpcStorageOptions extends StorageOptions
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
-    this.enableMetrics = builder.enableMetrics;
+    this.enableMetrics = builder.enableGrpcClientMetrics;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
@@ -418,7 +418,7 @@ public final class GrpcStorageOptions extends StorageOptions
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
-    private boolean enableMetrics = GrpcStorageDefaults.INSTANCE.isEnableMetrics();
+    private boolean enableGrpcClientMetrics = GrpcStorageDefaults.INSTANCE.isEnableMetrics();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
     private BlobWriteSessionConfig blobWriteSessionConfig =
@@ -432,7 +432,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.storageRetryStrategy = gso.getRetryAlgorithmManager().retryStrategy;
       this.terminationAwaitDuration = gso.getTerminationAwaitDuration();
       this.attemptDirectPath = gso.attemptDirectPath;
-      this.enableMetrics = gso.enableMetrics;
+      this.enableGrpcClientMetrics = gso.enableMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
     }
@@ -474,8 +474,8 @@ public final class GrpcStorageOptions extends StorageOptions
      * @since 2.41.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public GrpcStorageOptions.Builder setEnableMetrics(boolean enableMetrics) {
-      this.enableMetrics = enableMetrics;
+    public GrpcStorageOptions.Builder setEnableGrpcClientMetrics(boolean enableGrpcClientMetrics) {
+      this.enableGrpcClientMetrics = enableGrpcClientMetrics;
       return this;
     }
 

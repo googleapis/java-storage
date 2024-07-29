@@ -155,7 +155,6 @@ final class OpenTelemetryBootstrappingUtils {
                 .setProjectId(projectIdToUse)
                 .build());
 
-
     SdkMeterProviderBuilder providerBuilder = SdkMeterProvider.builder();
 
     // This replaces the dots with slashes in each metric, which is the format needed for this
