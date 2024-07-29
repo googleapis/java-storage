@@ -172,7 +172,7 @@ final class OpenTelemetryBootstrappingUtils {
                 Attributes.builder()
                     .put("gcp.resource_type", "storage.googleapis.com/Client")
                     .put("location", detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
-                    .put("project_id", detectedProjectId == null ? projectId : detectedProjectId)
+                    .put("project_id", projectId != null ? projectId : detectedProjectId)
                     .put(
                         "cloud_platform",
                         detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
