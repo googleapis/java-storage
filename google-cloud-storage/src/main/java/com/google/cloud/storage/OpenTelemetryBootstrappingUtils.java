@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.rpc.PermissionDeniedException;
+import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
 import com.google.cloud.opentelemetry.metric.MetricConfiguration;
 import com.google.cloud.opentelemetry.metric.MonitoredResourceDescription;
@@ -32,12 +34,17 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.internal.StringUtils;
 import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.common.CompletableResultCode;
+import io.opentelemetry.sdk.common.export.MemoryMode;
 import io.opentelemetry.sdk.metrics.Aggregation;
 import io.opentelemetry.sdk.metrics.InstrumentSelector;
 import io.opentelemetry.sdk.metrics.InstrumentType;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.SdkMeterProviderBuilder;
 import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.data.AggregationTemporality;
+import io.opentelemetry.sdk.metrics.data.MetricData;
+import io.opentelemetry.sdk.metrics.export.DefaultAggregationSelector;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
@@ -47,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,7 +186,8 @@ final class OpenTelemetryBootstrappingUtils {
     }
     providerBuilder
         .registerMetricReader(
-            PeriodicMetricReader.builder(cloudMonitoringExporter)
+            PeriodicMetricReader.builder(
+                    new PermissionDeniedSingleReportMetricsExporter(cloudMonitoringExporter))
                 .setInterval(java.time.Duration.ofSeconds(60))
                 .build())
         .setResource(
@@ -276,5 +285,78 @@ final class OpenTelemetryBootstrappingUtils {
       }
     }
     return boundaries;
+  }
+
+  private static final class PermissionDeniedSingleReportMetricsExporter implements MetricExporter {
+    private static final Logger LOGGER1 =
+        LoggerFactory.getLogger(PermissionDeniedSingleReportMetricsExporter.class);
+    private final MetricExporter delegate;
+
+    private final AtomicBoolean seenPermissionDenied = new AtomicBoolean(false);
+    private final AtomicBoolean seenNoRouteToHost = new AtomicBoolean(false);
+
+    private PermissionDeniedSingleReportMetricsExporter(MetricExporter delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public CompletableResultCode export(Collection<MetricData> metrics) {
+      if (seenPermissionDenied.get() && seenNoRouteToHost.get()) {
+        return CompletableResultCode.ofFailure();
+      }
+
+      try {
+        return delegate.export(metrics);
+      } catch (PermissionDeniedException e) {
+        if (!seenPermissionDenied.get()) {
+          seenPermissionDenied.set(true);
+          throw e;
+        }
+        LOGGER1.info("", e);
+        return CompletableResultCode.ofFailure();
+      } catch (UnavailableException e) {
+        if (seenPermissionDenied.get() && !seenNoRouteToHost.get()) {
+          seenNoRouteToHost.set(true);
+          throw e;
+        }
+        LOGGER1.info("", e);
+        return CompletableResultCode.ofFailure();
+      }
+    }
+
+    @Override
+    public Aggregation getDefaultAggregation(InstrumentType instrumentType) {
+      return delegate.getDefaultAggregation(instrumentType);
+    }
+
+    @Override
+    public MemoryMode getMemoryMode() {
+      return delegate.getMemoryMode();
+    }
+
+    @Override
+    public CompletableResultCode flush() {
+      return delegate.flush();
+    }
+
+    @Override
+    public CompletableResultCode shutdown() {
+      return delegate.shutdown();
+    }
+
+    @Override
+    public void close() {
+      delegate.close();
+    }
+
+    @Override
+    public AggregationTemporality getAggregationTemporality(InstrumentType instrumentType) {
+      return delegate.getAggregationTemporality(instrumentType);
+    }
+
+    @Override
+    public DefaultAggregationSelector with(InstrumentType instrumentType, Aggregation aggregation) {
+      return delegate.with(instrumentType, aggregation);
+    }
   }
 }
