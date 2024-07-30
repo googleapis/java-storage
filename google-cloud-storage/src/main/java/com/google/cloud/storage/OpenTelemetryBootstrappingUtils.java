@@ -50,6 +50,7 @@ import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.net.NoRouteToHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -187,6 +188,7 @@ final class OpenTelemetryBootstrappingUtils {
     providerBuilder
         .registerMetricReader(
             PeriodicMetricReader.builder(
+                    // todo: only decorate if the customer didn't explicitly enable metrics
                     new PermissionDeniedSingleReportMetricsExporter(cloudMonitoringExporter))
                 .setInterval(java.time.Duration.ofSeconds(60))
                 .build())
@@ -288,8 +290,6 @@ final class OpenTelemetryBootstrappingUtils {
   }
 
   private static final class PermissionDeniedSingleReportMetricsExporter implements MetricExporter {
-    private static final Logger LOGGER1 =
-        LoggerFactory.getLogger(PermissionDeniedSingleReportMetricsExporter.class);
     private final MetricExporter delegate;
 
     private final AtomicBoolean seenPermissionDenied = new AtomicBoolean(false);
@@ -312,14 +312,17 @@ final class OpenTelemetryBootstrappingUtils {
           seenPermissionDenied.set(true);
           throw e;
         }
-        LOGGER1.info("", e);
         return CompletableResultCode.ofFailure();
       } catch (UnavailableException e) {
-        if (seenPermissionDenied.get() && !seenNoRouteToHost.get()) {
+        if (seenPermissionDenied.get()
+            && !seenNoRouteToHost.get()
+            && ultimateCause(
+                e,
+                NoRouteToHostException
+                    .class)) { // todo: check that ultimate exception is NoRouteToHostException
           seenNoRouteToHost.set(true);
           throw e;
         }
-        LOGGER1.info("", e);
         return CompletableResultCode.ofFailure();
       }
     }
@@ -357,6 +360,19 @@ final class OpenTelemetryBootstrappingUtils {
     @Override
     public DefaultAggregationSelector with(InstrumentType instrumentType, Aggregation aggregation) {
       return delegate.with(instrumentType, aggregation);
+    }
+
+    private static boolean ultimateCause(Throwable t, Class<? extends Throwable> c) {
+      if (t == null) {
+        return false;
+      }
+
+      Throwable cause = t.getCause();
+      if (cause != null && c.isAssignableFrom(cause.getClass())) {
+        return true;
+      } else {
+        return ultimateCause(cause, c);
+      }
     }
   }
 }
