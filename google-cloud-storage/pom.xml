@@ -18,8 +18,28 @@
     <site.installationModule>google-cloud-storage</site.installationModule>
     <pubsub-proto.version>1.113.0</pubsub-proto.version>
     <junit-platform.version>5.10.3</junit-platform.version>
+    <version.slf4j>2.0.13</version.slf4j>
   </properties>
   <dependencies>
+    <!-- Add slf4j API frontend binding with JUL backend -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${version.slf4j}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${version.slf4j}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.3.14</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>

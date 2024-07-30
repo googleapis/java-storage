@@ -48,8 +48,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class OpenTelemetryBootstrappingUtils {
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(OpenTelemetryBootstrappingUtils.class);
 
   private static final Collection<String> METRICS_TO_ENABLE =
       ImmutableList.of(
@@ -136,12 +140,13 @@ final class OpenTelemetryBootstrappingUtils {
     Attributes detectedAttributes = resourceProvider.getAttributes();
 
     String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
-    //todo log
-    System.out.println(detectedProjectId);
-    String projectIdToUse = "fakeproj";//detectedProjectId == null ? projectId : detectedProjectId;
-
-    if(!projectIdToUse.equals(projectId)) {
-      //todo log
+    // todo log
+    LOGGER.info("detectedProjectId = {}", detectedProjectId);
+    String projectIdToUse =
+        "fakeproj"; // detectedProjectId == null ? projectId : detectedProjectId;
+    LOGGER.info("projectIdToUse = {}", projectIdToUse);
+    if (!projectIdToUse.equals(projectId)) {
+      // todo log
     }
 
     MonitoredResourceDescription monitoredResourceDescription =
