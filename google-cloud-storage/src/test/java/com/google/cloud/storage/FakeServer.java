@@ -60,6 +60,7 @@ final class FakeServer implements AutoCloseable {
             .setProjectId("test-proj")
             .setCredentials(NoCredentials.getInstance())
             .setGrpcInterceptorProvider(GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+            .setEnableGrpcClientMetrics(false)
             .build();
     return new FakeServer(server, grpcStorageOptions);
   }

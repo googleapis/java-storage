@@ -75,7 +75,6 @@ public final class ITGapicUnbufferedFinalizeOnCloseResumableWritableByteChannelT
               done, CHUNK_SEGMENTER, storageClient.writeObjectCallable(), writeCtx);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
-      se.printStackTrace(System.out);
       assertAll(
           () -> assertThat(se.getCode()).isEqualTo(0),
           () -> assertThat(se.getReason()).isEqualTo("invalid"),
@@ -231,7 +230,6 @@ public final class ITGapicUnbufferedFinalizeOnCloseResumableWritableByteChannelT
               done, CHUNK_SEGMENTER, storageClient.writeObjectCallable(), writeCtx);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
-      se.printStackTrace(System.out);
       assertAll(
           () -> assertThat(se.getCode()).isEqualTo(0),
           () -> assertThat(se.getReason()).isEqualTo("dataLoss"),
@@ -310,7 +308,6 @@ public final class ITGapicUnbufferedFinalizeOnCloseResumableWritableByteChannelT
               done, CHUNK_SEGMENTER, storageClient.writeObjectCallable(), writeCtx);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
-      se.printStackTrace(System.out);
       assertAll(
           () -> assertThat(se.getCode()).isEqualTo(0),
           () -> assertThat(se.getReason()).isEqualTo("dataLoss"),
