@@ -397,6 +397,7 @@
           <excludes>
             <exclude>**/*SmokeTest.java</exclude>
             <exclude>**/IT*.java</exclude>
+            <skipTests>true</skipTests>
           </excludes>
           <reportNameSuffix>sponge_log</reportNameSuffix>
         </configuration>
@@ -409,6 +410,27 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <!-- this plugin is released along with maven-surefire-plugin -->
+        <version>${surefire.version}</version>
+        <configuration>
+          <forkedProcessTimeoutInSeconds>3600</forkedProcessTimeoutInSeconds>
+          <reportNameSuffix>sponge_log</reportNameSuffix>
+          <includes>
+            <include>${test}</include>
+          </includes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit47</artifactId>
+            <version>${surefire.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -438,6 +460,12 @@
         test specifically for native image validation.
         -->
         <test>com.google.cloud.storage.it.StorageNativeCanary</test>
+      </properties>
+    </profile>
+    <profile>
+      <id>wtf</id>
+      <properties>
+        <test>com.google.cloud.storage.it.ITObjectTest</test>
       </properties>
     </profile>
   </profiles>
