@@ -136,7 +136,13 @@ final class OpenTelemetryBootstrappingUtils {
     Attributes detectedAttributes = resourceProvider.getAttributes();
 
     String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
-    String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
+    //todo log
+    System.out.println(detectedProjectId);
+    String projectIdToUse = "fakeproj";//detectedProjectId == null ? projectId : detectedProjectId;
+
+    if(!projectIdToUse.equals(projectId)) {
+      //todo log
+    }
 
     MonitoredResourceDescription monitoredResourceDescription =
         new MonitoredResourceDescription(
