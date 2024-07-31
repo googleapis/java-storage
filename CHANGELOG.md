@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.41.0](https://github.com/googleapis/java-storage/compare/v2.40.1...v2.41.0) (2024-07-31)
+
+
+### Features
+
+* Enable gRPC client open telemetry metrics reporting ([#2590](https://github.com/googleapis/java-storage/issues/2590)) ([d153228](https://github.com/googleapis/java-storage/commit/d153228a301007b5952de9722f370dda0784473a))
+
+
+### Bug Fixes
+
+* Add UnknownHostException to set of retriable exception ([#2651](https://github.com/googleapis/java-storage/issues/2651)) ([18de9fc](https://github.com/googleapis/java-storage/commit/18de9fcdb831132336eca4112dfe0515174bba7b))
+* Update grpc resumable upload error categorization to be more tolerant ([#2644](https://github.com/googleapis/java-storage/issues/2644)) ([95697dd](https://github.com/googleapis/java-storage/commit/95697dd3d744351058c13793c6ae576820f6b638))
+* Update Storage#readAllBytes to respect shouldReturnRawInputStream option ([#2635](https://github.com/googleapis/java-storage/issues/2635)) ([dc883cc](https://github.com/googleapis/java-storage/commit/dc883cce5f547def7cfb34c4f8a2d409493e4cb9))
+* Update TransferManager downloads to reduce in memory buffering ([#2630](https://github.com/googleapis/java-storage/issues/2630)) ([fc2fd75](https://github.com/googleapis/java-storage/commit/fc2fd750ed60b840e6285a4b1f4ecce739df4c09))
+* Use fast calculation for totalRemaining number of bytes from multiple ByteBuffers ([#2633](https://github.com/googleapis/java-storage/issues/2633)) ([758b3dd](https://github.com/googleapis/java-storage/commit/758b3dd3cc4f6dfc2dfc12c3a77472d97c31c5d5))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240625-2.0.0 ([#2616](https://github.com/googleapis/java-storage/issues/2616)) ([b22babb](https://github.com/googleapis/java-storage/commit/b22babbe26572d8c4289a65a0b125b2a60e8ef79))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240706-2.0.0 ([#2634](https://github.com/googleapis/java-storage/issues/2634)) ([1ccaa0c](https://github.com/googleapis/java-storage/commit/1ccaa0c64887a0661438957e9427237ee005ccf1))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.33.0 ([#2647](https://github.com/googleapis/java-storage/issues/2647)) ([8196259](https://github.com/googleapis/java-storage/commit/8196259927330ecfe3e604c24d248f7935e7fe0d))
+* Update dependency net.jqwik:jqwik to v1.9.0 ([#2608](https://github.com/googleapis/java-storage/issues/2608)) ([a20eb66](https://github.com/googleapis/java-storage/commit/a20eb660ddfa4b68d79ce04496064f3025676d5a))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.3 ([#2604](https://github.com/googleapis/java-storage/issues/2604)) ([8c79f39](https://github.com/googleapis/java-storage/commit/8c79f39ad78d100065c189bcf8e18644b29ff9ed))
+* Update junit-platform.version to v5.10.3 ([#2605](https://github.com/googleapis/java-storage/issues/2605)) ([a532ee4](https://github.com/googleapis/java-storage/commit/a532ee49e2ff5972ea8a2aabbab2dcf6fe0df774))
+
 ## [2.40.1](https://github.com/googleapis/java-storage/compare/v2.40.0...v2.40.1) (2024-06-26)
 
 
