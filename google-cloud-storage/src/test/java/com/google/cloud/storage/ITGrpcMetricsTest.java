@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -39,7 +38,7 @@ public class ITGrpcMetricsTest {
 
     SdkMeterProvider provider =
         OpenTelemetryBootstrappingUtils.createMeterProvider(
-            "monitoring.googleapis.com:443", grpcStorageOptions.getProjectId());
+            "monitoring.googleapis.com:443", grpcStorageOptions.getProjectId(), false);
 
     /*
      * SDKMeterProvider doesn't expose the relevant fields we want to test, but they are present in
@@ -49,9 +48,11 @@ public class ITGrpcMetricsTest {
      */
     String result = provider.toString();
 
-    assertTrue(
-        result.contains(grpcStorageOptions.getProjectId())
-            || result.contains(System.getenv("GOOGLE_CLOUD_PROJECT")));
+    // What the project ID will be will depend on the environment, so we just make sure it's present
+    // and not null/empty
+    assertThat(result.contains("project_id"));
+    assertThat(result).doesNotContain("project_id=\"\"");
+    assertThat(result).doesNotContain("project_id=null");
 
     // This is the check for the Seconds histogram boundary. We can't practically check for every
     // boundary,

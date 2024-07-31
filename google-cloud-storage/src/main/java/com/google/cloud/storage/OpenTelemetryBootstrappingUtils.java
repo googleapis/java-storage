@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.rpc.PermissionDeniedException;
+import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
 import com.google.cloud.opentelemetry.metric.MetricConfiguration;
 import com.google.cloud.opentelemetry.metric.MonitoredResourceDescription;
@@ -32,25 +34,32 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.internal.StringUtils;
 import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.common.CompletableResultCode;
+import io.opentelemetry.sdk.common.export.MemoryMode;
 import io.opentelemetry.sdk.metrics.Aggregation;
 import io.opentelemetry.sdk.metrics.InstrumentSelector;
 import io.opentelemetry.sdk.metrics.InstrumentType;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.SdkMeterProviderBuilder;
 import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.data.AggregationTemporality;
+import io.opentelemetry.sdk.metrics.data.MetricData;
+import io.opentelemetry.sdk.metrics.export.DefaultAggregationSelector;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.net.NoRouteToHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 final class OpenTelemetryBootstrappingUtils {
-
   private static final Collection<String> METRICS_TO_ENABLE =
       ImmutableList.of(
           "grpc.lb.wrr.rr_fallback",
@@ -76,13 +85,17 @@ final class OpenTelemetryBootstrappingUtils {
           "grpc.client.attempt.duration",
           "grpc.client.call.duration");
 
+  static final Logger log = Logger.getLogger(OpenTelemetryBootstrappingUtils.class.getName());
+
   static void enableGrpcMetrics(
       InstantiatingGrpcChannelProvider.Builder channelProviderBuilder,
       String endpoint,
       String projectId,
-      String universeDomain) {
+      String universeDomain,
+      boolean shouldSuppressExceptions) {
     String metricServiceEndpoint = getCloudMonitoringEndpoint(endpoint, universeDomain);
-    SdkMeterProvider provider = createMeterProvider(metricServiceEndpoint, projectId);
+    SdkMeterProvider provider =
+        createMeterProvider(metricServiceEndpoint, projectId, shouldSuppressExceptions);
 
     OpenTelemetrySdk openTelemetrySdk =
         OpenTelemetrySdk.builder().setMeterProvider(provider).build();
@@ -131,12 +144,26 @@ final class OpenTelemetryBootstrappingUtils {
   }
 
   @VisibleForTesting
-  static SdkMeterProvider createMeterProvider(String metricServiceEndpoint, String projectId) {
+  static SdkMeterProvider createMeterProvider(
+      String metricServiceEndpoint, String projectId, boolean shouldSuppressExceptions) {
     GCPResourceProvider resourceProvider = new GCPResourceProvider();
     Attributes detectedAttributes = resourceProvider.getAttributes();
 
     String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
     String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
+
+    if (!projectIdToUse.equals(projectId)) {
+      log.warning(
+          "The Project ID configured for metrics is "
+              + projectIdToUse
+              + ", but the Project ID of the storage "
+              + "client is "
+              + projectId
+              + ". Make sure that the service account in use has the required metric writing role "
+              + "(roles/monitoring.metricWriter) in the project "
+              + projectIdToUse
+              + ", or metrics will not be written.");
+    }
 
     MonitoredResourceDescription monitoredResourceDescription =
         new MonitoredResourceDescription(
@@ -165,9 +192,13 @@ final class OpenTelemetryBootstrappingUtils {
           InstrumentSelector.builder().setName(metric).build(),
           View.builder().setName(metric.replace(".", "/")).build());
     }
+    MetricExporter exporter =
+        shouldSuppressExceptions
+            ? new PermissionDeniedSingleReportMetricsExporter(cloudMonitoringExporter)
+            : cloudMonitoringExporter;
     providerBuilder
         .registerMetricReader(
-            PeriodicMetricReader.builder(cloudMonitoringExporter)
+            PeriodicMetricReader.builder(exporter)
                 .setInterval(java.time.Duration.ofSeconds(60))
                 .build())
         .setResource(
@@ -265,5 +296,88 @@ final class OpenTelemetryBootstrappingUtils {
       }
     }
     return boundaries;
+  }
+
+  private static final class PermissionDeniedSingleReportMetricsExporter implements MetricExporter {
+    private final MetricExporter delegate;
+    private final AtomicBoolean seenPermissionDenied = new AtomicBoolean(false);
+    private final AtomicBoolean seenNoRouteToHost = new AtomicBoolean(false);
+
+    private PermissionDeniedSingleReportMetricsExporter(MetricExporter delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public CompletableResultCode export(Collection<MetricData> metrics) {
+      if (seenPermissionDenied.get() && seenNoRouteToHost.get()) {
+        return CompletableResultCode.ofFailure();
+      }
+
+      try {
+        return delegate.export(metrics);
+      } catch (PermissionDeniedException e) {
+        if (!seenPermissionDenied.get()) {
+          seenPermissionDenied.set(true);
+          throw e;
+        }
+        return CompletableResultCode.ofFailure();
+      } catch (UnavailableException e) {
+        if (seenPermissionDenied.get()
+            && !seenNoRouteToHost.get()
+            && ultimateCause(e, NoRouteToHostException.class)) {
+          seenNoRouteToHost.set(true);
+          throw e;
+        }
+        return CompletableResultCode.ofFailure();
+      }
+    }
+
+    @Override
+    public Aggregation getDefaultAggregation(InstrumentType instrumentType) {
+      return delegate.getDefaultAggregation(instrumentType);
+    }
+
+    @Override
+    public MemoryMode getMemoryMode() {
+      return delegate.getMemoryMode();
+    }
+
+    @Override
+    public CompletableResultCode flush() {
+      return delegate.flush();
+    }
+
+    @Override
+    public CompletableResultCode shutdown() {
+      return delegate.shutdown();
+    }
+
+    @Override
+    public void close() {
+      delegate.close();
+    }
+
+    @Override
+    public AggregationTemporality getAggregationTemporality(InstrumentType instrumentType) {
+      return delegate.getAggregationTemporality(instrumentType);
+    }
+
+    @Override
+    public DefaultAggregationSelector with(InstrumentType instrumentType, Aggregation aggregation) {
+      return delegate.with(instrumentType, aggregation);
+    }
+
+    private static boolean ultimateCause(Throwable t, Class<? extends Throwable> c) {
+      if (t == null) {
+        return false;
+      }
+
+      Throwable cause = t.getCause();
+      if (cause != null && c.isAssignableFrom(cause.getClass())) {
+        return true;
+      } else {
+        return ultimateCause(cause, c);
+      }
+    }
   }
 }

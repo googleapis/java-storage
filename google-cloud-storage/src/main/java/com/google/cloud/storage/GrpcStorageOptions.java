@@ -116,7 +116,9 @@ public final class GrpcStorageOptions extends StorageOptions
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
-  private final boolean enableMetrics;
+  private final boolean enableGrpcClientMetrics;
+
+  private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
@@ -130,7 +132,8 @@ public final class GrpcStorageOptions extends StorageOptions
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
-    this.enableMetrics = builder.enableGrpcClientMetrics;
+    this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
+    this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
@@ -290,9 +293,13 @@ public final class GrpcStorageOptions extends StorageOptions
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
 
-    if (enableMetrics) {
+    if (enableGrpcClientMetrics) {
       OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
-          channelProviderBuilder, endpoint, this.getProjectId(), this.getUniverseDomain());
+          channelProviderBuilder,
+          endpoint,
+          this.getProjectId(),
+          this.getUniverseDomain(),
+          !grpcClientMetricsManuallyEnabled);
     }
 
     builder.setTransportChannelProvider(channelProviderBuilder.build());
@@ -358,7 +365,7 @@ public final class GrpcStorageOptions extends StorageOptions
         retryAlgorithmManager,
         terminationAwaitDuration,
         attemptDirectPath,
-        enableMetrics,
+        enableGrpcClientMetrics,
         grpcInterceptorProvider,
         blobWriteSessionConfig,
         baseHashCode());
@@ -374,7 +381,7 @@ public final class GrpcStorageOptions extends StorageOptions
     }
     GrpcStorageOptions that = (GrpcStorageOptions) o;
     return attemptDirectPath == that.attemptDirectPath
-        && enableMetrics == that.enableMetrics
+        && enableGrpcClientMetrics == that.enableGrpcClientMetrics
         && Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
         && Objects.equals(terminationAwaitDuration, that.terminationAwaitDuration)
         && Objects.equals(grpcInterceptorProvider, that.grpcInterceptorProvider)
@@ -424,6 +431,8 @@ public final class GrpcStorageOptions extends StorageOptions
     private BlobWriteSessionConfig blobWriteSessionConfig =
         GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
+    private boolean grpcMetricsManuallyEnabled = false;
+
     Builder() {}
 
     Builder(StorageOptions options) {
@@ -432,7 +441,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.storageRetryStrategy = gso.getRetryAlgorithmManager().retryStrategy;
       this.terminationAwaitDuration = gso.getTerminationAwaitDuration();
       this.attemptDirectPath = gso.attemptDirectPath;
-      this.enableGrpcClientMetrics = gso.enableMetrics;
+      this.enableGrpcClientMetrics = gso.enableGrpcClientMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
     }
@@ -476,6 +485,9 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public GrpcStorageOptions.Builder setEnableGrpcClientMetrics(boolean enableGrpcClientMetrics) {
       this.enableGrpcClientMetrics = enableGrpcClientMetrics;
+      if (enableGrpcClientMetrics) {
+        grpcMetricsManuallyEnabled = true;
+      }
       return this;
     }
 
