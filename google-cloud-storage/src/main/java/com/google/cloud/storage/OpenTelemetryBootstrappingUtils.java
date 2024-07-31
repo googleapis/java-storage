@@ -156,8 +156,7 @@ final class OpenTelemetryBootstrappingUtils {
       log.warning(
           "The Project ID configured for metrics is "
               + projectIdToUse
-              + ", but the Project ID of the storage "
-              + "client is "
+              + ", but the Project ID of the storage client is "
               + projectId
               + ". Make sure that the service account in use has the required metric writing role "
               + "(roles/monitoring.metricWriter) in the project "
