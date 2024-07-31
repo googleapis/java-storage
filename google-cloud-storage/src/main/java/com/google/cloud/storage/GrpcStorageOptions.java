@@ -425,7 +425,7 @@ public final class GrpcStorageOptions extends StorageOptions
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
-    private boolean enableGrpcClientMetrics = GrpcStorageDefaults.INSTANCE.isEnableMetrics();
+    private boolean enableGrpcClientMetrics = GrpcStorageDefaults.INSTANCE.isEnableGrpcClientMetrics();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
     private BlobWriteSessionConfig blobWriteSessionConfig =
