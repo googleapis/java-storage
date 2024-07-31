@@ -354,7 +354,7 @@
               <dependency>org.junit.vintage:junit-vintage-engine</dependency>
 
               <!--
-              These are needed at compile time, but it causes unused declared dependency errors
+              These are needed at runtime, but it causes unused declared dependency errors
               -->
               <dependency>io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi</dependency>
               <dependency>io.opentelemetry.semconv:opentelemetry-semconv</dependency>

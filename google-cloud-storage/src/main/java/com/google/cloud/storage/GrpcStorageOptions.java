@@ -698,7 +698,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
     /** @since 2.41.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
-    public boolean isEnableMetrics() {
+    public boolean isEnableGrpcClientMetrics() {
       return true;
     }
 
