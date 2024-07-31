@@ -116,6 +116,9 @@ public final class GrpcStorageOptions extends StorageOptions
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
+  private final boolean enableGrpcClientMetrics;
+
+  private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
@@ -129,6 +132,8 @@ public final class GrpcStorageOptions extends StorageOptions
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
+    this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
+    this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
@@ -287,6 +292,16 @@ public final class GrpcStorageOptions extends StorageOptions
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
+
+    if (enableGrpcClientMetrics) {
+      OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
+          channelProviderBuilder,
+          endpoint,
+          this.getProjectId(),
+          this.getUniverseDomain(),
+          !grpcClientMetricsManuallyEnabled);
+    }
+
     builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
@@ -350,6 +365,7 @@ public final class GrpcStorageOptions extends StorageOptions
         retryAlgorithmManager,
         terminationAwaitDuration,
         attemptDirectPath,
+        enableGrpcClientMetrics,
         grpcInterceptorProvider,
         blobWriteSessionConfig,
         baseHashCode());
@@ -365,6 +381,7 @@ public final class GrpcStorageOptions extends StorageOptions
     }
     GrpcStorageOptions that = (GrpcStorageOptions) o;
     return attemptDirectPath == that.attemptDirectPath
+        && enableGrpcClientMetrics == that.enableGrpcClientMetrics
         && Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
         && Objects.equals(terminationAwaitDuration, that.terminationAwaitDuration)
         && Objects.equals(grpcInterceptorProvider, that.grpcInterceptorProvider)
@@ -408,10 +425,14 @@ public final class GrpcStorageOptions extends StorageOptions
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
+    private boolean enableGrpcClientMetrics =
+        GrpcStorageDefaults.INSTANCE.isEnableGrpcClientMetrics();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
     private BlobWriteSessionConfig blobWriteSessionConfig =
         GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
+
+    private boolean grpcMetricsManuallyEnabled = false;
 
     Builder() {}
 
@@ -421,6 +442,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.storageRetryStrategy = gso.getRetryAlgorithmManager().retryStrategy;
       this.terminationAwaitDuration = gso.getTerminationAwaitDuration();
       this.attemptDirectPath = gso.attemptDirectPath;
+      this.enableGrpcClientMetrics = gso.enableGrpcClientMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
     }
@@ -452,6 +474,21 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public GrpcStorageOptions.Builder setAttemptDirectPath(boolean attemptDirectPath) {
       this.attemptDirectPath = attemptDirectPath;
+      return this;
+    }
+    /**
+     * Option for whether this client should emit internal gRPC client internal metrics to Cloud
+     * Monitoring. To disable metric reporting, set this to false. True by default. Emitting metrics
+     * is free and requires minimal CPU and memory.
+     *
+     * @since 2.41.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public GrpcStorageOptions.Builder setEnableGrpcClientMetrics(boolean enableGrpcClientMetrics) {
+      this.enableGrpcClientMetrics = enableGrpcClientMetrics;
+      if (enableGrpcClientMetrics) {
+        grpcMetricsManuallyEnabled = true;
+      }
       return this;
     }
 
@@ -658,6 +695,12 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public boolean isAttemptDirectPath() {
       return false;
+    }
+
+    /** @since 2.41.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public boolean isEnableGrpcClientMetrics() {
+      return true;
     }
 
     /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */

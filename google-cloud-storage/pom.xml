@@ -124,6 +124,53 @@
       <groupId>com.google.api.grpc</groupId>
       <artifactId>gapic-google-cloud-storage-v2</artifactId>
     </dependency>
+    <!-- Open Telemetry dependencies -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-opentelemetry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-metrics</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
+    </dependency>
+
+    <dependency>
+    <groupId>io.opentelemetry.semconv</groupId>
+    <artifactId>opentelemetry-semconv</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>exporter-metrics</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry.contrib</groupId>
+      <artifactId>opentelemetry-gcp-resources</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+    </dependency>
 
     <!-- Access to exception for retry handling -->
     <dependency>
@@ -159,10 +206,7 @@
       <artifactId>grpc-googleapis</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker-qual</artifactId>
-    </dependency>
+
     <!--
     We're not using this directly, however there appears to be some resolution
     issues when we don't list this dependency. Specifically, the check to ensure the flattened
@@ -184,6 +228,7 @@
       <version>0.140.0</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
@@ -307,6 +352,12 @@
               Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
               -->
               <dependency>org.junit.vintage:junit-vintage-engine</dependency>
+
+              <!--
+              These are needed at runtime, but it causes unused declared dependency errors
+              -->
+              <dependency>io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi</dependency>
+              <dependency>io.opentelemetry.semconv:opentelemetry-semconv</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>

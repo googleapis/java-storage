@@ -111,6 +111,16 @@
       ],
       "semanticCommitType": "test",
       "semanticCommitScope": "deps"
+    },
+    {
+      "groupName": "OpenTelemetry extended dependencies",
+      "packagePatterns": [
+        "^io.opentelemetry.semconv:",
+        "^io.opentelemetry.instrumentation:",
+        "^io.opentelemetry.contrib:",
+        "^com.google.cloud.opentelemetry:",
+        "$com.google.cloud.opentelemetry:shared-resourcemapping"
+      ]
     }
   ],
   "semanticCommits": true,
