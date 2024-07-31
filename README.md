@@ -414,7 +414,7 @@ To get help, follow the instructions in the [shared Troubleshooting document][tr
 
 ## Transport
 
-Cloud Storage uses gRPC for the transport layer.
+Cloud Storage uses HTTP/JSON for the transport layer.
 
 ## Supported Java Versions
 
