@@ -18,7 +18,8 @@ branchProtectionRules:
       - 'Kokoro - Test: Java GraalVM Native Image'
       - 'Kokoro - Test: Java 17 GraalVM Native Image'
       - javadoc
-      - unmanaged_dependency_check
+#      TODO: re-enabled once https://github.com/googleapis/sdk-platform-java/pull/3078 is merged and released
+#      - unmanaged_dependency_check
   - pattern: 1.113.14-sp
     isAdminEnforced: true
     requiredApprovingReviewCount: 1
