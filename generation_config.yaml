@@ -20,6 +20,7 @@ libraries:
     extra_versioned_modules: gapic-google-cloud-storage-v2
     excluded_poms: google-cloud-storage-bom,google-cloud-storage
     recommended_package: com.google.cloud.storage
+    transport: rest
     GAPICs:
       - proto_path: google/storage/v2
       - proto_path: google/storage/control/v2
