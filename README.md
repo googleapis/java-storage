@@ -46,7 +46,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.41.0</version>
+  <version>2.40.1</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
@@ -59,7 +59,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.41.0')
+implementation platform('com.google.cloud:libraries-bom:26.43.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
