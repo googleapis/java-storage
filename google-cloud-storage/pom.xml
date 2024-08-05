@@ -16,7 +16,7 @@
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
-    <pubsub-proto.version>1.113.0</pubsub-proto.version>
+    <pubsub-proto.version>1.114.0</pubsub-proto.version>
     <junit-platform.version>5.10.3</junit-platform.version>
   </properties>
   <dependencies>
@@ -225,14 +225,14 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
-      <version>0.140.0</version>
+      <version>0.141.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
-      <version>2.49.0</version>
+      <version>2.50.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
