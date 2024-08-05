@@ -79,5 +79,7 @@
       <version>1.132.0</version>
       <scope>test</scope>
     </dependency>
+  <!-- [START storage_install_with_bom] -->
   </dependencies>
+  <!-- [END storage_install_with_bom] -->
 </project>
