@@ -77,7 +77,8 @@ public interface StorageRpc extends ServiceRpc {
     SOFT_DELETED("softDeleted"),
     COPY_SOURCE_ACL("copySourceAcl"),
     GENERATION("generation"),
-    INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes");
+    INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes"),
+    X_UPLOAD_CONTENT_LENGTH("x-upload-content-length");
 
     private final String value;
 

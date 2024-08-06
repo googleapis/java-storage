@@ -161,7 +161,9 @@ public final class ITUnbufferedResumableUploadTest {
         ResumableMedia.gapic()
             .write()
             .resumableWrite(
-                storageClient.startResumableWriteCallable().withDefaultCallContext(merge), request);
+                storageClient.startResumableWriteCallable().withDefaultCallContext(merge),
+                request,
+                opts);
 
     UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()

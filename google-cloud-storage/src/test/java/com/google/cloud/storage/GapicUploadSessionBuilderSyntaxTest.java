@@ -23,6 +23,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.WriteObjectRequest;
@@ -94,7 +95,7 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableUnbuffered_fluent() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req);
+        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
     UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
@@ -110,7 +111,7 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableBuffered_fluent() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req);
+        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
@@ -150,7 +151,7 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableUnbuffered_incremental() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req);
+        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
     GapicWritableByteChannelSessionBuilder b1 =
         ResumableMedia.gapic()
             .write()
@@ -164,7 +165,7 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableBuffered_incremental() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req);
+        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
     GapicWritableByteChannelSessionBuilder b1 =
         ResumableMedia.gapic()
             .write()

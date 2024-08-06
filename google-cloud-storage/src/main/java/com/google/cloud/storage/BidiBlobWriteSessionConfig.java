@@ -114,7 +114,7 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
                       BidiWriteObjectRequest req = grpc.getBidiWriteObjectRequest(info, opts);
 
                       ApiFuture<BidiResumableWrite> startResumableWrite =
-                          grpc.startResumableWrite(grpcCallContext, req);
+                          grpc.startResumableWrite(grpcCallContext, req, opts);
                       return ResumableMedia.gapic()
                           .write()
                           .bidiByteChannel(grpc.storageClient.bidiWriteObjectCallable())

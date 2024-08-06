@@ -310,7 +310,9 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
 
       ApiFuture<ResumableWrite> f =
           storage.startResumableWrite(
-              GrpcCallContext.createDefault(), storage.getWriteObjectRequest(info, Opts.empty()));
+              GrpcCallContext.createDefault(),
+              storage.getWriteObjectRequest(info, Opts.empty()),
+              Opts.empty());
       ResumableWrite resumableWrite = ApiExceptions.callAndTranslateApiException(f);
 
       UploadCtx uploadCtx =
