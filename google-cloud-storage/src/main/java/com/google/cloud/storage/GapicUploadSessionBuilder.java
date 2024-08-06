@@ -21,6 +21,8 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
@@ -50,7 +52,8 @@ final class GapicUploadSessionBuilder {
 
   ApiFuture<ResumableWrite> resumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> callable,
-      WriteObjectRequest writeObjectRequest) {
+      WriteObjectRequest writeObjectRequest,
+      Opts<ObjectTargetOpt> opts) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
       b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
@@ -61,7 +64,7 @@ final class GapicUploadSessionBuilder {
     if (writeObjectRequest.hasObjectChecksums()) {
       b.setObjectChecksums(writeObjectRequest.getObjectChecksums());
     }
-    StartResumableWriteRequest req = b.build();
+    StartResumableWriteRequest req = opts.startResumableWriteRequest().apply(b).build();
     Function<String, WriteObjectRequest> f =
         uploadId ->
             writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
@@ -80,7 +83,8 @@ final class GapicUploadSessionBuilder {
 
   ApiFuture<BidiResumableWrite> bidiResumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
-      BidiWriteObjectRequest writeObjectRequest) {
+      BidiWriteObjectRequest writeObjectRequest,
+      Opts<ObjectTargetOpt> opts) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
       b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
@@ -91,7 +95,7 @@ final class GapicUploadSessionBuilder {
     if (writeObjectRequest.hasObjectChecksums()) {
       b.setObjectChecksums(writeObjectRequest.getObjectChecksums());
     }
-    StartResumableWriteRequest req = b.build();
+    StartResumableWriteRequest req = opts.startResumableWriteRequest().apply(b).build();
     Function<String, BidiWriteObjectRequest> f =
         uploadId ->
             writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();

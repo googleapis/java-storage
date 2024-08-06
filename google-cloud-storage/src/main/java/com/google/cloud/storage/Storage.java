@@ -1353,6 +1353,23 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Set a precondition on the number of bytes that GCS should expect for a resumable upload. See
+     * the docs for <a
+     * href="https://cloud.google.com/storage/docs/json_api/v1/parameters#xuploadcontentlength">X-Upload-Content-Length</a>
+     * for more detail.
+     *
+     * <p>If the method invoked with this option does not perform a resumable upload, this option
+     * will be ignored.
+     *
+     * @since 2.42.0
+     */
+    @BetaApi
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobWriteOption expectedObjectSize(long objectContentSize) {
+      return new BlobWriteOption(UnifiedOpts.resumableUploadExpectedObjectSize(objectContentSize));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
