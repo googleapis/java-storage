@@ -43,6 +43,7 @@ import com.google.cloud.storage.UnifiedOpts.MetagenerationNotMatch;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.UnifiedOpts.ResumableUploadExpectedObjectSize;
 import com.google.cloud.storage.UnifiedOpts.SourceGenerationMatch;
 import com.google.cloud.storage.UnifiedOpts.SourceGenerationNotMatch;
 import com.google.cloud.storage.UnifiedOpts.SourceMetagenerationMatch;
@@ -102,7 +103,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
                 || o instanceof SourceMetagenerationMatch
                 || o instanceof SourceMetagenerationNotMatch
                 || o instanceof Crc32cMatch
-                || o instanceof Md5Match;
+                || o instanceof Md5Match
+                || o instanceof ResumableUploadExpectedObjectSize;
     TO_EXCLUDE_FROM_PARTS = tmp.negate();
   }
 

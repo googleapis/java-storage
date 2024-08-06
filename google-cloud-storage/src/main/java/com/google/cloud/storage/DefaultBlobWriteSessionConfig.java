@@ -156,7 +156,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                       WriteObjectRequest req = grpc.getWriteObjectRequest(info, opts);
 
                       ApiFuture<ResumableWrite> startResumableWrite =
-                          grpc.startResumableWrite(grpcCallContext, req);
+                          grpc.startResumableWrite(grpcCallContext, req, opts);
                       return ResumableMedia.gapic()
                           .write()
                           .byteChannel(

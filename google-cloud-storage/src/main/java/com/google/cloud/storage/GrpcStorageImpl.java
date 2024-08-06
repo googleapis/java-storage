@@ -320,7 +320,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
         storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
 
-    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
     ApiFuture<GrpcResumableSession> session2 =
         ApiFutures.transform(
             start,
@@ -365,7 +365,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
 
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
@@ -790,7 +790,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     // in JSON, the starting of the resumable session happens before the invocation of write can
     // happen. Emulate the same thing here.
     //  1. create the future
-    ApiFuture<ResumableWrite> startResumableWrite = startResumableWrite(grpcCallContext, req);
+    ApiFuture<ResumableWrite> startResumableWrite = startResumableWrite(grpcCallContext, req, opts);
     //  2. await the result of the future
     ResumableWrite resumableWrite = ApiFutureUtils.await(startResumableWrite);
     //  3. wrap the result in another future container before constructing the BlobWriteChannel
@@ -1919,7 +1919,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @VisibleForTesting
   ApiFuture<ResumableWrite> startResumableWrite(
-      GrpcCallContext grpcCallContext, WriteObjectRequest req) {
+      GrpcCallContext grpcCallContext, WriteObjectRequest req, Opts<ObjectTargetOpt> opts) {
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
@@ -1928,11 +1928,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             storageClient
                 .startResumableWriteCallable()
                 .withDefaultCallContext(merge.withRetryableCodes(codes)),
-            req);
+            req,
+            opts);
   }
 
   ApiFuture<BidiResumableWrite> startResumableWrite(
-      GrpcCallContext grpcCallContext, BidiWriteObjectRequest req) {
+      GrpcCallContext grpcCallContext, BidiWriteObjectRequest req, Opts<ObjectTargetOpt> opts) {
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
@@ -1941,7 +1942,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             storageClient
                 .startResumableWriteCallable()
                 .withDefaultCallContext(merge.withRetryableCodes(codes)),
-            req);
+            req,
+            opts);
   }
 
   private SourceObject sourceObjectEncode(SourceBlob from) {
