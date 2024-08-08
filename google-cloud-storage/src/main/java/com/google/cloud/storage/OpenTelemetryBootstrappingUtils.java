@@ -102,6 +102,7 @@ final class OpenTelemetryBootstrappingUtils {
     GrpcOpenTelemetry grpcOpenTelemetry =
         GrpcOpenTelemetry.newBuilder()
             .sdk(openTelemetrySdk)
+            .addOptionalLabel("grpc.lb.locality")
             .enableMetrics(METRICS_TO_ENABLE)
             .build();
     ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator =
