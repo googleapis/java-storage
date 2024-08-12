@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.client.util.Data;
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
@@ -44,6 +45,8 @@ import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
+import com.google.cloud.storage.UnifiedOpts.NestedNamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -91,6 +94,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -497,11 +501,35 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
     Map<StorageRpc.Option, ?> optionsMap =
         Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
-    if (bucketInfo.getModifiedFields().isEmpty()) {
+    ImmutableSet<NamedField> modifiedFields = bucketInfo.getModifiedFields();
+    if (modifiedFields.isEmpty()) {
       return internalBucketGet(bucketInfo.getName(), optionsMap);
     } else {
+      com.google.api.services.storage.model.Bucket tmp = codecs.bucketInfo().encode(bucketInfo);
       com.google.api.services.storage.model.Bucket bucketPb =
-          codecs.bucketInfo().encode(bucketInfo);
+          new com.google.api.services.storage.model.Bucket();
+      Stream.concat(modifiedFields.stream(), BucketField.REQUIRED_FIELDS.stream())
+          .map(
+              f -> {
+                if (f instanceof NestedNamedField) {
+                  return ((NestedNamedField) f).getParent();
+                } else {
+                  return f;
+                }
+              })
+          .forEach(
+              field -> {
+                String jsonName = field.getApiaryName();
+                if (tmp.containsKey(jsonName)) {
+                  bucketPb.put(jsonName, tmp.get(jsonName));
+                } else {
+                  BucketField lookup = BucketField.lookup(field);
+                  if (lookup != null) {
+                    bucketPb.put(jsonName, Data.nullOf(lookup.getJsonClass()));
+                  }
+                }
+              });
+
       ResultRetryAlgorithm<?> algorithm =
           retryAlgorithmManager.getForBucketsUpdate(bucketPb, optionsMap);
       return run(
@@ -515,7 +543,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-    boolean unmodifiedBeforeOpts = blobInfo.getModifiedFields().isEmpty();
+    ImmutableSet<NamedField> modifiedFields = blobInfo.getModifiedFields();
+    boolean unmodifiedBeforeOpts = modifiedFields.isEmpty();
     BlobInfo.Builder builder = blobInfo.toBuilder();
 
     // This is a workaround until everything is in prod for both json and grpc.
@@ -523,7 +552,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     // request if it was modified, so that we don't send a null object in a
     // grpc or json request.
     // todo: b/308194853
-    if (blobInfo.getModifiedFields().contains(BlobField.RETENTION)) {
+    if (modifiedFields.contains(BlobField.RETENTION)) {
       builder.setRetention(blobInfo.getRetention());
     }
     BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
@@ -531,7 +560,30 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     if (unmodifiedBeforeOpts && unmodifiedAfterOpts) {
       return internalGetBlob(blobInfo.getBlobId(), optionsMap);
     } else {
-      StorageObject pb = codecs.blobInfo().encode(updated);
+      StorageObject tmp = codecs.blobInfo().encode(updated);
+      StorageObject pb = new StorageObject();
+      Stream.concat(modifiedFields.stream(), BlobField.REQUIRED_FIELDS.stream())
+          .map(
+              f -> {
+                if (f instanceof NestedNamedField) {
+                  return ((NestedNamedField) f).getParent();
+                } else {
+                  return f;
+                }
+              })
+          .forEach(
+              field -> {
+                String jsonName = field.getApiaryName();
+                if (tmp.containsKey(jsonName)) {
+                  pb.put(jsonName, tmp.get(jsonName));
+                } else {
+                  BlobField lookup = BlobField.lookup(field);
+                  if (lookup != null) {
+                    pb.put(jsonName, Data.nullOf(lookup.getJsonClass()));
+                  }
+                }
+              });
+
       ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsUpdate(pb, optionsMap);
       return run(
           algorithm,

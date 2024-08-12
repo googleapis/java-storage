@@ -45,11 +45,13 @@ import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
+import com.google.cloud.storage.UnifiedOpts.NestedNamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
@@ -62,9 +64,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +77,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An interface for Google Cloud Storage.
@@ -106,80 +111,107 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   enum BucketField implements FieldSelector, NamedField {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ID("id", "bucket_id"),
+    ID("id", "bucket_id", String.class),
     @TransportCompatibility(Transport.HTTP)
-    SELF_LINK("selfLink"),
+    SELF_LINK("selfLink", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    NAME("name"),
+    NAME("name", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    TIME_CREATED("timeCreated", "create_time"),
+    TIME_CREATED("timeCreated", "create_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    METAGENERATION("metageneration"),
+    METAGENERATION("metageneration", Long.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ACL("acl"),
+    ACL("acl", ArrayList.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    DEFAULT_OBJECT_ACL("defaultObjectAcl", "default_object_acl"),
+    DEFAULT_OBJECT_ACL("defaultObjectAcl", "default_object_acl", ArrayList.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    OWNER("owner"),
+    OWNER("owner", com.google.api.services.storage.model.Bucket.Owner.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    LABELS("labels"),
+    LABELS("labels", HashMap.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    LOCATION("location"),
+    LOCATION("location", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    LOCATION_TYPE("locationType", "location_type"),
+    LOCATION_TYPE("locationType", "location_type", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    WEBSITE("website"),
+    WEBSITE("website", com.google.api.services.storage.model.Bucket.Website.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    VERSIONING("versioning"),
+    VERSIONING("versioning", com.google.api.services.storage.model.Bucket.Versioning.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CORS("cors"),
+    CORS("cors", ArrayList.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    LIFECYCLE("lifecycle"),
+    LIFECYCLE("lifecycle", com.google.api.services.storage.model.Bucket.Lifecycle.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    STORAGE_CLASS("storageClass", "storage_class"),
+    STORAGE_CLASS("storageClass", "storage_class", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ETAG("etag"),
+    ETAG("etag", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ENCRYPTION("encryption"),
+    ENCRYPTION("encryption", com.google.api.services.storage.model.Bucket.Encryption.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    BILLING("billing"),
+    BILLING("billing", com.google.api.services.storage.model.Bucket.Billing.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold", "default_event_based_hold"),
+    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold", "default_event_based_hold", Boolean.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    RETENTION_POLICY("retentionPolicy", "retention_policy"),
+    RETENTION_POLICY(
+        "retentionPolicy",
+        "retention_policy",
+        com.google.api.services.storage.model.Bucket.RetentionPolicy.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    IAMCONFIGURATION("iamConfiguration", "iam_config"),
+    IAMCONFIGURATION(
+        "iamConfiguration",
+        "iam_config",
+        com.google.api.services.storage.model.Bucket.IamConfiguration.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    LOGGING("logging"),
+    LOGGING("logging", com.google.api.services.storage.model.Bucket.Logging.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    UPDATED("updated", "update_time"),
+    UPDATED("updated", "update_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    RPO("rpo"),
+    RPO("rpo", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
+    CUSTOM_PLACEMENT_CONFIG(
+        "customPlacementConfig",
+        "custom_placement_config",
+        com.google.api.services.storage.model.Bucket.CustomPlacementConfig.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    AUTOCLASS("autoclass"),
+    AUTOCLASS("autoclass", com.google.api.services.storage.model.Bucket.Autoclass.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    HIERARCHICAL_NAMESPACE("hierarchicalNamespace", "hierarchical_namespace"),
+    HIERARCHICAL_NAMESPACE(
+        "hierarchicalNamespace",
+        "hierarchical_namespace",
+        com.google.api.services.storage.model.Bucket.HierarchicalNamespace.class),
     @TransportCompatibility({Transport.HTTP})
-    OBJECT_RETENTION("objectRetention"),
+    OBJECT_RETENTION(
+        "objectRetention", com.google.api.services.storage.model.Bucket.ObjectRetention.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    SOFT_DELETE_POLICY("softDeletePolicy", "soft_delete_policy");
+    SOFT_DELETE_POLICY(
+        "softDeletePolicy",
+        "soft_delete_policy",
+        com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class);
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
+    private static final Map<String, BucketField> JSON_FIELD_NAME_INDEX;
+
+    static {
+      ImmutableMap.Builder<String, BucketField> tmp = ImmutableMap.builder();
+      for (BucketField field : values()) {
+        tmp.put(field.selector, field);
+      }
+      JSON_FIELD_NAME_INDEX = Utils.mapBuild(tmp);
+    }
 
     private final String selector;
     private final String grpcFieldName;
+    private final Class<?> jsonClass;
 
-    BucketField(String selector) {
-      this(selector, selector);
+    BucketField(String selector, Class<?> jsonClass) {
+      this(selector, selector, jsonClass);
     }
 
-    BucketField(String selector, String grpcFieldName) {
+    BucketField(String selector, String grpcFieldName, Class<?> jsonClass) {
       this.selector = selector;
       this.grpcFieldName = grpcFieldName;
+      this.jsonClass = jsonClass;
     }
 
     @Override
@@ -195,97 +227,130 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @Override
     public String getGrpcName() {
       return grpcFieldName;
+    }
+
+    Class<?> getJsonClass() {
+      return jsonClass;
+    }
+
+    @Nullable
+    static BucketField lookup(NamedField nf) {
+      NamedField lookup = nf;
+      if (nf instanceof NestedNamedField) {
+        NestedNamedField nested = (NestedNamedField) nf;
+        lookup = nested.getParent();
+      }
+      return JSON_FIELD_NAME_INDEX.get(lookup.getApiaryName());
     }
   }
 
   enum BlobField implements FieldSelector, NamedField {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ACL("acl"),
+    ACL("acl", com.google.api.services.storage.model.ObjectAccessControl.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    BUCKET("bucket"),
+    BUCKET("bucket", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CACHE_CONTROL("cacheControl", "cache_control"),
+    CACHE_CONTROL("cacheControl", "cache_control", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    COMPONENT_COUNT("componentCount", "component_count"),
+    COMPONENT_COUNT("componentCount", "component_count", Integer.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CONTENT_DISPOSITION("contentDisposition", "content_disposition"),
+    CONTENT_DISPOSITION("contentDisposition", "content_disposition", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CONTENT_ENCODING("contentEncoding", "content_encoding"),
+    CONTENT_ENCODING("contentEncoding", "content_encoding", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CONTENT_LANGUAGE("contentLanguage", "content_language"),
+    CONTENT_LANGUAGE("contentLanguage", "content_language", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CONTENT_TYPE("contentType", "content_type"),
+    CONTENT_TYPE("contentType", "content_type", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CRC32C("crc32c", "checksums.crc32c"),
+    CRC32C("crc32c", "checksums.crc32c", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    ETAG("etag"),
+    ETAG("etag", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    GENERATION("generation"),
+    GENERATION("generation", Long.class),
     @TransportCompatibility(Transport.HTTP)
-    ID("id"),
+    ID("id", String.class),
     /** {@code kind} is not exposed in {@link BlobInfo} or {@link Blob} no need to select it */
     @Deprecated
     @TransportCompatibility(Transport.HTTP)
-    KIND("kind"),
+    KIND("kind", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    MD5HASH("md5Hash", "checksums.md5_hash"),
+    MD5HASH("md5Hash", "checksums.md5_hash", String.class),
     @TransportCompatibility(Transport.HTTP)
-    MEDIA_LINK("mediaLink"),
+    MEDIA_LINK("mediaLink", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    METADATA("metadata"),
+    METADATA("metadata", HashMap.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    METAGENERATION("metageneration"),
+    METAGENERATION("metageneration", Long.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    NAME("name"),
+    NAME("name", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    OWNER("owner"),
+    OWNER("owner", com.google.api.services.storage.model.StorageObject.Owner.class),
     @TransportCompatibility(Transport.HTTP)
-    SELF_LINK("selfLink"),
+    SELF_LINK("selfLink", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    SIZE("size"),
+    SIZE("size", java.math.BigInteger.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    STORAGE_CLASS("storageClass", "storage_class"),
+    STORAGE_CLASS("storageClass", "storage_class", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    TIME_DELETED("timeDeleted", "delete_time"),
+    TIME_DELETED("timeDeleted", "delete_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    TIME_CREATED("timeCreated", "create_time"),
+    TIME_CREATED("timeCreated", "create_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    KMS_KEY_NAME("kmsKeyName", "kms_key"),
+    KMS_KEY_NAME("kmsKeyName", "kms_key", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    EVENT_BASED_HOLD("eventBasedHold", "event_based_hold"),
+    EVENT_BASED_HOLD("eventBasedHold", "event_based_hold", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    TEMPORARY_HOLD("temporaryHold", "temporary_hold"),
+    TEMPORARY_HOLD("temporaryHold", "temporary_hold", String.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    RETENTION_EXPIRATION_TIME("retentionExpirationTime", "retention_expire_time"),
+    RETENTION_EXPIRATION_TIME(
+        "retentionExpirationTime",
+        "retention_expire_time",
+        com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    UPDATED("updated", "update_time"),
+    UPDATED("updated", "update_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CUSTOM_TIME("customTime", "custom_time"),
+    CUSTOM_TIME("customTime", "custom_time", com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated", "update_storage_class_time"),
+    TIME_STORAGE_CLASS_UPDATED(
+        "timeStorageClassUpdated",
+        "update_storage_class_time",
+        com.google.api.client.util.DateTime.class),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption"),
+    CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption", String.class),
     @TransportCompatibility({Transport.HTTP})
-    RETENTION("retention"),
+    RETENTION("retention", com.google.api.services.storage.model.StorageObject.Retention.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    SOFT_DELETE_TIME("softDeleteTime", "soft_delete_time"),
+    SOFT_DELETE_TIME(
+        "softDeleteTime", "soft_delete_time", com.google.api.client.util.DateTime.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    HARD_DELETE_TIME("hardDeleteTime", "hard_delete_time");
+    HARD_DELETE_TIME(
+        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class);
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
+    private static final Map<String, BlobField> JSON_FIELD_NAME_INDEX;
+
+    static {
+      ImmutableMap.Builder<String, BlobField> tmp = ImmutableMap.builder();
+      for (BlobField field : values()) {
+        tmp.put(field.selector, field);
+      }
+      JSON_FIELD_NAME_INDEX = Utils.mapBuild(tmp);
+    }
 
     private final String selector;
     private final String grpcFieldName;
+    private final Class<?> jsonClass;
 
-    BlobField(String selector) {
-      this(selector, selector);
+    BlobField(String selector, Class<?> jsonClass) {
+      this(selector, selector, jsonClass);
     }
 
-    BlobField(String selector, String grpcFieldName) {
+    BlobField(String selector, String grpcFieldName, Class<?> jsonClass) {
       this.selector = selector;
       this.grpcFieldName = grpcFieldName;
+      this.jsonClass = jsonClass;
     }
 
     @Override
@@ -301,6 +366,20 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @Override
     public String getGrpcName() {
       return grpcFieldName;
+    }
+
+    Class<?> getJsonClass() {
+      return jsonClass;
+    }
+
+    @Nullable
+    static BlobField lookup(NamedField nf) {
+      NamedField lookup = nf;
+      if (nf instanceof NestedNamedField) {
+        NestedNamedField nested = (NestedNamedField) nf;
+        lookup = nested.getParent();
+      }
+      return JSON_FIELD_NAME_INDEX.get(lookup.getApiaryName());
     }
   }
 
