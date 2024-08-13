@@ -13,13 +13,14 @@ Java idiomatic client for [Cloud Storage][product-docs].
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
+<!-- {x-version-update-start:libraries-bom:released} -->
 ```xml
 <dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.43.0</version>
+      <version>26.44.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -35,12 +36,13 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
   </dependency>
-
+</dependencies>
 ```
 
 If you are using Maven without the BOM, add this to your dependencies:
 
 <!-- {x-version-update-start:google-cloud-storage:released} -->
+<!-- {x-version-update-start:google-cloud-storage-control:released} -->
 
 ```xml
 <dependency>
@@ -51,7 +53,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.41.0</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.41.0</version>
 </dependency>
 
 ```
@@ -59,20 +61,23 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.41.0')
+implementation platform('com.google.cloud:libraries-bom:26.44.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
+implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
 implementation 'com.google.cloud:google-cloud-storage:2.41.0'
+implementation 'com.google.cloud:google-cloud-storage-control:2.41.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.41.0"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage-control" % "2.41.0"
 ```
 <!-- {x-version-update-end} -->
 
@@ -121,7 +126,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>libraries-bom</artifactId>
-            <version>26.37.0</version>
+            <version>26.44.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -130,9 +135,10 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
 <dependencies>
     <dependency>
-    <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-storage-control</artifactId>
-</dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-storage-control</artifactId>
+    </dependency>
+</dependencies>
 ```
 
 If you are using Maven without the BOM, add this to your dependencies:
@@ -141,19 +147,19 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
-    <version>2.41.0</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+    <version>2.41.0</version>
 </dependency>
 ```
 
 If you are using Gradle 5.x or later, add this to your dependencies:
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.41.0')
+implementation platform('com.google.cloud:libraries-bom:26.44.0')
 implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage-control:2.41.0' <!-- {x-version-update:google-cloud-storage-control:current} -->
+implementation 'com.google.cloud:google-cloud-storage-control:2.41.0'
 ```
 
 #### Creating an authorized service object
