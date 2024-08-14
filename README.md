@@ -13,7 +13,6 @@ Java idiomatic client for [Cloud Storage][product-docs].
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
-<!-- {x-version-update-start:libraries-bom:released} -->
 ```xml
 <dependencyManagement>
   <dependencies>
@@ -37,12 +36,12 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <artifactId>google-cloud-storage-control</artifactId>
   </dependency>
 </dependencies>
+
 ```
 
 If you are using Maven without the BOM, add this to your dependencies:
 
 <!-- {x-version-update-start:google-cloud-storage:released} -->
-<!-- {x-version-update-start:google-cloud-storage-control:released} -->
 
 ```xml
 <dependency>
@@ -64,20 +63,17 @@ If you are using Gradle 5.x or later, add this to your dependencies:
 implementation platform('com.google.cloud:libraries-bom:26.44.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
-implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
 implementation 'com.google.cloud:google-cloud-storage:2.41.0'
-implementation 'com.google.cloud:google-cloud-storage-control:2.41.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.41.0"
-libraryDependencies += "com.google.cloud" % "google-cloud-storage-control" % "2.41.0"
 ```
 <!-- {x-version-update-end} -->
 
@@ -120,6 +116,7 @@ The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) 
 The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
+<!-- {x-version-update-start:libraries-bom:released} -->
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -142,7 +139,9 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 ```
 
 If you are using Maven without the BOM, add this to your dependencies:
-<!-- {x-version-update-start:google-cloud-storage:released} -->
+
+<!-- {x-version-update-start:google-cloud-storage-control:released} -->
+
 ```xml
 <dependency>
     <groupId>com.google.cloud</groupId>
@@ -283,7 +282,6 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
-| Native Image Storage Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) |
 | Configure Retries | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) |
 | Generate Signed Post Policy V4 | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) |
 | Get Service Account | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) |
