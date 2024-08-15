@@ -83,6 +83,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -1082,6 +1083,11 @@ final class JsonConversions {
     // various data level methods in the apiary model are hostile to ImmutableList, as it does not
     // provide a public default no args constructor. Instead, apiary uses ArrayList for all internal
     // representations of JSON Arrays.
-    return l -> l.stream().map(f).collect(Collectors.toList());
+    return l -> {
+      if (l == null) {
+        return ImmutableList.of();
+      }
+      return l.stream().filter(Objects::nonNull).map(f).collect(Collectors.toList());
+    };
   }
 }

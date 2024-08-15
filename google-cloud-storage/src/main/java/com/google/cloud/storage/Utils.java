@@ -26,6 +26,7 @@ import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
@@ -56,6 +57,21 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @InternalApi
 final class Utils {
+  private static final Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> mapBuild;
+
+  static {
+    Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> tmp;
+    // buildOrThrow was added in guava 31.0
+    // if it fails, fallback to the older build() method instead.
+    // The behavior was the same, but the new name makes the behavior clear
+    try {
+      ImmutableMap.builder().buildOrThrow();
+      tmp = ImmutableMap.Builder::buildOrThrow;
+    } catch (NoSuchMethodError e) {
+      tmp = ImmutableMap.Builder::build;
+    }
+    mapBuild = tmp;
+  }
 
   static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -318,5 +334,9 @@ final class Utils {
     } else {
       return ImmutableList.of(t);
     }
+  }
+
+  static <K, V> ImmutableMap<K, V> mapBuild(ImmutableMap.Builder<K, V> b) {
+    return (ImmutableMap<K, V>) mapBuild.apply(b);
   }
 }

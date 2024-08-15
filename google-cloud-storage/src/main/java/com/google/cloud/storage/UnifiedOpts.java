@@ -2301,21 +2301,6 @@ final class UnifiedOpts {
    */
   @SuppressWarnings("unchecked")
   static final class Opts<T extends Opt> {
-    private static final Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> mapBuild;
-
-    static {
-      Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> tmp;
-      // buildOrThrow was added in guava 31.0
-      // if it fails, fallback to the older build() method instead.
-      // The behavior was the same, but the new name makes the behavior clear
-      try {
-        ImmutableMap.builder().buildOrThrow();
-        tmp = ImmutableMap.Builder::buildOrThrow;
-      } catch (NoSuchMethodError e) {
-        tmp = ImmutableMap.Builder::build;
-      }
-      mapBuild = tmp;
-    }
 
     private final ImmutableList<T> opts;
 
@@ -2402,7 +2387,7 @@ final class UnifiedOpts {
     ImmutableMap<StorageRpc.Option, ?> getRpcOptions() {
       ImmutableMap.Builder<StorageRpc.Option, Object> builder =
           rpcOptionMapper().apply(ImmutableMap.builder());
-      return (ImmutableMap<StorageRpc.Option, ?>) mapBuild.apply(builder);
+      return Utils.mapBuild(builder);
     }
 
     Mapper<GrpcCallContext> grpcMetadataMapper() {
@@ -2798,7 +2783,7 @@ final class UnifiedOpts {
     }
   }
 
-  private static final class NestedNamedField implements NamedField {
+  static final class NestedNamedField implements NamedField {
     private static long serialVersionUID = -7623005572810688221L;
     private final NamedField parent;
     private final NamedField child;
@@ -2816,6 +2801,14 @@ final class UnifiedOpts {
     @Override
     public String getGrpcName() {
       return parent.getGrpcName() + "." + child.getGrpcName();
+    }
+
+    NamedField getParent() {
+      return parent;
+    }
+
+    NamedField getChild() {
+      return child;
     }
 
     @Override
