@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.42.0](https://github.com/googleapis/java-storage/compare/v2.41.0...v2.42.0) (2024-08-19)
+
+
+### Features
+
+* Enable grpc.lb.locality label for client-side metrics ([#2659](https://github.com/googleapis/java-storage/issues/2659)) ([b681ee0](https://github.com/googleapis/java-storage/commit/b681ee0d7c535db3dc4ede0c2b67bf2306aaf9f0))
+
+
+### Bug Fixes
+
+* Update modified field handling for blob and bucket with json transport to properly clear fields ([#2664](https://github.com/googleapis/java-storage/issues/2664)) ([e2f5537](https://github.com/googleapis/java-storage/commit/e2f553788eb3f3685056728de75c358893887604)), closes [#2662](https://github.com/googleapis/java-storage/issues/2662)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.34.0 ([#2673](https://github.com/googleapis/java-storage/issues/2673)) ([453c29a](https://github.com/googleapis/java-storage/commit/453c29abb8e970a1a639a39af3c0e3e8516fdda5))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.45.0 ([#2667](https://github.com/googleapis/java-storage/issues/2667)) ([1f66dff](https://github.com/googleapis/java-storage/commit/1f66dfff67dcab49596f25aa43651c7f098f12ad))
+
 ## [2.41.0](https://github.com/googleapis/java-storage/compare/v2.40.1...v2.41.0) (2024-07-31)
 
 
