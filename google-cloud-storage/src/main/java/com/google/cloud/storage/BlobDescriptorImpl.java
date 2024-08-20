@@ -33,7 +33,7 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import io.grpc.Status.Code;
 import java.io.IOException;
 import java.util.OptionalLong;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
 
@@ -115,7 +115,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      Executor executor) {
+      ScheduledExecutorService executor) {
     BlobDescriptorState state = new BlobDescriptorState(openRequest);
 
     BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, context, state);

@@ -42,6 +42,7 @@ import com.google.api.gax.rpc.RequestParamsExtractor;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
+import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
@@ -648,6 +649,20 @@ public final class GrpcStorageOptions extends StorageOptions
           blobWriteSessionConfig instanceof BlobWriteSessionConfig.GrpcCompatible,
           "The provided instance of BlobWriteSessionConfig is not compatible with gRPC transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
+      return this;
+    }
+
+    @BetaApi
+    @Override
+    public GrpcStorageOptions.Builder setUniverseDomain(String universeDomain) {
+      super.setUniverseDomain(universeDomain);
+      return this;
+    }
+
+    @BetaApi
+    @Override
+    public GrpcStorageOptions.Builder setApiTracerFactory(ApiTracerFactory apiTracerFactory) {
+      super.setApiTracerFactory(apiTracerFactory);
       return this;
     }
 

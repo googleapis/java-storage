@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +53,7 @@ final class BlobDescriptorStream
   private final SettableApiFuture<Void> blobDescriptorResolveFuture;
 
   private final BlobDescriptorState state;
-  private final Executor executor;
+  private final ScheduledExecutorService executor;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       callable;
   private final GrpcCallContext context;
@@ -67,7 +68,7 @@ final class BlobDescriptorStream
 
   private BlobDescriptorStream(
       BlobDescriptorState state,
-      Executor executor,
+      ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       GrpcCallContext context,
       int maxRedirectsAllowed) {
@@ -452,7 +453,7 @@ final class BlobDescriptorStream
   }
 
   static BlobDescriptorStream create(
-      Executor executor,
+      ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       GrpcCallContext context,
       BlobDescriptorState state) {

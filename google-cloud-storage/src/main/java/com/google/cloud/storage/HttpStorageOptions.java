@@ -24,6 +24,7 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.HeaderProvider;
+import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.auth.Credentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceRpc;
@@ -267,6 +268,18 @@ public class HttpStorageOptions extends StorageOptions {
           blobWriteSessionConfig instanceof BlobWriteSessionConfig.HttpCompatible,
           "The provided instance of BlobWriteSessionConfig is not compatible with this HTTP transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
+      return this;
+    }
+
+    @Override
+    public HttpStorageOptions.Builder setUniverseDomain(String universeDomain) {
+      super.setUniverseDomain(universeDomain);
+      return this;
+    }
+
+    @Override
+    public HttpStorageOptions.Builder setApiTracerFactory(ApiTracerFactory apiTracerFactory) {
+      super.setApiTracerFactory(apiTracerFactory);
       return this;
     }
 

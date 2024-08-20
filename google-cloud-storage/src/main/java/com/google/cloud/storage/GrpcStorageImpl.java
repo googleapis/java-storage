@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
+import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
@@ -105,6 +106,7 @@ import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
+import com.google.storage.v2.StorageSettings;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
@@ -134,8 +136,7 @@ import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -175,7 +176,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
-  final Executor executor;
+  final ScheduledExecutorService executor;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -198,7 +199,24 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = Suppliers.memoize(() -> UnifiedOpts.projectId(options.getProjectId()));
-    this.executor = Executors.newCachedThreadPool();
+    this.executor =
+        Utils.firstNonNull(
+                () -> {
+                  if (storageClient == null) {
+                    return null;
+                  }
+                  StorageSettings settings = storageClient.getSettings();
+                  if (settings == null) {
+                    return null;
+                  }
+                  return settings.getBackgroundExecutorProvider();
+                },
+                () -> {
+                  // TODO: if we make it to here, ensure we track the need to shutdown the executor
+                  //   separate from StorageClient
+                  return InstantiatingExecutorProvider.newBuilder().build();
+                })
+            .getExecutor();
   }
 
   @Override
