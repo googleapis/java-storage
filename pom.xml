@@ -66,6 +66,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.11.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!--
       Each of the following dependencies declares a dependency on opentelemtry-semconv,
       but they differ in what version. Explicitly declare the version here to break the tie.

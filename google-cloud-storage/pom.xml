@@ -17,7 +17,6 @@
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
     <pubsub-proto.version>1.114.1</pubsub-proto.version>
-    <junit-platform.version>5.11.0</junit-platform.version>
   </properties>
   <dependencies>
     <dependency>
@@ -294,15 +293,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.jqwik</groupId>
-      <artifactId>jqwik</artifactId>
-      <version>1.9.0</version>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit-platform.version}</version>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik</artifactId>
+      <version>1.9.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -399,13 +397,11 @@
         <dependency>
           <groupId>org.junit.vintage</groupId>
           <artifactId>junit-vintage-engine</artifactId>
-          <version>${junit-platform.version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.junit.jupiter</groupId>
           <artifactId>junit-jupiter-engine</artifactId>
-          <version>${junit-platform.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
