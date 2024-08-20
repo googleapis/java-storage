@@ -28,9 +28,9 @@ final class TransferManagerUtils {
 
   static String createBlobName(ParallelUploadConfig config, Path file) {
     if (config.getPrefix().isEmpty()) {
-      return file.toString();
+      return file.getFileName().toString();
     } else {
-      return config.getPrefix().concat(file.toString());
+      return config.getPrefix().concat(file.getFileName().toString());
     }
   }
 
