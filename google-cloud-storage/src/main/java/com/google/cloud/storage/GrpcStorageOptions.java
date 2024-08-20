@@ -31,6 +31,7 @@ import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
+import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.BidiStreamingCallable;
@@ -79,6 +80,7 @@ import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
 import com.google.storage.v2.stub.GrpcStorageCallableFactory;
 import com.google.storage.v2.stub.GrpcStorageStub;
+import com.google.storage.v2.stub.StorageStub;
 import com.google.storage.v2.stub.StorageStubSettings;
 import io.grpc.ClientInterceptor;
 import io.grpc.Detachable;
@@ -810,15 +812,17 @@ public final class GrpcStorageOptions extends StorageOptions
           Opts<UserProject> defaultOpts = t.y();
           if (ZeroCopyReadinessChecker.isReady()) {
             LOGGER.config("zero-copy protobuf deserialization available, using it");
-            StorageStubSettings stubSettings =
+            StorageStubSettings baseSettings =
                 (StorageStubSettings) storageSettings.getStubSettings();
-            ClientContext clientContext = ClientContext.create(stubSettings);
-            GrpcStorageCallableFactory grpcStorageCallableFactory =
-                new GrpcStorageCallableFactory();
-            InternalZeroCopyGrpcStorageStub stub =
-                new InternalZeroCopyGrpcStorageStub(
-                    stubSettings, clientContext, grpcStorageCallableFactory);
-            StorageClient client = new InternalStorageClient(stub);
+            InternalStorageStubSettings.Builder internalStorageStubSettingsBuilder =
+                new InternalStorageStubSettings.Builder(baseSettings);
+            InternalStorageSettings.Builder settingsBuilder =
+                new InternalStorageSettings.Builder(internalStorageStubSettingsBuilder);
+            InternalStorageSettings internalStorageSettingsBuilder =
+                new InternalStorageSettings(settingsBuilder);
+            InternalStorageClient client =
+                new InternalStorageClient(internalStorageSettingsBuilder);
+            InternalZeroCopyGrpcStorageStub stub = client.getStub();
             GrpcStorageImpl grpcStorage =
                 new GrpcStorageImpl(
                     grpcStorageOptions,
@@ -928,8 +932,8 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private static final class InternalStorageClient extends StorageClient {
 
-    private InternalStorageClient(InternalZeroCopyGrpcStorageStub stub) {
-      super(stub);
+    private InternalStorageClient(StorageSettings settings) throws IOException {
+      super(settings);
     }
 
     @Override
@@ -939,7 +943,7 @@ public final class GrpcStorageOptions extends StorageOptions
         // instead hook in here to close out the zero-copy marshaller
         //noinspection EmptyTryBlock
         try (ZeroCopyResponseMarshaller<ReadObjectResponse> ignore1 =
-                getStub().readObjectResponseMarshaller;
+            getStub().readObjectResponseMarshaller;
             ZeroCopyResponseMarshaller<BidiReadObjectResponse> ignore2 =
                 getStub().bidiReadObjectResponseMarshaller) {
           // use try-with to do the close dance for us
@@ -954,6 +958,60 @@ public final class GrpcStorageOptions extends StorageOptions
     @Override
     public InternalZeroCopyGrpcStorageStub getStub() {
       return (InternalZeroCopyGrpcStorageStub) super.getStub();
+    }
+  }
+
+  private static final class InternalStorageSettings extends StorageSettings {
+
+    private InternalStorageSettings(Builder settingsBuilder) throws IOException {
+      super(settingsBuilder);
+    }
+
+    private static final class Builder extends StorageSettings.Builder {
+      private Builder(StorageStubSettings.Builder stubSettings) {
+        super(stubSettings);
+      }
+
+      @Override
+      public InternalStorageSettings build() throws IOException {
+        return new InternalStorageSettings(this);
+      }
+    }
+  }
+
+  private static final class InternalStorageStubSettings extends StorageStubSettings {
+
+    private InternalStorageStubSettings(Builder settingsBuilder) throws IOException {
+      super(settingsBuilder);
+    }
+
+    @Override
+    public StorageStub createStub() throws IOException {
+      if (!getTransportChannelProvider()
+          .getTransportName()
+          .equals(GrpcTransportChannel.getGrpcTransportName())) {
+        throw new UnsupportedOperationException(
+            String.format(
+                "Transport not supported: %s", getTransportChannelProvider().getTransportName()));
+      }
+
+      ClientContext clientContext = ClientContext.create(this);
+      GrpcStorageCallableFactory grpcStorageCallableFactory = new GrpcStorageCallableFactory();
+      InternalZeroCopyGrpcStorageStub stub =
+          new InternalZeroCopyGrpcStorageStub(this, clientContext, grpcStorageCallableFactory);
+      return stub;
+    }
+
+    private static final class Builder extends StorageStubSettings.Builder {
+
+      private Builder(StorageStubSettings settings) {
+        super(settings);
+      }
+
+      @Override
+      public InternalStorageStubSettings build() throws IOException {
+        return new InternalStorageStubSettings(this);
+      }
     }
   }
 
