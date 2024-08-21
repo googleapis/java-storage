@@ -259,14 +259,19 @@ final class BlobDescriptorStream
             //   happen on a non-io thread
             Hasher.enabled().validate(Crc32cValue.of(crc32C), content);
           } catch (IOException e) {
-            //noinspection resource
-            BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
-            // todo: record failure for read
-            BidiReadObjectRequest requestWithNewReadId =
-                BidiReadObjectRequest.newBuilder()
-                    .addReadRanges(readWithNewId.makeReadRange())
-                    .build();
-            requestStream.send(requestWithNewReadId);
+            try {
+              read.recordError(e);
+
+              //noinspection resource
+              BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+              BidiReadObjectRequest requestWithNewReadId =
+                  BidiReadObjectRequest.newBuilder()
+                      .addReadRanges(readWithNewId.makeReadRange())
+                      .build();
+              requestStream.send(requestWithNewReadId);
+            } catch (Throwable t) {
+              read.fail(t);
+            }
             continue;
           }
 

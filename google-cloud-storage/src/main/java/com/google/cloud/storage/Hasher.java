@@ -99,12 +99,7 @@ interface Hasher {
       }
       Crc32cLengthKnown actual = Crc32cValue.of(crc32c.hash().asInt(), remaining);
       if (!actual.eqValue(expected)) {
-        throw new IOException(
-            String.format(
-                Locale.US,
-                "Mismatch checksum value. Expected %s actual %s",
-                expected.debugString(),
-                actual.debugString()));
+        throw new ChecksumMismatchException(expected, actual);
       }
     }
 
@@ -112,12 +107,7 @@ interface Hasher {
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = hash(b);
       if (!actual.eqValue(expected)) {
-        throw new IOException(
-            String.format(
-                Locale.US,
-                "Mismatch checksum value. Expected %s actual %s",
-                expected.debugString(),
-                actual.debugString()));
+        throw new ChecksumMismatchException(expected, actual);
       }
     }
 
@@ -129,6 +119,30 @@ interface Hasher {
       } else {
         return r1.concat(r2);
       }
+    }
+  }
+
+  final class ChecksumMismatchException extends IOException {
+    private final Crc32cValue<?> expected;
+    private final Crc32cLengthKnown actual;
+
+    private ChecksumMismatchException(Crc32cValue<?> expected, Crc32cLengthKnown actual) {
+      super(
+          String.format(
+              Locale.US,
+              "Mismatch checksum value. Expected %s actual %s",
+              expected.debugString(),
+              actual.debugString()));
+      this.expected = expected;
+      this.actual = actual;
+    }
+
+    Crc32cValue<?> getExpected() {
+      return expected;
+    }
+
+    Crc32cValue<?> getActual() {
+      return actual;
     }
   }
 }

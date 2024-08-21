@@ -36,6 +36,7 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
@@ -52,10 +53,12 @@ import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWrita
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
+import com.google.cloud.storage.Hasher.ChecksumMismatchException;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -181,6 +184,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
   @Deprecated private final Supplier<ProjectId> defaultProjectId;
+  private final RetryContextProvider retryContextProvider;
 
   GrpcStorageImpl(
       GrpcStorageOptions options,
@@ -217,6 +221,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   return InstantiatingExecutorProvider.newBuilder().build();
                 })
             .getExecutor();
+    retryContextProvider =
+        RetryContext.providerFrom(
+            getOptions(),
+            new BasicResultRetryAlgorithm<Object>() {
+              @Override
+              public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+                // this is only retryable with read object range, not other requests
+                return previousThrowable instanceof ChecksumMismatchException
+                    || retryAlgorithmManager.idempotent().shouldRetry(previousThrowable, null);
+              }
+            });
   }
 
   @Override
@@ -1500,7 +1515,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext context =
         GrpcUtils.contextWithBucketName(object.getBucket(), GrpcCallContext.createDefault());
 
-    return BlobDescriptorImpl.create(req, context, callable, executor);
+    return BlobDescriptorImpl.create(req, context, callable, executor, retryContextProvider);
   }
 
   @Override

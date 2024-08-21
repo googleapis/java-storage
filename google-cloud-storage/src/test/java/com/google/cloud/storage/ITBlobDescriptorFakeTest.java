@@ -23,9 +23,13 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
+import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.CancelledException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Hasher.ChecksumMismatchException;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.common.collect.ImmutableMap;
@@ -39,6 +43,7 @@ import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BucketName;
+import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
@@ -51,12 +56,15 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 public final class ITBlobDescriptorFakeTest {
@@ -558,6 +566,78 @@ public final class ITBlobDescriptorFakeTest {
             .buildOrThrow();
 
     runTestAgainstFakeServer(FakeStorage.from(db), RangeSpec.of(_2MiB, 8192), expected);
+  }
+
+  @Test
+  public void readRange_retrySettingsApplicable_attempt() throws Exception {
+
+    AtomicInteger reqCounter = new AtomicInteger(0);
+    StorageImplBase fake =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> responseObserver) {
+            return new AbstractObserver(responseObserver) {
+              @Override
+              public void onNext(BidiReadObjectRequest request) {
+                int reqCount = reqCounter.getAndIncrement();
+                if (request.equals(REQ_OPEN)) {
+                  respond.onNext(RES_OPEN);
+                } else {
+
+                  BidiReadObjectResponse.Builder b = BidiReadObjectResponse.newBuilder();
+                  request.getReadRangesList().stream()
+                      .map(r -> r.toBuilder().setReadLength(1).build())
+                      .map(
+                          r ->
+                              ObjectRangeData.newBuilder()
+                                  .setReadRange(r)
+                                  .setChecksummedData(
+                                      ChecksummedData.newBuilder()
+                                          .setContent(ByteString.copyFrom(new byte[] {'A'}))
+                                          // explicitly send a bad checksum to induce failure
+                                          .setCrc32C(reqCount)
+                                          .build())
+                                  .build())
+                      .forEach(b::addObjectDataRanges);
+
+                  respond.onNext(b.build());
+                }
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10, 10));
+
+        CancelledException cancelledException =
+            assertThrows(
+                CancelledException.class, () -> ApiExceptions.callAndTranslateApiException(future));
+
+        assertThat(cancelledException).hasCauseThat().isInstanceOf(ChecksumMismatchException.class);
+        Throwable[] suppressed = cancelledException.getSuppressed();
+        assertThat(suppressed).asList().hasSize(3);
+        List<String> suppressedMessages =
+            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
+        assertThat(suppressedMessages)
+            .containsExactly(
+                "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}",
+                "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}",
+                "Asynchronous task failed");
+      }
+    }
   }
 
   private static void runTestAgainstFakeServer(

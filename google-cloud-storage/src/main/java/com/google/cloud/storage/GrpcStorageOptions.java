@@ -943,7 +943,7 @@ public final class GrpcStorageOptions extends StorageOptions
         // instead hook in here to close out the zero-copy marshaller
         //noinspection EmptyTryBlock
         try (ZeroCopyResponseMarshaller<ReadObjectResponse> ignore1 =
-            getStub().readObjectResponseMarshaller;
+                getStub().readObjectResponseMarshaller;
             ZeroCopyResponseMarshaller<BidiReadObjectResponse> ignore2 =
                 getStub().bidiReadObjectResponseMarshaller) {
           // use try-with to do the close dance for us

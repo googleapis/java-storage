@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.math.LongMath;
 import com.google.protobuf.ByteString;
@@ -40,11 +41,16 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   private final BlobDescriptorStream stream;
   private final BlobDescriptorState state;
   private final BlobInfo info;
+  private final RetryContextProvider retryContextProvider;
 
-  private BlobDescriptorImpl(BlobDescriptorStream stream, BlobDescriptorState state) {
+  private BlobDescriptorImpl(
+      BlobDescriptorStream stream,
+      BlobDescriptorState state,
+      RetryContextProvider retryContextProvider) {
     this.stream = stream;
     this.state = state;
     this.info = Conversions.grpc().blobInfo().decode(state.getMetadata());
+    this.retryContextProvider = retryContextProvider;
   }
 
   @Override
@@ -56,7 +62,8 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     }
     SettableApiFuture<byte[]> future = SettableApiFuture.create();
     AccumulatingRead<byte[]> read =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(readId, readCursor, future);
+        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+            readId, readCursor, retryContextProvider.create(), future);
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     state.putOutstandingRead(readId, read);
@@ -73,7 +80,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
     AccumulatingRead<DisposableByteString> read =
         BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
-            readId, readCursor, future);
+            readId, readCursor, future, retryContextProvider.create());
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     state.putOutstandingRead(readId, read);
@@ -115,13 +122,17 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      ScheduledExecutorService executor) {
+      ScheduledExecutorService executor,
+      RetryContextProvider retryContextProvider) {
     BlobDescriptorState state = new BlobDescriptorState(openRequest);
 
     BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, context, state);
 
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
-        ApiFutures.transform(stream, nowOpen -> new BlobDescriptorImpl(stream, state), executor);
+        ApiFutures.transform(
+            stream,
+            nowOpen -> new BlobDescriptorImpl(stream, state, retryContextProvider),
+            executor);
     stream.send(openRequest);
     return StorageException.coalesceAsync(blobDescriptorFuture);
   }
