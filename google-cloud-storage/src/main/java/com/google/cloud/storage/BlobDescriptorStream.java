@@ -24,14 +24,17 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.common.base.Preconditions;
+import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
+import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
+import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
 import java.io.IOException;
 import java.util.List;
@@ -240,9 +243,31 @@ final class BlobDescriptorStream
         }
         for (int i = 0; i < rangeData.size(); i++) {
           ObjectRangeData d = rangeData.get(i);
-          long id = d.getReadRange().getReadId();
+          ReadRange readRange = d.getReadRange();
+          long id = readRange.getReadId();
           BlobDescriptorStreamRead read = state.getOutstandingRead(id);
           if (read == null) {
+            continue;
+          }
+          // TODO: validate read is still open
+          // todo: check that offsets match up
+          ChecksummedData checksummedData = d.getChecksummedData();
+          ByteString content = checksummedData.getContent();
+          int crc32C = checksummedData.getCrc32C();
+
+          try {
+            // todo: benchmark how long it takes to compute this checksum and whether it needs to
+            //   happen on a non-io thread
+            Hasher.enabled().validate(Crc32cValue.of(crc32C), content);
+          } catch (IOException e) {
+            //noinspection resource
+            BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+            // todo: record failure for read
+            BidiReadObjectRequest requestWithNewReadId =
+                BidiReadObjectRequest.newBuilder()
+                    .addReadRanges(readWithNewId.makeReadRange())
+                    .build();
+            requestStream.send(requestWithNewReadId);
             continue;
           }
           final int idx = i;

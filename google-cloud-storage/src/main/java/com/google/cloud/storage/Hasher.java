@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.hash.Hashing;
+import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -38,7 +39,7 @@ interface Hasher {
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
 
-  void validate(Crc32cValue<?> expected, List<ByteBuffer> buffers) throws IOException;
+  void validate(Crc32cValue<?> expected, ByteString byteString) throws IOException;
 
   @Nullable
   Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
@@ -66,7 +67,7 @@ interface Hasher {
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
 
     @Override
-    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) {}
+    public void validate(Crc32cValue<?> expected, ByteString b) {}
 
     @Override
     public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
@@ -88,7 +89,8 @@ interface Hasher {
 
     @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
     @Override
-    public void validate(Crc32cValue<?> expected, List<ByteBuffer> b) throws IOException {
+    public void validate(Crc32cValue<?> expected, ByteString byteString) throws IOException {
+      List<ByteBuffer> b = byteString.asReadOnlyByteBufferList();
       long remaining = 0;
       com.google.common.hash.Hasher crc32c = Hashing.crc32c().newHasher();
       for (ByteBuffer tmp : b) {

@@ -16,14 +16,16 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadRange;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -44,7 +46,7 @@ final class BlobDescriptorState {
     this.routingToken = new AtomicReference<>();
     this.metadata = new AtomicReference<>();
     this.readIdSeq = new AtomicLong(1);
-    this.outstandingReads = new ConcurrentHashMap<>();
+    this.outstandingReads = new HashMap<>();
   }
 
   BidiReadObjectRequest getOpenRequest() {
@@ -74,15 +76,21 @@ final class BlobDescriptorState {
 
   @Nullable
   BlobDescriptorStreamRead getOutstandingRead(long key) {
-    return outstandingReads.get(key);
+    synchronized (this) {
+      return outstandingReads.get(key);
+    }
   }
 
   void putOutstandingRead(long key, BlobDescriptorStreamRead value) {
-    outstandingReads.put(key, value);
+    synchronized (this) {
+      outstandingReads.put(key, value);
+    }
   }
 
   void removeOutstandingRead(long key) {
-    outstandingReads.remove(key);
+    synchronized (this) {
+      outstandingReads.remove(key);
+    }
   }
 
   void setRoutingToken(String routingToken) {
@@ -94,9 +102,22 @@ final class BlobDescriptorState {
     return this.routingToken.get();
   }
 
-  public List<ReadRange> getOutstandingReads() {
-    return outstandingReads.values().stream()
-        .map(BlobDescriptorStreamRead::makeReadRange)
-        .collect(ImmutableList.toImmutableList());
+  BlobDescriptorStreamRead assignNewReadId(long oldReadId) {
+    synchronized (this) {
+      BlobDescriptorStreamRead remove = outstandingReads.remove(oldReadId);
+      checkState(remove != null, "unable to locate old");
+      long newReadId = newReadId();
+      BlobDescriptorStreamRead withNewReadId = remove.withNewReadId(newReadId);
+      outstandingReads.put(newReadId, withNewReadId);
+      return withNewReadId;
+    }
+  }
+
+  List<ReadRange> getOutstandingReads() {
+    synchronized (this) {
+      return outstandingReads.values().stream()
+          .map(BlobDescriptorStreamRead::makeReadRange)
+          .collect(ImmutableList.toImmutableList());
+    }
   }
 }

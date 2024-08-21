@@ -127,4 +127,11 @@
     <method>com.google.api.core.ApiFuture getBlobDescriptor(com.google.cloud.storage.BlobId, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
   </difference>
 
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/cloud/storage/Hasher$*</className>
+    <method>* validate(*)</method>
+    <to>* validate(*)</to>
+  </difference>
+
 </differences>

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.UnavailableException;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.protobuf.Any;
@@ -33,6 +35,7 @@ import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
+import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
@@ -43,6 +46,7 @@ import io.grpc.Status;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -512,6 +516,124 @@ public final class ITBlobDescriptorFakeTest {
             bd.readRangeAsBytes(ByteRangeSpec.relativeLength(15L, 5L)).get(2, TimeUnit.SECONDS);
         assertThat(actual).hasLength(5);
         assertThat(xxd(actual)).isEqualTo(xxd(content3.getBytes()));
+      }
+    }
+  }
+
+  @Test
+  public void objectRangeData_checksumFailure() throws Exception {
+
+    Object metadata =
+        Object.newBuilder()
+            .setBucket(BucketName.format("_", "b"))
+            .setName("o")
+            .setGeneration(1)
+            .build();
+    byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
+    ChecksummedTestContent expected =
+        ChecksummedTestContent.of(Arrays.copyOfRange(b64bytes, 10, 30));
+
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(metadata.getBucket())
+                    .setObject(metadata.getName())
+                    .build())
+            .build();
+    BidiReadObjectResponse res1 = BidiReadObjectResponse.newBuilder().setMetadata(metadata).build();
+
+    ChecksummedTestContent content2_1 =
+        ChecksummedTestContent.of(Arrays.copyOfRange(b64bytes, 10, 20));
+    ChecksummedTestContent content2_2 =
+        ChecksummedTestContent.of(Arrays.copyOfRange(b64bytes, 20, 30));
+    BidiReadObjectRequest req2 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(1, 10, 20)).build();
+    BidiReadObjectResponse res2_1 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_1.asChecksummedData())
+                    .setReadRange(getReadRange(1, 10, 10))
+                    .build())
+            .build();
+    BidiReadObjectResponse res2_2 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(metadata)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_2.asChecksummedData().toBuilder().setCrc32C(1))
+                    .setReadRange(getReadRange(1, 20, 10))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    BidiReadObjectRequest req3 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(2, 20, 10)).build();
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(metadata)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_2.asChecksummedData())
+                    .setReadRange(getReadRange(2, 20, 10))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    StorageImplBase fake =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> respond) {
+            return new StreamObserver<BidiReadObjectRequest>() {
+              @Override
+              public void onNext(BidiReadObjectRequest value) {
+                if (req1.equals(value)) {
+                  respond.onNext(res1);
+                } else if (req2.equals(value)) {
+                  respond.onNext(res2_1);
+                  respond.onNext(res2_2);
+                } else if (req3.equals(value)) {
+                  respond.onNext(res3);
+                } else {
+                  respond.onError(TestUtils.apiException(Code.UNIMPLEMENTED, "Unexpected request"));
+                }
+              }
+
+              @Override
+              public void onError(Throwable t) {
+                respond.onError(t);
+              }
+
+              @Override
+              public void onCompleted() {
+                respond.onCompleted();
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(ByteRangeSpec.relativeLength(10L, 20L));
+
+        byte[] actual = future.get(5, TimeUnit.SECONDS);
+        Crc32cLengthKnown actualCrc32c = Hasher.enabled().hash(ByteBuffer.wrap(actual));
+
+        byte[] expectedBytes = expected.getBytes();
+        Crc32cLengthKnown expectedCrc32c =
+            Crc32cValue.of(expected.getCrc32c(), expectedBytes.length);
+
+        assertAll(
+            () -> assertThat(actual).hasLength(20),
+            () -> assertThat(xxd(actual)).isEqualTo(xxd(expectedBytes)),
+            () -> assertThat(actualCrc32c).isEqualTo(expectedCrc32c));
       }
     }
   }

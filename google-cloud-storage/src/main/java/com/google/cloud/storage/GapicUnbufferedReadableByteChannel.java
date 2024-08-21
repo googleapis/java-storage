@@ -181,7 +181,7 @@ final class GapicUnbufferedReadableByteChannel
       if (checksummedData.hasCrc32C()) {
         Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
         try {
-          hasher.validate(expected, content.asReadOnlyByteBufferList());
+          hasher.validate(expected, content);
         } catch (IOException e) {
           close();
           throw e;
