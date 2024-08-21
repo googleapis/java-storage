@@ -142,6 +142,15 @@ final class Retrying {
     };
   }
 
+  static ResultRetryAlgorithm<?> alwaysRetry() {
+    return new BasicResultRetryAlgorithm<Object>() {
+      @Override
+      public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+        return true;
+      }
+    };
+  }
+
   /**
    * Rather than requiring a full set of {@link StorageOptions} to be passed specify what we
    * actually need and have StorageOptions implement this interface.
