@@ -42,6 +42,7 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
@@ -229,6 +230,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
               public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
                 // this is only retryable with read object range, not other requests
                 return previousThrowable instanceof ChecksumMismatchException
+                    || previousThrowable instanceof OutOfRangeException
                     || retryAlgorithmManager.idempotent().shouldRetry(previousThrowable, null);
               }
             });

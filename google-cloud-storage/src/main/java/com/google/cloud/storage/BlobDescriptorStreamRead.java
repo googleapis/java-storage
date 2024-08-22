@@ -99,6 +99,8 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
   }
 
+  abstract void recordError(Throwable e);
+
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
       long readId,
       ReadCursor readCursor,
@@ -114,8 +116,6 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
       RetryContext retryContext) {
     return new ZeroCopyByteStringAccumulatingRead(readId, readCursor, retryContext, complete);
   }
-
-  public abstract void recordError(Throwable e);
 
   /** Base class of a read that will accumulate before completing by resolving a future */
   abstract static class AccumulatingRead<Result> extends BlobDescriptorStreamRead {

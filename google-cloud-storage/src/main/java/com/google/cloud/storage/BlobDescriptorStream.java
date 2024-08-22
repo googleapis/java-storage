@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
@@ -300,21 +302,22 @@ final class BlobDescriptorStream
               requestStream.send(requestWithNewReadId);
             }
           } else {
-            Status status =
-                Status.newBuilder()
-                    .setCode(Code.OUT_OF_RANGE.value())
-                    .setMessage(
-                        String.format("position = %d, readRange.read_offset = %d", position, begin))
-                    .build();
-            BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
-            // todo: record failure for read
-            BidiReadObjectRequest requestWithNewReadId =
-                BidiReadObjectRequest.newBuilder()
-                    .addReadRanges(readWithNewId.makeReadRange())
-                    .build();
-            requestStream.send(requestWithNewReadId);
-            // todo
-            continue;
+            try {
+              read.recordError(
+                  ApiExceptionFactory.createException(
+                      String.format("position = %d, readRange.read_offset = %d", position, begin),
+                      null,
+                      GrpcStatusCode.of(Code.OUT_OF_RANGE),
+                      true));
+              BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+              BidiReadObjectRequest requestWithNewReadId =
+                  BidiReadObjectRequest.newBuilder()
+                      .addReadRanges(readWithNewId.makeReadRange())
+                      .build();
+              requestStream.send(requestWithNewReadId);
+            } catch (Throwable e) {
+              read.fail(e);
+            }
           }
           if (d.getRangeEnd() && !read.getReadCursor().hasRemaining()) {
             final BlobDescriptorStreamRead finalRead = read;

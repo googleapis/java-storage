@@ -27,6 +27,7 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.CancelledException;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.ChecksumMismatchException;
@@ -628,7 +629,6 @@ public final class ITBlobDescriptorFakeTest {
 
         assertThat(cancelledException).hasCauseThat().isInstanceOf(ChecksumMismatchException.class);
         Throwable[] suppressed = cancelledException.getSuppressed();
-        assertThat(suppressed).asList().hasSize(3);
         List<String> suppressedMessages =
             Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
         assertThat(suppressedMessages)
@@ -636,6 +636,70 @@ public final class ITBlobDescriptorFakeTest {
                 "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}",
                 "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}",
                 "Asynchronous task failed");
+      }
+    }
+  }
+
+  @Test
+  public void retrySettingsApplicable_objectRangeData_offset_notAligned_gt() throws Exception {
+
+    ChecksummedTestContent content2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 11, 20);
+    BidiReadObjectRequest req2 = read(1, 10, 20);
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2.asChecksummedData())
+                    .setReadRange(getReadRange(1, 11, content2))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ChecksummedTestContent content3 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 12, 20);
+    BidiReadObjectRequest req3 = read(2, 10, 20);
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content3.asChecksummedData())
+                    .setReadRange(getReadRange(2, 12, content3))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
+        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
+            .put(REQ_OPEN, RES_OPEN)
+            .put(req2, res2)
+            .put(req3, res3)
+            .buildOrThrow();
+
+    try (FakeServer fakeServer = FakeServer.of(FakeStorage.from(db));
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(2).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 20L));
+
+        CancelledException cancelledException =
+            assertThrows(
+                CancelledException.class, () -> ApiExceptions.callAndTranslateApiException(future));
+
+        assertThat(cancelledException).hasCauseThat().isInstanceOf(OutOfRangeException.class);
+        Throwable[] suppressed = cancelledException.getSuppressed();
+        List<String> suppressedMessages =
+            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
+        assertThat(suppressedMessages)
+            .containsExactly(
+                "position = 10, readRange.read_offset = 11", "Asynchronous task failed");
       }
     }
   }
