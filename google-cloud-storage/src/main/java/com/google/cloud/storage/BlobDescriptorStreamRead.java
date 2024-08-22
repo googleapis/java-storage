@@ -82,19 +82,13 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
   }
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
-      long readId, ByteRangeSpec range, SettableApiFuture<byte[]> complete) {
-    return new ByteArrayAccumulatingRead(
-        readId,
-        new ReadCursor(range.beginOffset(), range.beginOffset() + range.length()),
-        complete);
+      long readId, ReadCursor readCursor, SettableApiFuture<byte[]> complete) {
+    return new ByteArrayAccumulatingRead(readId, readCursor, complete);
   }
 
-  static AccumulatingRead<DisposableByteString> createZeroCopyByteStringAccumulatingRead(
-      long readId, ByteRangeSpec range, SettableApiFuture<DisposableByteString> complete) {
-    return new ZeroCopyByteStringAccumulatingRead(
-        readId,
-        new ReadCursor(range.beginOffset(), range.beginOffset() + range.length()),
-        complete);
+  static ZeroCopyByteStringAccumulatingRead createZeroCopyByteStringAccumulatingRead(
+      long readId, ReadCursor readCursor, SettableApiFuture<DisposableByteString> complete) {
+    return new ZeroCopyByteStringAccumulatingRead(readId, readCursor, complete);
   }
 
   /** Base class of a read that will accumulate before completing by resolving a future */

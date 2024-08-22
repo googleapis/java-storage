@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteRangeSpec.relativeLength;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -54,7 +53,7 @@ public final class BlobDescriptorStreamReadTest {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            1, relativeLength(0L, 137L), complete);
+            1, new ReadCursor(0, 137), complete);
 
     byteArrayAccumulatingRead.accept(childRef);
     byteArrayAccumulatingRead.eof();
@@ -84,7 +83,7 @@ public final class BlobDescriptorStreamReadTest {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            1, relativeLength(0L, 137L), complete);
+            1, new ReadCursor(0, 137), complete);
 
     IOException ioException =
         assertThrows(
@@ -103,7 +102,7 @@ public final class BlobDescriptorStreamReadTest {
     int readId = 1;
     try (AccumulatingRead<byte[]> read =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            readId, relativeLength(0L, 137L), complete)) {
+            readId, new ReadCursor(0, 137), complete)) {
 
       ReadRange readRange1 = read.makeReadRange();
       ReadRange expectedReadRange1 =

@@ -83,7 +83,7 @@ public final class ITBlobDescriptorTest {
       assertThat(info1).isNotNull();
 
       ApiFuture<byte[]> futureRead1Bytes =
-          blobDescriptor.readRangeAsBytes(ByteRangeSpec.relativeLength(_512KiB - 13L, 13L));
+          blobDescriptor.readRangeAsBytes(RangeSpec.of(_512KiB - 13L, 13L));
 
       byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
       assertThat(read1Bytes.length).isEqualTo(13);
@@ -112,7 +112,7 @@ public final class ITBlobDescriptorTest {
         int numRangesToRead = 256;
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
-                .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
+                .mapToObj(i -> RangeSpec.of(i * _2MiB, (long) _2MiB))
                 .map(blobDescriptor::readRangeAsBytes)
                 .collect(Collectors.toList());
 
@@ -162,7 +162,7 @@ public final class ITBlobDescriptorTest {
         int numRangesToRead = 256;
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
-                .mapToObj(i -> ByteRangeSpec.relativeLength(i * _2MiB, (long) _2MiB))
+                .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
                 .map(blobDescriptor::readRangeAsByteString)
                 .collect(Collectors.toList());
 

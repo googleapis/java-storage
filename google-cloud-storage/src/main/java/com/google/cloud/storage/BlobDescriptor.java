@@ -26,7 +26,7 @@ public interface BlobDescriptor extends AutoCloseable, Closeable {
 
   BlobInfo getBlobInfo();
 
-  ApiFuture<byte[]> readRangeAsBytes(ByteRangeSpec range);
+  ApiFuture<byte[]> readRangeAsBytes(RangeSpec range);
 
   @Override
   void close() throws IOException;

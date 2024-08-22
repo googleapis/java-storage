@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
@@ -101,7 +102,13 @@ public final class ITBlobDescriptorFakeTest {
 
     BidiReadObjectResponse res1 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .build();
 
     ChecksummedTestContent content =
@@ -109,7 +116,13 @@ public final class ITBlobDescriptorFakeTest {
             Arrays.copyOfRange(DataGenerator.base64Characters().genBytes(64), 10, 20));
     BidiReadObjectResponse res2 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .addObjectDataRanges(
                 ObjectRangeData.newBuilder()
                     .setChecksummedData(content.asChecksummedData())
@@ -181,8 +194,7 @@ public final class ITBlobDescriptorFakeTest {
       ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
 
       try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
-        byte[] actual =
-            bd.readRangeAsBytes(ByteRangeSpec.relativeLength(10L, 10L)).get(1, TimeUnit.SECONDS);
+        byte[] actual = bd.readRangeAsBytes(RangeSpec.of(10L, 10L)).get(1, TimeUnit.SECONDS);
 
         assertThat(xxd(actual)).isEqualTo(xxd(content.getBytes()));
       }
@@ -226,7 +238,13 @@ public final class ITBlobDescriptorFakeTest {
 
     BidiReadObjectResponse res1 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .build();
 
     StorageImplBase fake =
@@ -391,7 +409,13 @@ public final class ITBlobDescriptorFakeTest {
             .build();
     BidiReadObjectResponse res1 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .build();
 
     ChecksummedTestContent content2 =
@@ -401,7 +425,13 @@ public final class ITBlobDescriptorFakeTest {
         BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(1, 10, 10)).build();
     BidiReadObjectResponse res2 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .addObjectDataRanges(
                 ObjectRangeData.newBuilder()
                     .setChecksummedData(content2.asChecksummedData())
@@ -435,7 +465,13 @@ public final class ITBlobDescriptorFakeTest {
             .build();
     BidiReadObjectResponse res3 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(Object.newBuilder().setBucket("b").setName("o").setGeneration(1).build())
+            .setMetadata(
+                Object.newBuilder()
+                    .setBucket("b")
+                    .setName("o")
+                    .setGeneration(1)
+                    .setSize(_2MiB)
+                    .build())
             .addObjectDataRanges(
                 ObjectRangeData.newBuilder()
                     .setChecksummedData(content3.asChecksummedData())
@@ -506,15 +542,13 @@ public final class ITBlobDescriptorFakeTest {
             AbortedException.class,
             () -> {
               try {
-                ApiFuture<byte[]> future =
-                    bd.readRangeAsBytes(ByteRangeSpec.relativeLength(10L, 10L));
+                ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 10L));
                 future.get(5, TimeUnit.SECONDS);
               } catch (ExecutionException e) {
                 throw e.getCause();
               }
             });
-        byte[] actual =
-            bd.readRangeAsBytes(ByteRangeSpec.relativeLength(15L, 5L)).get(2, TimeUnit.SECONDS);
+        byte[] actual = bd.readRangeAsBytes(RangeSpec.of(15L, 5L)).get(2, TimeUnit.SECONDS);
         assertThat(actual).hasLength(5);
         assertThat(xxd(actual)).isEqualTo(xxd(content3.getBytes()));
       }
@@ -529,6 +563,7 @@ public final class ITBlobDescriptorFakeTest {
             .setBucket(BucketName.format("_", "b"))
             .setName("o")
             .setGeneration(1)
+            .setSize(_2MiB)
             .build();
     byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
     ChecksummedTestContent expected =
@@ -622,7 +657,7 @@ public final class ITBlobDescriptorFakeTest {
       ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
 
       try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
-        ApiFuture<byte[]> future = bd.readRangeAsBytes(ByteRangeSpec.relativeLength(10L, 20L));
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 20L));
 
         byte[] actual = future.get(5, TimeUnit.SECONDS);
         Crc32cLengthKnown actualCrc32c = Hasher.enabled().hash(ByteBuffer.wrap(actual));
@@ -647,6 +682,7 @@ public final class ITBlobDescriptorFakeTest {
             .setBucket(BucketName.format("_", "b"))
             .setName("o")
             .setGeneration(1)
+            .setSize(_2MiB)
             .build();
     byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
     ChecksummedTestContent expected = ChecksummedTestContent.of(b64bytes, 10, 20);
@@ -695,7 +731,7 @@ public final class ITBlobDescriptorFakeTest {
             .put(req3, res3)
             .buildOrThrow();
 
-    runTestAgainstFakeServer(expected, db, ByteRangeSpec.relativeLength(10L, 20L));
+    runTestAgainstFakeServer(expected, db, RangeSpec.of(10L, 20L));
   }
 
   @Test
@@ -706,6 +742,7 @@ public final class ITBlobDescriptorFakeTest {
             .setBucket(BucketName.format("_", "b"))
             .setName("o")
             .setGeneration(1)
+            .setSize(_2MiB)
             .build();
     byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
     ChecksummedTestContent expected = ChecksummedTestContent.of(b64bytes, 10, 20);
@@ -754,13 +791,43 @@ public final class ITBlobDescriptorFakeTest {
             .put(req3, res3)
             .buildOrThrow();
 
-    runTestAgainstFakeServer(expected, db, ByteRangeSpec.relativeLength(10L, 20L));
+    runTestAgainstFakeServer(expected, db, RangeSpec.of(10L, 20L));
+  }
+
+  @Test
+  public void readRangeDoesNotSendARequestIfTheRangeWouldResultInZeroBytes() throws Exception {
+
+    Object metadata =
+        Object.newBuilder()
+            .setBucket(BucketName.format("_", "b"))
+            .setName("o")
+            .setGeneration(1)
+            .setSize(_2MiB)
+            .build();
+    ChecksummedTestContent expected = ChecksummedTestContent.of(new byte[0]);
+
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(metadata.getBucket())
+                    .setObject(metadata.getName())
+                    .build())
+            .build();
+    BidiReadObjectResponse res1 = BidiReadObjectResponse.newBuilder().setMetadata(metadata).build();
+
+    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
+        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
+            .put(req1, res1)
+            .buildOrThrow();
+
+    runTestAgainstFakeServer(expected, db, RangeSpec.of(_2MiB, 8192));
   }
 
   private void runTestAgainstFakeServer(
       ChecksummedTestContent expected,
       ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db,
-      ByteRangeSpec range)
+      RangeSpec range)
       throws Exception {
 
     StorageImplBase fake =
