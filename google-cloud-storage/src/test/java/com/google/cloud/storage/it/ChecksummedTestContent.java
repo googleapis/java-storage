@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -111,5 +114,11 @@ public final class ChecksummedTestContent {
     int crc32c = Hashing.crc32c().hashBytes(bytes).asInt();
     String md5Base64 = Base64.getEncoder().encodeToString(Hashing.md5().hashBytes(bytes).asBytes());
     return new ChecksummedTestContent(bytes, crc32c, md5Base64);
+  }
+
+  public static ChecksummedTestContent of(byte[] bytes, int from, int length) {
+    checkArgument(length >= 0, "length >= 0 (%s >= 0)", length);
+    checkPositionIndexes(from, from + length, bytes.length);
+    return of(Arrays.copyOfRange(bytes, from, from + length));
   }
 }

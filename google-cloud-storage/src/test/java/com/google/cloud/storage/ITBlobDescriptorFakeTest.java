@@ -27,6 +27,7 @@ import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
+import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadHandle;
@@ -636,6 +637,186 @@ public final class ITBlobDescriptorFakeTest {
             () -> assertThat(actualCrc32c).isEqualTo(expectedCrc32c));
       }
     }
+  }
+
+  @Test
+  public void objectRangeData_offset_notAligned_lt() throws Exception {
+
+    Object metadata =
+        Object.newBuilder()
+            .setBucket(BucketName.format("_", "b"))
+            .setName("o")
+            .setGeneration(1)
+            .build();
+    byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
+    ChecksummedTestContent expected = ChecksummedTestContent.of(b64bytes, 10, 20);
+
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(metadata.getBucket())
+                    .setObject(metadata.getName())
+                    .build())
+            .build();
+    BidiReadObjectResponse res1 = BidiReadObjectResponse.newBuilder().setMetadata(metadata).build();
+
+    ChecksummedTestContent content2 = ChecksummedTestContent.of(b64bytes, 9, 20);
+    BidiReadObjectRequest req2 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(1, 10, 20)).build();
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2.asChecksummedData())
+                    .setReadRange(getReadRange(1, 9, content2))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ChecksummedTestContent content3 = ChecksummedTestContent.of(b64bytes, 29, 1);
+    BidiReadObjectRequest req3 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(2, 29, 1)).build();
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(metadata)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content3.asChecksummedData())
+                    .setReadRange(getReadRange(2, 29, content3))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
+        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
+            .put(req1, res1)
+            .put(req2, res2)
+            .put(req3, res3)
+            .buildOrThrow();
+
+    runTestAgainstFakeServer(expected, db, ByteRangeSpec.relativeLength(10L, 20L));
+  }
+
+  @Test
+  public void objectRangeData_offset_notAligned_gt() throws Exception {
+
+    Object metadata =
+        Object.newBuilder()
+            .setBucket(BucketName.format("_", "b"))
+            .setName("o")
+            .setGeneration(1)
+            .build();
+    byte[] b64bytes = DataGenerator.base64Characters().genBytes(64);
+    ChecksummedTestContent expected = ChecksummedTestContent.of(b64bytes, 10, 20);
+
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(metadata.getBucket())
+                    .setObject(metadata.getName())
+                    .build())
+            .build();
+    BidiReadObjectResponse res1 = BidiReadObjectResponse.newBuilder().setMetadata(metadata).build();
+
+    ChecksummedTestContent content2 = ChecksummedTestContent.of(b64bytes, 11, 20);
+    BidiReadObjectRequest req2 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(1, 10, 20)).build();
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2.asChecksummedData())
+                    .setReadRange(getReadRange(1, 11, content2))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ChecksummedTestContent content3 = ChecksummedTestContent.of(b64bytes, 10, 20);
+    BidiReadObjectRequest req3 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(2, 10, 20)).build();
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(metadata)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content3.asChecksummedData())
+                    .setReadRange(getReadRange(2, 10, content3))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
+        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
+            .put(req1, res1)
+            .put(req2, res2)
+            .put(req3, res3)
+            .buildOrThrow();
+
+    runTestAgainstFakeServer(expected, db, ByteRangeSpec.relativeLength(10L, 20L));
+  }
+
+  private void runTestAgainstFakeServer(
+      ChecksummedTestContent expected,
+      ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db,
+      ByteRangeSpec range)
+      throws Exception {
+
+    StorageImplBase fake =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> respond) {
+            return new StreamObserver<BidiReadObjectRequest>() {
+              @Override
+              public void onNext(BidiReadObjectRequest req) {
+                if (db.containsKey(req)) {
+                  respond.onNext(db.get(req));
+                } else {
+                  respond.onError(TestUtils.apiException(Code.UNIMPLEMENTED, "Unexpected request"));
+                }
+              }
+
+              @Override
+              public void onError(Throwable t) {
+                respond.onError(t);
+              }
+
+              @Override
+              public void onCompleted() {
+                respond.onCompleted();
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(range);
+
+        byte[] actual = future.get(5, TimeUnit.SECONDS);
+        Crc32cLengthKnown actualCrc32c = Hasher.enabled().hash(ByteBuffer.wrap(actual));
+
+        byte[] expectedBytes = expected.getBytes();
+        Crc32cLengthKnown expectedCrc32c =
+            Crc32cValue.of(expected.getCrc32c(), expectedBytes.length);
+
+        assertAll(
+            () -> assertThat(actual).hasLength(expectedBytes.length),
+            () -> assertThat(xxd(actual)).isEqualTo(xxd(expectedBytes)),
+            () -> assertThat(actualCrc32c).isEqualTo(expectedCrc32c));
+      }
+    }
+  }
+
+  private ReadRange getReadRange(int readId, int readOffset, ChecksummedTestContent content) {
+    return getReadRange(readId, readOffset, content.asChecksummedData().getContent().size());
   }
 
   private static ReadRange getReadRange(int readId, int readOffset, int readLimit) {

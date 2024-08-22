@@ -51,6 +51,12 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     this.closed = closed;
   }
 
+  ReadCursor getReadCursor() {
+    return readCursor;
+  }
+
+  abstract boolean acceptingBytes();
+
   abstract void accept(ChildRef childRef) throws IOException;
 
   abstract void eof() throws IOException;
@@ -112,8 +118,16 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
 
     @Override
+    boolean acceptingBytes() {
+      return !complete.isDone() && readCursor.hasRemaining();
+    }
+
+    @Override
     void fail(Status status) throws IOException {
       io.grpc.Status grpcStatus = io.grpc.Status.fromCodeValue(status.getCode());
+      if (!status.getMessage().isEmpty()) {
+        grpcStatus = grpcStatus.withDescription(status.getMessage());
+      }
       StatusRuntimeException cause = grpcStatus.asRuntimeException();
       ApiException apiException =
           ApiExceptionFactory.createException(

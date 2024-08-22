@@ -23,6 +23,7 @@ import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
@@ -36,6 +37,7 @@ import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
+import io.grpc.Status.Code;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -226,6 +228,7 @@ final class BlobDescriptorStream
       controller.request(2);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void onResponse(BidiReadObjectResponse response) {
       controller.request(1);
@@ -246,11 +249,9 @@ final class BlobDescriptorStream
           ReadRange readRange = d.getReadRange();
           long id = readRange.getReadId();
           BlobDescriptorStreamRead read = state.getOutstandingRead(id);
-          if (read == null) {
+          if (read == null || !read.acceptingBytes()) {
             continue;
           }
-          // TODO: validate read is still open
-          // todo: check that offsets match up
           ChecksummedData checksummedData = d.getChecksummedData();
           ByteString content = checksummedData.getContent();
           int crc32C = checksummedData.getCrc32C();
@@ -270,18 +271,56 @@ final class BlobDescriptorStream
             requestStream.send(requestWithNewReadId);
             continue;
           }
+
           final int idx = i;
-          //noinspection rawtypes
-          ResponseContentLifecycleHandle.ChildRef childRef =
-              handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
-          read.accept(childRef);
-          if (d.getRangeEnd()) {
+          long begin = readRange.getReadOffset();
+          long position = read.getReadCursor().position();
+          if (begin == position) {
+            ChildRef childRef =
+                handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
+            read.accept(childRef);
+          } else if (begin < position) {
+            int skip = Math.toIntExact(position - begin);
+            ChildRef childRef =
+                handle.borrow(
+                    r ->
+                        r.getObjectDataRanges(idx)
+                            .getChecksummedData()
+                            .getContent()
+                            .substring(skip));
+            read.accept(childRef);
+            //noinspection resource
+            read = state.assignNewReadId(id);
+            if (read.getReadCursor().hasRemaining()) {
+              BidiReadObjectRequest requestWithNewReadId =
+                  BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
+              requestStream.send(requestWithNewReadId);
+            }
+          } else {
+            Status status =
+                Status.newBuilder()
+                    .setCode(Code.OUT_OF_RANGE.value())
+                    .setMessage(
+                        String.format("position = %d, readRange.read_offset = %d", position, begin))
+                    .build();
+            BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+            // todo: record failure for read
+            BidiReadObjectRequest requestWithNewReadId =
+                BidiReadObjectRequest.newBuilder()
+                    .addReadRanges(readWithNewId.makeReadRange())
+                    .build();
+            requestStream.send(requestWithNewReadId);
+            // todo
+            continue;
+          }
+          if (d.getRangeEnd() && !read.getReadCursor().hasRemaining()) {
+            final BlobDescriptorStreamRead finalRead = read;
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
             executor.execute(
                 StorageException.liftToRunnable(
                     () -> {
-                      read.eof();
+                      finalRead.eof();
                       // don't remove the outstanding read until the future has been resolved
                       state.removeOutstandingRead(id);
                     }));
