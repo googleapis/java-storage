@@ -19,10 +19,10 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
@@ -52,10 +52,9 @@ final class BlobDescriptorStream
   private final SettableApiFuture<Void> blobDescriptorResolveFuture;
 
   private final BlobDescriptorState state;
-  private final ResponseContentLifecycleManager<BidiReadObjectResponse>
-      bidiResponseContentLifecycleManager;
   private final Executor executor;
-  private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable;
+  private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      callable;
   private final GrpcCallContext context;
   private final int maxRedirectsAllowed;
 
@@ -69,13 +68,11 @@ final class BlobDescriptorStream
   private BlobDescriptorStream(
       BlobDescriptorState state,
       Executor executor,
-      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
-      BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
+      ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       GrpcCallContext context,
       int maxRedirectsAllowed) {
     this.state = state;
     this.executor = executor;
-    this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
     this.callable = callable;
     this.context = context;
     this.blobDescriptorResolveFuture = SettableApiFuture.create();
@@ -233,7 +230,7 @@ final class BlobDescriptorStream
     public void onResponse(BidiReadObjectResponse response) {
       controller.request(1);
       try (ResponseContentLifecycleHandle<BidiReadObjectResponse> handle =
-          bidiResponseContentLifecycleManager.get(response)) {
+          callable.getResponseContentLifecycleManager().get(response)) {
         if (response.hasMetadata()) {
           state.setMetadata(response.getMetadata());
         }
@@ -456,19 +453,12 @@ final class BlobDescriptorStream
 
   static BlobDescriptorStream create(
       Executor executor,
-      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
-      BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
+      ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       GrpcCallContext context,
       BlobDescriptorState state) {
 
     int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
-    return new BlobDescriptorStream(
-        state,
-        executor,
-        bidiResponseContentLifecycleManager,
-        callable,
-        context,
-        maxRedirectsAllowed);
+    return new BlobDescriptorStream(state, executor, callable, context, maxRedirectsAllowed);
   }
 
   static final class MaxRedirectsExceededException extends RuntimeException {

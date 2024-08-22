@@ -22,13 +22,13 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.api.gax.rpc.WatchdogTimeoutException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.protobuf.ByteString;
@@ -57,10 +57,9 @@ final class GapicUnbufferedReadableByteChannel
   private static final java.lang.Object EOF_MARKER = new java.lang.Object();
 
   private final SettableApiFuture<Object> result;
-  private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
   private final ReadObjectRequest req;
   private final Hasher hasher;
-  private final ResponseContentLifecycleManager rclm;
   private final RetryingDependencies retryingDeps;
   private final ResultRetryAlgorithm<?> alg;
   private final SimpleBlockingQueue<java.lang.Object> queue;
@@ -76,19 +75,17 @@ final class GapicUnbufferedReadableByteChannel
 
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
-      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest req,
       Hasher hasher,
       RetryingDependencies retryingDependencies,
-      ResultRetryAlgorithm<?> alg,
-      ResponseContentLifecycleManager rclm) {
+      ResultRetryAlgorithm<?> alg) {
     this.result = result;
     this.read = read;
     this.req = req;
     this.hasher = hasher;
     this.fetchOffset = new AtomicLong(req.getReadOffset());
     this.blobOffset = req.getReadOffset();
-    this.rclm = rclm;
     this.retryingDeps = retryingDependencies;
     this.alg =
         new BasicResultRetryAlgorithm<java.lang.Object>() {
@@ -159,7 +156,8 @@ final class GapicUnbufferedReadableByteChannel
       readObjectObserver.request();
 
       ReadObjectResponse resp = (ReadObjectResponse) take;
-      ResponseContentLifecycleHandle handle = rclm.get(resp);
+      ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+          read.getResponseContentLifecycleManager().get(resp);
       if (resp.hasMetadata()) {
         Object respMetadata = resp.getMetadata();
         if (metadata == null) {
@@ -251,7 +249,8 @@ final class GapicUnbufferedReadableByteChannel
           java.lang.Object queueValue = queue.poll();
           if (queueValue instanceof ReadObjectResponse) {
             ReadObjectResponse resp = (ReadObjectResponse) queueValue;
-            ResponseContentLifecycleHandle handle = rclm.get(resp);
+            ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+                read.getResponseContentLifecycleManager().get(resp);
             handle.close();
           } else if (queueValue == EOF_MARKER || queueValue instanceof Throwable) {
             break;

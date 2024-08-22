@@ -20,9 +20,9 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import java.io.IOException;
@@ -78,14 +78,11 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   static ApiFuture<BlobDescriptor> create(
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
-      BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
+      ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       Executor executor) {
     BlobDescriptorState state = new BlobDescriptorState(openRequest);
 
-    BlobDescriptorStream stream =
-        BlobDescriptorStream.create(
-            executor, bidiResponseContentLifecycleManager, callable, context, state);
+    BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, context, state);
 
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
         ApiFutures.transform(stream, nowOpen -> new BlobDescriptorImpl(stream, state), executor);

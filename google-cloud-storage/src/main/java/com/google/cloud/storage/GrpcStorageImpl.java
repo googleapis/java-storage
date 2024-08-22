@@ -38,7 +38,6 @@ import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
@@ -50,6 +49,8 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -749,10 +750,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext grpcCallContext = opts.grpcMetadataMapper().apply(Retrying.newCallContext());
 
     return new GrpcBlobReadChannel(
-        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        readObjectCallable(grpcCallContext),
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        responseContentLifecycleManager,
         request,
         !opts.autoGzipDecompression());
   }
@@ -1475,14 +1475,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     b.setReadObjectSpec(spec);
     BidiReadObjectRequest req = b.build();
 
-    BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
-        storageClient.bidiReadObjectCallable();
+    ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        new ZeroCopyBidiStreamingCallable<>(
+            storageClient.bidiReadObjectCallable(), bidiResponseContentLifecycleManager);
 
     GrpcCallContext context =
         GrpcUtils.contextWithBucketName(object.getBucket(), GrpcCallContext.createDefault());
 
-    return BlobDescriptorImpl.create(
-        req, context, callable, bidiResponseContentLifecycleManager, executor);
+    return BlobDescriptorImpl.create(req, context, callable, executor);
   }
 
   @Override
@@ -1784,10 +1784,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return ResumableMedia.gapic()
         .read()
         .byteChannel(
-            storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+            readObjectCallable(grpcCallContext),
             getOptions(),
-            retryAlgorithmManager.getFor(readObjectRequest),
-            responseContentLifecycleManager)
+            retryAlgorithmManager.getFor(readObjectRequest))
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)
@@ -2019,5 +2018,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getBucketCallable().call(req, merge),
         syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
+  }
+
+  private ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable(
+      GrpcCallContext grpcCallContext) {
+    return new ZeroCopyServerStreamingCallable<>(
+        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        responseContentLifecycleManager);
   }
 }
