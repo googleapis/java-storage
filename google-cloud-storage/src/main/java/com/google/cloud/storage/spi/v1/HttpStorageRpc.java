@@ -1090,6 +1090,10 @@ public class HttpStorageRpc implements StorageRpc {
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
       requestHeaders.set("X-Upload-Content-Type", detectContentType(object, options));
+      Long xUploadContentLength = Option.X_UPLOAD_CONTENT_LENGTH.getLong(options);
+      if (xUploadContentLength != null) {
+        requestHeaders.set("X-Upload-Content-Length", xUploadContentLength);
+      }
       setEncryptionHeaders(requestHeaders, "x-goog-encryption-", options);
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 200) {

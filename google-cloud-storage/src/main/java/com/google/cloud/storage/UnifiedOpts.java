@@ -55,6 +55,7 @@ import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
+import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
@@ -194,6 +195,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<StartResumableWriteRequest.Builder> startResumableWrite() {
       return Mapper.identity();
     }
   }
@@ -485,6 +490,12 @@ final class UnifiedOpts {
   static Projection projection(@NonNull String projection) {
     requireNonNull(projection, "projection must be non null");
     return new Projection(projection);
+  }
+
+  static ResumableUploadExpectedObjectSize resumableUploadExpectedObjectSize(
+      long expectedObjectSize) {
+    checkArgument(expectedObjectSize >= 0, "expectedObjectSize >= 0 (%s >= 0)", expectedObjectSize);
+    return new ResumableUploadExpectedObjectSize(expectedObjectSize);
   }
 
   static SoftDeleted softDeleted(boolean softDeleted) {
@@ -1832,6 +1843,25 @@ final class UnifiedOpts {
     }
   }
 
+  static final class ResumableUploadExpectedObjectSize extends RpcOptVal<@NonNull Long>
+      implements ObjectTargetOpt {
+    private static final long serialVersionUID = 3640126281492196357L;
+
+    private ResumableUploadExpectedObjectSize(@NonNull Long val) {
+      super(StorageRpc.Option.X_UPLOAD_CONTENT_LENGTH, val);
+    }
+
+    @Override
+    public Mapper<StartResumableWriteRequest.Builder> startResumableWrite() {
+      return b -> {
+        if (val > 0) {
+          b.getWriteObjectSpecBuilder().setObjectSize(val);
+        }
+        return b;
+      };
+    }
+  }
+
   static final class ShowDeletedKeys extends RpcOptVal<@NonNull Boolean> implements HmacKeyListOpt {
     private static final long serialVersionUID = -6604176744362903487L;
 
@@ -2424,6 +2454,10 @@ final class UnifiedOpts {
 
     Mapper<BidiWriteObjectRequest.Builder> bidiWriteObjectRequest() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::bidiWriteObject);
+    }
+
+    Mapper<StartResumableWriteRequest.Builder> startResumableWriteRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::startResumableWrite);
     }
 
     Mapper<GetObjectRequest.Builder> getObjectsRequest() {

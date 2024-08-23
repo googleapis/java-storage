@@ -190,7 +190,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
             opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
         ApiFuture<ResumableWrite> f =
             grpcStorage.startResumableWrite(
-                grpcCallContext, grpcStorage.getWriteObjectRequest(info, opts));
+                grpcCallContext, grpcStorage.getWriteObjectRequest(info, opts), opts);
         ApiFuture<WriteCtx<ResumableWrite>> start =
             ApiFutures.transform(f, WriteCtx::new, MoreExecutors.directExecutor());
 
