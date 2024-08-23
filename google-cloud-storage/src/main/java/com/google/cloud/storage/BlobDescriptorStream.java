@@ -281,8 +281,21 @@ final class BlobDescriptorStream
           long begin = readRange.getReadOffset();
           long position = read.getReadCursor().position();
           if (begin == position) {
-            ChildRef childRef =
-                handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
+            long remaining = read.getReadCursor().remaining();
+            int contentSize = content.size();
+            ChildRef childRef;
+            if (remaining >= contentSize) {
+              childRef =
+                  handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
+            } else {
+              childRef =
+                  handle.borrow(
+                      r ->
+                          r.getObjectDataRanges(idx)
+                              .getChecksummedData()
+                              .getContent()
+                              .substring(0, Math.toIntExact(remaining)));
+            }
             read.accept(childRef);
           } else if (begin < position) {
             int skip = Math.toIntExact(position - begin);
