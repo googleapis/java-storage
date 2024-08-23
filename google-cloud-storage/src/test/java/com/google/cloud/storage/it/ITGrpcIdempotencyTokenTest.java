@@ -68,6 +68,7 @@ public final class ITGrpcIdempotencyTokenTest {
     storage =
         StorageOptions.grpc()
             .setGrpcInterceptorProvider(() -> ImmutableList.of(requestAuditing))
+            .setEnableGrpcClientMetrics(false)
             .build()
             .getService();
   }

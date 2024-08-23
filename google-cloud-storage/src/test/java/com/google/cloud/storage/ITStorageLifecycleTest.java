@@ -50,6 +50,7 @@ public final class ITStorageLifecycleTest {
             .setHost(testBench.getGRPCBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId("test-project-id")
+            .setEnableGrpcClientMetrics(false)
             .build();
 
     Storage service1 = options.getService();
