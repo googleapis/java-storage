@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.BidiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ClientStreamReadyObserver;
+import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -33,15 +34,9 @@ import com.google.api.gax.rpc.StreamController;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.protobuf.Any;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
-import io.grpc.Metadata;
-import io.grpc.StatusRuntimeException;
-import io.grpc.protobuf.ProtoUtils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
@@ -52,10 +47,6 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcUtils {
-
-  static final Metadata.Key<Status> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of(
-          "grpc-status-details-bin", ProtoUtils.metadataMarshaller(Status.getDefaultInstance()));
 
   private GrpcUtils() {}
 
@@ -104,11 +95,9 @@ final class GrpcUtils {
   }
 
   /**
-   * Returns the first occurrence of a {@link BidiReadObjectRedirectedError} if the throwable is or
-   * is caused by a {@link StatusRuntimeException} that contains trailers, the trailers contain an
-   * entry {@code grpc-status-details-bin}, which contains a valid {@link Status}, and the status
-   * contains an entry in its details that is a {@link BidiReadObjectRedirectedError} (evaluated
-   * from index 0 to length). {@code null} otherwise.
+   * Returns the first occurrence of a {@link BidiReadObjectRedirectedError} if the throwable is an
+   * {@link ApiException} with {@link ErrorDetails} that contain an entry that is a {@link
+   * BidiReadObjectRedirectedError} (evaluated from index 0 to length). {@code null} otherwise.
    */
   @Nullable
   static BidiReadObjectRedirectedError getBidiReadObjectRedirectedError(Throwable t) {
@@ -116,12 +105,11 @@ final class GrpcUtils {
   }
 
   /**
-   * Returns the first occurrence of a {@link BidiReadObjectError} if the throwable is or is caused
-   * by a {@link StatusRuntimeException} that contains trailers, the trailers contain an entry
-   * {@code grpc-status-details-bin}, which contains a valid {@link Status}, and the status contains
-   * an entry in its details that is a {@link BidiReadObjectError} (evaluated from index 0 to
-   * length). {@code null} otherwise.
+   * Returns the first occurrence of a {@link BidiReadObjectError} if the throwable is an {@link
+   * ApiException} with {@link ErrorDetails} that contain an entry that is a {@link
+   * BidiReadObjectError} (evaluated from index 0 to length). {@code null} otherwise.
    */
+  @Nullable
   static BidiReadObjectError getBidiReadObjectError(Throwable t) {
     return findFirstPackedAny(t, BidiReadObjectError.class);
   }
@@ -129,28 +117,10 @@ final class GrpcUtils {
   @Nullable
   private static <M extends Message> M findFirstPackedAny(Throwable t, Class<M> clazz) {
     if (t instanceof ApiException) {
-      t = t.getCause();
-    }
-    if (!(t instanceof StatusRuntimeException)) {
-      return null;
-    }
-    StatusRuntimeException sre = (StatusRuntimeException) t;
-    Metadata trailers = sre.getTrailers();
-    if (trailers == null) {
-      return null;
-    }
-    Status status = trailers.get(GRPC_STATUS_DETAILS_KEY);
-    if (status == null) {
-      return null;
-    }
-    List<Any> detailsList = status.getDetailsList();
-    for (Any any : detailsList) {
-      if (any.is(clazz)) {
-        try {
-          return any.unpack(clazz);
-        } catch (InvalidProtocolBufferException e) {
-          // ignore it, falling back to regular retry behavior
-        }
+      ApiException apiException = (ApiException) t;
+      ErrorDetails errorDetails = apiException.getErrorDetails();
+      if (errorDetails != null) {
+        return errorDetails.getMessage(clazz);
       }
     }
     return null;

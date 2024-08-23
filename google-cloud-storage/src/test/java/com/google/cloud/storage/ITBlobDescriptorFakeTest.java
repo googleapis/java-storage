@@ -47,6 +47,7 @@ import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -57,6 +58,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 public final class ITBlobDescriptorFakeTest {
+
+  private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
+      Metadata.Key.of(
+          "grpc-status-details-bin",
+          ProtoUtils.metadataMarshaller(com.google.rpc.Status.getDefaultInstance()));
 
   /**
    *
@@ -156,7 +162,7 @@ public final class ITBlobDescriptorFakeTest {
                           .build();
 
                   Metadata trailers = new Metadata();
-                  trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
                   StatusRuntimeException statusRuntimeException =
                       Status.UNAVAILABLE.withDescription("redirect").asRuntimeException(trailers);
                   respond.onError(statusRuntimeException);
@@ -181,14 +187,7 @@ public final class ITBlobDescriptorFakeTest {
         };
 
     try (FakeServer fakeServer = FakeServer.of(fake);
-        Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
-                .setGrpcInterceptorProvider(
-                    GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                .build()
-                .getService()) {
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
       ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
@@ -270,7 +269,7 @@ public final class ITBlobDescriptorFakeTest {
                           .build();
 
                   Metadata trailers = new Metadata();
-                  trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
                   StatusRuntimeException statusRuntimeException =
                       Status.UNAVAILABLE.withDescription("redirect").asRuntimeException(trailers);
                   respond.onError(statusRuntimeException);
@@ -344,7 +343,7 @@ public final class ITBlobDescriptorFakeTest {
                         .build();
 
                 Metadata trailers = new Metadata();
-                trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
                 StatusRuntimeException statusRuntimeException =
                     Status.UNAVAILABLE
                         .withDescription(String.format("redirect %03d", requestCount))
@@ -366,14 +365,7 @@ public final class ITBlobDescriptorFakeTest {
         };
 
     try (FakeServer fakeServer = FakeServer.of(fake);
-        Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
-                .setGrpcInterceptorProvider(
-                    GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                .build()
-                .getService()) {
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
       ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
@@ -499,7 +491,7 @@ public final class ITBlobDescriptorFakeTest {
                           .build();
 
                   Metadata trailers = new Metadata();
-                  trailers.put(GrpcUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
                   StatusRuntimeException statusRuntimeException =
                       Status.UNAVAILABLE.withDescription("redirect").asRuntimeException(trailers);
                   respond.onNext(res2);
@@ -525,14 +517,7 @@ public final class ITBlobDescriptorFakeTest {
         };
 
     try (FakeServer fakeServer = FakeServer.of(fake);
-        Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
-                .setGrpcInterceptorProvider(
-                    GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                .build()
-                .getService()) {
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
       ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
