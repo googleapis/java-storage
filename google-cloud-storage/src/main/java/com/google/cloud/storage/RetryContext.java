@@ -42,10 +42,10 @@ final class RetryContext {
     failures = new LinkedList<>();
   }
 
-  public void recordError(Throwable e) {
-    int failureCount = failures.size() + 1 /* include e */;
+  public void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure) {
+    int failureCount = failures.size() + 1 /* include t in the count*/;
     int maxAttempts = retryingDependencies.getRetrySettings().getMaxAttempts();
-    boolean shouldRetry = algorithm.shouldRetry(e, null);
+    boolean shouldRetry = algorithm.shouldRetry(t, null);
     String msgPrefix = null;
     if (shouldRetry && failureCount >= maxAttempts) {
       msgPrefix = "Operation failed to complete within retry limit";
@@ -54,15 +54,16 @@ final class RetryContext {
     }
 
     if (msgPrefix == null) {
-      failures.add(e);
+      failures.add(t);
+      onSuccess.onSuccess();
     } else {
       String msg =
           String.format("%s (attempts: %d, maxAttempts: %d)", msgPrefix, failureCount, maxAttempts);
-      ApiException cancelled = ApiExceptionFactory.createException(msg, e, CANCELLED, false);
+      ApiException cancelled = ApiExceptionFactory.createException(msg, t, CANCELLED, false);
       for (Throwable failure : failures) {
         cancelled.addSuppressed(failure);
       }
-      throw cancelled;
+      onFailure.onFailure(cancelled);
     }
   }
 
@@ -83,7 +84,16 @@ final class RetryContext {
 
   @FunctionalInterface
   interface RetryContextProvider {
-
     RetryContext create();
+  }
+
+  @FunctionalInterface
+  interface OnSuccess {
+    void onSuccess();
+  }
+
+  @FunctionalInterface
+  interface OnFailure {
+    void onFailure(Throwable t);
   }
 }

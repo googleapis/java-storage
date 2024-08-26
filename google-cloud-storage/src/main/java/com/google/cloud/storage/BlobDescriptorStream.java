@@ -20,12 +20,14 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
@@ -261,19 +263,7 @@ final class BlobDescriptorStream
             //   happen on a non-io thread
             Hasher.enabled().validate(Crc32cValue.of(crc32C), content);
           } catch (IOException e) {
-            try {
-              read.recordError(e);
-
-              //noinspection resource
-              BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
-              BidiReadObjectRequest requestWithNewReadId =
-                  BidiReadObjectRequest.newBuilder()
-                      .addReadRanges(readWithNewId.makeReadRange())
-                      .build();
-              requestStream.send(requestWithNewReadId);
-            } catch (Throwable t) {
-              read.fail(t);
-            }
+            read.recordError(e, restartReadFromCurrentOffset(id), read::unsafeFail);
             continue;
           }
 
@@ -307,39 +297,32 @@ final class BlobDescriptorStream
                             .getContent()
                             .substring(skip));
             read.accept(childRef);
-            //noinspection resource
-            read = state.assignNewReadId(id);
-            if (read.getReadCursor().hasRemaining()) {
-              BidiReadObjectRequest requestWithNewReadId =
-                  BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
-              requestStream.send(requestWithNewReadId);
-            }
+            ApiException apiException =
+                ApiExceptionFactory.createException(
+                    String.format("position = %d, readRange.read_offset = %d", position, begin),
+                    null,
+                    GrpcStatusCode.of(Code.OUT_OF_RANGE),
+                    true);
+            read.recordError(apiException, restartReadFromCurrentOffset(id), read::unsafeFail);
+            continue;
           } else {
-            try {
-              read.recordError(
-                  ApiExceptionFactory.createException(
-                      String.format("position = %d, readRange.read_offset = %d", position, begin),
-                      null,
-                      GrpcStatusCode.of(Code.OUT_OF_RANGE),
-                      true));
-              BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
-              BidiReadObjectRequest requestWithNewReadId =
-                  BidiReadObjectRequest.newBuilder()
-                      .addReadRanges(readWithNewId.makeReadRange())
-                      .build();
-              requestStream.send(requestWithNewReadId);
-            } catch (Throwable e) {
-              read.fail(e);
-            }
+            ApiException apiException =
+                ApiExceptionFactory.createException(
+                    String.format("position = %d, readRange.read_offset = %d", position, begin),
+                    null,
+                    GrpcStatusCode.of(Code.OUT_OF_RANGE),
+                    true);
+            read.recordError(apiException, restartReadFromCurrentOffset(id), read::unsafeFail);
+            continue;
           }
+
           if (d.getRangeEnd() && !read.getReadCursor().hasRemaining()) {
-            final BlobDescriptorStreamRead finalRead = read;
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
             executor.execute(
                 StorageException.liftToRunnable(
                     () -> {
-                      finalRead.eof();
+                      read.eof();
                       // don't remove the outstanding read until the future has been resolved
                       state.removeOutstandingRead(id);
                     }));
@@ -377,6 +360,16 @@ final class BlobDescriptorStream
                 }));
       }
       reset();
+    }
+
+    private OnSuccess restartReadFromCurrentOffset(long id) {
+      return () -> {
+        //noinspection resource
+        BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+        BidiReadObjectRequest requestWithNewReadId =
+            BidiReadObjectRequest.newBuilder().addReadRanges(readWithNewId.makeReadRange()).build();
+        requestStream.send(requestWithNewReadId);
+      };
     }
 
     @Override

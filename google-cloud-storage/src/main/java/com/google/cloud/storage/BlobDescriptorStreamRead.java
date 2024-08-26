@@ -22,6 +22,8 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.RetryContext.OnFailure;
+import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
 import com.google.storage.v2.ReadRange;
@@ -78,6 +80,15 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     fail(apiException);
   }
 
+  final void unsafeFail(Throwable t) {
+    try {
+      fail(t);
+    } catch (IOException e) {
+      // todo: better exception than this
+      throw new RuntimeException(e);
+    }
+  }
+
   abstract void fail(Throwable t) throws IOException;
 
   abstract BlobDescriptorStreamRead withNewReadId(long newReadId);
@@ -99,7 +110,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
   }
 
-  abstract void recordError(Throwable e);
+  abstract void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure);
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
       long readId,
@@ -156,8 +167,8 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
 
     @Override
-    public void recordError(Throwable e) {
-      retryContext.recordError(e);
+    void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure) {
+      retryContext.recordError(t, onSuccess, onFailure);
     }
   }
 

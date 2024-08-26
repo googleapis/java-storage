@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
@@ -26,13 +25,15 @@ import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
-import com.google.api.gax.rpc.CancelledException;
 import com.google.api.gax.rpc.ResourceExhaustedException;
+import com.google.cloud.storage.RetryContext.OnFailure;
+import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import io.grpc.Status.Code;
 import org.junit.Test;
 
 public final class RetryContextTest {
+  private static final OnSuccess NOOP = () -> {};
 
   private static final Throwable T1 = apiException(Code.UNAVAILABLE, "{unavailable}");
   private static final Throwable T2 = apiException(Code.INTERNAL, "{internal}");
@@ -42,17 +43,14 @@ public final class RetryContextTest {
   public void retriable_cancelledException_when_maxAttemptBudget_consumed() {
     RetryContext ctx = RetryContext.of(maxAttempts(1), Retrying.alwaysRetry());
 
-    CancelledException cancelled =
-        assertThrows(CancelledException.class, () -> ctx.recordError(T1));
-
-    assertThat(cancelled).hasCauseThat().isEqualTo(T1);
+    ctx.recordError(T1, failOnSuccess(), actual -> assertThat(actual).hasCauseThat().isEqualTo(T1));
   }
 
   @Test
   public void retriable_maxAttemptBudget_still_available() {
     RetryContext ctx = RetryContext.of(maxAttempts(2), Retrying.alwaysRetry());
 
-    ctx.recordError(T1);
+    ctx.recordError(T1, NOOP, failOnFailure());
   }
 
   @Test
@@ -60,25 +58,24 @@ public final class RetryContextTest {
       retriable_cancelledException_when_maxAttemptBudget_multipleAttempts_previousErrorsIncludedAsSuppressed() {
     RetryContext ctx = RetryContext.of(maxAttempts(3), Retrying.alwaysRetry());
 
-    ctx.recordError(T1);
-    ctx.recordError(T2);
+    ctx.recordError(T1, NOOP, failOnFailure());
+    ctx.recordError(T2, NOOP, failOnFailure());
 
-    CancelledException cancelled =
-        assertThrows(CancelledException.class, () -> ctx.recordError(T3));
-
-    assertThat(cancelled).hasCauseThat().isEqualTo(T3);
-    Throwable[] suppressed = cancelled.getSuppressed();
-    assertThat(suppressed).asList().containsExactly(T1, T2);
+    ctx.recordError(
+        T3,
+        failOnSuccess(),
+        actual -> {
+          assertThat(actual).hasCauseThat().isEqualTo(T3);
+          Throwable[] suppressed = actual.getSuppressed();
+          assertThat(suppressed).asList().containsExactly(T1, T2);
+        });
   }
 
   @Test
   public void nonRetriable_cancelledException_regardlessOfAttemptBudget() {
     RetryContext ctx = RetryContext.of(maxAttempts(3), Retrying.neverRetry());
 
-    CancelledException cancelled =
-        assertThrows(CancelledException.class, () -> ctx.recordError(T1));
-
-    assertThat(cancelled).hasCauseThat().isEqualTo(T1);
+    ctx.recordError(T1, failOnSuccess(), actual -> assertThat(actual).hasCauseThat().isEqualTo(T1));
   }
 
   @Test
@@ -94,15 +91,17 @@ public final class RetryContextTest {
               }
             });
 
-    ctx.recordError(T1);
-    ctx.recordError(T2);
+    ctx.recordError(T1, NOOP, failOnFailure());
+    ctx.recordError(T2, NOOP, failOnFailure());
 
-    CancelledException cancelled =
-        assertThrows(CancelledException.class, () -> ctx.recordError(T3));
-
-    assertThat(cancelled).hasCauseThat().isEqualTo(T3);
-    Throwable[] suppressed = cancelled.getSuppressed();
-    assertThat(suppressed).asList().containsExactly(T1, T2);
+    ctx.recordError(
+        T3,
+        failOnSuccess(),
+        actual -> {
+          assertThat(actual).hasCauseThat().isEqualTo(T3);
+          Throwable[] suppressed = actual.getSuppressed();
+          assertThat(suppressed).asList().containsExactly(T1, T2);
+        });
   }
 
   @Test
@@ -117,16 +116,18 @@ public final class RetryContextTest {
               }
             });
 
-    ctx.recordError(T1);
-    ctx.recordError(T2);
+    ctx.recordError(T1, NOOP, failOnFailure());
+    ctx.recordError(T2, NOOP, failOnFailure());
     ctx.reset();
 
-    CancelledException cancelled =
-        assertThrows(CancelledException.class, () -> ctx.recordError(T3));
-
-    assertThat(cancelled).hasCauseThat().isEqualTo(T3);
-    Throwable[] suppressed = cancelled.getSuppressed();
-    assertThat(suppressed).asList().isEmpty();
+    ctx.recordError(
+        T3,
+        failOnSuccess(),
+        actual -> {
+          assertThat(actual).hasCauseThat().isEqualTo(T3);
+          Throwable[] suppressed = actual.getSuppressed();
+          assertThat(suppressed).asList().isEmpty();
+        });
   }
 
   private static ApiException apiException(Code code, String message) {
@@ -137,6 +138,20 @@ public final class RetryContextTest {
     return new MaxAttemptRetryingDependencies(
         RetrySettings.newBuilder().setMaxAttempts(maxAttempts).build(),
         NanoClock.getDefaultClock());
+  }
+
+  private static OnFailure failOnFailure() {
+    InvocationTracer invocationTracer = new InvocationTracer("Unexpected onFailure invocation");
+    return t -> {
+      throw invocationTracer;
+    };
+  }
+
+  private static OnSuccess failOnSuccess() {
+    InvocationTracer invocationTracer = new InvocationTracer("Unexpected onSuccess invocation");
+    return () -> {
+      throw invocationTracer;
+    };
   }
 
   private static final class MaxAttemptRetryingDependencies implements RetryingDependencies {
@@ -156,6 +171,12 @@ public final class RetryContextTest {
     @Override
     public ApiClock getClock() {
       return clock;
+    }
+  }
+
+  private static final class InvocationTracer extends RuntimeException {
+    private InvocationTracer(String message) {
+      super(message);
     }
   }
 }
