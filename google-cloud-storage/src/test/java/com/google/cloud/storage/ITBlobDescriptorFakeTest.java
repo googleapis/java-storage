@@ -26,11 +26,11 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.CancelledException;
+import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Hasher.ChecksumMismatchException;
+import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.common.collect.ImmutableMap;
@@ -422,7 +422,7 @@ public final class ITBlobDescriptorFakeTest {
   }
 
   @Test
-  public void objectRangeData_checksumFailure() throws Exception {
+  public void expectRetryForRangeWithFailedChecksumValidation() throws Exception {
 
     ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
 
@@ -623,16 +623,17 @@ public final class ITBlobDescriptorFakeTest {
       try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10, 10));
 
-        CancelledException cancelledException =
+        DataLossException dataLossException =
             assertThrows(
-                CancelledException.class, () -> ApiExceptions.callAndTranslateApiException(future));
+                DataLossException.class, () -> ApiExceptions.callAndTranslateApiException(future));
 
-        assertThat(cancelledException).hasCauseThat().isInstanceOf(ChecksumMismatchException.class);
-        Throwable[] suppressed = cancelledException.getSuppressed();
+        assertThat(dataLossException).isInstanceOf(UncheckedChecksumMismatchException.class);
+        Throwable[] suppressed = dataLossException.getSuppressed();
         List<String> suppressedMessages =
             Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
         assertThat(suppressedMessages)
             .containsExactly(
+                "Operation failed to complete within retry limit (attempts: 3, maxAttempts: 3) previous failures follow in order of occurrence",
                 "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}",
                 "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}",
                 "Asynchronous task failed");
@@ -689,17 +690,20 @@ public final class ITBlobDescriptorFakeTest {
       try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 20L));
 
-        CancelledException cancelledException =
+        OutOfRangeException outOfRangeException =
             assertThrows(
-                CancelledException.class, () -> ApiExceptions.callAndTranslateApiException(future));
+                OutOfRangeException.class,
+                () -> ApiExceptions.callAndTranslateApiException(future));
 
-        assertThat(cancelledException).hasCauseThat().isInstanceOf(OutOfRangeException.class);
-        Throwable[] suppressed = cancelledException.getSuppressed();
+        assertThat(outOfRangeException).isInstanceOf(OutOfRangeException.class);
+        Throwable[] suppressed = outOfRangeException.getSuppressed();
         List<String> suppressedMessages =
             Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
         assertThat(suppressedMessages)
             .containsExactly(
-                "position = 10, readRange.read_offset = 11", "Asynchronous task failed");
+                "Operation failed to complete within retry limit (attempts: 2, maxAttempts: 2) previous failures follow in order of occurrence",
+                "position = 10, readRange.read_offset = 11",
+                "Asynchronous task failed");
       }
     }
   }

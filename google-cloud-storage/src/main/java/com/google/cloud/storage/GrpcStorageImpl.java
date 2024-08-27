@@ -54,7 +54,7 @@ import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWrita
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
-import com.google.cloud.storage.Hasher.ChecksumMismatchException;
+import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -229,7 +229,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
               @Override
               public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
                 // this is only retryable with read object range, not other requests
-                return previousThrowable instanceof ChecksumMismatchException
+                return previousThrowable instanceof UncheckedChecksumMismatchException
                     || previousThrowable instanceof OutOfRangeException
                     || retryAlgorithmManager.idempotent().shouldRetry(previousThrowable, null);
               }

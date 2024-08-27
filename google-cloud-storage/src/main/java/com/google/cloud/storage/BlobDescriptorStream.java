@@ -26,6 +26,7 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.common.base.Preconditions;
@@ -261,8 +262,8 @@ final class BlobDescriptorStream
           try {
             // todo: benchmark how long it takes to compute this checksum and whether it needs to
             //   happen on a non-io thread
-            Hasher.enabled().validate(Crc32cValue.of(crc32C), content);
-          } catch (IOException e) {
+            Hasher.enabled().validateUnchecked(Crc32cValue.of(crc32C), content);
+          } catch (UncheckedChecksumMismatchException e) {
             read.recordError(e, restartReadFromCurrentOffset(id), read::unsafeFail);
             continue;
           }

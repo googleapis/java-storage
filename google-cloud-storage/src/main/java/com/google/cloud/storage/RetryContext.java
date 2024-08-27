@@ -16,18 +16,13 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
-import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
-import io.grpc.Status.Code;
 import java.util.LinkedList;
 import java.util.List;
 
 final class RetryContext {
 
-  private static final GrpcStatusCode CANCELLED = GrpcStatusCode.of(Code.CANCELLED);
   private final RetryingDependencies retryingDependencies;
   private final ResultRetryAlgorithm<?> algorithm;
   private List<Throwable> failures;
@@ -42,7 +37,7 @@ final class RetryContext {
     failures = new LinkedList<>();
   }
 
-  public void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure) {
+  public <T extends Throwable> void recordError(T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
     int failureCount = failures.size() + 1 /* include t in the count*/;
     int maxAttempts = retryingDependencies.getRetrySettings().getMaxAttempts();
     boolean shouldRetry = algorithm.shouldRetry(t, null);
@@ -58,12 +53,17 @@ final class RetryContext {
       onSuccess.onSuccess();
     } else {
       String msg =
-          String.format("%s (attempts: %d, maxAttempts: %d)", msgPrefix, failureCount, maxAttempts);
-      ApiException cancelled = ApiExceptionFactory.createException(msg, t, CANCELLED, false);
+          String.format(
+              "%s (attempts: %d, maxAttempts: %d)%s",
+              msgPrefix,
+              failureCount,
+              maxAttempts,
+              failures.isEmpty() ? "" : " previous failures follow in order of occurrence");
+      t.addSuppressed(new RetryBudgetExhaustedComment(msg));
       for (Throwable failure : failures) {
-        cancelled.addSuppressed(failure);
+        t.addSuppressed(failure);
       }
-      onFailure.onFailure(cancelled);
+      onFailure.onFailure(t);
     }
   }
 
@@ -93,7 +93,21 @@ final class RetryContext {
   }
 
   @FunctionalInterface
-  interface OnFailure {
-    void onFailure(Throwable t);
+  interface OnFailure<T extends Throwable> {
+    void onFailure(T t);
+  }
+
+  /**
+   * Define a custom exception which can carry a comment about the budget exhaustion, so we can
+   * include it as a suppressed exception, but don't fill in any stack frames. This is a throwable
+   * only because it is the only way we can include it into an exception that will by default print
+   * with the exception stacktrace.
+   *
+   * @see Throwable#addSuppressed(Throwable)
+   */
+  private static final class RetryBudgetExhaustedComment extends Throwable {
+    private RetryBudgetExhaustedComment(String comment) {
+      super(comment, /*cause=*/ null, /*enableSuppression=*/ true, /*writableStackTrace=*/ false);
+    }
   }
 }
