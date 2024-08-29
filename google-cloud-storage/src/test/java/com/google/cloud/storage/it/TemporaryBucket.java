@@ -23,22 +23,26 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.common.base.Preconditions;
+import com.google.storage.control.v2.StorageControlClient;
 import java.time.Duration;
 
 public final class TemporaryBucket implements AutoCloseable {
 
   private final BucketInfo bucket;
   private final Storage storage;
+  private final StorageControlClient ctrl;
   private final Duration cleanupTimeout;
   private final CleanupStrategy cleanupStrategy;
 
   private TemporaryBucket(
       BucketInfo bucket,
       Storage storage,
+      StorageControlClient ctrl,
       Duration cleanupTimeout,
       CleanupStrategy cleanupStrategy) {
     this.bucket = bucket;
     this.storage = storage;
+    this.ctrl = ctrl;
     this.cleanupTimeout = cleanupTimeout;
     this.cleanupStrategy = cleanupStrategy;
   }
@@ -51,7 +55,7 @@ public final class TemporaryBucket implements AutoCloseable {
   @Override
   public void close() throws Exception {
     if (cleanupStrategy == CleanupStrategy.ALWAYS) {
-      BucketCleaner.doCleanup(bucket.getName(), storage);
+      BucketCleaner.doCleanup(bucket.getName(), storage, ctrl);
     }
   }
 
@@ -65,6 +69,7 @@ public final class TemporaryBucket implements AutoCloseable {
     private Duration cleanupTimeoutDuration;
     private BucketInfo bucketInfo;
     private Storage storage;
+    private StorageControlClient ctrl;
 
     private Builder() {
       this.cleanupStrategy = CleanupStrategy.ALWAYS;
@@ -91,14 +96,20 @@ public final class TemporaryBucket implements AutoCloseable {
       return this;
     }
 
+    public Builder setStorageControl(StorageControlClient ctrl) {
+      this.ctrl = ctrl;
+      return this;
+    }
+
     public TemporaryBucket build() {
       Preconditions.checkArgument(
           cleanupStrategy != CleanupStrategy.ONLY_ON_SUCCESS, "Unable to detect success.");
       Storage s = requireNonNull(storage, "storage must be non null");
+      StorageControlClient c = requireNonNull(ctrl, "ctrl must be non null");
       Bucket b = s.create(requireNonNull(bucketInfo, "bucketInfo must be non null"));
 
       // intentionally drop from Bucket to BucketInfo to ensure not leaking the Storage instance
-      return new TemporaryBucket(b.asBucketInfo(), s, cleanupTimeoutDuration, cleanupStrategy);
+      return new TemporaryBucket(b.asBucketInfo(), s, c, cleanupTimeoutDuration, cleanupStrategy);
     }
   }
 }

@@ -28,7 +28,7 @@ mvn -version
 echo ${JOB_TYPE}
 
 # attempt to install 3 times with exponential backoff (starting with 10 seconds)
-retry_with_backoff 3 10 \
+#retry_with_backoff 3 10 \
   mvn install -B -V -ntp \
     -DskipTests=true \
     -Dclirr.skip=true \

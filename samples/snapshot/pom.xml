@@ -22,6 +22,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <test>com.example.storage.ITVerboseBucketCleanupTest</test>
   </properties>
 
   <dependencies>
@@ -29,6 +30,13 @@
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
       <version>2.42.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage</artifactId>
+      <version>2.42.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>

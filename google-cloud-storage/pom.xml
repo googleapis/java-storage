@@ -242,6 +242,17 @@
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage-control</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>proto-google-cloud-storage-control-v2</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-core</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
