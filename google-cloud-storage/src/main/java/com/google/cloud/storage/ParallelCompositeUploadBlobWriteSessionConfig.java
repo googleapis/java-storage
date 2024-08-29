@@ -452,7 +452,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier cachedPool() {
-      return new CachedSupplier();
+      return CachedSupplier.INSTANCE;
     }
 
     /**
@@ -529,11 +529,17 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     private static class CachedSupplier extends ExecutorSupplier implements Serializable {
       private static final long serialVersionUID = 7768210719775319260L;
+      private static final CachedSupplier INSTANCE = new CachedSupplier();
 
       @Override
       Executor get() {
         ThreadFactory threadFactory = newThreadFactory();
         return Executors.newCachedThreadPool(threadFactory);
+      }
+
+      /** prevent java serialization from using a new instance */
+      private Object readResolve() {
+        return INSTANCE;
       }
     }
 
