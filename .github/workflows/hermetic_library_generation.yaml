@@ -17,8 +17,9 @@
 name: Hermetic library generation upon generation config change through pull requests
 on:
   pull_request:
-    paths: 
-     - generation_config.yaml
+    paths:
+      - 'generation_config.yaml'
+
 
 env:
   HEAD_REF: ${{ github.head_ref }}
