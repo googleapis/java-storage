@@ -22,6 +22,7 @@ import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
@@ -136,6 +137,20 @@ public final class StorageException extends BaseHttpServiceException {
       GrpcStatusCode gsc = (GrpcStatusCode) statusCode;
       httpStatusCode =
           GrpcToHttpStatusCodeTranslation.grpcCodeToHttpStatusCode(gsc.getTransportCode());
+      StringBuilder sb = new StringBuilder();
+      ErrorDetails errorDetails = apiEx.getErrorDetails();
+      sb.append("errorDetails.getErrorInfo() = ").append(errorDetails.getErrorInfo());
+      sb.append("errorDetails.getRetryInfo() = ").append(errorDetails.getRetryInfo());
+      sb.append("errorDetails.getDebugInfo() = ").append(errorDetails.getDebugInfo());
+      sb.append("errorDetails.getQuotaFailure() = ").append(errorDetails.getQuotaFailure());
+      sb.append("errorDetails.getPreconditionFailure() = ")
+          .append(errorDetails.getPreconditionFailure());
+      sb.append("errorDetails.getBadRequest() = ").append(errorDetails.getBadRequest());
+      sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+      sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+      sb.append("errorDetails.getHelp() = ").append(errorDetails.getHelp());
+      sb.append("errorDetails.getLocalizedMessage() = ").append(errorDetails.getLocalizedMessage());
+      System.err.println(sb);
     }
     // If there is a gRPC exception in our cause change pull it's error message up to be our
     // message otherwise, create a generic error message with the status code.
