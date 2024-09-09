@@ -70,7 +70,6 @@ import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
 import com.google.storage.v2.stub.GrpcStorageCallableFactory;
 import com.google.storage.v2.stub.GrpcStorageStub;
-import com.google.storage.v2.stub.StorageStub;
 import com.google.storage.v2.stub.StorageStubSettings;
 import io.grpc.ClientInterceptor;
 import io.grpc.Detachable;
@@ -89,9 +88,9 @@ import java.nio.ByteBuffer;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -908,8 +907,26 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private static final class InternalStorageClient extends StorageClient {
 
-    private InternalStorageClient(StorageStub stub) {
+    private InternalStorageClient(InternalZeroCopyGrpcStorageStub stub) {
       super(stub);
+    }
+
+    @Override
+    public void shutdownNow() {
+      try {
+        // GrpcStorageStub#close() is final and we can't override it
+        // instead hook in here to close out the zero-copy marshaller
+        getStub().getObjectMediaResponseMarshaller.close();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      } finally {
+        super.shutdownNow();
+      }
+    }
+
+    @Override
+    public InternalZeroCopyGrpcStorageStub getStub() {
+      return (InternalZeroCopyGrpcStorageStub) super.getStub();
     }
   }
 
@@ -1071,30 +1088,21 @@ public final class GrpcStorageOptions extends StorageOptions
      * them all as suppressed exceptions on the first occurrence.
      */
     @VisibleForTesting
-    static void closeAllStreams(Collection<InputStream> inputStreams) throws IOException {
-      IOException ioException =
-          inputStreams.stream()
-              .map(
-                  stream -> {
-                    try {
-                      stream.close();
-                      return null;
-                    } catch (IOException e) {
-                      return e;
-                    }
-                  })
-              .filter(Objects::nonNull)
-              .reduce(
-                  null,
-                  (l, r) -> {
-                    if (l != null) {
-                      l.addSuppressed(r);
-                      return l;
-                    } else {
-                      return r;
-                    }
-                  },
-                  (l, r) -> l);
+    static void closeAllStreams(Iterable<InputStream> inputStreams) throws IOException {
+      Iterator<InputStream> iterator = inputStreams.iterator();
+      IOException ioException = null;
+      while (iterator.hasNext()) {
+        InputStream next = iterator.next();
+        try {
+          next.close();
+        } catch (IOException e) {
+          if (ioException == null) {
+            ioException = e;
+          } else {
+            ioException.addSuppressed(e);
+          }
+        }
+      }
 
       if (ioException != null) {
         throw ioException;
