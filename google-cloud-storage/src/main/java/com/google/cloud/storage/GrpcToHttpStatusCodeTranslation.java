@@ -97,6 +97,7 @@ final class GrpcToHttpStatusCodeTranslation {
    * HTTP codes for our retry handling.
    */
   static int grpcCodeToHttpStatusCode(Code code) {
+    System.err.printf(">>> grpcCodeToHttpStatusCode(code : %s)%n", code);
     StatusCodeMapping found = GRPC_CODE_INDEX.get(code);
     // theoretically it's possible for gRPC to add a new code we haven't mapped here, if this
     // happens fall through to our default of 0
