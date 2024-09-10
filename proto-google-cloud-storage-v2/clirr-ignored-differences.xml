@@ -78,4 +78,71 @@
     <className>com/google/storage/v2/*</className>
     <method>* *IncludeFoldersAsPrefixes*(*)</method>
   </difference>
+
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* getDefaultInstanceForType()</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* addRepeatedField(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clear()</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clear()</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clearField(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clearOneof(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clone()</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* mergeUnknownFields(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* setField(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* setRepeatedField(*)</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* setUnknownFields(*)</method>
+    <to>**</to>
+  </difference>
 </differences>
