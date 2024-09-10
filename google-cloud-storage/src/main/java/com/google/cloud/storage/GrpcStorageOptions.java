@@ -1098,7 +1098,7 @@ public final class GrpcStorageOptions extends StorageOptions
         } catch (IOException e) {
           if (ioException == null) {
             ioException = e;
-          } else {
+          } else if (ioException != e) {
             ioException.addSuppressed(e);
           }
         }
