@@ -182,6 +182,7 @@ final class GapicUnbufferedReadableByteChannel
         if (!result.isDone()) {
           result.setException(StorageException.coalesce(e));
         }
+        reset();
         throw e;
       }
     }
@@ -194,6 +195,7 @@ final class GapicUnbufferedReadableByteChannel
         if (!result.isDone()) {
           result.setException(StorageException.coalesce(e));
         }
+        reset();
         throw e;
       }
     }
@@ -212,7 +214,7 @@ final class GapicUnbufferedReadableByteChannel
             } catch (IOException e) {
               if (ioException == null) {
                 ioException = e;
-              } else {
+              } else if (ioException != e) {
                 ioException.addSuppressed(e);
               }
             }
@@ -237,6 +239,12 @@ final class GapicUnbufferedReadableByteChannel
           return responseIterator;
         }
       }
+    }
+
+    private void reset() {
+      serverStream = null;
+      responseIterator = null;
+      streamInitialized = false;
     }
   }
 }
