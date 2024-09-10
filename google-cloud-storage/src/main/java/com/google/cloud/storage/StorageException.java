@@ -139,18 +139,21 @@ public final class StorageException extends BaseHttpServiceException {
           GrpcToHttpStatusCodeTranslation.grpcCodeToHttpStatusCode(gsc.getTransportCode());
       StringBuilder sb = new StringBuilder();
       ErrorDetails errorDetails = apiEx.getErrorDetails();
-      sb.append("errorDetails.getErrorInfo() = ").append(errorDetails.getErrorInfo());
-      sb.append("errorDetails.getRetryInfo() = ").append(errorDetails.getRetryInfo());
-      sb.append("errorDetails.getDebugInfo() = ").append(errorDetails.getDebugInfo());
-      sb.append("errorDetails.getQuotaFailure() = ").append(errorDetails.getQuotaFailure());
-      sb.append("errorDetails.getPreconditionFailure() = ")
-          .append(errorDetails.getPreconditionFailure());
-      sb.append("errorDetails.getBadRequest() = ").append(errorDetails.getBadRequest());
-      sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
-      sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
-      sb.append("errorDetails.getHelp() = ").append(errorDetails.getHelp());
-      sb.append("errorDetails.getLocalizedMessage() = ").append(errorDetails.getLocalizedMessage());
-      System.err.println(sb);
+      if (errorDetails != null) {
+        sb.append("errorDetails.getErrorInfo() = ").append(errorDetails.getErrorInfo());
+        sb.append("errorDetails.getRetryInfo() = ").append(errorDetails.getRetryInfo());
+        sb.append("errorDetails.getDebugInfo() = ").append(errorDetails.getDebugInfo());
+        sb.append("errorDetails.getQuotaFailure() = ").append(errorDetails.getQuotaFailure());
+        sb.append("errorDetails.getPreconditionFailure() = ")
+            .append(errorDetails.getPreconditionFailure());
+        sb.append("errorDetails.getBadRequest() = ").append(errorDetails.getBadRequest());
+        sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+        sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+        sb.append("errorDetails.getHelp() = ").append(errorDetails.getHelp());
+        sb.append("errorDetails.getLocalizedMessage() = ")
+            .append(errorDetails.getLocalizedMessage());
+        System.err.println(sb);
+      }
     }
     // If there is a gRPC exception in our cause change pull it's error message up to be our
     // message otherwise, create a generic error message with the status code.
