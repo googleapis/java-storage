@@ -1658,16 +1658,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public HttpStorageOptions getOptions() {
-    HttpStorageOptions options = (HttpStorageOptions) super.getOptions();
-    /**
-     * TODO: In the future, this should happen automatically, and this block will be deleted
-     * https://github.com/googleapis/google-api-java-client-services/issues/19286
-     */
-    if (options.getUniverseDomain() != null) {
-
-      return options.toBuilder().setHost(options.getResolvedApiaryHost("storage")).build();
-    }
-    return options;
+    return (HttpStorageOptions) super.getOptions();
   }
 
   private Blob internalGetBlob(BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {

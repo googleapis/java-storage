@@ -56,8 +56,6 @@ public class HttpStorageOptions extends StorageOptions {
   private static final String API_SHORT_NAME = "Storage";
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
-  private static final String DEFAULT_HOST = "https://storage.googleapis.com";
-
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
   private transient RetryDependenciesAdapter retryDepsAdapter;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
@@ -117,7 +115,7 @@ public class HttpStorageOptions extends StorageOptions {
   }
 
   public static HttpStorageOptions.Builder newBuilder() {
-    return new HttpStorageOptions.Builder().setHost(DEFAULT_HOST);
+    return new HttpStorageOptions.Builder();
   }
 
   public static HttpStorageOptions getDefaultInstance() {
@@ -259,7 +257,17 @@ public class HttpStorageOptions extends StorageOptions {
 
     @Override
     public HttpStorageOptions build() {
-      return new HttpStorageOptions(this, defaults());
+      HttpStorageOptions options = new HttpStorageOptions(this, defaults());
+
+      // todo: In the future, this step will be done automatically, and the getResolvedApiaryHost
+      // helper method will
+      // be removed. When that happens, delete the following block.
+      // https://github.com/googleapis/google-api-java-client-services/issues/19286
+      if(options.getHost() != null) { // user did not manually set a host
+        this.setHost(options.getResolvedApiaryHost("storage"));
+        return new HttpStorageOptions(this, defaults());
+      }
+      return options;
     }
   }
 
@@ -382,17 +390,6 @@ public class HttpStorageOptions extends StorageOptions {
     public ServiceRpc create(StorageOptions options) {
       if (options instanceof HttpStorageOptions) {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
-        // todo: In the future, this step will be done automatically, and the getResolvedApiaryHost
-        // helper method will
-        // be removed. When that happens, delete the following block.
-        // https://github.com/googleapis/google-api-java-client-services/issues/19286
-        if (httpStorageOptions.getUniverseDomain() != null) {
-          httpStorageOptions =
-              httpStorageOptions
-                  .toBuilder()
-                  .setHost(httpStorageOptions.getResolvedApiaryHost("storage"))
-                  .build();
-        }
         return new HttpStorageRpc(httpStorageOptions);
       } else {
         throw new IllegalArgumentException("Only HttpStorageOptions supported");
