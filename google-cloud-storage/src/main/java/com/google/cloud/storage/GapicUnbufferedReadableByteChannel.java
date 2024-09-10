@@ -201,8 +201,23 @@ final class GapicUnbufferedReadableByteChannel
     @Override
     public void close() {
       if (serverStream != null) {
-        // todo: do we need to "drain" anything?
         serverStream.cancel();
+        if (responseIterator != null) {
+          IOException ioException = null;
+          while (responseIterator.hasNext()) {
+            try {
+              ReadObjectResponse next = responseIterator.next();
+              ResponseContentLifecycleHandle handle = rclm.get(next);
+              handle.close();
+            } catch (IOException e) {
+              if (ioException == null) {
+                ioException = e;
+              } else {
+                ioException.addSuppressed(e);
+              }
+            }
+          }
+        }
       }
     }
 
