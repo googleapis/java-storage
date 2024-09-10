@@ -141,16 +141,16 @@ public final class StorageException extends BaseHttpServiceException {
       ErrorDetails errorDetails = apiEx.getErrorDetails();
       if (errorDetails != null) {
         sb.append("errorDetails.getErrorInfo() = ").append(errorDetails.getErrorInfo());
-        sb.append("errorDetails.getRetryInfo() = ").append(errorDetails.getRetryInfo());
-        sb.append("errorDetails.getDebugInfo() = ").append(errorDetails.getDebugInfo());
-        sb.append("errorDetails.getQuotaFailure() = ").append(errorDetails.getQuotaFailure());
-        sb.append("errorDetails.getPreconditionFailure() = ")
+        sb.append("\nerrorDetails.getRetryInfo() = ").append(errorDetails.getRetryInfo());
+        sb.append("\nerrorDetails.getDebugInfo() = ").append(errorDetails.getDebugInfo());
+        sb.append("\nerrorDetails.getQuotaFailure() = ").append(errorDetails.getQuotaFailure());
+        sb.append("\nerrorDetails.getPreconditionFailure() = ")
             .append(errorDetails.getPreconditionFailure());
-        sb.append("errorDetails.getBadRequest() = ").append(errorDetails.getBadRequest());
-        sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
-        sb.append("errorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
-        sb.append("errorDetails.getHelp() = ").append(errorDetails.getHelp());
-        sb.append("errorDetails.getLocalizedMessage() = ")
+        sb.append("\nerrorDetails.getBadRequest() = ").append(errorDetails.getBadRequest());
+        sb.append("\nerrorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+        sb.append("\nerrorDetails.getRequestInfo() = ").append(errorDetails.getRequestInfo());
+        sb.append("\nerrorDetails.getHelp() = ").append(errorDetails.getHelp());
+        sb.append("\nerrorDetails.getLocalizedMessage() = ")
             .append(errorDetails.getLocalizedMessage());
         System.err.println(sb);
       }
