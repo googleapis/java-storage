@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
+import com.google.api.core.InternalExtensionOnly;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.TimeUnit;
@@ -35,11 +36,13 @@ import java.util.concurrent.TimeUnit;
  * BlobWriteSessionConfig} provided at {@link StorageOptions} creation time.
  *
  * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+ * @see HttpStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
  * @see BlobWriteSessionConfig
  * @see BlobWriteSessionConfigs
  * @since 2.26.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
+@InternalExtensionOnly
 public interface BlobWriteSession {
 
   /**
