@@ -44,7 +44,9 @@ import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -209,5 +211,23 @@ public final class ITBlobDescriptorTest {
     assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
     StorageException cause = (StorageException) ee.getCause();
     assertThat(cause.getCode()).isEqualTo(404);
+  }
+
+  @Test
+  public void testAppendableBlobUpload()
+      throws IOException, ExecutionException, InterruptedException {
+    AppendableBlobUpload upload =
+        storage.createAppendableBlobUpload(
+            BlobInfo.newBuilder(BlobId.of("cfs", String.valueOf(UUID.randomUUID()))).build(),
+            256 * 1024);
+    byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
+    byte[] a1 = Arrays.copyOfRange(bytes, 0, bytes.length / 2);
+    byte[] a2 = Arrays.copyOfRange(bytes, bytes.length / 2 + 1, bytes.length);
+
+    upload.write(ByteBuffer.wrap(a1));
+    upload.write(ByteBuffer.wrap(a2));
+    BlobInfo blob = upload.finalizeUpload();
+
+    assertThat(blob.getSize()).isEqualTo(a1.length + a2.length);
   }
 }

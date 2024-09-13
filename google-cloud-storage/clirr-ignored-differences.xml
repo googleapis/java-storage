@@ -128,6 +128,17 @@
   </difference>
 
   <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/BufferedWritableByteChannelSession$BufferedWritableByteChannel</className>
+    <method>com.google.cloud.storage.UnbufferedWritableByteChannelSession$UnbufferedWritableByteChannel getChannel()</method>
+  </difference>
+
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/Storage</className>
+    <method>com.google.cloud.storage.AppendableBlobUpload createAppendableBlobUpload(com.google.cloud.storage.BlobInfo, int, com.google.cloud.storage.Storage$BlobWriteOption[])</method>
+  </difference>
+  <difference>
     <differenceType>7005</differenceType>
     <className>com/google/cloud/storage/Hasher$*</className>
     <method>* validate(*)</method>

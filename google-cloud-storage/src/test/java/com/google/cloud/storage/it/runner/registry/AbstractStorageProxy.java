@@ -23,6 +23,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.AppendableBlobUpload;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobDescriptor;
 import com.google.cloud.storage.BlobId;
@@ -494,6 +495,12 @@ abstract class AbstractStorageProxy implements Storage {
   @Override
   public ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
     return delegate.getBlobDescriptor(id, options);
+  }
+
+  @Override
+  public AppendableBlobUpload createAppendableBlobUpload(
+      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+    return delegate.createAppendableBlobUpload(blob, bufferSize, options);
   }
 
   @Override

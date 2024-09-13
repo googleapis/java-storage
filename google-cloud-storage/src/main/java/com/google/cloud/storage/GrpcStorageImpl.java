@@ -89,6 +89,7 @@ import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
@@ -1468,6 +1469,34 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
         writerFactory.writeSession(this, info, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
+  }
+
+  @BetaApi
+  @Override
+  public AppendableBlobUpload createAppendableBlobUpload(
+      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    BidiWriteObjectRequest req = getBidiWriteObjectRequest(blob, opts);
+    BidiAppendableWrite baw = new BidiAppendableWrite(req);
+    ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
+    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
+        ResumableMedia.gapic()
+            .write()
+            .bidiByteChannel(storageClient.bidiWriteObjectCallable())
+            .setHasher(Hasher.noop())
+            .setByteStringStrategy(ByteStringStrategy.copy())
+            .appendable()
+            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
+            .buffered(BufferHandle.allocate(bufferSize))
+            .setStartAsync(startAppendableWrite)
+            .build();
+    DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<
+            BufferedWritableByteChannel, BidiWriteObjectResponse>
+        dec =
+            new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
+                build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
+    BlobWriteSession session = BlobWriteSessions.of(dec);
+    return AppendableBlobUpload.createNewAppendableBlob(blob, session);
   }
 
   @Override

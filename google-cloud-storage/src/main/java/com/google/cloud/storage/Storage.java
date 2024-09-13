@@ -5841,4 +5841,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   default ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
     return throwGrpcOnly(fmtMethodName("getBlobDescriptor", BlobId.class, BlobSourceOption.class));
   }
+
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  default AppendableBlobUpload createAppendableBlobUpload(
+      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+    return throwGrpcOnly(
+        fmtMethodName("createAppendableBlobUpload", BlobId.class, BlobWriteOption.class));
+  }
 }

@@ -56,7 +56,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
 
-  private final BidiWriteCtx<BidiResumableWrite> writeCtx;
+  private final BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx;
   private final GrpcCallContext context;
   private final BidiObserver responseObserver;
 
@@ -64,6 +64,8 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   private boolean open = true;
   private boolean first = true;
   private boolean finished = false;
+  private boolean appendable = false;
+  private boolean finalFlush = false;
   private volatile BidiWriteObjectRequest lastWrittenRequest;
   private volatile RewindableContent currentContent;
 
@@ -73,7 +75,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       ResultRetryAlgorithm<?> alg,
       SettableApiFuture<BidiWriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
-      BidiWriteCtx<BidiResumableWrite> writeCtx,
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.write = write;
     this.deps = deps;
@@ -110,7 +112,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       return;
     }
     try {
-      if (!finished) {
+      if (!finished && !appendable) {
         BidiWriteObjectRequest message = finishMessage();
         lastWrittenRequest = message;
         flush(Collections.singletonList(message));
@@ -127,8 +129,19 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     }
   }
 
+  public void finalizeWrite() throws IOException {
+    BidiWriteObjectRequest message = finishMessage();
+    lastWrittenRequest = message;
+    flush(Collections.singletonList(message));
+    close();
+  }
+
+  public void setFinalFlush() {
+    finalFlush = true;
+  }
+
   @VisibleForTesting
-  BidiWriteCtx<BidiResumableWrite> getWriteCtx() {
+  BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> getWriteCtx() {
     return writeCtx;
   }
 
@@ -140,7 +153,12 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     long begin = writeCtx.getConfirmedBytes().get();
     currentContent = RewindableContent.of(srcs, srcsOffset, srcsLength);
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, finalize);
+    boolean allowUnaligned = finalize;
+    if (finalFlush) {
+      allowUnaligned = true;
+    }
+    ChunkSegment[] data =
+        chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, allowUnaligned);
     if (data.length == 0) {
       currentContent = null;
       return 0;
@@ -166,11 +184,15 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       if (!first) {
         builder.clearUploadId();
         builder.clearObjectChecksums();
+        builder.clearWriteObjectSpec();
       } else {
         first = false;
+        if (builder.hasWriteObjectSpec()) {
+          appendable = builder.getWriteObjectSpec().getAppendable();
+        }
       }
       builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
-      if (!datum.isOnlyFullBlocks()) {
+      if (!datum.isOnlyFullBlocks() && !appendable) {
         builder.setFinishWrite(true);
         if (cumulative != null) {
           builder.setObjectChecksums(
@@ -180,7 +202,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       }
 
       if (i == data.length - 1 && !finished) {
-        if (finalize) {
+        if (finalize && !appendable) {
           builder.setFinishWrite(true);
           finished = true;
         } else {
@@ -191,7 +213,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       BidiWriteObjectRequest build = builder.build();
       messages.add(build);
     }
-    if (finalize && !finished) {
+    if (finalize && !finished && !appendable) {
       messages.add(finishMessage());
       finished = true;
     }
@@ -217,7 +239,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     BidiWriteObjectRequest.Builder b = writeCtx.newRequestBuilder();
     if (!first) {
-      b.clearUploadId().clearObjectChecksums();
+      b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec();
     }
     b.setFinishWrite(true).setWriteOffset(offset);
     if (crc32cValue != null) {
@@ -280,9 +302,12 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
     @Override
     public void onNext(BidiWriteObjectResponse value) {
       boolean finalizing = lastWrittenRequest.getFinishWrite();
-      if (!finalizing && value.hasPersistedSize()) { // incremental
+      boolean firstAppendable = lastWrittenRequest.getWriteObjectSpec().getAppendable();
+
+      if (!finalizing && (firstAppendable || value.hasPersistedSize())) { // incremental
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
-        long persistedSize = value.getPersistedSize();
+        long persistedSize =
+            firstAppendable ? value.getResource().getSize() : value.getPersistedSize();
 
         if (totalSentBytes == persistedSize) {
           writeCtx.getConfirmedBytes().set(persistedSize);
@@ -382,7 +407,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
     @Override
     public void onCompleted() {
-      if (last != null && last.hasResource()) {
+      if (last != null && (appendable || last.hasResource())) {
         resultFuture.set(last);
       }
       sem.release();

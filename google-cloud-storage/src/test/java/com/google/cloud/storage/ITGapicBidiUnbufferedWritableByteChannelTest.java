@@ -125,7 +125,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
 
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       //noinspection resource
       GapicBidiUnbufferedWritableByteChannel channel =
@@ -206,7 +207,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -288,7 +290,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -372,7 +375,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -453,7 +457,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -537,7 +542,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -630,7 +636,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -697,7 +704,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
 
       //noinspection resource
       GapicBidiUnbufferedWritableByteChannel channel =
@@ -748,7 +756,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
 
       //noinspection resource
       GapicBidiUnbufferedWritableByteChannel channel =
@@ -799,7 +808,8 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
       SettableApiFuture<BidiWriteObjectResponse> done = SettableApiFuture.create();
       BidiResumableWrite resumableWrite = getResumableWrite(uploadId);
-      BidiWriteCtx<BidiResumableWrite> writeCtx = new BidiWriteCtx<>(resumableWrite);
+      BidiWriteCtx<BidiWriteCtx.BidiWriteObjectRequestBuilderFactory> writeCtx =
+          new BidiWriteCtx<>(resumableWrite);
 
       ChunkSegmenter chunkSegmenter =
           new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), _512KiB, _256KiB);
