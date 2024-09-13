@@ -128,6 +128,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -157,6 +159,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(actualBytes, 2);
@@ -216,6 +220,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -264,6 +270,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
                       Hasher.enabled(),
+                      server.getGrpcStorageOptions(),
+                      StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -304,6 +312,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                               contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
                       start,
                       Hasher.enabled(),
+                      server.getGrpcStorageOptions(),
+                      StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[41];
       //noinspection resource

@@ -30,7 +30,6 @@ import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.rpc.NoHeaderProvider;
@@ -98,7 +97,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.threeten.bp.Duration;
 
 /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
@@ -338,12 +336,8 @@ public final class GrpcStorageOptions extends StorageOptions
     builder
         .readObjectSettings()
         .setRetrySettings(readRetrySettings)
-        // even though we might want to default to the empty set for retryable codes, don't ever
-        // actually do this. Doing so prevents any retry capability from being wired into the stream
-        // pipeline, ever.
-        // For our use, we will always set it one way or the other to ensure it's appropriate
-        // DO NOT: .setRetryableCodes(Collections.emptySet())
-        .setResumptionStrategy(new ReadObjectResumptionStrategy())
+        // disable gapic retries because we're handling it ourselves
+        .setRetryableCodes(Collections.emptySet())
         // for reads, the stream can be held open for a long time in order to read all bytes,
         // this is totally valid. instead we want to monitor if the stream is doing work and if not
         // timeout.
@@ -838,40 +832,6 @@ public final class GrpcStorageOptions extends StorageOptions
     @Override
     public ServiceRpc create(StorageOptions options) {
       throw new IllegalStateException("No supported for grpc");
-    }
-  }
-
-  // TODO: See if we can change gax to allow shifting this to callable.withContext so it doesn't
-  //   have to be set globally
-  private static class ReadObjectResumptionStrategy
-      implements StreamResumptionStrategy<ReadObjectRequest, ReadObjectResponse> {
-    private long readOffset = 0;
-
-    @NonNull
-    @Override
-    public StreamResumptionStrategy<ReadObjectRequest, ReadObjectResponse> createNew() {
-      return new ReadObjectResumptionStrategy();
-    }
-
-    @NonNull
-    @Override
-    public ReadObjectResponse processResponse(ReadObjectResponse response) {
-      readOffset += response.getChecksummedData().getContent().size();
-      return response;
-    }
-
-    @Nullable
-    @Override
-    public ReadObjectRequest getResumeRequest(ReadObjectRequest originalRequest) {
-      if (readOffset != 0) {
-        return originalRequest.toBuilder().setReadOffset(readOffset).build();
-      }
-      return originalRequest;
-    }
-
-    @Override
-    public boolean canResume() {
-      return true;
     }
   }
 
