@@ -42,6 +42,9 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -125,8 +128,9 @@ final class GapicUnbufferedReadableByteChannel
         if (alg.shouldRetry(coalesce, null)) {
           readObjectObserver = null;
           continue;
+        } else {
+          throw new IOException(coalesce);
         }
-        throw coalesce;
       }
       if (take == EOF_MARKER) {
         complete = true;
@@ -191,13 +195,31 @@ final class GapicUnbufferedReadableByteChannel
       if (leftovers != null) {
         leftovers.close();
       }
-    } finally {
       ReadObjectObserver obs = readObjectObserver;
       if (obs != null && !obs.cancellation.isDone()) {
         obs.cancel();
         drainQueue();
-        ApiExceptions.callAndTranslateApiException(obs.cancellation);
+        try {
+          // make sure our waiting doesn't lockup permanently
+          obs.cancellation.get(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          InterruptedIOException ioe = new InterruptedIOException();
+          ioe.initCause(e);
+          ioe.addSuppressed(new AsyncStorageTaskException());
+          throw ioe;
+        } catch (ExecutionException e) {
+          Throwable cause = e;
+          if (e.getCause() != null) {
+            cause = e.getCause();
+          }
+          IOException ioException = new IOException(cause);
+          ioException.addSuppressed(new AsyncStorageTaskException());
+          throw ioException;
+        } catch (TimeoutException ignore) {
+        }
       }
+    } finally {
       drainQueue();
     }
   }
