@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.43.0](https://github.com/googleapis/java-storage/compare/v2.42.0...v2.43.0) (2024-09-13)
+
+
+### Features
+
+* Allow specifying an expected object size for resumable operations. ([#2661](https://github.com/googleapis/java-storage/issues/2661)) ([3405611](https://github.com/googleapis/java-storage/commit/3405611f20153246691910aa33fed800ab989669)), closes [#2511](https://github.com/googleapis/java-storage/issues/2511)
+
+
+### Bug Fixes
+
+* Close pending zero-copy responses when Storage#close is called ([#2696](https://github.com/googleapis/java-storage/issues/2696)) ([1855308](https://github.com/googleapis/java-storage/commit/185530823a7d2378add1f95589f191326c9ae173))
+* Github workflow vulnerable to script injection ([#2663](https://github.com/googleapis/java-storage/issues/2663)) ([9151ac2](https://github.com/googleapis/java-storage/commit/9151ac27638e4491628d5bbb51643abc6bcd5f54))
+* Make ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier#cachedPool a singleton ([#2691](https://github.com/googleapis/java-storage/issues/2691)) ([1494809](https://github.com/googleapis/java-storage/commit/1494809af5624d7076b70087da8f81f31c6f61e7))
+
+
+### Dependencies
+
+* Promote storage-v2 artifacts to beta ([9d22597](https://github.com/googleapis/java-storage/commit/9d225978639cdf49601759d6f7c65a420be71c7a))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240819-2.0.0 ([#2665](https://github.com/googleapis/java-storage/issues/2665)) ([3df1000](https://github.com/googleapis/java-storage/commit/3df1000f137d54ef42c9b25e90a301c512644e2b))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.35.0 ([#2698](https://github.com/googleapis/java-storage/issues/2698)) ([1dd51c3](https://github.com/googleapis/java-storage/commit/1dd51c32948cae2cadbc6e3be1b23ab0bd6063a3))
+
 ## [2.42.0](https://github.com/googleapis/java-storage/compare/v2.41.0...v2.42.0) (2024-08-19)
 
 
