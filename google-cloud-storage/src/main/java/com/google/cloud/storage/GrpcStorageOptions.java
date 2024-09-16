@@ -330,9 +330,7 @@ public final class GrpcStorageOptions extends StorageOptions
         .startResumableWriteSettings()
         .setRetrySettings(baseRetrySettings)
         .setRetryableCodes(startResumableWriteRetryableCodes);
-    // for ReadObject we are configuring the server stream handling to do its own retries, so wire
-    // things through. Retryable codes will be controlled closer to the use site as idempotency
-    // considerations need to be made.
+    // for ReadObject disable retries and move the total timeout to the idle timeout
     builder
         .readObjectSettings()
         .setRetrySettings(readRetrySettings)
