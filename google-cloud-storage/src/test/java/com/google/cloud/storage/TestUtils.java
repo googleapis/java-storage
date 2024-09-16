@@ -20,14 +20,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
-import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
-import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
@@ -111,10 +109,6 @@ public final class TestUtils {
         ErrorDetails.builder().setRawErrorMessages(ImmutableList.of(Any.pack(debugInfo))).build();
     return ApiExceptionFactory.createException(
         statusRuntimeException, GrpcStatusCode.of(code), true, errorDetails);
-  }
-
-  public static GrpcCallContext contextWithRetryForCodes(StatusCode.Code... code) {
-    return GrpcCallContext.createDefault().withRetryableCodes(ImmutableSet.copyOf(code));
   }
 
   public static ImmutableList<ByteBuffer> subDivide(byte[] bytes, int division) {

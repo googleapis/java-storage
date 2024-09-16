@@ -150,10 +150,6 @@ final class GapicUnbufferedReadableByteChannel
                   "Mismatch Generation between subsequent reads. Expected %d but received %d",
                   metadata.getGeneration(), respMetadata.getGeneration()));
         }
-
-        if (!result.isDone()) {
-          result.set(metadata);
-        }
       }
       ChecksummedData checksummedData = resp.getChecksummedData();
       ByteString content = checksummedData.getContent();
@@ -316,6 +312,9 @@ final class GapicUnbufferedReadableByteChannel
         open.set(null);
         queue.offer(response);
         fetchOffset.addAndGet(response.getChecksummedData().getContent().size());
+        if (response.hasMetadata() && !result.isDone()) {
+          result.set(response.getMetadata());
+        }
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
@@ -325,6 +324,9 @@ final class GapicUnbufferedReadableByteChannel
     @Override
     protected void onErrorImpl(Throwable t) {
       open.setException(t);
+      if (!alg.shouldRetry(t, null)) {
+        result.setException(StorageException.coalesce(t));
+      }
       if (t instanceof CancellationException) {
         cancellation.set(t);
       }
