@@ -47,8 +47,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP, Transport.GRPC},
-    backends = {Backend.PROD, Backend.TEST_BENCH})
+    transports = {Transport.HTTP},
+    backends = {Backend.PROD})
 public class ITNotificationTest {
   private static final Notification.PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
@@ -116,7 +116,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void listNotification_doesNotExist() throws Exception {
     // create a temporary bucket to ensure we're immune from ordering on other tests
     try (TemporaryBucket tempB =
@@ -130,7 +129,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void listNotification_exists() {
     Notification notification = storage.createNotification(bucket.getName(), notificationInfo);
     List<Notification> notifications = storage.listNotifications(bucket.getName());
@@ -139,7 +137,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void createNotification_doesNotExist() throws Exception {
     Notification notification = storage.createNotification(bucket.getName(), notificationInfo);
     assertAll(
@@ -150,7 +147,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void getNotification_exists() throws Exception {
     Notification notification = storage.createNotification(bucket.getName(), notificationInfo);
 
@@ -170,7 +166,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void getNotification_doesNotExists() {
     Notification getResult = storage.getNotification(bucket.getName(), DOES_NOT_EXIST_ID);
 
@@ -178,7 +173,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void deleteNotification_exists() {
     Notification notification = storage.createNotification(bucket.getName(), notificationInfo);
     boolean deleteResult =
@@ -187,7 +181,6 @@ public class ITNotificationTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC, backends = Backend.PROD)
   public void deleteNotification_doesNotExists() {
     boolean deleteResult = storage.deleteNotification(bucket.getName(), DOES_NOT_EXIST_ID);
     assertThat(deleteResult).isFalse();

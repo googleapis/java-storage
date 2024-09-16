@@ -4805,7 +4805,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the created notification
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
@@ -4824,7 +4824,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the {@code Notification} object with the given id or {@code null} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   Notification getNotification(String bucket, String notificationId);
 
   /**
@@ -4841,7 +4841,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a list of {@link Notification} objects added to the bucket.
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   List<Notification> listNotifications(String bucket);
 
   /**
@@ -4865,7 +4865,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteNotification(String bucket, String notificationId);
 
   /**
