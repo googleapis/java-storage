@@ -263,7 +263,7 @@ public class HttpStorageOptions extends StorageOptions {
       // helper method will
       // be removed. When that happens, delete the following block.
       // https://github.com/googleapis/google-api-java-client-services/issues/19286
-      if(options.getHost() != null) { // user did not manually set a host
+      if (options.getHost() != null) { // user did not manually set a host
         this.setHost(options.getResolvedApiaryHost("storage"));
         return new HttpStorageOptions(this, defaults());
       }

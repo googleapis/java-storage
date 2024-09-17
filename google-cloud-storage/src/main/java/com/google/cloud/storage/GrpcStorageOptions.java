@@ -267,6 +267,10 @@ public final class GrpcStorageOptions extends StorageOptions
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
 
+    if (this.getUniverseDomain() != null) {
+      builder.setUniverseDomain(this.getUniverseDomain());
+    }
+
     // this MUST come after credentials, service options set value has higher priority than creds
     String quotaProjectId = this.getQuotaProjectId();
     if (quotaProjectId != null && !quotaProjectId.isEmpty()) {
