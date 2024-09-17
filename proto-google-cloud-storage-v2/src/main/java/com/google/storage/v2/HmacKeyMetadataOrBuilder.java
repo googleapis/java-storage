@@ -140,11 +140,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
    * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
-   * <code>string state = 5;</code>
+   * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The state.
    */
@@ -153,11 +153,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
    * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
-   * <code>string state = 5;</code>
+   * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for state.
    */
@@ -243,10 +243,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The etag of the HMAC key.
+   * Optional. The etag of the HMAC key.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -255,10 +255,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The etag of the HMAC key.
+   * Optional. The etag of the HMAC key.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */

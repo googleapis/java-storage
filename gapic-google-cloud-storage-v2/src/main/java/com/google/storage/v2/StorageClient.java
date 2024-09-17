@@ -222,7 +222,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> TestIamPermissions</td>
- *      <td><p> Tests a set of permissions on the given bucket or object to see which, if any, are held by the caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.</td>
+ *      <td><p> Tests a set of permissions on the given bucket, object, or managed folder to see which, if any, are held by the caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -254,83 +254,6 @@ import javax.annotation.Generated;
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
  *           <li><p> updateBucketCallable()
- *      </ul>
- *       </td>
- *    </tr>
- *    <tr>
- *      <td><p> DeleteNotificationConfig</td>
- *      <td><p> Permanently deletes a NotificationConfig.</td>
- *      <td>
- *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
- *      <ul>
- *           <li><p> deleteNotificationConfig(DeleteNotificationConfigRequest request)
- *      </ul>
- *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
- *      <ul>
- *           <li><p> deleteNotificationConfig(NotificationConfigName name)
- *           <li><p> deleteNotificationConfig(String name)
- *      </ul>
- *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
- *      <ul>
- *           <li><p> deleteNotificationConfigCallable()
- *      </ul>
- *       </td>
- *    </tr>
- *    <tr>
- *      <td><p> GetNotificationConfig</td>
- *      <td><p> View a NotificationConfig.</td>
- *      <td>
- *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
- *      <ul>
- *           <li><p> getNotificationConfig(GetNotificationConfigRequest request)
- *      </ul>
- *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
- *      <ul>
- *           <li><p> getNotificationConfig(NotificationConfigName name)
- *           <li><p> getNotificationConfig(String name)
- *      </ul>
- *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
- *      <ul>
- *           <li><p> getNotificationConfigCallable()
- *      </ul>
- *       </td>
- *    </tr>
- *    <tr>
- *      <td><p> CreateNotificationConfig</td>
- *      <td><p> Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered, publish messages to the specified Pub/Sub topics. See https://cloud.google.com/storage/docs/pubsub-notifications.</td>
- *      <td>
- *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
- *      <ul>
- *           <li><p> createNotificationConfig(CreateNotificationConfigRequest request)
- *      </ul>
- *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
- *      <ul>
- *           <li><p> createNotificationConfig(BucketName parent, NotificationConfig notificationConfig)
- *           <li><p> createNotificationConfig(String parent, NotificationConfig notificationConfig)
- *      </ul>
- *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
- *      <ul>
- *           <li><p> createNotificationConfigCallable()
- *      </ul>
- *       </td>
- *    </tr>
- *    <tr>
- *      <td><p> ListNotificationConfigs</td>
- *      <td><p> Retrieves a list of NotificationConfigs for a given bucket.</td>
- *      <td>
- *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
- *      <ul>
- *           <li><p> listNotificationConfigs(ListNotificationConfigsRequest request)
- *      </ul>
- *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
- *      <ul>
- *           <li><p> listNotificationConfigs(BucketName parent)
- *           <li><p> listNotificationConfigs(String parent)
- *      </ul>
- *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
- *      <ul>
- *           <li><p> listNotificationConfigsPagedCallable()
- *           <li><p> listNotificationConfigsCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -664,6 +587,83 @@ import javax.annotation.Generated;
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
  *           <li><p> updateHmacKeyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DeleteNotificationConfig</td>
+ *      <td><p> Permanently deletes a NotificationConfig.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfig(DeleteNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfig(NotificationConfigName name)
+ *           <li><p> deleteNotificationConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetNotificationConfig</td>
+ *      <td><p> View a NotificationConfig.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfig(GetNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfig(NotificationConfigName name)
+ *           <li><p> getNotificationConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateNotificationConfig</td>
+ *      <td><p> Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered, publish messages to the specified Pub/Sub topics. See https://cloud.google.com/storage/docs/pubsub-notifications.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfig(CreateNotificationConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfig(BucketName parent, NotificationConfig notificationConfig)
+ *           <li><p> createNotificationConfig(String parent, NotificationConfig notificationConfig)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createNotificationConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListNotificationConfigs</td>
+ *      <td><p> Retrieves a list of NotificationConfigs for a given bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigs(ListNotificationConfigsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigs(BucketName parent)
+ *           <li><p> listNotificationConfigs(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listNotificationConfigsPagedCallable()
+ *           <li><p> listNotificationConfigsCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -1670,9 +1670,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
-   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
    *
    * <p>Sample code:
    *
@@ -1709,9 +1711,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
-   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
    *
    * <p>Sample code:
    *
@@ -1748,9 +1752,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
-   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
    *
    * <p>Sample code:
    *
@@ -1781,9 +1787,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
-   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
    *
    * <p>Sample code:
    *
@@ -1911,551 +1919,6 @@ public class StorageClient implements BackgroundResource {
    */
   public final UnaryCallable<UpdateBucketRequest, Bucket> updateBucketCallable() {
     return stub.updateBucketCallable();
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Permanently deletes a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   NotificationConfigName name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-   *   storageClient.deleteNotificationConfig(name);
-   * }
-   * }</pre>
-   *
-   * @param name Required. The parent bucket of the NotificationConfig.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final void deleteNotificationConfig(NotificationConfigName name) {
-    DeleteNotificationConfigRequest request =
-        DeleteNotificationConfigRequest.newBuilder()
-            .setName(name == null ? null : name.toString())
-            .build();
-    deleteNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Permanently deletes a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   String name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
-   *   storageClient.deleteNotificationConfig(name);
-   * }
-   * }</pre>
-   *
-   * @param name Required. The parent bucket of the NotificationConfig.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final void deleteNotificationConfig(String name) {
-    DeleteNotificationConfigRequest request =
-        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
-    deleteNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Permanently deletes a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   DeleteNotificationConfigRequest request =
-   *       DeleteNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
-   *           .build();
-   *   storageClient.deleteNotificationConfig(request);
-   * }
-   * }</pre>
-   *
-   * @param request The request object containing all of the parameters for the API call.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final void deleteNotificationConfig(DeleteNotificationConfigRequest request) {
-    deleteNotificationConfigCallable().call(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Permanently deletes a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   DeleteNotificationConfigRequest request =
-   *       DeleteNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
-   *           .build();
-   *   ApiFuture<Empty> future =
-   *       storageClient.deleteNotificationConfigCallable().futureCall(request);
-   *   // Do something.
-   *   future.get();
-   * }
-   * }</pre>
-   */
-  public final UnaryCallable<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigCallable() {
-    return stub.deleteNotificationConfigCallable();
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * View a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   NotificationConfigName name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-   *   NotificationConfig response = storageClient.getNotificationConfig(name);
-   * }
-   * }</pre>
-   *
-   * @param name Required. The parent bucket of the NotificationConfig. Format:
-   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig getNotificationConfig(NotificationConfigName name) {
-    GetNotificationConfigRequest request =
-        GetNotificationConfigRequest.newBuilder()
-            .setName(name == null ? null : name.toString())
-            .build();
-    return getNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * View a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   String name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
-   *   NotificationConfig response = storageClient.getNotificationConfig(name);
-   * }
-   * }</pre>
-   *
-   * @param name Required. The parent bucket of the NotificationConfig. Format:
-   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig getNotificationConfig(String name) {
-    GetNotificationConfigRequest request =
-        GetNotificationConfigRequest.newBuilder().setName(name).build();
-    return getNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * View a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   GetNotificationConfigRequest request =
-   *       GetNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
-   *           .build();
-   *   NotificationConfig response = storageClient.getNotificationConfig(request);
-   * }
-   * }</pre>
-   *
-   * @param request The request object containing all of the parameters for the API call.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig getNotificationConfig(GetNotificationConfigRequest request) {
-    return getNotificationConfigCallable().call(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * View a NotificationConfig.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   GetNotificationConfigRequest request =
-   *       GetNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
-   *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.getNotificationConfigCallable().futureCall(request);
-   *   // Do something.
-   *   NotificationConfig response = future.get();
-   * }
-   * }</pre>
-   */
-  public final UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    return stub.getNotificationConfigCallable();
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
-   * publish messages to the specified Pub/Sub topics. See
-   * https://cloud.google.com/storage/docs/pubsub-notifications.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-   *   NotificationConfig response =
-   *       storageClient.createNotificationConfig(parent, notificationConfig);
-   * }
-   * }</pre>
-   *
-   * @param parent Required. The bucket to which this NotificationConfig belongs.
-   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig createNotificationConfig(
-      BucketName parent, NotificationConfig notificationConfig) {
-    CreateNotificationConfigRequest request =
-        CreateNotificationConfigRequest.newBuilder()
-            .setParent(parent == null ? null : parent.toString())
-            .setNotificationConfig(notificationConfig)
-            .build();
-    return createNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
-   * publish messages to the specified Pub/Sub topics. See
-   * https://cloud.google.com/storage/docs/pubsub-notifications.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
-   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-   *   NotificationConfig response =
-   *       storageClient.createNotificationConfig(parent, notificationConfig);
-   * }
-   * }</pre>
-   *
-   * @param parent Required. The bucket to which this NotificationConfig belongs.
-   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig createNotificationConfig(
-      String parent, NotificationConfig notificationConfig) {
-    CreateNotificationConfigRequest request =
-        CreateNotificationConfigRequest.newBuilder()
-            .setParent(parent)
-            .setNotificationConfig(notificationConfig)
-            .build();
-    return createNotificationConfig(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
-   * publish messages to the specified Pub/Sub topics. See
-   * https://cloud.google.com/storage/docs/pubsub-notifications.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   CreateNotificationConfigRequest request =
-   *       CreateNotificationConfigRequest.newBuilder()
-   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
-   *           .build();
-   *   NotificationConfig response = storageClient.createNotificationConfig(request);
-   * }
-   * }</pre>
-   *
-   * @param request The request object containing all of the parameters for the API call.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final NotificationConfig createNotificationConfig(
-      CreateNotificationConfigRequest request) {
-    return createNotificationConfigCallable().call(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
-   * publish messages to the specified Pub/Sub topics. See
-   * https://cloud.google.com/storage/docs/pubsub-notifications.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   CreateNotificationConfigRequest request =
-   *       CreateNotificationConfigRequest.newBuilder()
-   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
-   *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.createNotificationConfigCallable().futureCall(request);
-   *   // Do something.
-   *   NotificationConfig response = future.get();
-   * }
-   * }</pre>
-   */
-  public final UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    return stub.createNotificationConfigCallable();
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
-   *     // doThingsWith(element);
-   *   }
-   * }
-   * }</pre>
-   *
-   * @param parent Required. Name of a Google Cloud Storage bucket.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(BucketName parent) {
-    ListNotificationConfigsRequest request =
-        ListNotificationConfigsRequest.newBuilder()
-            .setParent(parent == null ? null : parent.toString())
-            .build();
-    return listNotificationConfigs(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
-   *     // doThingsWith(element);
-   *   }
-   * }
-   * }</pre>
-   *
-   * @param parent Required. Name of a Google Cloud Storage bucket.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(String parent) {
-    ListNotificationConfigsRequest request =
-        ListNotificationConfigsRequest.newBuilder().setParent(parent).build();
-    return listNotificationConfigs(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setPageSize(883849137)
-   *           .setPageToken("pageToken873572522")
-   *           .build();
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(request).iterateAll()) {
-   *     // doThingsWith(element);
-   *   }
-   * }
-   * }</pre>
-   *
-   * @param request The request object containing all of the parameters for the API call.
-   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
-   */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(
-      ListNotificationConfigsRequest request) {
-    return listNotificationConfigsPagedCallable().call(request);
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setPageSize(883849137)
-   *           .setPageToken("pageToken873572522")
-   *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.listNotificationConfigsPagedCallable().futureCall(request);
-   *   // Do something.
-   *   for (NotificationConfig element : future.get().iterateAll()) {
-   *     // doThingsWith(element);
-   *   }
-   * }
-   * }</pre>
-   */
-  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    return stub.listNotificationConfigsPagedCallable();
-  }
-
-  // AUTO-GENERATED DOCUMENTATION AND METHOD.
-  /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
-   *
-   * <p>Sample code:
-   *
-   * <pre>{@code
-   * // This snippet has been automatically generated and should be regarded as a code template only.
-   * // It will require modifications to work:
-   * // - It may require correct/in-range values for request initialization.
-   * // - It may require specifying regional endpoints when creating the service client as shown in
-   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-   * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setPageSize(883849137)
-   *           .setPageToken("pageToken873572522")
-   *           .build();
-   *   while (true) {
-   *     ListNotificationConfigsResponse response =
-   *         storageClient.listNotificationConfigsCallable().call(request);
-   *     for (NotificationConfig element : response.getNotificationConfigsList()) {
-   *       // doThingsWith(element);
-   *     }
-   *     String nextPageToken = response.getNextPageToken();
-   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
-   *       request = request.toBuilder().setPageToken(nextPageToken).build();
-   *     } else {
-   *       break;
-   *     }
-   *   }
-   * }
-   * }</pre>
-   */
-  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    return stub.listNotificationConfigsCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3986,7 +3449,9 @@ public class StorageClient implements BackgroundResource {
    * @param project Required. Project ID, in the format of "projects/{projectIdentifier}".
    *     {projectIdentifier} can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ServiceAccount getServiceAccount(ProjectName project) {
     GetServiceAccountRequest request =
         GetServiceAccountRequest.newBuilder()
@@ -4016,7 +3481,9 @@ public class StorageClient implements BackgroundResource {
    * @param project Required. Project ID, in the format of "projects/{projectIdentifier}".
    *     {projectIdentifier} can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ServiceAccount getServiceAccount(String project) {
     GetServiceAccountRequest request =
         GetServiceAccountRequest.newBuilder().setProject(project).build();
@@ -4046,7 +3513,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ServiceAccount getServiceAccount(GetServiceAccountRequest request) {
     return getServiceAccountCallable().call(request);
   }
@@ -4074,7 +3543,10 @@ public class StorageClient implements BackgroundResource {
    *   ServiceAccount response = future.get();
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<GetServiceAccountRequest, ServiceAccount> getServiceAccountCallable() {
     return stub.getServiceAccountCallable();
   }
@@ -4103,7 +3575,9 @@ public class StorageClient implements BackgroundResource {
    *     project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final CreateHmacKeyResponse createHmacKey(
       ProjectName project, String serviceAccountEmail) {
     CreateHmacKeyRequest request =
@@ -4138,7 +3612,9 @@ public class StorageClient implements BackgroundResource {
    *     project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final CreateHmacKeyResponse createHmacKey(String project, String serviceAccountEmail) {
     CreateHmacKeyRequest request =
         CreateHmacKeyRequest.newBuilder()
@@ -4172,7 +3648,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final CreateHmacKeyResponse createHmacKey(CreateHmacKeyRequest request) {
     return createHmacKeyCallable().call(request);
   }
@@ -4201,7 +3679,10 @@ public class StorageClient implements BackgroundResource {
    *   CreateHmacKeyResponse response = future.get();
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyCallable() {
     return stub.createHmacKeyCallable();
   }
@@ -4230,7 +3711,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final void deleteHmacKey(String accessId, ProjectName project) {
     DeleteHmacKeyRequest request =
         DeleteHmacKeyRequest.newBuilder()
@@ -4264,7 +3747,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final void deleteHmacKey(String accessId, String project) {
     DeleteHmacKeyRequest request =
         DeleteHmacKeyRequest.newBuilder().setAccessId(accessId).setProject(project).build();
@@ -4295,7 +3780,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final void deleteHmacKey(DeleteHmacKeyRequest request) {
     deleteHmacKeyCallable().call(request);
   }
@@ -4323,7 +3810,10 @@ public class StorageClient implements BackgroundResource {
    *   future.get();
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<DeleteHmacKeyRequest, Empty> deleteHmacKeyCallable() {
     return stub.deleteHmacKeyCallable();
   }
@@ -4352,7 +3842,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final HmacKeyMetadata getHmacKey(String accessId, ProjectName project) {
     GetHmacKeyRequest request =
         GetHmacKeyRequest.newBuilder()
@@ -4386,7 +3878,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final HmacKeyMetadata getHmacKey(String accessId, String project) {
     GetHmacKeyRequest request =
         GetHmacKeyRequest.newBuilder().setAccessId(accessId).setProject(project).build();
@@ -4417,7 +3911,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final HmacKeyMetadata getHmacKey(GetHmacKeyRequest request) {
     return getHmacKeyCallable().call(request);
   }
@@ -4445,7 +3941,10 @@ public class StorageClient implements BackgroundResource {
    *   HmacKeyMetadata response = future.get();
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyCallable() {
     return stub.getHmacKeyCallable();
   }
@@ -4474,7 +3973,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ListHmacKeysPagedResponse listHmacKeys(ProjectName project) {
     ListHmacKeysRequest request =
         ListHmacKeysRequest.newBuilder()
@@ -4507,7 +4008,9 @@ public class StorageClient implements BackgroundResource {
    *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
    *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ListHmacKeysPagedResponse listHmacKeys(String project) {
     ListHmacKeysRequest request = ListHmacKeysRequest.newBuilder().setProject(project).build();
     return listHmacKeys(request);
@@ -4542,7 +4045,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final ListHmacKeysPagedResponse listHmacKeys(ListHmacKeysRequest request) {
     return listHmacKeysPagedCallable().call(request);
   }
@@ -4576,7 +4081,10 @@ public class StorageClient implements BackgroundResource {
    *   }
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse>
       listHmacKeysPagedCallable() {
     return stub.listHmacKeysPagedCallable();
@@ -4617,7 +4125,10 @@ public class StorageClient implements BackgroundResource {
    *   }
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysCallable() {
     return stub.listHmacKeysCallable();
   }
@@ -4647,7 +4158,9 @@ public class StorageClient implements BackgroundResource {
    * @param updateMask Update mask for hmac_key. Not specifying any fields will mean only the
    *     `state` field is updated to the value specified in `hmac_key`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final HmacKeyMetadata updateHmacKey(HmacKeyMetadata hmacKey, FieldMask updateMask) {
     UpdateHmacKeyRequest request =
         UpdateHmacKeyRequest.newBuilder().setHmacKey(hmacKey).setUpdateMask(updateMask).build();
@@ -4678,7 +4191,9 @@ public class StorageClient implements BackgroundResource {
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final HmacKeyMetadata updateHmacKey(UpdateHmacKeyRequest request) {
     return updateHmacKeyCallable().call(request);
   }
@@ -4706,9 +4221,596 @@ public class StorageClient implements BackgroundResource {
    *   HmacKeyMetadata response = future.get();
    * }
    * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
    */
+  @Deprecated
   public final UnaryCallable<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyCallable() {
     return stub.updateHmacKeyCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   NotificationConfigName name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+   *   storageClient.deleteNotificationConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The parent bucket of the NotificationConfig.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final void deleteNotificationConfig(NotificationConfigName name) {
+    DeleteNotificationConfigRequest request =
+        DeleteNotificationConfigRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    deleteNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
+   *   storageClient.deleteNotificationConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The parent bucket of the NotificationConfig.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final void deleteNotificationConfig(String name) {
+    DeleteNotificationConfigRequest request =
+        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
+    deleteNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   DeleteNotificationConfigRequest request =
+   *       DeleteNotificationConfigRequest.newBuilder()
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
+   *           .build();
+   *   storageClient.deleteNotificationConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final void deleteNotificationConfig(DeleteNotificationConfigRequest request) {
+    deleteNotificationConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Permanently deletes a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   DeleteNotificationConfigRequest request =
+   *       DeleteNotificationConfigRequest.newBuilder()
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
+   *           .build();
+   *   ApiFuture<Empty> future =
+   *       storageClient.deleteNotificationConfigCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final UnaryCallable<DeleteNotificationConfigRequest, Empty>
+      deleteNotificationConfigCallable() {
+    return stub.deleteNotificationConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * View a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   NotificationConfigName name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+   *   NotificationConfig response = storageClient.getNotificationConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The parent bucket of the NotificationConfig. Format:
+   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig getNotificationConfig(NotificationConfigName name) {
+    GetNotificationConfigRequest request =
+        GetNotificationConfigRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return getNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * View a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
+   *   NotificationConfig response = storageClient.getNotificationConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The parent bucket of the NotificationConfig. Format:
+   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig getNotificationConfig(String name) {
+    GetNotificationConfigRequest request =
+        GetNotificationConfigRequest.newBuilder().setName(name).build();
+    return getNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * View a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   GetNotificationConfigRequest request =
+   *       GetNotificationConfigRequest.newBuilder()
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
+   *           .build();
+   *   NotificationConfig response = storageClient.getNotificationConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig getNotificationConfig(GetNotificationConfigRequest request) {
+    return getNotificationConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * View a NotificationConfig.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   GetNotificationConfigRequest request =
+   *       GetNotificationConfigRequest.newBuilder()
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
+   *           .build();
+   *   ApiFuture<NotificationConfig> future =
+   *       storageClient.getNotificationConfigCallable().futureCall(request);
+   *   // Do something.
+   *   NotificationConfig response = future.get();
+   * }
+   * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigCallable() {
+    return stub.getNotificationConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * publish messages to the specified Pub/Sub topics. See
+   * https://cloud.google.com/storage/docs/pubsub-notifications.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+   *   NotificationConfig response =
+   *       storageClient.createNotificationConfig(parent, notificationConfig);
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this NotificationConfig belongs.
+   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig createNotificationConfig(
+      BucketName parent, NotificationConfig notificationConfig) {
+    CreateNotificationConfigRequest request =
+        CreateNotificationConfigRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .setNotificationConfig(notificationConfig)
+            .build();
+    return createNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * publish messages to the specified Pub/Sub topics. See
+   * https://cloud.google.com/storage/docs/pubsub-notifications.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+   *   NotificationConfig response =
+   *       storageClient.createNotificationConfig(parent, notificationConfig);
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this NotificationConfig belongs.
+   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig createNotificationConfig(
+      String parent, NotificationConfig notificationConfig) {
+    CreateNotificationConfigRequest request =
+        CreateNotificationConfigRequest.newBuilder()
+            .setParent(parent)
+            .setNotificationConfig(notificationConfig)
+            .build();
+    return createNotificationConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * publish messages to the specified Pub/Sub topics. See
+   * https://cloud.google.com/storage/docs/pubsub-notifications.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   CreateNotificationConfigRequest request =
+   *       CreateNotificationConfigRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
+   *           .build();
+   *   NotificationConfig response = storageClient.createNotificationConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final NotificationConfig createNotificationConfig(
+      CreateNotificationConfigRequest request) {
+    return createNotificationConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * publish messages to the specified Pub/Sub topics. See
+   * https://cloud.google.com/storage/docs/pubsub-notifications.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   CreateNotificationConfigRequest request =
+   *       CreateNotificationConfigRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
+   *           .build();
+   *   ApiFuture<NotificationConfig> future =
+   *       storageClient.createNotificationConfigCallable().futureCall(request);
+   *   // Do something.
+   *   NotificationConfig response = future.get();
+   * }
+   * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigCallable() {
+    return stub.createNotificationConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of NotificationConfigs for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   for (NotificationConfig element :
+   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of a Google Cloud Storage bucket.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final ListNotificationConfigsPagedResponse listNotificationConfigs(BucketName parent) {
+    ListNotificationConfigsRequest request =
+        ListNotificationConfigsRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .build();
+    return listNotificationConfigs(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of NotificationConfigs for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   for (NotificationConfig element :
+   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. Name of a Google Cloud Storage bucket.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final ListNotificationConfigsPagedResponse listNotificationConfigs(String parent) {
+    ListNotificationConfigsRequest request =
+        ListNotificationConfigsRequest.newBuilder().setParent(parent).build();
+    return listNotificationConfigs(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of NotificationConfigs for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   ListNotificationConfigsRequest request =
+   *       ListNotificationConfigsRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .build();
+   *   for (NotificationConfig element :
+   *       storageClient.listNotificationConfigs(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final ListNotificationConfigsPagedResponse listNotificationConfigs(
+      ListNotificationConfigsRequest request) {
+    return listNotificationConfigsPagedCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of NotificationConfigs for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   ListNotificationConfigsRequest request =
+   *       ListNotificationConfigsRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .build();
+   *   ApiFuture<NotificationConfig> future =
+   *       storageClient.listNotificationConfigsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (NotificationConfig element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
+      listNotificationConfigsPagedCallable() {
+    return stub.listNotificationConfigsPagedCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves a list of NotificationConfigs for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   ListNotificationConfigsRequest request =
+   *       ListNotificationConfigsRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .build();
+   *   while (true) {
+   *     ListNotificationConfigsResponse response =
+   *         storageClient.listNotificationConfigsCallable().call(request);
+   *     for (NotificationConfig element : response.getNotificationConfigsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }</pre>
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
+      listNotificationConfigsCallable() {
+    return stub.listNotificationConfigsCallable();
   }
 
   @Override
@@ -4811,94 +4913,6 @@ public class StorageClient implements BackgroundResource {
     protected ListBucketsFixedSizeCollection createCollection(
         List<ListBucketsPage> pages, int collectionSize) {
       return new ListBucketsFixedSizeCollection(pages, collectionSize);
-    }
-  }
-
-  public static class ListNotificationConfigsPagedResponse
-      extends AbstractPagedListResponse<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage,
-          ListNotificationConfigsFixedSizeCollection> {
-
-    public static ApiFuture<ListNotificationConfigsPagedResponse> createAsync(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
-      ApiFuture<ListNotificationConfigsPage> futurePage =
-          ListNotificationConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);
-      return ApiFutures.transform(
-          futurePage,
-          input -> new ListNotificationConfigsPagedResponse(input),
-          MoreExecutors.directExecutor());
-    }
-
-    private ListNotificationConfigsPagedResponse(ListNotificationConfigsPage page) {
-      super(page, ListNotificationConfigsFixedSizeCollection.createEmptyCollection());
-    }
-  }
-
-  public static class ListNotificationConfigsPage
-      extends AbstractPage<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage> {
-
-    private ListNotificationConfigsPage(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ListNotificationConfigsResponse response) {
-      super(context, response);
-    }
-
-    private static ListNotificationConfigsPage createEmptyPage() {
-      return new ListNotificationConfigsPage(null, null);
-    }
-
-    @Override
-    protected ListNotificationConfigsPage createPage(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ListNotificationConfigsResponse response) {
-      return new ListNotificationConfigsPage(context, response);
-    }
-
-    @Override
-    public ApiFuture<ListNotificationConfigsPage> createPageAsync(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
-      return super.createPageAsync(context, futureResponse);
-    }
-  }
-
-  public static class ListNotificationConfigsFixedSizeCollection
-      extends AbstractFixedSizeCollection<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage,
-          ListNotificationConfigsFixedSizeCollection> {
-
-    private ListNotificationConfigsFixedSizeCollection(
-        List<ListNotificationConfigsPage> pages, int collectionSize) {
-      super(pages, collectionSize);
-    }
-
-    private static ListNotificationConfigsFixedSizeCollection createEmptyCollection() {
-      return new ListNotificationConfigsFixedSizeCollection(null, 0);
-    }
-
-    @Override
-    protected ListNotificationConfigsFixedSizeCollection createCollection(
-        List<ListNotificationConfigsPage> pages, int collectionSize) {
-      return new ListNotificationConfigsFixedSizeCollection(pages, collectionSize);
     }
   }
 
@@ -5048,6 +5062,94 @@ public class StorageClient implements BackgroundResource {
     protected ListHmacKeysFixedSizeCollection createCollection(
         List<ListHmacKeysPage> pages, int collectionSize) {
       return new ListHmacKeysFixedSizeCollection(pages, collectionSize);
+    }
+  }
+
+  public static class ListNotificationConfigsPagedResponse
+      extends AbstractPagedListResponse<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          NotificationConfig,
+          ListNotificationConfigsPage,
+          ListNotificationConfigsFixedSizeCollection> {
+
+    public static ApiFuture<ListNotificationConfigsPagedResponse> createAsync(
+        PageContext<
+                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
+            context,
+        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
+      ApiFuture<ListNotificationConfigsPage> futurePage =
+          ListNotificationConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);
+      return ApiFutures.transform(
+          futurePage,
+          input -> new ListNotificationConfigsPagedResponse(input),
+          MoreExecutors.directExecutor());
+    }
+
+    private ListNotificationConfigsPagedResponse(ListNotificationConfigsPage page) {
+      super(page, ListNotificationConfigsFixedSizeCollection.createEmptyCollection());
+    }
+  }
+
+  public static class ListNotificationConfigsPage
+      extends AbstractPage<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          NotificationConfig,
+          ListNotificationConfigsPage> {
+
+    private ListNotificationConfigsPage(
+        PageContext<
+                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
+            context,
+        ListNotificationConfigsResponse response) {
+      super(context, response);
+    }
+
+    private static ListNotificationConfigsPage createEmptyPage() {
+      return new ListNotificationConfigsPage(null, null);
+    }
+
+    @Override
+    protected ListNotificationConfigsPage createPage(
+        PageContext<
+                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
+            context,
+        ListNotificationConfigsResponse response) {
+      return new ListNotificationConfigsPage(context, response);
+    }
+
+    @Override
+    public ApiFuture<ListNotificationConfigsPage> createPageAsync(
+        PageContext<
+                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
+            context,
+        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
+      return super.createPageAsync(context, futureResponse);
+    }
+  }
+
+  public static class ListNotificationConfigsFixedSizeCollection
+      extends AbstractFixedSizeCollection<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          NotificationConfig,
+          ListNotificationConfigsPage,
+          ListNotificationConfigsFixedSizeCollection> {
+
+    private ListNotificationConfigsFixedSizeCollection(
+        List<ListNotificationConfigsPage> pages, int collectionSize) {
+      super(pages, collectionSize);
+    }
+
+    private static ListNotificationConfigsFixedSizeCollection createEmptyCollection() {
+      return new ListNotificationConfigsFixedSizeCollection(null, 0);
+    }
+
+    @Override
+    protected ListNotificationConfigsFixedSizeCollection createCollection(
+        List<ListNotificationConfigsPage> pages, int collectionSize) {
+      return new ListNotificationConfigsFixedSizeCollection(pages, collectionSize);
     }
   }
 }

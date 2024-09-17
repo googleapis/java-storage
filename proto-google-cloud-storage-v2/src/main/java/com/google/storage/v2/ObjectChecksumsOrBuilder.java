@@ -64,8 +64,8 @@ public interface ObjectChecksumsOrBuilder
    * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
    * ETags: Best Practices].
    * Not all objects will provide an MD5 hash. For example, composite objects
-   * provide only crc32c hashes.
-   * This value is equivalent to running `cat object.txt | openssl md5 -binary`
+   * provide only crc32c hashes. This value is equivalent to running `cat
+   * object.txt | openssl md5 -binary`
    * </pre>
    *
    * <code>bytes md5_hash = 2;</code>

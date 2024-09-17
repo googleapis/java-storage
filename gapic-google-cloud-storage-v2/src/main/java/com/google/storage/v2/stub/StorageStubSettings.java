@@ -179,17 +179,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
   private final UnaryCallSettings<TestIamPermissionsRequest, TestIamPermissionsResponse>
       testIamPermissionsSettings;
   private final UnaryCallSettings<UpdateBucketRequest, Bucket> updateBucketSettings;
-  private final UnaryCallSettings<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigSettings;
-  private final UnaryCallSettings<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigSettings;
-  private final UnaryCallSettings<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigSettings;
-  private final PagedCallSettings<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          ListNotificationConfigsPagedResponse>
-      listNotificationConfigsSettings;
   private final UnaryCallSettings<ComposeObjectRequest, Object> composeObjectSettings;
   private final UnaryCallSettings<DeleteObjectRequest, Empty> deleteObjectSettings;
   private final UnaryCallSettings<RestoreObjectRequest, Object> restoreObjectSettings;
@@ -219,6 +208,17 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
           ListHmacKeysRequest, ListHmacKeysResponse, ListHmacKeysPagedResponse>
       listHmacKeysSettings;
   private final UnaryCallSettings<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeySettings;
+  private final UnaryCallSettings<DeleteNotificationConfigRequest, Empty>
+      deleteNotificationConfigSettings;
+  private final UnaryCallSettings<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigSettings;
+  private final UnaryCallSettings<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigSettings;
+  private final PagedCallSettings<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          ListNotificationConfigsPagedResponse>
+      listNotificationConfigsSettings;
 
   private static final PagedListDescriptor<ListBucketsRequest, ListBucketsResponse, Bucket>
       LIST_BUCKETS_PAGE_STR_DESC =
@@ -251,49 +251,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
             @Override
             public Iterable<Bucket> extractResources(ListBucketsResponse payload) {
               return payload.getBucketsList();
-            }
-          };
-
-  private static final PagedListDescriptor<
-          ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-      LIST_NOTIFICATION_CONFIGS_PAGE_STR_DESC =
-          new PagedListDescriptor<
-              ListNotificationConfigsRequest,
-              ListNotificationConfigsResponse,
-              NotificationConfig>() {
-            @Override
-            public String emptyToken() {
-              return "";
-            }
-
-            @Override
-            public ListNotificationConfigsRequest injectToken(
-                ListNotificationConfigsRequest payload, String token) {
-              return ListNotificationConfigsRequest.newBuilder(payload).setPageToken(token).build();
-            }
-
-            @Override
-            public ListNotificationConfigsRequest injectPageSize(
-                ListNotificationConfigsRequest payload, int pageSize) {
-              return ListNotificationConfigsRequest.newBuilder(payload)
-                  .setPageSize(pageSize)
-                  .build();
-            }
-
-            @Override
-            public Integer extractPageSize(ListNotificationConfigsRequest payload) {
-              return payload.getPageSize();
-            }
-
-            @Override
-            public String extractNextToken(ListNotificationConfigsResponse payload) {
-              return payload.getNextPageToken();
-            }
-
-            @Override
-            public Iterable<NotificationConfig> extractResources(
-                ListNotificationConfigsResponse payload) {
-              return payload.getNotificationConfigsList();
             }
           };
 
@@ -366,6 +323,49 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
             }
           };
 
+  private static final PagedListDescriptor<
+          ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
+      LIST_NOTIFICATION_CONFIGS_PAGE_STR_DESC =
+          new PagedListDescriptor<
+              ListNotificationConfigsRequest,
+              ListNotificationConfigsResponse,
+              NotificationConfig>() {
+            @Override
+            public String emptyToken() {
+              return "";
+            }
+
+            @Override
+            public ListNotificationConfigsRequest injectToken(
+                ListNotificationConfigsRequest payload, String token) {
+              return ListNotificationConfigsRequest.newBuilder(payload).setPageToken(token).build();
+            }
+
+            @Override
+            public ListNotificationConfigsRequest injectPageSize(
+                ListNotificationConfigsRequest payload, int pageSize) {
+              return ListNotificationConfigsRequest.newBuilder(payload)
+                  .setPageSize(pageSize)
+                  .build();
+            }
+
+            @Override
+            public Integer extractPageSize(ListNotificationConfigsRequest payload) {
+              return payload.getPageSize();
+            }
+
+            @Override
+            public String extractNextToken(ListNotificationConfigsResponse payload) {
+              return payload.getNextPageToken();
+            }
+
+            @Override
+            public Iterable<NotificationConfig> extractResources(
+                ListNotificationConfigsResponse payload) {
+              return payload.getNotificationConfigsList();
+            }
+          };
+
   private static final PagedListResponseFactory<
           ListBucketsRequest, ListBucketsResponse, ListBucketsPagedResponse>
       LIST_BUCKETS_PAGE_STR_FACT =
@@ -380,33 +380,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               PageContext<ListBucketsRequest, ListBucketsResponse, Bucket> pageContext =
                   PageContext.create(callable, LIST_BUCKETS_PAGE_STR_DESC, request, context);
               return ListBucketsPagedResponse.createAsync(pageContext, futureResponse);
-            }
-          };
-
-  private static final PagedListResponseFactory<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          ListNotificationConfigsPagedResponse>
-      LIST_NOTIFICATION_CONFIGS_PAGE_STR_FACT =
-          new PagedListResponseFactory<
-              ListNotificationConfigsRequest,
-              ListNotificationConfigsResponse,
-              ListNotificationConfigsPagedResponse>() {
-            @Override
-            public ApiFuture<ListNotificationConfigsPagedResponse> getFuturePagedResponse(
-                UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-                    callable,
-                ListNotificationConfigsRequest request,
-                ApiCallContext context,
-                ApiFuture<ListNotificationConfigsResponse> futureResponse) {
-              PageContext<
-                      ListNotificationConfigsRequest,
-                      ListNotificationConfigsResponse,
-                      NotificationConfig>
-                  pageContext =
-                      PageContext.create(
-                          callable, LIST_NOTIFICATION_CONFIGS_PAGE_STR_DESC, request, context);
-              return ListNotificationConfigsPagedResponse.createAsync(pageContext, futureResponse);
             }
           };
 
@@ -441,6 +414,33 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               PageContext<ListHmacKeysRequest, ListHmacKeysResponse, HmacKeyMetadata> pageContext =
                   PageContext.create(callable, LIST_HMAC_KEYS_PAGE_STR_DESC, request, context);
               return ListHmacKeysPagedResponse.createAsync(pageContext, futureResponse);
+            }
+          };
+
+  private static final PagedListResponseFactory<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          ListNotificationConfigsPagedResponse>
+      LIST_NOTIFICATION_CONFIGS_PAGE_STR_FACT =
+          new PagedListResponseFactory<
+              ListNotificationConfigsRequest,
+              ListNotificationConfigsResponse,
+              ListNotificationConfigsPagedResponse>() {
+            @Override
+            public ApiFuture<ListNotificationConfigsPagedResponse> getFuturePagedResponse(
+                UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
+                    callable,
+                ListNotificationConfigsRequest request,
+                ApiCallContext context,
+                ApiFuture<ListNotificationConfigsResponse> futureResponse) {
+              PageContext<
+                      ListNotificationConfigsRequest,
+                      ListNotificationConfigsResponse,
+                      NotificationConfig>
+                  pageContext =
+                      PageContext.create(
+                          callable, LIST_NOTIFICATION_CONFIGS_PAGE_STR_DESC, request, context);
+              return ListNotificationConfigsPagedResponse.createAsync(pageContext, futureResponse);
             }
           };
 
@@ -490,33 +490,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
   /** Returns the object with the settings used for calls to updateBucket. */
   public UnaryCallSettings<UpdateBucketRequest, Bucket> updateBucketSettings() {
     return updateBucketSettings;
-  }
-
-  /** Returns the object with the settings used for calls to deleteNotificationConfig. */
-  public UnaryCallSettings<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigSettings() {
-    return deleteNotificationConfigSettings;
-  }
-
-  /** Returns the object with the settings used for calls to getNotificationConfig. */
-  public UnaryCallSettings<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigSettings() {
-    return getNotificationConfigSettings;
-  }
-
-  /** Returns the object with the settings used for calls to createNotificationConfig. */
-  public UnaryCallSettings<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigSettings() {
-    return createNotificationConfigSettings;
-  }
-
-  /** Returns the object with the settings used for calls to listNotificationConfigs. */
-  public PagedCallSettings<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          ListNotificationConfigsPagedResponse>
-      listNotificationConfigsSettings() {
-    return listNotificationConfigsSettings;
   }
 
   /** Returns the object with the settings used for calls to composeObject. */
@@ -589,35 +562,112 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return queryWriteStatusSettings;
   }
 
-  /** Returns the object with the settings used for calls to getServiceAccount. */
+  /**
+   * Returns the object with the settings used for calls to getServiceAccount.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public UnaryCallSettings<GetServiceAccountRequest, ServiceAccount> getServiceAccountSettings() {
     return getServiceAccountSettings;
   }
 
-  /** Returns the object with the settings used for calls to createHmacKey. */
+  /**
+   * Returns the object with the settings used for calls to createHmacKey.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public UnaryCallSettings<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeySettings() {
     return createHmacKeySettings;
   }
 
-  /** Returns the object with the settings used for calls to deleteHmacKey. */
+  /**
+   * Returns the object with the settings used for calls to deleteHmacKey.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public UnaryCallSettings<DeleteHmacKeyRequest, Empty> deleteHmacKeySettings() {
     return deleteHmacKeySettings;
   }
 
-  /** Returns the object with the settings used for calls to getHmacKey. */
+  /**
+   * Returns the object with the settings used for calls to getHmacKey.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public UnaryCallSettings<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeySettings() {
     return getHmacKeySettings;
   }
 
-  /** Returns the object with the settings used for calls to listHmacKeys. */
+  /**
+   * Returns the object with the settings used for calls to listHmacKeys.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public PagedCallSettings<ListHmacKeysRequest, ListHmacKeysResponse, ListHmacKeysPagedResponse>
       listHmacKeysSettings() {
     return listHmacKeysSettings;
   }
 
-  /** Returns the object with the settings used for calls to updateHmacKey. */
+  /**
+   * Returns the object with the settings used for calls to updateHmacKey.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
   public UnaryCallSettings<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeySettings() {
     return updateHmacKeySettings;
+  }
+
+  /**
+   * Returns the object with the settings used for calls to deleteNotificationConfig.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public UnaryCallSettings<DeleteNotificationConfigRequest, Empty>
+      deleteNotificationConfigSettings() {
+    return deleteNotificationConfigSettings;
+  }
+
+  /**
+   * Returns the object with the settings used for calls to getNotificationConfig.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public UnaryCallSettings<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigSettings() {
+    return getNotificationConfigSettings;
+  }
+
+  /**
+   * Returns the object with the settings used for calls to createNotificationConfig.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public UnaryCallSettings<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigSettings() {
+    return createNotificationConfigSettings;
+  }
+
+  /**
+   * Returns the object with the settings used for calls to listNotificationConfigs.
+   *
+   * @deprecated This method is deprecated and will be removed in the next major version update.
+   */
+  @Deprecated
+  public PagedCallSettings<
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          ListNotificationConfigsPagedResponse>
+      listNotificationConfigsSettings() {
+    return listNotificationConfigsSettings;
   }
 
   public StorageStub createStub() throws IOException {
@@ -709,10 +759,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();
     testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();
     updateBucketSettings = settingsBuilder.updateBucketSettings().build();
-    deleteNotificationConfigSettings = settingsBuilder.deleteNotificationConfigSettings().build();
-    getNotificationConfigSettings = settingsBuilder.getNotificationConfigSettings().build();
-    createNotificationConfigSettings = settingsBuilder.createNotificationConfigSettings().build();
-    listNotificationConfigsSettings = settingsBuilder.listNotificationConfigsSettings().build();
     composeObjectSettings = settingsBuilder.composeObjectSettings().build();
     deleteObjectSettings = settingsBuilder.deleteObjectSettings().build();
     restoreObjectSettings = settingsBuilder.restoreObjectSettings().build();
@@ -732,6 +778,10 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     getHmacKeySettings = settingsBuilder.getHmacKeySettings().build();
     listHmacKeysSettings = settingsBuilder.listHmacKeysSettings().build();
     updateHmacKeySettings = settingsBuilder.updateHmacKeySettings().build();
+    deleteNotificationConfigSettings = settingsBuilder.deleteNotificationConfigSettings().build();
+    getNotificationConfigSettings = settingsBuilder.getNotificationConfigSettings().build();
+    createNotificationConfigSettings = settingsBuilder.createNotificationConfigSettings().build();
+    listNotificationConfigsSettings = settingsBuilder.listNotificationConfigsSettings().build();
   }
 
   /** Builder for StorageStubSettings. */
@@ -750,17 +800,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     private final UnaryCallSettings.Builder<TestIamPermissionsRequest, TestIamPermissionsResponse>
         testIamPermissionsSettings;
     private final UnaryCallSettings.Builder<UpdateBucketRequest, Bucket> updateBucketSettings;
-    private final UnaryCallSettings.Builder<DeleteNotificationConfigRequest, Empty>
-        deleteNotificationConfigSettings;
-    private final UnaryCallSettings.Builder<GetNotificationConfigRequest, NotificationConfig>
-        getNotificationConfigSettings;
-    private final UnaryCallSettings.Builder<CreateNotificationConfigRequest, NotificationConfig>
-        createNotificationConfigSettings;
-    private final PagedCallSettings.Builder<
-            ListNotificationConfigsRequest,
-            ListNotificationConfigsResponse,
-            ListNotificationConfigsPagedResponse>
-        listNotificationConfigsSettings;
     private final UnaryCallSettings.Builder<ComposeObjectRequest, Object> composeObjectSettings;
     private final UnaryCallSettings.Builder<DeleteObjectRequest, Empty> deleteObjectSettings;
     private final UnaryCallSettings.Builder<RestoreObjectRequest, Object> restoreObjectSettings;
@@ -795,6 +834,17 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
         listHmacKeysSettings;
     private final UnaryCallSettings.Builder<UpdateHmacKeyRequest, HmacKeyMetadata>
         updateHmacKeySettings;
+    private final UnaryCallSettings.Builder<DeleteNotificationConfigRequest, Empty>
+        deleteNotificationConfigSettings;
+    private final UnaryCallSettings.Builder<GetNotificationConfigRequest, NotificationConfig>
+        getNotificationConfigSettings;
+    private final UnaryCallSettings.Builder<CreateNotificationConfigRequest, NotificationConfig>
+        createNotificationConfigSettings;
+    private final PagedCallSettings.Builder<
+            ListNotificationConfigsRequest,
+            ListNotificationConfigsResponse,
+            ListNotificationConfigsPagedResponse>
+        listNotificationConfigsSettings;
     private static final ImmutableMap<String, ImmutableSet<StatusCode.Code>>
         RETRYABLE_CODE_DEFINITIONS;
 
@@ -844,11 +894,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       updateBucketSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      deleteNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      getNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      createNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
-      listNotificationConfigsSettings =
-          PagedCallSettings.newBuilder(LIST_NOTIFICATION_CONFIGS_PAGE_STR_FACT);
       composeObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       deleteObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       restoreObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
@@ -868,6 +913,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       getHmacKeySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       listHmacKeysSettings = PagedCallSettings.newBuilder(LIST_HMAC_KEYS_PAGE_STR_FACT);
       updateHmacKeySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      deleteNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      getNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      createNotificationConfigSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      listNotificationConfigsSettings =
+          PagedCallSettings.newBuilder(LIST_NOTIFICATION_CONFIGS_PAGE_STR_FACT);
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -880,10 +930,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               setIamPolicySettings,
               testIamPermissionsSettings,
               updateBucketSettings,
-              deleteNotificationConfigSettings,
-              getNotificationConfigSettings,
-              createNotificationConfigSettings,
-              listNotificationConfigsSettings,
               composeObjectSettings,
               deleteObjectSettings,
               restoreObjectSettings,
@@ -899,7 +945,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               deleteHmacKeySettings,
               getHmacKeySettings,
               listHmacKeysSettings,
-              updateHmacKeySettings);
+              updateHmacKeySettings,
+              deleteNotificationConfigSettings,
+              getNotificationConfigSettings,
+              createNotificationConfigSettings,
+              listNotificationConfigsSettings);
       initDefaults(this);
     }
 
@@ -915,10 +965,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       setIamPolicySettings = settings.setIamPolicySettings.toBuilder();
       testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();
       updateBucketSettings = settings.updateBucketSettings.toBuilder();
-      deleteNotificationConfigSettings = settings.deleteNotificationConfigSettings.toBuilder();
-      getNotificationConfigSettings = settings.getNotificationConfigSettings.toBuilder();
-      createNotificationConfigSettings = settings.createNotificationConfigSettings.toBuilder();
-      listNotificationConfigsSettings = settings.listNotificationConfigsSettings.toBuilder();
       composeObjectSettings = settings.composeObjectSettings.toBuilder();
       deleteObjectSettings = settings.deleteObjectSettings.toBuilder();
       restoreObjectSettings = settings.restoreObjectSettings.toBuilder();
@@ -938,6 +984,10 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       getHmacKeySettings = settings.getHmacKeySettings.toBuilder();
       listHmacKeysSettings = settings.listHmacKeysSettings.toBuilder();
       updateHmacKeySettings = settings.updateHmacKeySettings.toBuilder();
+      deleteNotificationConfigSettings = settings.deleteNotificationConfigSettings.toBuilder();
+      getNotificationConfigSettings = settings.getNotificationConfigSettings.toBuilder();
+      createNotificationConfigSettings = settings.createNotificationConfigSettings.toBuilder();
+      listNotificationConfigsSettings = settings.listNotificationConfigsSettings.toBuilder();
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -950,10 +1000,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               setIamPolicySettings,
               testIamPermissionsSettings,
               updateBucketSettings,
-              deleteNotificationConfigSettings,
-              getNotificationConfigSettings,
-              createNotificationConfigSettings,
-              listNotificationConfigsSettings,
               composeObjectSettings,
               deleteObjectSettings,
               restoreObjectSettings,
@@ -969,7 +1015,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               deleteHmacKeySettings,
               getHmacKeySettings,
               listHmacKeysSettings,
-              updateHmacKeySettings);
+              updateHmacKeySettings,
+              deleteNotificationConfigSettings,
+              getNotificationConfigSettings,
+              createNotificationConfigSettings,
+              listNotificationConfigsSettings);
     }
 
     private static Builder createDefault() {
@@ -1027,26 +1077,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
 
       builder
           .updateBucketSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .deleteNotificationConfigSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .getNotificationConfigSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .createNotificationConfigSettings()
-          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
-          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
-
-      builder
-          .listNotificationConfigsSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -1135,6 +1165,26 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
+      builder
+          .deleteNotificationConfigSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .getNotificationConfigSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .createNotificationConfigSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .listNotificationConfigsSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
       return builder;
     }
 
@@ -1200,33 +1250,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     /** Returns the builder for the settings used for calls to updateBucket. */
     public UnaryCallSettings.Builder<UpdateBucketRequest, Bucket> updateBucketSettings() {
       return updateBucketSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to deleteNotificationConfig. */
-    public UnaryCallSettings.Builder<DeleteNotificationConfigRequest, Empty>
-        deleteNotificationConfigSettings() {
-      return deleteNotificationConfigSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to getNotificationConfig. */
-    public UnaryCallSettings.Builder<GetNotificationConfigRequest, NotificationConfig>
-        getNotificationConfigSettings() {
-      return getNotificationConfigSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to createNotificationConfig. */
-    public UnaryCallSettings.Builder<CreateNotificationConfigRequest, NotificationConfig>
-        createNotificationConfigSettings() {
-      return createNotificationConfigSettings;
-    }
-
-    /** Returns the builder for the settings used for calls to listNotificationConfigs. */
-    public PagedCallSettings.Builder<
-            ListNotificationConfigsRequest,
-            ListNotificationConfigsResponse,
-            ListNotificationConfigsPagedResponse>
-        listNotificationConfigsSettings() {
-      return listNotificationConfigsSettings;
     }
 
     /** Returns the builder for the settings used for calls to composeObject. */
@@ -1303,39 +1326,116 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       return queryWriteStatusSettings;
     }
 
-    /** Returns the builder for the settings used for calls to getServiceAccount. */
+    /**
+     * Returns the builder for the settings used for calls to getServiceAccount.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public UnaryCallSettings.Builder<GetServiceAccountRequest, ServiceAccount>
         getServiceAccountSettings() {
       return getServiceAccountSettings;
     }
 
-    /** Returns the builder for the settings used for calls to createHmacKey. */
+    /**
+     * Returns the builder for the settings used for calls to createHmacKey.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public UnaryCallSettings.Builder<CreateHmacKeyRequest, CreateHmacKeyResponse>
         createHmacKeySettings() {
       return createHmacKeySettings;
     }
 
-    /** Returns the builder for the settings used for calls to deleteHmacKey. */
+    /**
+     * Returns the builder for the settings used for calls to deleteHmacKey.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public UnaryCallSettings.Builder<DeleteHmacKeyRequest, Empty> deleteHmacKeySettings() {
       return deleteHmacKeySettings;
     }
 
-    /** Returns the builder for the settings used for calls to getHmacKey. */
+    /**
+     * Returns the builder for the settings used for calls to getHmacKey.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public UnaryCallSettings.Builder<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeySettings() {
       return getHmacKeySettings;
     }
 
-    /** Returns the builder for the settings used for calls to listHmacKeys. */
+    /**
+     * Returns the builder for the settings used for calls to listHmacKeys.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public PagedCallSettings.Builder<
             ListHmacKeysRequest, ListHmacKeysResponse, ListHmacKeysPagedResponse>
         listHmacKeysSettings() {
       return listHmacKeysSettings;
     }
 
-    /** Returns the builder for the settings used for calls to updateHmacKey. */
+    /**
+     * Returns the builder for the settings used for calls to updateHmacKey.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
     public UnaryCallSettings.Builder<UpdateHmacKeyRequest, HmacKeyMetadata>
         updateHmacKeySettings() {
       return updateHmacKeySettings;
+    }
+
+    /**
+     * Returns the builder for the settings used for calls to deleteNotificationConfig.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
+    public UnaryCallSettings.Builder<DeleteNotificationConfigRequest, Empty>
+        deleteNotificationConfigSettings() {
+      return deleteNotificationConfigSettings;
+    }
+
+    /**
+     * Returns the builder for the settings used for calls to getNotificationConfig.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
+    public UnaryCallSettings.Builder<GetNotificationConfigRequest, NotificationConfig>
+        getNotificationConfigSettings() {
+      return getNotificationConfigSettings;
+    }
+
+    /**
+     * Returns the builder for the settings used for calls to createNotificationConfig.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
+    public UnaryCallSettings.Builder<CreateNotificationConfigRequest, NotificationConfig>
+        createNotificationConfigSettings() {
+      return createNotificationConfigSettings;
+    }
+
+    /**
+     * Returns the builder for the settings used for calls to listNotificationConfigs.
+     *
+     * @deprecated This method is deprecated and will be removed in the next major version update.
+     */
+    @Deprecated
+    public PagedCallSettings.Builder<
+            ListNotificationConfigsRequest,
+            ListNotificationConfigsResponse,
+            ListNotificationConfigsPagedResponse>
+        listNotificationConfigsSettings() {
+      return listNotificationConfigsSettings;
     }
 
     @Override

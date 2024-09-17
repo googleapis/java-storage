@@ -28,7 +28,10 @@ public interface ObjectAccessControlOrBuilder
    *
    *
    * <pre>
-   * The access permission for the entity.
+   * The access permission for the entity. One of the following values:
+   * * `READER`
+   * * `WRITER`
+   * * `OWNER`
    * </pre>
    *
    * <code>string role = 1;</code>
@@ -40,7 +43,10 @@ public interface ObjectAccessControlOrBuilder
    *
    *
    * <pre>
-   * The access permission for the entity.
+   * The access permission for the entity. One of the following values:
+   * * `READER`
+   * * `WRITER`
+   * * `OWNER`
    * </pre>
    *
    * <code>string role = 1;</code>

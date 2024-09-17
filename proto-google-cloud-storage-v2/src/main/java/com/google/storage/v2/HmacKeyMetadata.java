@@ -293,11 +293,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
    * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
-   * <code>string state = 5;</code>
+   * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The state.
    */
@@ -317,11 +317,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
    * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
-   * <code>string state = 5;</code>
+   * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for state.
    */
@@ -444,10 +444,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The etag of the HMAC key.
+   * Optional. The etag of the HMAC key.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -467,10 +467,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The etag of the HMAC key.
+   * Optional. The etag of the HMAC key.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */
@@ -1481,11 +1481,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
      * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
-     * <code>string state = 5;</code>
+     * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The state.
      */
@@ -1504,11 +1504,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
      * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
-     * <code>string state = 5;</code>
+     * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for state.
      */
@@ -1527,11 +1527,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
      * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
-     * <code>string state = 5;</code>
+     * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The state to set.
      * @return This builder for chaining.
@@ -1549,11 +1549,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
      * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
-     * <code>string state = 5;</code>
+     * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1567,11 +1567,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Optional. State of the key. One of ACTIVE, INACTIVE, or DELETED.
      * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
-     * <code>string state = 5;</code>
+     * <code>string state = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for state to set.
      * @return This builder for chaining.
@@ -1998,10 +1998,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The etag of the HMAC key.
+     * Optional. The etag of the HMAC key.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The etag.
      */
@@ -2020,10 +2020,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The etag of the HMAC key.
+     * Optional. The etag of the HMAC key.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for etag.
      */
@@ -2042,10 +2042,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The etag of the HMAC key.
+     * Optional. The etag of the HMAC key.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The etag to set.
      * @return This builder for chaining.
@@ -2063,10 +2063,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The etag of the HMAC key.
+     * Optional. The etag of the HMAC key.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -2080,10 +2080,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The etag of the HMAC key.
+     * Optional. The etag of the HMAC key.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for etag to set.
      * @return This builder for chaining.

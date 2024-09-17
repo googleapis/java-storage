@@ -20074,7 +20074,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Configuration that, if present, specifies the data placement for a
-   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+   * dual-region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -20090,7 +20091,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Configuration that, if present, specifies the data placement for a
-   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+   * dual-region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -20108,7 +20110,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Configuration that, if present, specifies the data placement for a
-   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+   * dual-region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26343,7 +26346,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26358,7 +26362,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26379,7 +26384,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26403,7 +26409,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26424,7 +26431,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26454,7 +26462,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26474,7 +26483,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26490,7 +26500,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -26510,7 +26521,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Configuration that, if present, specifies the data placement for a
-     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
+     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
+     * dual-region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>

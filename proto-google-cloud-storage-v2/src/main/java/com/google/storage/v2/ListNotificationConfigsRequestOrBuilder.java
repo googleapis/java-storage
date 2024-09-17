@@ -57,12 +57,12 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * The maximum number of NotificationConfigs to return. The service may
-   * return fewer than this value. The default value is 100. Specifying a value
-   * above 100 will result in a page_size of 100.
+   * Optional. The maximum number of NotificationConfigs to return. The service
+   * may return fewer than this value. The default value is 100. Specifying a
+   * value above 100 will result in a page_size of 100.
    * </pre>
    *
-   * <code>int32 page_size = 2;</code>
+   * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageSize.
    */
@@ -72,14 +72,14 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * A page token, received from a previous `ListNotificationConfigs` call.
-   * Provide this to retrieve the subsequent page.
+   * Optional. A page token, received from a previous `ListNotificationConfigs`
+   * call. Provide this to retrieve the subsequent page.
    *
    * When paginating, all other parameters provided to `ListNotificationConfigs`
    * must match the call that provided the page token.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageToken.
    */
@@ -88,14 +88,14 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * A page token, received from a previous `ListNotificationConfigs` call.
-   * Provide this to retrieve the subsequent page.
+   * Optional. A page token, received from a previous `ListNotificationConfigs`
+   * call. Provide this to retrieve the subsequent page.
    *
    * When paginating, all other parameters provided to `ListNotificationConfigs`
    * must match the call that provided the page token.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for pageToken.
    */

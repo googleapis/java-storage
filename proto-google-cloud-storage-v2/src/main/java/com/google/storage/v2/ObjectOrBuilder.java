@@ -493,7 +493,10 @@ public interface ObjectOrBuilder
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests.
+   * for output only and will be silently ignored if provided in requests. The
+   * checksums of the complete object regardless of data range. If the object is
+   * downloaded in full, the client should compute one of these checksums over
+   * the downloaded object and compare it against the value provided here.
    * </pre>
    *
    * <code>
@@ -508,7 +511,10 @@ public interface ObjectOrBuilder
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests.
+   * for output only and will be silently ignored if provided in requests. The
+   * checksums of the complete object regardless of data range. If the object is
+   * downloaded in full, the client should compute one of these checksums over
+   * the downloaded object and compare it against the value provided here.
    * </pre>
    *
    * <code>
@@ -523,7 +529,10 @@ public interface ObjectOrBuilder
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests.
+   * for output only and will be silently ignored if provided in requests. The
+   * checksums of the complete object regardless of data range. If the object is
+   * downloaded in full, the client should compute one of these checksums over
+   * the downloaded object and compare it against the value provided here.
    * </pre>
    *
    * <code>
