@@ -30,11 +30,9 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
-import java.util.Arrays;
 import java.util.Iterator;
 
 final class GapicUnbufferedReadableByteChannel
@@ -80,7 +78,7 @@ final class GapicUnbufferedReadableByteChannel
       throw new ClosedChannelException();
     }
 
-    long totalBufferCapacity = Arrays.stream(dsts).mapToLong(Buffer::remaining).sum();
+    long totalBufferCapacity = Buffers.totalRemaining(dsts, offset, length);
     ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
@@ -184,6 +182,7 @@ final class GapicUnbufferedReadableByteChannel
         if (!result.isDone()) {
           result.setException(StorageException.coalesce(e));
         }
+        reset();
         throw e;
       }
     }
@@ -196,6 +195,7 @@ final class GapicUnbufferedReadableByteChannel
         if (!result.isDone()) {
           result.setException(StorageException.coalesce(e));
         }
+        reset();
         throw e;
       }
     }
@@ -203,8 +203,23 @@ final class GapicUnbufferedReadableByteChannel
     @Override
     public void close() {
       if (serverStream != null) {
-        // todo: do we need to "drain" anything?
         serverStream.cancel();
+        if (responseIterator != null) {
+          IOException ioException = null;
+          while (responseIterator.hasNext()) {
+            try {
+              ReadObjectResponse next = responseIterator.next();
+              ResponseContentLifecycleHandle handle = rclm.get(next);
+              handle.close();
+            } catch (IOException e) {
+              if (ioException == null) {
+                ioException = e;
+              } else if (ioException != e) {
+                ioException.addSuppressed(e);
+              }
+            }
+          }
+        }
       }
     }
 
@@ -224,6 +239,12 @@ final class GapicUnbufferedReadableByteChannel
           return responseIterator;
         }
       }
+    }
+
+    private void reset() {
+      serverStream = null;
+      responseIterator = null;
+      streamInitialized = false;
     }
   }
 }

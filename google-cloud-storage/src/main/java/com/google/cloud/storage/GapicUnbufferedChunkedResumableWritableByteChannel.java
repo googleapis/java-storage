@@ -24,6 +24,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
@@ -267,11 +268,18 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
       if (t instanceof OutOfRangeException) {
         OutOfRangeException oore = (OutOfRangeException) t;
         open = false;
-        StorageException storageException =
-            ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
-                segments, null, context, oore);
-        invocationHandle.setException(storageException);
-      } else if (t instanceof ApiException) {
+        ErrorDetails ed = oore.getErrorDetails();
+        if (!(ed != null
+            && ed.getErrorInfo() != null
+            && ed.getErrorInfo().getReason().equals("GRPC_MISMATCHED_UPLOAD_SIZE"))) {
+          StorageException storageException =
+              ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                  segments, null, context, oore);
+          invocationHandle.setException(storageException);
+          return;
+        }
+      }
+      if (t instanceof ApiException) {
         // use StorageExceptions logic to translate from ApiException to our status codes ensuring
         // things fall in line with our retry handlers.
         // This is suboptimal, as it will initialize a second exception, however this is the

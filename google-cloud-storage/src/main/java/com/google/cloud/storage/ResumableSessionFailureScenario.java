@@ -169,6 +169,9 @@ enum ResumableSessionFailureScenario {
     Map<String, List<String>> extraHeaders = context.getExtraHeaders();
     recordHeadersTo(extraHeaders, PREFIX_O, sb);
     int length = reqs.size();
+    if (length == 0) {
+      sb.append("\n").append(PREFIX_O).append("[]");
+    }
     for (int i = 0; i < length; i++) {
       if (i == 0) {
         sb.append("\n").append(PREFIX_O).append("[");

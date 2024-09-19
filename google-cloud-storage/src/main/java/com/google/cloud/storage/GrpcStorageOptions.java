@@ -70,7 +70,6 @@ import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
 import com.google.storage.v2.stub.GrpcStorageCallableFactory;
 import com.google.storage.v2.stub.GrpcStorageStub;
-import com.google.storage.v2.stub.StorageStub;
 import com.google.storage.v2.stub.StorageStubSettings;
 import io.grpc.ClientInterceptor;
 import io.grpc.Detachable;
@@ -89,9 +88,9 @@ import java.nio.ByteBuffer;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -116,6 +115,9 @@ public final class GrpcStorageOptions extends StorageOptions
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
+  private final boolean enableGrpcClientMetrics;
+
+  private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
@@ -129,6 +131,8 @@ public final class GrpcStorageOptions extends StorageOptions
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
+    this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
+    this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
@@ -262,6 +266,10 @@ public final class GrpcStorageOptions extends StorageOptions
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
 
+    if (this.getUniverseDomain() != null) {
+      builder.setUniverseDomain(this.getUniverseDomain());
+    }
+
     // this MUST come after credentials, service options set value has higher priority than creds
     String quotaProjectId = this.getQuotaProjectId();
     if (quotaProjectId != null && !quotaProjectId.isEmpty()) {
@@ -287,6 +295,16 @@ public final class GrpcStorageOptions extends StorageOptions
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
+
+    if (enableGrpcClientMetrics) {
+      OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
+          channelProviderBuilder,
+          endpoint,
+          this.getProjectId(),
+          this.getUniverseDomain(),
+          !grpcClientMetricsManuallyEnabled);
+    }
+
     builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
@@ -350,6 +368,7 @@ public final class GrpcStorageOptions extends StorageOptions
         retryAlgorithmManager,
         terminationAwaitDuration,
         attemptDirectPath,
+        enableGrpcClientMetrics,
         grpcInterceptorProvider,
         blobWriteSessionConfig,
         baseHashCode());
@@ -365,6 +384,7 @@ public final class GrpcStorageOptions extends StorageOptions
     }
     GrpcStorageOptions that = (GrpcStorageOptions) o;
     return attemptDirectPath == that.attemptDirectPath
+        && enableGrpcClientMetrics == that.enableGrpcClientMetrics
         && Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
         && Objects.equals(terminationAwaitDuration, that.terminationAwaitDuration)
         && Objects.equals(grpcInterceptorProvider, that.grpcInterceptorProvider)
@@ -408,10 +428,14 @@ public final class GrpcStorageOptions extends StorageOptions
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
+    private boolean enableGrpcClientMetrics =
+        GrpcStorageDefaults.INSTANCE.isEnableGrpcClientMetrics();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
     private BlobWriteSessionConfig blobWriteSessionConfig =
         GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
+
+    private boolean grpcMetricsManuallyEnabled = false;
 
     Builder() {}
 
@@ -421,6 +445,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.storageRetryStrategy = gso.getRetryAlgorithmManager().retryStrategy;
       this.terminationAwaitDuration = gso.getTerminationAwaitDuration();
       this.attemptDirectPath = gso.attemptDirectPath;
+      this.enableGrpcClientMetrics = gso.enableGrpcClientMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
     }
@@ -452,6 +477,21 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public GrpcStorageOptions.Builder setAttemptDirectPath(boolean attemptDirectPath) {
       this.attemptDirectPath = attemptDirectPath;
+      return this;
+    }
+    /**
+     * Option for whether this client should emit internal gRPC client internal metrics to Cloud
+     * Monitoring. To disable metric reporting, set this to false. True by default. Emitting metrics
+     * is free and requires minimal CPU and memory.
+     *
+     * @since 2.41.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public GrpcStorageOptions.Builder setEnableGrpcClientMetrics(boolean enableGrpcClientMetrics) {
+      this.enableGrpcClientMetrics = enableGrpcClientMetrics;
+      if (enableGrpcClientMetrics) {
+        grpcMetricsManuallyEnabled = true;
+      }
       return this;
     }
 
@@ -660,6 +700,12 @@ public final class GrpcStorageOptions extends StorageOptions
       return false;
     }
 
+    /** @since 2.41.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public boolean isEnableGrpcClientMetrics() {
+      return true;
+    }
+
     /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     public GrpcInterceptorProvider grpcInterceptorProvider() {
@@ -865,8 +911,26 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private static final class InternalStorageClient extends StorageClient {
 
-    private InternalStorageClient(StorageStub stub) {
+    private InternalStorageClient(InternalZeroCopyGrpcStorageStub stub) {
       super(stub);
+    }
+
+    @Override
+    public void shutdownNow() {
+      try {
+        // GrpcStorageStub#close() is final and we can't override it
+        // instead hook in here to close out the zero-copy marshaller
+        getStub().getObjectMediaResponseMarshaller.close();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      } finally {
+        super.shutdownNow();
+      }
+    }
+
+    @Override
+    public InternalZeroCopyGrpcStorageStub getStub() {
+      return (InternalZeroCopyGrpcStorageStub) super.getStub();
     }
   }
 
@@ -1028,30 +1092,21 @@ public final class GrpcStorageOptions extends StorageOptions
      * them all as suppressed exceptions on the first occurrence.
      */
     @VisibleForTesting
-    static void closeAllStreams(Collection<InputStream> inputStreams) throws IOException {
-      IOException ioException =
-          inputStreams.stream()
-              .map(
-                  stream -> {
-                    try {
-                      stream.close();
-                      return null;
-                    } catch (IOException e) {
-                      return e;
-                    }
-                  })
-              .filter(Objects::nonNull)
-              .reduce(
-                  null,
-                  (l, r) -> {
-                    if (l != null) {
-                      l.addSuppressed(r);
-                      return l;
-                    } else {
-                      return r;
-                    }
-                  },
-                  (l, r) -> l);
+    static void closeAllStreams(Iterable<InputStream> inputStreams) throws IOException {
+      Iterator<InputStream> iterator = inputStreams.iterator();
+      IOException ioException = null;
+      while (iterator.hasNext()) {
+        InputStream next = iterator.next();
+        try {
+          next.close();
+        } catch (IOException e) {
+          if (ioException == null) {
+            ioException = e;
+          } else if (ioException != e) {
+            ioException.addSuppressed(e);
+          }
+        }
+      }
 
       if (ioException != null) {
         throw ioException;

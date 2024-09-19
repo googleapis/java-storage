@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.40.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.43.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
   <packaging>jar</packaging>
   <name>Google Cloud Storage</name>
   <url>https://github.com/googleapis/java-storage</url>
@@ -12,12 +12,11 @@
   <parent>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-parent</artifactId>
-    <version>2.40.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+    <version>2.43.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
-    <pubsub-proto.version>1.112.1</pubsub-proto.version>
-    <junit-platform.version>5.10.2</junit-platform.version>
+    <pubsub-proto.version>1.114.2</pubsub-proto.version>
   </properties>
   <dependencies>
     <dependency>
@@ -124,6 +123,53 @@
       <groupId>com.google.api.grpc</groupId>
       <artifactId>gapic-google-cloud-storage-v2</artifactId>
     </dependency>
+    <!-- Open Telemetry dependencies -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-opentelemetry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-metrics</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
+    </dependency>
+
+    <dependency>
+    <groupId>io.opentelemetry.semconv</groupId>
+    <artifactId>opentelemetry-semconv</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>exporter-metrics</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry.contrib</groupId>
+      <artifactId>opentelemetry-gcp-resources</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+    </dependency>
 
     <!-- Access to exception for retry handling -->
     <dependency>
@@ -159,10 +205,7 @@
       <artifactId>grpc-googleapis</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker-qual</artifactId>
-    </dependency>
+
     <!--
     We're not using this directly, however there appears to be some resolution
     issues when we don't list this dependency. Specifically, the check to ensure the flattened
@@ -181,13 +224,14 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
-      <version>0.139.0</version>
+      <version>0.143.0</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
-      <version>2.48.0</version>
+      <version>2.52.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -249,15 +293,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.jqwik</groupId>
-      <artifactId>jqwik</artifactId>
-      <version>1.8.5</version>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit-platform.version}</version>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik</artifactId>
+      <version>1.9.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -307,6 +350,12 @@
               Add in vintage engine so that both JUnit4 and JUnit5 tests are run by the JUnit5 runner.
               -->
               <dependency>org.junit.vintage:junit-vintage-engine</dependency>
+
+              <!--
+              These are needed at runtime, but it causes unused declared dependency errors
+              -->
+              <dependency>io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi</dependency>
+              <dependency>io.opentelemetry.semconv:opentelemetry-semconv</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>
@@ -348,13 +397,11 @@
         <dependency>
           <groupId>org.junit.vintage</groupId>
           <artifactId>junit-vintage-engine</artifactId>
-          <version>${junit-platform.version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.junit.jupiter</groupId>
           <artifactId>junit-jupiter-engine</artifactId>
-          <version>${junit-platform.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

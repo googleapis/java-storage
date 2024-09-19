@@ -1,0 +1,26 @@
+gapic_generator_version: 2.45.0
+googleapis_commitish: cbf696d38a963c5ab333f85fc9a910b5698ad415
+libraries_bom_version: 26.45.0
+libraries:
+  - api_shortname: storage
+    name_pretty: Cloud Storage
+    product_documentation: https://cloud.google.com/storage
+    client_documentation: https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history
+    api_description: 'is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally.'
+    issue_tracker: https://issuetracker.google.com/savedsearches/559782
+    release_level: stable
+    language: java
+    repo: googleapis/java-storage
+    repo_short: java-storage
+    distribution_name: com.google.cloud:google-cloud-storage
+    codeowner_team: '@googleapis/cloud-storage-dpe'
+    api_id: storage.googleapis.com
+    requires_billing: true
+    library_type: GAPIC_COMBO
+    extra_versioned_modules: gapic-google-cloud-storage-v2
+    excluded_poms: google-cloud-storage-bom,google-cloud-storage
+    recommended_package: com.google.cloud.storage
+    transport: rest
+    GAPICs:
+      - proto_path: google/storage/v2
+      - proto_path: google/storage/control/v2

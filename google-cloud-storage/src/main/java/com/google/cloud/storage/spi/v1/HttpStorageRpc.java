@@ -790,6 +790,9 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
               .setUserProject(Option.USER_PROJECT.getString(options));
       setEncryptionHeaders(getRequest.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+      if (Option.RETURN_RAW_INPUT_STREAM.getBoolean(options) != null) {
+        getRequest.setReturnRawInputStream(Option.RETURN_RAW_INPUT_STREAM.getBoolean(options));
+      }
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       getRequest.executeMedia().download(out);
       return out.toByteArray();
@@ -1087,6 +1090,10 @@ public class HttpStorageRpc implements StorageRpc {
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
       requestHeaders.set("X-Upload-Content-Type", detectContentType(object, options));
+      Long xUploadContentLength = Option.X_UPLOAD_CONTENT_LENGTH.getLong(options);
+      if (xUploadContentLength != null) {
+        requestHeaders.set("X-Upload-Content-Length", xUploadContentLength);
+      }
       setEncryptionHeaders(requestHeaders, "x-goog-encryption-", options);
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 200) {

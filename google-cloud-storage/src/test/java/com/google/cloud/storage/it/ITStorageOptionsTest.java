@@ -64,7 +64,11 @@ public final class ITStorageOptionsTest {
   @Test
   public void clientShouldConstructCleanly_grpc() throws Exception {
     StorageOptions options =
-        StorageOptions.grpc().setCredentials(credentials).setAttemptDirectPath(false).build();
+        StorageOptions.grpc()
+            .setCredentials(credentials)
+            .setAttemptDirectPath(false)
+            .setEnableGrpcClientMetrics(false)
+            .build();
     doTest(options);
   }
 

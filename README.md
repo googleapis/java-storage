@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.41.0</version>
+      <version>26.45.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -35,6 +35,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
   </dependency>
+</dependencies>
 
 ```
 
@@ -46,12 +47,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.40.0</version>
+  <version>2.43.0</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.40.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.43.0</version>
 </dependency>
 
 ```
@@ -59,20 +60,20 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:26.41.0')
+implementation platform('com.google.cloud:libraries-bom:2.43.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.40.0'
+implementation 'com.google.cloud:google-cloud-storage:2.43.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.40.0"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.43.0"
 ```
 <!-- {x-version-update-end} -->
 
@@ -115,13 +116,14 @@ The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) 
 The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
+<!-- {x-version-update-start:libraries-bom:released} -->
 ```xml
 <dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>libraries-bom</artifactId>
-            <version>26.37.0</version>
+            <version>26.44.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -130,30 +132,33 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
 <dependencies>
     <dependency>
-    <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-storage-control</artifactId>
-</dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-storage-control</artifactId>
+    </dependency>
+</dependencies>
 ```
 
 If you are using Maven without the BOM, add this to your dependencies:
-<!-- {x-version-update-start:google-cloud-storage:released} -->
+
+<!-- {x-version-update-start:google-cloud-storage-control:released} -->
+
 ```xml
 <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
-    <version>2.40.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage-control:current} -->
+    <version>2.41.0</version>
 </dependency>
 ```
 
 If you are using Gradle 5.x or later, add this to your dependencies:
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.40.0')
+implementation platform('com.google.cloud:libraries-bom:26.44.0')
 implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage-control:2.40.1-SNAPSHOT' <!-- {x-version-update:google-cloud-storage-control:current} -->
+implementation 'com.google.cloud:google-cloud-storage-control:2.41.0'
 ```
 
 #### Creating an authorized service object
@@ -277,7 +282,6 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
-| Native Image Storage Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) |
 | Configure Retries | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) |
 | Generate Signed Post Policy V4 | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) |
 | Get Service Account | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) |
@@ -412,6 +416,10 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 
 To get help, follow the instructions in the [shared Troubleshooting document][troubleshooting].
 
+## Transport
+
+Cloud Storage uses HTTP/JSON for the transport layer.
+
 ## Supported Java Versions
 
 Java 8 or above is required for using this client.
@@ -504,7 +512,7 @@ Java is a registered trademark of Oracle and/or its affiliates.
 [kokoro-badge-link-5]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java11.html
 [stability-image]: https://img.shields.io/badge/stability-stable-green
 [maven-version-image]: https://img.shields.io/maven-central/v/com.google.cloud/google-cloud-storage.svg
-[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.40.0
+[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.42.0
 [authentication]: https://github.com/googleapis/google-cloud-java#authentication
 [auth-scopes]: https://developers.google.com/identity/protocols/oauth2/scopes
 [predefined-iam-roles]: https://cloud.google.com/iam/docs/understanding-roles#predefined_roles

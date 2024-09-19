@@ -55,6 +55,7 @@ import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
+import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
@@ -194,6 +195,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<StartResumableWriteRequest.Builder> startResumableWrite() {
       return Mapper.identity();
     }
   }
@@ -485,6 +490,12 @@ final class UnifiedOpts {
   static Projection projection(@NonNull String projection) {
     requireNonNull(projection, "projection must be non null");
     return new Projection(projection);
+  }
+
+  static ResumableUploadExpectedObjectSize resumableUploadExpectedObjectSize(
+      long expectedObjectSize) {
+    checkArgument(expectedObjectSize >= 0, "expectedObjectSize >= 0 (%s >= 0)", expectedObjectSize);
+    return new ResumableUploadExpectedObjectSize(expectedObjectSize);
   }
 
   static SoftDeleted softDeleted(boolean softDeleted) {
@@ -1832,6 +1843,25 @@ final class UnifiedOpts {
     }
   }
 
+  static final class ResumableUploadExpectedObjectSize extends RpcOptVal<@NonNull Long>
+      implements ObjectTargetOpt {
+    private static final long serialVersionUID = 3640126281492196357L;
+
+    private ResumableUploadExpectedObjectSize(@NonNull Long val) {
+      super(StorageRpc.Option.X_UPLOAD_CONTENT_LENGTH, val);
+    }
+
+    @Override
+    public Mapper<StartResumableWriteRequest.Builder> startResumableWrite() {
+      return b -> {
+        if (val > 0) {
+          b.getWriteObjectSpecBuilder().setObjectSize(val);
+        }
+        return b;
+      };
+    }
+  }
+
   static final class ShowDeletedKeys extends RpcOptVal<@NonNull Boolean> implements HmacKeyListOpt {
     private static final long serialVersionUID = -6604176744362903487L;
 
@@ -2301,21 +2331,6 @@ final class UnifiedOpts {
    */
   @SuppressWarnings("unchecked")
   static final class Opts<T extends Opt> {
-    private static final Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> mapBuild;
-
-    static {
-      Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> tmp;
-      // buildOrThrow was added in guava 31.0
-      // if it fails, fallback to the older build() method instead.
-      // The behavior was the same, but the new name makes the behavior clear
-      try {
-        ImmutableMap.builder().buildOrThrow();
-        tmp = ImmutableMap.Builder::buildOrThrow;
-      } catch (NoSuchMethodError e) {
-        tmp = ImmutableMap.Builder::build;
-      }
-      mapBuild = tmp;
-    }
 
     private final ImmutableList<T> opts;
 
@@ -2402,7 +2417,7 @@ final class UnifiedOpts {
     ImmutableMap<StorageRpc.Option, ?> getRpcOptions() {
       ImmutableMap.Builder<StorageRpc.Option, Object> builder =
           rpcOptionMapper().apply(ImmutableMap.builder());
-      return (ImmutableMap<StorageRpc.Option, ?>) mapBuild.apply(builder);
+      return Utils.mapBuild(builder);
     }
 
     Mapper<GrpcCallContext> grpcMetadataMapper() {
@@ -2439,6 +2454,10 @@ final class UnifiedOpts {
 
     Mapper<BidiWriteObjectRequest.Builder> bidiWriteObjectRequest() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::bidiWriteObject);
+    }
+
+    Mapper<StartResumableWriteRequest.Builder> startResumableWriteRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::startResumableWrite);
     }
 
     Mapper<GetObjectRequest.Builder> getObjectsRequest() {
@@ -2798,7 +2817,7 @@ final class UnifiedOpts {
     }
   }
 
-  private static final class NestedNamedField implements NamedField {
+  static final class NestedNamedField implements NamedField {
     private static long serialVersionUID = -7623005572810688221L;
     private final NamedField parent;
     private final NamedField child;
@@ -2816,6 +2835,14 @@ final class UnifiedOpts {
     @Override
     public String getGrpcName() {
       return parent.getGrpcName() + "." + child.getGrpcName();
+    }
+
+    NamedField getParent() {
+      return parent;
+    }
+
+    NamedField getChild() {
+      return child;
     }
 
     @Override

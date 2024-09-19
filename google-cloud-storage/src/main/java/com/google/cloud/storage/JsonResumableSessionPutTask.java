@@ -205,7 +205,8 @@ final class JsonResumableSessionPutTask
             && contentLength != null
             && contentLength > 0) {
           String errorMessage = cause.getContent().toLowerCase(Locale.US);
-          if (errorMessage.contains("content-range")) {
+          if (errorMessage.contains("content-range")
+              && !errorMessage.contains("earlier")) { // TODO: exclude "earlier request"
             StorageException se =
                 ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
                     uploadId, response, cause, cause::getContent);

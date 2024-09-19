@@ -541,7 +541,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Creates a new folder. This operation is only applicable to a hierarchical
      * namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     default void createFolder(
@@ -557,7 +556,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Permanently deletes an empty folder. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     default void deleteFolder(
@@ -573,7 +571,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Returns metadata for the specified folder. This operation is only
      * applicable to a hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     default void getFolder(
@@ -588,7 +585,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Retrieves a list of folders. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     default void listFolders(
@@ -607,7 +603,6 @@ public final class StorageControlGrpc {
      * applicable to a hierarchical namespace enabled bucket. During a rename, the
      * source and destination folders are locked until the long running operation
      * completes.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     default void renameFolder(
@@ -729,7 +724,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Creates a new folder. This operation is only applicable to a hierarchical
      * namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public void createFolder(
@@ -747,7 +741,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Permanently deletes an empty folder. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public void deleteFolder(
@@ -765,7 +758,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Returns metadata for the specified folder. This operation is only
      * applicable to a hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public void getFolder(
@@ -781,7 +773,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Retrieves a list of folders. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public void listFolders(
@@ -802,7 +793,6 @@ public final class StorageControlGrpc {
      * applicable to a hierarchical namespace enabled bucket. During a rename, the
      * source and destination folders are locked until the long running operation
      * completes.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public void renameFolder(
@@ -921,7 +911,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Creates a new folder. This operation is only applicable to a hierarchical
      * namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.storage.control.v2.Folder createFolder(
@@ -936,7 +925,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Permanently deletes an empty folder. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.protobuf.Empty deleteFolder(
@@ -951,7 +939,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Returns metadata for the specified folder. This operation is only
      * applicable to a hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.storage.control.v2.Folder getFolder(
@@ -966,7 +953,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Retrieves a list of folders. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.storage.control.v2.ListFoldersResponse listFolders(
@@ -983,7 +969,6 @@ public final class StorageControlGrpc {
      * applicable to a hierarchical namespace enabled bucket. During a rename, the
      * source and destination folders are locked until the long running operation
      * completes.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.longrunning.Operation renameFolder(
@@ -1083,7 +1068,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Creates a new folder. This operation is only applicable to a hierarchical
      * namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.control.v2.Folder>
@@ -1098,7 +1082,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Permanently deletes an empty folder. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
@@ -1113,7 +1096,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Returns metadata for the specified folder. This operation is only
      * applicable to a hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.control.v2.Folder>
@@ -1128,7 +1110,6 @@ public final class StorageControlGrpc {
      * <pre>
      * Retrieves a list of folders. This operation is only applicable to a
      * hierarchical namespace enabled bucket.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -1146,7 +1127,6 @@ public final class StorageControlGrpc {
      * applicable to a hierarchical namespace enabled bucket. During a rename, the
      * source and destination folders are locked until the long running operation
      * completes.
-     * Hierarchical namespace buckets are in allowlist preview.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>

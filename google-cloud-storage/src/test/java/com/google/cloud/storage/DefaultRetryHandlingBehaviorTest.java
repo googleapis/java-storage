@@ -35,6 +35,7 @@ import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -342,6 +343,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     IO_EXCEPTION(new IOException("no retry")),
     AUTH_RETRYABLE_TRUE(new RetryableException(true)),
     AUTH_RETRYABLE_FALSE(new RetryableException(false)),
+    UNKNOWN_HOST_EXCEPTION(C.UNKNOWN_HOST_EXCEPTION),
     ;
 
     private final Throwable throwable;
@@ -415,6 +417,8 @@ public final class DefaultRetryHandlingBehaviorTest {
       private static final MalformedJsonException GSON_MALFORMED_EXCEPTION =
           new MalformedJsonException("parse-exception");
       private static final IOException IO_PREMATURE_EOF = new IOException("Premature EOF");
+      private static final UnknownHostException UNKNOWN_HOST_EXCEPTION =
+          new UnknownHostException("fake.fake");
 
       private static HttpResponseException newHttpResponseException(
           int httpStatusCode, String name) {
@@ -1063,6 +1067,16 @@ public final class DefaultRetryHandlingBehaviorTest {
                 Behavior.SAME),
             new Case(
                 ThrowableCategory.AUTH_RETRYABLE_FALSE,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.UNKNOWN_HOST_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.UNKNOWN_HOST_EXCEPTION,
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
                 Behavior.SAME))
