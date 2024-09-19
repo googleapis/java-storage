@@ -160,7 +160,8 @@ final class RetryTestFixture extends TestWatcher {
           builder =
               StorageOptions.grpc()
                   .setHost(testBench.getGRPCBaseUri())
-                  .setEnableGrpcClientMetrics(false);
+                  .setEnableGrpcClientMetrics(false)
+                  .setAttemptDirectPath(false);
           break;
         default:
           throw new IllegalStateException(

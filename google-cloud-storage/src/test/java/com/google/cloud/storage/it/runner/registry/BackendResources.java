@@ -118,6 +118,7 @@ final class BackendResources implements ManagedLifecycle {
                       .setGrpcInterceptorProvider(
                           GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                       .setEnableGrpcClientMetrics(false)
+                      .setAttemptDirectPath(false)
                       .build();
               return new StorageInstance(built, protectedBucketNames);
             });
