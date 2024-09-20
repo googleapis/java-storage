@@ -117,7 +117,7 @@ public final class ITStorageReadChannelTest {
 
   @Test
   public void storageReadChannel_shouldAllowDisablingBufferingBySettingChunkSize_lteq0()
-      throws IOException {
+      throws Exception {
     int _512KiB = 512 * 1024;
     int _1MiB = 1024 * 1024;
 
@@ -130,6 +130,7 @@ public final class ITStorageReadChannelTest {
     }
 
     try (ReadChannel c = storage.reader(info.getBlobId())) {
+      ApiFuture<BlobInfo> infoFuture = getBlobInfoFromReadChannelFunction(c);
       c.setChunkSize(0);
 
       ByteBuffer buf = ByteBuffer.allocate(_1MiB);
@@ -140,6 +141,8 @@ public final class ITStorageReadChannelTest {
       String actual = xxd(buf);
       String expected = xxd(uncompressedBytes);
       assertThat(actual).isEqualTo(expected);
+      BlobInfo blobInfo = infoFuture.get(3, TimeUnit.SECONDS);
+      assertThat(blobInfo.getBlobId()).isEqualTo(info.getBlobId());
     }
   }
 

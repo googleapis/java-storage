@@ -19,38 +19,55 @@ package com.google.cloud.storage;
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.rpc.ServerStream;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ServerStreamingCallable;
+import com.google.api.gax.rpc.StateCheckingResponseObserver;
+import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.BaseServiceException;
+import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
-import java.io.Closeable;
+import io.grpc.Status.Code;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
-import java.util.Iterator;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
+  private static final java.lang.Object EOF_MARKER = new java.lang.Object();
 
   private final SettableApiFuture<Object> result;
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
   private final ReadObjectRequest req;
   private final Hasher hasher;
-  private final LazyServerStreamIterator iter;
   private final ResponseContentLifecycleManager rclm;
+  private final RetryingDependencies retryingDeps;
+  private final ResultRetryAlgorithm<?> alg;
+  private final SimpleBlockingQueue<java.lang.Object> queue;
 
-  private boolean open = true;
-  private boolean complete = false;
+  private final AtomicLong fetchOffset;
+  private volatile ReadObjectObserver readObjectObserver;
+  private volatile boolean open = true;
+  private volatile boolean complete = false;
+
   private long blobOffset;
-
   private Object metadata;
-
   private ResponseContentLifecycleHandle leftovers;
 
   GapicUnbufferedReadableByteChannel(
@@ -58,14 +75,21 @@ final class GapicUnbufferedReadableByteChannel
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest req,
       Hasher hasher,
+      RetryingDependencies retryingDependencies,
+      ResultRetryAlgorithm<?> alg,
       ResponseContentLifecycleManager rclm) {
     this.result = result;
     this.read = read;
     this.req = req;
     this.hasher = hasher;
+    this.fetchOffset = new AtomicLong(req.getReadOffset());
     this.blobOffset = req.getReadOffset();
     this.rclm = rclm;
-    this.iter = new LazyServerStreamIterator();
+    this.retryingDeps = retryingDependencies;
+    this.alg = alg;
+    // The reasoning for 2 elements below allow for a single response and the EOF/error signal
+    // from onComplete or onError. Same thing com.google.api.gax.rpc.QueuingResponseObserver does.
+    this.queue = new SimpleBlockingQueue<>(2);
   }
 
   @Override
@@ -90,47 +114,62 @@ final class GapicUnbufferedReadableByteChannel
         continue;
       }
 
-      if (iter.hasNext()) {
-        ReadObjectResponse resp = iter.next();
-        ResponseContentLifecycleHandle handle = rclm.get(resp);
-        if (resp.hasMetadata()) {
-          Object respMetadata = resp.getMetadata();
-          if (metadata == null) {
-            metadata = respMetadata;
-          } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
-            throw closeWithError(
-                String.format(
-                    "Mismatch Generation between subsequent reads. Expected %d but received %d",
-                    metadata.getGeneration(), respMetadata.getGeneration()));
-          }
-
-          if (!result.isDone()) {
-            result.set(metadata);
-          }
-        }
-        ChecksummedData checksummedData = resp.getChecksummedData();
-        ByteString content = checksummedData.getContent();
-        int contentSize = content.size();
-        // Very important to know whether a crc32c value is set. Without checking, protobuf will
-        // happily return 0, which is a valid crc32c value.
-        if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
-          try {
-            hasher.validate(expected, content.asReadOnlyByteBufferList());
-          } catch (IOException e) {
-            close();
-            throw e;
-          }
-        }
-        handle.copy(c, dsts, offset, length);
-        if (handle.hasRemaining()) {
-          leftovers = handle;
+      ensureStreamOpen();
+      java.lang.Object take;
+      try {
+        take = queue.poll();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new InterruptedIOException();
+      }
+      if (take instanceof Throwable) {
+        Throwable throwable = (Throwable) take;
+        BaseServiceException coalesce = StorageException.coalesce(throwable);
+        if (alg.shouldRetry(coalesce, null)) {
+          readObjectObserver = null;
+          continue;
         } else {
-          handle.close();
+          throw new IOException(coalesce);
         }
-      } else {
+      }
+      if (take == EOF_MARKER) {
         complete = true;
         break;
+      }
+      readObjectObserver.request();
+
+      ReadObjectResponse resp = (ReadObjectResponse) take;
+      ResponseContentLifecycleHandle handle = rclm.get(resp);
+      if (resp.hasMetadata()) {
+        Object respMetadata = resp.getMetadata();
+        if (metadata == null) {
+          metadata = respMetadata;
+        } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
+          throw closeWithError(
+              String.format(
+                  "Mismatch Generation between subsequent reads. Expected %d but received %d",
+                  metadata.getGeneration(), respMetadata.getGeneration()));
+        }
+      }
+      ChecksummedData checksummedData = resp.getChecksummedData();
+      ByteString content = checksummedData.getContent();
+      int contentSize = content.size();
+      // Very important to know whether a crc32c value is set. Without checking, protobuf will
+      // happily return 0, which is a valid crc32c value.
+      if (checksummedData.hasCrc32C()) {
+        Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
+        try {
+          hasher.validate(expected, content.asReadOnlyByteBufferList());
+        } catch (IOException e) {
+          close();
+          throw e;
+        }
+      }
+      handle.copy(c, dsts, offset, length);
+      if (handle.hasRemaining()) {
+        leftovers = handle;
+      } else {
+        handle.close();
       }
     }
     long read = c.read();
@@ -152,13 +191,90 @@ final class GapicUnbufferedReadableByteChannel
       if (leftovers != null) {
         leftovers.close();
       }
+      ReadObjectObserver obs = readObjectObserver;
+      if (obs != null && !obs.cancellation.isDone()) {
+        obs.cancel();
+        drainQueue();
+        try {
+          // make sure our waiting doesn't lockup permanently
+          obs.cancellation.get(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          InterruptedIOException ioe = new InterruptedIOException();
+          ioe.initCause(e);
+          ioe.addSuppressed(new AsyncStorageTaskException());
+          throw ioe;
+        } catch (ExecutionException e) {
+          Throwable cause = e;
+          if (e.getCause() != null) {
+            cause = e.getCause();
+          }
+          IOException ioException = new IOException(cause);
+          ioException.addSuppressed(new AsyncStorageTaskException());
+          throw ioException;
+        } catch (TimeoutException ignore) {
+        }
+      }
     } finally {
-      iter.close();
+      drainQueue();
+    }
+  }
+
+  private void drainQueue() throws IOException {
+    IOException ioException = null;
+    while (queue.nonEmpty()) {
+      try {
+        java.lang.Object queueValue = queue.poll();
+        if (queueValue instanceof ReadObjectResponse) {
+          ReadObjectResponse resp = (ReadObjectResponse) queueValue;
+          ResponseContentLifecycleHandle handle = rclm.get(resp);
+          handle.close();
+        } else if (queueValue == EOF_MARKER || queueValue instanceof Throwable) {
+          break;
+        }
+      } catch (IOException e) {
+        if (ioException == null) {
+          ioException = e;
+        } else if (ioException != e) {
+          ioException.addSuppressed(e);
+        }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        if (ioException == null) {
+          ioException = new InterruptedIOException();
+        } else {
+          ioException.addSuppressed(e);
+        }
+      }
+    }
+    if (ioException != null) {
+      throw ioException;
     }
   }
 
   ApiFuture<Object> getResult() {
     return result;
+  }
+
+  private void ensureStreamOpen() {
+    if (readObjectObserver == null) {
+      readObjectObserver =
+          Retrying.run(
+              retryingDeps,
+              alg,
+              () -> {
+                ReadObjectObserver tmp = new ReadObjectObserver();
+                ReadObjectRequest request = req;
+                long currentFetchOffset = fetchOffset.get();
+                if (request.getReadOffset() != currentFetchOffset) {
+                  request = req.toBuilder().setReadOffset(currentFetchOffset).build();
+                }
+                read.call(request, tmp);
+                ApiExceptions.callAndTranslateApiException(tmp.open);
+                return tmp;
+              },
+              Decoder.identity());
+    }
   }
 
   private IOException closeWithError(String message) throws IOException {
@@ -168,83 +284,95 @@ final class GapicUnbufferedReadableByteChannel
     throw new IOException(message, cause);
   }
 
-  private final class LazyServerStreamIterator implements Iterator<ReadObjectResponse>, Closeable {
-    private ServerStream<ReadObjectResponse> serverStream;
-    private Iterator<ReadObjectResponse> responseIterator;
+  private final class ReadObjectObserver extends StateCheckingResponseObserver<ReadObjectResponse> {
 
-    private volatile boolean streamInitialized = false;
+    private final SettableApiFuture<Void> open = SettableApiFuture.create();
+    private final SettableApiFuture<Throwable> cancellation = SettableApiFuture.create();
+
+    private volatile StreamController controller;
+
+    void request() {
+      controller.request(1);
+    }
+
+    void cancel() {
+      controller.cancel();
+    }
 
     @Override
-    public boolean hasNext() {
+    protected void onStartImpl(StreamController controller) {
+      this.controller = controller;
+      controller.disableAutoInboundFlowControl();
+      controller.request(1);
+    }
+
+    @Override
+    protected void onResponseImpl(ReadObjectResponse response) {
       try {
-        return ensureResponseIteratorOpen().hasNext();
-      } catch (RuntimeException e) {
-        if (!result.isDone()) {
-          result.setException(StorageException.coalesce(e));
+        open.set(null);
+        queue.offer(response);
+        fetchOffset.addAndGet(response.getChecksummedData().getContent().size());
+        if (response.hasMetadata() && !result.isDone()) {
+          result.set(response.getMetadata());
         }
-        reset();
-        throw e;
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
       }
     }
 
     @Override
-    public ReadObjectResponse next() {
+    protected void onErrorImpl(Throwable t) {
+      open.setException(t);
+      if (!alg.shouldRetry(t, null)) {
+        result.setException(StorageException.coalesce(t));
+      }
+      if (t instanceof CancellationException) {
+        cancellation.set(t);
+      }
       try {
-        return ensureResponseIteratorOpen().next();
-      } catch (RuntimeException e) {
-        if (!result.isDone()) {
-          result.setException(StorageException.coalesce(e));
-        }
-        reset();
-        throw e;
+        queue.offer(t);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
       }
     }
 
     @Override
-    public void close() {
-      if (serverStream != null) {
-        serverStream.cancel();
-        if (responseIterator != null) {
-          IOException ioException = null;
-          while (responseIterator.hasNext()) {
-            try {
-              ReadObjectResponse next = responseIterator.next();
-              ResponseContentLifecycleHandle handle = rclm.get(next);
-              handle.close();
-            } catch (IOException e) {
-              if (ioException == null) {
-                ioException = e;
-              } else if (ioException != e) {
-                ioException.addSuppressed(e);
-              }
-            }
-          }
-        }
+    protected void onCompleteImpl() {
+      try {
+        cancellation.set(null);
+        queue.offer(EOF_MARKER);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
       }
     }
+  }
 
-    private Iterator<ReadObjectResponse> ensureResponseIteratorOpen() {
-      boolean initialized = streamInitialized;
-      if (initialized) {
-        return responseIterator;
-      } else {
-        synchronized (this) {
-          if (!streamInitialized) {
-            if (serverStream == null) {
-              serverStream = read.call(req);
-            }
-            responseIterator = serverStream.iterator();
-            streamInitialized = true;
-          }
-          return responseIterator;
-        }
-      }
+  /**
+   * Simplified wrapper around an {@link java.util.concurrent.ArrayBlockingQueue}. We don't need the
+   * majority of methods/functionality just blocking offer/poll.
+   */
+  static final class SimpleBlockingQueue<T> {
+
+    private final ArrayBlockingQueue<T> queue;
+
+    SimpleBlockingQueue(int poolMaxSize) {
+      this.queue = new ArrayBlockingQueue<>(poolMaxSize);
     }
 
-    private void reset() {
-      serverStream = null;
-      responseIterator = null;
-      streamInitialized = false;
+    public boolean nonEmpty() {
+      return !queue.isEmpty();
+    }
+
+    @NonNull
+    public T poll() throws InterruptedException {
+      return queue.take();
+    }
+
+    public void offer(@NonNull T element) throws InterruptedException {
+      queue.put(element);
     }
   }
 }

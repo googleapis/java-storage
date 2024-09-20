@@ -17,13 +17,15 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.apiException;
-import static com.google.cloud.storage.TestUtils.contextWithRetryForCodes;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFutures;
-import com.google.api.gax.rpc.StatusCode;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.DataLossException;
 import com.google.cloud.storage.ChannelSession.UnbufferedReadSession;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.common.collect.ImmutableList;
@@ -122,12 +124,11 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               (start, resultFuture) ->
                   new GapicUnbufferedReadableByteChannel(
                       resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
+                      storageClient.readObjectCallable(),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      retryOnly(DataLossException.class),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -151,12 +152,11 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               (start, resultFuture) ->
                   new GapicUnbufferedReadableByteChannel(
                       resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
+                      storageClient.readObjectCallable(),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      retryOnly(DataLossException.class),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(actualBytes, 2);
@@ -210,12 +210,11 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               (start, resultFuture) ->
                   new GapicUnbufferedReadableByteChannel(
                       resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
+                      storageClient.readObjectCallable(),
                       start,
                       Hasher.noop(),
+                      server.getGrpcStorageOptions(),
+                      retryOnly(DataLossException.class),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -258,12 +257,11 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               (start, resultFuture) ->
                   new GapicUnbufferedReadableByteChannel(
                       resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
+                      storageClient.readObjectCallable(),
                       start,
                       Hasher.enabled(),
+                      server.getGrpcStorageOptions(),
+                      retryOnly(DataLossException.class),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -298,12 +296,11 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               (start, resultFuture) ->
                   new GapicUnbufferedReadableByteChannel(
                       resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
+                      storageClient.readObjectCallable(),
                       start,
                       Hasher.enabled(),
+                      server.getGrpcStorageOptions(),
+                      retryOnly(DataLossException.class),
                       ResponseContentLifecycleManager.noop()));
       byte[] actualBytes = new byte[41];
       //noinspection resource
@@ -315,5 +312,15 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
       assertThat(read2).isEqualTo(-1);
       assertThrows(ClosedChannelException.class, () -> c.read(buf));
     }
+  }
+
+  private static <E extends ApiException> ResultRetryAlgorithm<?> retryOnly(Class<E> c) {
+    return new BasicResultRetryAlgorithm<java.lang.Object>() {
+      @Override
+      public boolean shouldRetry(Throwable previousThrowable, java.lang.Object previousResponse) {
+        return previousThrowable instanceof StorageException
+            && c.isAssignableFrom(previousThrowable.getCause().getClass());
+      }
+    };
   }
 }

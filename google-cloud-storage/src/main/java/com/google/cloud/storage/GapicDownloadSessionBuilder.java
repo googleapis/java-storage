@@ -20,8 +20,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.Object;
@@ -43,27 +45,32 @@ final class GapicDownloadSessionBuilder {
     return INSTANCE;
   }
 
-  /**
-   * Any retry capability must be defined within the provided ServerStreamingCallable. The
-   * ultimately produced channel will not do any retries of its own.
-   */
   public ReadableByteChannelSessionBuilder byteChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      RetryingDependencies retryingDependencies,
+      ResultRetryAlgorithm<?> resultRetryAlgorithm,
       ResponseContentLifecycleManager responseContentLifecycleManager) {
-    return new ReadableByteChannelSessionBuilder(read, responseContentLifecycleManager);
+    return new ReadableByteChannelSessionBuilder(
+        read, retryingDependencies, resultRetryAlgorithm, responseContentLifecycleManager);
   }
 
   public static final class ReadableByteChannelSessionBuilder {
 
     private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+    private final RetryingDependencies retryingDependencies;
+    private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
     private final ResponseContentLifecycleManager responseContentLifecycleManager;
     private boolean autoGzipDecompression;
     private Hasher hasher;
 
     private ReadableByteChannelSessionBuilder(
         ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+        RetryingDependencies retryingDependencies,
+        ResultRetryAlgorithm<?> resultRetryAlgorithm,
         ResponseContentLifecycleManager responseContentLifecycleManager) {
       this.read = read;
+      this.retryingDependencies = retryingDependencies;
+      this.resultRetryAlgorithm = resultRetryAlgorithm;
       this.responseContentLifecycleManager = responseContentLifecycleManager;
       this.hasher = Hasher.noop();
       this.autoGzipDecompression = false;
@@ -105,12 +112,24 @@ final class GapicDownloadSessionBuilder {
         if (autoGzipDecompression) {
           return new GzipReadableByteChannel(
               new GapicUnbufferedReadableByteChannel(
-                  resultFuture, read, object, hasher, responseContentLifecycleManager),
+                  resultFuture,
+                  read,
+                  object,
+                  hasher,
+                  retryingDependencies,
+                  resultRetryAlgorithm,
+                  responseContentLifecycleManager),
               ApiFutures.transform(
                   resultFuture, Object::getContentEncoding, MoreExecutors.directExecutor()));
         } else {
           return new GapicUnbufferedReadableByteChannel(
-              resultFuture, read, object, hasher, responseContentLifecycleManager);
+              resultFuture,
+              read,
+              object,
+              hasher,
+              retryingDependencies,
+              resultRetryAlgorithm,
+              responseContentLifecycleManager);
         }
       };
     }

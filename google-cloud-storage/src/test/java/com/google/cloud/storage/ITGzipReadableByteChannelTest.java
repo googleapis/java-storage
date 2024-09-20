@@ -126,6 +126,8 @@ public class ITGzipReadableByteChannelTest {
               .read()
               .byteChannel(
                   storageClient.getInstance().readObjectCallable(),
+                  fakeServer.getInstance().getGrpcStorageOptions(),
+                  StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                   ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(true)
@@ -147,6 +149,8 @@ public class ITGzipReadableByteChannelTest {
               .read()
               .byteChannel(
                   storageClient.getInstance().readObjectCallable(),
+                  fakeServer.getInstance().getGrpcStorageOptions(),
+                  StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                   ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(false)
@@ -199,6 +203,8 @@ public class ITGzipReadableByteChannelTest {
               .read()
               .byteChannel(
                   storageClient.getInstance().readObjectCallable(),
+                  fakeServer.getInstance().getGrpcStorageOptions(),
+                  StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                   ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(true)
@@ -220,6 +226,8 @@ public class ITGzipReadableByteChannelTest {
               .read()
               .byteChannel(
                   storageClient.getInstance().readObjectCallable(),
+                  fakeServer.getInstance().getGrpcStorageOptions(),
+                  StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                   ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .setAutoGzipDecompression(false)
@@ -241,6 +249,8 @@ public class ITGzipReadableByteChannelTest {
               .read()
               .byteChannel(
                   storageClient.getInstance().readObjectCallable(),
+                  fakeServer.getInstance().getGrpcStorageOptions(),
+                  StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
                   ResponseContentLifecycleManager.noop())
               .setHasher(Hasher.noop())
               .unbuffered()
@@ -324,7 +334,11 @@ public class ITGzipReadableByteChannelTest {
         ReadableByteChannelSession<?, Object> session =
             ResumableMedia.gapic()
                 .read()
-                .byteChannel(sc.readObjectCallable(), ResponseContentLifecycleManager.noop())
+                .byteChannel(
+                    sc.readObjectCallable(),
+                    fakeServer.getGrpcStorageOptions(),
+                    StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
+                    ResponseContentLifecycleManager.noop())
                 .setHasher(Hasher.noop())
                 .setAutoGzipDecompression(true)
                 .unbuffered()
