@@ -90,7 +90,6 @@ import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
-import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListNotificationConfigsRequest;
 import com.google.storage.v2.ListNotificationConfigsResponse;
@@ -1390,16 +1389,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public ServiceAccount getServiceAccount(String projectId) {
-    GetServiceAccountRequest req =
-        GetServiceAccountRequest.newBuilder()
-            .setProject(projectNameCodec.encode(projectId))
-            .build();
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> storageClient.getServiceAccountCallable().call(req, retryContext),
-        codecs.serviceAccount());
+    return CrossTransportUtils.throwHttpJsonOnly(Storage.class, "getServiceAccount");
   }
 
   @Override
