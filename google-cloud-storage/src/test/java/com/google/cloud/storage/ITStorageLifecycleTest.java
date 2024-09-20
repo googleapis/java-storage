@@ -51,6 +51,7 @@ public final class ITStorageLifecycleTest {
             .setCredentials(NoCredentials.getInstance())
             .setProjectId("test-project-id")
             .setEnableGrpcClientMetrics(false)
+            .setAttemptDirectPath(false)
             .build();
 
     Storage service1 = options.getService();
