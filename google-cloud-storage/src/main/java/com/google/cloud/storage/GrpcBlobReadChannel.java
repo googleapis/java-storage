@@ -16,10 +16,12 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -28,17 +30,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final RetryingDependencies retryingDependencies;
+  private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
   private final ResponseContentLifecycleManager responseContentLifecycleManager;
   private final ReadObjectRequest request;
   private final boolean autoGzipDecompression;
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      RetryingDependencies retryingDependencies,
+      ResultRetryAlgorithm<?> resultRetryAlgorithm,
       ResponseContentLifecycleManager responseContentLifecycleManager,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
     super(Conversions.grpc().blobInfo());
     this.read = read;
+    this.retryingDependencies = retryingDependencies;
+    this.resultRetryAlgorithm = resultRetryAlgorithm;
     this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.request = request;
     this.autoGzipDecompression = autoGzipDecompression;
@@ -56,7 +64,11 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
           ReadableByteChannelSessionBuilder b =
               ResumableMedia.gapic()
                   .read()
-                  .byteChannel(read, responseContentLifecycleManager)
+                  .byteChannel(
+                      read,
+                      retryingDependencies,
+                      resultRetryAlgorithm,
+                      responseContentLifecycleManager)
                   .setHasher(Hasher.noop())
                   .setAutoGzipDecompression(autoGzipDecompression);
           BufferHandle bufferHandle = getBufferHandle();

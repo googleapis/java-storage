@@ -749,6 +749,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        getOptions(),
+        retryAlgorithmManager.getFor(request),
         responseContentLifecycleManager,
         request,
         !opts.autoGzipDecompression());
@@ -1910,6 +1912,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         .read()
         .byteChannel(
             storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+            getOptions(),
+            retryAlgorithmManager.getFor(readObjectRequest),
             responseContentLifecycleManager)
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
