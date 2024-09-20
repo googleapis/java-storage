@@ -689,7 +689,7 @@ public final class GrpcStorageOptions extends StorageOptions
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     public boolean isAttemptDirectPath() {
-      return false;
+      return true;
     }
 
     /** @since 2.41.0 This new api is in preview and is subject to breaking changes. */

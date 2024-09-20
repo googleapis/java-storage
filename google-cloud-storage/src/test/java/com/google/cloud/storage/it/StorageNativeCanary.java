@@ -57,7 +57,12 @@ public final class StorageNativeCanary {
 
   @Test
   public void canary_happyPath_grpc() throws Exception {
-    assertBehaviorOfPrimaryStorageActions(StorageOptions.grpc().build().getService());
+    assertBehaviorOfPrimaryStorageActions(
+        StorageOptions.grpc()
+            // TODO https://github.com/googleapis/java-storage/issues/2716
+            .setAttemptDirectPath(false)
+            .build()
+            .getService());
   }
 
   /**
