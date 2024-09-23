@@ -61,9 +61,6 @@ import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Fields;
-import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
-import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
-import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
@@ -76,32 +73,25 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.FieldMask;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
 import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListNotificationConfigsRequest;
 import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
@@ -118,7 +108,6 @@ import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
 import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -1317,119 +1306,28 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public HmacKey createHmacKey(ServiceAccount serviceAccount, CreateHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    CreateHmacKeyRequest request =
-        defaultProjectId
-            .createHmacKey()
-            .andThen(opts.createHmacKeysRequest())
-            .apply(CreateHmacKeyRequest.newBuilder())
-            .setServiceAccountEmail(serviceAccount.getEmail())
-            .build();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(request),
-        () -> storageClient.createHmacKeyCallable().call(request, merge),
-        resp -> {
-          ByteString secretKeyBytes = resp.getSecretKeyBytes();
-          String b64SecretKey = BaseEncoding.base64().encode(secretKeyBytes.toByteArray());
-          return HmacKey.newBuilder(b64SecretKey)
-              .setMetadata(codecs.hmacKeyMetadata().decode(resp.getMetadata()))
-              .build();
-        });
+    return CrossTransportUtils.throwHttpJsonOnly(Storage.class, "createHmacKey");
   }
 
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
-    Opts<HmacKeyListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-
-    ListHmacKeysRequest request =
-        defaultProjectId
-            .listHmacKeys()
-            .andThen(opts.listHmacKeysRequest())
-            .apply(ListHmacKeysRequest.newBuilder())
-            .build();
-    try {
-      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-      return Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(request),
-          () -> storageClient.listHmacKeysPagedCallable().call(request, merge),
-          resp ->
-              new TransformingPageDecorator<>(
-                  resp.getPage(),
-                  codecs.hmacKeyMetadata(),
-                  getOptions(),
-                  retryAlgorithmManager.getFor(request)));
-    } catch (Exception e) {
-      throw StorageException.coalesce(e);
-    }
+    return CrossTransportUtils.throwHttpJsonOnly(Storage.class, "listHmacKey");
   }
 
   @Override
   public HmacKeyMetadata getHmacKey(String accessId, GetHmacKeyOption... options) {
-    Opts<HmacKeySourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    GetHmacKeyRequest request =
-        defaultProjectId
-            .getHmacKey()
-            .andThen(opts.getHmacKeysRequest())
-            .apply(GetHmacKeyRequest.newBuilder())
-            .setAccessId(accessId)
-            .build();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(request),
-        () -> storageClient.getHmacKeyCallable().call(request, merge),
-        codecs.hmacKeyMetadata());
+    return CrossTransportUtils.throwHttpJsonOnly(Storage.class, "getHmacKey");
   }
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    DeleteHmacKeyRequest req =
-        DeleteHmacKeyRequest.newBuilder()
-            .setAccessId(hmacKeyMetadata.getAccessId())
-            .setProject(projectNameCodec.encode(hmacKeyMetadata.getProjectId()))
-            .build();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          storageClient.deleteHmacKeyCallable().call(req, merge);
-          return null;
-        },
-        Decoder.identity());
+    CrossTransportUtils.throwHttpJsonOnly(Storage.class, "deleteHmacKey");
   }
 
   @Override
   public HmacKeyMetadata updateHmacKeyState(
       HmacKeyMetadata hmacKeyMetadata, HmacKeyState state, UpdateHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    com.google.storage.v2.HmacKeyMetadata encode =
-        codecs.hmacKeyMetadata().encode(hmacKeyMetadata).toBuilder().setState(state.name()).build();
-
-    UpdateHmacKeyRequest.Builder builder =
-        opts.updateHmacKeysRequest().apply(UpdateHmacKeyRequest.newBuilder()).setHmacKey(encode);
-    UpdateHmacKeyRequest request =
-        builder.setUpdateMask(FieldMask.newBuilder().addPaths("state").build()).build();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(request),
-        () -> storageClient.updateHmacKeyCallable().call(request, merge),
-        codecs.hmacKeyMetadata());
+    return CrossTransportUtils.throwHttpJsonOnly(Storage.class, "updateHmacKeyState");
   }
 
   @Override

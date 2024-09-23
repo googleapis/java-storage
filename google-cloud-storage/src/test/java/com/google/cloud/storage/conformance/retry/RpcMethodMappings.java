@@ -852,6 +852,7 @@ final class RpcMethodMappings {
       private static void delete(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(26, hmacKey.delete)
+                .withApplicable(TestRetryConformance.transportIs(Transport.HTTP))
                 .withSetup(
                     defaultSetup.andThen(
                         (ctx, c) ->
@@ -881,6 +882,7 @@ final class RpcMethodMappings {
       private static void get(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(27, hmacKey.get)
+                .withApplicable(TestRetryConformance.transportIs(Transport.HTTP))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -895,6 +897,7 @@ final class RpcMethodMappings {
       private static void list(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(28, hmacKey.list)
+                .withApplicable(TestRetryConformance.transportIs(Transport.HTTP))
                 .withTest(
                     (ctx, c) -> ctx.map(state -> state.consume(ctx.getStorage().listHmacKeys())))
                 .build());
@@ -903,7 +906,9 @@ final class RpcMethodMappings {
       private static void update(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(29, hmacKey.update)
-                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withApplicable(
+                    not(TestRetryConformance::isPreconditionsProvided)
+                        .and(TestRetryConformance.transportIs(Transport.HTTP)))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -919,6 +924,7 @@ final class RpcMethodMappings {
       private static void create(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(25, hmacKey.create)
+                .withApplicable(TestRetryConformance.transportIs(Transport.HTTP))
                 .withSetup(defaultSetup.andThen(serviceAccount))
                 .withTest(
                     (ctx, c) ->

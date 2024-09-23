@@ -26,10 +26,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
-import com.google.cloud.storage.HmacKey;
-import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
-import com.google.cloud.storage.HmacKey.HmacKeyState;
-import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -37,8 +33,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
-import com.google.cloud.storage.Storage.CreateHmacKeyOption;
-import com.google.cloud.storage.Storage.ListHmacKeysOption;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -108,61 +102,6 @@ public final class ITGrpcTest {
             .collect(ImmutableList.toImmutableList());
 
     assertThat(bucketNames).contains(bucketInfo.getName());
-  }
-
-  @Test
-  public void createHmacKey() {
-    ServiceAccount serviceAccount = ServiceAccount.of("x@y.z");
-    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-    assertThat(hmacKey).isNotNull();
-    assertThat(hmacKey.getSecretKey()).isNotNull();
-    assertThat(hmacKey.getMetadata().getServiceAccount()).isEqualTo(serviceAccount);
-  }
-
-  @Test
-  public void getHmacKey() {
-    ServiceAccount serviceAccount = ServiceAccount.of("x@y.z");
-    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-    HmacKeyMetadata actual = storage.getHmacKey(hmacKey.getMetadata().getAccessId());
-    assertThat(actual).isEqualTo(hmacKey.getMetadata());
-  }
-
-  @Test
-  public void listHmacKeys() {
-    ImmutableList<HmacKey> keys =
-        IntStream.rangeClosed(1, 4)
-            .mapToObj(i -> ServiceAccount.of(String.format("x-%d@y.z", i)))
-            .map(sa -> storage.createHmacKey(sa, CreateHmacKeyOption.projectId("proj")))
-            .collect(ImmutableList.toImmutableList());
-
-    ImmutableList<HmacKeyMetadata> expected =
-        keys.stream().map(HmacKey::getMetadata).collect(ImmutableList.toImmutableList());
-
-    Page<HmacKeyMetadata> page = storage.listHmacKeys(ListHmacKeysOption.projectId("proj"));
-
-    ImmutableList<HmacKeyMetadata> actual =
-        StreamSupport.stream(page.iterateAll().spliterator(), false)
-            .collect(ImmutableList.toImmutableList());
-
-    assertThat(actual).containsAtLeastElementsIn(expected);
-  }
-
-  @Test
-  public void updateHmacKey() {
-    ServiceAccount serviceAccount = ServiceAccount.of("x@y.z");
-    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-    HmacKeyMetadata updated =
-        storage.updateHmacKeyState(hmacKey.getMetadata(), HmacKeyState.INACTIVE);
-    assertThat(updated.getServiceAccount()).isEqualTo(serviceAccount);
-    assertThat(updated.getState()).isEqualTo(HmacKeyState.INACTIVE);
-  }
-
-  @Test
-  public void deleteHmacKey() {
-    ServiceAccount serviceAccount = ServiceAccount.of("x@y.z");
-    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-    storage.updateHmacKeyState(hmacKey.getMetadata(), HmacKeyState.INACTIVE);
-    storage.deleteHmacKey(hmacKey.getMetadata());
   }
 
   @Test
