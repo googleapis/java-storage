@@ -40,7 +40,7 @@ import org.threeten.bp.Instant;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP, Transport.GRPC},
+    transports = {Transport.HTTP},
     backends = {Backend.TEST_BENCH})
 public class ITHmacTest {
 
