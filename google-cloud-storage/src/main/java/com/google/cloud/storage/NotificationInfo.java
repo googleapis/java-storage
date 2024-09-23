@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.core.InternalApi;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
@@ -35,13 +34,11 @@ public class NotificationInfo implements Serializable {
   private static final PathTemplate PATH_TEMPLATE =
       PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
 
-  // TODO: Change to StringEnum in next major version
   public enum PayloadFormat {
     JSON_API_V1,
     NONE
   }
 
-  // TODO: Change to StringEnum in next major version
   public enum EventType {
     OBJECT_FINALIZE,
     OBJECT_METADATA_UPDATE,
@@ -57,7 +54,6 @@ public class NotificationInfo implements Serializable {
   private final String objectNamePrefix;
   private final String etag;
   private final String selfLink;
-  private final String bucket;
 
   /** Builder for {@code NotificationInfo}. */
   public abstract static class Builder {
@@ -79,8 +75,6 @@ public class NotificationInfo implements Serializable {
 
     public abstract Builder setCustomAttributes(Map<String, String> customAttributes);
 
-    abstract Builder setBucket(String bucket);
-
     /** Creates a {@code NotificationInfo} object. */
     public abstract NotificationInfo build();
   }
@@ -96,7 +90,6 @@ public class NotificationInfo implements Serializable {
     private String objectNamePrefix;
     private String etag;
     private String selfLink;
-    private String bucket;
 
     BuilderImpl(String topic) {
       this.topic = topic;
@@ -111,7 +104,6 @@ public class NotificationInfo implements Serializable {
       customAttributes = notificationInfo.customAttributes;
       payloadFormat = notificationInfo.payloadFormat;
       objectNamePrefix = notificationInfo.objectNamePrefix;
-      bucket = notificationInfo.bucket;
     }
 
     @Override
@@ -164,12 +156,6 @@ public class NotificationInfo implements Serializable {
       return this;
     }
 
-    @Override
-    Builder setBucket(String bucket) {
-      this.bucket = bucket;
-      return this;
-    }
-
     public NotificationInfo build() {
       checkNotNull(topic);
       checkTopicFormat(topic);
@@ -186,7 +172,6 @@ public class NotificationInfo implements Serializable {
     customAttributes = builder.customAttributes;
     payloadFormat = builder.payloadFormat;
     objectNamePrefix = builder.objectNamePrefix;
-    bucket = builder.bucket;
   }
 
   /** Returns the service-generated id for the notification. */
@@ -238,15 +223,6 @@ public class NotificationInfo implements Serializable {
    */
   public Map<String, String> getCustomAttributes() {
     return customAttributes;
-  }
-
-  /**
-   * gRPC has the bucket name encoded in the notification name, use this internal property to track
-   * it.
-   */
-  @InternalApi
-  String getBucket() {
-    return bucket;
   }
 
   @Override

@@ -90,12 +90,6 @@ public class Notification extends NotificationInfo {
     }
 
     @Override
-    Builder setBucket(String bucket) {
-      infoBuilder.setBucket(bucket);
-      return this;
-    }
-
-    @Override
     public Notification build() {
       return new Notification(storage, infoBuilder);
     }

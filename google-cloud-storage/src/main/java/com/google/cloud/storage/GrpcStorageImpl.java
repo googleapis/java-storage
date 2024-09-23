@@ -82,21 +82,14 @@ import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListNotificationConfigsRequest;
-import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.NotificationConfig;
-import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
@@ -104,7 +97,6 @@ import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
-import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
@@ -1393,96 +1385,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Notification createNotification(String bucket, NotificationInfo notificationInfo) {
-    NotificationConfig encode = codecs.notificationInfo().encode(notificationInfo);
-    CreateNotificationConfigRequest req =
-        CreateNotificationConfigRequest.newBuilder()
-            .setParent(bucketNameCodec.encode(bucket))
-            .setNotificationConfig(encode)
-            .build();
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> storageClient.createNotificationConfigCallable().call(req, retryContext),
-        syntaxDecoders.notificationConfig);
+    return throwHttpJsonOnly(
+        fmtMethodName("createNotification", String.class, NotificationInfo.class));
   }
 
   @Override
   public Notification getNotification(String bucket, String notificationId) {
-    String name;
-    if (NotificationConfigName.isParsableFrom(notificationId)) {
-      name = notificationId;
-    } else {
-      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
-      name = configName.toString();
-    }
-    GetNotificationConfigRequest req =
-        GetNotificationConfigRequest.newBuilder().setName(name).build();
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          try {
-            return storageClient.getNotificationConfigCallable().call(req, retryContext);
-          } catch (NotFoundException e) {
-            return null;
-          }
-        },
-        syntaxDecoders.notificationConfig);
+    return throwHttpJsonOnly(fmtMethodName("getNotification", String.class, String.class));
   }
 
   @Override
   public List<Notification> listNotifications(String bucket) {
-    ListNotificationConfigsRequest req =
-        ListNotificationConfigsRequest.newBuilder()
-            .setParent(bucketNameCodec.encode(bucket))
-            .build();
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getFor(req);
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
-        algorithm,
-        () -> storageClient.listNotificationConfigsPagedCallable().call(req, retryContext),
-        resp -> {
-          TransformingPageDecorator<
-                  ListNotificationConfigsRequest,
-                  ListNotificationConfigsResponse,
-                  NotificationConfig,
-                  ListNotificationConfigsPage,
-                  Notification>
-              page =
-                  new TransformingPageDecorator<>(
-                      resp.getPage(), syntaxDecoders.notificationConfig, getOptions(), algorithm);
-          return ImmutableList.copyOf(page.iterateAll());
-        });
+    return throwHttpJsonOnly(fmtMethodName("listNotifications", String.class));
   }
 
   @Override
   public boolean deleteNotification(String bucket, String notificationId) {
-    String name;
-    if (NotificationConfigName.isParsableFrom(notificationId)) {
-      name = notificationId;
-    } else {
-      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
-      name = configName.toString();
-    }
-    DeleteNotificationConfigRequest req =
-        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Boolean.TRUE.equals(
-        Retrying.run(
-            getOptions(),
-            retryAlgorithmManager.getFor(req),
-            () -> {
-              try {
-                storageClient.deleteNotificationConfigCallable().call(req, retryContext);
-                return true;
-              } catch (NotFoundException e) {
-                return false;
-              }
-            },
-            Decoder.identity()));
+    return throwHttpJsonOnly(fmtMethodName("deleteNotification", String.class, String.class));
   }
 
   @BetaApi
@@ -1519,8 +1438,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         o -> codecs.blobInfo().decode(o).asBlob(GrpcStorageImpl.this);
     final Decoder<com.google.storage.v2.Bucket, Bucket> bucket =
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
-    final Decoder<NotificationConfig, Notification> notificationConfig =
-        n -> codecs.notificationInfo().decode(n).asNotification(GrpcStorageImpl.this);
   }
 
   /**

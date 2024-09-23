@@ -21,7 +21,6 @@ import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
-import static com.google.cloud.storage.Utils.topicNameCodec;
 
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
@@ -37,8 +36,6 @@ import com.google.cloud.storage.BucketInfo.Logging;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
-import com.google.cloud.storage.NotificationInfo.EventType;
-import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -52,8 +49,6 @@ import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.CryptoKeyName;
 import com.google.storage.v2.HmacKeyMetadata;
-import com.google.storage.v2.NotificationConfig;
-import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
@@ -107,8 +102,6 @@ final class GrpcConversions {
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, Object> blobInfoCodec =
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
-  private final Codec<NotificationInfo, com.google.storage.v2.NotificationConfig>
-      notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
   private final Codec<Policy, com.google.iam.v1.Policy> policyCodec =
       Codec.of(this::policyEncode, this::policyDecode);
   private final Codec<Binding, com.google.iam.v1.Binding> bindingCodec =
@@ -217,10 +210,6 @@ final class GrpcConversions {
 
   Codec<BlobInfo, Object> blobInfo() {
     return blobInfoCodec;
-  }
-
-  Codec<NotificationInfo, com.google.storage.v2.NotificationConfig> notificationInfo() {
-    return notificationInfoCodec;
   }
 
   Codec<Policy, com.google.iam.v1.Policy> policyCodec() {
@@ -1001,56 +990,6 @@ final class GrpcConversions {
     }
     ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
     return toBuilder.build();
-  }
-
-  private NotificationConfig notificationEncode(NotificationInfo from) {
-    NotificationConfig.Builder to = NotificationConfig.newBuilder();
-    String id = from.getNotificationId();
-    if (id != null) {
-      if (NotificationConfigName.isParsableFrom(id)) {
-        ifNonNull(id, to::setName);
-      } else {
-        NotificationConfigName name = NotificationConfigName.of("_", from.getBucket(), id);
-        to.setName(name.toString());
-      }
-    }
-    ifNonNull(from.getTopic(), topicNameCodec::encode, to::setTopic);
-    ifNonNull(from.getEtag(), to::setEtag);
-    ifNonNull(from.getEventTypes(), toImmutableListOf(EventType::name), to::addAllEventTypes);
-    ifNonNull(from.getCustomAttributes(), to::putAllCustomAttributes);
-    ifNonNull(from.getObjectNamePrefix(), to::setObjectNamePrefix);
-    ifNonNull(from.getPayloadFormat(), PayloadFormat::name, to::setPayloadFormat);
-    return to.build();
-  }
-
-  private NotificationInfo notificationDecode(NotificationConfig from) {
-    NotificationInfo.Builder to =
-        NotificationInfo.newBuilder(topicNameCodec.decode(from.getTopic()));
-    if (!from.getName().isEmpty()) {
-      NotificationConfigName parse = NotificationConfigName.parse(from.getName());
-      // the case where parse could return null is already guarded by the preceding isEmpty check
-      //noinspection DataFlowIssue
-      to.setNotificationId(parse.getNotificationConfig());
-      to.setBucket(parse.getBucket());
-    }
-    if (!from.getEtag().isEmpty()) {
-      to.setEtag(from.getEtag());
-    }
-    if (!from.getEventTypesList().isEmpty()) {
-      EventType[] eventTypes =
-          from.getEventTypesList().stream().map(EventType::valueOf).toArray(EventType[]::new);
-      to.setEventTypes(eventTypes);
-    }
-    if (!from.getCustomAttributesMap().isEmpty()) {
-      to.setCustomAttributes(from.getCustomAttributesMap());
-    }
-    if (!from.getObjectNamePrefix().isEmpty()) {
-      to.setObjectNamePrefix(from.getObjectNamePrefix());
-    }
-    if (!from.getPayloadFormat().isEmpty()) {
-      to.setPayloadFormat(PayloadFormat.valueOf(from.getPayloadFormat()));
-    }
-    return to.build();
   }
 
   private com.google.iam.v1.Policy policyEncode(Policy from) {
