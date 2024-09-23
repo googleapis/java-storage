@@ -26,7 +26,6 @@ import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltE
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
-import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
