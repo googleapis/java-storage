@@ -45,3 +45,10 @@ branches:
     extraFiles:
       - README.md
     branch: 2.30.x
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-backport
+    extraFiles:
+      - README.md
+      - .readme-partials.yaml
+    branch: 2.38.x
