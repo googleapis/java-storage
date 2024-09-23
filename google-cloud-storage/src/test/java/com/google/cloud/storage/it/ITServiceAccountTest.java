@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 @RunWith(StorageITRunner.class)
 @CrossRun(
     backends = {Backend.PROD},
-    transports = {Transport.HTTP, Transport.GRPC})
+    transports = {Transport.HTTP})
 public class ITServiceAccountTest {
 
   private static final String SERVICE_ACCOUNT_EMAIL_SUFFIX =

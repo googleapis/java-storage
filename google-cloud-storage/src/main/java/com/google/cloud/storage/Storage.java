@@ -4781,7 +4781,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the service account associated with this project
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   ServiceAccount getServiceAccount(String projectId);
 
   /**
