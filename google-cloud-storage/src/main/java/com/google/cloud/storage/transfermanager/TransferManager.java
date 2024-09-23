@@ -18,8 +18,11 @@ package com.google.cloud.storage.transfermanager;
 
 import com.google.cloud.storage.BlobInfo;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -88,4 +91,35 @@ public interface TransferManager extends AutoCloseable {
    */
   @NonNull
   DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config);
+
+  /**
+   * Uploads a list of input streams in parallel. This operation will not block the invoking thread,
+   * awaiting results should be done on the returned UploadJob.
+   *
+   * <p>Accepts a {@link ParallelUploadConfig} which defines the constraints of parallel uploads or
+   * predefined defaults.
+   *
+   * <p>Example of creating a parallel upload with Transfer Manager.
+   *
+   * <pre>{@code
+   * Storage storage = StorageOptions.getDefaultInstance().getService();
+   * String bucketName = "my-unique-bucket";
+   * String sourceFileName = "file.txt";
+   * Blob blob = storage.get(bucketName, sourceFileName)
+   * InputStream inputStream = Channels.newInputStream(blob.reader());
+   * List<Path> streams = Map.of(sourceFileName, inputStream);
+   *
+   * ParallelUploadConfig parallelUploadConfig =
+   *           ParallelUploadConfig.newBuilder()
+   *               .setBucketName(bucketName)
+   *               .build();
+   *
+   * UploadJob uploadedFiles = transferManager.uploadFiles(streams, config);
+   *
+   * }</pre>
+   *
+   * @return an {@link UploadJob}
+   */
+  @NonNull
+  UploadJob uploadFiles(Map<String, InputStream> streams, ParallelUploadConfig config) throws IOException;
 }

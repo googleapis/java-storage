@@ -22,6 +22,9 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
+
+import java.io.InputStream;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
@@ -31,12 +34,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
+final class ParallelCompositeUploadCallable<T> implements Callable<UploadResult> {
   private final Storage storage;
 
   private final BlobInfo originalBlob;
 
-  private final Path sourceFile;
+  private final T source;
 
   private final ParallelUploadConfig parallelUploadConfig;
 
@@ -45,12 +48,12 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
   public ParallelCompositeUploadCallable(
       Storage storage,
       BlobInfo originalBlob,
-      Path sourceFile,
+      T source,
       ParallelUploadConfig parallelUploadConfig,
       BlobWriteOption[] opts) {
     this.storage = storage;
     this.originalBlob = originalBlob;
-    this.sourceFile = sourceFile;
+    this.source = source;
     this.parallelUploadConfig = parallelUploadConfig;
     this.opts = opts;
   }
@@ -61,9 +64,17 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
 
   private UploadResult uploadPCU() {
     BlobWriteSession session = storage.blobWriteSession(originalBlob, opts);
-    try (WritableByteChannel writableByteChannel = session.open();
-        FileChannel fc = FileChannel.open(sourceFile, StandardOpenOption.READ)) {
-      ByteStreams.copy(fc, writableByteChannel);
+    try (WritableByteChannel writableByteChannel = session.open()) {
+      if (source instanceof Path) {
+        try (FileChannel fc = FileChannel.open((Path) source, StandardOpenOption.READ)) {
+          ByteStreams.copy(fc, writableByteChannel);
+        }
+      } else if (source instanceof InputStream) {
+        InputStream inputStream = (InputStream) source;
+        ByteStreams.copy(inputStream, Channels.newOutputStream(writableByteChannel));
+      } else {
+        throw new IllegalArgumentException(String.format("Unsupported source type %s", source.getClass().getName()));
+      }
     } catch (StorageException e) {
       if (parallelUploadConfig.isSkipIfExists() && e.getCode() == 412) {
         return UploadResult.newBuilder(originalBlob, TransferStatus.SKIPPED)
@@ -85,7 +96,7 @@ final class ParallelCompositeUploadCallable implements Callable<UploadResult> {
       return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
           .setUploadedBlob(newBlob)
           .build();
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+    } catch (InterruptedException | ExecutionException | TimeoutException | IllegalArgumentException e) {
       return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
           .setException(e)
           .build();

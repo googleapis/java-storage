@@ -21,6 +21,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.FixedHeaderProvider;
+import com.google.cloud.Tuple;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
@@ -36,15 +37,19 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class TransferManagerImpl implements TransferManager {
@@ -105,31 +110,18 @@ final class TransferManagerImpl implements TransferManager {
   @Override
   public @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config)
       throws IOException {
-    Storage.BlobWriteOption[] opts =
-        config.getWriteOptsPerRequest().toArray(new BlobWriteOption[0]);
-    List<ApiFuture<UploadResult>> uploadTasks = new ArrayList<>();
-    for (Path file : files) {
+    return uploadBySource(files, config, file -> {
       if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
-      String blobName = TransferManagerUtils.createBlobName(config, file);
-      BlobInfo blobInfo = BlobInfo.newBuilder(config.getBucketName(), blobName).build();
-      if (transferManagerConfig.isAllowParallelCompositeUpload()
-          && qos.parallelCompositeUpload(Files.size(file))) {
-        ParallelCompositeUploadCallable callable =
-            new ParallelCompositeUploadCallable(storage, blobInfo, file, config, opts);
-        SettableApiFuture<UploadResult> resultFuture = SettableApiFuture.create();
-        pcuQueue.add(new PendingPcuTask(callable, resultFuture));
-        uploadTasks.add(resultFuture);
-        schedulePcuPoller();
-      } else {
-        UploadCallable callable =
-            new UploadCallable(transferManagerConfig, storage, blobInfo, file, config, opts);
-        uploadTasks.add(convert(executor.submit(callable)));
+      try {
+        return new UploadSource<>(
+                TransferManagerUtils.createBlobName(config, file),
+                file,
+                qos.parallelCompositeUpload(Files.size(file))
+        );
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-    }
-    return UploadJob.newBuilder()
-        .setParallelUploadConfig(config)
-        .setUploadResults(ImmutableList.copyOf(uploadTasks))
-        .build();
+    });
   }
 
   @Override
@@ -183,6 +175,50 @@ final class TransferManagerImpl implements TransferManager {
         .setDownloadResults(downloadTasks)
         .setParallelDownloadConfig(config)
         .build();
+  }
+
+  @Override
+  public @NonNull UploadJob uploadFiles(Map<String, InputStream> streams, ParallelUploadConfig config) throws IOException {
+    return uploadBySource(streams.entrySet(), config, entry -> new UploadSource<>(
+            entry.getKey(), entry.getValue(), true
+    ));
+  }
+
+  private <K, V> @NonNull UploadJob uploadBySource(Iterable<K> source, ParallelUploadConfig config, Function<K, UploadSource<V>> sourceExtractor) throws IOException {
+    Storage.BlobWriteOption[] opts = config.getWriteOptsPerRequest().toArray(new BlobWriteOption[0]);
+    List<ApiFuture<UploadResult>> uploadTasks = new ArrayList<>();
+
+    for (K entry : source) {
+      UploadSource<V> uploadSource = sourceExtractor.apply(entry);
+      Tuple<ApiFuture<UploadResult>, Boolean> uploadResult = upload(uploadSource.getBlobName(), uploadSource.getSource(), uploadSource.isParallelCompositeUpload(), opts, config);
+      uploadTasks.add(uploadResult.x());
+      if (uploadResult.y()) {
+        schedulePcuPoller();
+      }
+    }
+
+    return UploadJob.newBuilder()
+            .setParallelUploadConfig(config)
+            .setUploadResults(ImmutableList.copyOf(uploadTasks))
+            .build();
+  }
+
+  public @NonNull <T> Tuple<ApiFuture<UploadResult>, Boolean> upload(String blobName, T source,
+                                                                     boolean isParallelCompositeUpload,
+                                                                     Storage.BlobWriteOption[] opts,
+                                                                     ParallelUploadConfig config) {
+    BlobInfo blobInfo = BlobInfo.newBuilder(config.getBucketName(), blobName).build();
+    if (transferManagerConfig.isAllowParallelCompositeUpload() && isParallelCompositeUpload) {
+      ParallelCompositeUploadCallable<T> callable =
+              new ParallelCompositeUploadCallable<>(storage, blobInfo, source, config, opts);
+      SettableApiFuture<UploadResult> resultFuture = SettableApiFuture.create();
+      pcuQueue.add(new PendingPcuTask(callable, resultFuture));
+      return Tuple.of(resultFuture, true);
+    } else {
+      UploadCallable<T> callable =
+              new UploadCallable<>(storage, blobInfo, source, config, opts);
+      return Tuple.of(convert(executor.submit(callable)), false);
+    }
   }
 
   private void schedulePcuPoller() {

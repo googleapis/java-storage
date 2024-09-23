@@ -21,44 +21,50 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
+
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
-final class UploadCallable implements Callable<UploadResult> {
-  private final TransferManagerConfig transferManagerConfig;
+final class UploadCallable<T> implements Callable<UploadResult> {
   private final Storage storage;
 
   private final BlobInfo originalBlob;
 
-  private final Path sourceFile;
+  private final T source;
 
   private final ParallelUploadConfig parallelUploadConfig;
 
   private final Storage.BlobWriteOption[] opts;
 
   public UploadCallable(
-      TransferManagerConfig transferManagerConfig,
       Storage storage,
       BlobInfo originalBlob,
-      Path sourceFile,
+      T source,
       ParallelUploadConfig parallelUploadConfig,
       BlobWriteOption[] opts) {
-    this.transferManagerConfig = transferManagerConfig;
     this.storage = storage;
     this.originalBlob = originalBlob;
-    this.sourceFile = sourceFile;
+    this.source = source;
     this.parallelUploadConfig = parallelUploadConfig;
     this.opts = opts;
   }
 
-  public UploadResult call() throws Exception {
+  public UploadResult call() {
     // TODO: Check for chunking
     return uploadWithoutChunking();
   }
 
   private UploadResult uploadWithoutChunking() {
     try {
-      Blob from = storage.createFrom(originalBlob, sourceFile, opts);
+      Blob from;
+      if (source instanceof Path) {
+        from = storage.createFrom(originalBlob, (Path) source, opts);
+      } else if (source instanceof InputStream) {
+        from = storage.createFrom(originalBlob, (InputStream) source, opts);
+      } else {
+        throw new IllegalArgumentException("Unsupported source type: " + source.getClass().getName());
+      }
       return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
           .setUploadedBlob(from.asBlobInfo())
           .build();
