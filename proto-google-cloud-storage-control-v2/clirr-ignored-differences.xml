@@ -39,6 +39,12 @@
   <difference>
     <differenceType>7006</differenceType>
     <className>com/google/storage/control/v2/**</className>
+    <method>* clear()</method>
+    <to>**</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/control/v2/**</className>
     <method>* clearField(*)</method>
     <to>**</to>
   </difference>
