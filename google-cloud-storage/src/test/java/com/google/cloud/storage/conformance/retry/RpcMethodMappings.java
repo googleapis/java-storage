@@ -2114,6 +2114,7 @@ final class RpcMethodMappings {
       private static void get(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(59, serviceaccount.get)
+                .withApplicable(TestRetryConformance.transportIs(Transport.HTTP))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
