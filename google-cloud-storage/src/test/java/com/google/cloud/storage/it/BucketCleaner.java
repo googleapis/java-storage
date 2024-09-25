@@ -29,6 +29,7 @@ import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.storage.control.v2.BucketName;
+import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.Folder;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.ListFoldersRequest;
@@ -141,7 +142,12 @@ public final class BucketCleaner {
                         LOGGER.warning(formatted);
                         boolean success = true;
                         try {
-                          ctrl.deleteFolder(folder.getName());
+                          ctrl.deleteFolderCallable()
+                              .call(
+                                  DeleteFolderRequest.newBuilder()
+                                      .setName(folder.getName())
+                                      .build(),
+                                  grpcCallContext);
                         } catch (ApiException e) {
                           LOGGER1.debug("{}", formatted, e);
                           success = false;
@@ -173,7 +179,12 @@ public final class BucketCleaner {
                         LOGGER.warning(formatted);
                         boolean success = true;
                         try {
-                          ctrl.deleteFolder(managedFolder.getName());
+                          ctrl.deleteFolderCallable()
+                              .call(
+                                  DeleteFolderRequest.newBuilder()
+                                      .setName(managedFolder.getName())
+                                      .build(),
+                                  grpcCallContext);
                         } catch (ApiException e) {
                           LOGGER1.debug("{}", formatted, e);
                           success = false;

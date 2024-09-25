@@ -5,12 +5,15 @@ import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.it.BucketCleaner;
+import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.storage.control.v2.StorageControlClient;
+import com.google.storage.control.v2.StorageControlSettings;
+import com.google.storage.control.v2.stub.StorageControlStubSettings;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -43,11 +46,16 @@ public final class ITVerboseBucketCleanupTest {
     );
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
-    OffsetDateTime _3HoursAgo = now.minusHours(3);
-    LOGGER.info(String.format("_3HoursAgo = %s", _3HoursAgo));
+    OffsetDateTime _1HourAgo = now.minusHours(1);
+    LOGGER.info(String.format("_1HourAgo = %s", _1HourAgo));
 
+    StorageControlSettings ctrlSettings = StorageControlSettings.newBuilder()
+        .setTransportChannelProvider(StorageControlStubSettings.defaultGrpcTransportProviderBuilder()
+            .setInterceptorProvider(GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+            .build())
+        .build();
     try (Storage s = StorageOptions.http().build().getService();
-        StorageControlClient ctrl = StorageControlClient.create()) {
+        StorageControlClient ctrl = StorageControlClient.create(ctrlSettings)) {
       List<ListenableFuture<Void>> deleteFutures = s.list(
               BucketListOption.fields(BucketField.NAME, BucketField.TIME_CREATED))
           .streamAll()
@@ -56,7 +64,7 @@ public final class ITVerboseBucketCleanupTest {
             OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
             String action = null;
             try {
-              if (name.startsWith("gcloud-test") && ctime.isBefore(_3HoursAgo)) {
+              if (name.startsWith("gcloud-test") && ctime.isBefore(_1HourAgo)) {
                 action = "Cleaning up";
                 return exec.<Void>submit(() -> {
                   BucketCleaner.doCleanup(name, s, ctrl);
