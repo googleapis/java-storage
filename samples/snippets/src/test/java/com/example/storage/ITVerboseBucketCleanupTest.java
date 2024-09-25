@@ -24,6 +24,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 
 public final class ITVerboseBucketCleanupTest {
+  static {
+    org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
+    org.slf4j.bridge.SLF4JBridgeHandler.install();
+  }
   private static final Logger LOGGER = Logger.getLogger(ITVerboseBucketCleanupTest.class.getName());
 
   @Test
