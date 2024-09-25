@@ -91,6 +91,7 @@
 
   <logger name="com.example.storage.ITVerboseBucketCleanupTest" level="trace"/>
   <logger name="com.google.cloud.storage.it.BucketCleaner" level="trace"/>
+  <logger name="com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor" level="trace"/>
 
   <root level="info">
     <appender-ref ref="STDOUT"/>
