@@ -81,6 +81,17 @@ config_diff=$(diff "${generation_config}" "${baseline_generation_config}" || tru
 # parse image tag from the generation configuration.
 image_tag=$(grep "gapic_generator_version" "${generation_config}" | cut -d ':' -f 2 | xargs)
 
+repo_root_dir=$(pwd)
+mkdir -path "${repo_root_dir}/output"
+# download api definitions from googleapis repository
+googleapis_commitish=$(grep googleapis_commitish "${generation_config}" | cut -d ":" -f 2 | xargs)
+api_def_dir=$(mktemp -d)
+git clone https://github.com/googleapis/googleapis.git "${api_def_dir}"
+pushd "${api_def_dir}"
+git checkout "${googleapis_commitish}"
+cp -r google/ grafeas/ "${repo_root_dir}/output"
+popd
+
 # run hermetic code generation docker image.
 docker run \
   --rm \
@@ -90,6 +101,8 @@ docker run \
   --baseline-generation-config-path="${workspace_name}/${baseline_generation_config}" \
   --current-generation-config-path="${workspace_name}/${generation_config}"
 
+# remove api definitions after generation
+rm -rf "${api_def_dir}"
 
 # commit the change to the pull request.
 if [[ $(basename $(pwd)) == "google-cloud-java" ]]; then
