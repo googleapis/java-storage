@@ -67,13 +67,7 @@ message="chore: generate libraries at $(date)"
 
 git checkout "${target_branch}"
 git checkout "${current_branch}"
-# if the last commit doesn't contain changes to generation configuration,
-# do not generate again as the result will be the same.
-change_of_last_commit="$(git diff-tree --no-commit-id --name-only HEAD~1..HEAD -r)"
-if [[ ! ("${change_of_last_commit}" == *"${generation_config}"*) ]]; then
-    echo "The last commit doesn't contain any changes to the generation_config.yaml, skipping the whole generation process." || true
-    exit 0
-fi
+
 # copy generation configuration from target branch to current branch.
 git show "${target_branch}":"${generation_config}" > "${baseline_generation_config}"
 config_diff=$(diff "${generation_config}" "${baseline_generation_config}" || true)
@@ -105,24 +99,17 @@ docker run \
 rm -rf "${api_def_dir}"
 
 # commit the change to the pull request.
-if [[ $(basename $(pwd)) == "google-cloud-java" ]]; then
-  git add java-* pom.xml gapic-libraries-bom/pom.xml versions.txt
-else
-  # The image leaves intermediate folders and files it works with. Here we remove them
-  rm -rdf output googleapis "${baseline_generation_config}"
-  git add --all -- ':!pr_description.txt'
-fi
+rm -rdf output googleapis "${baseline_generation_config}"
+git add --all -- ':!pr_description.txt' ':!hermetic_library_generation.sh'
 changed_files=$(git diff --cached --name-only)
-if [[ "${changed_files}" == "" ]]; then
-    echo "There is no generated code change with the generation config change ${config_diff}."
-    echo "Skip committing to the pull request."
-    exit 0
+if [[ "${changed_files}" != "" ]]; then
+    echo "Commit changes..."
+    git commit -m "${message}"
+    git push
+else
+    echo "There is no generated code change, skip commit."
 fi
 
-echo "Configuration diff:"
-echo "${config_diff}"
-git commit -m "${message}"
-git push
 # set pr body if pr_description.txt is generated.
 if [[ -f "pr_description.txt" ]]; then
   pr_num=$(gh pr list -s open -H "${current_branch}" -q . --json number | jq ".[] | .number")
