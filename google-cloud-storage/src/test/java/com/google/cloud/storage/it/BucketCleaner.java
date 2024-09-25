@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.storage.control.v2.BucketName;
 import com.google.storage.control.v2.DeleteFolderRequest;
+import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.Folder;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
 import com.google.storage.control.v2.ListFoldersRequest;
@@ -145,7 +146,7 @@ public final class BucketCleaner {
                           ctrl.deleteFolderCallable()
                               .call(
                                   DeleteFolderRequest.newBuilder()
-                                      .setName(trimManagedFolderName(folder.getName()))
+                                      .setName(folder.getName())
                                       .build(),
                                   grpcCallContext);
                         } catch (ApiException e) {
@@ -179,9 +180,9 @@ public final class BucketCleaner {
                         LOGGER.warning(formatted);
                         boolean success = true;
                         try {
-                          ctrl.deleteFolderCallable()
+                          ctrl.deleteManagedFolderCallable()
                               .call(
-                                  DeleteFolderRequest.newBuilder()
+                                  DeleteManagedFolderRequest.newBuilder()
                                       .setName(managedFolder.getName())
                                       .build(),
                                   grpcCallContext);
@@ -225,13 +226,6 @@ public final class BucketCleaner {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e, () -> "Error during bucket cleanup.");
     }
-  }
-
-  private static String trimManagedFolderName(String name) {
-    if (name.endsWith("/")) {
-      return name.substring(0, name.length() - 2);
-    }
-    return name;
   }
 
   private static boolean getIfAnyFailedAndReport(
