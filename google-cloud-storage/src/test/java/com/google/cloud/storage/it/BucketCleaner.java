@@ -145,7 +145,7 @@ public final class BucketCleaner {
                           ctrl.deleteFolderCallable()
                               .call(
                                   DeleteFolderRequest.newBuilder()
-                                      .setName(folder.getName())
+                                      .setName(trimManagedFolderName(folder.getName()))
                                       .build(),
                                   grpcCallContext);
                         } catch (ApiException e) {
@@ -225,6 +225,13 @@ public final class BucketCleaner {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e, () -> "Error during bucket cleanup.");
     }
+  }
+
+  private static String trimManagedFolderName(String name) {
+    if (name.endsWith("/")) {
+      return name.substring(0, name.length() - 2);
+    }
+    return name;
   }
 
   private static boolean getIfAnyFailedAndReport(
