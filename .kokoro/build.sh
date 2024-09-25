@@ -48,8 +48,8 @@ set +e
 case ${JOB_TYPE} in
 test)
     echo "SUREFIRE_JVM_OPT: ${SUREFIRE_JVM_OPT}"
-    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
-    RETURN_CODE=$?
+#    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
+    RETURN_CODE=1
     ;;
 lint)
     mvn com.coveo:fmt-maven-plugin:check -B -ntp
@@ -60,25 +60,25 @@ javadoc)
     RETURN_CODE=$?
     ;;
 integration)
-    mvn -B ${INTEGRATION_TEST_ARGS} \
-      -ntp \
-      -Penable-integration-tests \
-      -DtrimStackTrace=false \
-      -Dclirr.skip=true \
-      -Denforcer.skip=true \
-      -fae \
-      verify
-    RETURN_CODE=$?
+#    mvn -B ${INTEGRATION_TEST_ARGS} \
+#      -ntp \
+#      -Penable-integration-tests \
+#      -DtrimStackTrace=false \
+#      -Dclirr.skip=true \
+#      -Denforcer.skip=true \
+#      -fae \
+#      verify
+    RETURN_CODE=1
     ;;
 graalvm)
     # Run Unit and Integration Tests with Native Image
-    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
-    RETURN_CODE=$?
+#    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
+    RETURN_CODE=1
     ;;
 graalvm17)
     # Run Unit and Integration Tests with Native Image
-    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
-    RETURN_CODE=$?
+#    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
+    RETURN_CODE=1
     ;;
 samples)
     SAMPLES_DIR=samples

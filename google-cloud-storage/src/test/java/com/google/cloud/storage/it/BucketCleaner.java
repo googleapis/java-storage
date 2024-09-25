@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.FailedPreconditionException;
@@ -26,8 +27,12 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.storage.control.v2.BucketName;
 import com.google.storage.control.v2.Folder;
+import com.google.storage.control.v2.GetStorageLayoutRequest;
+import com.google.storage.control.v2.ListFoldersRequest;
+import com.google.storage.control.v2.ListManagedFoldersRequest;
 import com.google.storage.control.v2.StorageControlClient;
 import com.google.storage.control.v2.StorageLayout;
 import com.google.storage.control.v2.StorageLayoutName;
@@ -97,15 +102,34 @@ public final class BucketCleaner {
       boolean anyFailedFolderDelete = false;
       boolean anyFailedManagedFolderDelete = false;
 
+      GrpcCallContext grpcCallContext =
+          GrpcCallContext.createDefault()
+              .withExtraHeaders(
+                  ImmutableMap.of("x-goog-user-project", ImmutableList.of(projectId)));
       if (!anyFailedObjectDelete) {
         BucketName parent = BucketName.of("_", bucketName);
         StorageLayout storageLayout =
-            ctrl.getStorageLayout(StorageLayoutName.of(parent.getProject(), parent.getBucket()));
+            ctrl.getStorageLayoutCallable()
+                .call(
+                    GetStorageLayoutRequest.newBuilder()
+                        .setName(
+                            StorageLayoutName.of(parent.getProject(), parent.getBucket())
+                                .toString())
+                        .build(),
+                    grpcCallContext);
+
         List<DeleteResult> folderDeletes;
         if (storageLayout.hasHierarchicalNamespace()
             && storageLayout.getHierarchicalNamespace().getEnabled()) {
           folderDeletes =
-              StreamSupport.stream(ctrl.listFolders(parent).iterateAll().spliterator(), false)
+              StreamSupport.stream(
+                      ctrl.listFoldersPagedCallable()
+                          .call(
+                              ListFoldersRequest.newBuilder().setParent(parent.toString()).build(),
+                              grpcCallContext)
+                          .iterateAll()
+                          .spliterator(),
+                      false)
                   .collect(Collectors.toList())
                   .stream()
                   .sorted(Collections.reverseOrder(Comparator.comparing(Folder::getName)))
@@ -129,7 +153,15 @@ public final class BucketCleaner {
         try {
           managedFolderDeletes =
               StreamSupport.stream(
-                      ctrl.listManagedFolders(parent).iterateAll().spliterator(), false)
+                      ctrl.listManagedFoldersPagedCallable()
+                          .call(
+                              ListManagedFoldersRequest.newBuilder()
+                                  .setParent(parent.toString())
+                                  .build(),
+                              grpcCallContext)
+                          .iterateAll()
+                          .spliterator(),
+                      false)
                   .map(
                       managedFolder -> {
                         LOGGER.warning(
