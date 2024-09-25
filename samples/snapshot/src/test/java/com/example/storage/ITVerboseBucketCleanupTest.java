@@ -43,8 +43,8 @@ public final class ITVerboseBucketCleanupTest {
     );
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
-    OffsetDateTime _3DaysAgo = now.minusDays(3);
-    LOGGER.info(String.format("_3DaysAgo = %s", _3DaysAgo));
+    OffsetDateTime _3HoursAgo = now.minusHours(3);
+    LOGGER.info(String.format("_3HoursAgo = %s", _3HoursAgo));
 
     try (Storage s = StorageOptions.http().build().getService();
         StorageControlClient ctrl = StorageControlClient.create()) {
@@ -56,7 +56,7 @@ public final class ITVerboseBucketCleanupTest {
             OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
             String action = null;
             try {
-              if (name.startsWith("gcloud-test") && ctime.isBefore(_3DaysAgo)) {
+              if (name.startsWith("gcloud-test") && ctime.isBefore(_3HoursAgo)) {
                 action = "Cleaning up";
                 return exec.<Void>submit(() -> {
                   BucketCleaner.doCleanup(name, s, ctrl);

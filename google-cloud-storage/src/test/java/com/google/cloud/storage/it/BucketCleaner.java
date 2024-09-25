@@ -44,10 +44,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.slf4j.LoggerFactory;
 
 public final class BucketCleaner {
 
   private static final Logger LOGGER = Logger.getLogger(BucketCleaner.class.getName());
+  private static final org.slf4j.Logger LOGGER1 = LoggerFactory.getLogger(BucketCleaner.class);
 
   public static void doCleanup(String bucketName, Storage s) {
     LOGGER.fine("Starting bucket cleanup...");
@@ -135,11 +137,13 @@ public final class BucketCleaner {
                   .sorted(Collections.reverseOrder(Comparator.comparing(Folder::getName)))
                   .map(
                       folder -> {
-                        LOGGER.warning(String.format("folder = %s", folder.getName()));
+                        String formatted = String.format("folder = %s", folder.getName());
+                        LOGGER.warning(formatted);
                         boolean success = true;
                         try {
                           ctrl.deleteFolder(folder.getName());
                         } catch (ApiException e) {
+                          LOGGER1.debug("{}", formatted, e);
                           success = false;
                         }
                         return new DeleteResult(folder.getName(), success);
@@ -164,12 +168,14 @@ public final class BucketCleaner {
                       false)
                   .map(
                       managedFolder -> {
-                        LOGGER.warning(
-                            String.format("managedFolder = %s", managedFolder.getName()));
+                        String formatted =
+                            String.format("managedFolder = %s", managedFolder.getName());
+                        LOGGER.warning(formatted);
                         boolean success = true;
                         try {
                           ctrl.deleteFolder(managedFolder.getName());
                         } catch (ApiException e) {
+                          LOGGER1.debug("{}", formatted, e);
                           success = false;
                         }
                         return new DeleteResult(managedFolder.getName(), success);
