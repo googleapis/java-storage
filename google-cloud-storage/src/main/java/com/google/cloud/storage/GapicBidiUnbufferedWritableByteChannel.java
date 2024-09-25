@@ -367,7 +367,9 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),
-                ImmutableList.of(lastWrittenRequest),
+                lastWrittenRequest != null
+                    ? ImmutableList.of(lastWrittenRequest)
+                    : ImmutableList.of(),
                 null,
                 context,
                 t);
