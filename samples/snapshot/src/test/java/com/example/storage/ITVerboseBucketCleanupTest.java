@@ -42,7 +42,7 @@ public final class ITVerboseBucketCleanupTest {
         .build();
 
     ListeningExecutorService exec = MoreExecutors.listeningDecorator(
-        Executors.newFixedThreadPool(4 * Runtime.getRuntime().availableProcessors(), threadFactory)
+        Executors.newFixedThreadPool(1, threadFactory)
     );
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
