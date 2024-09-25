@@ -52,7 +52,7 @@ public final class ITVerboseBucketCleanupTest {
             OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
             String action = null;
             try {
-              if (ctime.isBefore(_3DaysAgo)) {
+              if (name.startsWith("gcloud-test") && ctime.isBefore(_3DaysAgo)) {
                 action = "Cleaning up";
                 return exec.<Void>submit(() -> {
                   BucketCleaner.doCleanup(name, s, ctrl);
