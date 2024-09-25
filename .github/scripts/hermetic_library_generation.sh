@@ -70,13 +70,12 @@ git checkout "${current_branch}"
 
 # copy generation configuration from target branch to current branch.
 git show "${target_branch}":"${generation_config}" > "${baseline_generation_config}"
-config_diff=$(diff "${generation_config}" "${baseline_generation_config}" || true)
 
 # parse image tag from the generation configuration.
 image_tag=$(grep "gapic_generator_version" "${generation_config}" | cut -d ':' -f 2 | xargs)
 
 repo_root_dir=$(pwd)
-mkdir -path "${repo_root_dir}/output"
+mkdir -p "${repo_root_dir}/output"
 # download api definitions from googleapis repository
 googleapis_commitish=$(grep googleapis_commitish "${generation_config}" | cut -d ":" -f 2 | xargs)
 api_def_dir=$(mktemp -d)
