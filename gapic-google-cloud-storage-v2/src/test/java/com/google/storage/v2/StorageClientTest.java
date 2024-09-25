@@ -999,364 +999,6 @@ public class StorageClientTest {
   }
 
   @Test
-  public void deleteNotificationConfigTest() throws Exception {
-    Empty expectedResponse = Empty.newBuilder().build();
-    mockStorage.addResponse(expectedResponse);
-
-    NotificationConfigName name =
-        NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-
-    client.deleteNotificationConfig(name);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    DeleteNotificationConfigRequest actualRequest =
-        ((DeleteNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(name.toString(), actualRequest.getName());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void deleteNotificationConfigExceptionTest() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      NotificationConfigName name =
-          NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-      client.deleteNotificationConfig(name);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void deleteNotificationConfigTest2() throws Exception {
-    Empty expectedResponse = Empty.newBuilder().build();
-    mockStorage.addResponse(expectedResponse);
-
-    String name = "name3373707";
-
-    client.deleteNotificationConfig(name);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    DeleteNotificationConfigRequest actualRequest =
-        ((DeleteNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(name, actualRequest.getName());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void deleteNotificationConfigExceptionTest2() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      String name = "name3373707";
-      client.deleteNotificationConfig(name);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void getNotificationConfigTest() throws Exception {
-    NotificationConfig expectedResponse =
-        NotificationConfig.newBuilder()
-            .setName(
-                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-                    .toString())
-            .setTopic("topic110546223")
-            .setEtag("etag3123477")
-            .addAllEventTypes(new ArrayList<String>())
-            .putAllCustomAttributes(new HashMap<String, String>())
-            .setObjectNamePrefix("objectNamePrefix-1978236516")
-            .setPayloadFormat("payloadFormat-2140609755")
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    NotificationConfigName name =
-        NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-
-    NotificationConfig actualResponse = client.getNotificationConfig(name);
-    Assert.assertEquals(expectedResponse, actualResponse);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    GetNotificationConfigRequest actualRequest =
-        ((GetNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(name.toString(), actualRequest.getName());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void getNotificationConfigExceptionTest() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      NotificationConfigName name =
-          NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-      client.getNotificationConfig(name);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void getNotificationConfigTest2() throws Exception {
-    NotificationConfig expectedResponse =
-        NotificationConfig.newBuilder()
-            .setName(
-                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-                    .toString())
-            .setTopic("topic110546223")
-            .setEtag("etag3123477")
-            .addAllEventTypes(new ArrayList<String>())
-            .putAllCustomAttributes(new HashMap<String, String>())
-            .setObjectNamePrefix("objectNamePrefix-1978236516")
-            .setPayloadFormat("payloadFormat-2140609755")
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    String name = "name3373707";
-
-    NotificationConfig actualResponse = client.getNotificationConfig(name);
-    Assert.assertEquals(expectedResponse, actualResponse);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    GetNotificationConfigRequest actualRequest =
-        ((GetNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(name, actualRequest.getName());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void getNotificationConfigExceptionTest2() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      String name = "name3373707";
-      client.getNotificationConfig(name);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void createNotificationConfigTest() throws Exception {
-    NotificationConfig expectedResponse =
-        NotificationConfig.newBuilder()
-            .setName(
-                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-                    .toString())
-            .setTopic("topic110546223")
-            .setEtag("etag3123477")
-            .addAllEventTypes(new ArrayList<String>())
-            .putAllCustomAttributes(new HashMap<String, String>())
-            .setObjectNamePrefix("objectNamePrefix-1978236516")
-            .setPayloadFormat("payloadFormat-2140609755")
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-
-    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
-    Assert.assertEquals(expectedResponse, actualResponse);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    CreateNotificationConfigRequest actualRequest =
-        ((CreateNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(parent.toString(), actualRequest.getParent());
-    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void createNotificationConfigExceptionTest() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-      client.createNotificationConfig(parent, notificationConfig);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void createNotificationConfigTest2() throws Exception {
-    NotificationConfig expectedResponse =
-        NotificationConfig.newBuilder()
-            .setName(
-                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-                    .toString())
-            .setTopic("topic110546223")
-            .setEtag("etag3123477")
-            .addAllEventTypes(new ArrayList<String>())
-            .putAllCustomAttributes(new HashMap<String, String>())
-            .setObjectNamePrefix("objectNamePrefix-1978236516")
-            .setPayloadFormat("payloadFormat-2140609755")
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    String parent = "parent-995424086";
-    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-
-    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
-    Assert.assertEquals(expectedResponse, actualResponse);
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    CreateNotificationConfigRequest actualRequest =
-        ((CreateNotificationConfigRequest) actualRequests.get(0));
-
-    Assert.assertEquals(parent, actualRequest.getParent());
-    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void createNotificationConfigExceptionTest2() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      String parent = "parent-995424086";
-      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-      client.createNotificationConfig(parent, notificationConfig);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void listNotificationConfigsTest() throws Exception {
-    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
-    ListNotificationConfigsResponse expectedResponse =
-        ListNotificationConfigsResponse.newBuilder()
-            .setNextPageToken("")
-            .addAllNotificationConfigs(Arrays.asList(responsesElement))
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-
-    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
-
-    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
-
-    Assert.assertEquals(1, resources.size());
-    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    ListNotificationConfigsRequest actualRequest =
-        ((ListNotificationConfigsRequest) actualRequests.get(0));
-
-    Assert.assertEquals(parent.toString(), actualRequest.getParent());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void listNotificationConfigsExceptionTest() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
-      client.listNotificationConfigs(parent);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
-  public void listNotificationConfigsTest2() throws Exception {
-    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
-    ListNotificationConfigsResponse expectedResponse =
-        ListNotificationConfigsResponse.newBuilder()
-            .setNextPageToken("")
-            .addAllNotificationConfigs(Arrays.asList(responsesElement))
-            .build();
-    mockStorage.addResponse(expectedResponse);
-
-    String parent = "parent-995424086";
-
-    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
-
-    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
-
-    Assert.assertEquals(1, resources.size());
-    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
-
-    List<AbstractMessage> actualRequests = mockStorage.getRequests();
-    Assert.assertEquals(1, actualRequests.size());
-    ListNotificationConfigsRequest actualRequest =
-        ((ListNotificationConfigsRequest) actualRequests.get(0));
-
-    Assert.assertEquals(parent, actualRequest.getParent());
-    Assert.assertTrue(
-        channelProvider.isHeaderSent(
-            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
-  }
-
-  @Test
-  public void listNotificationConfigsExceptionTest2() throws Exception {
-    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
-    mockStorage.addException(exception);
-
-    try {
-      String parent = "parent-995424086";
-      client.listNotificationConfigs(parent);
-      Assert.fail("No exception raised");
-    } catch (InvalidArgumentException e) {
-      // Expected exception.
-    }
-  }
-
-  @Test
   public void composeObjectTest() throws Exception {
     Object expectedResponse =
         Object.newBuilder()
@@ -3110,6 +2752,364 @@ public class StorageClientTest {
       HmacKeyMetadata hmacKey = HmacKeyMetadata.newBuilder().build();
       FieldMask updateMask = FieldMask.newBuilder().build();
       client.updateHmacKey(hmacKey, updateMask);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void deleteNotificationConfigTest() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    mockStorage.addResponse(expectedResponse);
+
+    NotificationConfigName name =
+        NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+
+    client.deleteNotificationConfig(name);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteNotificationConfigRequest actualRequest =
+        ((DeleteNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteNotificationConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      NotificationConfigName name =
+          NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+      client.deleteNotificationConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void deleteNotificationConfigTest2() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    mockStorage.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    client.deleteNotificationConfig(name);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteNotificationConfigRequest actualRequest =
+        ((DeleteNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteNotificationConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.deleteNotificationConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getNotificationConfigTest() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
+            .setTopic("topic110546223")
+            .setEtag("etag3123477")
+            .addAllEventTypes(new ArrayList<String>())
+            .putAllCustomAttributes(new HashMap<String, String>())
+            .setObjectNamePrefix("objectNamePrefix-1978236516")
+            .setPayloadFormat("payloadFormat-2140609755")
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    NotificationConfigName name =
+        NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+
+    NotificationConfig actualResponse = client.getNotificationConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetNotificationConfigRequest actualRequest =
+        ((GetNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getNotificationConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      NotificationConfigName name =
+          NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+      client.getNotificationConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getNotificationConfigTest2() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
+            .setTopic("topic110546223")
+            .setEtag("etag3123477")
+            .addAllEventTypes(new ArrayList<String>())
+            .putAllCustomAttributes(new HashMap<String, String>())
+            .setObjectNamePrefix("objectNamePrefix-1978236516")
+            .setPayloadFormat("payloadFormat-2140609755")
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    NotificationConfig actualResponse = client.getNotificationConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetNotificationConfigRequest actualRequest =
+        ((GetNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getNotificationConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getNotificationConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void createNotificationConfigTest() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
+            .setTopic("topic110546223")
+            .setEtag("etag3123477")
+            .addAllEventTypes(new ArrayList<String>())
+            .putAllCustomAttributes(new HashMap<String, String>())
+            .setObjectNamePrefix("objectNamePrefix-1978236516")
+            .setPayloadFormat("payloadFormat-2140609755")
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+
+    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateNotificationConfigRequest actualRequest =
+        ((CreateNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createNotificationConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+      client.createNotificationConfig(parent, notificationConfig);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void createNotificationConfigTest2() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
+            .setTopic("topic110546223")
+            .setEtag("etag3123477")
+            .addAllEventTypes(new ArrayList<String>())
+            .putAllCustomAttributes(new HashMap<String, String>())
+            .setObjectNamePrefix("objectNamePrefix-1978236516")
+            .setPayloadFormat("payloadFormat-2140609755")
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    String parent = "parent-995424086";
+    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+
+    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateNotificationConfigRequest actualRequest =
+        ((CreateNotificationConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createNotificationConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+      client.createNotificationConfig(parent, notificationConfig);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listNotificationConfigsTest() throws Exception {
+    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
+    ListNotificationConfigsResponse expectedResponse =
+        ListNotificationConfigsResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllNotificationConfigs(Arrays.asList(responsesElement))
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+
+    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
+
+    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListNotificationConfigsRequest actualRequest =
+        ((ListNotificationConfigsRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listNotificationConfigsExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      client.listNotificationConfigs(parent);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listNotificationConfigsTest2() throws Exception {
+    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
+    ListNotificationConfigsResponse expectedResponse =
+        ListNotificationConfigsResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllNotificationConfigs(Arrays.asList(responsesElement))
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    String parent = "parent-995424086";
+
+    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
+
+    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListNotificationConfigsRequest actualRequest =
+        ((ListNotificationConfigsRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listNotificationConfigsExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      client.listNotificationConfigs(parent);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.

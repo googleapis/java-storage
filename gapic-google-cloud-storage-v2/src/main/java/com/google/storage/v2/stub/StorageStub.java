@@ -131,31 +131,6 @@ public abstract class StorageStub implements BackgroundResource {
     throw new UnsupportedOperationException("Not implemented: updateBucketCallable()");
   }
 
-  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: deleteNotificationConfigCallable()");
-  }
-
-  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: getNotificationConfigCallable()");
-  }
-
-  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: createNotificationConfigCallable()");
-  }
-
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    throw new UnsupportedOperationException(
-        "Not implemented: listNotificationConfigsPagedCallable()");
-  }
-
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    throw new UnsupportedOperationException("Not implemented: listNotificationConfigsCallable()");
-  }
-
   public UnaryCallable<ComposeObjectRequest, Object> composeObjectCallable() {
     throw new UnsupportedOperationException("Not implemented: composeObjectCallable()");
   }
@@ -216,32 +191,69 @@ public abstract class StorageStub implements BackgroundResource {
     throw new UnsupportedOperationException("Not implemented: queryWriteStatusCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<GetServiceAccountRequest, ServiceAccount> getServiceAccountCallable() {
     throw new UnsupportedOperationException("Not implemented: getServiceAccountCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyCallable() {
     throw new UnsupportedOperationException("Not implemented: createHmacKeyCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<DeleteHmacKeyRequest, Empty> deleteHmacKeyCallable() {
     throw new UnsupportedOperationException("Not implemented: deleteHmacKeyCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyCallable() {
     throw new UnsupportedOperationException("Not implemented: getHmacKeyCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysPagedCallable() {
     throw new UnsupportedOperationException("Not implemented: listHmacKeysPagedCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysCallable() {
     throw new UnsupportedOperationException("Not implemented: listHmacKeysCallable()");
   }
 
+  @Deprecated
   public UnaryCallable<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyCallable() {
     throw new UnsupportedOperationException("Not implemented: updateHmacKeyCallable()");
+  }
+
+  @Deprecated
+  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: deleteNotificationConfigCallable()");
+  }
+
+  @Deprecated
+  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: getNotificationConfigCallable()");
+  }
+
+  @Deprecated
+  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: createNotificationConfigCallable()");
+  }
+
+  @Deprecated
+  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
+      listNotificationConfigsPagedCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: listNotificationConfigsPagedCallable()");
+  }
+
+  @Deprecated
+  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
+      listNotificationConfigsCallable() {
+    throw new UnsupportedOperationException("Not implemented: listNotificationConfigsCallable()");
   }
 
   @Override
