@@ -23,22 +23,27 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.common.base.Preconditions;
+import com.google.storage.control.v2.StorageControlClient;
 import java.time.Duration;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class TemporaryBucket implements AutoCloseable {
 
   private final BucketInfo bucket;
   private final Storage storage;
+  @Nullable private final StorageControlClient ctrl;
   private final Duration cleanupTimeout;
   private final CleanupStrategy cleanupStrategy;
 
   private TemporaryBucket(
       BucketInfo bucket,
       Storage storage,
+      @Nullable StorageControlClient ctrl,
       Duration cleanupTimeout,
       CleanupStrategy cleanupStrategy) {
     this.bucket = bucket;
     this.storage = storage;
+    this.ctrl = ctrl;
     this.cleanupTimeout = cleanupTimeout;
     this.cleanupStrategy = cleanupStrategy;
   }
@@ -51,7 +56,11 @@ public final class TemporaryBucket implements AutoCloseable {
   @Override
   public void close() throws Exception {
     if (cleanupStrategy == CleanupStrategy.ALWAYS) {
-      BucketCleaner.doCleanup(bucket.getName(), storage);
+      if (ctrl != null) {
+        BucketCleaner.doCleanup(bucket.getName(), storage, ctrl);
+      } else {
+        BucketCleaner.doCleanup(bucket.getName(), storage);
+      }
     }
   }
 
@@ -65,6 +74,7 @@ public final class TemporaryBucket implements AutoCloseable {
     private Duration cleanupTimeoutDuration;
     private BucketInfo bucketInfo;
     private Storage storage;
+    private StorageControlClient ctrl;
 
     private Builder() {
       this.cleanupStrategy = CleanupStrategy.ALWAYS;
@@ -91,6 +101,11 @@ public final class TemporaryBucket implements AutoCloseable {
       return this;
     }
 
+    public Builder setStorageControlClient(StorageControlClient ctrl) {
+      this.ctrl = ctrl;
+      return this;
+    }
+
     public TemporaryBucket build() {
       Preconditions.checkArgument(
           cleanupStrategy != CleanupStrategy.ONLY_ON_SUCCESS, "Unable to detect success.");
@@ -98,7 +113,8 @@ public final class TemporaryBucket implements AutoCloseable {
       Bucket b = s.create(requireNonNull(bucketInfo, "bucketInfo must be non null"));
 
       // intentionally drop from Bucket to BucketInfo to ensure not leaking the Storage instance
-      return new TemporaryBucket(b.asBucketInfo(), s, cleanupTimeoutDuration, cleanupStrategy);
+      return new TemporaryBucket(
+          b.asBucketInfo(), s, ctrl, cleanupTimeoutDuration, cleanupStrategy);
     }
   }
 }

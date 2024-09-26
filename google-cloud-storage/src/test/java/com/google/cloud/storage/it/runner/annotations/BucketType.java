@@ -21,5 +21,7 @@ public enum BucketType {
   /** A default bucket created using all GCS defaults */
   DEFAULT,
   /** A bucket created using all GCS defaults except that it has requester_pays enabled. */
-  REQUESTER_PAYS
+  REQUESTER_PAYS,
+  /** A bucket created with Hierarchical Namespace enabled */
+  HNS
 }

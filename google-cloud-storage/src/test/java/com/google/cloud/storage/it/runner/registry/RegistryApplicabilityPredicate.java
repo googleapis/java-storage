@@ -88,10 +88,8 @@ interface RegistryApplicabilityPredicate {
     };
   }
 
-  static RegistryApplicabilityPredicate isRequesterPaysBucket() {
+  static RegistryApplicabilityPredicate bucketTypeIs(BucketType bucketType) {
     return annotatedWith(BucketFixture.class)
-        .and(
-            (ff, intersection) ->
-                ff.getAnnotation(BucketFixture.class).value() == BucketType.REQUESTER_PAYS);
+        .and((ff, intersection) -> ff.getAnnotation(BucketFixture.class).value() == bucketType);
   }
 }
