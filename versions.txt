@@ -1,10 +1,10 @@
 # Format:
 # module:released-version:current-version
 
-google-cloud-storage:2.43.1:2.43.1
-gapic-google-cloud-storage-v2:2.43.1-beta:2.43.1-beta
-grpc-google-cloud-storage-v2:2.43.1-beta:2.43.1-beta
-proto-google-cloud-storage-v2:2.43.1-beta:2.43.1-beta
-google-cloud-storage-control:2.43.1:2.43.1
-proto-google-cloud-storage-control-v2:2.43.1:2.43.1
-grpc-google-cloud-storage-control-v2:2.43.1:2.43.1
+google-cloud-storage:2.43.1:2.43.2-SNAPSHOT
+gapic-google-cloud-storage-v2:2.43.1-beta:2.43.2-beta-SNAPSHOT
+grpc-google-cloud-storage-v2:2.43.1-beta:2.43.2-beta-SNAPSHOT
+proto-google-cloud-storage-v2:2.43.1-beta:2.43.2-beta-SNAPSHOT
+google-cloud-storage-control:2.43.1:2.43.2-SNAPSHOT
+proto-google-cloud-storage-control-v2:2.43.1:2.43.2-SNAPSHOT
+grpc-google-cloud-storage-control-v2:2.43.1:2.43.2-SNAPSHOT
