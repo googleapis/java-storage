@@ -225,6 +225,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .getExecutor();
     retryContextProvider =
         RetryContext.providerFrom(
+            executor,
             getOptions(),
             new BasicResultRetryAlgorithm<Object>() {
               @Override

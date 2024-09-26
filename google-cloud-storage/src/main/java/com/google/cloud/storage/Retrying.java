@@ -27,6 +27,7 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.UUID;
@@ -162,17 +163,40 @@ final class Retrying {
     ApiClock getClock();
 
     static RetryingDependencies attemptOnce() {
-      return new RetryingDependencies() {
-        @Override
-        public RetrySettings getRetrySettings() {
-          return RetrySettings.newBuilder().setMaxAttempts(1).build();
-        }
+      return RetryingDependencies.simple(
+          NanoClock.getDefaultClock(), RetrySettings.newBuilder().setMaxAttempts(1).build());
+    }
 
-        @Override
-        public ApiClock getClock() {
-          return NanoClock.getDefaultClock();
-        }
-      };
+    static RetryingDependencies simple(ApiClock clock, RetrySettings retrySettings) {
+      return new SimpleRetryingDependencies(clock, retrySettings);
+    }
+  }
+
+  private static final class SimpleRetryingDependencies implements RetryingDependencies {
+    private final ApiClock clock;
+    private final RetrySettings retrySettings;
+
+    private SimpleRetryingDependencies(ApiClock clock, RetrySettings retrySettings) {
+      this.retrySettings = retrySettings;
+      this.clock = clock;
+    }
+
+    @Override
+    public ApiClock getClock() {
+      return clock;
+    }
+
+    @Override
+    public RetrySettings getRetrySettings() {
+      return retrySettings;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("clock", clock)
+          .add("retrySettings", retrySettings)
+          .toString();
     }
   }
 }

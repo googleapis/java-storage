@@ -18,11 +18,9 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
-import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
@@ -59,6 +57,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -132,17 +131,8 @@ public final class TestUtils {
   }
 
   static RetryingDependencies defaultRetryingDeps() {
-    return new RetryingDependencies() {
-      @Override
-      public RetrySettings getRetrySettings() {
-        return StorageOptions.getDefaultRetrySettings();
-      }
-
-      @Override
-      public ApiClock getClock() {
-        return NanoClock.getDefaultClock();
-      }
-    };
+    return RetryingDependencies.simple(
+        NanoClock.getDefaultClock(), StorageOptions.getDefaultRetrySettings());
   }
 
   /**
@@ -317,5 +307,21 @@ public final class TestUtils {
     } else {
       return Optional.of(l.get(l.size() - 1));
     }
+  }
+
+  static String messagesToText(Throwable t) {
+    return messagesToText(t, "");
+  }
+
+  private static String messagesToText(Throwable t, String indent) {
+    if (t == null) {
+      return "";
+    }
+    String nextIndent = indent + "  ";
+    return Stream.of(
+            Stream.of(indent + t.getMessage()),
+            Arrays.stream(t.getSuppressed()).map(tt -> messagesToText(tt, nextIndent)))
+        .flatMap(s -> s)
+        .collect(Collectors.joining("\n"));
   }
 }
