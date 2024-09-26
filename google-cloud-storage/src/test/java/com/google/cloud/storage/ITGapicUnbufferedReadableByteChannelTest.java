@@ -66,7 +66,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
 
   private final ReadObjectRequest req1 =
       ReadObjectRequest.newBuilder().setObject(objectName).setReadOffset(0).build();
-  private final ReadObjectRequest req2 = req1.toBuilder().setReadOffset(20).build();
+  private final ReadObjectRequest req2 =
+      req1.toBuilder().setGeneration(3L).setReadOffset(20).build();
   private final ReadObjectResponse resp1 =
       ReadObjectResponse.newBuilder()
           .setMetadata(expectedResult)

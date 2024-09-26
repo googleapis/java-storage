@@ -264,12 +264,15 @@ final class GapicUnbufferedReadableByteChannel
               alg,
               () -> {
                 ReadObjectObserver tmp = new ReadObjectObserver();
-                ReadObjectRequest request = req;
+                ReadObjectRequest.Builder builder = req.toBuilder();
                 long currentFetchOffset = fetchOffset.get();
-                if (request.getReadOffset() != currentFetchOffset) {
-                  request = req.toBuilder().setReadOffset(currentFetchOffset).build();
+                if (req.getReadOffset() != currentFetchOffset) {
+                  builder.setReadOffset(currentFetchOffset);
                 }
-                read.call(request, tmp);
+                if (metadata != null && req.getGeneration() == 0) {
+                  builder.setGeneration(metadata.getGeneration());
+                }
+                read.call(builder.build(), tmp);
                 ApiExceptions.callAndTranslateApiException(tmp.open);
                 return tmp;
               },
