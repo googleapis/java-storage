@@ -25,7 +25,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
-import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
@@ -58,7 +57,6 @@ import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -332,7 +330,6 @@ public final class ITBlobDescriptorFakeTest {
     BidiReadObjectRequest req2 = read(1, 10, 10);
     BidiReadObjectResponse res2 =
         BidiReadObjectResponse.newBuilder()
-            .setMetadata(METADATA)
             .addObjectDataRanges(
                 ObjectRangeData.newBuilder()
                     .setChecksummedData(content2.asChecksummedData())
@@ -383,7 +380,7 @@ public final class ITBlobDescriptorFakeTest {
                   com.google.rpc.Status grpcStatusDetails =
                       com.google.rpc.Status.newBuilder()
                           .setCode(com.google.rpc.Code.UNAVAILABLE_VALUE)
-                          .setMessage("redirect")
+                          .setMessage("fail read_id: 1")
                           .addDetails(Any.pack(err2))
                           .build();
 
@@ -625,18 +622,25 @@ public final class ITBlobDescriptorFakeTest {
 
         DataLossException dataLossException =
             assertThrows(
-                DataLossException.class, () -> ApiExceptions.callAndTranslateApiException(future));
+                DataLossException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
 
         assertThat(dataLossException).isInstanceOf(UncheckedChecksumMismatchException.class);
         Throwable[] suppressed = dataLossException.getSuppressed();
-        List<String> suppressedMessages =
-            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
-        assertThat(suppressedMessages)
-            .containsExactly(
-                "Operation failed to complete within retry limit (attempts: 3, maxAttempts: 3) previous failures follow in order of occurrence",
-                "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}",
-                "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}",
-                "Asynchronous task failed");
+        String suppressedMessages =
+            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.joining("\n"));
+        assertAll(
+            () ->
+                assertThat(suppressedMessages)
+                    .contains("Operation failed to complete within attempt budget"),
+            () ->
+                assertThat(suppressedMessages)
+                    .contains(
+                        "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}"),
+            () ->
+                assertThat(suppressedMessages)
+                    .contains(
+                        "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}"),
+            () -> assertThat(suppressedMessages).contains("Asynchronous task failed"));
       }
     }
   }
@@ -692,18 +696,20 @@ public final class ITBlobDescriptorFakeTest {
 
         OutOfRangeException outOfRangeException =
             assertThrows(
-                OutOfRangeException.class,
-                () -> ApiExceptions.callAndTranslateApiException(future));
+                OutOfRangeException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
 
         assertThat(outOfRangeException).isInstanceOf(OutOfRangeException.class);
         Throwable[] suppressed = outOfRangeException.getSuppressed();
-        List<String> suppressedMessages =
-            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
-        assertThat(suppressedMessages)
-            .containsExactly(
-                "Operation failed to complete within retry limit (attempts: 2, maxAttempts: 2) previous failures follow in order of occurrence",
-                "position = 10, readRange.read_offset = 11",
-                "Asynchronous task failed");
+        String suppressedMessages =
+            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.joining("\n"));
+        assertAll(
+            () ->
+                assertThat(suppressedMessages)
+                    .contains("Operation failed to complete within attempt budget"),
+            () ->
+                assertThat(suppressedMessages)
+                    .contains("position = 10, readRange.read_offset = 11"),
+            () -> assertThat(suppressedMessages).contains("Asynchronous task failed"));
       }
     }
   }

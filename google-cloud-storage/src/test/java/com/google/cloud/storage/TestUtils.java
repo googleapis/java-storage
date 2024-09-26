@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
@@ -32,6 +33,7 @@ import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
@@ -56,6 +58,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -311,6 +316,22 @@ public final class TestUtils {
 
   static String messagesToText(Throwable t) {
     return messagesToText(t, "");
+  }
+
+  static <T> T await(ApiFuture<T> future, long timeout, TimeUnit unit) throws TimeoutException {
+    try {
+      return future.get(timeout, unit);
+    } catch (ExecutionException exception) {
+      if (exception.getCause() instanceof RuntimeException) {
+        RuntimeException cause = (RuntimeException) exception.getCause();
+        cause.addSuppressed(new AsyncStorageTaskException());
+        throw cause;
+      }
+      throw new UncheckedExecutionException(exception);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
   }
 
   private static String messagesToText(Throwable t, String indent) {
