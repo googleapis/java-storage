@@ -32,6 +32,7 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.TestUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -51,12 +52,12 @@ public final class StorageNativeCanary {
   private static final byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
 
   @Test
-  public void canary_happyPath_http() throws Exception {
+  public void canary_happyPath_http() throws Throwable {
     assertBehaviorOfPrimaryStorageActions(StorageOptions.http().build().getService());
   }
 
   @Test
-  public void canary_happyPath_grpc() throws Exception {
+  public void canary_happyPath_grpc() throws Throwable {
     assertBehaviorOfPrimaryStorageActions(StorageOptions.grpc().build().getService());
   }
 
@@ -84,7 +85,7 @@ public final class StorageNativeCanary {
    *   <li>Delete temporary bucket (Unary)
    * </ul>
    */
-  private static void assertBehaviorOfPrimaryStorageActions(Storage storage) throws Exception {
+  private static void assertBehaviorOfPrimaryStorageActions(Storage storage) throws Throwable {
     // create a temporary bucket
     try (TemporaryBucket temporaryBucket =
         TemporaryBucket.newBuilder()
@@ -131,6 +132,18 @@ public final class StorageNativeCanary {
           () -> assertThat(actual.get(1).getContent()).isEqualTo(bytes),
           () -> assertThat(deletes.get(0)).isTrue(),
           () -> assertThat(deletes.get(1)).isTrue());
+    } catch (Throwable e) {
+      String hintMessage =
+          "Possible missing reflect-config configuration. Run the following to regenerate grpc reflect-config: mvn -Dmaven.test.skip.exec=true clean install && cd google-cloud-storage && mvn -Pregen-grpc-graalvm-reflect-config exec:exec";
+      Throwable linkageError = TestUtils.findThrowable(LinkageError.class, e);
+      Throwable roe = TestUtils.findThrowable(ReflectiveOperationException.class, e);
+      if (linkageError != null) {
+        throw new RuntimeException(hintMessage, linkageError);
+      } else if (roe != null) {
+        throw new RuntimeException(hintMessage, roe);
+      } else {
+        throw e;
+      }
     }
   }
 

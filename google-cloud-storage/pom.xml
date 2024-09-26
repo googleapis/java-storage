@@ -313,7 +313,12 @@
       <version>1.9.0</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+      <version>4.8.176</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -425,6 +430,41 @@
         -->
         <test>com.google.cloud.storage.it.StorageNativeCanary</test>
       </properties>
+    </profile>
+    <profile>
+      <id>regen-grpc-graalvm-reflect-config</id>
+      <!--
+      to run this, execute the following commands from the base of the repo:
+
+      mvn -Dmaven.test.skip.exec=true clean install && cd google-cloud-storage && mvn -Pregen-grpc-graalvm-reflect-config exec:exec
+
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.4.1</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <classpathScope>test</classpathScope>
+              <addOutputToClasspath>true</addOutputToClasspath>
+              <executable>java</executable>
+              <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>com.google.cloud.storage.GenerateGrpcProtobufReflectConfig</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
