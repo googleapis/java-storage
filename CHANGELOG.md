@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.43.1](https://github.com/googleapis/java-storage/compare/v2.43.0...v2.43.1) (2024-09-26)
+
+
+### Bug Fixes
+
+* Add managed folder to testIamPermissions method ([556dd95](https://github.com/googleapis/java-storage/commit/556dd95c2cf7180cb14c12a2f7ecc288c0c49ea9))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.46.0 ([556dd95](https://github.com/googleapis/java-storage/commit/556dd95c2cf7180cb14c12a2f7ecc288c0c49ea9))
+* Remove server unimplemented GrpcStorageImpl#{get,list,create,delete,Update}HmacKey ([#2717](https://github.com/googleapis/java-storage/issues/2717)) ([06f7292](https://github.com/googleapis/java-storage/commit/06f7292036c39ca7f10119a1b906c604a0c34344))
+* Remove server unimplemented GrpcStorageImpl#{get,list,create,delete}Notification ([#2710](https://github.com/googleapis/java-storage/issues/2710)) ([310c9b2](https://github.com/googleapis/java-storage/commit/310c9b285024573a7e58dfb07f41b482a8a3372f))
+* Remove server unimplemented GrpcStorageImpl#getServiceAccount ([#2718](https://github.com/googleapis/java-storage/issues/2718)) ([51076a8](https://github.com/googleapis/java-storage/commit/51076a87eae57ec6763bdbfa20dcc390b688fc82))
+* Update grpc based ReadObject rpcs to remove race condition between cancellation and message handling ([#2708](https://github.com/googleapis/java-storage/issues/2708)) ([2c7f088](https://github.com/googleapis/java-storage/commit/2c7f08868df8adba623178d679a100f19d10f070))
+* Update grpc upload error diagnostics to be tolerant of receiving an error if no request has been sent ([#2732](https://github.com/googleapis/java-storage/issues/2732)) ([fff72d5](https://github.com/googleapis/java-storage/commit/fff72d5cfeca9ad3348e7c9b72e2740024dcbbb6))
+* Update GrpcStorageOptions to attempt direct path by default ([#2715](https://github.com/googleapis/java-storage/issues/2715)) ([9de9a92](https://github.com/googleapis/java-storage/commit/9de9a92be05f36bbe6afabeffcc597470a92b5a3))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.36.0 ([#2721](https://github.com/googleapis/java-storage/issues/2721)) ([11f09fe](https://github.com/googleapis/java-storage/commit/11f09febb76a50fc0e19ec096c9bbad485764c8b))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.36.1 ([#2738](https://github.com/googleapis/java-storage/issues/2738)) ([eb320e1](https://github.com/googleapis/java-storage/commit/eb320e104bca9e5a7c192d58147045bf7201ffc7))
+* Update googleapis/sdk-platform-java action to v2.46.1 ([#2736](https://github.com/googleapis/java-storage/issues/2736)) ([795f2c3](https://github.com/googleapis/java-storage/commit/795f2c34c1bc389179c2ca2bafba0803fff5e38e))
+
 ## [2.43.0](https://github.com/googleapis/java-storage/compare/v2.42.0...v2.43.0) (2024-09-13)
 
 
