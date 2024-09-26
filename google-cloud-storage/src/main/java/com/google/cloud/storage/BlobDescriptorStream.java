@@ -127,7 +127,9 @@ final class BlobDescriptorStream
   public void send(BidiReadObjectRequest request) {
     checkOpen();
     if (requestStream == null) {
-      restart();
+      BidiReadObjectRequest merged =
+          state.getOpenRequest().toBuilder().clearReadRanges().mergeFrom(request).build();
+      getRequestStream().send(merged);
     } else {
       getRequestStream().send(request);
     }
@@ -369,7 +371,7 @@ final class BlobDescriptorStream
         BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
         BidiReadObjectRequest requestWithNewReadId =
             BidiReadObjectRequest.newBuilder().addReadRanges(readWithNewId.makeReadRange()).build();
-        requestStream.send(requestWithNewReadId);
+        BlobDescriptorStream.this.send(requestWithNewReadId);
       };
     }
 
@@ -378,11 +380,11 @@ final class BlobDescriptorStream
   }
 
   private class MonitoringResponseObserver implements ResponseObserver<BidiReadObjectResponse> {
-    private final BlobDescriptorStream.BidiReadObjectResponseObserver delegate;
+    private final ResponseObserver<BidiReadObjectResponse> delegate;
     private final SettableApiFuture<Void> openSignal;
     private final SettableApiFuture<Void> closeSignal;
 
-    private MonitoringResponseObserver(BidiReadObjectResponseObserver delegate) {
+    private MonitoringResponseObserver(ResponseObserver<BidiReadObjectResponse> delegate) {
       this.delegate = delegate;
       this.openSignal = SettableApiFuture.create();
       this.closeSignal = SettableApiFuture.create();

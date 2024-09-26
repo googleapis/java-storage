@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -39,6 +40,7 @@ final class BlobDescriptorState {
   private final AtomicReference<@MonotonicNonNull Object> metadata;
   private final AtomicLong readIdSeq;
   private final Map<Long, BlobDescriptorStreamRead> outstandingReads;
+  private final ReentrantLock lock;
 
   BlobDescriptorState(BidiReadObjectRequest openRequest) {
     this.openRequest = openRequest;
@@ -47,9 +49,16 @@ final class BlobDescriptorState {
     this.metadata = new AtomicReference<>();
     this.readIdSeq = new AtomicLong(1);
     this.outstandingReads = new HashMap<>();
+    this.lock = new ReentrantLock();
   }
 
   BidiReadObjectRequest getOpenRequest() {
+    Object obj = metadata.get();
+    if (obj != null && obj.getGeneration() != openRequest.getReadObjectSpec().getGeneration()) {
+      BidiReadObjectRequest.Builder b = openRequest.toBuilder();
+      b.getReadObjectSpecBuilder().setGeneration(obj.getGeneration());
+      return b.build();
+    }
     return openRequest;
   }
 
@@ -76,20 +85,29 @@ final class BlobDescriptorState {
 
   @Nullable
   BlobDescriptorStreamRead getOutstandingRead(long key) {
-    synchronized (this) {
+    lock.lock();
+    try {
       return outstandingReads.get(key);
+    } finally {
+      lock.unlock();
     }
   }
 
   void putOutstandingRead(long key, BlobDescriptorStreamRead value) {
-    synchronized (this) {
+    lock.lock();
+    try {
       outstandingReads.put(key, value);
+    } finally {
+      lock.unlock();
     }
   }
 
   void removeOutstandingRead(long key) {
-    synchronized (this) {
+    lock.lock();
+    try {
       outstandingReads.remove(key);
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -103,22 +121,28 @@ final class BlobDescriptorState {
   }
 
   BlobDescriptorStreamRead assignNewReadId(long oldReadId) {
-    synchronized (this) {
+    lock.lock();
+    try {
       BlobDescriptorStreamRead remove = outstandingReads.remove(oldReadId);
-      checkState(remove != null, "unable to locate old");
+      checkState(remove != null, "unable to locate old read");
       long newReadId = newReadId();
       BlobDescriptorStreamRead withNewReadId = remove.withNewReadId(newReadId);
       outstandingReads.put(newReadId, withNewReadId);
       return withNewReadId;
+    } finally {
+      lock.unlock();
     }
   }
 
   List<ReadRange> getOutstandingReads() {
-    synchronized (this) {
+    lock.lock();
+    try {
       return outstandingReads.values().stream()
           .filter(BlobDescriptorStreamRead::readyToSend)
           .map(BlobDescriptorStreamRead::makeReadRange)
           .collect(ImmutableList.toImmutableList());
+    } finally {
+      lock.unlock();
     }
   }
 }
