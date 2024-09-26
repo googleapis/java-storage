@@ -116,6 +116,7 @@ final class BlobDescriptorState {
   List<ReadRange> getOutstandingReads() {
     synchronized (this) {
       return outstandingReads.values().stream()
+          .filter(BlobDescriptorStreamRead::readyToSend)
           .map(BlobDescriptorStreamRead::makeReadRange)
           .collect(ImmutableList.toImmutableList());
     }

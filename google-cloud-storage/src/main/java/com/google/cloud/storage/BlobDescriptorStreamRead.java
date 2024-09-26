@@ -41,6 +41,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
   protected final List<ChildRef> childRefs;
   protected final RetryContext retryContext;
   protected boolean closed;
+  protected boolean tombstoned;
 
   private BlobDescriptorStreamRead(long readId, ReadCursor readCursor, RetryContext retryContext) {
     this(readId, readCursor, Collections.synchronizedList(new ArrayList<>()), retryContext, false);
@@ -57,6 +58,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     this.childRefs = childRefs;
     this.retryContext = retryContext;
     this.closed = closed;
+    this.tombstoned = false;
   }
 
   ReadCursor getReadCursor() {
@@ -110,7 +112,9 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
   }
 
-  abstract void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure);
+  abstract <T extends Throwable> void recordError(T t, OnSuccess onSuccess, OnFailure<T> onFailure);
+
+  public abstract boolean readyToSend();
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
       long readId,
@@ -154,21 +158,29 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     @Override
     boolean acceptingBytes() {
-      return !complete.isDone() && readCursor.hasRemaining();
+      return !complete.isDone() && !tombstoned && readCursor.hasRemaining();
     }
 
     @Override
-    void fail(Throwable t) throws IOException {
+    void fail(Throwable t) {
       try {
-        complete.setException(t);
-      } finally {
+        tombstoned = true;
         close();
+      } catch (IOException e) {
+        t.addSuppressed(t);
+      } finally {
+        complete.setException(t);
       }
     }
 
     @Override
-    void recordError(Throwable t, OnSuccess onSuccess, OnFailure onFailure) {
+    <T extends Throwable> void recordError(T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
       retryContext.recordError(t, onSuccess, onFailure);
+    }
+
+    @Override
+    public boolean readyToSend() {
+      return !tombstoned && !retryContext.inBackoff();
     }
   }
 
@@ -235,6 +247,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     @Override
     ByteArrayAccumulatingRead withNewReadId(long newReadId) {
+      this.tombstoned = true;
       return new ByteArrayAccumulatingRead(
           newReadId, readCursor, childRefs, retryContext, closed, complete);
     }
@@ -291,6 +304,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     @Override
     ZeroCopyByteStringAccumulatingRead withNewReadId(long newReadId) {
+      this.tombstoned = true;
       return new ZeroCopyByteStringAccumulatingRead(
           newReadId, readCursor, childRefs, retryContext, closed, complete, byteString);
     }
