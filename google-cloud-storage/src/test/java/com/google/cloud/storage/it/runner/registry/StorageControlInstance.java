@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,47 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.it.BucketCleaner;
 import com.google.storage.control.v2.StorageControlClient;
+import com.google.storage.control.v2.StorageControlSettings;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-/** Shim to lift a BucketInfo to be a managed bucket instance */
-final class BucketInfoShim implements ManagedLifecycle {
+final class StorageControlInstance implements ManagedLifecycle {
 
-  private final BucketInfo bucketInfo;
-  private final Storage s;
-  private final StorageControlClient ctrl;
+  private final StorageControlSettings settings;
 
-  private BucketInfo createdBucket;
+  private StorageControlClient ctrl;
 
-  BucketInfoShim(BucketInfo bucketInfo, Storage s, StorageControlClient ctrl) {
-    this.bucketInfo = bucketInfo;
-    this.s = s;
-    this.ctrl = ctrl;
+  StorageControlInstance(StorageControlSettings settings) {
+    this.settings = settings;
   }
 
-  public BucketInfo getBucketInfo() {
-    return createdBucket;
+  StorageControlClient getCtrl() {
+    return ctrl;
   }
 
   @Override
   public Object get() {
-    return bucketInfo;
+    return ctrl;
   }
 
   @Override
   public void start() {
-    createdBucket = s.create(bucketInfo).asBucketInfo();
+    try {
+      ctrl = StorageControlClient.create(settings);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
   public void stop() {
-    BucketCleaner.doCleanup(bucketInfo.getName(), s, ctrl);
+    try {
+      ctrl.shutdownNow();
+      ctrl.awaitTermination(30, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
   }
 }
