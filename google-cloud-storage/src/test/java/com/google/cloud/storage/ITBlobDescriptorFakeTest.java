@@ -21,6 +21,7 @@ import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
@@ -737,6 +738,58 @@ public final class ITBlobDescriptorFakeTest {
             .buildOrThrow();
 
     runTestAgainstFakeServer(FakeStorage.from(db), RangeSpec.of(10, 20), expected);
+  }
+
+  @Test
+  public void validateReadRemovedFromStateWhenFailed() throws Exception {
+
+    BidiReadObjectRequest req2 = read(1, 10, 20);
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(req2.getReadRangesList().get(0))
+                    .setChecksummedData(
+                        ChecksummedData.newBuilder()
+                            .setContent(ByteString.copyFrom(new byte[] {'A'}))
+                            // explicitly send a bad checksum to induce failure
+                            .setCrc32C(1)
+                            .build())
+                    .build())
+            .build();
+
+    FakeStorage fake = FakeStorage.from(ImmutableMap.of(REQ_OPEN, RES_OPEN, req2, res2));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        BlobDescriptorImpl bdi = null;
+        if (bd instanceof BlobDescriptorImpl) {
+          bdi = (BlobDescriptorImpl) bd;
+        } else {
+          fail("unable to locate state for validation");
+        }
+
+        ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10, 20));
+        ExecutionException ee =
+            assertThrows(ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
+
+        assertThat(ee).hasCauseThat().isInstanceOf(UncheckedChecksumMismatchException.class);
+
+        BlobDescriptorStreamRead outstandingRead = bdi.state.getOutstandingRead(1L);
+        assertThat(outstandingRead).isNull();
+      }
+    }
   }
 
   private static void runTestAgainstFakeServer(

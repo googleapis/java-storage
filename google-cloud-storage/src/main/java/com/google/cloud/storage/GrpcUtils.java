@@ -17,8 +17,10 @@
 package com.google.cloud.storage;
 
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStream;
 import com.google.api.gax.rpc.BidiStreamObserver;
@@ -35,8 +37,10 @@ import com.google.api.gax.rpc.UnaryCallable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Message;
+import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
+import io.grpc.StatusRuntimeException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
@@ -112,6 +116,16 @@ final class GrpcUtils {
   @Nullable
   static BidiReadObjectError getBidiReadObjectError(Throwable t) {
     return findFirstPackedAny(t, BidiReadObjectError.class);
+  }
+
+  static ApiException statusToApiException(Status status) {
+    io.grpc.Status grpcStatus = io.grpc.Status.fromCodeValue(status.getCode());
+    if (!status.getMessage().isEmpty()) {
+      grpcStatus = grpcStatus.withDescription(status.getMessage());
+    }
+    StatusRuntimeException cause = grpcStatus.asRuntimeException();
+    return ApiExceptionFactory.createException(
+        cause, GrpcStatusCode.of(grpcStatus.getCode()), false);
   }
 
   @Nullable

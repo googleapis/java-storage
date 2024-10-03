@@ -266,7 +266,10 @@ final class BlobDescriptorStream
             //   happen on a non-io thread
             Hasher.enabled().validateUnchecked(Crc32cValue.of(crc32C), content);
           } catch (UncheckedChecksumMismatchException e) {
-            read.recordError(e, restartReadFromCurrentOffset(id), read::unsafeFail);
+            read.recordError(
+                e,
+                restartReadFromCurrentOffset(id),
+                state.removeOutstandingReadOnFailure(id, read::fail));
             continue;
           }
 
@@ -306,7 +309,10 @@ final class BlobDescriptorStream
                     null,
                     GrpcStatusCode.of(Code.OUT_OF_RANGE),
                     true);
-            read.recordError(apiException, restartReadFromCurrentOffset(id), read::unsafeFail);
+            read.recordError(
+                apiException,
+                restartReadFromCurrentOffset(id),
+                state.removeOutstandingReadOnFailure(id, read::fail));
             continue;
           } else {
             ApiException apiException =
@@ -315,7 +321,10 @@ final class BlobDescriptorStream
                     null,
                     GrpcStatusCode.of(Code.OUT_OF_RANGE),
                     true);
-            read.recordError(apiException, restartReadFromCurrentOffset(id), read::unsafeFail);
+            read.recordError(
+                apiException,
+                restartReadFromCurrentOffset(id),
+                state.removeOutstandingReadOnFailure(id, read::fail));
             continue;
           }
 
@@ -339,6 +348,7 @@ final class BlobDescriptorStream
 
     @Override
     public void onError(Throwable t) {
+      reset();
       BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
       if (error == null) {
         return;
@@ -355,14 +365,16 @@ final class BlobDescriptorStream
         if (read == null) {
           continue;
         }
+        // mark read as failed, but don't resolve its future now. Schedule the delivery of the
+        // failure in executor to ensure any downstream future doesn't block this IO thread.
+        read.preFail();
         executor.execute(
             StorageException.liftToRunnable(
-                () -> {
-                  read.fail(status);
-                  state.removeOutstandingRead(id);
-                }));
+                () ->
+                    state
+                        .removeOutstandingReadOnFailure(id, read::fail)
+                        .onFailure(GrpcUtils.statusToApiException(status))));
       }
-      reset();
     }
 
     private OnSuccess restartReadFromCurrentOffset(long id) {

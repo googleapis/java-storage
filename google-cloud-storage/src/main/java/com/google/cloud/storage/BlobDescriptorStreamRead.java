@@ -17,17 +17,12 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.grpc.GrpcStatusCode;
-import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.protobuf.ByteString;
-import com.google.rpc.Status;
 import com.google.storage.v2.ReadRange;
-import io.grpc.StatusRuntimeException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,27 +66,11 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
   abstract void eof() throws IOException;
 
-  final void fail(Status status) throws IOException {
-    io.grpc.Status grpcStatus = io.grpc.Status.fromCodeValue(status.getCode());
-    if (!status.getMessage().isEmpty()) {
-      grpcStatus = grpcStatus.withDescription(status.getMessage());
-    }
-    StatusRuntimeException cause = grpcStatus.asRuntimeException();
-    ApiException apiException =
-        ApiExceptionFactory.createException(cause, GrpcStatusCode.of(grpcStatus.getCode()), false);
-    fail(apiException);
+  final void preFail() {
+    tombstoned = true;
   }
 
-  final void unsafeFail(Throwable t) {
-    try {
-      fail(t);
-    } catch (IOException e) {
-      // todo: better exception than this
-      throw new RuntimeException(e);
-    }
-  }
-
-  abstract void fail(Throwable t) throws IOException;
+  abstract void fail(Throwable t);
 
   abstract BlobDescriptorStreamRead withNewReadId(long newReadId);
 

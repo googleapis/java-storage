@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
@@ -109,6 +110,13 @@ final class BlobDescriptorState {
     } finally {
       lock.unlock();
     }
+  }
+
+  <T extends Throwable> OnFailure<T> removeOutstandingReadOnFailure(long key, OnFailure<T> onFail) {
+    return t -> {
+      removeOutstandingRead(key);
+      onFail.onFailure(t);
+    };
   }
 
   void setRoutingToken(String routingToken) {

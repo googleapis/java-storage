@@ -39,7 +39,7 @@ import java.util.concurrent.ScheduledExecutorService;
 final class BlobDescriptorImpl implements BlobDescriptor {
 
   private final BlobDescriptorStream stream;
-  private final BlobDescriptorState state;
+  @VisibleForTesting final BlobDescriptorState state;
   private final BlobInfo info;
   private final RetryContextProvider retryContextProvider;
 
