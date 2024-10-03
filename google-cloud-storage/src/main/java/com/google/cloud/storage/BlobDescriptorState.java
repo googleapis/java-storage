@@ -18,32 +18,38 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.RetryContext.OnFailure;
-import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.Object;
-import com.google.storage.v2.ReadRange;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BlobDescriptorState {
 
+  private final GrpcCallContext baseContext;
   private final BidiReadObjectRequest openRequest;
   private final AtomicReference<@Nullable BidiReadHandle> bidiReadHandle;
   private final AtomicReference<@Nullable String> routingToken;
   private final AtomicReference<@MonotonicNonNull Object> metadata;
   private final AtomicLong readIdSeq;
+
+  @GuardedBy("this.lock") // https://errorprone.info/bugpattern/GuardedBy
   private final Map<Long, BlobDescriptorStreamRead> outstandingReads;
+
   private final ReentrantLock lock;
 
-  BlobDescriptorState(BidiReadObjectRequest openRequest) {
+  BlobDescriptorState(
+      @NonNull GrpcCallContext baseContext, @NonNull BidiReadObjectRequest openRequest) {
+    this.baseContext = baseContext;
     this.openRequest = openRequest;
     this.bidiReadHandle = new AtomicReference<>();
     this.routingToken = new AtomicReference<>();
@@ -53,19 +59,35 @@ final class BlobDescriptorState {
     this.lock = new ReentrantLock();
   }
 
-  BidiReadObjectRequest getOpenRequest() {
-    Object obj = metadata.get();
-    if (obj != null && obj.getGeneration() != openRequest.getReadObjectSpec().getGeneration()) {
-      BidiReadObjectRequest.Builder b = openRequest.toBuilder();
-      b.getReadObjectSpecBuilder().setGeneration(obj.getGeneration());
-      return b.build();
-    }
-    return openRequest;
-  }
+  OpenArguments getOpenArguments() {
+    lock.lock();
+    try {
+      BidiReadObjectRequest.Builder b = openRequest.toBuilder().clearReadRanges();
 
-  @Nullable
-  BidiReadHandle getBidiReadHandle() {
-    return bidiReadHandle.get();
+      Object obj = metadata.get();
+      if (obj != null && obj.getGeneration() != openRequest.getReadObjectSpec().getGeneration()) {
+        b.getReadObjectSpecBuilder().setGeneration(obj.getGeneration());
+      }
+
+      String routingToken = this.routingToken.get();
+      if (routingToken != null) {
+        b.getReadObjectSpecBuilder().setRoutingToken(routingToken);
+      }
+
+      BidiReadHandle bidiReadHandle = this.bidiReadHandle.get();
+      if (bidiReadHandle != null) {
+        b.getReadObjectSpecBuilder().setReadHandle(bidiReadHandle);
+      }
+
+      outstandingReads.values().stream()
+          .filter(BlobDescriptorStreamRead::readyToSend)
+          .map(BlobDescriptorStreamRead::makeReadRange)
+          .forEach(b::addReadRanges);
+
+      return OpenArguments.of(baseContext, b.build());
+    } finally {
+      lock.unlock();
+    }
   }
 
   void setBidiReadHandle(BidiReadHandle newValue) {
@@ -123,11 +145,6 @@ final class BlobDescriptorState {
     this.routingToken.set(routingToken);
   }
 
-  @Nullable
-  String getRoutingToken() {
-    return this.routingToken.get();
-  }
-
   BlobDescriptorStreamRead assignNewReadId(long oldReadId) {
     lock.lock();
     try {
@@ -142,15 +159,25 @@ final class BlobDescriptorState {
     }
   }
 
-  List<ReadRange> getOutstandingReads() {
-    lock.lock();
-    try {
-      return outstandingReads.values().stream()
-          .filter(BlobDescriptorStreamRead::readyToSend)
-          .map(BlobDescriptorStreamRead::makeReadRange)
-          .collect(ImmutableList.toImmutableList());
-    } finally {
-      lock.unlock();
+  static final class OpenArguments {
+    private final GrpcCallContext ctx;
+    private final BidiReadObjectRequest req;
+
+    private OpenArguments(GrpcCallContext ctx, BidiReadObjectRequest req) {
+      this.ctx = ctx;
+      this.req = req;
+    }
+
+    public GrpcCallContext getCtx() {
+      return ctx;
+    }
+
+    public BidiReadObjectRequest getReq() {
+      return req;
+    }
+
+    public static OpenArguments of(GrpcCallContext ctx, BidiReadObjectRequest req) {
+      return new OpenArguments(ctx, req);
     }
   }
 }

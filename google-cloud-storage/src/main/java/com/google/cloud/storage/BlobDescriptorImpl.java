@@ -124,9 +124,9 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       ScheduledExecutorService executor,
       RetryContextProvider retryContextProvider) {
-    BlobDescriptorState state = new BlobDescriptorState(openRequest);
+    BlobDescriptorState state = new BlobDescriptorState(context, openRequest);
 
-    BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, context, state);
+    BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, state);
 
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
         ApiFutures.transform(

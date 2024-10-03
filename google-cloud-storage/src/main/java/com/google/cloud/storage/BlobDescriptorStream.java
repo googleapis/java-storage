@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.storage.BlobDescriptorState.OpenArguments;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
@@ -32,13 +33,11 @@ import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
-import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.ChecksummedData;
-import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
@@ -51,6 +50,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BlobDescriptorStream
     implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
@@ -61,7 +61,6 @@ final class BlobDescriptorStream
   private final ScheduledExecutorService executor;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       callable;
-  private final GrpcCallContext context;
   private final int maxRedirectsAllowed;
 
   private volatile boolean open;
@@ -75,19 +74,18 @@ final class BlobDescriptorStream
       BlobDescriptorState state,
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      GrpcCallContext context,
       int maxRedirectsAllowed) {
     this.state = state;
     this.executor = executor;
     this.callable = callable;
-    this.context = context;
     this.blobDescriptorResolveFuture = SettableApiFuture.create();
     this.open = true;
     this.redirectCounter = new AtomicInteger();
     this.maxRedirectsAllowed = maxRedirectsAllowed;
   }
 
-  public ClientStream<BidiReadObjectRequest> getRequestStream() {
+  // TODO: make this more elegant
+  private ClientStream<BidiReadObjectRequest> getRequestStream(@Nullable GrpcCallContext context) {
     if (requestStream != null) {
       return requestStream;
     } else {
@@ -127,30 +125,31 @@ final class BlobDescriptorStream
   public void send(BidiReadObjectRequest request) {
     checkOpen();
     if (requestStream == null) {
+      OpenArguments openArguments = state.getOpenArguments();
       BidiReadObjectRequest merged =
-          state.getOpenRequest().toBuilder().clearReadRanges().mergeFrom(request).build();
-      getRequestStream().send(merged);
+          openArguments.getReq().toBuilder().clearReadRanges().mergeFrom(request).build();
+      getRequestStream(openArguments.getCtx()).send(merged);
     } else {
-      getRequestStream().send(request);
+      getRequestStream(null).send(request);
     }
   }
 
   @Override
   public void closeSendWithError(Throwable t) {
     checkOpen();
-    getRequestStream().closeSendWithError(t);
+    getRequestStream(null).closeSendWithError(t);
   }
 
   @Override
   public void closeSend() {
     checkOpen();
-    getRequestStream().closeSend();
+    getRequestStream(null).closeSend();
   }
 
   @Override
   public boolean isSendReady() {
     checkOpen();
-    return getRequestStream().isSendReady();
+    return getRequestStream(null).isSendReady();
   }
 
   @Override
@@ -191,30 +190,9 @@ final class BlobDescriptorStream
   private void restart() {
     reset();
 
-    BidiReadObjectRequest openRequest = state.getOpenRequest();
-    BidiReadObjectRequest.Builder b = openRequest.toBuilder().clearReadRanges();
-
-    String routingToken = state.getRoutingToken();
-    if (routingToken != null) {
-      b.getReadObjectSpecBuilder().setRoutingToken(routingToken);
-    }
-
-    BidiReadHandle bidiReadHandle = state.getBidiReadHandle();
-    if (bidiReadHandle != null) {
-      b.getReadObjectSpecBuilder().setReadHandle(bidiReadHandle);
-    }
-
-    b.addAllReadRanges(state.getOutstandingReads());
-    if (openRequest.getReadObjectSpec().getGeneration() <= 0) {
-      Object metadata = state.getMetadata();
-      if (metadata != null) {
-        b.getReadObjectSpecBuilder().setGeneration(metadata.getGeneration());
-      }
-    }
-
-    BidiReadObjectRequest restartRequest = b.build();
-    ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream();
-    requestStream1.send(restartRequest);
+    OpenArguments openArguments = state.getOpenArguments();
+    ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream(openArguments.getCtx());
+    requestStream1.send(openArguments.getReq());
   }
 
   private void reset() {
@@ -484,11 +462,10 @@ final class BlobDescriptorStream
   static BlobDescriptorStream create(
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      GrpcCallContext context,
       BlobDescriptorState state) {
 
     int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
-    return new BlobDescriptorStream(state, executor, callable, context, maxRedirectsAllowed);
+    return new BlobDescriptorStream(state, executor, callable, maxRedirectsAllowed);
   }
 
   static final class MaxRedirectsExceededException extends RuntimeException {

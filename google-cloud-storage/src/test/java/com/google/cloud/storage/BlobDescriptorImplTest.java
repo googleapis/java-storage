@@ -107,7 +107,7 @@ public final class BlobDescriptorImplTest {
   }
 
   private static BlobDescriptorState stateWithObjectSize(long objectSize) {
-    BlobDescriptorState state = new BlobDescriptorState(null);
+    BlobDescriptorState state = new BlobDescriptorState(null, null);
     state.setMetadata(
         Object.newBuilder()
             .setBucket("projects/_/buckets/b")

@@ -56,6 +56,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
   private static final GrpcPlainRequestLoggingInterceptor INSTANCE =
       new GrpcPlainRequestLoggingInterceptor();
 
+  private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
+      Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+
   private GrpcPlainRequestLoggingInterceptor() {}
 
   public static GrpcPlainRequestLoggingInterceptor getInstance() {
@@ -73,6 +76,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
     return new SimpleForwardingClientCall<ReqT, RespT>(call) {
       @Override
       public void start(Listener<RespT> responseListener, Metadata headers) {
+        if (headers.containsKey(X_GOOG_REQUEST_PARAMS)) {
+          LOGGER.log(Level.CONFIG, () -> String.format(">>> headers = %s", headers));
+        }
         SimpleForwardingClientCallListener<RespT> listener =
             new SimpleForwardingClientCallListener<RespT>(responseListener) {
               @Override
