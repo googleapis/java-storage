@@ -23,6 +23,8 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.BlobDescriptorState.OpenArguments;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
@@ -31,6 +33,8 @@ import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadRange;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 public final class BlobDescriptorStateTest {
@@ -83,7 +87,11 @@ public final class BlobDescriptorStateTest {
 
     OpenArguments expected =
         OpenArguments.of(
-            GrpcCallContext.createDefault(),
+            GrpcCallContext.createDefault()
+                .withExtraHeaders(
+                    ImmutableMap.of(
+                        "x-goog-request-params",
+                        ImmutableList.of("bucket=projects/_/buckets/my-bucket"))),
             BidiReadObjectRequest.newBuilder()
                 .setReadObjectSpec(
                     BidiReadObjectSpec.newBuilder()
@@ -110,5 +118,80 @@ public final class BlobDescriptorStateTest {
         () ->
             assertThat(actual.getCtx().getExtraHeaders())
                 .isEqualTo(expected.getCtx().getExtraHeaders()));
+  }
+
+  @Test
+  public void redirectTokenPresentInHeadersIfNonNull() {
+    BidiReadObjectRequest base =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/my-bucket")
+                    .setObject("my-object"))
+            .build();
+
+    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+
+    state.setRoutingToken("token-1");
+
+    OpenArguments openArguments = state.getOpenArguments();
+    GrpcCallContext ctx = openArguments.getCtx();
+    Map<String, List<String>> extraHeaders = ctx.getExtraHeaders();
+    Map<String, List<String>> expected =
+        ImmutableMap.of(
+            "x-goog-request-params",
+            ImmutableList.of("bucket=projects/_/buckets/my-bucket&routing_token=token-1"));
+
+    assertThat(extraHeaders).isEqualTo(expected);
+  }
+
+  @Test
+  public void redirectTokenNotPresentInHeadersIfNull() {
+    BidiReadObjectRequest base =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/my-bucket")
+                    .setObject("my-object"))
+            .build();
+
+    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+
+    state.setRoutingToken(null);
+
+    OpenArguments openArguments = state.getOpenArguments();
+    GrpcCallContext ctx = openArguments.getCtx();
+    Map<String, List<String>> extraHeaders = ctx.getExtraHeaders();
+    Map<String, List<String>> expected =
+        ImmutableMap.of(
+            "x-goog-request-params", ImmutableList.of("bucket=projects/_/buckets/my-bucket"));
+
+    assertThat(extraHeaders).isEqualTo(expected);
+  }
+
+  @Test
+  public void redirectTokenMustNotBeUrlEncoded() {
+    BidiReadObjectRequest base =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/my-bucket")
+                    .setObject("my-object"))
+            .build();
+
+    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+
+    state.setRoutingToken("token%20with%2furl%20encoding");
+
+    OpenArguments openArguments = state.getOpenArguments();
+    GrpcCallContext ctx = openArguments.getCtx();
+    Map<String, List<String>> extraHeaders = ctx.getExtraHeaders();
+    Map<String, List<String>> expected =
+        ImmutableMap.of(
+            "x-goog-request-params",
+            ImmutableList.of(
+                "bucket=projects/_/buckets/my-bucket&routing_token=token%20with%2furl%20encoding"));
+
+    assertThat(extraHeaders).isEqualTo(expected);
   }
 }

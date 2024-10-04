@@ -31,6 +31,7 @@ import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.common.collect.ImmutableMap;
@@ -305,7 +306,8 @@ public final class ITBlobDescriptorFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobDescriptor> futureBlobDescriptor =
+          storage.getBlobDescriptor(id, BlobSourceOption.userProject("user-project"));
 
       StorageException se =
           assertThrows(

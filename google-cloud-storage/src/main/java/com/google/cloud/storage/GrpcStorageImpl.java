@@ -1527,6 +1527,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options);
     Object object = codecs.blobId().encode(id);
 
     BidiReadObjectSpec.Builder spec =
@@ -1544,8 +1545,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         new ZeroCopyBidiStreamingCallable<>(
             storageClient.bidiReadObjectCallable(), bidiResponseContentLifecycleManager);
 
-    GrpcCallContext context =
-        GrpcUtils.contextWithBucketName(object.getBucket(), GrpcCallContext.createDefault());
+    GrpcCallContext context = opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
 
     return BlobDescriptorImpl.create(req, context, callable, executor, retryContextProvider);
   }

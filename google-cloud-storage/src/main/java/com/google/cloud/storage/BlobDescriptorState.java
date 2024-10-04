@@ -20,14 +20,21 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.RetryContext.OnFailure;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.Object;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -65,7 +72,8 @@ final class BlobDescriptorState {
       BidiReadObjectRequest.Builder b = openRequest.toBuilder().clearReadRanges();
 
       Object obj = metadata.get();
-      if (obj != null && obj.getGeneration() != openRequest.getReadObjectSpec().getGeneration()) {
+      BidiReadObjectSpec spec = openRequest.getReadObjectSpec();
+      if (obj != null && obj.getGeneration() != spec.getGeneration()) {
         b.getReadObjectSpecBuilder().setGeneration(obj.getGeneration());
       }
 
@@ -84,7 +92,16 @@ final class BlobDescriptorState {
           .map(BlobDescriptorStreamRead::makeReadRange)
           .forEach(b::addReadRanges);
 
-      return OpenArguments.of(baseContext, b.build());
+      ImmutableMap<String, List<String>> headers =
+          ImmutableMap.of(
+              "x-goog-request-params",
+              ImmutableList.of(
+                  Stream.of(
+                          "bucket=" + spec.getBucket(),
+                          routingToken != null ? "routing_token=" + routingToken : null)
+                      .filter(Objects::nonNull)
+                      .collect(Collectors.joining("&"))));
+      return OpenArguments.of(baseContext.withExtraHeaders(headers), b.build());
     } finally {
       lock.unlock();
     }
