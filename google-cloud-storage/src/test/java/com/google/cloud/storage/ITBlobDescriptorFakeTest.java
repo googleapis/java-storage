@@ -34,8 +34,12 @@ import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
+import com.google.cloud.storage.it.GrpcRequestAuditing;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadHandle;
@@ -46,6 +50,7 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
@@ -58,6 +63,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -66,6 +72,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 
 public final class ITBlobDescriptorFakeTest {
@@ -93,6 +100,10 @@ public final class ITBlobDescriptorFakeTest {
   private static final BidiReadObjectResponse RES_OPEN =
       BidiReadObjectResponse.newBuilder().setMetadata(METADATA).build();
   private static final byte[] ALL_OBJECT_BYTES = DataGenerator.base64Characters().genBytes(64);
+  private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
+      Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+  private static final Metadata.Key<String> X_GOOG_USER_PROJECT =
+      Metadata.Key.of("x-goog-user-project", Metadata.ASCII_STRING_MARSHALLER);
 
   /**
    *
@@ -790,6 +801,74 @@ public final class ITBlobDescriptorFakeTest {
 
         BlobDescriptorStreamRead outstandingRead = bdi.state.getOutstandingRead(1L);
         assertThat(outstandingRead).isNull();
+      }
+    }
+  }
+
+  @Test
+  public void requestOptionsShouldBePresentInRequest() throws Exception {
+
+    String keyB64 = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
+    Key key = new SecretKeySpec(BaseEncoding.base64().decode(keyB64), "AES256");
+    byte[] keySha256 = Hashing.sha256().hashBytes(key.getEncoded()).asBytes();
+    BidiReadObjectRequest reqOpen =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(METADATA.getBucket())
+                    .setObject(METADATA.getName())
+                    .setIfGenerationMatch(1)
+                    .setIfGenerationNotMatch(2)
+                    .setIfMetagenerationMatch(3)
+                    .setIfMetagenerationNotMatch(4)
+                    .setCommonObjectRequestParams(
+                        CommonObjectRequestParams.newBuilder()
+                            .setEncryptionAlgorithm("AES256")
+                            .setEncryptionKeyBytes(ByteString.copyFrom(key.getEncoded()))
+                            .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256))))
+            .build();
+    BidiReadObjectResponse resOpen =
+        BidiReadObjectResponse.newBuilder().setMetadata(METADATA).build();
+
+    FakeStorage fake = FakeStorage.from(ImmutableMap.of(reqOpen, resOpen));
+
+    GrpcRequestAuditing requestAuditing = new GrpcRequestAuditing();
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .setGrpcInterceptorProvider(
+                    () ->
+                        ImmutableList.of(
+                            requestAuditing, GrpcPlainRequestLoggingInterceptor.getInstance()))
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor =
+          storage.getBlobDescriptor(
+              id,
+              BlobSourceOption.generationMatch(1),
+              BlobSourceOption.generationNotMatch(2),
+              BlobSourceOption.metagenerationMatch(3),
+              BlobSourceOption.metagenerationNotMatch(4),
+              BlobSourceOption.decryptionKey(key),
+              BlobSourceOption.userProject("my-awesome-project"));
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        // by the time we reach here the test has already passed/failed
+        assertAll(
+            () -> assertThat(bd).isNotNull(),
+            () ->
+                requestAuditing
+                    .assertRequestHeader(X_GOOG_REQUEST_PARAMS)
+                    .contains("bucket=" + METADATA.getBucket()),
+            () ->
+                requestAuditing
+                    .assertRequestHeader(X_GOOG_USER_PROJECT)
+                    .contains("my-awesome-project"));
       }
     }
   }

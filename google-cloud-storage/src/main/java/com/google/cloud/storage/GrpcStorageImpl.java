@@ -1539,6 +1539,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     }
     BidiReadObjectRequest.Builder b = BidiReadObjectRequest.newBuilder();
     b.setReadObjectSpec(spec);
+    opts.bidiReadObjectRequest().apply(b);
     BidiReadObjectRequest req = b.build();
 
     ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =

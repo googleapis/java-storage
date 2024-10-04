@@ -37,6 +37,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
+import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
@@ -148,6 +149,10 @@ final class UnifiedOpts {
    */
   interface ObjectSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableObject {
     default Mapper<ReadObjectRequest.Builder> readObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
       return Mapper.identity();
     }
 
@@ -657,6 +662,15 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        customerSuppliedKey(
+            b.getReadObjectSpecBuilder().getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> {
         customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
@@ -897,6 +911,15 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        b.getReadObjectSpecBuilder()
+            .setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<UpdateObjectRequest.Builder> updateObject() {
       return b -> b.setUpdateMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
     }
@@ -1095,6 +1118,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        b.getReadObjectSpecBuilder().setIfGenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfGenerationMatch(val);
     }
@@ -1166,6 +1197,14 @@ final class UnifiedOpts {
     @Override
     public Mapper<ReadObjectRequest.Builder> readObject() {
       return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        b.getReadObjectSpecBuilder().setIfGenerationNotMatch(val);
+        return b;
+      };
     }
 
     @Override
@@ -1344,6 +1383,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        b.getReadObjectSpecBuilder().setIfMetagenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfMetagenerationMatch(val);
     }
@@ -1439,6 +1486,14 @@ final class UnifiedOpts {
     @Override
     public Mapper<ReadObjectRequest.Builder> readObject() {
       return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObject() {
+      return b -> {
+        b.getReadObjectSpecBuilder().setIfMetagenerationNotMatch(val);
+        return b;
+      };
     }
 
     @Override
@@ -2665,6 +2720,10 @@ final class UnifiedOpts {
 
     Mapper<ReadObjectRequest.Builder> readObjectRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::readObject);
+    }
+
+    public Mapper<BidiReadObjectRequest.Builder> bidiReadObjectRequest() {
+      return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::bidiReadObject);
     }
 
     Mapper<ListObjectsRequest.Builder> listObjectsRequest() {
