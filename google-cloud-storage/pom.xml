@@ -310,13 +310,13 @@
     <dependency>
       <groupId>net.jqwik</groupId>
       <artifactId>jqwik</artifactId>
-      <version>1.9.0</version>
+      <version>1.9.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
-      <version>4.8.176</version>
+      <version>4.8.177</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
