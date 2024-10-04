@@ -330,7 +330,7 @@ public final class RetryContextTest {
         testClock);
   }
 
-  private static <T extends Throwable> OnFailure<T> failOnFailure() {
+  static <T extends Throwable> OnFailure<T> failOnFailure() {
     InvocationTracer invocationTracer = new InvocationTracer("Unexpected onFailure invocation");
     return t -> {
       invocationTracer.addSuppressed(t);
@@ -338,7 +338,7 @@ public final class RetryContextTest {
     };
   }
 
-  private static OnSuccess failOnSuccess() {
+  static OnSuccess failOnSuccess() {
     InvocationTracer invocationTracer = new InvocationTracer("Unexpected onSuccess invocation");
     return () -> {
       throw invocationTracer;
@@ -371,10 +371,10 @@ public final class RetryContextTest {
     }
   }
 
-  private static final class BlockingOnSuccess implements OnSuccess {
+  static final class BlockingOnSuccess implements OnSuccess {
     private final CountDownLatch cdl;
 
-    public BlockingOnSuccess() {
+    BlockingOnSuccess() {
       this.cdl = new CountDownLatch(1);
     }
 

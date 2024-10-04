@@ -27,9 +27,12 @@ import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.Object;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -171,6 +174,21 @@ final class BlobDescriptorState {
       BlobDescriptorStreamRead withNewReadId = remove.withNewReadId(newReadId);
       outstandingReads.put(newReadId, withNewReadId);
       return withNewReadId;
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  public void failAll(Executor executor, Throwable terminalFailure) {
+    lock.lock();
+    try {
+      Iterator<Entry<Long, BlobDescriptorStreamRead>> iter = outstandingReads.entrySet().iterator();
+      while (iter.hasNext()) {
+        Entry<Long, BlobDescriptorStreamRead> entry = iter.next();
+        iter.remove();
+        BlobDescriptorStreamRead read = entry.getValue();
+        executor.execute(() -> read.fail(StorageException.coalesce(terminalFailure)));
+      }
     } finally {
       lock.unlock();
     }

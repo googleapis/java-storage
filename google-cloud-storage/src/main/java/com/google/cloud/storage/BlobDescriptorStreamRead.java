@@ -38,11 +38,11 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
   protected boolean closed;
   protected boolean tombstoned;
 
-  private BlobDescriptorStreamRead(long readId, ReadCursor readCursor, RetryContext retryContext) {
+  BlobDescriptorStreamRead(long readId, ReadCursor readCursor, RetryContext retryContext) {
     this(readId, readCursor, Collections.synchronizedList(new ArrayList<>()), retryContext, false);
   }
 
-  private BlobDescriptorStreamRead(
+  BlobDescriptorStreamRead(
       long readId,
       ReadCursor readCursor,
       List<ChildRef> childRefs,

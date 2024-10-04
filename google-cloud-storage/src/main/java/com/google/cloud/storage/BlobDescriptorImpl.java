@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
@@ -55,6 +57,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
 
   @Override
   public ApiFuture<byte[]> readRangeAsBytes(RangeSpec range) {
+    checkState(stream.isOpen(), "stream already closed");
     long readId = state.newReadId();
     ReadCursor readCursor = getReadCursor(range, state);
     if (!readCursor.hasRemaining()) {
@@ -72,6 +75,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   }
 
   public ApiFuture<DisposableByteString> readRangeAsByteString(RangeSpec range) {
+    checkState(stream.isOpen(), "stream already closed");
     long readId = state.newReadId();
     ReadCursor readCursor = getReadCursor(range, state);
     if (!readCursor.hasRemaining()) {
@@ -126,7 +130,8 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       RetryContextProvider retryContextProvider) {
     BlobDescriptorState state = new BlobDescriptorState(context, openRequest);
 
-    BlobDescriptorStream stream = BlobDescriptorStream.create(executor, callable, state);
+    BlobDescriptorStream stream =
+        BlobDescriptorStream.create(executor, callable, state, retryContextProvider.create());
 
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
         ApiFutures.transform(

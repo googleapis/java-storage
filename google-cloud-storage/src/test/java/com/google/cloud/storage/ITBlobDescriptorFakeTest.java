@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.DataLossException;
@@ -37,6 +38,7 @@ import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.cloud.storage.it.GrpcRequestAuditing;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -65,15 +67,22 @@ import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 public final class ITBlobDescriptorFakeTest {
 
@@ -873,6 +882,74 @@ public final class ITBlobDescriptorFakeTest {
     }
   }
 
+  @Test
+  public void failedStreamRestartShouldFailAllPendingReads() throws Exception {
+    final Set<BidiReadObjectRequest> reads = Collections.synchronizedSet(new HashSet<>());
+    StorageImplBase fakeStorage =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> responseObserver) {
+            return new AbstractObserver(responseObserver) {
+              @Override
+              public void onNext(BidiReadObjectRequest request) {
+                if (request.equals(REQ_OPEN)) {
+                  respond.onNext(RES_OPEN);
+                  return;
+                }
+
+                reads.add(request);
+
+                if (reads.size() == 3) {
+                  respond.onError(Status.UNAVAILABLE.asRuntimeException());
+                }
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fakeStorage);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> f1 = bd.readRangeAsBytes(RangeSpec.of(1, 1));
+        ApiFuture<byte[]> f2 = bd.readRangeAsBytes(RangeSpec.of(2, 2));
+        ApiFuture<byte[]> f3 = bd.readRangeAsBytes(RangeSpec.of(3, 3));
+
+        List<byte[]> successful =
+            ApiFutures.successfulAsList(ImmutableList.of(f1, f2, f3)).get(5, TimeUnit.SECONDS);
+        assertThat(successful).isEqualTo(Lists.newArrayList(null, null, null));
+
+        assertAll(
+            () -> {
+              Set<String> readRanges =
+                  reads.stream()
+                      .map(BidiReadObjectRequest::getReadRangesList)
+                      .flatMap(Collection::stream)
+                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .collect(Collectors.toSet());
+              Set<String> expected =
+                  Stream.of(getReadRange(1, 1, 1), getReadRange(2, 2, 2), getReadRange(3, 3, 3))
+                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .collect(Collectors.toSet());
+              assertThat(readRanges).isEqualTo(expected);
+            },
+            assert503(f1),
+            assert503(f2),
+            assert503(f3));
+      }
+    }
+  }
+
   private static void runTestAgainstFakeServer(
       FakeStorage fakeStorage, RangeSpec range, ChecksummedTestContent expected) throws Exception {
 
@@ -917,6 +994,20 @@ public final class ITBlobDescriptorFakeTest {
         .setReadOffset(readOffset)
         .setReadLength(readLimit)
         .build();
+  }
+
+  private static ThrowingRunnable assert503(ApiFuture<?> f) {
+    return () -> {
+      StorageException se =
+          assertThrows(StorageException.class, () -> TestUtils.await(f, 5, TimeUnit.SECONDS));
+      assertThat(se.getCode()).isEqualTo(503);
+    };
+  }
+
+  private static String fmt(ReadRange r) {
+    return String.format(
+        "ReadRange{id: %d, offset: %d, length: %d}",
+        r.getReadId(), r.getReadOffset(), r.getReadLength());
   }
 
   private static final class FakeStorage extends StorageImplBase {

@@ -39,7 +39,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class GrpcRequestAuditing implements ClientInterceptor, AssertRequestHeaders, GrpcInterceptorProvider {
+public final class GrpcRequestAuditing
+    implements ClientInterceptor, AssertRequestHeaders, GrpcInterceptorProvider {
 
   private final List<Metadata> requestHeaders;
 

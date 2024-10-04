@@ -227,15 +227,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         RetryContext.providerFrom(
             executor,
             getOptions(),
-            new BasicResultRetryAlgorithm<Object>() {
-              @Override
-              public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
-                // this is only retryable with read object range, not other requests
-                return previousThrowable instanceof UncheckedChecksumMismatchException
-                    || previousThrowable instanceof OutOfRangeException
-                    || retryAlgorithmManager.idempotent().shouldRetry(previousThrowable, null);
-              }
-            });
+            new ReadObjectRangeResultRetryAlgorithmDecorator(retryAlgorithmManager.idempotent()));
   }
 
   @Override
@@ -2091,5 +2083,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return new ZeroCopyServerStreamingCallable<>(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
         responseContentLifecycleManager);
+  }
+
+  private static class ReadObjectRangeResultRetryAlgorithmDecorator
+      extends BasicResultRetryAlgorithm<Object> {
+
+    private final ResultRetryAlgorithm<?> delegate;
+
+    private ReadObjectRangeResultRetryAlgorithmDecorator(ResultRetryAlgorithm<?> delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+      // this is only retryable with read object range, not other requests
+      return previousThrowable instanceof UncheckedChecksumMismatchException
+          || previousThrowable instanceof OutOfRangeException
+          || delegate.shouldRetry(StorageException.coalesce(previousThrowable), null);
+    }
   }
 }

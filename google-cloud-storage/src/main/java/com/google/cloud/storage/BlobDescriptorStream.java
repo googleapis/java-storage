@@ -30,6 +30,7 @@ import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnSuccess;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.rpc.Status;
@@ -61,6 +62,7 @@ final class BlobDescriptorStream
   private final ScheduledExecutorService executor;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       callable;
+  private final RetryContext streamRetryContext;
   private final int maxRedirectsAllowed;
 
   private volatile boolean open;
@@ -74,14 +76,16 @@ final class BlobDescriptorStream
       BlobDescriptorState state,
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      int maxRedirectsAllowed) {
+      int maxRedirectsAllowed,
+      RetryContext backoff) {
     this.state = state;
     this.executor = executor;
     this.callable = callable;
+    this.streamRetryContext = backoff;
     this.blobDescriptorResolveFuture = SettableApiFuture.create();
+    this.maxRedirectsAllowed = maxRedirectsAllowed;
     this.open = true;
     this.redirectCounter = new AtomicInteger();
-    this.maxRedirectsAllowed = maxRedirectsAllowed;
   }
 
   // TODO: make this more elegant
@@ -104,20 +108,20 @@ final class BlobDescriptorStream
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
     if (!open) {
       return;
     }
+    open = false;
+    cleanUp();
+  }
 
-    try {
-      cancel(true);
-      if (requestStream != null) {
-        requestStream.closeSend();
-        ApiFutureUtils.await(monitoringResponseObserver.closeSignal);
-        requestStream = null;
-      }
-    } finally {
-      open = false;
+  private void cleanUp() {
+    cancel(true);
+    if (requestStream != null) {
+      requestStream.closeSend();
+      ApiFutureUtils.await(monitoringResponseObserver.closeSignal);
+      requestStream = null;
     }
   }
 
@@ -183,20 +187,35 @@ final class BlobDescriptorStream
     return blobDescriptorResolveFuture.isDone();
   }
 
-  private void checkOpen() {
-    Preconditions.checkState(open, "not open");
+  boolean isOpen() {
+    return open;
   }
 
-  private void restart() {
-    reset();
+  private void checkOpen() {
+    Preconditions.checkState(open, "Stream closed");
+  }
+
+  @VisibleForTesting
+  void restart() {
+    Preconditions.checkState(
+        requestStream == null, "attempting to restart stream when stream is already active");
 
     OpenArguments openArguments = state.getOpenArguments();
-    ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream(openArguments.getCtx());
-    requestStream1.send(openArguments.getReq());
+    BidiReadObjectRequest req = openArguments.getReq();
+    if (!req.getReadRangesList().isEmpty() || !blobDescriptorResolveFuture.isDone()) {
+      ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream(openArguments.getCtx());
+      requestStream1.send(req);
+    }
   }
 
-  private void reset() {
-    requestStream = null;
+  private void failAll(Throwable terminalFailure) {
+    open = false;
+    try {
+      blobDescriptorResolveFuture.setException(terminalFailure);
+      state.failAll(executor, terminalFailure);
+    } finally {
+      cleanUp();
+    }
   }
 
   private final class BidiReadObjectResponseObserver
@@ -319,39 +338,55 @@ final class BlobDescriptorStream
           }
         }
       } catch (IOException e) {
-        // TODO: sync this up with stream restarts when the time comes
-        throw StorageException.coalesce(e);
+        //
+        // When using zero-copy, the returned InputStream is of type InputStream rather than its
+        // concrete subclass. The subclass is `io.grpc.internal.ReadableBuffers.BufferInputStream`
+        // which exclusively operates on a `io.grpc.internal.ReadableBuffer`. `ReadableBuffer`s
+        // close method does not throw.
+        //
+        // This is defined as an exhaustiveness compliance. {@code javac} dictates we handle an
+        // `IOException`, even though the underlying classes won't throw it. If the behavior in grpc
+        // at some point does throw, we catch it here and funnel it into the stream retry handling.
+        //
+        requestStream = null;
+        streamRetryContext.recordError(
+            e, BlobDescriptorStream.this::restart, BlobDescriptorStream.this::failAll);
       }
     }
 
     @Override
     public void onError(Throwable t) {
-      reset();
-      BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
-      if (error == null) {
-        return;
-      }
-
-      List<ReadRangeError> rangeErrors = error.getReadRangeErrorsList();
-      if (rangeErrors.isEmpty()) {
-        return;
-      }
-      for (ReadRangeError rangeError : rangeErrors) {
-        Status status = rangeError.getStatus();
-        long id = rangeError.getReadId();
-        BlobDescriptorStreamRead read = state.getOutstandingRead(id);
-        if (read == null) {
-          continue;
+      requestStream = null;
+      try {
+        BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
+        if (error == null) {
+          return;
         }
-        // mark read as failed, but don't resolve its future now. Schedule the delivery of the
-        // failure in executor to ensure any downstream future doesn't block this IO thread.
-        read.preFail();
-        executor.execute(
-            StorageException.liftToRunnable(
-                () ->
-                    state
-                        .removeOutstandingReadOnFailure(id, read::fail)
-                        .onFailure(GrpcUtils.statusToApiException(status))));
+
+        List<ReadRangeError> rangeErrors = error.getReadRangeErrorsList();
+        if (rangeErrors.isEmpty()) {
+          return;
+        }
+        for (ReadRangeError rangeError : rangeErrors) {
+          Status status = rangeError.getStatus();
+          long id = rangeError.getReadId();
+          BlobDescriptorStreamRead read = state.getOutstandingRead(id);
+          if (read == null) {
+            continue;
+          }
+          // mark read as failed, but don't resolve its future now. Schedule the delivery of the
+          // failure in executor to ensure any downstream future doesn't block this IO thread.
+          read.preFail();
+          executor.execute(
+              StorageException.liftToRunnable(
+                  () ->
+                      state
+                          .removeOutstandingReadOnFailure(id, read::fail)
+                          .onFailure(GrpcUtils.statusToApiException(status))));
+        }
+      } finally {
+        streamRetryContext.recordError(
+            t, BlobDescriptorStream.this::restart, BlobDescriptorStream.this::failAll);
       }
     }
 
@@ -435,6 +470,7 @@ final class BlobDescriptorStream
         delegate.onError(t);
         return;
       }
+      requestStream = null;
       int redirectCount = redirectCounter.incrementAndGet();
       if (redirectCount > maxRedirectsAllowed) {
         // attach the fact we're ignoring the redirect to the original exception as a suppressed
@@ -462,10 +498,11 @@ final class BlobDescriptorStream
   static BlobDescriptorStream create(
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      BlobDescriptorState state) {
+      BlobDescriptorState state,
+      RetryContext retryContext) {
 
     int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
-    return new BlobDescriptorStream(state, executor, callable, maxRedirectsAllowed);
+    return new BlobDescriptorStream(state, executor, callable, maxRedirectsAllowed, retryContext);
   }
 
   static final class MaxRedirectsExceededException extends RuntimeException {
