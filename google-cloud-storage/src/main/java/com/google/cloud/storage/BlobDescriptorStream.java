@@ -259,8 +259,10 @@ final class BlobDescriptorStream
           int crc32C = checksummedData.getCrc32C();
 
           try {
-            // todo: benchmark how long it takes to compute this checksum and whether it needs to
-            //   happen on a non-io thread
+            // On a Threadripper PRO 3945WX
+            // java11+ calculating the crc32c of a 2MiB segment is ~70us
+            // java8 the same calculation is ~1600us
+            // not something to worry about offloading to another thread at this time.
             Hasher.enabled().validateUnchecked(Crc32cValue.of(crc32C), content);
           } catch (UncheckedChecksumMismatchException e) {
             read.recordError(
