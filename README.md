@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.47.0</version>
+      <version>26.48.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -41,6 +41,8 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
 If you are using Maven without the BOM, add this to your dependencies:
 
+<!-- {x-version-update-start:google-cloud-storage:released} -->
+
 ```xml
 <dependency>
   <groupId>com.google.cloud</groupId>
@@ -58,7 +60,7 @@ If you are using Maven without the BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:2.43.1')
+implementation platform('com.google.cloud:libraries-bom:26.48.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
@@ -73,6 +75,7 @@ If you are using SBT, add this to your dependencies:
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.43.1"
 ```
+<!-- {x-version-update-end} -->
 
 ## Authentication
 
@@ -113,7 +116,6 @@ The [Storage Control API](https://cloud.google.com/storage/docs/reference/rpc/) 
 The Storage Control API creates one space to perform metadata-specific, control plane, and long-running operations apart from the Storage API. Separating these operations from the Storage API improves API standardization and lets you run faster releases.
 
 If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
-<!-- {x-version-update-start:libraries-bom:released} -->
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -137,7 +139,6 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
 If you are using Maven without the BOM, add this to your dependencies:
 
-<!-- {x-version-update-start:google-cloud-storage-control:released} -->
 
 ```xml
 <dependency>
@@ -509,7 +510,7 @@ Java is a registered trademark of Oracle and/or its affiliates.
 [kokoro-badge-link-5]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java11.html
 [stability-image]: https://img.shields.io/badge/stability-stable-green
 [maven-version-image]: https://img.shields.io/maven-central/v/com.google.cloud/google-cloud-storage.svg
-[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.43.0
+[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.43.1
 [authentication]: https://github.com/googleapis/google-cloud-java#authentication
 [auth-scopes]: https://developers.google.com/identity/protocols/oauth2/scopes
 [predefined-iam-roles]: https://cloud.google.com/iam/docs/understanding-roles#predefined_roles
