@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -38,6 +39,7 @@ import com.example.storage.bucket.DisableBucketVersioning;
 import com.example.storage.bucket.DisableDefaultEventBasedHold;
 import com.example.storage.bucket.DisableLifecycleManagement;
 import com.example.storage.bucket.DisableRequesterPays;
+import com.example.storage.bucket.DisableSoftDelete;
 import com.example.storage.bucket.DisableUniformBucketLevelAccess;
 import com.example.storage.bucket.EnableBucketVersioning;
 import com.example.storage.bucket.EnableDefaultEventBasedHold;
@@ -68,6 +70,7 @@ import com.example.storage.bucket.SetDefaultRpo;
 import com.example.storage.bucket.SetPublicAccessPreventionEnforced;
 import com.example.storage.bucket.SetPublicAccessPreventionInherited;
 import com.example.storage.bucket.SetRetentionPolicy;
+import com.example.storage.bucket.SetSoftDeletePolicy;
 import com.example.storage.object.DownloadRequesterPaysObject;
 import com.example.storage.object.ReleaseEventBasedHold;
 import com.example.storage.object.ReleaseTemporaryHold;
@@ -77,6 +80,7 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.Identity;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -698,6 +702,32 @@ public class ITBucketSnippets {
       assertNotNull(storage.get(tempBucket).getObjectRetention());
       String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
       assertTrue(snippetOutput.contains("Enabled"));
+    } finally {
+      storage.delete(tempBucket);
+    }
+  }
+
+  @Test
+  public void testSetSoftDeletePolicy() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.of(tempBucket));
+    try {
+      assertNotEquals(java.time.Duration.ofDays(10), bucket.getSoftDeletePolicy().getRetentionDuration());
+      SetSoftDeletePolicy.setSoftDeletePolicy(PROJECT_ID, tempBucket);
+      assertEquals(java.time.Duration.ofDays(10), storage.get(tempBucket).getSoftDeletePolicy().getRetentionDuration());
+    } finally {
+      storage.delete(tempBucket);
+    }
+  }
+
+  @Test
+  public void testDisableSoftDelete() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.of(tempBucket));
+    try {
+      assertNotEquals(java.time.Duration.ofDays(0), bucket.getSoftDeletePolicy().getRetentionDuration());
+      DisableSoftDelete.disableSoftDelete(PROJECT_ID, tempBucket);
+      assertEquals(java.time.Duration.ofSeconds(0), storage.get(tempBucket).getSoftDeletePolicy().getRetentionDuration());
     } finally {
       storage.delete(tempBucket);
     }

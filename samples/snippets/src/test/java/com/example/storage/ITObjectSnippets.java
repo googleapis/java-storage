@@ -43,8 +43,11 @@ import com.example.storage.object.GetObjectMetadata;
 import com.example.storage.object.ListObjects;
 import com.example.storage.object.ListObjectsWithOldVersions;
 import com.example.storage.object.ListObjectsWithPrefix;
+import com.example.storage.object.ListSoftDeletedObjects;
+import com.example.storage.object.ListSoftDeletedVersionsOfObject;
 import com.example.storage.object.MakeObjectPublic;
 import com.example.storage.object.MoveObject;
+import com.example.storage.object.RestoreSoftDeletedObject;
 import com.example.storage.object.RotateObjectEncryptionKey;
 import com.example.storage.object.SetObjectMetadata;
 import com.example.storage.object.SetObjectRetentionPolicy;
@@ -73,6 +76,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
@@ -459,5 +463,61 @@ public class ITObjectSnippets {
       storage.delete(tempBucket, retentionBlob);
       storage.delete(tempBucket);
     }
+  }
+
+  @Test
+  public void testListSoftDeletedObjects() {
+    //This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
+            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+
+    String blob = "softdelobj";
+    storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
+    storage.delete(BlobId.of(BUCKET, blob));
+
+    ListSoftDeletedObjects.listSoftDeletedObjects(PROJECT_ID, BUCKET);
+
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+
+    assertTrue(snippetOutput.contains(blob));
+  }
+
+  @Test
+  public void testListSoftDeletedVersionsOfObject() {
+    //This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
+            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+
+    String blob = "softdelobj1";
+    storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
+    storage.delete(BlobId.of(BUCKET, blob));
+
+    String blob2 = "softdelobj2";
+    storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob2)).build());
+    storage.delete(BlobId.of(BUCKET, blob2));
+
+    ListSoftDeletedVersionsOfObject.listSoftDeletedVersionOfObject(PROJECT_ID, BUCKET, blob);
+
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+
+    assertTrue(snippetOutput.contains(blob));
+    assertFalse(snippetOutput.contains(blob2));
+  }
+
+  @Test
+  public void testRestoreSoftDeletedObject() {
+    //This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
+            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+
+    String blob = "restorableobj";
+    long gen = storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build()).getGeneration();
+    storage.delete(BlobId.of(BUCKET, blob));
+
+    assertNull(storage.get(BlobId.of(BUCKET, blob)));
+
+    RestoreSoftDeletedObject.RestoreSoftDeletedObject(PROJECT_ID, BUCKET, blob, gen);
+
+    assertNotNull(storage.get(BlobId.of(BUCKET, blob)));
   }
 }
