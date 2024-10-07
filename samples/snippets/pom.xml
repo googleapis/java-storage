@@ -79,7 +79,15 @@
       <version>1.133.0</version>
       <scope>test</scope>
     </dependency>
-  <!-- [START storage_install_with_bom] -->
+    <dependency>
+      <!-- tests jars aren't in the bom, manually include the version here -->
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage</artifactId>
+      <version>2.43.1</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <!-- [START storage_install_with_bom] -->
   </dependencies>
   <!-- [END storage_install_with_bom] -->
 </project>
