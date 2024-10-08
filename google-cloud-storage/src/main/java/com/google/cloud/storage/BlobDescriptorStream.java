@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
@@ -44,6 +45,7 @@ import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
 import io.grpc.Status.Code;
 import java.io.IOException;
+import java.nio.channels.AsynchronousCloseException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -51,6 +53,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BlobDescriptorStream
@@ -109,11 +112,19 @@ final class BlobDescriptorStream
 
   @Override
   public void close() {
+    ApiFuture<Void> closeAsync = closeAsync();
+    ApiFutureUtils.await(closeAsync);
+  }
+
+  public ApiFuture<Void> closeAsync() {
     if (!open) {
-      return;
+      return ApiFutures.immediateFuture(null);
     }
     open = false;
     cleanUp();
+    AsynchronousCloseException cause = new AsynchronousCloseException();
+    ApiFuture<?> f = failAll(() -> new StorageException(0, "Parent stream shutdown", cause));
+    return ApiFutures.transformAsync(f, ignore -> ApiFutures.immediateFuture(null), executor);
   }
 
   private void cleanUp() {
@@ -212,7 +223,17 @@ final class BlobDescriptorStream
     open = false;
     try {
       blobDescriptorResolveFuture.setException(terminalFailure);
-      state.failAll(executor, terminalFailure);
+      state.failAll(executor, () -> terminalFailure);
+    } finally {
+      cleanUp();
+    }
+  }
+
+  private ApiFuture<?> failAll(Supplier<Throwable> terminalFailure) {
+    open = false;
+    try {
+      blobDescriptorResolveFuture.setException(terminalFailure.get());
+      return state.failAll(executor, terminalFailure);
     } finally {
       cleanUp();
     }

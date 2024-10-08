@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -65,6 +66,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -950,6 +952,107 @@ public final class ITBlobDescriptorFakeTest {
     }
   }
 
+  // todo: in the future this should also interrupt and fail any child streams.
+  //   for example, when an individual range is streamed and we don't want backpressure
+  //   from the consumer to slow down the network stream of all reads.
+  @Test
+  public void closingBlobDescriptorShouldFailAllPendingReads() throws Exception {
+    BidiReadObjectRequest req2 = read(1, 1, 1);
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(req2.getReadRangesList().get(0))
+                    .setChecksummedData(
+                        getChecksummedData(ByteString.copyFromUtf8("A"), Hasher.enabled()))
+                    .setRangeEnd(true))
+            .build();
+    final Set<BidiReadObjectRequest> reads = Collections.synchronizedSet(new HashSet<>());
+    StorageImplBase fakeStorage =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> responseObserver) {
+            return new AbstractObserver(responseObserver) {
+              @Override
+              public void onNext(BidiReadObjectRequest request) {
+                if (request.equals(REQ_OPEN)) {
+                  respond.onNext(RES_OPEN);
+                  return;
+                } else if (request.equals(req2)) {
+                  respond.onNext(res2);
+                }
+                reads.add(request);
+              }
+            };
+          }
+        };
+
+    try (FakeServer fakeServer = FakeServer.of(fakeStorage);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        // issue three different range reads
+        ApiFuture<byte[]> f1 = bd.readRangeAsBytes(RangeSpec.of(1, 1));
+        ApiFuture<byte[]> f2 = bd.readRangeAsBytes(RangeSpec.of(2, 2));
+        ApiFuture<byte[]> f3 = bd.readRangeAsBytes(RangeSpec.of(3, 3));
+
+        // close the "parent"
+        bd.close();
+
+        assertAll(
+            () -> {
+              // make sure all three ranges were sent to the server
+              Set<String> readRanges =
+                  reads.stream()
+                      .map(BidiReadObjectRequest::getReadRangesList)
+                      .flatMap(Collection::stream)
+                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .collect(Collectors.toSet());
+              Set<String> expected =
+                  Stream.of(getReadRange(1, 1, 1), getReadRange(2, 2, 2), getReadRange(3, 3, 3))
+                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .collect(Collectors.toSet());
+              assertThat(readRanges).isEqualTo(expected);
+            },
+            () -> {
+              // make sure the first read succeeded
+              byte[] actual = TestUtils.await(f1, 5, TimeUnit.SECONDS);
+              assertThat(ByteString.copyFrom(actual)).isEqualTo(ByteString.copyFromUtf8("A"));
+            },
+            // make sure the other two pending reads fail
+            assertStatusCodeIs(f2, 0),
+            assertStatusCodeIs(f3, 0),
+            () -> {
+              // the futures are already verified to be resolved based on the two previous
+              // assertions get them again for our additional assertions
+              ExecutionException ee2 = assertThrows(ExecutionException.class, f2::get);
+              ExecutionException ee3 = assertThrows(ExecutionException.class, f3::get);
+              StorageException se2 = (StorageException) ee2.getCause();
+              StorageException se3 = (StorageException) ee3.getCause();
+
+              assertAll(
+                  () -> assertThat(se2).isNotSameInstanceAs(se3),
+                  () ->
+                      assertThat(se2).hasCauseThat().isInstanceOf(AsynchronousCloseException.class),
+                  () ->
+                      assertThat(se3)
+                          .hasCauseThat()
+                          .isInstanceOf(AsynchronousCloseException.class));
+            });
+      }
+    }
+  }
+
   private static void runTestAgainstFakeServer(
       FakeStorage fakeStorage, RangeSpec range, ChecksummedTestContent expected) throws Exception {
 
@@ -997,10 +1100,14 @@ public final class ITBlobDescriptorFakeTest {
   }
 
   private static ThrowingRunnable assert503(ApiFuture<?> f) {
+    return assertStatusCodeIs(f, 503);
+  }
+
+  private static ThrowingRunnable assertStatusCodeIs(ApiFuture<?> f, int expected) {
     return () -> {
       StorageException se =
           assertThrows(StorageException.class, () -> TestUtils.await(f, 5, TimeUnit.SECONDS));
-      assertThat(se.getCode()).isEqualTo(503);
+      assertThat(se.getCode()).isEqualTo(expected);
     };
   }
 

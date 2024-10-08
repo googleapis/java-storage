@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.common.collect.ImmutableList;
@@ -26,6 +28,7 @@ import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.Object;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +39,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.checkerframework.checker.lock.qual.GuardedBy;
@@ -179,16 +183,27 @@ final class BlobDescriptorState {
     }
   }
 
-  public void failAll(Executor executor, Throwable terminalFailure) {
+  ApiFuture<?> failAll(Executor executor, Supplier<Throwable> terminalFailure) {
     lock.lock();
     try {
       Iterator<Entry<Long, BlobDescriptorStreamRead>> iter = outstandingReads.entrySet().iterator();
+      ArrayList<ApiFuture<?>> futures = new ArrayList<>();
       while (iter.hasNext()) {
         Entry<Long, BlobDescriptorStreamRead> entry = iter.next();
         iter.remove();
         BlobDescriptorStreamRead read = entry.getValue();
-        executor.execute(() -> read.fail(StorageException.coalesce(terminalFailure)));
+        read.preFail();
+        ApiFuture<?> f =
+            ApiFutures.transformAsync(
+                ApiFutures.immediateFuture("trigger"),
+                ignore -> read.fail(StorageException.coalesce(terminalFailure.get())),
+                executor);
+        futures.add(f);
       }
+      // for our result here, we don't care if the individual futures fail or succeed, only that
+      // they resolve. Only collect successful results so we don't cause a failure to the caller
+      // that awaits this future.
+      return ApiFutures.successfulAsList(futures);
     } finally {
       lock.unlock();
     }

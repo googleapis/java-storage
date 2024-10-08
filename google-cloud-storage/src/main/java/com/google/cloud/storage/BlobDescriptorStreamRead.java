@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
@@ -70,7 +71,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     tombstoned = true;
   }
 
-  abstract void fail(Throwable t);
+  abstract ApiFuture<?> fail(Throwable t);
 
   abstract BlobDescriptorStreamRead withNewReadId(long newReadId);
 
@@ -141,7 +142,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     }
 
     @Override
-    void fail(Throwable t) {
+    ApiFuture<?> fail(Throwable t) {
       try {
         tombstoned = true;
         close();
@@ -150,6 +151,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
       } finally {
         complete.setException(t);
       }
+      return complete;
     }
 
     @Override

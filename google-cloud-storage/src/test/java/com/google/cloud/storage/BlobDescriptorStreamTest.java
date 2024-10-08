@@ -21,7 +21,9 @@ import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.NanoClock;
+import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
@@ -42,11 +44,13 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
+import java.nio.channels.AsynchronousCloseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -191,9 +195,48 @@ public final class BlobDescriptorStreamTest {
         () -> assertThat(stream.isOpen()).isFalse());
   }
 
+  @Test
+  public void closingShouldFailPendingReads() throws Exception {
+
+    TestBlobDescriptorStreamRead read1 = TestBlobDescriptorStreamRead.of();
+    TestBlobDescriptorStreamRead read2 = TestBlobDescriptorStreamRead.of();
+    TestBlobDescriptorStreamRead read3 = TestBlobDescriptorStreamRead.of();
+    state.putOutstandingRead(read1.readId, read1);
+    state.putOutstandingRead(read2.readId, read2);
+    state.putOutstandingRead(read3.readId, read3);
+
+    RetryContext streamRetryContext = retryContextProvider.create();
+    BlobDescriptorStream stream =
+        BlobDescriptorStream.create(exec, callable, state, streamRetryContext);
+    ApiFuture<Void> closeAsync = stream.closeAsync();
+    TestUtils.await(closeAsync, 5, TimeUnit.SECONDS);
+
+    assertAll(
+        () -> {
+          Throwable t1 = read1.fail.get(2, TimeUnit.SECONDS);
+          // t1.printStackTrace(System.out);
+          assertThat(t1).isInstanceOf(StorageException.class);
+          assertThat(t1).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+        },
+        () -> {
+          Throwable t2 = read2.fail.get(2, TimeUnit.SECONDS);
+          // t2.printStackTrace(System.err);
+          assertThat(t2).isInstanceOf(StorageException.class);
+          assertThat(t2).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+        },
+        () -> {
+          Throwable t3 = read3.fail.get(2, TimeUnit.SECONDS);
+          // t3.printStackTrace(System.out);
+          assertThat(t3).isInstanceOf(StorageException.class);
+          assertThat(t3).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+        });
+  }
+
   private static class TestBlobDescriptorStreamRead extends BlobDescriptorStreamRead {
 
+    private static final AtomicLong readIdSeq = new AtomicLong(1);
     private boolean readyToSend = false;
+    private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
     TestBlobDescriptorStreamRead(
         long readId,
@@ -216,7 +259,10 @@ public final class BlobDescriptorStreamTest {
     void eof() {}
 
     @Override
-    void fail(Throwable t) {}
+    ApiFuture<Throwable> fail(Throwable t) {
+      fail.set(t);
+      return fail;
+    }
 
     @Override
     BlobDescriptorStreamRead withNewReadId(long newReadId) {
@@ -229,6 +275,12 @@ public final class BlobDescriptorStreamTest {
     @Override
     public boolean readyToSend() {
       return readyToSend;
+    }
+
+    static TestBlobDescriptorStreamRead of() {
+      long id = readIdSeq.getAndIncrement();
+      return new TestBlobDescriptorStreamRead(
+          id, new ReadCursor(0, 10), new ArrayList<>(), RetryContext.neverRetry(), false);
     }
   }
 }
