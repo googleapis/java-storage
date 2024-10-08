@@ -18,6 +18,10 @@ on:
   pull_request:
     paths:
       - 'generation_config.yaml'
+      - '.readme-partials.yaml'
+      - 'owlbot.py'
+      - 'versions.txt'
+      - '.github/.OwlBot-hermetic.yaml'
 
 env:
   REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
