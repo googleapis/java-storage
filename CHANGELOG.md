@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.43.2](https://github.com/googleapis/java-storage/compare/v2.43.1...v2.43.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* Plumb list blobs match glob option for grpc transport ([#2759](https://github.com/googleapis/java-storage/issues/2759)) ([207abd1](https://github.com/googleapis/java-storage/commit/207abd110ac2e1854804332025e6ea7806df1785))
+
+
+### Dependencies
+
+* Update dependency com.google.api:gapic-generator-java to v2.47.0 ([#2750](https://github.com/googleapis/java-storage/issues/2750)) ([9041f24](https://github.com/googleapis/java-storage/commit/9041f242c185a8a96361a087d42c5be7ba06a583))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240924-2.0.0 ([#2719](https://github.com/googleapis/java-storage/issues/2719)) ([7b19831](https://github.com/googleapis/java-storage/commit/7b19831b48153bb7f6744f5d7b8559c244d483d7))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.37.0 ([#2751](https://github.com/googleapis/java-storage/issues/2751)) ([003d6fa](https://github.com/googleapis/java-storage/commit/003d6faaa3d64310cf91a1e304247e2f44a5c9c7))
+* Update googleapis/sdk-platform-java action to v2.47.0 ([#2749](https://github.com/googleapis/java-storage/issues/2749)) ([befa415](https://github.com/googleapis/java-storage/commit/befa415d69743faf079930315c5ebd8afaa52d7f))
+
 ## [2.43.1](https://github.com/googleapis/java-storage/compare/v2.43.0...v2.43.1) (2024-09-26)
 
 
