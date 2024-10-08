@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.protobuf.ByteString;
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.channels.ScatteringByteChannel;
 
 /** Blob Descriptor is to blob, what File Descriptor is to a file */
 public interface BlobDescriptor extends AutoCloseable, Closeable {
@@ -27,6 +28,15 @@ public interface BlobDescriptor extends AutoCloseable, Closeable {
   BlobInfo getBlobInfo();
 
   ApiFuture<byte[]> readRangeAsBytes(RangeSpec range);
+
+  /**
+   * Read the provided range as a non-blocking Channel.
+   *
+   * <p>The returned channel will be non-blocking for all read calls. If bytes have not yet
+   * asynchronously been delivered from gcs the method will return rather than waiting for the bytes
+   * to arrive.
+   */
+  ScatteringByteChannel readRangeAsChannel(RangeSpec range);
 
   @Override
   void close() throws IOException;

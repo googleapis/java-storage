@@ -24,6 +24,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
@@ -31,6 +32,7 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import java.io.IOException;
+import java.nio.channels.ScatteringByteChannel;
 import java.util.concurrent.ScheduledExecutorService;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
@@ -63,6 +65,20 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     state.putOutstandingRead(readId, read);
     stream.send(request);
     return future;
+  }
+
+  @Override
+  public ScatteringByteChannel readRangeAsChannel(RangeSpec range) {
+    checkState(stream.isOpen(), "stream already closed");
+    long readId = state.newReadId();
+    StreamingRead read =
+        BlobDescriptorStreamRead.streamingRead(readId, range, retryContextProvider.create());
+    BidiReadObjectRequest request =
+        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
+    // todo: fork the stream and state
+    state.putOutstandingRead(readId, read);
+    stream.send(request);
+    return read;
   }
 
   public ApiFuture<DisposableByteString> readRangeAsByteString(RangeSpec range) {

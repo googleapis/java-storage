@@ -43,6 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadHandle;
@@ -65,8 +66,11 @@ import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.Channels;
+import java.nio.channels.ScatteringByteChannel;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1012,6 +1016,54 @@ public final class ITBlobDescriptorFakeTest {
                           .isInstanceOf(AsynchronousCloseException.class));
             });
       }
+    }
+  }
+
+  @Test
+  public void streaming() throws Exception {
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_2MiB));
+    BidiReadObjectRequest req2 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(1, 0, 0)).build();
+
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(getReadRange(1, 0, _2MiB))
+                    .setRangeEnd(true)
+                    .setChecksummedData(testContent.asChecksummedData()))
+            .build();
+
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                REQ_OPEN,
+                respond -> respond.onNext(RES_OPEN),
+                req2,
+                respond -> respond.onNext(res2)));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setGrpcInterceptorProvider(
+                    GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS);
+          ScatteringByteChannel c = bd.readRangeAsChannel(RangeSpec.all())) {
+        ByteStreams.copy(c, Channels.newChannel(baos));
+      }
+
+      byte[] actual = baos.toByteArray();
+      assertThat(xxd(actual)).isEqualTo(xxd(testContent.getBytes()));
     }
   }
 

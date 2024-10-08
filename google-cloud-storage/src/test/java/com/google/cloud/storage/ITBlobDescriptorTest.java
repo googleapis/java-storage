@@ -42,8 +42,11 @@ import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ScatteringByteChannel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -140,6 +143,44 @@ public final class ITBlobDescriptorTest {
               assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
             },
             () -> assertThat(finalLength).isEqualTo(numRangesToRead * _2MiB));
+      }
+    }
+  }
+
+  @Test
+  public void lotsChannel() throws Exception {
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+
+    BlobInfo gen1 =
+        storage.create(
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+            testContent.getBytes(),
+            BlobTargetOption.doesNotExist());
+    BlobId blobId = gen1.getBlobId();
+    byte[] buffer = new byte[_2MiB];
+    for (int j = 0; j < 2; j++) {
+
+      Stopwatch sw = Stopwatch.createStarted();
+      try (BlobDescriptor blobDescriptor =
+          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ScatteringByteChannel r = blobDescriptor.readRangeAsChannel(RangeSpec.all())) {
+          ByteBuffer buf = ByteBuffer.wrap(buffer);
+          Buffers.copyUsingBuffer(buf, r, Channels.newChannel(baos));
+        }
+        Stopwatch stop = sw.stop();
+        System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
+        Hasher hasher = Hashing.crc32c().newHasher();
+        byte[] actual = baos.toByteArray();
+        hasher.putBytes(actual);
+
+        Crc32cLengthKnown expectedCrc32c =
+            Crc32cValue.of(testContent.getCrc32c(), testContent.getBytes().length);
+        Crc32cLengthKnown actualCrc32c = Crc32cValue.of(hasher.hash().asInt(), actual.length);
+
+        assertThat(actualCrc32c).isEqualTo(expectedCrc32c);
       }
     }
   }

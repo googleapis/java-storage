@@ -18,18 +18,28 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
+import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
+import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ReadRange;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
@@ -116,6 +126,10 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     return new ZeroCopyByteStringAccumulatingRead(readId, rangeSpec, retryContext, complete);
   }
 
+  static StreamingRead streamingRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+    return new StreamingRead(readId, rangeSpec, retryContext, false);
+  }
+
   /** Base class of a read that will accumulate before completing by resolving a future */
   abstract static class AccumulatingRead<Result> extends BlobDescriptorStreamRead {
     protected final List<ChildRef> childRefs;
@@ -182,20 +196,227 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
   /**
    * Base class of a read that will be processed in a streaming manner (e.g. {@link
-   * java.nio.channels.ReadableByteChannel})
+   * ReadableByteChannel})
    */
-  abstract static class StreamingRead extends BlobDescriptorStreamRead {
-    private StreamingRead(long readId, RangeSpec range, RetryContext retryContext) {
-      super(readId, range, retryContext);
+  static class StreamingRead extends BlobDescriptorStreamRead
+      implements UnbufferedReadableByteChannel {
+    private final SettableApiFuture<Void> failFuture;
+    private final BlockingQueue<Closeable> queue;
+
+    private boolean complete;
+    @Nullable private ChildRefHelper leftovers;
+
+    private StreamingRead(
+        long readId, RangeSpec rangeSpec, RetryContext retryContext, boolean closed) {
+      this(
+          readId,
+          rangeSpec,
+          new AtomicLong(rangeSpec.begin()),
+          retryContext,
+          closed,
+          SettableApiFuture.create(),
+          new ArrayBlockingQueue<>(2),
+          false,
+          null);
     }
 
     private StreamingRead(
-        long readId,
+        long newReadId,
         RangeSpec rangeSpec,
         AtomicLong readOffset,
         RetryContext retryContext,
-        boolean closed) {
-      super(readId, rangeSpec, readOffset, retryContext, closed);
+        boolean closed,
+        SettableApiFuture<Void> failFuture,
+        BlockingQueue<Closeable> queue,
+        boolean complete,
+        @Nullable ChildRefHelper leftovers) {
+      super(newReadId, rangeSpec, readOffset, retryContext, closed);
+      this.failFuture = failFuture;
+      this.queue = queue;
+      this.complete = complete;
+      this.leftovers = leftovers;
+    }
+
+    @Override
+    boolean acceptingBytes() {
+      return !closed && !tombstoned;
+    }
+
+    @Override
+    void accept(ChildRef childRef) throws IOException {
+      retryContext.reset();
+      int size = childRef.byteString().size();
+      offer(childRef);
+      readOffset.addAndGet(size);
+    }
+
+    @Override
+    void eof() throws IOException {
+      retryContext.reset();
+      offer(EofMarker.INSTANCE);
+    }
+
+    @Override
+    ApiFuture<?> fail(Throwable t) {
+      try {
+        offer(new SmuggledFailure(t));
+        failFuture.set(null);
+      } catch (InterruptedIOException e) {
+        Thread.currentThread().interrupt();
+        failFuture.setException(e);
+      }
+      return failFuture;
+    }
+
+    @Override
+    StreamingRead withNewReadId(long newReadId) {
+      tombstoned = true;
+      return new StreamingRead(
+          newReadId,
+          rangeSpec,
+          readOffset,
+          retryContext,
+          closed,
+          failFuture,
+          queue,
+          complete,
+          leftovers);
+    }
+
+    @Override
+    public void close() throws IOException {
+      if (!closed) {
+        retryContext.reset();
+        closed = true;
+        if (leftovers != null) {
+          leftovers.ref.close();
+        }
+        GrpcUtils.closeAll(queue);
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      return !closed;
+    }
+
+    @Override
+    public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+      if (closed) {
+        throw new ClosedChannelException();
+      }
+      if (complete) {
+        close();
+        return -1;
+      }
+
+      long read = 0;
+      long dstsRemaining = Buffers.totalRemaining(dsts, offset, length);
+      if (leftovers != null) {
+        read += leftovers.copy(dsts, offset, length);
+        if (!leftovers.hasRemaining()) {
+          leftovers.ref.close();
+          leftovers = null;
+        }
+      }
+
+      java.lang.Object poll;
+      while (read < dstsRemaining && (poll = queue.poll()) != null) {
+        if (poll instanceof ChildRef) {
+          ChildRefHelper ref = new ChildRefHelper((ChildRef) poll);
+          read += ref.copy(dsts, offset, length);
+          if (ref.hasRemaining()) {
+            leftovers = ref;
+            break;
+          } else {
+            ref.ref.close();
+          }
+        } else if (poll == EofMarker.INSTANCE) {
+          complete = true;
+          if (read == 0) {
+            close();
+            return -1;
+          }
+          break;
+        } else if (poll instanceof SmuggledFailure) {
+          SmuggledFailure throwable = (SmuggledFailure) poll;
+          BaseServiceException coalesce = StorageException.coalesce(throwable.getSmuggled());
+          throw new IOException(coalesce);
+        } else {
+          //noinspection DataFlowIssue
+          Preconditions.checkState(
+              false, "unhandled queue element type %s", poll.getClass().getName());
+        }
+      }
+
+      return read;
+    }
+
+    private void offer(Closeable offer) throws InterruptedIOException {
+      try {
+        queue.put(offer);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new InterruptedIOException();
+      }
+    }
+
+    /**
+     * The queue items are added to is a queue of {@link Closeable}. This class smuggles a Throwable
+     * in a no-op Closable, such that the throwable can be in the queue.
+     *
+     * <p>Refer to {@link #fail(Throwable)} to see where this class is instantiated.
+     */
+    static final class SmuggledFailure implements Closeable {
+      private final Throwable smuggled;
+
+      private SmuggledFailure(Throwable smuggled) {
+        this.smuggled = smuggled;
+      }
+
+      Throwable getSmuggled() {
+        return smuggled;
+      }
+
+      @Override
+      public void close() throws IOException {}
+    }
+
+    static final class ChildRefHelper {
+      private final ChildRef ref;
+
+      private final List<ByteBuffer> buffers;
+
+      private ChildRefHelper(ChildRef ref) {
+        this.ref = ref;
+        this.buffers = ref.byteString().asReadOnlyByteBufferList();
+      }
+
+      long copy(ByteBuffer[] dsts, int offset, int length) {
+        long copied = 0;
+        for (ByteBuffer b : buffers) {
+          long copiedBytes = Buffers.copy(b, dsts, offset, length);
+          copied += copiedBytes;
+          if (b.hasRemaining()) break;
+        }
+        return copied;
+      }
+
+      boolean hasRemaining() {
+        for (ByteBuffer b : buffers) {
+          if (b.hasRemaining()) return true;
+        }
+        return false;
+      }
+    }
+
+    private static final class EofMarker implements Closeable {
+      private static final EofMarker INSTANCE = new EofMarker();
+
+      private EofMarker() {}
+
+      @Override
+      public void close() {}
     }
   }
 
