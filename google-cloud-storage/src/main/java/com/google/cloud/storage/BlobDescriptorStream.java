@@ -527,12 +527,4 @@ final class BlobDescriptorStream
     int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
     return new BlobDescriptorStream(state, executor, callable, maxRedirectsAllowed, retryContext);
   }
-
-  static final class MaxRedirectsExceededException extends RuntimeException {
-    private MaxRedirectsExceededException(int maxRedirectAllowed, int actualRedirects) {
-      super(
-          String.format(
-              "max redirects exceeded (max: %d, actual: %d)", maxRedirectAllowed, actualRedirects));
-    }
-  }
 }
