@@ -32,6 +32,8 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ClientStreamReadyObserver;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.cloud.storage.Backoff.Jitterer;
+import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
@@ -39,17 +41,21 @@ import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.cloud.storage.RetryContextTest.BlockingOnSuccess;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -227,6 +233,96 @@ public final class BlobDescriptorStreamTest {
           assertThat(t3).isInstanceOf(StorageException.class);
           assertThat(t3).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
         });
+  }
+
+  @Test
+  public void streamingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
+    try (StreamingRead read1 =
+        BlobDescriptorStreamRead.streamingRead(1, RangeSpec.all(), RetryContext.neverRetry())) {
+      state.putOutstandingRead(1, read1);
+      BlobDescriptorStream stream =
+          BlobDescriptorStream.create(exec, callable, state, RetryContext.neverRetry());
+
+      ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
+      ByteString bytes2 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
+
+      AtomicBoolean bytes1Close = new AtomicBoolean(false);
+      AtomicBoolean bytes2Close = new AtomicBoolean(false);
+
+      try (ResponseContentLifecycleHandle<ByteString> handle =
+          ResponseContentLifecycleHandle.create(
+              bytes1,
+              ByteString::asReadOnlyByteBufferList,
+              () -> bytes1Close.compareAndSet(false, true))) {
+        read1.accept(handle.borrow(Function.identity()));
+      }
+      try (ResponseContentLifecycleHandle<ByteString> handle =
+          ResponseContentLifecycleHandle.create(
+              bytes2,
+              ByteString::asReadOnlyByteBufferList,
+              () -> bytes2Close.compareAndSet(false, true))) {
+        read1.accept(handle.borrow(Function.identity()));
+      }
+
+      // read some bytes, causing leftovers to be populated
+      read1.read(ByteBuffer.allocate(1));
+      stream.close();
+
+      // call read again to observe the async close that happens
+      IOException ioe = assertThrows(IOException.class, () -> read1.read(ByteBuffer.allocate(32)));
+
+      assertAll(
+          () -> assertThat(bytes1Close.get()).isTrue(),
+          () -> assertThat(bytes2Close.get()).isTrue(),
+          () -> assertThat(read1.acceptingBytes()).isFalse(),
+          () -> assertThat(ioe).hasCauseThat().isInstanceOf(StorageException.class),
+          () -> assertThat(ioe).hasCauseThat().hasMessageThat().contains("Parent stream shutdown"));
+    }
+  }
+
+  @Test
+  public void accumulatingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
+    SettableApiFuture<byte[]> complete = SettableApiFuture.create();
+    try (AccumulatingRead<byte[]> read1 =
+        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+            1, RangeSpec.all(), RetryContext.neverRetry(), complete)) {
+      state.putOutstandingRead(1, read1);
+      BlobDescriptorStream stream =
+          BlobDescriptorStream.create(exec, callable, state, RetryContext.neverRetry());
+
+      ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
+      ByteString bytes2 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
+
+      AtomicBoolean bytes1Close = new AtomicBoolean(false);
+      AtomicBoolean bytes2Close = new AtomicBoolean(false);
+
+      try (ResponseContentLifecycleHandle<ByteString> handle =
+          ResponseContentLifecycleHandle.create(
+              bytes1,
+              ByteString::asReadOnlyByteBufferList,
+              () -> bytes1Close.compareAndSet(false, true))) {
+        read1.accept(handle.borrow(Function.identity()));
+      }
+      try (ResponseContentLifecycleHandle<ByteString> handle =
+          ResponseContentLifecycleHandle.create(
+              bytes2,
+              ByteString::asReadOnlyByteBufferList,
+              () -> bytes2Close.compareAndSet(false, true))) {
+        read1.accept(handle.borrow(Function.identity()));
+      }
+
+      stream.close();
+
+      StorageException se =
+          assertThrows(
+              StorageException.class, () -> TestUtils.await(complete, 2, TimeUnit.SECONDS));
+      assertAll(
+          () -> assertThat(bytes1Close.get()).isTrue(),
+          () -> assertThat(bytes2Close.get()).isTrue(),
+          () -> assertThat(read1.acceptingBytes()).isFalse(),
+          () -> assertThat(se).hasMessageThat().contains("Parent stream shutdown"),
+          () -> assertThat(se).hasCauseThat().isInstanceOf(AsynchronousCloseException.class));
+    }
   }
 
   private static class TestBlobDescriptorStreamRead extends BlobDescriptorStreamRead {

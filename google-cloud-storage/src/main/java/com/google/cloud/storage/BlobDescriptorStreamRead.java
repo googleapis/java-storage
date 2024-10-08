@@ -340,6 +340,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
           break;
         } else if (poll instanceof SmuggledFailure) {
           SmuggledFailure throwable = (SmuggledFailure) poll;
+          close();
           BaseServiceException coalesce = StorageException.coalesce(throwable.getSmuggled());
           throw new IOException(coalesce);
         } else {
