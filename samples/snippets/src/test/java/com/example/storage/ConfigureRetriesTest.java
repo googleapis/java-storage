@@ -23,6 +23,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import org.junit.After;
@@ -49,11 +50,10 @@ public final class ConfigureRetriesTest {
   }
 
   @After
-  public void tearDown() {
-    if (blob != null && blob.exists()) {
-      blob.delete();
+  public void tearDown() throws Exception {
+    try (Storage ignore = storage) {
+      BucketCleaner.doCleanup(bucketName, storage);
     }
-    storage.delete(bucketName);
   }
 
   @Test

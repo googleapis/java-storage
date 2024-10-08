@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import java.io.File;
@@ -28,9 +29,6 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -65,12 +63,9 @@ public class ITStorageSnippets {
   }
 
   @AfterClass
-  public static void afterClass() throws ExecutionException, InterruptedException {
-    if (storage != null) {
-      boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 1, TimeUnit.MINUTES);
-      if (!wasDeleted && log.isLoggable(Level.WARNING)) {
-        log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
-      }
+  public static void afterClass() throws Exception {
+    try (Storage ignore = storage) {
+      BucketCleaner.doCleanup(BUCKET, storage);
     }
   }
 

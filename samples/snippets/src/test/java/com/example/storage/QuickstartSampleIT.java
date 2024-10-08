@@ -21,12 +21,12 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.storage.control.v2.StorageLayoutName;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,19 +41,16 @@ public class QuickstartSampleIT {
 
   private String bucketName;
 
-  private static void deleteBucket(String bucketName) {
-    Storage storage = StorageOptions.getDefaultInstance().getService();
-    storage.delete(bucketName);
-  }
-
   @Before
   public void setUp() {
     bucketName = "java-storage-grpc-" + UUID.randomUUID();
   }
 
   @After
-  public void tearDown() {
-    deleteBucket(bucketName);
+  public void tearDown() throws Exception {
+    try (Storage storage = StorageOptions.getDefaultInstance().getService()) {
+      BucketCleaner.doCleanup(bucketName, storage);
+    }
   }
 
   @Test

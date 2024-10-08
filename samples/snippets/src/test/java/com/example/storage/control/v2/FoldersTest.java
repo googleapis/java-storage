@@ -25,6 +25,7 @@ import com.google.cloud.storage.BucketInfo.HierarchicalNamespace;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.storage.control.v2.BucketName;
@@ -67,10 +68,9 @@ public final class FoldersTest {
   @After
   public void tearDown() throws Exception {
     // Use try-with-resource to handle the dance closing multiple things
-    //noinspection EmptyTryBlock
     try (AutoCloseable ignore1 = storage;
         AutoCloseable ignore2 = storageControl) {
-      // ignore
+      BucketCleaner.doCleanup(bucket.getName(), storage, storageControl);
     }
   }
 
