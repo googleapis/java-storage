@@ -44,9 +44,8 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
+import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -132,8 +131,7 @@ public final class BlobDescriptorStreamTest {
   public void streamRestartShouldNotSendARequestIfAllReadsAreInBackoff() {
     RetryContext read1RetryContext = retryContextProvider.create();
     TestBlobDescriptorStreamRead read1 =
-        new TestBlobDescriptorStreamRead(
-            1, RangeSpec.of(1, 2), new ArrayList<>(), read1RetryContext);
+        new TestBlobDescriptorStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
     state.putOutstandingRead(1, read1);
 
     RetryContext streamRetryContext = retryContextProvider.create();
@@ -152,8 +150,7 @@ public final class BlobDescriptorStreamTest {
   public void streamRestartShouldSendARequestIfReadsAreNotInBackoff() {
     RetryContext read1RetryContext = retryContextProvider.create();
     TestBlobDescriptorStreamRead read1 =
-        new TestBlobDescriptorStreamRead(
-            1, RangeSpec.of(1, 2), new ArrayList<>(), read1RetryContext);
+        new TestBlobDescriptorStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
     read1.readyToSend = true;
     state.putOutstandingRead(1, read1);
 
@@ -238,9 +235,8 @@ public final class BlobDescriptorStreamTest {
     private boolean readyToSend = false;
     private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
-    TestBlobDescriptorStreamRead(
-        long readId, RangeSpec rangeSpec, List<ChildRef> childRefs, RetryContext retryContext) {
-      super(readId, rangeSpec, childRefs, new AtomicLong(rangeSpec.begin()), retryContext, false);
+    TestBlobDescriptorStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+      super(readId, rangeSpec, new AtomicLong(rangeSpec.begin()), retryContext, false);
     }
 
     @Override
@@ -273,10 +269,12 @@ public final class BlobDescriptorStreamTest {
       return readyToSend;
     }
 
+    @Override
+    public void close() throws IOException {}
+
     static TestBlobDescriptorStreamRead of() {
       long id = readIdSeq.getAndIncrement();
-      return new TestBlobDescriptorStreamRead(
-          id, RangeSpec.of(0, 10), new ArrayList<>(), RetryContext.neverRetry());
+      return new TestBlobDescriptorStreamRead(id, RangeSpec.of(0, 10), RetryContext.neverRetry());
     }
   }
 }
