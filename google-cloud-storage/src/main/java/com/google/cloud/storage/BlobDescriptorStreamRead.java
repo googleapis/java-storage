@@ -29,36 +29,46 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
   protected final long readId;
-  protected final ReadCursor readCursor;
+  protected final RangeSpec rangeSpec;
   protected final List<ChildRef> childRefs;
   protected final RetryContext retryContext;
+  protected final AtomicLong readOffset;
   protected boolean closed;
   protected boolean tombstoned;
 
-  BlobDescriptorStreamRead(long readId, ReadCursor readCursor, RetryContext retryContext) {
-    this(readId, readCursor, Collections.synchronizedList(new ArrayList<>()), retryContext, false);
+  BlobDescriptorStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+    this(
+        readId,
+        rangeSpec,
+        Collections.synchronizedList(new ArrayList<>()),
+        new AtomicLong(rangeSpec.begin()),
+        retryContext,
+        false);
   }
 
   BlobDescriptorStreamRead(
       long readId,
-      ReadCursor readCursor,
+      RangeSpec rangeSpec,
       List<ChildRef> childRefs,
+      AtomicLong readOffset,
       RetryContext retryContext,
       boolean closed) {
     this.readId = readId;
-    this.readCursor = readCursor;
+    this.rangeSpec = rangeSpec;
     this.childRefs = childRefs;
     this.retryContext = retryContext;
+    this.readOffset = readOffset;
     this.closed = closed;
     this.tombstoned = false;
   }
 
-  ReadCursor getReadCursor() {
-    return readCursor;
+  long readOffset() {
+    return readOffset.get();
   }
 
   abstract boolean acceptingBytes();
@@ -76,11 +86,16 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
   abstract BlobDescriptorStreamRead withNewReadId(long newReadId);
 
   final ReadRange makeReadRange() {
-    return ReadRange.newBuilder()
-        .setReadId(readId)
-        .setReadOffset(readCursor.position())
-        .setReadLength(readCursor.remaining())
-        .build();
+    long currentOffset = readOffset.get();
+    ReadRange.Builder b = ReadRange.newBuilder().setReadId(readId).setReadOffset(currentOffset);
+    rangeSpec
+        .limit()
+        .ifPresent(
+            limit -> {
+              long readSoFar = currentOffset - rangeSpec.begin();
+              b.setReadLength(limit - readSoFar);
+            });
+    return b.build();
   }
 
   @Override
@@ -98,18 +113,18 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
       long readId,
-      ReadCursor readCursor,
+      RangeSpec rangeSpec,
       RetryContext retryContext,
       SettableApiFuture<byte[]> complete) {
-    return new ByteArrayAccumulatingRead(readId, readCursor, retryContext, complete);
+    return new ByteArrayAccumulatingRead(readId, rangeSpec, retryContext, complete);
   }
 
   static ZeroCopyByteStringAccumulatingRead createZeroCopyByteStringAccumulatingRead(
       long readId,
-      ReadCursor readCursor,
+      RangeSpec rangeSpec,
       SettableApiFuture<DisposableByteString> complete,
       RetryContext retryContext) {
-    return new ZeroCopyByteStringAccumulatingRead(readId, readCursor, retryContext, complete);
+    return new ZeroCopyByteStringAccumulatingRead(readId, rangeSpec, retryContext, complete);
   }
 
   /** Base class of a read that will accumulate before completing by resolving a future */
@@ -118,27 +133,28 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     private AccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         RetryContext retryContext,
         SettableApiFuture<Result> complete) {
-      super(readId, readCursor, retryContext);
+      super(readId, rangeSpec, retryContext);
       this.complete = complete;
     }
 
     private AccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         List<ChildRef> childRefs,
+        AtomicLong readOffset,
         RetryContext retryContext,
         boolean closed,
         SettableApiFuture<Result> complete) {
-      super(readId, readCursor, childRefs, retryContext, closed);
+      super(readId, rangeSpec, childRefs, readOffset, retryContext, closed);
       this.complete = complete;
     }
 
     @Override
     boolean acceptingBytes() {
-      return !complete.isDone() && !tombstoned && readCursor.hasRemaining();
+      return !complete.isDone() && !tombstoned;
     }
 
     @Override
@@ -170,17 +186,18 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
    * java.nio.channels.ReadableByteChannel})
    */
   abstract static class StreamingRead extends BlobDescriptorStreamRead {
-    private StreamingRead(long readId, long readOffset, long readLimit, RetryContext retryContext) {
-      super(readId, new ReadCursor(readOffset, readOffset + readLimit), retryContext);
+    private StreamingRead(long readId, RangeSpec range, RetryContext retryContext) {
+      super(readId, range, retryContext);
     }
 
     private StreamingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         List<ChildRef> childRefs,
+        AtomicLong readOffset,
         RetryContext retryContext,
         boolean closed) {
-      super(readId, readCursor, childRefs, retryContext, closed);
+      super(readId, rangeSpec, childRefs, readOffset, retryContext, closed);
     }
   }
 
@@ -188,20 +205,21 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     private ByteArrayAccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         RetryContext retryContext,
         SettableApiFuture<byte[]> complete) {
-      super(readId, readCursor, retryContext, complete);
+      super(readId, rangeSpec, retryContext, complete);
     }
 
     private ByteArrayAccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         List<ChildRef> childRefs,
         RetryContext retryContext,
+        AtomicLong readOffset,
         boolean closed,
         SettableApiFuture<byte[]> complete) {
-      super(readId, readCursor, childRefs, retryContext, closed, complete);
+      super(readId, rangeSpec, childRefs, readOffset, retryContext, closed, complete);
     }
 
     @Override
@@ -209,7 +227,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
       retryContext.reset();
       int size = childRef.byteString().size();
       childRefs.add(childRef);
-      readCursor.advance(size);
+      readOffset.addAndGet(size);
     }
 
     @Override
@@ -230,7 +248,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     ByteArrayAccumulatingRead withNewReadId(long newReadId) {
       this.tombstoned = true;
       return new ByteArrayAccumulatingRead(
-          newReadId, readCursor, childRefs, retryContext, closed, complete);
+          newReadId, rangeSpec, childRefs, retryContext, readOffset, closed, complete);
     }
   }
 
@@ -241,21 +259,22 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
 
     private ZeroCopyByteStringAccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         RetryContext retryContext,
         SettableApiFuture<DisposableByteString> complete) {
-      super(readId, readCursor, retryContext, complete);
+      super(readId, rangeSpec, retryContext, complete);
     }
 
     public ZeroCopyByteStringAccumulatingRead(
         long readId,
-        ReadCursor readCursor,
+        RangeSpec rangeSpec,
         List<ChildRef> childRefs,
+        AtomicLong readOffset,
         RetryContext retryContext,
         boolean closed,
         SettableApiFuture<DisposableByteString> complete,
         ByteString byteString) {
-      super(readId, readCursor, childRefs, retryContext, closed, complete);
+      super(readId, rangeSpec, childRefs, readOffset, retryContext, closed, complete);
       this.byteString = byteString;
     }
 
@@ -269,7 +288,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
       retryContext.reset();
       int size = childRef.byteString().size();
       childRefs.add(childRef);
-      readCursor.advance(size);
+      readOffset.addAndGet(size);
     }
 
     @Override
@@ -287,7 +306,7 @@ abstract class BlobDescriptorStreamRead implements AutoCloseable, Closeable {
     ZeroCopyByteStringAccumulatingRead withNewReadId(long newReadId) {
       this.tombstoned = true;
       return new ZeroCopyByteStringAccumulatingRead(
-          newReadId, readCursor, childRefs, retryContext, closed, complete, byteString);
+          newReadId, rangeSpec, childRefs, readOffset, retryContext, closed, complete, byteString);
     }
   }
 }

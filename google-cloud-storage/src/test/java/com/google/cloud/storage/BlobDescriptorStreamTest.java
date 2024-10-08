@@ -133,7 +133,7 @@ public final class BlobDescriptorStreamTest {
     RetryContext read1RetryContext = retryContextProvider.create();
     TestBlobDescriptorStreamRead read1 =
         new TestBlobDescriptorStreamRead(
-            1, new ReadCursor(1, 2), new ArrayList<>(), read1RetryContext, false);
+            1, RangeSpec.of(1, 2), new ArrayList<>(), read1RetryContext);
     state.putOutstandingRead(1, read1);
 
     RetryContext streamRetryContext = retryContextProvider.create();
@@ -153,7 +153,7 @@ public final class BlobDescriptorStreamTest {
     RetryContext read1RetryContext = retryContextProvider.create();
     TestBlobDescriptorStreamRead read1 =
         new TestBlobDescriptorStreamRead(
-            1, new ReadCursor(1, 2), new ArrayList<>(), read1RetryContext, false);
+            1, RangeSpec.of(1, 2), new ArrayList<>(), read1RetryContext);
     read1.readyToSend = true;
     state.putOutstandingRead(1, read1);
 
@@ -239,12 +239,8 @@ public final class BlobDescriptorStreamTest {
     private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
     TestBlobDescriptorStreamRead(
-        long readId,
-        ReadCursor readCursor,
-        List<ChildRef> childRefs,
-        RetryContext retryContext,
-        boolean closed) {
-      super(readId, readCursor, childRefs, retryContext, closed);
+        long readId, RangeSpec rangeSpec, List<ChildRef> childRefs, RetryContext retryContext) {
+      super(readId, rangeSpec, childRefs, new AtomicLong(rangeSpec.begin()), retryContext, false);
     }
 
     @Override
@@ -280,7 +276,7 @@ public final class BlobDescriptorStreamTest {
     static TestBlobDescriptorStreamRead of() {
       long id = readIdSeq.getAndIncrement();
       return new TestBlobDescriptorStreamRead(
-          id, new ReadCursor(0, 10), new ArrayList<>(), RetryContext.neverRetry(), false);
+          id, RangeSpec.of(0, 10), new ArrayList<>(), RetryContext.neverRetry());
     }
   }
 }

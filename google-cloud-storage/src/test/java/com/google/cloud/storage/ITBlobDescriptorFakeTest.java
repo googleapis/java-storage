@@ -579,19 +579,6 @@ public final class ITBlobDescriptorFakeTest {
   }
 
   @Test
-  public void readRangeDoesNotSendARequestIfTheRangeWouldResultInZeroBytes() throws Exception {
-
-    ChecksummedTestContent expected = ChecksummedTestContent.of(new byte[0]);
-
-    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
-        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
-            .put(REQ_OPEN, RES_OPEN)
-            .buildOrThrow();
-
-    runTestAgainstFakeServer(FakeStorage.from(db), RangeSpec.of(_2MiB, 8192), expected);
-  }
-
-  @Test
   public void readRange_retrySettingsApplicable_attempt() throws Exception {
 
     AtomicInteger reqCounter = new AtomicInteger(0);
@@ -737,31 +724,6 @@ public final class ITBlobDescriptorFakeTest {
             () -> assertThat(suppressedMessages).contains("Asynchronous task failed"));
       }
     }
-  }
-
-  @Test
-  public void moreBytesReturnedThanRequested_onlyForwardsRequestedBytes() throws Exception {
-
-    ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
-    ChecksummedTestContent content2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 21);
-    BidiReadObjectRequest req2 = read(1, 10, 20);
-    BidiReadObjectResponse res2 =
-        BidiReadObjectResponse.newBuilder()
-            .addObjectDataRanges(
-                ObjectRangeData.newBuilder()
-                    .setChecksummedData(content2.asChecksummedData())
-                    .setReadRange(getReadRange(1, 10, content2))
-                    .setRangeEnd(true)
-                    .build())
-            .build();
-
-    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
-        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
-            .put(REQ_OPEN, RES_OPEN)
-            .put(req2, res2)
-            .buildOrThrow();
-
-    runTestAgainstFakeServer(FakeStorage.from(db), RangeSpec.of(10, 20), expected);
   }
 
   @Test

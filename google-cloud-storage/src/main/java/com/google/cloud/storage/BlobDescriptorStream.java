@@ -295,23 +295,11 @@ final class BlobDescriptorStream
 
           final int idx = i;
           long begin = readRange.getReadOffset();
-          long position = read.getReadCursor().position();
+          long position = read.readOffset();
           if (begin == position) {
-            long remaining = read.getReadCursor().remaining();
-            int contentSize = content.size();
             ChildRef childRef;
-            if (remaining >= contentSize) {
-              childRef =
-                  handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
-            } else {
-              childRef =
-                  handle.borrow(
-                      r ->
-                          r.getObjectDataRanges(idx)
-                              .getChecksummedData()
-                              .getContent()
-                              .substring(0, Math.toIntExact(remaining)));
-            }
+            childRef =
+                handle.borrow(r -> r.getObjectDataRanges(idx).getChecksummedData().getContent());
             read.accept(childRef);
           } else if (begin < position) {
             int skip = Math.toIntExact(position - begin);
@@ -348,7 +336,7 @@ final class BlobDescriptorStream
             continue;
           }
 
-          if (d.getRangeEnd() && !read.getReadCursor().hasRemaining()) {
+          if (d.getRangeEnd()) {
             // invoke eof on exec, the resolving future could have a downstream callback
             // that we don't want to block this grpc thread
             executor.execute(

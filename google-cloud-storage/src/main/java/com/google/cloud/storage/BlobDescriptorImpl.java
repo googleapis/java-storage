@@ -22,20 +22,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.grpc.GrpcStatusCode;
-import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.math.LongMath;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
-import io.grpc.Status.Code;
 import java.io.IOException;
-import java.util.OptionalLong;
 import java.util.concurrent.ScheduledExecutorService;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
@@ -59,14 +54,10 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   public ApiFuture<byte[]> readRangeAsBytes(RangeSpec range) {
     checkState(stream.isOpen(), "stream already closed");
     long readId = state.newReadId();
-    ReadCursor readCursor = getReadCursor(range, state);
-    if (!readCursor.hasRemaining()) {
-      return ApiFutures.immediateFuture(new byte[0]);
-    }
     SettableApiFuture<byte[]> future = SettableApiFuture.create();
     AccumulatingRead<byte[]> read =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            readId, readCursor, retryContextProvider.create(), future);
+            readId, range, retryContextProvider.create(), future);
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     state.putOutstandingRead(readId, read);
@@ -77,14 +68,10 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   public ApiFuture<DisposableByteString> readRangeAsByteString(RangeSpec range) {
     checkState(stream.isOpen(), "stream already closed");
     long readId = state.newReadId();
-    ReadCursor readCursor = getReadCursor(range, state);
-    if (!readCursor.hasRemaining()) {
-      return ApiFutures.immediateFuture(EmptyDisposableByteString.INSTANCE);
-    }
     SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
     AccumulatingRead<DisposableByteString> read =
         BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
-            readId, readCursor, future, retryContextProvider.create());
+            readId, range, future, retryContextProvider.create());
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     state.putOutstandingRead(readId, read);
@@ -100,26 +87,6 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   @Override
   public void close() throws IOException {
     stream.close();
-  }
-
-  @VisibleForTesting
-  static ReadCursor getReadCursor(RangeSpec range, BlobDescriptorState state) {
-    long begin = range.begin();
-    long objectSize = state.getMetadata().getSize();
-    if (begin > objectSize) {
-      throw ApiExceptionFactory.createException(
-          String.format(
-              "range begin must be < objectSize (range begin = %d, object size = %d",
-              begin, objectSize),
-          null,
-          GrpcStatusCode.of(Code.OUT_OF_RANGE),
-          false);
-    }
-    final long end;
-    OptionalLong limit = range.limit();
-    long saturatedAdd = LongMath.saturatedAdd(begin, limit.orElse(0L));
-    end = Math.min(saturatedAdd, objectSize);
-    return new ReadCursor(begin, end);
   }
 
   static ApiFuture<BlobDescriptor> create(

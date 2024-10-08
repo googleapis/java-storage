@@ -53,7 +53,7 @@ public final class BlobDescriptorStreamReadTest {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            1, new ReadCursor(0, 137), RetryContext.neverRetry(), complete);
+            1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
 
     byteArrayAccumulatingRead.accept(childRef);
     byteArrayAccumulatingRead.eof();
@@ -83,7 +83,7 @@ public final class BlobDescriptorStreamReadTest {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            1, new ReadCursor(0, 137), RetryContext.neverRetry(), complete);
+            1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
 
     IOException ioException =
         assertThrows(
@@ -102,7 +102,7 @@ public final class BlobDescriptorStreamReadTest {
     int readId = 1;
     try (AccumulatingRead<byte[]> read =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            readId, new ReadCursor(0, 137), RetryContext.neverRetry(), complete)) {
+            readId, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete)) {
 
       ReadRange readRange1 = read.makeReadRange();
       ReadRange expectedReadRange1 =

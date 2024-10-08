@@ -77,10 +77,10 @@ public final class BlobDescriptorStateTest {
 
     AccumulatingRead<byte[]> r1 =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            1, new ReadCursor(3, 7), neverRetry, f1);
+            1, RangeSpec.of(3, 4), neverRetry, f1);
     AccumulatingRead<byte[]> r2 =
         BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            2, new ReadCursor(19, 33), neverRetry, f2);
+            2, RangeSpec.of(19, 14), neverRetry, f2);
 
     state.putOutstandingRead(1, r1);
     state.putOutstandingRead(2, r2);
