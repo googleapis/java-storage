@@ -318,7 +318,7 @@ public final class ITBlobReadChannelTest {
       assertThat(e).hasCauseThat().isInstanceOf(StorageException.class);
       StorageException se = (StorageException) e.getCause();
       // b/261214971 for differing response code
-      assertThat(se.getCode()).isAnyOf(/*json*/ 304, /*grpc*/ 409);
+      assertThat(se.getCode()).isAnyOf(/*json*/ 304, /*grpc*/ 412);
     }
   }
 
