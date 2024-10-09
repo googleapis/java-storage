@@ -224,14 +224,14 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
-      <version>0.145.0</version>
+      <version>0.146.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
-      <version>2.54.0</version>
+      <version>2.55.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
