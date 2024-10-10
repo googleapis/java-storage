@@ -270,8 +270,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             getOptions().asRetryDependencies(),
             retryAlgorithmManager.idempotent(),
             jsonResumableWrite);
-    HttpContentRange contentRange =
-        HttpContentRange.of(ByteRangeSpec.relativeLength(0L, size), size);
+    HttpContentRange contentRange = HttpContentRange.of(ByteRangeSpec.explicit(0L, size), size);
     ResumableOperationResult<StorageObject> put =
         session.put(RewindableContent.of(path), contentRange);
     // all exception translation is taken care of down in the JsonResumableSession
@@ -1724,8 +1723,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             getOptions().asRetryDependencies(),
             retryAlgorithmManager.idempotent(),
             jsonResumableWrite);
-    HttpContentRange contentRange =
-        HttpContentRange.of(ByteRangeSpec.relativeLength(0L, size), size);
+    HttpContentRange contentRange = HttpContentRange.of(ByteRangeSpec.explicit(0L, size), size);
     ResumableOperationResult<StorageObject> put =
         session.put(RewindableContent.of(path), contentRange);
     // all exception translation is taken care of down in the JsonResumableSession
