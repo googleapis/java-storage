@@ -41,16 +41,17 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
 
 If you are using Maven without the BOM, add this to your dependencies:
 
+
 ```xml
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.43.1</version>
+  <version>2.43.2</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.43.1</version>
+  <version>2.43.2</version>
 </dependency>
 
 ```
