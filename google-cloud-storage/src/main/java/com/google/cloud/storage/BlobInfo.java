@@ -110,6 +110,7 @@ public class BlobInfo implements Serializable {
   private final Retention retention;
   private final OffsetDateTime softDeleteTime;
   private final OffsetDateTime hardDeleteTime;
+  private final String restoreToken;
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
@@ -531,6 +532,8 @@ public class BlobInfo implements Serializable {
 
     abstract Builder setHardDeleteTime(OffsetDateTime hardDeleteTIme);
 
+    abstract Builder setRestoreToken(String restoreToken);
+
     public abstract Builder setRetention(Retention retention);
 
     /** Creates a {@code BlobInfo} object. */
@@ -634,6 +637,7 @@ public class BlobInfo implements Serializable {
     private Retention retention;
     private OffsetDateTime softDeleteTime;
     private OffsetDateTime hardDeleteTime;
+    private String restoreToken;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
@@ -674,6 +678,7 @@ public class BlobInfo implements Serializable {
       retention = blobInfo.retention;
       softDeleteTime = blobInfo.softDeleteTime;
       hardDeleteTime = blobInfo.hardDeleteTime;
+      restoreToken = blobInfo.restoreToken;
     }
 
     @Override
@@ -1066,6 +1071,15 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
+    Builder setRestoreToken(String restoreToken) {
+      if(!Objects.equals(this.restoreToken, restoreToken)){
+        modifiedFields.add(BlobField.RESTORE_TOKEN);
+      }
+      this.restoreToken = restoreToken;
+      return this;
+    }
+
+    @Override
     public Builder setRetention(Retention retention) {
       // todo: b/308194853
       modifiedFields.add(BlobField.RETENTION);
@@ -1299,6 +1313,7 @@ public class BlobInfo implements Serializable {
     retention = builder.retention;
     softDeleteTime = builder.softDeleteTime;
     hardDeleteTime = builder.hardDeleteTime;
+    restoreToken = builder.restoreToken;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -1704,6 +1719,14 @@ public class BlobInfo implements Serializable {
     return hardDeleteTime;
   }
 
+  /**
+   * If this is a soft-deleted object in an HNS-enabled bucket, returns the restore token which will
+   * be necessary to restore it if there's a name conflict with another object.
+   */
+  public String getRestoreToken() {
+    return restoreToken;
+  }
+
   /** Returns the object's Retention policy. */
   public Retention getRetention() {
     return retention;
@@ -1761,7 +1784,8 @@ public class BlobInfo implements Serializable {
         retention,
         retentionExpirationTime,
         softDeleteTime,
-        hardDeleteTime);
+        hardDeleteTime,
+        restoreToken);
   }
 
   @Override
@@ -1805,7 +1829,8 @@ public class BlobInfo implements Serializable {
         && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime)
         && Objects.equals(retention, blobInfo.retention)
         && Objects.equals(softDeleteTime, blobInfo.softDeleteTime)
-        && Objects.equals(hardDeleteTime, blobInfo.hardDeleteTime);
+        && Objects.equals(hardDeleteTime, blobInfo.hardDeleteTime)
+        && Objects.equals(restoreToken, blobInfo.restoreToken);
   }
 
   ImmutableSet<NamedField> getModifiedFields() {
