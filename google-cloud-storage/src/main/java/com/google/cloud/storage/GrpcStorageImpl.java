@@ -1724,11 +1724,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @VisibleForTesting
   ApiFuture<ResumableWrite> startResumableWrite(
       GrpcCallContext grpcCallContext, WriteObjectRequest req, Opts<ObjectTargetOpt> opts) {
+    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
         .write()
         .resumableWrite(
-            storageClient.startResumableWriteCallable().withDefaultCallContext(merge), req, opts);
+            storageClient
+                .startResumableWriteCallable()
+                .withDefaultCallContext(merge.withRetryableCodes(codes)),
+            req,
+            opts);
   }
 
   ApiFuture<BidiResumableWrite> startResumableWrite(
