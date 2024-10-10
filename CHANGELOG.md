@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.43.3](https://github.com/googleapis/java-storage/compare/v2.43.2...v2.43.3) (2024-10-10)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.47.0 ([c517798](https://github.com/googleapis/java-storage/commit/c5177983a48b1bf26e8abb5d4d27355bfcd62d3b))
+* Update gRPC ReadObject retry to avoid double retry ([#2765](https://github.com/googleapis/java-storage/issues/2765)) ([1fc57b9](https://github.com/googleapis/java-storage/commit/1fc57b9b4fe2ec2d08333fb62be66f272294deca))
+
 ## [2.43.2](https://github.com/googleapis/java-storage/compare/v2.43.1...v2.43.2) (2024-10-08)
 
 
