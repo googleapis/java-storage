@@ -326,8 +326,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     HARD_DELETE_TIME(
-        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class);
+        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class),
 
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    RESTORE_TOKEN("restoreToken", "restore_token", String.class);
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
     private static final Map<String, BlobField> JSON_FIELD_NAME_INDEX;
 
@@ -1688,6 +1690,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option that must be specified when getting a soft-deleted object from an HNS-enabled
+     * bucket that has a name/generation conflict with another object in the same bucket.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobGetOption restoreToken(String restoreToken){
+      return new BlobGetOption(UnifiedOpts.restoreToken(restoreToken));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -1774,6 +1785,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobRestoreOption copySourceAcl(boolean copySourceAcl) {
       return new BlobRestoreOption(UnifiedOpts.copySourceAcl(copySourceAcl));
+    }
+
+    /**
+     * Returns an option that must be specified when getting a soft-deleted object from an HNS-enabled
+     * bucket that has a name/generation conflict with another object in the same bucket.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption restoreToken(String restoreToken) {
+      return new BlobRestoreOption(UnifiedOpts.restoreToken(restoreToken));
     }
   }
 
