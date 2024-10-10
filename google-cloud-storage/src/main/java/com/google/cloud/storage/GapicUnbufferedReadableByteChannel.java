@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
@@ -258,6 +259,11 @@ final class GapicUnbufferedReadableByteChannel
 
   private void ensureStreamOpen() {
     if (readObjectObserver == null) {
+      java.lang.Object peek = queue.peek();
+      if (peek instanceof Throwable || peek == EOF_MARKER) {
+        // If our queue has an error or EOF, do not send another request
+        return;
+      }
       readObjectObserver =
           Retrying.run(
               retryingDeps,
@@ -326,12 +332,14 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     protected void onErrorImpl(Throwable t) {
-      open.setException(t);
-      if (!alg.shouldRetry(t, null)) {
-        result.setException(StorageException.coalesce(t));
-      }
       if (t instanceof CancellationException) {
         cancellation.set(t);
+      }
+      if (!open.isDone()) {
+        open.setException(t);
+        if (!alg.shouldRetry(t, null)) {
+          result.setException(StorageException.coalesce(t));
+        }
       }
       try {
         queue.offer(t);
@@ -367,6 +375,11 @@ final class GapicUnbufferedReadableByteChannel
 
     public boolean nonEmpty() {
       return !queue.isEmpty();
+    }
+
+    @Nullable
+    public T peek() {
+      return queue.peek();
     }
 
     @NonNull
