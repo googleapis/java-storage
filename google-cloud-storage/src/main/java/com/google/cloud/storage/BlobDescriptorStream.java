@@ -44,6 +44,7 @@ import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
 import io.grpc.Status.Code;
+import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;
 import java.util.List;
@@ -441,7 +442,6 @@ final class BlobDescriptorStream
     @Override
     public void onError(Throwable t) {
       delegate.onError(t);
-      blobDescriptorResolveFuture.setException(t);
       openSignal.setException(t);
       closeSignal.setException(t);
     }
@@ -449,7 +449,21 @@ final class BlobDescriptorStream
     @Override
     public void onComplete() {
       delegate.onComplete();
-      blobDescriptorResolveFuture.set(null);
+      if (state.getMetadata() == null) {
+        StatusRuntimeException cause =
+            Code.UNAVAILABLE
+                .toStatus()
+                .withDescription("onComplete without prior onNext")
+                .asRuntimeException();
+        ApiException apiException =
+            ApiExceptionFactory.createException(cause, GrpcStatusCode.of(Code.UNAVAILABLE), false);
+        StorageException storageException =
+            new StorageException(0, cause.getMessage(), apiException);
+        streamRetryContext.recordError(
+            storageException,
+            BlobDescriptorStream.this::restart,
+            blobDescriptorResolveFuture::setException);
+      }
       openSignal.set(null);
       closeSignal.set(null);
     }
@@ -489,6 +503,7 @@ final class BlobDescriptorStream
         // bubble all the way up to the invoker we'll be able to see it in a bug report.
         t.addSuppressed(new MaxRedirectsExceededException(maxRedirectsAllowed, redirectCount));
         delegate.onError(t);
+        blobDescriptorResolveFuture.setException(t);
         return;
       }
       if (error.hasReadHandle()) {

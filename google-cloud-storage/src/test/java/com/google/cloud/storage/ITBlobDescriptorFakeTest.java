@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.cloud.storage.TestUtils.xxd;
@@ -28,6 +29,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
@@ -1064,6 +1066,74 @@ public final class ITBlobDescriptorFakeTest {
 
       byte[] actual = baos.toByteArray();
       assertThat(xxd(actual)).isEqualTo(xxd(testContent.getBytes()));
+    }
+  }
+
+  @Test
+  public void retryableErrorWhileOpeningIsRetried() throws Exception {
+    AtomicInteger reqCounter = new AtomicInteger(0);
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                REQ_OPEN,
+                respond -> {
+                  int i = reqCounter.incrementAndGet();
+                  if (i <= 1) {
+                    ApiException apiException =
+                        apiException(Code.UNAVAILABLE, String.format("{unavailable %d}", i));
+                    respond.onError(apiException);
+                  } else {
+                    respond.onNext(RES_OPEN);
+                  }
+                }));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      try (BlobDescriptor bd = futureBlobDescriptor.get(20, TimeUnit.SECONDS)) {
+        assertThat(bd).isNotNull();
+      }
+    }
+  }
+
+  @Test
+  public void onCompleteWithoutAValue() throws Exception {
+    // I'm not sure if this is something that can actually happen in practice, but is being here
+    // to ensure it's at least accounted for, rather than a null pointer exception or something else
+    // equally cryptic.
+    FakeStorage fake = FakeStorage.of(ImmutableMap.of(REQ_OPEN, StreamObserver::onCompleted));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ExecutionException ee =
+          assertThrows(
+              ExecutionException.class, () -> futureBlobDescriptor.get(20, TimeUnit.SECONDS));
+      assertAll(
+          () -> assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class),
+          () ->
+              assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(UnavailableException.class),
+          () -> assertThat(((StorageException) ee.getCause()).getCode()).isEqualTo(0),
+          () -> {
+            String messages = TestUtils.messagesToText(ee.getCause());
+            assertThat(messages).contains("Unretryable error");
+          });
     }
   }
 
