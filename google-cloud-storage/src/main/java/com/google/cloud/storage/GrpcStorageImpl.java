@@ -135,7 +135,6 @@ import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions>
     implements Storage, StorageInternal {
 
