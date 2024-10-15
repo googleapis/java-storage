@@ -120,7 +120,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>libraries-bom</artifactId>
-            <version>26.44.0</version>
+            <version>{{ metadata['libraries_bom_version'] }}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -142,19 +142,19 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-storage-control</artifactId>
-    <version>2.41.0</version>
+    <version>{{ metadata['library_version'] }}</version>
 </dependency>
 ```
 
 If you are using Gradle 5.x or later, add this to your dependencies:
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:26.44.0')
+implementation platform('com.google.cloud:libraries-bom:{{ metadata['libraries_bom_version'] }}')
 implementation 'com.google.cloud:google-cloud-storage-control'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage-control:2.41.0'
+implementation 'com.google.cloud:google-cloud-storage-control:{{ metadata['library_version'] }}'
 ```
 
 #### Creating an authorized service object
