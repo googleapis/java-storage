@@ -30,8 +30,8 @@ class NoOpOpenTelemetryInstance implements OpenTelemetryTraceUtil {
   }
 
   @Override
-  public OpenTelemetryTraceUtil.Span startSpan(String spanName,
-      OpenTelemetryTraceUtil.Context parent) {
+  public OpenTelemetryTraceUtil.Span startSpan(
+      String spanName, OpenTelemetryTraceUtil.Context parent) {
     return new Span();
   }
 
@@ -82,6 +82,7 @@ class NoOpOpenTelemetryInstance implements OpenTelemetryTraceUtil {
       return new Scope();
     }
   }
+
   static class Context implements OpenTelemetryTraceUtil.Context {
     @Override
     public Scope makeCurrent() {

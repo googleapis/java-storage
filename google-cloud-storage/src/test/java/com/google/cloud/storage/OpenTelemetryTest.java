@@ -71,8 +71,7 @@ public final class OpenTelemetryTest {
 
   @Test
   public void noOpDoesNothing() {
-    StorageOptions storageOptions =
-        StorageOptions.http().build();
+    StorageOptions storageOptions = StorageOptions.http().build();
     Storage storage = storageOptions.getService();
     storage.create(BucketInfo.of(generator.randomBucketName()));
   }

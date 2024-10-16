@@ -360,8 +360,7 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public Bucket create(Bucket bucket, Map<Option, ?> options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create(Bucket,Map)");
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create(Bucket,Map)");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
