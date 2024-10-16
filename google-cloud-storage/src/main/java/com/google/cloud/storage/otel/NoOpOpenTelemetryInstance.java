@@ -17,29 +17,80 @@
 
 package com.google.cloud.storage.otel;
 
+import com.google.api.core.ApiFuture;
+import io.opentelemetry.api.trace.StatusCode;
+import java.util.Map;
 import javax.annotation.Nonnull;
 
 class NoOpOpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   @Override
-  public Span startSpan(String spanName) {
-    return null;
+  public OpenTelemetryTraceUtil.Span startSpan(String spanName) {
+    return new Span();
   }
 
   @Override
-  public Span startSpan(String spanName, Context parent) {
-    return null;
+  public OpenTelemetryTraceUtil.Span startSpan(String spanName,
+      OpenTelemetryTraceUtil.Context parent) {
+    return new Span();
   }
 
   @Nonnull
   @Override
   public Span currentSpan() {
-    return null;
+    return new Span();
   }
 
   @Nonnull
   @Override
   public Context currentContext() {
-    return null;
+    return new Context();
+  }
+
+  static class Span implements OpenTelemetryTraceUtil.Span {
+    @Override
+    public void end() {}
+
+    @Override
+    public void end(Throwable error) {}
+
+    @Override
+    public <T> void endAtFuture(ApiFuture<T> futureValue) {}
+
+    @Override
+    public OpenTelemetryTraceUtil.Span recordException(Throwable error) {
+      return this;
+    }
+
+    @Override
+    public OpenTelemetryTraceUtil.Span setStatus(StatusCode status, String name) {
+      return this;
+    }
+
+    @Override
+    public OpenTelemetryTraceUtil.Span addEvent(String name) {
+      return this;
+    }
+
+    @Override
+    public OpenTelemetryTraceUtil.Span addEvent(String name, Map<String, Object> attributes) {
+      return this;
+    }
+
+    @Override
+    public Scope makeCurrent() {
+      return new Scope();
+    }
+  }
+  static class Context implements OpenTelemetryTraceUtil.Context {
+    @Override
+    public Scope makeCurrent() {
+      return new Scope();
+    }
+  }
+
+  static class Scope implements OpenTelemetryTraceUtil.Scope {
+    @Override
+    public void close() {}
   }
 }

@@ -69,6 +69,14 @@ public final class OpenTelemetryTest {
         getAttributeValue(spanData, "gcp.client.artifact"));
   }
 
+  @Test
+  public void noOpDoesNothing() {
+    StorageOptions storageOptions =
+        StorageOptions.http().build();
+    Storage storage = storageOptions.getService();
+    storage.create(BucketInfo.of(generator.randomBucketName()));
+  }
+
   private String getAttributeValue(SpanData spanData, String key) {
     return spanData.getAttributes().get(AttributeKey.stringKey(key)).toString();
   }
