@@ -41,6 +41,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
   private GetObjectRequest() {
     bucket_ = "";
     object_ = "";
+    restoreToken_ = "";
   }
 
   @java.lang.Override
@@ -475,6 +476,65 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
   }
 
+  public static final int RESTORE_TOKEN_FIELD_NUMBER = 12;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object restoreToken_ = "";
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets and if soft_deleted is set to true. This parameter is optional, and
+   * is only required in the rare case when there are multiple soft-deleted
+   * objects with the same name and generation.
+   * </pre>
+   *
+   * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The restoreToken.
+   */
+  @java.lang.Override
+  public java.lang.String getRestoreToken() {
+    java.lang.Object ref = restoreToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      restoreToken_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets and if soft_deleted is set to true. This parameter is optional, and
+   * is only required in the rare case when there are multiple soft-deleted
+   * objects with the same name and generation.
+   * </pre>
+   *
+   * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for restoreToken.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getRestoreTokenBytes() {
+    java.lang.Object ref = restoreToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      restoreToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -519,6 +579,9 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (((bitField0_ & 0x00000001) != 0)) {
       output.writeBool(11, softDeleted_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(restoreToken_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 12, restoreToken_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -559,6 +622,9 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     }
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, softDeleted_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(restoreToken_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, restoreToken_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -607,6 +673,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (hasReadMask()) {
       if (!getReadMask().equals(other.getReadMask())) return false;
     }
+    if (!getRestoreToken().equals(other.getRestoreToken())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -652,6 +719,8 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       hash = (37 * hash) + READ_MASK_FIELD_NUMBER;
       hash = (53 * hash) + getReadMask().hashCode();
     }
+    hash = (37 * hash) + RESTORE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getRestoreToken().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -819,6 +888,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
         readMaskBuilder_.dispose();
         readMaskBuilder_ = null;
       }
+      restoreToken_ = "";
       return this;
     }
 
@@ -895,6 +965,9 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       if (((from_bitField0_ & 0x00000200) != 0)) {
         result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
         to_bitField0_ |= 0x00000040;
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.restoreToken_ = restoreToken_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -977,6 +1050,11 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       }
       if (other.hasReadMask()) {
         mergeReadMask(other.getReadMask());
+      }
+      if (!other.getRestoreToken().isEmpty()) {
+        restoreToken_ = other.restoreToken_;
+        bitField0_ |= 0x00000400;
+        onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1065,6 +1143,12 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
                 bitField0_ |= 0x00000008;
                 break;
               } // case 88
+            case 98:
+              {
+                restoreToken_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000400;
+                break;
+              } // case 98
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -2127,6 +2211,132 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
         readMask_ = null;
       }
       return readMaskBuilder_;
+    }
+
+    private java.lang.Object restoreToken_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets and if soft_deleted is set to true. This parameter is optional, and
+     * is only required in the rare case when there are multiple soft-deleted
+     * objects with the same name and generation.
+     * </pre>
+     *
+     * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The restoreToken.
+     */
+    public java.lang.String getRestoreToken() {
+      java.lang.Object ref = restoreToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        restoreToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets and if soft_deleted is set to true. This parameter is optional, and
+     * is only required in the rare case when there are multiple soft-deleted
+     * objects with the same name and generation.
+     * </pre>
+     *
+     * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The bytes for restoreToken.
+     */
+    public com.google.protobuf.ByteString getRestoreTokenBytes() {
+      java.lang.Object ref = restoreToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        restoreToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets and if soft_deleted is set to true. This parameter is optional, and
+     * is only required in the rare case when there are multiple soft-deleted
+     * objects with the same name and generation.
+     * </pre>
+     *
+     * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The restoreToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRestoreToken(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      restoreToken_ = value;
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets and if soft_deleted is set to true. This parameter is optional, and
+     * is only required in the rare case when there are multiple soft-deleted
+     * objects with the same name and generation.
+     * </pre>
+     *
+     * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearRestoreToken() {
+      restoreToken_ = getDefaultInstance().getRestoreToken();
+      bitField0_ = (bitField0_ & ~0x00000400);
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets and if soft_deleted is set to true. This parameter is optional, and
+     * is only required in the rare case when there are multiple soft-deleted
+     * objects with the same name and generation.
+     * </pre>
+     *
+     * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The bytes for restoreToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRestoreTokenBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+      restoreToken_ = value;
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override
