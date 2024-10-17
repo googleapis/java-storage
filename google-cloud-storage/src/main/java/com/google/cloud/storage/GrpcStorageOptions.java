@@ -78,6 +78,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import io.grpc.protobuf.ProtoUtils;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -345,6 +346,11 @@ public final class GrpcStorageOptions extends StorageOptions
         // timeout.
         .setIdleTimeout(totalTimeout);
     return Tuple.of(builder.build(), defaultOpts);
+  }
+
+  @Override
+  public OpenTelemetrySdk getOpenTelemetrySdk() {
+    return null;
   }
 
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
@@ -626,6 +632,11 @@ public final class GrpcStorageOptions extends StorageOptions
           "The provided instance of BlobWriteSessionConfig is not compatible with gRPC transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
       return this;
+    }
+
+    @Override
+    public StorageOptions.Builder setOpenTelemetrySdk(@NonNull OpenTelemetrySdk openTelemetrySdk) {
+      return null;
     }
 
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */

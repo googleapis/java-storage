@@ -67,6 +67,7 @@ import com.google.cloud.http.CensusHttpModule;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -80,6 +81,7 @@ import io.opencensus.trace.Span;
 import io.opencensus.trace.Status;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
+import io.opentelemetry.api.trace.StatusCode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -113,6 +115,7 @@ public class HttpStorageRpc implements StorageRpc {
   private final Storage storage;
   private final Tracer tracer = Tracing.getTracer();
   private final HttpRequestInitializer batchRequestInitializer;
+  private final OpenTelemetryTraceUtil openTelemetryTraceUtil;
 
   private static final long MEGABYTE = 1024L * 1024L;
   private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
@@ -144,6 +147,8 @@ public class HttpStorageRpc implements StorageRpc {
             .setRootUrl(options.getHost())
             .setApplicationName(applicationName)
             .build();
+    // Get instance of OpenTelemetry
+    openTelemetryTraceUtil = OpenTelemetryTraceUtil.getInstance(options);
   }
 
   public Storage getStorage() {
@@ -355,9 +360,10 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public Bucket create(Bucket bucket, Map<Option, ?> options) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create(Bucket,Map)");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
-    try {
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       return storage
           .buckets()
           .insert(this.options.getProjectId(), bucket)
@@ -368,9 +374,12 @@ public class HttpStorageRpc implements StorageRpc {
           .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options))
           .execute();
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }

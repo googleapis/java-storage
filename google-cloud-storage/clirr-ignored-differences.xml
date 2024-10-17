@@ -96,4 +96,17 @@
     <method>boolean equals(java.lang.Object)</method>
   </difference>
 
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/StorageOptions$Builder</className>
+    <method>com.google.cloud.storage.StorageOptions$Builder setOpenTelemetrySdk(io.opentelemetry.sdk.OpenTelemetrySdk)</method>
+  </difference>
+
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/StorageOptions</className>
+    <method>io.opentelemetry.sdk.OpenTelemetrySdk getOpenTelemetrySdk()</method>
+  </difference>
+
+
 </differences>
