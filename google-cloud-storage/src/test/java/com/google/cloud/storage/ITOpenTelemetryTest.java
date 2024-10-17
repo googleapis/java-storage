@@ -69,6 +69,23 @@ public final class ITOpenTelemetryTest {
   }
 
   @Test
+  public void checkInstrumentationGrpc() {
+    SpanExporter exporter = new TestExporter();
+
+    OpenTelemetrySdk openTelemetrySdk =
+        OpenTelemetrySdk.builder()
+            .setTracerProvider(
+                SdkTracerProvider.builder()
+                    .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+                    .build())
+            .build();
+    StorageOptions storageOptions =
+        StorageOptions.grpc().setOpenTelemetrySdk(openTelemetrySdk).build();
+    Storage storage = storageOptions.getService();
+    storage.create(BucketInfo.of(generator.randomBucketName()));
+  }
+
+  @Test
   public void noOpDoesNothing() {
     StorageOptions storageOptions = StorageOptions.http().build();
     Storage storage = storageOptions.getService();

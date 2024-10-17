@@ -119,6 +119,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
+  private OpenTelemetrySdk openTelemetrySdk;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -134,6 +135,7 @@ public final class GrpcStorageOptions extends StorageOptions
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
+    this.openTelemetrySdk = builder.openTelemetrySdk;
   }
 
   @Override
@@ -350,7 +352,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   @Override
   public OpenTelemetrySdk getOpenTelemetrySdk() {
-    return null;
+    return openTelemetrySdk;
   }
 
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
@@ -435,6 +437,8 @@ public final class GrpcStorageOptions extends StorageOptions
 
     private boolean grpcMetricsManuallyEnabled = false;
 
+    private OpenTelemetrySdk openTelemetrySdk;
+
     Builder() {}
 
     Builder(StorageOptions options) {
@@ -446,6 +450,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.enableGrpcClientMetrics = gso.enableGrpcClientMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
+      this.openTelemetrySdk = gso.openTelemetrySdk;
     }
 
     /**
@@ -634,9 +639,15 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    @Override
-    public StorageOptions.Builder setOpenTelemetrySdk(@NonNull OpenTelemetrySdk openTelemetrySdk) {
-      return null;
+    /**
+     * Enable OpenTelemetry Tracing and provide an instance for the client to use.
+     *
+     * @param openTelemetrySdk
+     */
+    public GrpcStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
+      requireNonNull(openTelemetrySdk, "openTelemetry must be non null");
+      this.openTelemetrySdk = openTelemetrySdk;
+      return this;
     }
 
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
