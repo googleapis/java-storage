@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.43.3](https://github.com/googleapis/java-storage/compare/v2.43.2...v2.43.3) (2024-10-17)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.47.0 ([c517798](https://github.com/googleapis/java-storage/commit/c5177983a48b1bf26e8abb5d4d27355bfcd62d3b))
+* Fix createFrom resumable upload retry offset calculation ([#2771](https://github.com/googleapis/java-storage/issues/2771)) ([1126cdc](https://github.com/googleapis/java-storage/commit/1126cdcde07fed3c57d99dfa2b2505b06d5cd25a)), closes [#2770](https://github.com/googleapis/java-storage/issues/2770)
+* Update gRPC ReadObject retry to avoid double retry ([#2765](https://github.com/googleapis/java-storage/issues/2765)) ([1fc57b9](https://github.com/googleapis/java-storage/commit/1fc57b9b4fe2ec2d08333fb62be66f272294deca))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20241008-2.0.0 ([#2776](https://github.com/googleapis/java-storage/issues/2776)) ([0545b5e](https://github.com/googleapis/java-storage/commit/0545b5e7d7e292da38fb42a9160fb1938628684b))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.48.0 ([#2781](https://github.com/googleapis/java-storage/issues/2781)) ([8fa013e](https://github.com/googleapis/java-storage/commit/8fa013e09e3c02c6deeb6d49911c051b940ef79c))
+
 ## [2.43.2](https://github.com/googleapis/java-storage/compare/v2.43.1...v2.43.2) (2024-10-08)
 
 
