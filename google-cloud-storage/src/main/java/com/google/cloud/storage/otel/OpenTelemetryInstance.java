@@ -18,6 +18,7 @@ package com.google.cloud.storage.otel;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.core.GaxProperties;
+import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Context;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
@@ -38,11 +39,14 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   private static final String LIBRARY_NAME = "cloud.google.com/java/storage";
 
+  private final String transport;
+
   public OpenTelemetryInstance(StorageOptions storageOptions) {
     this.storageOptions = storageOptions;
     this.openTelemetry = storageOptions.getOpenTelemetrySdk();
     this.tracer =
         openTelemetry.getTracer(LIBRARY_NAME, GaxProperties.getLibraryVersion(this.getClass()));
+    this.transport = storageOptions instanceof GrpcStorageOptions ? "grpc" : "http";
   }
 
   static class Span implements OpenTelemetryTraceUtil.Span {
@@ -146,6 +150,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   public OpenTelemetryTraceUtil.Span startSpan(String methodName) {
     String formatSpanName = String.format("%s.%s/%s", "storage", "client", methodName);
     SpanBuilder spanBuilder = tracer.spanBuilder(formatSpanName).setSpanKind(SpanKind.CLIENT);
+    spanBuilder.setAttribute("rpc.system", transport);
     io.opentelemetry.api.trace.Span span =
         addSettingsAttributesToCurrentSpan(spanBuilder).startSpan();
     return new Span(span, formatSpanName);

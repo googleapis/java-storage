@@ -66,6 +66,7 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals(
         "com.google.cloud.google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
+    Assert.assertEquals("http", getAttributeValue(spanData, "rpc.system"));
   }
 
   @Test
@@ -90,6 +91,7 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals(
         "com.google.cloud.google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
+   Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
   }
 
   @Test
