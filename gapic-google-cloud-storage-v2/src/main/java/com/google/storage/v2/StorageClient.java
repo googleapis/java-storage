@@ -2312,6 +2312,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setRestoreToken("restoreToken1638686731")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2348,6 +2349,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setRestoreToken("restoreToken1638686731")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2620,6 +2622,7 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
+   *           .setRestoreToken("restoreToken1638686731")
    *           .build();
    *   Object response = storageClient.getObject(request);
    * }
@@ -2657,6 +2660,7 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
+   *           .setRestoreToken("restoreToken1638686731")
    *           .build();
    *   ApiFuture<Object> future = storageClient.getObjectCallable().futureCall(request);
    *   // Do something.

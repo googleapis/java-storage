@@ -309,4 +309,37 @@ public interface GetObjectRequestOrBuilder
    * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
    */
   com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets and if soft_deleted is set to true. This parameter is optional, and
+   * is only required in the rare case when there are multiple soft-deleted
+   * objects with the same name and generation.
+   * </pre>
+   *
+   * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The restoreToken.
+   */
+  java.lang.String getRestoreToken();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets and if soft_deleted is set to true. This parameter is optional, and
+   * is only required in the rare case when there are multiple soft-deleted
+   * objects with the same name and generation.
+   * </pre>
+   *
+   * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for restoreToken.
+   */
+  com.google.protobuf.ByteString getRestoreTokenBytes();
 }
