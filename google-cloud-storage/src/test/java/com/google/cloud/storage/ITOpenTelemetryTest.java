@@ -86,9 +86,9 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals(
         "com.google.cloud.google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
-   Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
+    Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
 
-   // Cleanup
+    // Cleanup
     RemoteStorageHelper.forceDelete(storage, bucket);
   }
 
@@ -101,7 +101,7 @@ public final class ITOpenTelemetryTest {
     Storage storageHttp = storageOptionsHttp.getService();
     storageHttp.create(BucketInfo.of(httpBucket));
 
-    //NoOp for Grpc
+    // NoOp for Grpc
     StorageOptions storageOptionsGrpc = StorageOptions.grpc().build();
     Storage storageGrpc = storageOptionsGrpc.getService();
     storageGrpc.create(BucketInfo.of(grpcBucket));

@@ -23,6 +23,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Context;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.SpanBuilder;
@@ -60,7 +61,12 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
     @Override
     public OpenTelemetryTraceUtil.Span recordException(Throwable error) {
-      span.recordException(error);
+      span.recordException(
+          error,
+          Attributes.of(
+              AttributeKey.stringKey("exception.message"), error.getMessage(),
+              AttributeKey.stringKey("exception.type"), error.getClass().getName(),
+              AttributeKey.stringKey("exception.stacktrace"), error.getStackTrace().toString()));
       return this;
     }
 
