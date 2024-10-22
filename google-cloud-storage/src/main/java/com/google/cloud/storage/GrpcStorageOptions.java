@@ -642,7 +642,7 @@ public final class GrpcStorageOptions extends StorageOptions
     /**
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
-     * @param openTelemetrySdk
+     * @param openTelemetrySdk User defined instance of OpenTelemetry SDK to be used by the library
      */
     public GrpcStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
       requireNonNull(openTelemetrySdk, "openTelemetry must be non null");
