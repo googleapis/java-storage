@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.core.BetaApi;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Storage.BlobGetOption;
@@ -103,7 +102,6 @@ public class Bucket extends BucketInfo {
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
-    @BetaApi
     public static BucketSourceOption[] dedupe(BucketSourceOption... os) {
       return Option.dedupe(BucketSourceOption[]::new, os);
     }
@@ -115,7 +113,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BucketSourceOption[] dedupe(
         Collection<BucketSourceOption> collection, BucketSourceOption... os) {
       return Option.dedupe(BucketSourceOption[]::new, collection, os);
@@ -128,7 +125,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BucketSourceOption[] dedupe(
         BucketSourceOption[] array, BucketSourceOption... os) {
       return Option.dedupe(BucketSourceOption[]::new, array, os);
@@ -286,7 +282,6 @@ public class Bucket extends BucketInfo {
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
-    @BetaApi
     public static BlobTargetOption[] dedupe(BlobTargetOption... os) {
       return Option.dedupe(BlobTargetOption[]::new, os);
     }
@@ -298,7 +293,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobTargetOption[] dedupe(
         Collection<BlobTargetOption> collection, BlobTargetOption... os) {
       return Option.dedupe(BlobTargetOption[]::new, collection, os);
@@ -311,7 +305,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobTargetOption[] dedupe(BlobTargetOption[] array, BlobTargetOption... os) {
       return Option.dedupe(BlobTargetOption[]::new, array, os);
     }
@@ -449,7 +442,6 @@ public class Bucket extends BucketInfo {
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
-    @BetaApi
     public static BlobWriteOption[] dedupe(BlobWriteOption... os) {
       return Option.dedupe(BlobWriteOption[]::new, os);
     }
@@ -461,7 +453,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobWriteOption[] dedupe(
         Collection<BlobWriteOption> collection, BlobWriteOption... os) {
       return Option.dedupe(BlobWriteOption[]::new, collection, os);
@@ -474,7 +465,6 @@ public class Bucket extends BucketInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobWriteOption[] dedupe(BlobWriteOption[] array, BlobWriteOption... os) {
       return Option.dedupe(BlobWriteOption[]::new, array, os);
     }
@@ -1541,9 +1531,8 @@ public class Bucket extends BucketInfo {
   /**
    * Drop the held {@link Storage} instance.
    *
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
-  @BetaApi
   public BucketInfo asBucketInfo() {
     return this.toBuilder().infoBuilder.build();
   }
