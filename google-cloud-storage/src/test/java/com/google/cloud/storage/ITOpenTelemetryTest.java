@@ -16,12 +16,7 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.TransportCompatibility.Transport;
-import com.google.cloud.storage.it.runner.StorageITRunner;
-import com.google.cloud.storage.it.runner.annotations.Backend;
-import com.google.cloud.storage.it.runner.annotations.CrossRun;
-import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.testing.RemoteStorageHelper;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.common.CompletableResultCode;
@@ -33,16 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(StorageITRunner.class)
-@CrossRun(
-    backends = {Backend.PROD},
-    transports = {Transport.HTTP})
 public final class ITOpenTelemetryTest {
-  @Inject public Generator generator;
 
   @Test
   public void checkInstrumentation() {
@@ -58,7 +48,8 @@ public final class ITOpenTelemetryTest {
     StorageOptions storageOptions =
         StorageOptions.http().setOpenTelemetrySdk(openTelemetrySdk).build();
     Storage storage = storageOptions.getService();
-    storage.create(BucketInfo.of(generator.randomBucketName()));
+    String bucket = randomBucketName();
+    storage.create(BucketInfo.of(bucket));
     TestExporter testExported = (TestExporter) exporter;
     SpanData spanData = testExported.getExportedSpans().get(0);
     Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
@@ -66,21 +57,71 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals(
         "com.google.cloud.google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
+    Assert.assertEquals("http", getAttributeValue(spanData, "rpc.system"));
+
+    // Cleanup
+    RemoteStorageHelper.forceDelete(storage, bucket);
+  }
+
+  @Test
+  public void checkInstrumentationGrpc() {
+    SpanExporter exporter = new TestExporter();
+
+    OpenTelemetrySdk openTelemetrySdk =
+        OpenTelemetrySdk.builder()
+            .setTracerProvider(
+                SdkTracerProvider.builder()
+                    .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+                    .build())
+            .build();
+    StorageOptions storageOptions =
+        StorageOptions.grpc().setOpenTelemetrySdk(openTelemetrySdk).build();
+    Storage storage = storageOptions.getService();
+    String bucket = randomBucketName();
+    storage.create(BucketInfo.of(bucket));
+    TestExporter testExported = (TestExporter) exporter;
+    SpanData spanData = testExported.getExportedSpans().get(0);
+    Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
+    Assert.assertEquals("googleapis/java-storage", getAttributeValue(spanData, "gcp.client.repo"));
+    Assert.assertEquals(
+        "com.google.cloud.google-cloud-storage",
+        getAttributeValue(spanData, "gcp.client.artifact"));
+    Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
+
+    // Cleanup
+    RemoteStorageHelper.forceDelete(storage, bucket);
   }
 
   @Test
   public void noOpDoesNothing() {
-    StorageOptions storageOptions = StorageOptions.http().build();
-    Storage storage = storageOptions.getService();
-    storage.create(BucketInfo.of(generator.randomBucketName()));
+    String httpBucket = randomBucketName();
+    String grpcBucket = randomBucketName();
+    // NoOp for HTTP
+    StorageOptions storageOptionsHttp = StorageOptions.http().build();
+    Storage storageHttp = storageOptionsHttp.getService();
+    storageHttp.create(BucketInfo.of(httpBucket));
+
+    // NoOp for Grpc
+    StorageOptions storageOptionsGrpc = StorageOptions.grpc().build();
+    Storage storageGrpc = storageOptionsGrpc.getService();
+    storageGrpc.create(BucketInfo.of(grpcBucket));
+
+    // cleanup
+    RemoteStorageHelper.forceDelete(storageHttp, httpBucket);
+    RemoteStorageHelper.forceDelete(storageGrpc, grpcBucket);
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
     return spanData.getAttributes().get(AttributeKey.stringKey(key)).toString();
   }
+
+  public String randomBucketName() {
+    return "java-storage-grpc-rand-" + UUID.randomUUID();
+  }
 }
 
 class TestExporter implements SpanExporter {
+
   public final List<SpanData> exportedSpans = Collections.synchronizedList(new ArrayList<>());
 
   @Override

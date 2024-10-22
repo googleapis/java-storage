@@ -68,6 +68,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -168,6 +169,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
   @Deprecated private final ProjectId defaultProjectId;
+  private final OpenTelemetryTraceUtil openTelemetryTraceUtil;
 
   GrpcStorageImpl(
       GrpcStorageOptions options,
@@ -184,6 +186,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
+    this.openTelemetryTraceUtil = OpenTelemetryTraceUtil.getInstance(options);
   }
 
   @Override
@@ -198,6 +201,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create(Bucket, BucketTargetOption");
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -212,11 +217,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> storageClient.createBucketCallable().call(req, merge),
-        syntaxDecoders.bucket);
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> storageClient.createBucketCallable().call(req, merge),
+          syntaxDecoders.bucket);
+    } catch (Exception ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(
+          io.opentelemetry.api.trace.StatusCode.ERROR, ex.getClass().getSimpleName());
+      throw StorageException.coalesce(ex);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
