@@ -139,6 +139,49 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
+   * Output only. Restore token used to differentiate deleted objects with the
+   * same name and generation. This field is output only, and only set for
+   * deleted objects in HNS buckets.
+   * </pre>
+   *
+   * <code>optional string restore_token = 35 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return Whether the restoreToken field is set.
+   */
+  boolean hasRestoreToken();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. Restore token used to differentiate deleted objects with the
+   * same name and generation. This field is output only, and only set for
+   * deleted objects in HNS buckets.
+   * </pre>
+   *
+   * <code>optional string restore_token = 35 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The restoreToken.
+   */
+  java.lang.String getRestoreToken();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. Restore token used to differentiate deleted objects with the
+   * same name and generation. This field is output only, and only set for
+   * deleted objects in HNS buckets.
+   * </pre>
+   *
+   * <code>optional string restore_token = 35 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The bytes for restoreToken.
+   */
+  com.google.protobuf.ByteString getRestoreTokenBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Output only. The version of the metadata for this generation of this
    * object. Used for preconditions and for detecting changes in metadata. A
    * metageneration number is only meaningful in the context of a particular

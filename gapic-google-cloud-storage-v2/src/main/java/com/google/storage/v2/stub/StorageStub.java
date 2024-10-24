@@ -17,8 +17,6 @@
 package com.google.storage.v2.stub;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
-import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
@@ -39,29 +37,15 @@ import com.google.storage.v2.CancelResumableWriteRequest;
 import com.google.storage.v2.CancelResumableWriteResponse;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
-import com.google.storage.v2.CreateHmacKeyResponse;
-import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
-import com.google.storage.v2.GetServiceAccountRequest;
-import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListBucketsResponse;
-import com.google.storage.v2.ListHmacKeysRequest;
-import com.google.storage.v2.ListHmacKeysResponse;
-import com.google.storage.v2.ListNotificationConfigsRequest;
-import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.NotificationConfig;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -70,11 +54,9 @@ import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
-import com.google.storage.v2.ServiceAccount;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -189,71 +171,6 @@ public abstract class StorageStub implements BackgroundResource {
   public UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable() {
     throw new UnsupportedOperationException("Not implemented: queryWriteStatusCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<GetServiceAccountRequest, ServiceAccount> getServiceAccountCallable() {
-    throw new UnsupportedOperationException("Not implemented: getServiceAccountCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyCallable() {
-    throw new UnsupportedOperationException("Not implemented: createHmacKeyCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<DeleteHmacKeyRequest, Empty> deleteHmacKeyCallable() {
-    throw new UnsupportedOperationException("Not implemented: deleteHmacKeyCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyCallable() {
-    throw new UnsupportedOperationException("Not implemented: getHmacKeyCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysPagedCallable() {
-    throw new UnsupportedOperationException("Not implemented: listHmacKeysPagedCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysCallable() {
-    throw new UnsupportedOperationException("Not implemented: listHmacKeysCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyCallable() {
-    throw new UnsupportedOperationException("Not implemented: updateHmacKeyCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: deleteNotificationConfigCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: getNotificationConfigCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    throw new UnsupportedOperationException("Not implemented: createNotificationConfigCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    throw new UnsupportedOperationException(
-        "Not implemented: listNotificationConfigsPagedCallable()");
-  }
-
-  @Deprecated
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    throw new UnsupportedOperationException("Not implemented: listNotificationConfigsCallable()");
   }
 
   @Override

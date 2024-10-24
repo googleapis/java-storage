@@ -95,6 +95,39 @@ public interface RestoreObjectRequestOrBuilder
    *
    *
    * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets. This parameter is optional, and is only required in the rare case
+   * when there are multiple soft-deleted objects with the same name and
+   * generation.
+   * </pre>
+   *
+   * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The restoreToken.
+   */
+  java.lang.String getRestoreToken();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets. This parameter is optional, and is only required in the rare case
+   * when there are multiple soft-deleted objects with the same name and
+   * generation.
+   * </pre>
+   *
+   * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for restoreToken.
+   */
+  com.google.protobuf.ByteString getRestoreTokenBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Makes the operation conditional on whether the object's current generation
    * matches the given value. Setting to 0 makes the operation succeed only if
    * there are no live versions of the object.

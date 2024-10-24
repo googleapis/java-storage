@@ -22,20 +22,8 @@
             "CreateBucket": {
               "methods": ["createBucket", "createBucket", "createBucket", "createBucketCallable"]
             },
-            "CreateHmacKey": {
-              "methods": ["createHmacKey", "createHmacKey", "createHmacKey", "createHmacKeyCallable"]
-            },
-            "CreateNotificationConfig": {
-              "methods": ["createNotificationConfig", "createNotificationConfig", "createNotificationConfig", "createNotificationConfigCallable"]
-            },
             "DeleteBucket": {
               "methods": ["deleteBucket", "deleteBucket", "deleteBucket", "deleteBucketCallable"]
-            },
-            "DeleteHmacKey": {
-              "methods": ["deleteHmacKey", "deleteHmacKey", "deleteHmacKey", "deleteHmacKeyCallable"]
-            },
-            "DeleteNotificationConfig": {
-              "methods": ["deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfigCallable"]
             },
             "DeleteObject": {
               "methods": ["deleteObject", "deleteObject", "deleteObject", "deleteObject", "deleteObject", "deleteObjectCallable"]
@@ -43,29 +31,14 @@
             "GetBucket": {
               "methods": ["getBucket", "getBucket", "getBucket", "getBucketCallable"]
             },
-            "GetHmacKey": {
-              "methods": ["getHmacKey", "getHmacKey", "getHmacKey", "getHmacKeyCallable"]
-            },
             "GetIamPolicy": {
               "methods": ["getIamPolicy", "getIamPolicy", "getIamPolicy", "getIamPolicyCallable"]
-            },
-            "GetNotificationConfig": {
-              "methods": ["getNotificationConfig", "getNotificationConfig", "getNotificationConfig", "getNotificationConfigCallable"]
             },
             "GetObject": {
               "methods": ["getObject", "getObject", "getObject", "getObject", "getObject", "getObjectCallable"]
             },
-            "GetServiceAccount": {
-              "methods": ["getServiceAccount", "getServiceAccount", "getServiceAccount", "getServiceAccountCallable"]
-            },
             "ListBuckets": {
               "methods": ["listBuckets", "listBuckets", "listBuckets", "listBucketsPagedCallable", "listBucketsCallable"]
-            },
-            "ListHmacKeys": {
-              "methods": ["listHmacKeys", "listHmacKeys", "listHmacKeys", "listHmacKeysPagedCallable", "listHmacKeysCallable"]
-            },
-            "ListNotificationConfigs": {
-              "methods": ["listNotificationConfigs", "listNotificationConfigs", "listNotificationConfigs", "listNotificationConfigsPagedCallable", "listNotificationConfigsCallable"]
             },
             "ListObjects": {
               "methods": ["listObjects", "listObjects", "listObjects", "listObjectsPagedCallable", "listObjectsCallable"]
@@ -96,9 +69,6 @@
             },
             "UpdateBucket": {
               "methods": ["updateBucket", "updateBucket", "updateBucketCallable"]
-            },
-            "UpdateHmacKey": {
-              "methods": ["updateHmacKey", "updateHmacKey", "updateHmacKeyCallable"]
             },
             "UpdateObject": {
               "methods": ["updateObject", "updateObject", "updateObjectCallable"]
