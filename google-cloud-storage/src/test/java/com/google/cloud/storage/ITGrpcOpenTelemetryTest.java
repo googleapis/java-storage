@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiClock;
-import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -37,7 +36,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @SingleBackend(Backend.TEST_BENCH)
-public class GrpcOpenTelemetryTest {
+public class ITGrpcOpenTelemetryTest {
   @Inject public TestBench testBench;
   private static final ApiClock TIME_SOURCE =
       new ApiClock() {
