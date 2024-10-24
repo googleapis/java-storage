@@ -219,7 +219,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       // We never created any parts
       // create an empty object
       try {
-        BlobInfo blobInfo = storage.internalDirectUpload(ultimateObject, opts, Buffers.allocate(0));
+        BlobInfo blobInfo =
+            storage.internalDirectUpload(ultimateObject, opts, Buffers.allocate(0), null);
         finalObject.set(blobInfo);
         return;
       } catch (StorageException se) {
@@ -285,7 +286,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
             ApiFutures.immediateFuture(partInfo),
             info -> {
               try {
-                return storage.internalDirectUpload(info, partOpts, buf);
+                // TODO: Add in Otel context when available
+                return storage.internalDirectUpload(info, partOpts, buf, null);
               } catch (StorageException e) {
                 // a precondition failure usually means the part was created, but we didn't get the
                 // response. And when we tried to retry the object already exists.

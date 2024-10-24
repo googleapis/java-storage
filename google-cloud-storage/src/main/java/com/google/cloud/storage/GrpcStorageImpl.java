@@ -248,8 +248,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
-        .asBlob(this);
+    // Start the otel span to retain information of the origin of the request
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create(BlobInfo, BlobTargetOption");
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return internalDirectUpload(
+              blobInfo,
+              opts,
+              ByteBuffer.wrap(content, offset, length),
+              openTelemetryTraceUtil.currentContext())
+          .asBlob(this);
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -799,9 +814,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public BlobInfo internalDirectUpload(
-      BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+      BlobInfo blobInfo,
+      Opts<ObjectTargetOpt> opts,
+      ByteBuffer buf,
+      OpenTelemetryTraceUtil.Context ctx) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(buf, "content must be non null");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("internalDirectUpload(BlobInfo)", ctx);
     Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -809,28 +829,36 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Hasher hasher = Hasher.enabled();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     RewindableContent content = RewindableContent.of(buf);
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          content.rewindTo(0);
-          UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
-              ResumableMedia.gapic()
-                  .write()
-                  .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
-                  .setByteStringStrategy(ByteStringStrategy.noCopy())
-                  .setHasher(hasher)
-                  .direct()
-                  .unbuffered()
-                  .setRequest(req)
-                  .build();
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> {
+            content.rewindTo(0);
+            UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+                ResumableMedia.gapic()
+                    .write()
+                    .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
+                    .setByteStringStrategy(ByteStringStrategy.noCopy())
+                    .setHasher(hasher)
+                    .direct()
+                    .unbuffered()
+                    .setRequest(req)
+                    .build();
 
-          try (UnbufferedWritableByteChannel c = session.open()) {
-            content.writeTo(c);
-          }
-          return session.getResult();
-        },
-        this::getBlob);
+            try (UnbufferedWritableByteChannel c = session.open()) {
+              content.writeTo(c);
+            }
+            return session.getResult();
+          },
+          this::getBlob);
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
