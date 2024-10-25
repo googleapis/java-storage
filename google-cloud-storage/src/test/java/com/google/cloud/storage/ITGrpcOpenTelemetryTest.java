@@ -18,12 +18,12 @@ package com.google.cloud.storage;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.api.core.ApiClock;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.TestBench;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -41,23 +41,15 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.TEST_BENCH)
 public class ITGrpcOpenTelemetryTest {
   @Inject public TestBench testBench;
-  private static final ApiClock TIME_SOURCE =
-      new ApiClock() {
-        @Override
-        public long nanoTime() {
-          return 42_000_000_000L;
-        }
-
-        @Override
-        public long millisTime() {
-          return 42_000L;
-        }
-      };
   private StorageOptions options;
-  private SpanExporter exporter = new TestExporter();
+  private SpanExporter exporter;
+  private Storage storage;
+  @Inject public Generator generator;
+  @Inject public BucketInfo testBucket;
 
   @Before
   public void setUp() {
+    exporter = new TestExporter();
     OpenTelemetrySdk openTelemetrySdk =
         OpenTelemetrySdk.builder()
             .setTracerProvider(
@@ -72,11 +64,11 @@ public class ITGrpcOpenTelemetryTest {
             .setCredentials(NoCredentials.getInstance())
             .setOpenTelemetrySdk(openTelemetrySdk)
             .build();
+    storage = options.getService();
   }
 
   @Test
   public void runCreateBucket() {
-    Storage storage = options.getService();
     String bucket = "random-bucket";
     storage.create(BucketInfo.of(bucket));
     TestExporter testExported = (TestExporter) exporter;
@@ -91,27 +83,22 @@ public class ITGrpcOpenTelemetryTest {
 
   @Test
   public void runCreateBlob() {
-    Storage storage = options.getService();
-    String bucket = "random-bucket";
-    storage.create(BucketInfo.of(bucket));
     byte[] content = "Hello, World!".getBytes(UTF_8);
-    BlobId toCreate = BlobId.of(bucket, "blob");
+    BlobId toCreate = BlobId.of(testBucket.getName(), generator.randomObjectName());
     storage.create(BlobInfo.newBuilder(toCreate).build(), content);
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
-    // (1) Span to create the bucket
-    // (2) Span when calling create
-    // (3) Span when passing call to internalDirectUpload
-    Assert.assertEquals(3, spanData.size());
-    for(SpanData span : spanData) {
+    // (1) Span when calling create
+    // (2) Span when passing call to internalDirectUpload
+    Assert.assertEquals(2, spanData.size());
+    for (SpanData span : spanData) {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
-      Assert.assertEquals("googleapis/java-storage",
-          getAttributeValue(span, "gcp.client.repo"));
+      Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
       Assert.assertEquals(
-          "com.google.cloud.google-cloud-storage",
-          getAttributeValue(span, "gcp.client.artifact"));
+          "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("grpc", getAttributeValue(span, "rpc.system"));
     }
+    Assert.assertEquals(spanData.get(1).getSpanContext(), spanData.get(0).getParentSpanContext());
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
