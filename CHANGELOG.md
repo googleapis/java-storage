@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.44.1](https://github.com/googleapis/java-storage/compare/v2.44.0...v2.44.1) (2024-10-25)
+
+
+### Dependencies
+
+* Update sdk-platform-java dependencies ([#2795](https://github.com/googleapis/java-storage/issues/2795)) ([aeb86e5](https://github.com/googleapis/java-storage/commit/aeb86e5467269d55f9019638fe8b05331b423e55))
+
 ## [2.44.0](https://github.com/googleapis/java-storage/compare/v2.43.2...v2.44.0) (2024-10-23)
 
 
