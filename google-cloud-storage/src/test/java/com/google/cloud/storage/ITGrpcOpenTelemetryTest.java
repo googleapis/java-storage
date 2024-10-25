@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.api.core.ApiClock;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -29,6 +31,7 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,6 +87,31 @@ public class ITGrpcOpenTelemetryTest {
         "com.google.cloud.google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
     Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
+  }
+
+  @Test
+  public void runCreateBlob() {
+    Storage storage = options.getService();
+    String bucket = "random-bucket";
+    storage.create(BucketInfo.of(bucket));
+    byte[] content = "Hello, World!".getBytes(UTF_8);
+    BlobId toCreate = BlobId.of(bucket, "blob");
+    storage.create(BlobInfo.newBuilder(toCreate).build(), content);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    // (1) Span to create the bucket
+    // (2) Span when calling create
+    // (3) Span when passing call to internalDirectUpload
+    Assert.assertEquals(3, spanData.size());
+    for(SpanData span : spanData) {
+      Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
+      Assert.assertEquals("googleapis/java-storage",
+          getAttributeValue(span, "gcp.client.repo"));
+      Assert.assertEquals(
+          "com.google.cloud.google-cloud-storage",
+          getAttributeValue(span, "gcp.client.artifact"));
+      Assert.assertEquals("grpc", getAttributeValue(span, "rpc.system"));
+    }
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
