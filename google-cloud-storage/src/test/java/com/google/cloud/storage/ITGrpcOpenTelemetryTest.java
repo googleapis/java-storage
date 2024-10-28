@@ -88,9 +88,6 @@ public class ITGrpcOpenTelemetryTest {
     storage.create(BlobInfo.newBuilder(toCreate).build(), content);
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
-    // (1) Span when calling create
-    // (2) Span when passing call to internalDirectUpload
-    Assert.assertEquals(2, spanData.size());
     for (SpanData span : spanData) {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
       Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
@@ -98,6 +95,9 @@ public class ITGrpcOpenTelemetryTest {
           "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("grpc", getAttributeValue(span, "rpc.system"));
     }
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("create")));
+    Assert.assertTrue(
+        spanData.stream().anyMatch(x -> x.getName().contains("internalDirectUpload")));
     Assert.assertEquals(spanData.get(1).getSpanContext(), spanData.get(0).getParentSpanContext());
   }
 

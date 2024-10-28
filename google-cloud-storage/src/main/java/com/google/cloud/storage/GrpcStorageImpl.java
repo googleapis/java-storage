@@ -201,8 +201,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create(Bucket, BucketTargetOption");
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -249,8 +248,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     // Start the otel span to retain information of the origin of the request
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create(BlobInfo, BlobTargetOption");
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       return internalDirectUpload(
               blobInfo,
@@ -269,7 +267,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    try {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    try (OpenTelemetryTraceUtil.Scope ununsed = otelSpan.makeCurrent()) {
       requireNonNull(blobInfo, "blobInfo must be non null");
       InputStream inputStreamParam = firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES));
 
@@ -296,7 +295,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       ApiFuture<WriteObjectResponse> responseApiFuture = session.getResult();
       return this.getBlob(responseApiFuture);
     } catch (IOException | ApiException e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
   }
 
@@ -810,6 +813,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         retryAlgorithmManager.idempotent(),
         () -> wrapped,
         hasher);
+  }
+
+  @Override
+  public BlobInfo internalDirectUpload(
+      BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+    return internalDirectUpload(blobInfo, opts, buf, null);
   }
 
   @Override

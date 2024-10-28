@@ -39,7 +39,6 @@ import com.google.cloud.storage.UnifiedOpts.EncryptionKey;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -357,12 +356,9 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             new FakeStorageInternal() {
               @Override
               public BlobInfo internalDirectUpload(
-                  BlobInfo info,
-                  Opts<ObjectTargetOpt> opts,
-                  ByteBuffer buf,
-                  OpenTelemetryTraceUtil.Context ctx) {
+                  BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
                 metadatas.add(info.getMetadata());
-                return super.internalDirectUpload(info, opts, buf, null);
+                return super.internalDirectUpload(info, opts, buf);
               }
 
               @Override
@@ -450,10 +446,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             new FakeStorageInternal() {
               @Override
               public BlobInfo internalDirectUpload(
-                  BlobInfo info,
-                  Opts<ObjectTargetOpt> opts,
-                  ByteBuffer buf,
-                  OpenTelemetryTraceUtil.Context ctx) {
+                  BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
                 throw StorageException.coalesce(
                     ApiExceptionFactory.createException(
                         null, GrpcStatusCode.of(Code.PERMISSION_DENIED), false));
@@ -564,10 +557,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
           new FakeStorageInternal() {
             @Override
             public BlobInfo internalDirectUpload(
-                BlobInfo info,
-                Opts<ObjectTargetOpt> opts,
-                ByteBuffer buf,
-                OpenTelemetryTraceUtil.Context ctx) {
+                BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
               if (induceFailure.getAndSet(false)) {
                 Uninterruptibles.awaitUninterruptibly(blockForWrite1);
                 try {
@@ -581,7 +571,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
                   blockForWrite1Complete.countDown();
                 }
               } else {
-                return super.internalDirectUpload(info, opts, buf, null);
+                return super.internalDirectUpload(info, opts, buf);
               }
             }
           };
@@ -724,11 +714,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         new FakeStorageInternal() {
           @Override
           public BlobInfo internalDirectUpload(
-              BlobInfo info,
-              Opts<ObjectTargetOpt> opts,
-              ByteBuffer buf,
-              OpenTelemetryTraceUtil.Context ctx) {
-            BlobInfo blobInfo = super.internalDirectUpload(info, opts, buf, null);
+              BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+            BlobInfo blobInfo = super.internalDirectUpload(info, opts, buf);
             if (info.getName().equals(p1.getName())) {
               throw StorageException.coalesce(
                   ApiExceptionFactory.createException(
@@ -791,10 +778,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
         new FakeStorageInternal() {
           @Override
           public BlobInfo internalDirectUpload(
-              BlobInfo info,
-              Opts<ObjectTargetOpt> opts,
-              ByteBuffer buf,
-              OpenTelemetryTraceUtil.Context ctx) {
+              BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
             if (info.getBlobId().getName().endsWith(".part")) {
               // Kinda hacky but since we are creating multiple parts we will use a range
               // to ensure the customTimes are being calculated appropriately
@@ -803,7 +787,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             } else {
               assertThat(info.getCustomTimeOffsetDateTime()).isNull();
             }
-            return super.internalDirectUpload(info, opts, buf, null);
+            return super.internalDirectUpload(info, opts, buf);
           }
         };
     ParallelCompositeUploadWritableByteChannel pcu =
@@ -859,10 +843,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
 
     @Override
     public BlobInfo internalDirectUpload(
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        ByteBuffer buf,
-        OpenTelemetryTraceUtil.Context ctx) {
+        BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
       BlobId id = info.getBlobId();
 
       BlobInfo.Builder b = info.toBuilder();
