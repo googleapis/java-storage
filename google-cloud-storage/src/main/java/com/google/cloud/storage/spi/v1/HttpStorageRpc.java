@@ -360,7 +360,7 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public Bucket create(Bucket bucket, Map<Option, ?> options) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create(Bucket,Map)");
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -388,9 +388,10 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public StorageObject create(
       StorageObject storageObject, final InputStream content, Map<Option, ?> options) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_OBJECT);
     Scope scope = tracer.withSpan(span);
-    try {
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       Storage.Objects.Insert insert =
           storage
               .objects()
@@ -415,9 +416,12 @@ public class HttpStorageRpc implements StorageRpc {
           .setKmsKeyName(Option.KMS_KEY_NAME.getString(options))
           .execute();
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
