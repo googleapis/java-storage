@@ -156,7 +156,6 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   public OpenTelemetryTraceUtil.Span startSpan(String methodName) {
     String formatSpanName = String.format("%s.%s/%s", "storage", "client", methodName);
     SpanBuilder spanBuilder = tracer.spanBuilder(formatSpanName).setSpanKind(SpanKind.CLIENT);
-    spanBuilder.setAttribute("rpc.system", transport);
     io.opentelemetry.api.trace.Span span =
         addSettingsAttributesToCurrentSpan(spanBuilder).startSpan();
     return new Span(span, formatSpanName);
@@ -164,16 +163,17 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   @Override
   public OpenTelemetryTraceUtil.Span startSpan(
-      String spanName, OpenTelemetryTraceUtil.Context parent) {
+      String methodName, OpenTelemetryTraceUtil.Context parent) {
     assert (parent instanceof OpenTelemetryInstance.Context);
+    String formatSpanName = String.format("%s.%s/%s", "storage", "client", methodName);
     SpanBuilder spanBuilder =
         tracer
-            .spanBuilder(spanName)
+            .spanBuilder(formatSpanName)
             .setSpanKind(SpanKind.CLIENT)
             .setParent(((OpenTelemetryInstance.Context) parent).context);
     io.opentelemetry.api.trace.Span span =
         addSettingsAttributesToCurrentSpan(spanBuilder).startSpan();
-    return new Span(span, spanName);
+    return new Span(span, formatSpanName);
   }
 
   @Nonnull
@@ -196,6 +196,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
                 .put("gcp.client.version", GaxProperties.getLibraryVersion(this.getClass()))
                 .put("gcp.client.repo", "googleapis/java-storage")
                 .put("gcp.client.artifact", "com.google.cloud.google-cloud-storage")
+                .put("rpc.system", transport)
                 .build());
     return spanBuilder;
   }

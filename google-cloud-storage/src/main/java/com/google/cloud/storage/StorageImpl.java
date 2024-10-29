@@ -50,6 +50,7 @@ import com.google.cloud.storage.UnifiedOpts.NestedNamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.common.base.CharMatcher;
@@ -1737,7 +1738,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   }
 
   @Override
-  public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+  public BlobInfo internalDirectUpload(
+      BlobInfo info,
+      Opts<ObjectTargetOpt> opts,
+      ByteBuffer buf,
+      OpenTelemetryTraceUtil.Context ctx) {
 
     BlobInfo.Builder builder =
         info.toBuilder()
