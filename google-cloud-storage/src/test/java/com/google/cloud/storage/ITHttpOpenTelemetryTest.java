@@ -16,7 +16,9 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.fail;
 
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -56,6 +58,7 @@ public class ITHttpOpenTelemetryTest {
   private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
+
 
   @Before
   public void setUp() {
