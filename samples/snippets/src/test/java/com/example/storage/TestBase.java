@@ -22,6 +22,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import org.junit.After;
@@ -49,6 +50,6 @@ public abstract class TestBase {
 
   @After
   public void tearDown() {
-    RemoteStorageHelper.forceDelete(storage, bucketName);
+    BucketCleaner.doCleanup(bucketName, storage);
   }
 }

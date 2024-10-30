@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableList;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,6 +60,13 @@ public class ITTransferManagerSamples {
             BlobInfo.newBuilder(BUCKET, "blob3").build());
     for (BlobInfo blob : blobs) {
       storage.create(blob);
+    }
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+    try (Storage ignore = storage) {
+      BucketCleaner.doCleanup(BUCKET, storage);
     }
   }
 

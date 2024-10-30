@@ -563,7 +563,6 @@ public class ITObjectTest {
 
   @Test
   // When gRPC support is added for matchGlob, enable this test for gRPC.
-  @Exclude(transports = Transport.GRPC)
   public void testListBlobsWithMatchGlob() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     try (TemporaryBucket tempBucket =

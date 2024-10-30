@@ -132,6 +132,13 @@
         "^com.google.cloud.opentelemetry:",
         "$com.google.cloud.opentelemetry:shared-resourcemapping"
       ]
+    },
+    {
+      "packagePatterns": [
+        "^com.google.api:gapic-generator-java",
+        "^com.google.cloud:sdk-platform-java-config"
+      ],
+      "groupName": "sdk-platform-java dependencies"
     }
   ],
   "semanticCommits": true,

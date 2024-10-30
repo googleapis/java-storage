@@ -1253,8 +1253,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
-      return CrossTransportUtils.throwHttpJsonOnly(
-          com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
+      return b -> b.setMatchGlobBytes(ByteString.copyFromUtf8(val));
     }
   }
 

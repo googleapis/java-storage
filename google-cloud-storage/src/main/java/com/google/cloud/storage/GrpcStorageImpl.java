@@ -135,7 +135,6 @@ import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions>
     implements Storage, StorageInternal {
 
@@ -723,8 +722,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
-    GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+    GrpcCallContext grpcCallContext = Retrying.newCallContext();
 
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
@@ -1708,10 +1706,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes =
-        resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
+    GrpcCallContext grpcCallContext = opts.grpcMetadataMapper().apply(Retrying.newCallContext());
     return ResumableMedia.gapic()
         .read()
         .byteChannel(

@@ -23,13 +23,12 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.storage.control.v2.BucketName;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
-import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.ManagedFolder;
-import com.google.storage.control.v2.ManagedFolderName;
 import com.google.storage.control.v2.StorageControlClient;
 import java.io.IOException;
 import java.util.UUID;
@@ -70,13 +69,11 @@ public class GetManagedFolderTest {
   }
 
   @After
-  public void tearDown() {
-    storageControl.deleteManagedFolder(
-        DeleteManagedFolderRequest.newBuilder()
-            .setName(ManagedFolderName.format("_", bucketName, managedFolderId))
-            .build());
-    storage.delete(bucketName);
-    storageControl.shutdown();
+  public void tearDown() throws Exception {
+    try (Storage ignore1 = storage;
+        StorageControlClient ignore2 = storageControl) {
+      BucketCleaner.doCleanup(bucketName, storage, storageControl);
+    }
   }
 
   @Test

@@ -1,5 +1,50 @@
 # Changelog
 
+## [2.44.1](https://github.com/googleapis/java-storage/compare/v2.44.0...v2.44.1) (2024-10-25)
+
+
+### Dependencies
+
+* Update sdk-platform-java dependencies ([#2795](https://github.com/googleapis/java-storage/issues/2795)) ([aeb86e5](https://github.com/googleapis/java-storage/commit/aeb86e5467269d55f9019638fe8b05331b423e55))
+
+## [2.44.0](https://github.com/googleapis/java-storage/compare/v2.43.2...v2.44.0) (2024-10-23)
+
+
+### Features
+
+* Promote gRPC transport to GA ([#2766](https://github.com/googleapis/java-storage/issues/2766)) ([41fd72a](https://github.com/googleapis/java-storage/commit/41fd72a57e3577217e98f7a179d8958c14c5676a))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.47.0 ([c517798](https://github.com/googleapis/java-storage/commit/c5177983a48b1bf26e8abb5d4d27355bfcd62d3b))
+* Fix createFrom resumable upload retry offset calculation ([#2771](https://github.com/googleapis/java-storage/issues/2771)) ([1126cdc](https://github.com/googleapis/java-storage/commit/1126cdcde07fed3c57d99dfa2b2505b06d5cd25a)), closes [#2770](https://github.com/googleapis/java-storage/issues/2770)
+* Update gRPC ReadObject retry to avoid double retry ([#2765](https://github.com/googleapis/java-storage/issues/2765)) ([1fc57b9](https://github.com/googleapis/java-storage/commit/1fc57b9b4fe2ec2d08333fb62be66f272294deca))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20241008-2.0.0 ([#2776](https://github.com/googleapis/java-storage/issues/2776)) ([0545b5e](https://github.com/googleapis/java-storage/commit/0545b5e7d7e292da38fb42a9160fb1938628684b))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.38.0 ([#2787](https://github.com/googleapis/java-storage/issues/2787)) ([a470e88](https://github.com/googleapis/java-storage/commit/a470e880f348a4950102546c7ee844761e1c5b57))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.48.0 ([#2781](https://github.com/googleapis/java-storage/issues/2781)) ([8fa013e](https://github.com/googleapis/java-storage/commit/8fa013e09e3c02c6deeb6d49911c051b940ef79c))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.49.0 ([#2782](https://github.com/googleapis/java-storage/issues/2782)) ([a7baffb](https://github.com/googleapis/java-storage/commit/a7baffb9579f865a20fe42d189f8ba9d8b4ee716))
+* Update googleapis/sdk-platform-java action to v2.48.0 ([#2786](https://github.com/googleapis/java-storage/issues/2786)) ([2893e61](https://github.com/googleapis/java-storage/commit/2893e617b865717959da34a47d2a972ad90cde72))
+
+## [2.43.2](https://github.com/googleapis/java-storage/compare/v2.43.1...v2.43.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* Plumb list blobs match glob option for grpc transport ([#2759](https://github.com/googleapis/java-storage/issues/2759)) ([207abd1](https://github.com/googleapis/java-storage/commit/207abd110ac2e1854804332025e6ea7806df1785))
+
+
+### Dependencies
+
+* Update dependency com.google.api:gapic-generator-java to v2.47.0 ([#2750](https://github.com/googleapis/java-storage/issues/2750)) ([9041f24](https://github.com/googleapis/java-storage/commit/9041f242c185a8a96361a087d42c5be7ba06a583))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20240924-2.0.0 ([#2719](https://github.com/googleapis/java-storage/issues/2719)) ([7b19831](https://github.com/googleapis/java-storage/commit/7b19831b48153bb7f6744f5d7b8559c244d483d7))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.37.0 ([#2751](https://github.com/googleapis/java-storage/issues/2751)) ([003d6fa](https://github.com/googleapis/java-storage/commit/003d6faaa3d64310cf91a1e304247e2f44a5c9c7))
+* Update googleapis/sdk-platform-java action to v2.47.0 ([#2749](https://github.com/googleapis/java-storage/issues/2749)) ([befa415](https://github.com/googleapis/java-storage/commit/befa415d69743faf079930315c5ebd8afaa52d7f))
+
 ## [2.43.1](https://github.com/googleapis/java-storage/compare/v2.43.0...v2.43.1) (2024-09-26)
 
 

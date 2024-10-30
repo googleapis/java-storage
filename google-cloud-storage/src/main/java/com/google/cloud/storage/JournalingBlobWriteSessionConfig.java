@@ -215,7 +215,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
 
         return new JournalingUpload<>(session, start);
       } else {
-        return CrossTransportUtils.throwHttpJsonOnly(BlobWriteSessionConfigs.class, "journaling");
+        return CrossTransportUtils.throwGrpcOnly(BlobWriteSessionConfigs.class, "journaling");
       }
     }
 

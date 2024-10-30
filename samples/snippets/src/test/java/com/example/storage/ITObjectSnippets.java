@@ -60,8 +60,8 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageClass;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
@@ -76,9 +76,6 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import org.junit.AfterClass;
@@ -117,15 +114,9 @@ public class ITObjectSnippets {
   }
 
   @AfterClass
-  public static void afterClass() throws ExecutionException, InterruptedException {
-    if (storage != null) {
-      for (BlobInfo info : storage.list(BUCKET, BlobListOption.versions(true)).getValues()) {
-        storage.delete(info.getBlobId());
-      }
-      boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 5, TimeUnit.SECONDS);
-      if (!wasDeleted && log.isLoggable(Level.WARNING)) {
-        log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
-      }
+  public static void afterClass() throws Exception {
+    try (Storage ignore = storage) {
+      BucketCleaner.doCleanup(BUCKET, storage);
     }
   }
 
