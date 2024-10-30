@@ -34,14 +34,11 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
@@ -694,15 +691,6 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.pageSize(5).listObjects().apply(ListObjectsRequest.newBuilder()).build();
         assertThat(actual).isEqualTo(expected);
       }
-
-      @Test
-      public void listHmacKeys() {
-        ListHmacKeysRequest expected = ListHmacKeysRequest.newBuilder().setPageSize(5).build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.pageSize(5).listHmacKeys().apply(ListHmacKeysRequest.newBuilder()).build();
-        assertThat(actual).isEqualTo(expected);
-      }
     }
 
     public static final class PageTokenTest {
@@ -728,19 +716,6 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.pageToken("pageToken")
                 .listObjects()
                 .apply(ListObjectsRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void listHmacKeys() {
-        ListHmacKeysRequest expected =
-            ListHmacKeysRequest.newBuilder().setPageToken("pageToken").build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.pageToken("pageToken")
-                .listHmacKeys()
-                .apply(ListHmacKeysRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
@@ -874,112 +849,6 @@ public final class UnifiedOptsGrpcTest {
       }
     }
 
-    public static final class ProjectIdTest {
-      @Test
-      public void listHmacKeys_nonResource() {
-        ListHmacKeysRequest expected =
-            ListHmacKeysRequest.newBuilder().setProject("projects/proj").build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.projectId("proj")
-                .listHmacKeys()
-                .apply(ListHmacKeysRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void getHmacKey_nonResource() {
-        GetHmacKeyRequest expected =
-            GetHmacKeyRequest.newBuilder().setProject("projects/proj").build();
-
-        GetHmacKeyRequest actual =
-            UnifiedOpts.projectId("proj")
-                .getHmacKey()
-                .apply(GetHmacKeyRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void createHmacKey_nonResource() {
-        CreateHmacKeyRequest expected =
-            CreateHmacKeyRequest.newBuilder().setProject("projects/proj").build();
-
-        CreateHmacKeyRequest actual =
-            UnifiedOpts.projectId("proj")
-                .createHmacKey()
-                .apply(CreateHmacKeyRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void listHmacKeys_resource() {
-        ListHmacKeysRequest expected =
-            ListHmacKeysRequest.newBuilder().setProject("projects/proj").build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.projectId("projects/proj")
-                .listHmacKeys()
-                .apply(ListHmacKeysRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void getHmacKey_resource() {
-        GetHmacKeyRequest expected =
-            GetHmacKeyRequest.newBuilder().setProject("projects/proj").build();
-
-        GetHmacKeyRequest actual =
-            UnifiedOpts.projectId("projects/proj")
-                .getHmacKey()
-                .apply(GetHmacKeyRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void createHmacKey_resource() {
-        CreateHmacKeyRequest expected =
-            CreateHmacKeyRequest.newBuilder().setProject("projects/proj").build();
-
-        CreateHmacKeyRequest actual =
-            UnifiedOpts.projectId("projects/proj")
-                .createHmacKey()
-                .apply(CreateHmacKeyRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void listBuckets_nonResource() {
-        ListBucketsRequest expected =
-            ListBucketsRequest.newBuilder().setParent("projects/proj").build();
-
-        ListBucketsRequest actual =
-            UnifiedOpts.projectId("proj")
-                .listBuckets()
-                .apply(ListBucketsRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-
-      @Test
-      public void listBuckets_resource() {
-        ListBucketsRequest expected =
-            ListBucketsRequest.newBuilder().setParent("projects/proj").build();
-
-        ListBucketsRequest actual =
-            UnifiedOpts.projectId("projects/proj")
-                .listBuckets()
-                .apply(ListBucketsRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-    }
-
     public static final class SourceGenerationMatchTest {
       @Test
       public void rewriteObject() {
@@ -1056,21 +925,6 @@ public final class UnifiedOptsGrpcTest {
       }
     }
 
-    public static final class ServiceAccountTest {
-      @Test
-      public void listHmacKeys() {
-        ListHmacKeysRequest expected =
-            ListHmacKeysRequest.newBuilder().setServiceAccountEmail("x@y.z").build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.serviceAccount(ServiceAccount.of("x@y.z"))
-                .listHmacKeys()
-                .apply(ListHmacKeysRequest.newBuilder())
-                .build();
-        assertThat(actual).isEqualTo(expected);
-      }
-    }
-
     public static final class SetContentTypeTest {
       @Test
       public void writeObject() {
@@ -1104,21 +958,6 @@ public final class UnifiedOptsGrpcTest {
                 .apply(UpdateObjectRequest.newBuilder())
                 .build();
 
-        assertThat(actual).isEqualTo(expected);
-      }
-    }
-
-    public static final class ShowDeletedKeysTest {
-      @Test
-      public void listHmacKeys() {
-        ListHmacKeysRequest expected =
-            ListHmacKeysRequest.newBuilder().setShowDeletedKeys(true).build();
-
-        ListHmacKeysRequest actual =
-            UnifiedOpts.showDeletedKeys(true)
-                .listHmacKeys()
-                .apply(ListHmacKeysRequest.newBuilder())
-                .build();
         assertThat(actual).isEqualTo(expected);
       }
     }
