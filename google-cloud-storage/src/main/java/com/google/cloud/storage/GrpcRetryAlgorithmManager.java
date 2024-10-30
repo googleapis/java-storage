@@ -70,11 +70,9 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-
   public ResultRetryAlgorithm<?> getFor(DeleteBucketRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
-
 
   public ResultRetryAlgorithm<?> getFor(DeleteObjectRequest req) {
     if (req.getGeneration() > 0 || req.hasIfGenerationMatch()) {
@@ -87,11 +85,9 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-
   public ResultRetryAlgorithm<?> getFor(GetIamPolicyRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
-
 
   public ResultRetryAlgorithm<?> getFor(GetObjectRequest req) {
     return retryStrategy.getIdempotentHandler();
@@ -100,7 +96,6 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   public ResultRetryAlgorithm<?> getFor(RestoreObjectRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
-
 
   public ResultRetryAlgorithm<?> getFor(ListBucketsRequest req) {
     return retryStrategy.getIdempotentHandler();

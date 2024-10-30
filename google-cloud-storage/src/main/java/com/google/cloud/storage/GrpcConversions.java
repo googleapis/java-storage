@@ -166,7 +166,6 @@ final class GrpcConversions {
     return bucketAclCodec;
   }
 
-
   Codec<Cors, Bucket.Cors> cors() {
     return corsCodec;
   }

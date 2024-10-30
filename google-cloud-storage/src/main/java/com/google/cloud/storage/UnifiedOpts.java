@@ -242,22 +242,19 @@ final class UnifiedOpts {
   }
 
   /** Base interface for those Opts which are applicable to HmacKey List operations */
-  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {
-  }
+  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {}
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Source (get/read/origin
    * relationship) operations
    */
-  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {
-  }
+  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {}
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Target (set/write/destination
    * relationship) operations
    */
-  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {
-  }
+  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {}
 
   /**
    * Some Options have a corresponding "SOURCE" version, this interface provide a construct for
