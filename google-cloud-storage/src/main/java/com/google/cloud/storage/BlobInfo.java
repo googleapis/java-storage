@@ -1072,7 +1072,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setRestoreToken(String restoreToken) {
-      if(!Objects.equals(this.restoreToken, restoreToken)){
+      if (!Objects.equals(this.restoreToken, restoreToken)) {
         modifiedFields.add(BlobField.RESTORE_TOKEN);
       }
       this.restoreToken = restoreToken;

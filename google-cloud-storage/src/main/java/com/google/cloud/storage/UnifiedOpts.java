@@ -477,7 +477,7 @@ final class UnifiedOpts {
     return new SoftDeleted(softDeleted);
   }
 
-  static RestoreToken restoreToken(String restoreToken){
+  static RestoreToken restoreToken(String restoreToken) {
     return new RestoreToken(restoreToken);
   }
 
@@ -705,8 +705,7 @@ final class UnifiedOpts {
     private RestoreToken(String val) {
       super(StorageRpc.Option.RESTORE_TOKEN, val);
     }
-    
-    /* TODO: uncomment when grpc is available
+
     @Override
     public Mapper<RestoreObjectRequest.Builder> restoreObject() {
       return b -> b.setRestoreToken(val);
@@ -714,9 +713,8 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
-      return b-> b.setRestoreToken(val);
+      return b -> b.setRestoreToken(val);
     }
-    */
   }
 
   static final class CopySourceAcl extends RpcOptVal<Boolean> implements ObjectSourceOpt {

@@ -1659,11 +1659,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option that must be specified when getting a soft-deleted object from an HNS-enabled
-     * bucket that has a name/generation conflict with another object in the same bucket.
+     * Returns an option that must be specified when getting a soft-deleted object from an
+     * HNS-enabled bucket that has a name/generation conflict with another object in the same
+     * bucket.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobGetOption restoreToken(String restoreToken){
+    public static BlobGetOption restoreToken(String restoreToken) {
       return new BlobGetOption(UnifiedOpts.restoreToken(restoreToken));
     }
 
@@ -1754,8 +1755,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option that must be specified when getting a soft-deleted object from an HNS-enabled
-     * bucket that has a name/generation conflict with another object in the same bucket.
+     * Returns an option that must be specified when getting a soft-deleted object from an
+     * HNS-enabled bucket that has a name/generation conflict with another object in the same
+     * bucket.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobRestoreOption restoreToken(String restoreToken) {

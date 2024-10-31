@@ -1526,18 +1526,17 @@ public class ITObjectTest {
   }
 
   @Test
-  @Exclude(transports = Transport.GRPC) // TODO: remove when grpc is available
   public void testRestoreToken() {
     String bucketName = generator.randomBucketName();
     storage.create(
-            BucketInfo.newBuilder(bucketName)
-                    .setHierarchicalNamespace(
-                            BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
-                    .setIamConfiguration(
-                            BucketInfo.IamConfiguration.newBuilder()
-                                    .setIsUniformBucketLevelAccessEnabled(true)
-                                    .build())
-                    .build());
+        BucketInfo.newBuilder(bucketName)
+            .setHierarchicalNamespace(
+                BucketInfo.HierarchicalNamespace.newBuilder().setEnabled(true).build())
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
     BlobInfo info = BlobInfo.newBuilder(bucketName, generator.randomObjectName()).build();
     try {
       Blob delobj = storage.create(info);
@@ -1546,16 +1545,21 @@ public class ITObjectTest {
       Blob got = storage.get(delobj.getBlobId(), BlobGetOption.softDeleted(true));
       assertThat(got.getRestoreToken()).isNotNull();
 
-      Blob gotWithRestoreToken = storage.get(delobj.getBlobId(), BlobGetOption.softDeleted(true), BlobGetOption.restoreToken(got.getRestoreToken()));
+      Blob gotWithRestoreToken =
+          storage.get(
+              delobj.getBlobId(),
+              BlobGetOption.softDeleted(true),
+              BlobGetOption.restoreToken(got.getRestoreToken()));
       assertThat(gotWithRestoreToken).isNotNull();
 
-      storage.restore(got.getBlobId(), Storage.BlobRestoreOption.restoreToken(got.getRestoreToken()));
-      assertThat(storage.get(bucketName, delobj.getName())).isNotNull();;
+      storage.restore(
+          got.getBlobId(), Storage.BlobRestoreOption.restoreToken(got.getRestoreToken()));
+      assertThat(storage.get(bucketName, delobj.getName())).isNotNull();
+      ;
 
     } finally {
       storage.delete(info.getBlobId());
       storage.delete(bucketName);
     }
-
   }
 }
