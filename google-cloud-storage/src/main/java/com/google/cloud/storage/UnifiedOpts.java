@@ -477,6 +477,10 @@ final class UnifiedOpts {
     return new SoftDeleted(softDeleted);
   }
 
+  static RestoreToken restoreToken(String restoreToken) {
+    return new RestoreToken(restoreToken);
+  }
+
   static CopySourceAcl copySourceAcl(boolean copySourceAcl) {
     return new CopySourceAcl(copySourceAcl);
   }
@@ -691,6 +695,25 @@ final class UnifiedOpts {
     @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setSoftDeleted(val);
+    }
+  }
+
+  static final class RestoreToken extends RpcOptVal<String> implements ObjectSourceOpt {
+
+    private static final long serialVersionUID = 4215757108268532746L;
+
+    private RestoreToken(String val) {
+      super(StorageRpc.Option.RESTORE_TOKEN, val);
+    }
+
+    @Override
+    public Mapper<RestoreObjectRequest.Builder> restoreObject() {
+      return b -> b.setRestoreToken(val);
+    }
+
+    @Override
+    public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setRestoreToken(val);
     }
   }
 

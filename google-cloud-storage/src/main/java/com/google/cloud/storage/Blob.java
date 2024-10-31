@@ -535,6 +535,12 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    Builder setRestoreToken(String restoreToken) {
+      infoBuilder.setRestoreToken(restoreToken);
+      return this;
+    }
+
+    @Override
     public Builder setRetention(Retention retention) {
       infoBuilder.setRetention(retention);
       return this;
