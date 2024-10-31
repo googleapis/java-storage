@@ -25,20 +25,11 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
-import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
-import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListHmacKeysRequest;
-import com.google.storage.v2.ListNotificationConfigsRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.QueryWriteStatusRequest;
@@ -47,7 +38,6 @@ import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import java.io.Serializable;
@@ -80,24 +70,8 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(CreateHmacKeyRequest req) {
-    return retryStrategy.getNonidempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(CreateNotificationConfigRequest req) {
-    return retryStrategy.getNonidempotentHandler();
-  }
-
   public ResultRetryAlgorithm<?> getFor(DeleteBucketRequest req) {
     return retryStrategy.getIdempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(DeleteHmacKeyRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(DeleteNotificationConfigRequest req) {
-    return retryStrategy.getNonidempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteObjectRequest req) {
@@ -111,15 +85,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(GetHmacKeyRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
   public ResultRetryAlgorithm<?> getFor(GetIamPolicyRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(GetNotificationConfigRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
 
@@ -131,19 +97,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(GetServiceAccountRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
   public ResultRetryAlgorithm<?> getFor(ListBucketsRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(ListHmacKeysRequest req) {
-    return retryStrategy.getIdempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(ListNotificationConfigsRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
 
@@ -194,11 +148,6 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return req.hasIfMetagenerationMatch()
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();
-  }
-
-  public ResultRetryAlgorithm<?> getFor(UpdateHmacKeyRequest req) {
-    // TODO: etag
-    return retryStrategy.getNonidempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(UpdateObjectRequest req) {

@@ -17,8 +17,6 @@
 package com.google.storage.v2.stub;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
-import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
@@ -46,29 +44,15 @@ import com.google.storage.v2.CancelResumableWriteRequest;
 import com.google.storage.v2.CancelResumableWriteResponse;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
-import com.google.storage.v2.CreateHmacKeyResponse;
-import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
-import com.google.storage.v2.GetServiceAccountRequest;
-import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListBucketsResponse;
-import com.google.storage.v2.ListHmacKeysRequest;
-import com.google.storage.v2.ListHmacKeysResponse;
-import com.google.storage.v2.ListNotificationConfigsRequest;
-import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.NotificationConfig;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -77,11 +61,9 @@ import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
-import com.google.storage.v2.ServiceAccount;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -305,107 +287,6 @@ public class GrpcStorageStub extends StorageStub {
                   ProtoUtils.marshaller(QueryWriteStatusResponse.getDefaultInstance()))
               .build();
 
-  private static final MethodDescriptor<GetServiceAccountRequest, ServiceAccount>
-      getServiceAccountMethodDescriptor =
-          MethodDescriptor.<GetServiceAccountRequest, ServiceAccount>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/GetServiceAccount")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(GetServiceAccountRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(ServiceAccount.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<CreateHmacKeyRequest, CreateHmacKeyResponse>
-      createHmacKeyMethodDescriptor =
-          MethodDescriptor.<CreateHmacKeyRequest, CreateHmacKeyResponse>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/CreateHmacKey")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(CreateHmacKeyRequest.getDefaultInstance()))
-              .setResponseMarshaller(
-                  ProtoUtils.marshaller(CreateHmacKeyResponse.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<DeleteHmacKeyRequest, Empty> deleteHmacKeyMethodDescriptor =
-      MethodDescriptor.<DeleteHmacKeyRequest, Empty>newBuilder()
-          .setType(MethodDescriptor.MethodType.UNARY)
-          .setFullMethodName("google.storage.v2.Storage/DeleteHmacKey")
-          .setRequestMarshaller(ProtoUtils.marshaller(DeleteHmacKeyRequest.getDefaultInstance()))
-          .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
-          .build();
-
-  private static final MethodDescriptor<GetHmacKeyRequest, HmacKeyMetadata>
-      getHmacKeyMethodDescriptor =
-          MethodDescriptor.<GetHmacKeyRequest, HmacKeyMetadata>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/GetHmacKey")
-              .setRequestMarshaller(ProtoUtils.marshaller(GetHmacKeyRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(HmacKeyMetadata.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<ListHmacKeysRequest, ListHmacKeysResponse>
-      listHmacKeysMethodDescriptor =
-          MethodDescriptor.<ListHmacKeysRequest, ListHmacKeysResponse>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/ListHmacKeys")
-              .setRequestMarshaller(ProtoUtils.marshaller(ListHmacKeysRequest.getDefaultInstance()))
-              .setResponseMarshaller(
-                  ProtoUtils.marshaller(ListHmacKeysResponse.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<UpdateHmacKeyRequest, HmacKeyMetadata>
-      updateHmacKeyMethodDescriptor =
-          MethodDescriptor.<UpdateHmacKeyRequest, HmacKeyMetadata>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/UpdateHmacKey")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(UpdateHmacKeyRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(HmacKeyMetadata.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigMethodDescriptor =
-          MethodDescriptor.<DeleteNotificationConfigRequest, Empty>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/DeleteNotificationConfig")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(DeleteNotificationConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigMethodDescriptor =
-          MethodDescriptor.<GetNotificationConfigRequest, NotificationConfig>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/GetNotificationConfig")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(GetNotificationConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(NotificationConfig.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigMethodDescriptor =
-          MethodDescriptor.<CreateNotificationConfigRequest, NotificationConfig>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/CreateNotificationConfig")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(CreateNotificationConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(NotificationConfig.getDefaultInstance()))
-              .build();
-
-  private static final MethodDescriptor<
-          ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsMethodDescriptor =
-          MethodDescriptor
-              .<ListNotificationConfigsRequest, ListNotificationConfigsResponse>newBuilder()
-              .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/ListNotificationConfigs")
-              .setRequestMarshaller(
-                  ProtoUtils.marshaller(ListNotificationConfigsRequest.getDefaultInstance()))
-              .setResponseMarshaller(
-                  ProtoUtils.marshaller(ListNotificationConfigsResponse.getDefaultInstance()))
-              .build();
-
   private final UnaryCallable<DeleteBucketRequest, Empty> deleteBucketCallable;
   private final UnaryCallable<GetBucketRequest, Bucket> getBucketCallable;
   private final UnaryCallable<CreateBucketRequest, Bucket> createBucketCallable;
@@ -439,24 +320,6 @@ public class GrpcStorageStub extends StorageStub {
       startResumableWriteCallable;
   private final UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable;
-  private final UnaryCallable<GetServiceAccountRequest, ServiceAccount> getServiceAccountCallable;
-  private final UnaryCallable<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyCallable;
-  private final UnaryCallable<DeleteHmacKeyRequest, Empty> deleteHmacKeyCallable;
-  private final UnaryCallable<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyCallable;
-  private final UnaryCallable<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysCallable;
-  private final UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse>
-      listHmacKeysPagedCallable;
-  private final UnaryCallable<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyCallable;
-  private final UnaryCallable<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigCallable;
-  private final UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable;
-  private final UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable;
-  private final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable;
-  private final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -508,26 +371,6 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate QUERY_WRITE_STATUS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
-  private static final PathTemplate GET_SERVICE_ACCOUNT_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate CREATE_HMAC_KEY_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate DELETE_HMAC_KEY_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate GET_HMAC_KEY_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate LIST_HMAC_KEYS_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate UPDATE_HMAC_KEY_0_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
-  private static final PathTemplate DELETE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
-  private static final PathTemplate GET_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
-  private static final PathTemplate CREATE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=**}");
-  private static final PathTemplate LIST_NOTIFICATION_CONFIGS_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=**}");
 
   public static final GrpcStorageStub create(StorageStubSettings settings) throws IOException {
     return new GrpcStorageStub(settings, ClientContext.create(settings));
@@ -812,122 +655,6 @@ public class GrpcStorageStub extends StorageStub {
                       return builder.build();
                     })
                 .build();
-    GrpcCallSettings<GetServiceAccountRequest, ServiceAccount> getServiceAccountTransportSettings =
-        GrpcCallSettings.<GetServiceAccountRequest, ServiceAccount>newBuilder()
-            .setMethodDescriptor(getServiceAccountMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  builder.add(request.getProject(), "project", GET_SERVICE_ACCOUNT_0_PATH_TEMPLATE);
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyTransportSettings =
-        GrpcCallSettings.<CreateHmacKeyRequest, CreateHmacKeyResponse>newBuilder()
-            .setMethodDescriptor(createHmacKeyMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  builder.add(request.getProject(), "project", CREATE_HMAC_KEY_0_PATH_TEMPLATE);
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<DeleteHmacKeyRequest, Empty> deleteHmacKeyTransportSettings =
-        GrpcCallSettings.<DeleteHmacKeyRequest, Empty>newBuilder()
-            .setMethodDescriptor(deleteHmacKeyMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  builder.add(request.getProject(), "project", DELETE_HMAC_KEY_0_PATH_TEMPLATE);
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyTransportSettings =
-        GrpcCallSettings.<GetHmacKeyRequest, HmacKeyMetadata>newBuilder()
-            .setMethodDescriptor(getHmacKeyMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  builder.add(request.getProject(), "project", GET_HMAC_KEY_0_PATH_TEMPLATE);
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysTransportSettings =
-        GrpcCallSettings.<ListHmacKeysRequest, ListHmacKeysResponse>newBuilder()
-            .setMethodDescriptor(listHmacKeysMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  builder.add(request.getProject(), "project", LIST_HMAC_KEYS_0_PATH_TEMPLATE);
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyTransportSettings =
-        GrpcCallSettings.<UpdateHmacKeyRequest, HmacKeyMetadata>newBuilder()
-            .setMethodDescriptor(updateHmacKeyMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  if (request.getHmacKey() != null) {
-                    builder.add(
-                        request.getHmacKey().getProject(),
-                        "project",
-                        UPDATE_HMAC_KEY_0_PATH_TEMPLATE);
-                  }
-                  return builder.build();
-                })
-            .build();
-    GrpcCallSettings<DeleteNotificationConfigRequest, Empty>
-        deleteNotificationConfigTransportSettings =
-            GrpcCallSettings.<DeleteNotificationConfigRequest, Empty>newBuilder()
-                .setMethodDescriptor(deleteNotificationConfigMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getName(), "bucket", DELETE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<GetNotificationConfigRequest, NotificationConfig>
-        getNotificationConfigTransportSettings =
-            GrpcCallSettings.<GetNotificationConfigRequest, NotificationConfig>newBuilder()
-                .setMethodDescriptor(getNotificationConfigMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getName(), "bucket", GET_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<CreateNotificationConfigRequest, NotificationConfig>
-        createNotificationConfigTransportSettings =
-            GrpcCallSettings.<CreateNotificationConfigRequest, NotificationConfig>newBuilder()
-                .setMethodDescriptor(createNotificationConfigMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getParent(),
-                          "bucket",
-                          CREATE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-        listNotificationConfigsTransportSettings =
-            GrpcCallSettings
-                .<ListNotificationConfigsRequest, ListNotificationConfigsResponse>newBuilder()
-                .setMethodDescriptor(listNotificationConfigsMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getParent(), "bucket", LIST_NOTIFICATION_CONFIGS_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
 
     this.deleteBucketCallable =
         callableFactory.createUnaryCallable(
@@ -1009,54 +736,6 @@ public class GrpcStorageStub extends StorageStub {
     this.queryWriteStatusCallable =
         callableFactory.createUnaryCallable(
             queryWriteStatusTransportSettings, settings.queryWriteStatusSettings(), clientContext);
-    this.getServiceAccountCallable =
-        callableFactory.createUnaryCallable(
-            getServiceAccountTransportSettings,
-            settings.getServiceAccountSettings(),
-            clientContext);
-    this.createHmacKeyCallable =
-        callableFactory.createUnaryCallable(
-            createHmacKeyTransportSettings, settings.createHmacKeySettings(), clientContext);
-    this.deleteHmacKeyCallable =
-        callableFactory.createUnaryCallable(
-            deleteHmacKeyTransportSettings, settings.deleteHmacKeySettings(), clientContext);
-    this.getHmacKeyCallable =
-        callableFactory.createUnaryCallable(
-            getHmacKeyTransportSettings, settings.getHmacKeySettings(), clientContext);
-    this.listHmacKeysCallable =
-        callableFactory.createUnaryCallable(
-            listHmacKeysTransportSettings, settings.listHmacKeysSettings(), clientContext);
-    this.listHmacKeysPagedCallable =
-        callableFactory.createPagedCallable(
-            listHmacKeysTransportSettings, settings.listHmacKeysSettings(), clientContext);
-    this.updateHmacKeyCallable =
-        callableFactory.createUnaryCallable(
-            updateHmacKeyTransportSettings, settings.updateHmacKeySettings(), clientContext);
-    this.deleteNotificationConfigCallable =
-        callableFactory.createUnaryCallable(
-            deleteNotificationConfigTransportSettings,
-            settings.deleteNotificationConfigSettings(),
-            clientContext);
-    this.getNotificationConfigCallable =
-        callableFactory.createUnaryCallable(
-            getNotificationConfigTransportSettings,
-            settings.getNotificationConfigSettings(),
-            clientContext);
-    this.createNotificationConfigCallable =
-        callableFactory.createUnaryCallable(
-            createNotificationConfigTransportSettings,
-            settings.createNotificationConfigSettings(),
-            clientContext);
-    this.listNotificationConfigsCallable =
-        callableFactory.createUnaryCallable(
-            listNotificationConfigsTransportSettings,
-            settings.listNotificationConfigsSettings(),
-            clientContext);
-    this.listNotificationConfigsPagedCallable =
-        callableFactory.createPagedCallable(
-            listNotificationConfigsTransportSettings,
-            settings.listNotificationConfigsSettings(),
-            clientContext);
 
     this.backgroundResources =
         new BackgroundResourceAggregation(clientContext.getBackgroundResources());
@@ -1190,70 +869,6 @@ public class GrpcStorageStub extends StorageStub {
   public UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable() {
     return queryWriteStatusCallable;
-  }
-
-  @Override
-  public UnaryCallable<GetServiceAccountRequest, ServiceAccount> getServiceAccountCallable() {
-    return getServiceAccountCallable;
-  }
-
-  @Override
-  public UnaryCallable<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyCallable() {
-    return createHmacKeyCallable;
-  }
-
-  @Override
-  public UnaryCallable<DeleteHmacKeyRequest, Empty> deleteHmacKeyCallable() {
-    return deleteHmacKeyCallable;
-  }
-
-  @Override
-  public UnaryCallable<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyCallable() {
-    return getHmacKeyCallable;
-  }
-
-  @Override
-  public UnaryCallable<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysCallable() {
-    return listHmacKeysCallable;
-  }
-
-  @Override
-  public UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysPagedCallable() {
-    return listHmacKeysPagedCallable;
-  }
-
-  @Override
-  public UnaryCallable<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyCallable() {
-    return updateHmacKeyCallable;
-  }
-
-  @Override
-  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
-    return deleteNotificationConfigCallable;
-  }
-
-  @Override
-  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    return getNotificationConfigCallable;
-  }
-
-  @Override
-  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    return createNotificationConfigCallable;
-  }
-
-  @Override
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    return listNotificationConfigsCallable;
-  }
-
-  @Override
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    return listNotificationConfigsPagedCallable;
   }
 
   @Override
