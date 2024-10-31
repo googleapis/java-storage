@@ -42,6 +42,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   private RestoreObjectRequest() {
     bucket_ = "";
     object_ = "";
+    restoreToken_ = "";
   }
 
   @java.lang.Override
@@ -188,6 +189,65 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   @java.lang.Override
   public long getGeneration() {
     return generation_;
+  }
+
+  public static final int RESTORE_TOKEN_FIELD_NUMBER = 11;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object restoreToken_ = "";
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets. This parameter is optional, and is only required in the rare case
+   * when there are multiple soft-deleted objects with the same name and
+   * generation.
+   * </pre>
+   *
+   * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The restoreToken.
+   */
+  @java.lang.Override
+  public java.lang.String getRestoreToken() {
+    java.lang.Object ref = restoreToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      restoreToken_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Restore token used to differentiate soft-deleted objects with the
+   * same name and generation. Only applicable for hierarchical namespace
+   * buckets. This parameter is optional, and is only required in the rare case
+   * when there are multiple soft-deleted objects with the same name and
+   * generation.
+   * </pre>
+   *
+   * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for restoreToken.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getRestoreTokenBytes() {
+    java.lang.Object ref = restoreToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      restoreToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
@@ -465,6 +525,9 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     if (((bitField0_ & 0x00000010) != 0)) {
       output.writeBool(9, copySourceAcl_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(restoreToken_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, restoreToken_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -503,6 +566,9 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     if (((bitField0_ & 0x00000010) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, copySourceAcl_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(restoreToken_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, restoreToken_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -522,6 +588,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     if (!getBucket().equals(other.getBucket())) return false;
     if (!getObject().equals(other.getObject())) return false;
     if (getGeneration() != other.getGeneration()) return false;
+    if (!getRestoreToken().equals(other.getRestoreToken())) return false;
     if (hasIfGenerationMatch() != other.hasIfGenerationMatch()) return false;
     if (hasIfGenerationMatch()) {
       if (getIfGenerationMatch() != other.getIfGenerationMatch()) return false;
@@ -564,6 +631,8 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     hash = (53 * hash) + getObject().hashCode();
     hash = (37 * hash) + GENERATION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getGeneration());
+    hash = (37 * hash) + RESTORE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getRestoreToken().hashCode();
     if (hasIfGenerationMatch()) {
       hash = (37 * hash) + IF_GENERATION_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfGenerationMatch());
@@ -740,6 +809,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       bucket_ = "";
       object_ = "";
       generation_ = 0L;
+      restoreToken_ = "";
       ifGenerationMatch_ = 0L;
       ifGenerationNotMatch_ = 0L;
       ifMetagenerationMatch_ = 0L;
@@ -795,28 +865,31 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.generation_ = generation_;
       }
-      int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.restoreToken_ = restoreToken_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
+      if (((from_bitField0_ & 0x00000080) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
-      if (((from_bitField0_ & 0x00000080) != 0)) {
+      if (((from_bitField0_ & 0x00000100) != 0)) {
         result.copySourceAcl_ = copySourceAcl_;
         to_bitField0_ |= 0x00000010;
       }
-      if (((from_bitField0_ & 0x00000100) != 0)) {
+      if (((from_bitField0_ & 0x00000200) != 0)) {
         result.commonObjectRequestParams_ =
             commonObjectRequestParamsBuilder_ == null
                 ? commonObjectRequestParams_
@@ -884,6 +957,11 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       if (other.getGeneration() != 0L) {
         setGeneration(other.getGeneration());
       }
+      if (!other.getRestoreToken().isEmpty()) {
+        restoreToken_ = other.restoreToken_;
+        bitField0_ |= 0x00000008;
+        onChanged();
+      }
       if (other.hasIfGenerationMatch()) {
         setIfGenerationMatch(other.getIfGenerationMatch());
       }
@@ -949,40 +1027,46 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
             case 32:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 32
             case 40:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 40
             case 48:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 48
             case 56:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 56
             case 66:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000100;
+                bitField0_ |= 0x00000200;
                 break;
               } // case 66
             case 72:
               {
                 copySourceAcl_ = input.readBool();
-                bitField0_ |= 0x00000080;
+                bitField0_ |= 0x00000100;
                 break;
               } // case 72
+            case 90:
+              {
+                restoreToken_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 90
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1277,6 +1361,132 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       return this;
     }
 
+    private java.lang.Object restoreToken_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets. This parameter is optional, and is only required in the rare case
+     * when there are multiple soft-deleted objects with the same name and
+     * generation.
+     * </pre>
+     *
+     * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The restoreToken.
+     */
+    public java.lang.String getRestoreToken() {
+      java.lang.Object ref = restoreToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        restoreToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets. This parameter is optional, and is only required in the rare case
+     * when there are multiple soft-deleted objects with the same name and
+     * generation.
+     * </pre>
+     *
+     * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The bytes for restoreToken.
+     */
+    public com.google.protobuf.ByteString getRestoreTokenBytes() {
+      java.lang.Object ref = restoreToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        restoreToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets. This parameter is optional, and is only required in the rare case
+     * when there are multiple soft-deleted objects with the same name and
+     * generation.
+     * </pre>
+     *
+     * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The restoreToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRestoreToken(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      restoreToken_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets. This parameter is optional, and is only required in the rare case
+     * when there are multiple soft-deleted objects with the same name and
+     * generation.
+     * </pre>
+     *
+     * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearRestoreToken() {
+      restoreToken_ = getDefaultInstance().getRestoreToken();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Restore token used to differentiate soft-deleted objects with the
+     * same name and generation. Only applicable for hierarchical namespace
+     * buckets. This parameter is optional, and is only required in the rare case
+     * when there are multiple soft-deleted objects with the same name and
+     * generation.
+     * </pre>
+     *
+     * <code>string restore_token = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The bytes for restoreToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRestoreTokenBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+      restoreToken_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+
     private long ifGenerationMatch_;
     /**
      *
@@ -1293,7 +1503,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1329,7 +1539,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setIfGenerationMatch(long value) {
 
       ifGenerationMatch_ = value;
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1347,7 +1557,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1370,7 +1580,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1408,7 +1618,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setIfGenerationNotMatch(long value) {
 
       ifGenerationNotMatch_ = value;
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1427,7 +1637,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000020);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1448,7 +1658,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1482,7 +1692,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setIfMetagenerationMatch(long value) {
 
       ifMetagenerationMatch_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1499,7 +1709,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000040);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1520,7 +1730,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000040) != 0);
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      *
@@ -1554,7 +1764,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setIfMetagenerationNotMatch(long value) {
 
       ifMetagenerationNotMatch_ = value;
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1571,7 +1781,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000080);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1593,7 +1803,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasCopySourceAcl() {
-      return ((bitField0_ & 0x00000080) != 0);
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      *
@@ -1629,7 +1839,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setCopySourceAcl(boolean value) {
 
       copySourceAcl_ = value;
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -1647,7 +1857,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearCopySourceAcl() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000100);
       copySourceAcl_ = false;
       onChanged();
       return this;
@@ -1671,7 +1881,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return ((bitField0_ & 0x00000100) != 0);
+      return ((bitField0_ & 0x00000200) != 0);
     }
     /**
      *
@@ -1712,7 +1922,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -1732,7 +1942,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -1748,7 +1958,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0)
+        if (((bitField0_ & 0x00000200) != 0)
             && commonObjectRequestParams_ != null
             && commonObjectRequestParams_
                 != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
@@ -1760,7 +1970,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
       if (commonObjectRequestParams_ != null) {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         onChanged();
       }
       return this;
@@ -1775,7 +1985,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000200);
       commonObjectRequestParams_ = null;
       if (commonObjectRequestParamsBuilder_ != null) {
         commonObjectRequestParamsBuilder_.dispose();
@@ -1795,7 +2005,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

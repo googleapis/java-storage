@@ -35,7 +35,6 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUActio
 import com.google.cloud.storage.BucketInfo.Logging;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
-import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +47,6 @@ import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.CryptoKeyName;
-import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
@@ -77,10 +75,6 @@ final class GrpcConversions {
       Codec.of(this::objectAclEncode, this::objectAclDecode);
   private final Codec<Acl, BucketAccessControl> bucketAclCodec =
       Codec.of(this::bucketAclEncode, this::bucketAclDecode);
-  private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
-      Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
-  private final Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccountCodec =
-      Codec.of(this::serviceAccountEncode, this::serviceAccountDecode);
   private final Codec<Cors, Bucket.Cors> corsCodec = Codec.of(this::corsEncode, this::corsDecode);
   private final Codec<BucketInfo.Logging, Bucket.Logging> loggingCodec =
       Codec.of(this::loggingEncode, this::loggingDecode);
@@ -170,14 +164,6 @@ final class GrpcConversions {
 
   Codec<Acl, BucketAccessControl> bucketAcl() {
     return bucketAclCodec;
-  }
-
-  Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadata() {
-    return hmacKeyMetadataCodec;
-  }
-
-  Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccount() {
-    return serviceAccountCodec;
   }
 
   Codec<Cors, Bucket.Cors> cors() {
@@ -788,44 +774,6 @@ final class GrpcConversions {
       conditionBuilder.setMatchesSuffix(condition.getMatchesSuffixList());
     }
     return new BucketInfo.LifecycleRule(lifecycleAction, conditionBuilder.build());
-  }
-
-  private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
-    HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
-    ifNonNull(from.getEtag(), to::setEtag);
-    ifNonNull(from.getId(), to::setId);
-    ifNonNull(from.getAccessId(), to::setAccessId);
-    ifNonNull(from.getProjectId(), projectNameCodec::encode, to::setProject);
-    ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
-    ifNonNull(from.getState(), Enum::name, to::setState);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
-    return to.build();
-  }
-
-  private HmacKey.HmacKeyMetadata hmacKeyMetadataDecode(HmacKeyMetadata from) {
-    HmacKey.HmacKeyMetadata.Builder to =
-        HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
-            .setAccessId(from.getAccessId())
-            .setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()))
-            .setId(from.getId())
-            .setProjectId(projectNameCodec.decode(from.getProject()))
-            .setState(HmacKeyState.valueOf(from.getState()))
-            .setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
-    if (!from.getEtag().isEmpty()) {
-      to.setEtag(from.getEtag());
-    }
-    return to.build();
-  }
-
-  private com.google.storage.v2.ServiceAccount serviceAccountEncode(ServiceAccount from) {
-    return com.google.storage.v2.ServiceAccount.newBuilder()
-        .setEmailAddress(from.getEmail())
-        .build();
-  }
-
-  private ServiceAccount serviceAccountDecode(com.google.storage.v2.ServiceAccount from) {
-    return ServiceAccount.of(from.getEmailAddress());
   }
 
   private com.google.storage.v2.CustomerEncryption customerEncryptionEncode(

@@ -9,6 +9,18 @@
   </difference>
 
   <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *Hmac*(*)</method>
+  </difference>
+
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *ServiceAccount*(*)</method>
+  </difference>
+
+  <difference>
     <differenceType>7012</differenceType>
     <className>com/google/storage/v2/*</className>
     <method>* restoreObject(*)</method>
