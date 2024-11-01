@@ -372,6 +372,10 @@ final class UnifiedOpts {
     return new GenerationMatch(0);
   }
 
+  static Generation generation(long generation) {
+    return new Generation(generation);
+  }
+
   static EncryptionKey encryptionKey(@NonNull String encryptionKey) {
     requireNonNull(encryptionKey, "encryptionKey must be non null");
     return new EncryptionKey(
@@ -675,7 +679,7 @@ final class UnifiedOpts {
   }
 
   static final class SoftDeleted extends RpcOptVal<Boolean>
-      implements ObjectListOpt, ObjectSourceOpt {
+      implements ObjectListOpt, ObjectSourceOpt, BucketListOpt, BucketSourceOpt {
 
     private static final long serialVersionUID = -8526951678111463350L;
 
@@ -692,6 +696,12 @@ final class UnifiedOpts {
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setSoftDeleted(val);
     }
+
+    /* todo: uncomment when grpc is available
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setSoftDeleted(val);
+    }*/
   }
 
   static final class CopySourceAcl extends RpcOptVal<Boolean> implements ObjectSourceOpt {
@@ -1438,6 +1448,27 @@ final class UnifiedOpts {
     }
   }
 
+  static final class Generation extends RpcOptVal<@NonNull Long> implements BucketSourceOpt {
+
+    private static final long serialVersionUID = 5765651177835878761L;
+
+    private Generation(long val) {
+      super(StorageRpc.Option.GENERATION, val);
+    }
+
+    /* todo: uncomment when grpc is available
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setGeneration(val);
+    }
+
+    @Override
+    public Mapper<RestoreBucketRequest.Builder> restoreBucket() {
+      return b -> b.setGeneration(val);
+    }
+    */
+  }
+
   static final class PageSize extends RpcOptVal<@NonNull Long>
       implements BucketListOpt, ObjectListOpt, HmacKeyListOpt {
     private static final long serialVersionUID = -8184518840397826601L;
@@ -1596,7 +1627,7 @@ final class UnifiedOpts {
     }
   }
 
-  static final class Projection extends RpcOptVal<String> implements BucketTargetOpt {
+  static final class Projection extends RpcOptVal<String> implements BucketTargetOpt, BucketSourceOpt {
     private static final long serialVersionUID = -7394684784418942133L;
 
     private Projection(String val) {

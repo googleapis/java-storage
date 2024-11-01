@@ -410,6 +410,9 @@ final class JsonConversions {
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::encode,  to::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::encode,  to::setHardDeleteTime);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
     to.setName(from.getName());
@@ -527,6 +530,9 @@ final class JsonConversions {
         to::setHierarchicalNamespace);
     ifNonNull(from.getObjectRetention(), this::objectRetentionDecode, to::setObjectRetention);
     ifNonNull(from.getSoftDeletePolicy(), this::softDeletePolicyDecode, to::setSoftDeletePolicy);
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::decode, to::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::decode, to::setHardDeleteTime);
     return to.build();
   }
 

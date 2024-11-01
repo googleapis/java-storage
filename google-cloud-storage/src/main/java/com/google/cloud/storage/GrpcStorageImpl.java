@@ -415,6 +415,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return internalObjectRestore(blob, unwrap);
   }
 
+  @Override
+  public void restore(String bucket, long generation, BucketRestoreOption... options) {
+    //todo: implement when grpc is available
+  }
+
   private Blob internalObjectRestore(BlobId blobId, Opts<ObjectSourceOpt> opts) {
     Opts<ObjectSourceOpt> finalOpts = opts.prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
     GrpcCallContext grpcCallContext =

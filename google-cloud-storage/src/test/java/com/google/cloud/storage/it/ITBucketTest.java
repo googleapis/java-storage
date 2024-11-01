@@ -67,6 +67,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
+
+import com.google.common.collect.Streams;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -685,6 +687,34 @@ public class ITBucketTest {
 
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = {Transport.GRPC})
+  public void testSoftDelete() {
+    String bucketName = generator.randomBucketName();
+    Bucket softDelBucket = storage.create(BucketInfo.of(bucketName));
+    try {
+      long generation = softDelBucket.getGeneration();
+      assertNull(softDelBucket.getSoftDeleteTime());
+      assertNull(softDelBucket.getHardDeleteTime());
+      storage.delete(bucketName);
+
+      assertNull(storage.get(bucketName));
+      Bucket softDeleted = storage.get(bucketName, BucketGetOption.generation(generation), BucketGetOption.softDeleted(true));
+      assertNotNull(softDeleted);
+      assertNotNull(softDeleted.getSoftDeleteTime());
+      assertNotNull(softDeleted.getHardDeleteTime());
+
+      storage.list().iterateAll().forEach(b -> assertNotEquals(bucketName, b.getName()));
+      assertTrue(Streams.stream(storage.list(BucketListOption.softDeleted(true)).iterateAll()).anyMatch(b -> b.getName().equals(bucketName)));
+
+      storage.restore(bucketName, generation);
+
+      assertNotNull(storage.get(bucketName));
+    } finally {
+      storage.delete(bucketName);
     }
   }
 

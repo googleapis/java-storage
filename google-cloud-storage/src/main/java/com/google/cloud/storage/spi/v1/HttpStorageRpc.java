@@ -429,6 +429,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
+              .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options))
               .execute();
       return Tuple.<String, Iterable<Bucket>>of(buckets.getNextPageToken(), buckets.getItems());
     } catch (IOException ex) {
@@ -510,15 +511,19 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
+      Storage.Buckets.Get get = storage
           .buckets()
           .get(bucket.getName())
           .setProjection(DEFAULT_PROJECTION)
           .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
           .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
           .setFields(Option.FIELDS.getString(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+          .setUserProject(Option.USER_PROJECT.getString(options));
+      if (Boolean.TRUE.equals(Option.SOFT_DELETED.getBoolean(options))) {
+        get.setSoftDeleted(true);
+        get.setGeneration(Option.GENERATION.getLong(options));
+      }
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -588,6 +593,30 @@ public class HttpStorageRpc implements StorageRpc {
       StorageException serviceException = translate(ex);
       if (serviceException.getCode() == HTTP_NOT_FOUND) {
         return null;
+      }
+      throw serviceException;
+    } finally {
+      scope.close();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
+  }
+
+  @Override
+  public void restore(Bucket bucket, Map<Option, ?> options) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_RESTORE_BUCKET);
+    Scope scope = tracer.withSpan(span);
+    try {
+      Storage.Buckets.Restore restore =
+              storage.buckets().restore(bucket.getName(), bucket.getGeneration());
+      restore
+              .setUserProject(Option.USER_PROJECT.getString(options))
+              .setFields(Option.FIELDS.getString(options))
+              .execute();
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return;
       }
       throw serviceException;
     } finally {

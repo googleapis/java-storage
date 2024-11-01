@@ -119,8 +119,10 @@ public class BucketInfo implements Serializable {
   private final CustomPlacementConfig customPlacementConfig;
   private final ObjectRetention objectRetention;
   private final HierarchicalNamespace hierarchicalNamespace;
-
   private final SoftDeletePolicy softDeletePolicy;
+  private final long generation;
+  private final OffsetDateTime softDeleteTime;
+  private final OffsetDateTime hardDeleteTime;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -1841,6 +1843,12 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
 
+    abstract Builder setGeneration(long generation);
+
+    abstract Builder setSoftDeleteTime(OffsetDateTime softDeleteTime);
+
+    abstract Builder setHardDeleteTime(OffsetDateTime hardDeleteTime);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
 
@@ -1939,9 +1947,11 @@ public class BucketInfo implements Serializable {
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
     private ObjectRetention objectRetention;
-
     private SoftDeletePolicy softDeletePolicy;
     private HierarchicalNamespace hierarchicalNamespace;
+    private long generation;
+    private OffsetDateTime softDeleteTime;
+    private OffsetDateTime hardDeleteTime;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -1983,6 +1993,9 @@ public class BucketInfo implements Serializable {
       objectRetention = bucketInfo.objectRetention;
       softDeletePolicy = bucketInfo.softDeletePolicy;
       hierarchicalNamespace = bucketInfo.hierarchicalNamespace;
+      generation = bucketInfo.getGeneration();
+      softDeleteTime = bucketInfo.getSoftDeleteTime();
+      hardDeleteTime = bucketInfo.getHardDeleteTime();
     }
 
     @Override
@@ -2367,6 +2380,33 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    Builder setGeneration(long generation) {
+      if(!Objects.equals(this.generation, generation)){
+        modifiedFields.add(BucketField.GENERATION);
+      }
+      this.generation = generation;
+      return this;
+    }
+
+    @Override
+    Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
+      if(!Objects.equals(this.softDeleteTime, softDeleteTime)){
+        modifiedFields.add(BucketField.SOFT_DELETE_TIME);
+      }
+      this.softDeleteTime = softDeleteTime;
+      return this;
+    }
+
+    @Override
+    Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
+      if(!Objects.equals(this.hardDeleteTime, hardDeleteTime)){
+        modifiedFields.add(BucketField.HARD_DELETE_TIME);
+      }
+      this.hardDeleteTime = hardDeleteTime;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       if (!Objects.equals(this.locationType, locationType)) {
         modifiedFields.add(BucketField.LOCATION_TYPE);
@@ -2609,6 +2649,9 @@ public class BucketInfo implements Serializable {
     objectRetention = builder.objectRetention;
     softDeletePolicy = builder.softDeletePolicy;
     hierarchicalNamespace = builder.hierarchicalNamespace;
+    generation = builder.generation;
+    softDeleteTime = builder.softDeleteTime;
+    hardDeleteTime = builder.hardDeleteTime;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2959,6 +3002,21 @@ public class BucketInfo implements Serializable {
     return hierarchicalNamespace;
   }
 
+  /** Returns the generation of this bucket */
+  public long getGeneration() {
+    return generation;
+  }
+
+  /** If this bucket is soft-deleted, returns the time it was soft-deleted */
+  public OffsetDateTime getSoftDeleteTime() {
+    return softDeleteTime;
+  }
+
+  /** If this bucket is soft-deleted, returns the time it will be hard-deleted */
+  public OffsetDateTime getHardDeleteTime() {
+    return hardDeleteTime;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2998,6 +3056,9 @@ public class BucketInfo implements Serializable {
         objectRetention,
         softDeletePolicy,
         hierarchicalNamespace,
+        generation,
+        softDeleteTime,
+        hardDeleteTime,
         logging);
   }
 
@@ -3041,6 +3102,9 @@ public class BucketInfo implements Serializable {
         && Objects.equals(objectRetention, that.objectRetention)
         && Objects.equals(softDeletePolicy, that.softDeletePolicy)
         && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)
+        && Objects.equals(generation, that.getGeneration())
+        && Objects.equals(softDeleteTime, that.getSoftDeleteTime())
+        && Objects.equals(hardDeleteTime, that.getHardDeleteTime())
         && Objects.equals(logging, that.logging);
   }
 

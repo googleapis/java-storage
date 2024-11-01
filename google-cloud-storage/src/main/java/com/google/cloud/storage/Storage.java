@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.InternalExtensionOnly;
@@ -187,7 +188,28 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     SOFT_DELETE_POLICY(
         "softDeletePolicy",
         "soft_delete_policy",
-        com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class);
+        com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    GENERATION(
+            "generation",
+            "generation",
+            Long.class
+    ),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    SOFT_DELETE_TIME(
+            "softDeleteTime",
+            "soft_delete_time",
+            DateTime.class
+    ),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    HARD_DELETE_TIME(
+            "hardDeleteTime",
+            "hard_delete_time",
+            DateTime.class
+    );
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
     private static final Map<String, BucketField> JSON_FIELD_NAME_INDEX;
@@ -908,6 +930,23 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption userProject(@NonNull String userProject) {
       return new BucketGetOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * Returns an option for this bucket's generation. Should only be specified when
+     * getting a soft-deleted bucket
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketGetOption generation(long generation) {
+      return new BucketGetOption(UnifiedOpts.generation(generation));
+    }
+
+    /**
+     * Returns an option that must be true if getting a soft-deleted bucket.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketGetOption softDeleted(boolean softDeleted){
+      return new BucketGetOption(UnifiedOpts.softDeleted(softDeleted));
     }
 
     /**
@@ -1743,6 +1782,49 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
   }
 
+  class BucketRestoreOption extends Option<BucketSourceOpt> {
+    private static final long serialVersionUID = 1422014464162702152L;
+
+    BucketRestoreOption(BucketSourceOpt opt) {
+      super(opt);
+    }
+
+    /**
+     * Returns an option to define the projection in the API request. In some cases this option may
+     * be needed to be set to `noAcl` to omit ACL data from the response. The default value is
+     * `full`
+     */
+    public static BucketRestoreOption projection(String projection) {
+      return new BucketRestoreOption(UnifiedOpts.projection(projection));
+    }
+
+    /**
+     * Returns an option to specify the bucket's fields to be returned by the RPC call. If this
+     * option is not provided all bucket's fields are returned. {@code BucketGetOption.fields}) can
+     * be used to specify only the fields of interest. Bucket name is always returned, even if not
+     * specified.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketRestoreOption fields(BucketField... fields) {
+      requireNonNull(fields, "fields must be non null");
+      ImmutableSet<NamedField> set =
+              ImmutableSet.<NamedField>builder()
+                      .addAll(BucketField.REQUIRED_FIELDS)
+                      .add(fields)
+                      .build();
+      return new BucketRestoreOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * Returns an option for bucket's billing user project. This option is only used by the buckets
+     * with 'requester_pays' flag.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketRestoreOption userProject(@NonNull String userProject) {
+      return new BucketRestoreOption(UnifiedOpts.userProject(userProject));
+    }
+  }
+
   /** Class for specifying bucket list options. */
   class BucketListOption extends Option<BucketListOpt> {
 
@@ -1780,6 +1862,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption userProject(@NonNull String userProject) {
       return new BucketListOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * Returns an option for whether to return soft-deleted buckets.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketListOption softDeleted(boolean softDeleted) {
+      return new BucketListOption(UnifiedOpts.softDeleted(softDeleted));
     }
 
     /**
@@ -3192,6 +3282,20 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob restore(BlobId blob, BlobRestoreOption... options);
+
+  /**
+   * Restores a soft-deleted bucket to full bucket status.
+   *
+   * <p>Example of restoring a bucket.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * long generation = 42;
+   * storage.restore(bucketName, generation);
+   * }</pre>
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  void restore(String bucket, long generation, BucketRestoreOption... options);
 
   /**
    * Lists the project's buckets.
