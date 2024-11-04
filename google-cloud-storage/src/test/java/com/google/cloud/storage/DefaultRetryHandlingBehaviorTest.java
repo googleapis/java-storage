@@ -346,6 +346,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     UNKNOWN_HOST_EXCEPTION(C.UNKNOWN_HOST_EXCEPTION),
     ;
 
+
     private final Throwable throwable;
 
     ThrowableCategory(Throwable throwable) {

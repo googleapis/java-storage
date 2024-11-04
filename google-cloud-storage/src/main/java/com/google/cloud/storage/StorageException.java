@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableSet;
 import io.grpc.StatusException;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -43,6 +44,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public final class StorageException extends BaseHttpServiceException {
   private static final String INTERNAL_ERROR = "internalError";
   private static final String CONNECTION_CLOSED_PREMATURELY = "connectionClosedPrematurely";
+  private static final String CONNECTION_REFUSED = "connectionRefused";
 
   // see: https://cloud.google.com/storage/docs/resumable-uploads-xml#practices
   static final Set<Error> RETRYABLE_ERRORS =
@@ -54,7 +56,8 @@ public final class StorageException extends BaseHttpServiceException {
           new Error(429, null),
           new Error(408, null),
           new Error(null, INTERNAL_ERROR),
-          new Error(null, CONNECTION_CLOSED_PREMATURELY));
+          new Error(null, CONNECTION_CLOSED_PREMATURELY),
+          new Error(null, CONNECTION_REFUSED));
 
   private static final long serialVersionUID = 757915549325467990L;
 
@@ -178,6 +181,20 @@ public final class StorageException extends BaseHttpServiceException {
       // default
       return new StorageException(exception);
     }
+  }
+
+  /**
+   * Translate ConnectionException to a StorageException representing the cause of the error. This method
+   * defaults to idempotent always being {@code true}. Additionally, this method translates
+   * transient issues Connection Refused as a retryable error.
+   *
+   * @return {@code StorageException}
+   */
+  public static StorageException translate(ConnectException exception) {
+    String message = exception.getMessage();
+    if (message != null && message.contains("Connection refused")) {
+      return new StorageException(0, message, CONNECTION_REFUSED, exception);
+    } else getStorageException(exception);
   }
 
   static <T> T wrapIOException(IOExceptionCallable<T> c) {

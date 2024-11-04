@@ -25,6 +25,7 @@ import com.google.cloud.ExceptionHandler.Interceptor;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Set;
@@ -117,6 +118,11 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
         }
       } else if (ioException instanceof UnknownHostException && idempotent) {
         return RetryResult.RETRY;
+      }
+      if(idempotent && ioException.getCause() instanceof StorageException) {
+        StorageException ex = (StorageException) ioException.getCause();
+        return ex.isRetryable() ? RetryResult.RETRY : RetryResult.NO_RETRY;
+
       }
       if (BaseServiceException.isRetryable(idempotent, ioException)) {
         return RetryResult.RETRY;

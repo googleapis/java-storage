@@ -26,6 +26,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
