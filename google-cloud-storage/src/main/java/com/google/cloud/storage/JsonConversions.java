@@ -254,7 +254,6 @@ final class JsonConversions {
 
     ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::encode, to::setSoftDeleteTime);
     ifNonNull(from.getHardDeleteTime(), dateTimeCodec::encode, to::setHardDeleteTime);
-    ifNonNull(from.getRestoreToken(), to::setRestoreToken);
 
     // todo: clean this up once retention is enabled in grpc
     // This is a workaround so that explicitly null retention objects are only included when the
@@ -339,7 +338,6 @@ final class JsonConversions {
     ifNonNull(from.getRetention(), this::retentionDecode, to::setRetention);
     ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::decode, to::setSoftDeleteTime);
     ifNonNull(from.getHardDeleteTime(), dateTimeCodec::decode, to::setHardDeleteTime);
-    ifNonNull(from.getRestoreToken(), to::setRestoreToken);
     return to.build();
   }
 

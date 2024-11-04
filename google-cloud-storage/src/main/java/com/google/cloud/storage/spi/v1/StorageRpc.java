@@ -75,7 +75,6 @@ public interface StorageRpc extends ServiceRpc {
     RETURN_RAW_INPUT_STREAM("returnRawInputStream"),
     OVERRIDE_UNLOCKED_RETENTION("overrideUnlockedRetention"),
     SOFT_DELETED("softDeleted"),
-    RESTORE_TOKEN("restoreToken"),
     COPY_SOURCE_ACL("copySourceAcl"),
     GENERATION("generation"),
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes"),
