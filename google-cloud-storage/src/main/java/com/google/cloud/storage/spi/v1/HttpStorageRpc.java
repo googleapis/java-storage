@@ -1852,12 +1852,4 @@ public class HttpStorageRpc implements StorageRpc {
     error.setMessage(statusMessage);
     return translate(error);
   }
-  private static StorageException buildStorageException(int statusCode, String statusMessage, OpenTelemetryTraceUtil.Span otelSpan) {
-    GoogleJsonError error = new GoogleJsonError();
-    error.setCode(statusCode);
-    error.setMessage(statusMessage);
-    StorageException ex = translate(error);
-    otelSpan.recordException(ex);
-    return ex;
-  }
 }
