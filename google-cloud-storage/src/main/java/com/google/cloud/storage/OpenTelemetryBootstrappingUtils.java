@@ -217,7 +217,7 @@ final class OpenTelemetryBootstrappingUtils {
     }
     String detectedHostId = detectedAttributes.get(AttributeKey.stringKey("host.id"));
     if (detectedHostId != null) {
-      attributesBuilder.put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")));
+      attributesBuilder.put("host_id", detectedHostId);
     } else {
       attributesBuilder.put("host_id", "unknown");
     }
