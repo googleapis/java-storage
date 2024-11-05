@@ -31,6 +31,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.opentelemetry.GrpcOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.internal.StringUtils;
 import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -196,24 +197,36 @@ final class OpenTelemetryBootstrappingUtils {
         shouldSuppressExceptions
             ? new PermissionDeniedSingleReportMetricsExporter(cloudMonitoringExporter)
             : cloudMonitoringExporter;
+    AttributesBuilder attributesBuilder =
+        Attributes.builder()
+            .put("gcp.resource_type", "storage.googleapis.com/Client")
+            .put("project_id", projectIdToUse)
+            .put("instance_id", UUID.randomUUID().toString())
+            .put("api", "grpc");
+    String detectedLocation = detectedAttributes.get(AttributeKey.stringKey("cloud.region"));
+    if (detectedLocation != null) {
+      attributesBuilder.put("location", detectedLocation);
+    } else {
+      attributesBuilder.put("location", "global");
+    }
+    String detectedCloudPlatform = detectedAttributes.get(AttributeKey.stringKey("cloud.platform"));
+    if (detectedCloudPlatform != null) {
+      attributesBuilder.put("cloud_platform", detectedCloudPlatform);
+    } else {
+      attributesBuilder.put("cloud_platform", "unknown");
+    }
+    String detectedHostId = detectedAttributes.get(AttributeKey.stringKey("host.id"));
+    if (detectedHostId != null) {
+      attributesBuilder.put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")));
+    } else {
+      attributesBuilder.put("host_id", "unknown");
+    }
     providerBuilder
         .registerMetricReader(
             PeriodicMetricReader.builder(exporter)
                 .setInterval(java.time.Duration.ofSeconds(60))
                 .build())
-        .setResource(
-            Resource.create(
-                Attributes.builder()
-                    .put("gcp.resource_type", "storage.googleapis.com/Client")
-                    .put("location", detectedAttributes.get(AttributeKey.stringKey("cloud.region")))
-                    .put("project_id", projectIdToUse)
-                    .put(
-                        "cloud_platform",
-                        detectedAttributes.get(AttributeKey.stringKey("cloud.platform")))
-                    .put("host_id", detectedAttributes.get(AttributeKey.stringKey("host.id")))
-                    .put("instance_id", UUID.randomUUID().toString())
-                    .put("api", "grpc")
-                    .build()));
+        .setResource(Resource.create(attributesBuilder.build()));
 
     addHistogramView(
         providerBuilder, latencyHistogramBoundaries(), "grpc/client/attempt/duration", "s");
