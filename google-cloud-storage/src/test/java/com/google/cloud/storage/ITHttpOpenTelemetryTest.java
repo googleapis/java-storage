@@ -16,9 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.fail;
 
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -39,9 +37,7 @@ import io.opentelemetry.sdk.trace.export.SpanExporter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +56,6 @@ public class ITHttpOpenTelemetryTest {
   private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
-
 
   @Before
   public void setUp() {
@@ -133,17 +128,20 @@ public class ITHttpOpenTelemetryTest {
     }
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("read")));
   }
+
   @Test
   public void runCopy() {
 
     byte[] expected = "Hello, World!".getBytes(StandardCharsets.UTF_8);
 
     BlobInfo info =
-        BlobInfo.newBuilder(testBucket.getName(), generator.randomObjectName() + "copy/src").build();
+        BlobInfo.newBuilder(testBucket.getName(), generator.randomObjectName() + "copy/src")
+            .build();
     Blob cpySrc = storage.create(info, expected, BlobTargetOption.doesNotExist());
 
     BlobInfo dst =
-        BlobInfo.newBuilder(testBucket.getName(), generator.randomObjectName() + "copy/dst").build();
+        BlobInfo.newBuilder(testBucket.getName(), generator.randomObjectName() + "copy/dst")
+            .build();
 
     CopyRequest copyRequest =
         CopyRequest.newBuilder()
@@ -165,7 +163,6 @@ public class ITHttpOpenTelemetryTest {
     }
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("openRewrite")));
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
-
   }
 
   private String getAttributeValue(SpanData spanData, String key) {

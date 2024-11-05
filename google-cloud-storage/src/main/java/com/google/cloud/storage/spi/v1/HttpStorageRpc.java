@@ -889,7 +889,7 @@ public class HttpStorageRpc implements StorageRpc {
     OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("read");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()){
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       checkArgument(position >= 0, "Position should be non-negative, is " + position);
       Get req = createReadRequest(from, options);
       Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
@@ -1183,8 +1183,11 @@ public class HttpStorageRpc implements StorageRpc {
     OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("continueRewrite");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CONTINUE_REWRITE);
     Scope scope = tracer.withSpan(span);
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()){
-      return rewrite(previousResponse.rewriteRequest, previousResponse.rewriteToken, openTelemetryTraceUtil.currentContext());
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return rewrite(
+          previousResponse.rewriteRequest,
+          previousResponse.rewriteToken,
+          openTelemetryTraceUtil.currentContext());
     } finally {
       otelSpan.end();
       scope.close();
@@ -1192,9 +1195,10 @@ public class HttpStorageRpc implements StorageRpc {
     }
   }
 
-  private RewriteResponse rewrite(RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
+  private RewriteResponse rewrite(
+      RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
     OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("rewrite", ctx);
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()){
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       String userProject = Option.USER_PROJECT.getString(req.sourceOptions);
       if (userProject == null) {
         userProject = Option.USER_PROJECT.getString(req.targetOptions);
