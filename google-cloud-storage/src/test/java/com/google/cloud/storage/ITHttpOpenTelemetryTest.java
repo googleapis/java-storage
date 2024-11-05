@@ -16,9 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.fail;
 
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -58,7 +56,6 @@ public class ITHttpOpenTelemetryTest {
   private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
-
 
   @Before
   public void setUp() {
@@ -152,6 +149,8 @@ public class ITHttpOpenTelemetryTest {
           "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
     }
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("openRewrite")));
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
