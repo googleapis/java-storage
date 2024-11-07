@@ -84,13 +84,8 @@ public class ITHttpOpenTelemetryTest {
     String bucket = "random-bucket";
     storage.create(BucketInfo.of(bucket));
     TestExporter testExported = (TestExporter) exporter;
-    SpanData spanData = testExported.getExportedSpans().get(0);
-    Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
-    Assert.assertEquals("googleapis/java-storage", getAttributeValue(spanData, "gcp.client.repo"));
-    Assert.assertEquals(
-        "com.google.cloud.google-cloud-storage",
-        getAttributeValue(spanData, "gcp.client.artifact"));
-    Assert.assertEquals("http", getAttributeValue(spanData, "rpc.system"));
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
   }
 
   @Test
@@ -100,13 +95,7 @@ public class ITHttpOpenTelemetryTest {
     storage.create(BlobInfo.newBuilder(toCreate).build(), content);
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
-    for (SpanData span : spanData) {
-      Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
-      Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
-      Assert.assertEquals(
-          "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
-      Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
-    }
+    checkCommonAttributes(spanData);
   }
 
   @Test
@@ -119,13 +108,7 @@ public class ITHttpOpenTelemetryTest {
         blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
-    for (SpanData span : spanData) {
-      Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
-      Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
-      Assert.assertEquals(
-          "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
-      Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
-    }
+    checkCommonAttributes(spanData);
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("read")));
   }
 
@@ -149,11 +132,16 @@ public class ITHttpOpenTelemetryTest {
             .setSourceOptions(BlobSourceOption.generationMatch(cpySrc.getGeneration()))
             .setTarget(dst, BlobTargetOption.doesNotExist())
             .build();
-
     CopyWriter copyWriter = storage.copy(copyRequest);
     copyWriter.getResult();
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("openRewrite")));
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
+  }
+
+  private void checkCommonAttributes(List<SpanData> spanData) {
     for (SpanData span : spanData) {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
       Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
@@ -161,8 +149,6 @@ public class ITHttpOpenTelemetryTest {
           "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
     }
-    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("openRewrite")));
-    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
