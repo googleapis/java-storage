@@ -848,9 +848,10 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public long read(
       StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("read");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
-    try {
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       Get req = createReadRequest(from, options);
       Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
       if (shouldReturnRawInputStream != null) {
@@ -867,6 +868,8 @@ public class HttpStorageRpc implements StorageRpc {
       req.executeMedia().download(outputStream);
       return mediaHttpDownloader.getNumBytesDownloaded();
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
       if (serviceException.getCode() == SC_REQUESTED_RANGE_NOT_SATISFIABLE) {
@@ -874,6 +877,7 @@ public class HttpStorageRpc implements StorageRpc {
       }
       throw serviceException;
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
@@ -882,9 +886,10 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public Tuple<String, byte[]> read(
       StorageObject from, Map<Option, ?> options, long position, int bytes) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("read");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
-    try {
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       checkArgument(position >= 0, "Position should be non-negative, is " + position);
       Get req = createReadRequest(from, options);
       Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
@@ -902,6 +907,8 @@ public class HttpStorageRpc implements StorageRpc {
       String etag = req.getLastResponseHeaders().getETag();
       return Tuple.of(etag, output.toByteArray());
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = StorageException.translate(ex);
       if (serviceException.getCode() == SC_REQUESTED_RANGE_NOT_SATISFIABLE) {
@@ -909,6 +916,7 @@ public class HttpStorageRpc implements StorageRpc {
       }
       throw serviceException;
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
@@ -1158,11 +1166,13 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public RewriteResponse openRewrite(RewriteRequest rewriteRequest) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("openRewrite");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN_REWRITE);
     Scope scope = tracer.withSpan(span);
-    try {
-      return rewrite(rewriteRequest, null);
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return rewrite(rewriteRequest, null, openTelemetryTraceUtil.currentContext());
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
@@ -1170,18 +1180,25 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public RewriteResponse continueRewrite(RewriteResponse previousResponse) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("continueRewrite");
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CONTINUE_REWRITE);
     Scope scope = tracer.withSpan(span);
-    try {
-      return rewrite(previousResponse.rewriteRequest, previousResponse.rewriteToken);
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      return rewrite(
+          previousResponse.rewriteRequest,
+          previousResponse.rewriteToken,
+          openTelemetryTraceUtil.currentContext());
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
-  private RewriteResponse rewrite(RewriteRequest req, String token) {
-    try {
+  private RewriteResponse rewrite(
+      RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
+    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("rewrite", ctx);
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       String userProject = Option.USER_PROJECT.getString(req.sourceOptions);
       if (userProject == null) {
         userProject = Option.USER_PROJECT.getString(req.targetOptions);
@@ -1232,8 +1249,12 @@ public class HttpStorageRpc implements StorageRpc {
           rewriteResponse.getRewriteToken(),
           rewriteResponse.getTotalBytesRewritten().longValue());
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       tracer.getCurrentSpan().setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
+    } finally {
+      otelSpan.end();
     }
   }
 
