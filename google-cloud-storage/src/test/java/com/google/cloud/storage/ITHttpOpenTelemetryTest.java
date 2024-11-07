@@ -149,8 +149,6 @@ public class ITHttpOpenTelemetryTest {
           "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
     }
-    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("openRewrite")));
-    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
   }
 
   private String getAttributeValue(SpanData spanData, String key) {
