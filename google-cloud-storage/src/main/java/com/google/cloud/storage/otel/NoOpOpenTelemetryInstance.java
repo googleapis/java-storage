@@ -24,13 +24,13 @@ import javax.annotation.Nonnull;
 class NoOpOpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   @Override
-  public OpenTelemetryTraceUtil.Span startSpan(String spanName) {
+  public OpenTelemetryTraceUtil.Span startSpan(String spanName, String module) {
     return new Span();
   }
 
   @Override
   public OpenTelemetryTraceUtil.Span startSpan(
-      String spanName, OpenTelemetryTraceUtil.Context parent) {
+      String spanName, String module, OpenTelemetryTraceUtil.Context parent) {
     return new Span();
   }
 
