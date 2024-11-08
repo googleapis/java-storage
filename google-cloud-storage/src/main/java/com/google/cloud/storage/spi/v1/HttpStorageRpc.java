@@ -106,7 +106,6 @@ public class HttpStorageRpc implements StorageRpc {
   public static final String NO_ACL_PROJECTION = "noAcl";
   private static final String ENCRYPTION_KEY_PREFIX = "x-goog-encryption-";
   private static final String SOURCE_ENCRYPTION_KEY_PREFIX = "x-goog-copy-source-encryption-";
-  private static final String OTEL_MODULE_NAME = "storage.spi.v1";
 
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
@@ -362,7 +361,7 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public Bucket create(Bucket bucket, Map<Option, ?> options) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -391,7 +390,7 @@ public class HttpStorageRpc implements StorageRpc {
   public StorageObject create(
       StorageObject storageObject, final InputStream content, Map<Option, ?> options) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_OBJECT);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -852,7 +851,7 @@ public class HttpStorageRpc implements StorageRpc {
   public long read(
       StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("read", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("read", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -891,7 +890,7 @@ public class HttpStorageRpc implements StorageRpc {
   public Tuple<String, byte[]> read(
       StorageObject from, Map<Option, ?> options, long position, int bytes) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("read", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("read", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1172,7 +1171,7 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public RewriteResponse openRewrite(RewriteRequest rewriteRequest) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("openRewrite", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("openRewrite", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1187,7 +1186,7 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public RewriteResponse continueRewrite(RewriteResponse previousResponse) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("continueRewrite", OTEL_MODULE_NAME);
+        openTelemetryTraceUtil.startSpan("continueRewrite", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CONTINUE_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1205,7 +1204,7 @@ public class HttpStorageRpc implements StorageRpc {
   private RewriteResponse rewrite(
       RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("rewrite", OTEL_MODULE_NAME, ctx);
+        openTelemetryTraceUtil.startSpan("rewrite", this.getClass().getName(), ctx);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       String userProject = Option.USER_PROJECT.getString(req.sourceOptions);
       if (userProject == null) {
