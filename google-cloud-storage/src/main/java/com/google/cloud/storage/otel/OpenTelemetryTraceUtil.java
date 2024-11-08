@@ -76,13 +76,13 @@ public interface OpenTelemetryTraceUtil {
   }
 
   /** Starts a new span with the given name, sets it as the current span, and returns it. */
-  Span startSpan(String spanName);
+  Span startSpan(String spanName, String module);
 
   /**
    * Starts a new span with the given name and the given context as its parent, sets it as the
    * current span, and returns it.
    */
-  Span startSpan(String spanName, Context parent);
+  Span startSpan(String spanName, String module, Context parent);
 
   /** Returns the current span. */
   @Nonnull

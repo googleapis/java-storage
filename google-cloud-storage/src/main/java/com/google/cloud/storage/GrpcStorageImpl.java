@@ -201,7 +201,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -248,7 +249,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     // Start the otel span to retain information of the origin of the request
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       return internalDirectUpload(
               blobInfo,
@@ -267,7 +269,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     try (OpenTelemetryTraceUtil.Scope ununsed = otelSpan.makeCurrent()) {
       requireNonNull(blobInfo, "blobInfo must be non null");
       InputStream inputStreamParam = firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES));
@@ -830,7 +833,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(buf, "content must be non null");
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalDirectUpload(BlobInfo)", ctx);
+        openTelemetryTraceUtil.startSpan("internalDirectUpload", this.getClass().getName(), ctx);
     Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());

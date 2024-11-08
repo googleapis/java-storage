@@ -360,7 +360,8 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public Bucket create(Bucket bucket, Map<Option, ?> options) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -388,7 +389,8 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public StorageObject create(
       StorageObject storageObject, final InputStream content, Map<Option, ?> options) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("create");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_OBJECT);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -848,7 +850,8 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public long read(
       StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("read");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("read", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -886,7 +889,8 @@ public class HttpStorageRpc implements StorageRpc {
   @Override
   public Tuple<String, byte[]> read(
       StorageObject from, Map<Option, ?> options, long position, int bytes) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("read");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("read", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1166,7 +1170,8 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public RewriteResponse openRewrite(RewriteRequest rewriteRequest) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("openRewrite");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("openRewrite", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1180,7 +1185,8 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public RewriteResponse continueRewrite(RewriteResponse previousResponse) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("continueRewrite");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("continueRewrite", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CONTINUE_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
@@ -1197,7 +1203,8 @@ public class HttpStorageRpc implements StorageRpc {
 
   private RewriteResponse rewrite(
       RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
-    OpenTelemetryTraceUtil.Span otelSpan = openTelemetryTraceUtil.startSpan("rewrite", ctx);
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("rewrite", this.getClass().getName(), ctx);
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       String userProject = Option.USER_PROJECT.getString(req.sourceOptions);
       if (userProject == null) {

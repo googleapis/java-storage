@@ -153,8 +153,8 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   }
 
   @Override
-  public OpenTelemetryTraceUtil.Span startSpan(String methodName) {
-    String formatSpanName = String.format("%s.%s/%s", "storage", "client", methodName);
+  public OpenTelemetryTraceUtil.Span startSpan(String methodName, String module) {
+    String formatSpanName = String.format("%s/%s", module, methodName);
     SpanBuilder spanBuilder = tracer.spanBuilder(formatSpanName).setSpanKind(SpanKind.CLIENT);
     io.opentelemetry.api.trace.Span span =
         addSettingsAttributesToCurrentSpan(spanBuilder).startSpan();
@@ -163,9 +163,9 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   @Override
   public OpenTelemetryTraceUtil.Span startSpan(
-      String methodName, OpenTelemetryTraceUtil.Context parent) {
+      String methodName, String module, OpenTelemetryTraceUtil.Context parent) {
     assert (parent instanceof OpenTelemetryInstance.Context);
-    String formatSpanName = String.format("%s.%s/%s", "storage", "client", methodName);
+    String formatSpanName = String.format("%s/%s", module, methodName);
     SpanBuilder spanBuilder =
         tracer
             .spanBuilder(formatSpanName)
