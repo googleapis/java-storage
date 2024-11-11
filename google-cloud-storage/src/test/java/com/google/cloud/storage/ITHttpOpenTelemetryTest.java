@@ -141,6 +141,19 @@ public class ITHttpOpenTelemetryTest {
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("rewrite")));
   }
 
+  @Test
+  public void runReadAllBytes() {
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+    storage.create(blobInfo, helloWorldTextBytes);
+    byte[] read = storage.readAllBytes(blobId);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("load")));
+
+  }
+
   private void checkCommonAttributes(List<SpanData> spanData) {
     for (SpanData span : spanData) {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
