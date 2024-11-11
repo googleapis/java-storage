@@ -791,9 +791,11 @@ public class HttpStorageRpc implements StorageRpc {
 
   @Override
   public byte[] load(StorageObject from, Map<Option, ?> options) {
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("load", this.getClass().getName());
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LOAD);
     Scope scope = tracer.withSpan(span);
-    try {
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
       Storage.Objects.Get getRequest =
           storage
               .objects()
@@ -812,9 +814,12 @@ public class HttpStorageRpc implements StorageRpc {
       getRequest.executeMedia().download(out);
       return out.toByteArray();
     } catch (IOException ex) {
+      otelSpan.recordException(ex);
+      otelSpan.setStatus(StatusCode.ERROR, ex.getClass().getSimpleName());
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
     } finally {
+      otelSpan.end();
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
