@@ -330,7 +330,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   @Override
-  public Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
+  public Blob internalCreateFrom(
+      Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
         openTelemetryTraceUtil.startSpan("internalCreateFrom", this.getClass().getName(), ctx);
@@ -339,26 +340,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       throw new StorageException(0, path + " is a directory");
     }
     try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(info, opts);
+      GrpcCallContext grpcCallContext =
+          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+      WriteObjectRequest req = getWriteObjectRequest(info, opts);
 
-    ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
-        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
+          storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
 
-    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
-    ApiFuture<GrpcResumableSession> session2 =
-        ApiFutures.transform(
-            start,
-            rw ->
-                ResumableSession.grpc(
-                    getOptions(),
-                    retryAlgorithmManager.idempotent(),
-                    write,
-                    storageClient.queryWriteStatusCallable(),
-                    rw,
-                    Hasher.noop()),
-            MoreExecutors.directExecutor());
+      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
+      ApiFuture<GrpcResumableSession> session2 =
+          ApiFutures.transform(
+              start,
+              rw ->
+                  ResumableSession.grpc(
+                      getOptions(),
+                      retryAlgorithmManager.idempotent(),
+                      write,
+                      storageClient.queryWriteStatusCallable(),
+                      rw,
+                      Hasher.noop()),
+              MoreExecutors.directExecutor());
       GrpcResumableSession got = session2.get();
       ResumableOperationResult<@Nullable Object> put = got.put(RewindableContent.of(path));
       Object object = put.getObject();
@@ -419,7 +420,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         ByteStreams.copy(src, dst);
       } catch (Exception e) {
         otelSpan.recordException(e);
-        otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+        otelSpan.setStatus(
+            io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
         throw StorageException.coalesce(e);
       }
       return getBlob(session.getResult());
