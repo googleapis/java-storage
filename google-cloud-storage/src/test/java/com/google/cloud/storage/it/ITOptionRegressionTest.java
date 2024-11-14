@@ -743,8 +743,7 @@ public final class ITOptionRegressionTest {
             "updated",
             "retention",
             "softDeleteTime",
-            "hardDeleteTime",
-            "restoreToken");
+            "hardDeleteTime");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
@@ -924,8 +923,7 @@ public final class ITOptionRegressionTest {
             "items/updated",
             "items/retention",
             "items/softDeleteTime",
-            "items/hardDeleteTime",
-            "items/restoreToken");
+            "items/hardDeleteTime");
     s.list(b.getName(), BlobListOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
