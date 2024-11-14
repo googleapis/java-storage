@@ -315,39 +315,51 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    return internalCreateFrom(path, blobInfo, opts);
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+      return internalCreateFrom(path, blobInfo, opts, openTelemetryTraceUtil.currentContext());
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
-  public Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
+  public Blob internalCreateFrom(
+      Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
       throws IOException {
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("internalCreateFrom", this.getClass().getName(), ctx);
     requireNonNull(path, "path must be non null");
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      GrpcCallContext grpcCallContext =
+          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+      WriteObjectRequest req = getWriteObjectRequest(info, opts);
 
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(info, opts);
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
+          storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
 
-    ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
-        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
-
-    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
-    ApiFuture<GrpcResumableSession> session2 =
-        ApiFutures.transform(
-            start,
-            rw ->
-                ResumableSession.grpc(
-                    getOptions(),
-                    retryAlgorithmManager.idempotent(),
-                    write,
-                    storageClient.queryWriteStatusCallable(),
-                    rw,
-                    Hasher.noop()),
-            MoreExecutors.directExecutor());
-    try {
+      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
+      ApiFuture<GrpcResumableSession> session2 =
+          ApiFutures.transform(
+              start,
+              rw ->
+                  ResumableSession.grpc(
+                      getOptions(),
+                      retryAlgorithmManager.idempotent(),
+                      write,
+                      storageClient.queryWriteStatusCallable(),
+                      rw,
+                      Hasher.noop()),
+              MoreExecutors.directExecutor());
       GrpcResumableSession got = session2.get();
       ResumableOperationResult<@Nullable Object> put = got.put(RewindableContent.of(path));
       Object object = put.getObject();
@@ -358,7 +370,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       }
       return codecs.blobInfo().decode(object).asBlob(this);
     } catch (InterruptedException | ExecutionException e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
   }
 
@@ -372,37 +388,46 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public Blob createFrom(
       BlobInfo blobInfo, InputStream in, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    requireNonNull(blobInfo, "blobInfo must be non null");
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+      requireNonNull(blobInfo, "blobInfo must be non null");
 
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+      GrpcCallContext grpcCallContext =
+          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+      WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
+      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
 
-    BufferedWritableByteChannelSession<WriteObjectResponse> session =
-        ResumableMedia.gapic()
-            .write()
-            .byteChannel(
-                storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(Hasher.noop())
-            .setByteStringStrategy(ByteStringStrategy.noCopy())
-            .resumable()
-            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
-            .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
-            .setStartAsync(start)
-            .build();
+      BufferedWritableByteChannelSession<WriteObjectResponse> session =
+          ResumableMedia.gapic()
+              .write()
+              .byteChannel(
+                  storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+              .setHasher(Hasher.noop())
+              .setByteStringStrategy(ByteStringStrategy.noCopy())
+              .resumable()
+              .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
+              .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
+              .setStartAsync(start)
+              .build();
 
-    // Specifically not in the try-with, so we don't close the provided stream
-    ReadableByteChannel src =
-        Channels.newChannel(firstNonNull(in, new ByteArrayInputStream(ZERO_BYTES)));
-    try (BufferedWritableByteChannel dst = session.open()) {
-      ByteStreams.copy(src, dst);
-    } catch (Exception e) {
-      throw StorageException.coalesce(e);
+      // Specifically not in the try-with, so we don't close the provided stream
+      ReadableByteChannel src =
+          Channels.newChannel(firstNonNull(in, new ByteArrayInputStream(ZERO_BYTES)));
+      try (BufferedWritableByteChannel dst = session.open()) {
+        ByteStreams.copy(src, dst);
+      } catch (Exception e) {
+        otelSpan.recordException(e);
+        otelSpan.setStatus(
+            io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+        throw StorageException.coalesce(e);
+      }
+      return getBlob(session.getResult());
+    } finally {
+      otelSpan.end();
     }
-    return getBlob(session.getResult());
   }
 
   @Override
@@ -732,14 +757,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("readAllBytes", this.getClass().getName());
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (UnbufferedReadableByteChannel r = session.open();
+    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent();
+        UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(baos)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
     return baos.toByteArray();
   }

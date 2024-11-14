@@ -31,6 +31,9 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +47,8 @@ public class ITGrpcOpenTelemetryTest {
   private StorageOptions options;
   private SpanExporter exporter;
   private Storage storage;
+  private static final byte[] helloWorldTextBytes = "hello world".getBytes();
+  private BlobId blobId;
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
 
@@ -65,6 +70,8 @@ public class ITGrpcOpenTelemetryTest {
             .setOpenTelemetrySdk(openTelemetrySdk)
             .build();
     storage = options.getService();
+    String objectString = generator.randomObjectName();
+    blobId = BlobId.of(testBucket.getName(), objectString);
   }
 
   @Test
@@ -72,13 +79,8 @@ public class ITGrpcOpenTelemetryTest {
     String bucket = "random-bucket";
     storage.create(BucketInfo.of(bucket));
     TestExporter testExported = (TestExporter) exporter;
-    SpanData spanData = testExported.getExportedSpans().get(0);
-    Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
-    Assert.assertEquals("googleapis/java-storage", getAttributeValue(spanData, "gcp.client.repo"));
-    Assert.assertEquals(
-        "com.google.cloud.google-cloud-storage",
-        getAttributeValue(spanData, "gcp.client.artifact"));
-    Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
   }
 
   @Test
@@ -88,6 +90,36 @@ public class ITGrpcOpenTelemetryTest {
     storage.create(BlobInfo.newBuilder(toCreate).build(), content);
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("create")));
+    Assert.assertTrue(
+        spanData.stream().anyMatch(x -> x.getName().contains("internalDirectUpload")));
+    Assert.assertEquals(spanData.get(1).getSpanContext(), spanData.get(0).getParentSpanContext());
+  }
+
+  @Test
+  public void runReadAllBytes() {
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+    storage.create(blobInfo, helloWorldTextBytes);
+    byte[] read = storage.readAllBytes(blobId);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("readAllBytes")));
+  }
+
+  @Test
+  public void createFrom() throws IOException {
+    Path helloWorldTxtGz = File.createTempFile(blobId.getName(), ".txt.gz").toPath();
+    storage.createFrom(BlobInfo.newBuilder(blobId).build(), helloWorldTxtGz);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("createFrom")));
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("internalCreateFrom")));
+  }
+
+  private void checkCommonAttributes(List<SpanData> spanData) {
     for (SpanData span : spanData) {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
       Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
@@ -95,10 +127,6 @@ public class ITGrpcOpenTelemetryTest {
           "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("grpc", getAttributeValue(span, "rpc.system"));
     }
-    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("create")));
-    Assert.assertTrue(
-        spanData.stream().anyMatch(x -> x.getName().contains("internalDirectUpload")));
-    Assert.assertEquals(spanData.get(1).getSpanContext(), spanData.get(0).getParentSpanContext());
   }
 
   private String getAttributeValue(SpanData spanData, String key) {

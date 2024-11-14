@@ -32,6 +32,12 @@ interface StorageInternal {
     throw new UnsupportedOperationException("not implemented");
   }
 
+  default BlobInfo internalCreateFrom(
+      Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
+      throws IOException {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
   default BlobInfo internalDirectUpload(
       BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
     throw new UnsupportedOperationException("not implemented");
