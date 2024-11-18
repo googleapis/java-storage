@@ -69,6 +69,8 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Scope;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -698,56 +700,66 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public CopyWriter copy(CopyRequest copyRequest) {
-    BlobId src = copyRequest.getSource();
-    BlobInfo dst = copyRequest.getTarget();
-    Opts<ObjectSourceOpt> srcOpts =
-        Opts.unwrap(copyRequest.getSourceOptions())
-            .projectAsSource()
-            .resolveFrom(src)
-            .prepend(defaultOpts);
-    Opts<ObjectTargetOpt> dstOpts =
-        Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
+    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      BlobId src = copyRequest.getSource();
+      BlobInfo dst = copyRequest.getTarget();
+      Opts<ObjectSourceOpt> srcOpts =
+          Opts.unwrap(copyRequest.getSourceOptions())
+              .projectAsSource()
+              .resolveFrom(src)
+              .prepend(defaultOpts);
+      Opts<ObjectTargetOpt> dstOpts =
+          Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
 
-    Mapper<RewriteObjectRequest.Builder> mapper =
-        srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
+      Mapper<RewriteObjectRequest.Builder> mapper =
+          srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
 
-    Object srcProto = codecs.blobId().encode(src);
-    Object dstProto = codecs.blobInfo().encode(dst);
+      Object srcProto = codecs.blobId().encode(src);
+      Object dstProto = codecs.blobInfo().encode(dst);
 
-    RewriteObjectRequest.Builder b =
-        RewriteObjectRequest.newBuilder()
-            .setDestinationName(dstProto.getName())
-            .setDestinationBucket(dstProto.getBucket())
-            // destination_kms_key comes from dstOpts
-            // according to the docs in the protos, it is illegal to populate the following fields,
-            // clear them out if they are set
-            // destination_predefined_acl comes from dstOpts
-            // if_*_match come from srcOpts and dstOpts
-            // copy_source_encryption_* come from srcOpts
-            // common_object_request_params come from dstOpts
-            .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
-            .setSourceBucket(srcProto.getBucket())
-            .setSourceObject(srcProto.getName());
+      RewriteObjectRequest.Builder b =
+          RewriteObjectRequest.newBuilder()
+              .setDestinationName(dstProto.getName())
+              .setDestinationBucket(dstProto.getBucket())
+              // destination_kms_key comes from dstOpts
+              // according to the docs in the protos, it is illegal to populate the following
+              // fields,
+              // clear them out if they are set
+              // destination_predefined_acl comes from dstOpts
+              // if_*_match come from srcOpts and dstOpts
+              // copy_source_encryption_* come from srcOpts
+              // common_object_request_params come from dstOpts
+              .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
+              .setSourceBucket(srcProto.getBucket())
+              .setSourceObject(srcProto.getName());
 
-    if (src.getGeneration() != null) {
-      b.setSourceGeneration(src.getGeneration());
+      if (src.getGeneration() != null) {
+        b.setSourceGeneration(src.getGeneration());
+      }
+
+      if (copyRequest.getMegabytesCopiedPerChunk() != null) {
+        b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
+      }
+
+      RewriteObjectRequest req = mapper.apply(b).build();
+      GrpcCallContext grpcCallContext =
+          srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+      UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
+          storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
+      GrpcCallContext retryContext = Retrying.newCallContext();
+      return Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> callable.call(req, retryContext),
+          (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
-
-    if (copyRequest.getMegabytesCopiedPerChunk() != null) {
-      b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
-    }
-
-    RewriteObjectRequest req = mapper.apply(b).build();
-    GrpcCallContext grpcCallContext =
-        srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
-        storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
-    GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> callable.call(req, retryContext),
-        (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
   }
 
   @Override
@@ -803,27 +815,39 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", this.getClass().getName());
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (UnbufferedReadableByteChannel r = session.open();
+    try (Scope unused = otelSpan.makeCurrent();
+        UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
   }
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", this.getClass().getName());
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (UnbufferedReadableByteChannel r = session.open();
+    try (Scope unused = otelSpan.makeCurrent();
+        UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
     }
   }
 
