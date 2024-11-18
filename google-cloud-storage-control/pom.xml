@@ -40,10 +40,6 @@
             <artifactId>proto-google-common-protos</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.threeten</groupId>
-            <artifactId>threetenbp</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.api</groupId>
             <artifactId>api-common</artifactId>
         </dependency>
