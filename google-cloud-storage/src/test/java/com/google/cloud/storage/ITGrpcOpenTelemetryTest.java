@@ -19,6 +19,9 @@ package com.google.cloud.storage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.cloud.NoCredentials;
+import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -31,9 +34,11 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +56,7 @@ public class ITGrpcOpenTelemetryTest {
   private BlobId blobId;
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
+  private static final Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"));
 
   @Before
   public void setUp() {
@@ -109,7 +115,7 @@ public class ITGrpcOpenTelemetryTest {
   }
 
   @Test
-  public void createFrom() throws IOException {
+  public void runCreateFrom() throws IOException {
     Path helloWorldTxtGz = File.createTempFile(blobId.getName(), ".txt.gz").toPath();
     storage.createFrom(BlobInfo.newBuilder(blobId).build(), helloWorldTxtGz);
     TestExporter testExported = (TestExporter) exporter;
@@ -117,6 +123,51 @@ public class ITGrpcOpenTelemetryTest {
     checkCommonAttributes(spanData);
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("createFrom")));
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("internalCreateFrom")));
+  }
+
+  @Test
+  public void runDownloadToPath() throws IOException {
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+    storage.create(blobInfo, helloWorldTextBytes);
+    try (TmpFile file = TmpFile.of(tmpDir, "download-to", ".txt")) {
+      storage.downloadTo(blobId, file.getPath());
+      TestExporter testExported = (TestExporter) exporter;
+      List<SpanData> spanData = testExported.getExportedSpans();
+      checkCommonAttributes(spanData);
+      Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("downloadTo")));
+    }
+  }
+
+  @Test
+  public void runDownloadToOutputStream() {
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+    storage.create(blobInfo, helloWorldTextBytes);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    storage.downloadTo(blobId, baos);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("downloadTo")));
+  }
+
+  @Test
+  public void runCopy() {
+    BlobInfo info =
+        BlobInfo.newBuilder(testBucket, generator.randomObjectName() + "copy/src").build();
+    Blob cpySrc = storage.create(info, helloWorldTextBytes, BlobTargetOption.doesNotExist());
+    BlobInfo dst =
+        BlobInfo.newBuilder(testBucket, generator.randomObjectName() + "copy/dst").build();
+    CopyRequest copyRequest =
+        CopyRequest.newBuilder()
+            .setSource(cpySrc.getBlobId())
+            .setSourceOptions(BlobSourceOption.generationMatch(cpySrc.getGeneration()))
+            .setTarget(dst, BlobTargetOption.doesNotExist())
+            .build();
+    storage.copy(copyRequest);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("copy")));
   }
 
   private void checkCommonAttributes(List<SpanData> spanData) {
