@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.45.0](https://github.com/googleapis/java-storage/compare/v2.44.1...v2.45.0) (2024-11-18)
+
+
+### Features
+
+* Adds support for restore token ([aef367d](https://github.com/googleapis/java-storage/commit/aef367dac146147bfbbb46b64aa91a7aebe05b6c))
+* Adds support for restore token ([#2768](https://github.com/googleapis/java-storage/issues/2768)) ([0394354](https://github.com/googleapis/java-storage/commit/0394354c81b35b66d46d84b9afb090d891ee6a12))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.49.0 ([aef367d](https://github.com/googleapis/java-storage/commit/aef367dac146147bfbbb46b64aa91a7aebe05b6c))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.50.0 ([281cccb](https://github.com/googleapis/java-storage/commit/281cccbafd2ef17c56ab4095e1f14aab2d11427e))
+* Set default values for monitored resource ([#2809](https://github.com/googleapis/java-storage/issues/2809)) ([27829a4](https://github.com/googleapis/java-storage/commit/27829a48813a2cd89d4ddf78cf8f925b64388cd8))
+
+
+### Dependencies
+
+* Update sdk-platform-java dependencies ([#2817](https://github.com/googleapis/java-storage/issues/2817)) ([9e961c4](https://github.com/googleapis/java-storage/commit/9e961c4a5058234f04bf71eb45185f5641c0b9a4))
+
 ## [2.44.1](https://github.com/googleapis/java-storage/compare/v2.44.0...v2.44.1) (2024-10-25)
 
 
