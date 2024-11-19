@@ -288,10 +288,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
         object = query.getObject();
       }
       return codecs.blobInfo().decode(object).asBlob(this);
-    } catch (IOException e) {
+    } catch (Exception e) {
       otelSpan.recordException(e);
       otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
+      throw StorageException.coalesce(e);
     } finally {
       otelSpan.end();
     }
