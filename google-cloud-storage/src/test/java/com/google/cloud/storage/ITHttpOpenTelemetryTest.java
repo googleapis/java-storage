@@ -34,8 +34,10 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
@@ -150,6 +152,26 @@ public class ITHttpOpenTelemetryTest {
     List<SpanData> spanData = testExported.getExportedSpans();
     checkCommonAttributes(spanData);
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("load")));
+  }
+
+  @Test
+  public void runCreateFromPath() throws IOException {
+    Path helloWorldTxtGz = File.createTempFile(blobId.getName(), ".txt.gz").toPath();
+    storage.createFrom(BlobInfo.newBuilder(blobId).build(), helloWorldTxtGz);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("createFrom")));
+  }
+
+  @Test
+  public void runCreateFromInputStream() throws IOException {
+    InputStream inputStream = new ByteArrayInputStream(helloWorldTextBytes);
+    storage.createFrom(BlobInfo.newBuilder(blobId).build(), inputStream);
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("createFrom")));
   }
 
   private void checkCommonAttributes(List<SpanData> spanData) {
