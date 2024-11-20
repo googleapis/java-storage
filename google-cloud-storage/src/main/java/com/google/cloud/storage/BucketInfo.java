@@ -2381,7 +2381,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setGeneration(long generation) {
-      if(!Objects.equals(this.generation, generation)){
+      if (!Objects.equals(this.generation, generation)) {
         modifiedFields.add(BucketField.GENERATION);
       }
       this.generation = generation;
@@ -2390,7 +2390,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
-      if(!Objects.equals(this.softDeleteTime, softDeleteTime)){
+      if (!Objects.equals(this.softDeleteTime, softDeleteTime)) {
         modifiedFields.add(BucketField.SOFT_DELETE_TIME);
       }
       this.softDeleteTime = softDeleteTime;
@@ -2399,7 +2399,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
-      if(!Objects.equals(this.hardDeleteTime, hardDeleteTime)){
+      if (!Objects.equals(this.hardDeleteTime, hardDeleteTime)) {
         modifiedFields.add(BucketField.HARD_DELETE_TIME);
       }
       this.hardDeleteTime = hardDeleteTime;

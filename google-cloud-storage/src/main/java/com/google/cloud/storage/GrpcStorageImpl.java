@@ -417,7 +417,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public void restore(String bucket, long generation, BucketRestoreOption... options) {
-    //todo: implement when grpc is available
+    // todo: implement when grpc is available
   }
 
   private Blob internalObjectRestore(BlobId blobId, Opts<ObjectSourceOpt> opts) {

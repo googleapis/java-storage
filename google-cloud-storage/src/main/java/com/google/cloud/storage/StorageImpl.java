@@ -447,19 +447,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public void restore(String bucket, long generation, BucketRestoreOption... options) {
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-            Opts.unwrap(options).getRpcOptions();
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
 
     final com.google.api.services.storage.model.Bucket bucketPb =
-            codecs.bucketInfo().encode(BucketInfo.of(bucket)).setGeneration(generation);
+        codecs.bucketInfo().encode(BucketInfo.of(bucket)).setGeneration(generation);
 
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForBucketRestore(bucket, optionsMap);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForBucketRestore(bucket, optionsMap);
 
-    run(
-            algorithm,
-            callable(
-            () -> storageRpc.restore(bucketPb, optionsMap)),
-            Function.identity());
+    run(algorithm, callable(() -> storageRpc.restore(bucketPb, optionsMap)), Function.identity());
   }
 
   private static Page<Bucket> listBuckets(

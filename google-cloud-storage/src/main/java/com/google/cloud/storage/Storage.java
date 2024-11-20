@@ -191,25 +191,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
         com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    GENERATION(
-            "generation",
-            "generation",
-            Long.class
-    ),
+    GENERATION("generation", "generation", Long.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    SOFT_DELETE_TIME(
-            "softDeleteTime",
-            "soft_delete_time",
-            DateTime.class
-    ),
+    SOFT_DELETE_TIME("softDeleteTime", "soft_delete_time", DateTime.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    HARD_DELETE_TIME(
-            "hardDeleteTime",
-            "hard_delete_time",
-            DateTime.class
-    );
+    HARD_DELETE_TIME("hardDeleteTime", "hard_delete_time", DateTime.class);
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
     private static final Map<String, BucketField> JSON_FIELD_NAME_INDEX;
@@ -933,19 +921,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option for this bucket's generation. Should only be specified when
-     * getting a soft-deleted bucket
+     * Returns an option for this bucket's generation. Should only be specified when getting a
+     * soft-deleted bucket
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption generation(long generation) {
       return new BucketGetOption(UnifiedOpts.generation(generation));
     }
 
-    /**
-     * Returns an option that must be true if getting a soft-deleted bucket.
-     */
+    /** Returns an option that must be true if getting a soft-deleted bucket. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketGetOption softDeleted(boolean softDeleted){
+    public static BucketGetOption softDeleted(boolean softDeleted) {
       return new BucketGetOption(UnifiedOpts.softDeleted(softDeleted));
     }
 
@@ -1808,10 +1794,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BucketRestoreOption fields(BucketField... fields) {
       requireNonNull(fields, "fields must be non null");
       ImmutableSet<NamedField> set =
-              ImmutableSet.<NamedField>builder()
-                      .addAll(BucketField.REQUIRED_FIELDS)
-                      .add(fields)
-                      .build();
+          ImmutableSet.<NamedField>builder()
+              .addAll(BucketField.REQUIRED_FIELDS)
+              .add(fields)
+              .build();
       return new BucketRestoreOption(UnifiedOpts.fields(set));
     }
 
@@ -1864,9 +1850,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BucketListOption(UnifiedOpts.userProject(userProject));
     }
 
-    /**
-     * Returns an option for whether to return soft-deleted buckets.
-     */
+    /** Returns an option for whether to return soft-deleted buckets. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption softDeleted(boolean softDeleted) {
       return new BucketListOption(UnifiedOpts.softDeleted(softDeleted));

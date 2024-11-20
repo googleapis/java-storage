@@ -253,9 +253,7 @@ public interface StorageRpc extends ServiceRpc {
    */
   StorageObject restore(StorageObject object, Map<Option, ?> options);
 
-  /**
-   * If a bucket has been soft-deleted, restores it.
-   */
+  /** If a bucket has been soft-deleted, restores it. */
   void restore(Bucket bucket, Map<Option, ?> options);
 
   /**

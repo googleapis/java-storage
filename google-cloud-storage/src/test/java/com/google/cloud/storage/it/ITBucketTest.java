@@ -58,6 +58,7 @@ import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Streams;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -67,8 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-
-import com.google.common.collect.Streams;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -702,13 +701,19 @@ public class ITBucketTest {
       storage.delete(bucketName);
 
       assertNull(storage.get(bucketName));
-      Bucket softDeleted = storage.get(bucketName, BucketGetOption.generation(generation), BucketGetOption.softDeleted(true));
+      Bucket softDeleted =
+          storage.get(
+              bucketName,
+              BucketGetOption.generation(generation),
+              BucketGetOption.softDeleted(true));
       assertNotNull(softDeleted);
       assertNotNull(softDeleted.getSoftDeleteTime());
       assertNotNull(softDeleted.getHardDeleteTime());
 
       storage.list().iterateAll().forEach(b -> assertNotEquals(bucketName, b.getName()));
-      assertTrue(Streams.stream(storage.list(BucketListOption.softDeleted(true)).iterateAll()).anyMatch(b -> b.getName().equals(bucketName)));
+      assertTrue(
+          Streams.stream(storage.list(BucketListOption.softDeleted(true)).iterateAll())
+              .anyMatch(b -> b.getName().equals(bucketName)));
 
       storage.restore(bucketName, generation);
 

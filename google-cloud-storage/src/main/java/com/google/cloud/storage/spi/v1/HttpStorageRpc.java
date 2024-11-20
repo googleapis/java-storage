@@ -511,14 +511,15 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      Storage.Buckets.Get get = storage
-          .buckets()
-          .get(bucket.getName())
-          .setProjection(DEFAULT_PROJECTION)
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-          .setFields(Option.FIELDS.getString(options))
-          .setUserProject(Option.USER_PROJECT.getString(options));
+      Storage.Buckets.Get get =
+          storage
+              .buckets()
+              .get(bucket.getName())
+              .setProjection(DEFAULT_PROJECTION)
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+              .setFields(Option.FIELDS.getString(options))
+              .setUserProject(Option.USER_PROJECT.getString(options));
       if (Boolean.TRUE.equals(Option.SOFT_DELETED.getBoolean(options))) {
         get.setSoftDeleted(true);
         get.setGeneration(Option.GENERATION.getLong(options));
@@ -607,11 +608,11 @@ public class HttpStorageRpc implements StorageRpc {
     Scope scope = tracer.withSpan(span);
     try {
       Storage.Buckets.Restore restore =
-              storage.buckets().restore(bucket.getName(), bucket.getGeneration());
+          storage.buckets().restore(bucket.getName(), bucket.getGeneration());
       restore
-              .setUserProject(Option.USER_PROJECT.getString(options))
-              .setFields(Option.FIELDS.getString(options))
-              .execute();
+          .setUserProject(Option.USER_PROJECT.getString(options))
+          .setFields(Option.FIELDS.getString(options))
+          .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);

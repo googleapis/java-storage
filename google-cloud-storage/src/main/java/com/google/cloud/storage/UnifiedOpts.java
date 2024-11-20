@@ -1627,7 +1627,8 @@ final class UnifiedOpts {
     }
   }
 
-  static final class Projection extends RpcOptVal<String> implements BucketTargetOpt, BucketSourceOpt {
+  static final class Projection extends RpcOptVal<String>
+      implements BucketTargetOpt, BucketSourceOpt {
     private static final long serialVersionUID = -7394684784418942133L;
 
     private Projection(String val) {

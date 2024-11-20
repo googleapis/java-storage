@@ -411,8 +411,8 @@ final class JsonConversions {
     ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
     ifNonNull(from.getGeneration(), to::setGeneration);
-    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::encode,  to::setSoftDeleteTime);
-    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::encode,  to::setHardDeleteTime);
+    ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::encode, to::setSoftDeleteTime);
+    ifNonNull(from.getHardDeleteTime(), dateTimeCodec::encode, to::setHardDeleteTime);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
     to.setName(from.getName());
