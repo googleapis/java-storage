@@ -32,11 +32,11 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.StreamSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.threeten.bp.Duration;
-import org.threeten.bp.Instant;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(

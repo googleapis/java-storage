@@ -16,12 +16,15 @@
 
 package com.google.cloud.storage;
 
+import static com.google.api.gax.util.TimeConversionUtils.toJavaTimeDuration;
+import static com.google.api.gax.util.TimeConversionUtils.toThreetenDuration;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.core.ObsoleteApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
@@ -97,7 +100,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.threeten.bp.Duration;
 
 /** @since 2.14.0 */
 @TransportCompatibility(Transport.GRPC)
@@ -110,7 +112,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
-  private final Duration terminationAwaitDuration;
+  private final java.time.Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
   private final boolean enableGrpcClientMetrics;
 
@@ -126,7 +128,8 @@ public final class GrpcStorageOptions extends StorageOptions
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
     this.terminationAwaitDuration =
         MoreObjects.firstNonNull(
-            builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
+            builder.terminationAwaitDuration,
+            serviceDefaults.getTerminationAwaitDurationDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
@@ -145,7 +148,7 @@ public final class GrpcStorageOptions extends StorageOptions
   }
 
   @InternalApi
-  Duration getTerminationAwaitDuration() {
+  java.time.Duration getTerminationAwaitDuration() {
     return terminationAwaitDuration;
   }
 
@@ -314,9 +317,9 @@ public final class GrpcStorageOptions extends StorageOptions
             // seconds.
             // To allow read streams to have longer lifespans, crank up their timeouts, instead rely
             // on idleTimeout below.
-            .setLogicalTimeout(Duration.ofDays(28))
+            .setLogicalTimeout(java.time.Duration.ofDays(28))
             .build();
-    Duration totalTimeout = baseRetrySettings.getTotalTimeout();
+    java.time.Duration totalTimeout = baseRetrySettings.getTotalTimeoutDuration();
     Set<Code> startResumableWriteRetryableCodes =
         builder.startResumableWriteSettings().getRetryableCodes();
 
@@ -324,7 +327,7 @@ public final class GrpcStorageOptions extends StorageOptions
     // StartResumableWrite
     builder.applyToAllUnaryMethods(
         input -> {
-          input.setSimpleTimeoutNoRetries(totalTimeout);
+          input.setSimpleTimeoutNoRetriesDuration(totalTimeout);
           return null;
         });
 
@@ -342,7 +345,7 @@ public final class GrpcStorageOptions extends StorageOptions
         // for reads, the stream can be held open for a long time in order to read all bytes,
         // this is totally valid. instead we want to monitor if the stream is doing work and if not
         // timeout.
-        .setIdleTimeout(totalTimeout);
+        .setIdleTimeoutDuration(totalTimeout);
     return Tuple.of(builder.build(), defaultOpts);
   }
 
@@ -412,7 +415,7 @@ public final class GrpcStorageOptions extends StorageOptions
   public static final class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private Duration terminationAwaitDuration;
+    private java.time.Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
     private boolean enableGrpcClientMetrics =
         GrpcStorageDefaults.INSTANCE.isEnableGrpcClientMetrics();
@@ -437,6 +440,15 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     /**
+     * This method is obsolete. Use {@link #setTerminationAwaitDurationDuration(java.time.Duration)}
+     * instead.
+     */
+    @ObsoleteApi("Use setTerminationAwaitDurationDuration(java.time.Duration) instead")
+    public Builder setTerminationAwaitDuration(org.threeten.bp.Duration terminationAwaitDuration) {
+      return setTerminationAwaitDurationDuration(toJavaTimeDuration(terminationAwaitDuration));
+    }
+
+    /**
      * Set the maximum duration in which to await termination of any outstanding requests when
      * calling {@link Storage#close()}
      *
@@ -444,7 +456,8 @@ public final class GrpcStorageOptions extends StorageOptions
      * @return the builder
      * @since 2.14.0
      */
-    public Builder setTerminationAwaitDuration(Duration terminationAwaitDuration) {
+    public Builder setTerminationAwaitDurationDuration(
+        java.time.Duration terminationAwaitDuration) {
       this.terminationAwaitDuration =
           requireNonNull(terminationAwaitDuration, "terminationAwaitDuration must be non null");
       return this;
@@ -652,9 +665,15 @@ public final class GrpcStorageOptions extends StorageOptions
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
+    /** This method is obsolete. Use {@link #getTerminationAwaitDurationDuration()} instead. */
+    @ObsoleteApi("Use getTerminationAwaitDurationDuration() instead")
+    public org.threeten.bp.Duration getTerminationAwaitDuration() {
+      return toThreetenDuration(getTerminationAwaitDurationDuration());
+    }
+
     /** @since 2.14.0 */
-    public Duration getTerminationAwaitDuration() {
-      return Duration.ofMinutes(1);
+    public java.time.Duration getTerminationAwaitDurationDuration() {
+      return java.time.Duration.ofMinutes(1);
     }
 
     /** @since 2.14.0 */
