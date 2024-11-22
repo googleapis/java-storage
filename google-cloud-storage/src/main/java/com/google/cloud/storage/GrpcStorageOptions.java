@@ -129,7 +129,7 @@ public final class GrpcStorageOptions extends StorageOptions
     this.terminationAwaitDuration =
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration,
-            serviceDefaults.getTerminationAwaitDurationDuration());
+            serviceDefaults.getTerminationAwaitJavaTimeDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
@@ -440,12 +440,12 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     /**
-     * This method is obsolete. Use {@link #setTerminationAwaitDurationDuration(java.time.Duration)}
+     * This method is obsolete. Use {@link #setTerminationAwaitJavaTimeDuration(java.time.Duration)}
      * instead.
      */
-    @ObsoleteApi("Use setTerminationAwaitDurationDuration(java.time.Duration) instead")
+    @ObsoleteApi("Use setTerminationAwaitJavaTimeDuration(java.time.Duration) instead")
     public Builder setTerminationAwaitDuration(org.threeten.bp.Duration terminationAwaitDuration) {
-      return setTerminationAwaitDurationDuration(toJavaTimeDuration(terminationAwaitDuration));
+      return setTerminationAwaitJavaTimeDuration(toJavaTimeDuration(terminationAwaitDuration));
     }
 
     /**
@@ -456,7 +456,7 @@ public final class GrpcStorageOptions extends StorageOptions
      * @return the builder
      * @since 2.14.0
      */
-    public Builder setTerminationAwaitDurationDuration(
+    public Builder setTerminationAwaitJavaTimeDuration(
         java.time.Duration terminationAwaitDuration) {
       this.terminationAwaitDuration =
           requireNonNull(terminationAwaitDuration, "terminationAwaitDuration must be non null");
@@ -665,14 +665,14 @@ public final class GrpcStorageOptions extends StorageOptions
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    /** This method is obsolete. Use {@link #getTerminationAwaitDurationDuration()} instead. */
+    /** This method is obsolete. Use {@link #getTerminationAwaitJavaTimeDuration()} instead. */
     @ObsoleteApi("Use getTerminationAwaitDurationDuration() instead")
     public org.threeten.bp.Duration getTerminationAwaitDuration() {
-      return toThreetenDuration(getTerminationAwaitDurationDuration());
+      return toThreetenDuration(getTerminationAwaitJavaTimeDuration());
     }
 
     /** @since 2.14.0 */
-    public java.time.Duration getTerminationAwaitDurationDuration() {
+    public java.time.Duration getTerminationAwaitJavaTimeDuration() {
       return java.time.Duration.ofMinutes(1);
     }
 
