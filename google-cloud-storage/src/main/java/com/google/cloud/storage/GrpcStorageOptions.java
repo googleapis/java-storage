@@ -129,7 +129,7 @@ public final class GrpcStorageOptions extends StorageOptions
     this.terminationAwaitDuration =
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration,
-            serviceDefaults.getTerminationAwaitJavaTimeDuration());
+            serviceDefaults.getTerminationAwaitDurationJavaTime());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
@@ -665,14 +665,14 @@ public final class GrpcStorageOptions extends StorageOptions
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    /** This method is obsolete. Use {@link #getTerminationAwaitJavaTimeDuration()} instead. */
-    @ObsoleteApi("Use getTerminationAwaitDurationDuration() instead")
+    /** This method is obsolete. Use {@link #getTerminationAwaitDurationJavaTime()} instead. */
+    @ObsoleteApi("Use getTerminationAwaitDurationJavaTime() instead")
     public org.threeten.bp.Duration getTerminationAwaitDuration() {
-      return toThreetenDuration(getTerminationAwaitJavaTimeDuration());
+      return toThreetenDuration(getTerminationAwaitDurationJavaTime());
     }
 
     /** @since 2.14.0 */
-    public java.time.Duration getTerminationAwaitJavaTimeDuration() {
+    public java.time.Duration getTerminationAwaitDurationJavaTime() {
       return java.time.Duration.ofMinutes(1);
     }
 
