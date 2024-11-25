@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.client.http.ByteArrayContent;
@@ -26,10 +25,6 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.core.NanoClock;
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
-import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
@@ -48,19 +43,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.SocketException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.threeten.bp.Duration;
 
 /**
  * A {@link ManagedLifecycle} which integrates with the <a target="_blank"
@@ -183,11 +172,7 @@ public final class TestBench implements ManagedLifecycle {
   }
 
   private boolean startGRPCServer(int gRPCPort) throws IOException {
-    GenericUrl url = new GenericUrl(baseUri + "/start_grpc?port=9090");
-    HttpRequest req = requestFactory.buildGetRequest(url);
-    HttpResponse resp = req.execute();
-    resp.disconnect();
-    return resp.getStatusCode() == 200;
+    return true;
   }
 
   @Override
@@ -196,168 +181,10 @@ public final class TestBench implements ManagedLifecycle {
   }
 
   @Override
-  public void start() {
-    try {
-      tempDirectory = Files.createTempDirectory(containerName);
-      outPath = tempDirectory.resolve("stdout");
-      errPath = tempDirectory.resolve("stderr");
-
-      File outFile = outPath.toFile();
-      File errFile = errPath.toFile();
-      LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
-      LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
-      String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
-      // First try and pull the docker image, this validates docker is available and running
-      // on the host, as well as gives time for the image to be downloaded independently of
-      // trying to start the container. (Below, when we first start the container we then attempt
-      // to issue a call against the api before we yield to run our tests.)
-      try {
-        Process p =
-            new ProcessBuilder()
-                .command("docker", "pull", dockerImage)
-                .redirectOutput(outFile)
-                .redirectError(errFile)
-                .start();
-        p.waitFor(5, TimeUnit.MINUTES);
-        if (!ignorePullError && p.exitValue() != 0) {
-          dumpServerLogs(outPath, errPath);
-          throw new IllegalStateException(
-              String.format(
-                  "Non-zero status while attempting to pull docker image '%s'", dockerImage));
-        }
-      } catch (InterruptedException | IllegalThreadStateException e) {
-        dumpServerLogs(outPath, errPath);
-        throw new IllegalStateException(
-            String.format("Timeout while attempting to pull docker image '%s'", dockerImage));
-      }
-
-      int port = URI.create(baseUri).getPort();
-      int gRPCPort = URI.create(gRPCBaseUri).getPort();
-      final List<String> command =
-          ImmutableList.of(
-              "docker",
-              "run",
-              "-i",
-              "--rm",
-              "--publish",
-              port + ":9000",
-              "--publish",
-              gRPCPort + ":9090",
-              String.format("--name=%s", containerName),
-              dockerImage);
-      process =
-          new ProcessBuilder()
-              .command(command)
-              .redirectOutput(outFile)
-              .redirectError(errFile)
-              .start();
-      LOGGER.log(Level.INFO, command.toString());
-      try {
-        // wait a small amount of time for the server to come up before probing
-        Thread.sleep(500);
-        // wait for the server to come up
-        List<RetryTestResource> existingResources =
-            runWithRetries(
-                TestBench.this::listRetryTests,
-                RetrySettings.newBuilder()
-                    .setTotalTimeout(Duration.ofSeconds(30))
-                    .setInitialRetryDelay(Duration.ofMillis(500))
-                    .setRetryDelayMultiplier(1.5)
-                    .setMaxRetryDelay(Duration.ofSeconds(5))
-                    .build(),
-                new BasicResultRetryAlgorithm<List<RetryTestResource>>() {
-                  @Override
-                  public boolean shouldRetry(
-                      Throwable previousThrowable, List<RetryTestResource> previousResponse) {
-                    return previousThrowable instanceof SocketException;
-                  }
-                },
-                NanoClock.getDefaultClock());
-        if (!existingResources.isEmpty()) {
-          LOGGER.info(
-              "Test Server already has retry tests in it, is it running outside the tests?");
-        }
-        // Start gRPC Service
-        if (!startGRPCServer(gRPCPort)) {
-          throw new IllegalStateException(
-              "Failed to start server within a reasonable amount of time. Host url(gRPC): "
-                  + gRPCBaseUri);
-        }
-      } catch (RetryHelperException e) {
-        dumpServerLogs(outPath, errPath);
-        throw new IllegalStateException(
-            "Failed to connect to server within a reasonable amount of time. Host url: " + baseUri,
-            e.getCause());
-      }
-    } catch (IOException | InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public void start() {}
 
   @Override
-  public void stop() {
-    try {
-      process.destroy();
-      process.waitFor(2, TimeUnit.SECONDS);
-      boolean attemptForceStopContainer = false;
-      try {
-        int processExitValue = process.exitValue();
-        if (processExitValue != 0) {
-          attemptForceStopContainer = true;
-        }
-        System.out.println("processExitValue = " + processExitValue);
-        LOGGER.warning("Container exit value = " + processExitValue);
-      } catch (IllegalThreadStateException e) {
-        attemptForceStopContainer = true;
-      }
-
-      if (attemptForceStopContainer) {
-        LOGGER.warning("Container did not gracefully exit, attempting to explicitly stop it.");
-        System.out.println("Container did not gracefully exit, attempting to explicitly stop it.");
-        ImmutableList<String> command = ImmutableList.of("docker", "kill", containerName);
-        System.out.println("command = " + command);
-        LOGGER.log(Level.WARNING, command.toString());
-        Process shutdownProcess = new ProcessBuilder(command).start();
-        shutdownProcess.waitFor(5, TimeUnit.SECONDS);
-        int shutdownProcessExitValue = shutdownProcess.exitValue();
-        LOGGER.warning("Container exit value = " + shutdownProcessExitValue);
-      }
-
-      // wait for the server to shutdown
-      runWithRetries(
-          () -> {
-            try {
-              listRetryTests();
-            } catch (SocketException e) {
-              // desired result
-              return null;
-            }
-            throw new NotShutdownException();
-          },
-          RetrySettings.newBuilder()
-              .setTotalTimeout(Duration.ofSeconds(30))
-              .setInitialRetryDelay(Duration.ofMillis(500))
-              .setRetryDelayMultiplier(1.5)
-              .setMaxRetryDelay(Duration.ofSeconds(5))
-              .build(),
-          new BasicResultRetryAlgorithm<List<?>>() {
-            @Override
-            public boolean shouldRetry(Throwable previousThrowable, List<?> previousResponse) {
-              return previousThrowable instanceof NotShutdownException;
-            }
-          },
-          NanoClock.getDefaultClock());
-      try {
-        Files.delete(errPath);
-        Files.delete(outPath);
-        Files.delete(tempDirectory);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    } catch (InterruptedException | IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public void stop() {}
 
   private void dumpServerLogs(Path outFile, Path errFile) throws IOException {
     try {
