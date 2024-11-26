@@ -490,7 +490,8 @@ public class ITObjectSnippets {
         .setSoftDeletePolicy(
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(7))
-                .build());
+                .build())
+        .build();
 
     String blob = "softdelobj1";
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
