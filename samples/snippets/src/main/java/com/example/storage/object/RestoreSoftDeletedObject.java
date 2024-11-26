@@ -23,7 +23,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class RestoreSoftDeletedObject {
-  public static void RestoreSoftDeletedObject(
+  public static void restoreSoftDeletedObject(
       String projectId, String bucketName, String objectName, long generation) {
     // The ID of your GCP project
     // String projectId = "your-project-id";

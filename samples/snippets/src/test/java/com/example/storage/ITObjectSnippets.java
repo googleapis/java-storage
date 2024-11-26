@@ -523,7 +523,7 @@ public class ITObjectSnippets {
 
     assertNull(storage.get(BlobId.of(BUCKET, blob)));
 
-    RestoreSoftDeletedObject.RestoreSoftDeletedObject(PROJECT_ID, BUCKET, blob, gen);
+    RestoreSoftDeletedObject.restoreSoftDeletedObject(PROJECT_ID, BUCKET, blob, gen);
 
     assertNotNull(storage.get(BlobId.of(BUCKET, blob)));
   }
