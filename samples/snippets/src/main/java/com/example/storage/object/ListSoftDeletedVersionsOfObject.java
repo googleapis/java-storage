@@ -24,27 +24,28 @@ import com.google.cloud.storage.StorageOptions;
 
 public class ListSoftDeletedVersionsOfObject {
 
-    public static void listSoftDeletedVersionOfObject(String projectId, String bucketName, String objectName) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void listSoftDeletedVersionOfObject(
+      String projectId, String bucketName, String objectName) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The name of your GCS object
-        // String objectName = "your-object-name";
+    // The name of your GCS object
+    // String objectName = "your-object-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        Page<Blob> blobs =
-                storage.list(
-                        bucketName,
-                        Storage.BlobListOption.softDeleted(true),
-                        // See https://cloud.google.com/storage/docs/json_api/v1/objects/list#matchGlob
-                        Storage.BlobListOption.matchGlob(objectName));
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Page<Blob> blobs =
+        storage.list(
+            bucketName,
+            Storage.BlobListOption.softDeleted(true),
+            // See https://cloud.google.com/storage/docs/json_api/v1/objects/list#matchGlob
+            Storage.BlobListOption.matchGlob(objectName));
 
-        for (Blob blob : blobs.iterateAll()) {
-            System.out.println(blob.getName());
-        }
+    for (Blob blob : blobs.iterateAll()) {
+      System.out.println(blob.getName());
     }
+  }
 }
 // [END storage_list_soft_deleted_object_versions]

@@ -23,20 +23,21 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class RestoreSoftDeletedObject {
-    public static void RestoreSoftDeletedObject(String projectId, String bucketName, String objectName, long generation) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void RestoreSoftDeletedObject(
+      String projectId, String bucketName, String objectName, long generation) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The name of your GCS object
-        // String objectName = "your-object-name";
+    // The name of your GCS object
+    // String objectName = "your-object-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        Blob blob = storage.restore(BlobId.of(bucketName, objectName, generation));
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Blob blob = storage.restore(BlobId.of(bucketName, objectName, generation));
 
-        System.out.println("Restored previously soft-deleted object " + blob.getName());
-    }
+    System.out.println("Restored previously soft-deleted object " + blob.getName());
+  }
 }
 // [END storage_restore_object]

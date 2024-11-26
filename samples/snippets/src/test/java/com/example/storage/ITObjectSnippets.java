@@ -454,9 +454,7 @@ public class ITObjectSnippets {
       assertNotNull(storage.get(tempBucket, retentionBlob).getRetention());
     } finally {
 
-      storage
-          .get(tempBucket, retentionBlob)
-          .toBuilder()
+      storage.get(tempBucket, retentionBlob).toBuilder()
           .setRetention(null)
           .build()
           .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
@@ -467,9 +465,12 @@ public class ITObjectSnippets {
 
   @Test
   public void testListSoftDeletedObjects() {
-    //This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
-            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+    // This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder()
+        .setSoftDeletePolicy(
+            BucketInfo.SoftDeletePolicy.newBuilder()
+                .setRetentionDuration(Duration.ofDays(7))
+                .build());
 
     String blob = "softdelobj";
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
@@ -484,9 +485,12 @@ public class ITObjectSnippets {
 
   @Test
   public void testListSoftDeletedVersionsOfObject() {
-    //This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
-            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+    // This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder()
+        .setSoftDeletePolicy(
+            BucketInfo.SoftDeletePolicy.newBuilder()
+                .setRetentionDuration(Duration.ofDays(7))
+                .build());
 
     String blob = "softdelobj1";
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
@@ -506,9 +510,12 @@ public class ITObjectSnippets {
 
   @Test
   public void testRestoreSoftDeletedObject() {
-    //This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder().setSoftDeletePolicy(BucketInfo.SoftDeletePolicy
-            .newBuilder().setRetentionDuration(Duration.ofDays(7)).build());
+    // This is already the default, but we set it here in case the default ever changes
+    storage.get(BUCKET).toBuilder()
+        .setSoftDeletePolicy(
+            BucketInfo.SoftDeletePolicy.newBuilder()
+                .setRetentionDuration(Duration.ofDays(7))
+                .build());
 
     String blob = "restorableobj";
     long gen = storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build()).getGeneration();

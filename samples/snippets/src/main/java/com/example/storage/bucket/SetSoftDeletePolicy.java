@@ -17,27 +17,32 @@
 package com.example.storage.bucket;
 
 // [START storage_set_soft_delete_policy]
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 import java.time.Duration;
 
 public class SetSoftDeletePolicy {
-    public static void setSoftDeletePolicy(String projectId, String bucketName) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void setSoftDeletePolicy(String projectId, String bucketName) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        storage.get(bucketName).toBuilder().setSoftDeletePolicy(
-                BucketInfo.SoftDeletePolicy.newBuilder().setRetentionDuration(Duration.ofDays(10)).build()
-        ).build().update();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Bucket bucket = storage.get(bucketName);
+    bucket.toBuilder()
+        .setSoftDeletePolicy(
+            BucketInfo.SoftDeletePolicy.newBuilder()
+                .setRetentionDuration(Duration.ofDays(10))
+                .build())
+        .build()
+        .update();
 
-        System.out.println("Soft delete policy for " + bucketName + " was set to a 10-day retention period");
-    }
+    System.out.println(
+        "Soft delete policy for " + bucketName + " was set to a 10-day retention period");
+  }
 }
 // [END storage_set_soft_delete_policy]
-

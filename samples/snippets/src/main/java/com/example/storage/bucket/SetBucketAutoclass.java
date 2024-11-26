@@ -49,8 +49,7 @@ public class SetBucketAutoclass {
       Bucket bucket = storage.get(bucketName);
 
       Bucket toUpdate =
-          bucket
-              .toBuilder()
+          bucket.toBuilder()
               .setAutoclass(
                   Autoclass.newBuilder()
                       .setEnabled(enabled)
