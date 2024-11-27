@@ -801,17 +801,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
-    ReadObjectRequest request = getReadObjectRequest(blob, opts);
-    GrpcCallContext grpcCallContext = Retrying.newCallContext();
+    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
+      ReadObjectRequest request = getReadObjectRequest(blob, opts);
+      GrpcCallContext grpcCallContext = Retrying.newCallContext();
 
-    return new GrpcBlobReadChannel(
-        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
-        getOptions(),
-        retryAlgorithmManager.getFor(request),
-        responseContentLifecycleManager,
-        request,
-        !opts.autoGzipDecompression());
+      return new GrpcBlobReadChannel(
+          storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+          getOptions(),
+          retryAlgorithmManager.getFor(request),
+          responseContentLifecycleManager,
+          request,
+          !opts.autoGzipDecompression());
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -854,25 +863,35 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    Hasher hasher = Hasher.noop();
-    // in JSON, the starting of the resumable session happens before the invocation of write can
-    // happen. Emulate the same thing here.
-    //  1. create the future
-    ApiFuture<ResumableWrite> startResumableWrite = startResumableWrite(grpcCallContext, req, opts);
-    //  2. await the result of the future
-    ResumableWrite resumableWrite = ApiFutureUtils.await(startResumableWrite);
-    //  3. wrap the result in another future container before constructing the BlobWriteChannel
-    ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
-    return new GrpcBlobWriteChannel(
-        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
-        getOptions(),
-        retryAlgorithmManager.idempotent(),
-        () -> wrapped,
-        hasher);
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+      GrpcCallContext grpcCallContext =
+          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+      WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+      Hasher hasher = Hasher.noop();
+      // in JSON, the starting of the resumable session happens before the invocation of write can
+      // happen. Emulate the same thing here.
+      //  1. create the future
+      ApiFuture<ResumableWrite> startResumableWrite =
+          startResumableWrite(grpcCallContext, req, opts);
+      //  2. await the result of the future
+      ResumableWrite resumableWrite = ApiFutureUtils.await(startResumableWrite);
+      //  3. wrap the result in another future container before constructing the BlobWriteChannel
+      ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
+      return new GrpcBlobWriteChannel(
+          storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
+          getOptions(),
+          retryAlgorithmManager.idempotent(),
+          () -> wrapped,
+          hasher);
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw StorageException.coalesce(e);
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override

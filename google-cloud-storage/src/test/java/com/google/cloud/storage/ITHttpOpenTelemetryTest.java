@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.cloud.NoCredentials;
+import com.google.cloud.ReadChannel;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
@@ -172,6 +174,31 @@ public class ITHttpOpenTelemetryTest {
     List<SpanData> spanData = testExported.getExportedSpans();
     checkCommonAttributes(spanData);
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("createFrom")));
+  }
+
+  @Test
+  public void runWriter() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(testBucket, generator.randomObjectName()).build();
+    try (WriteChannel writer = storage.writer(info)) {
+      // Do nothing
+    }
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("writer")));
+  }
+
+  @Test
+  public void runReader() throws IOException {
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+    storage.create(blobInfo, helloWorldTextBytes);
+    try (ReadChannel reader = storage.reader(blobId)) {
+      // Do nothing
+    }
+    TestExporter testExported = (TestExporter) exporter;
+    List<SpanData> spanData = testExported.getExportedSpans();
+    checkCommonAttributes(spanData);
+    Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("reader")));
   }
 
   private void checkCommonAttributes(List<SpanData> spanData) {
