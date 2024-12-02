@@ -168,6 +168,12 @@ final class StorageInstance implements ManagedLifecycle {
     }
 
     @Override
+    public void restore(String bucket, long generation, BucketRestoreOption... options) {
+      checkBucketProtected(bucket);
+      super.restore(bucket, generation, options);
+    }
+
+    @Override
     public void close() throws Exception {
       throw new VetoException("Called #close() on global Storage instance");
     }

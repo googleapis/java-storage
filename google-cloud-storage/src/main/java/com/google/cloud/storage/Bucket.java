@@ -745,6 +745,24 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    BucketInfo.Builder setGeneration(long generation) {
+      infoBuilder.setGeneration(generation);
+      return this;
+    }
+
+    @Override
+    BucketInfo.Builder setSoftDeleteTime(OffsetDateTime softDeleteTime) {
+      infoBuilder.setSoftDeleteTime(softDeleteTime);
+      return this;
+    }
+
+    @Override
+    BucketInfo.Builder setHardDeleteTime(OffsetDateTime hardDeleteTime) {
+      infoBuilder.setHardDeleteTime(hardDeleteTime);
+      return this;
+    }
+
+    @Override
     public Builder setHierarchicalNamespace(HierarchicalNamespace hierarchicalNamespace) {
       infoBuilder.setHierarchicalNamespace(hierarchicalNamespace);
       return this;

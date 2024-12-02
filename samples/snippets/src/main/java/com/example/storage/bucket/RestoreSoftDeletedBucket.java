@@ -16,30 +16,26 @@
 
 package com.example.storage.bucket;
 
-// [START storage_set_bucket_public_iam]
-import com.google.cloud.Identity;
-import com.google.cloud.Policy;
+// [START storage_restore_soft_deleted_bucket]
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.StorageRoles;
 
-public class MakeBucketPublic {
-  public static void makeBucketPublic(String projectId, String bucketName) {
+public class RestoreSoftDeletedBucket {
+  public static void restoreSoftDeletedBucket(
+      String projectId, String bucketName, long generation) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Policy originalPolicy = storage.getIamPolicy(bucketName);
-    storage.setIamPolicy(
-        bucketName,
-        originalPolicy.toBuilder()
-            .addIdentity(StorageRoles.objectViewer(), Identity.allUsers()) // All users can view
-            .build());
+    // The generation of the bucket to restore
+    // long generation = 123456789;
 
-    System.out.println("Bucket " + bucketName + " is now publicly readable");
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    storage.restore(bucketName, generation);
+
+    System.out.println("Soft deleted bucket " + bucketName + " was restored.");
   }
 }
-// [END storage_set_bucket_public_iam]
+// [END storage_restore_soft_deleted_bucket]

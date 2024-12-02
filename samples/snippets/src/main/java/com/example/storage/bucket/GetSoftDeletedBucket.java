@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,40 @@
 
 package com.example.storage.bucket;
 
-// [START storage_set_public_access_prevention_inherited]
+// [START storage_get_soft_deleted_bucket]
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class SetPublicAccessPreventionInherited {
-  public static void setPublicAccessPreventionInherited(String projectId, String bucketName) {
+public class GetSoftDeletedBucket {
+  public static void getSoftDeletedBucket(String projectId, String bucketName, long generation) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
+    // The generation of the bucket to restore
+    // long generation = 123456789;
+
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    Bucket bucket =
+        storage.get(
+            bucketName,
+            Storage.BucketGetOption.softDeleted(true),
+            Storage.BucketGetOption.generation(generation));
 
-    // Sets public access prevention to 'inherited' for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                .build())
-        .build()
-        .update();
+    // The following fields are only set for soft-deleted buckets
+    String softDeleteTime = bucket.getSoftDeleteTime().toString();
+    String hardDeleteTime = bucket.getHardDeleteTime().toString();
 
-    System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
+    System.out.println(
+        "The bucket "
+            + bucketName
+            + " was soft-deleted at "
+            + softDeleteTime
+            + " and will be fully deleted at "
+            + hardDeleteTime);
   }
 }
-// [END storage_set_public_access_prevention_inherited]
+// [END storage_get_soft_deleted_bucket]

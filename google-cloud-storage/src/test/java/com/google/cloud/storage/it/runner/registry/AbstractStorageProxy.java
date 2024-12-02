@@ -145,6 +145,11 @@ abstract class AbstractStorageProxy implements Storage {
   }
 
   @Override
+  public void restore(String bucket, long generation, BucketRestoreOption... options) {
+    delegate.restore(bucket, generation, options);
+  }
+
+  @Override
   public Page<Bucket> list(BucketListOption... options) {
     return delegate.list(options);
   }

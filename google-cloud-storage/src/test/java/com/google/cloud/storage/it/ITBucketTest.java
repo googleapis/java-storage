@@ -58,6 +58,7 @@ import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Streams;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -685,6 +686,40 @@ public class ITBucketTest {
 
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = {Transport.GRPC})
+  public void testSoftDelete() {
+    String bucketName = generator.randomBucketName();
+    Bucket softDelBucket = storage.create(BucketInfo.of(bucketName));
+    try {
+      long generation = softDelBucket.getGeneration();
+      assertNull(softDelBucket.getSoftDeleteTime());
+      assertNull(softDelBucket.getHardDeleteTime());
+      storage.delete(bucketName);
+
+      assertNull(storage.get(bucketName));
+      Bucket softDeleted =
+          storage.get(
+              bucketName,
+              BucketGetOption.generation(generation),
+              BucketGetOption.softDeleted(true));
+      assertNotNull(softDeleted);
+      assertNotNull(softDeleted.getSoftDeleteTime());
+      assertNotNull(softDeleted.getHardDeleteTime());
+
+      storage.list().iterateAll().forEach(b -> assertNotEquals(bucketName, b.getName()));
+      assertTrue(
+          Streams.stream(storage.list(BucketListOption.softDeleted(true)).iterateAll())
+              .anyMatch(b -> b.getName().equals(bucketName)));
+
+      storage.restore(bucketName, generation);
+
+      assertNotNull(storage.get(bucketName));
+    } finally {
+      storage.delete(bucketName);
     }
   }
 
