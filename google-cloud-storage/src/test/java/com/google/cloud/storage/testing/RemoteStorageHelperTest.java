@@ -34,6 +34,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.threeten.bp.Duration;
 
 public class RemoteStorageHelperTest {
 
@@ -273,8 +273,8 @@ public class RemoteStorageHelperTest {
     assertEquals(60000, ((HttpTransportOptions) options.getTransportOptions()).getConnectTimeout());
     assertEquals(60000, ((HttpTransportOptions) options.getTransportOptions()).getReadTimeout());
     assertEquals(10, options.getRetrySettings().getMaxAttempts());
-    assertEquals(Duration.ofMillis(30000), options.getRetrySettings().getMaxRetryDelay());
-    assertEquals(Duration.ofMillis(120000), options.getRetrySettings().getTotalTimeout());
-    assertEquals(Duration.ofMillis(250), options.getRetrySettings().getInitialRetryDelay());
+    assertEquals(Duration.ofMillis(30000), options.getRetrySettings().getMaxRetryDelayDuration());
+    assertEquals(Duration.ofMillis(120000), options.getRetrySettings().getTotalTimeoutDuration());
+    assertEquals(Duration.ofMillis(250), options.getRetrySettings().getInitialRetryDelayDuration());
   }
 }

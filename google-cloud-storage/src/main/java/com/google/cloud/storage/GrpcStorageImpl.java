@@ -189,8 +189,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public void close() throws Exception {
     try (StorageClient s = storageClient) {
       s.shutdownNow();
-      org.threeten.bp.Duration terminationAwaitDuration =
-          getOptions().getTerminationAwaitDuration();
+      java.time.Duration terminationAwaitDuration = getOptions().getTerminationAwaitDuration();
       s.awaitTermination(terminationAwaitDuration.toMillis(), TimeUnit.MILLISECONDS);
     }
   }
