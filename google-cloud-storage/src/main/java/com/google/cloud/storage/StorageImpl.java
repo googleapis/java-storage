@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
+import static com.google.cloud.storage.otel.OpenTelemetryTraceUtil.MODULE_STORAGE;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -247,8 +248,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope scope = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       if (Files.isDirectory(path)) {
         throw new StorageException(0, path + " is a directory");
       }
@@ -308,8 +309,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope scope = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
 
       ApiFuture<BlobInfo> objectFuture;
       try (StorageWriteChannel writer = writer(blobInfo, options)) {
