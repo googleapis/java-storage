@@ -16,12 +16,11 @@
 
 package com.google.cloud.storage.otel;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.api.core.ApiFuture;
-import com.google.api.gax.core.GaxProperties;
 import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Context;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -42,11 +41,10 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   private final String transport;
 
-  public OpenTelemetryInstance(StorageOptions storageOptions) {
+  OpenTelemetryInstance(StorageOptions storageOptions) {
     this.storageOptions = storageOptions;
     this.openTelemetry = storageOptions.getOpenTelemetrySdk();
-    this.tracer =
-        openTelemetry.getTracer(LIBRARY_NAME, GaxProperties.getLibraryVersion(this.getClass()));
+    this.tracer = openTelemetry.getTracer(LIBRARY_NAME, storageOptions.getLibraryVersion());
     this.transport = storageOptions instanceof GrpcStorageOptions ? "grpc" : "http";
   }
 
@@ -54,7 +52,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
     private final io.opentelemetry.api.trace.Span span;
     private final String spanName;
 
-    Span(io.opentelemetry.api.trace.Span span, String spanName) {
+    private Span(io.opentelemetry.api.trace.Span span, String spanName) {
       this.span = span;
       this.spanName = spanName;
     }
@@ -129,7 +127,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   static class Scope implements OpenTelemetryTraceUtil.Scope {
     private final io.opentelemetry.context.Scope scope;
 
-    Scope(io.opentelemetry.context.Scope scope) {
+    private Scope(io.opentelemetry.context.Scope scope) {
       this.scope = scope;
     }
 
@@ -142,7 +140,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   static class Context implements OpenTelemetryTraceUtil.Context {
     private final io.opentelemetry.context.Context context;
 
-    Context(io.opentelemetry.context.Context context) {
+    private Context(io.opentelemetry.context.Context context) {
       this.context = context;
     }
 
@@ -164,13 +162,13 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
   @Override
   public OpenTelemetryTraceUtil.Span startSpan(
       String methodName, String module, OpenTelemetryTraceUtil.Context parent) {
-    assert (parent instanceof OpenTelemetryInstance.Context);
+    checkArgument(
+        parent instanceof OpenTelemetryInstance.Context,
+        "parent must be an instance of " + OpenTelemetryInstance.Context.class.getName());
     String formatSpanName = String.format("%s/%s", module, methodName);
+    Context p2 = (Context) parent;
     SpanBuilder spanBuilder =
-        tracer
-            .spanBuilder(formatSpanName)
-            .setSpanKind(SpanKind.CLIENT)
-            .setParent(((OpenTelemetryInstance.Context) parent).context);
+        tracer.spanBuilder(formatSpanName).setSpanKind(SpanKind.CLIENT).setParent(p2.context);
     io.opentelemetry.api.trace.Span span =
         addSettingsAttributesToCurrentSpan(spanBuilder).startSpan();
     return new Span(span, formatSpanName);
@@ -193,9 +191,9 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
     spanBuilder =
         spanBuilder.setAllAttributes(
             Attributes.builder()
-                .put("gcp.client.version", GaxProperties.getLibraryVersion(this.getClass()))
+                .put("gcp.client.version", storageOptions.getLibraryVersion())
                 .put("gcp.client.repo", "googleapis/java-storage")
-                .put("gcp.client.artifact", "com.google.cloud.google-cloud-storage")
+                .put("gcp.client.artifact", "com.google.cloud:google-cloud-storage")
                 .put("rpc.system", transport)
                 .build());
     return spanBuilder;

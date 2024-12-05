@@ -26,6 +26,7 @@ import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltE
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
+import static com.google.cloud.storage.otel.OpenTelemetryTraceUtil.MODULE_STORAGE;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -204,7 +205,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
+        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -219,7 +220,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
@@ -252,8 +253,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     // Start the otel span to retain information of the origin of the request
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       return internalDirectUpload(
               blobInfo,
               opts,
@@ -272,8 +273,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope ununsed = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       requireNonNull(blobInfo, "blobInfo must be non null");
       InputStream inputStreamParam = firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES));
 
@@ -318,8 +319,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
       return internalCreateFrom(path, blobInfo, opts, openTelemetryTraceUtil.currentContext());
     } catch (Exception e) {
@@ -336,12 +337,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalCreateFrom", this.getClass().getName(), ctx);
+        openTelemetryTraceUtil.startSpan("internalCreateFrom", MODULE_STORAGE, ctx);
     requireNonNull(path, "path must be non null");
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       GrpcCallContext grpcCallContext =
           opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
       WriteObjectRequest req = getWriteObjectRequest(info, opts);
@@ -391,8 +392,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       BlobInfo blobInfo, InputStream in, int bufferSize, BlobWriteOption... options)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", this.getClass().getName());
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       requireNonNull(blobInfo, "blobInfo must be non null");
 
       Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
@@ -700,8 +701,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public CopyWriter copy(CopyRequest copyRequest) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
       BlobId src = copyRequest.getSource();
       BlobInfo dst = copyRequest.getTarget();
       Opts<ObjectSourceOpt> srcOpts =
@@ -770,11 +771,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("readAllBytes", this.getClass().getName());
+        openTelemetryTraceUtil.startSpan("readAllBytes", MODULE_STORAGE);
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent();
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent();
         UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(baos)) {
       ByteStreams.copy(r, w);
@@ -815,11 +816,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", this.getClass().getName());
+    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (Scope unused = otelSpan.makeCurrent();
+    try (Scope ignored = otelSpan.makeCurrent();
         UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
       ByteStreams.copy(r, w);
@@ -834,11 +835,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", this.getClass().getName());
+    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (Scope unused = otelSpan.makeCurrent();
+    try (Scope ignored = otelSpan.makeCurrent();
         UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
       ByteStreams.copy(r, w);
@@ -889,7 +890,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(buf, "content must be non null");
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalDirectUpload", this.getClass().getName(), ctx);
+        openTelemetryTraceUtil.startSpan("internalDirectUpload", MODULE_STORAGE, ctx);
     Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -897,7 +898,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Hasher hasher = Hasher.enabled();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     RewindableContent content = RewindableContent.of(buf);
-    try (OpenTelemetryTraceUtil.Scope unused = otelSpan.makeCurrent()) {
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
