@@ -76,6 +76,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.rmi.Remote;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
@@ -470,7 +471,9 @@ public class ITObjectSnippets {
         .setSoftDeletePolicy(
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(7))
-                .build());
+                .build())
+        .build()
+        .update();
 
     String blob = "softdelobj";
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
@@ -491,7 +494,11 @@ public class ITObjectSnippets {
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(7))
                 .build())
-        .build();
+        .build()
+        .update();
+
+    System.out.println(storage.get(BUCKET).getSoftDeletePolicy().toString());
+
 
     String blob = "softdelobj1";
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build());
@@ -511,21 +518,31 @@ public class ITObjectSnippets {
 
   @Test
   public void testRestoreSoftDeletedObject() {
-    // This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder()
-        .setSoftDeletePolicy(
-            BucketInfo.SoftDeletePolicy.newBuilder()
-                .setRetentionDuration(Duration.ofDays(7))
-                .build());
+    String bucket = RemoteStorageHelper.generateBucketName();
 
-    String blob = "restorableobj";
-    long gen = storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, blob)).build()).getGeneration();
-    storage.delete(BlobId.of(BUCKET, blob));
+    storage.create(BucketInfo.of(bucket));
+    try {
+      // This is already the default, but we set it here in case the default ever changes
+      storage.get(bucket).toBuilder()
+              .setSoftDeletePolicy(
+                      BucketInfo.SoftDeletePolicy.newBuilder()
+                              .setRetentionDuration(Duration.ofDays(7))
+                              .build())
+              .build()
+              .update();
 
-    assertNull(storage.get(BlobId.of(BUCKET, blob)));
+      String blob = "restorableobj";
 
-    RestoreSoftDeletedObject.restoreSoftDeletedObject(PROJECT_ID, BUCKET, blob, gen);
+      long gen = storage.create(BlobInfo.newBuilder(BlobId.of(bucket, blob)).build()).getGeneration();
+      storage.delete(BlobId.of(bucket, blob));
 
-    assertNotNull(storage.get(BlobId.of(BUCKET, blob)));
+      assertNull(storage.get(BlobId.of(bucket, blob)));
+
+      RestoreSoftDeletedObject.restoreSoftDeletedObject(PROJECT_ID, bucket, blob, gen);
+
+      assertNotNull(storage.get(BlobId.of(bucket, blob)));
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucket);
+    }
   }
 }
