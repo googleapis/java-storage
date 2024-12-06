@@ -52,6 +52,8 @@ import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Scope;
+import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.common.base.CharMatcher;
@@ -744,10 +746,19 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-    StorageObject storageObject = Conversions.json().blobId().encode(blob);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-    return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
+    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+      StorageObject storageObject = Conversions.json().blobId().encode(blob);
+      ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+      return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -778,40 +789,58 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
-    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+      BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+      BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
 
-    StorageObject encode = codecs.blobInfo().encode(updated);
-    // open the resumable session outside the write channel
-    // the exception behavior of open is different from #write(ByteBuffer)
-    Supplier<String> uploadIdSupplier =
-        ResumableMedia.startUploadForBlobInfo(
-            getOptions(),
-            updated,
-            optionsMap,
-            retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
-    JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
-    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
+      StorageObject encode = codecs.blobInfo().encode(updated);
+      // open the resumable session outside the write channel
+      // the exception behavior of open is different from #write(ByteBuffer)
+      Supplier<String> uploadIdSupplier =
+          ResumableMedia.startUploadForBlobInfo(
+              getOptions(),
+              updated,
+              optionsMap,
+              retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
+      JsonResumableWrite jsonResumableWrite =
+          JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+      return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
   public StorageWriteChannel writer(URL signedURL) {
-    // TODO: is it possible to know if a signed url is configured to have a constraint which makes
-    //   it idempotent?
-    ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
-        retryAlgorithmManager.getForResumableUploadSessionCreate(Collections.emptyMap());
-    // open the resumable session outside the write channel
-    // the exception behavior of open is different from #write(ByteBuffer)
-    String signedUrlString = signedURL.toString();
-    Supplier<String> uploadIdSupplier =
-        ResumableMedia.startUploadForSignedUrl(
-            getOptions(), signedURL, forResumableUploadSessionCreate);
-    JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get(), 0);
-    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
+    try (Scope unused = otelSpan.makeCurrent()) {
+      // TODO: is it possible to know if a signed url is configured to have a constraint which makes
+      //   it idempotent?
+      ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
+          retryAlgorithmManager.getForResumableUploadSessionCreate(Collections.emptyMap());
+      // open the resumable session outside the write channel
+      // the exception behavior of open is different from #write(ByteBuffer)
+      String signedUrlString = signedURL.toString();
+      Supplier<String> uploadIdSupplier =
+          ResumableMedia.startUploadForSignedUrl(
+              getOptions(), signedURL, forResumableUploadSessionCreate);
+      JsonResumableWrite jsonResumableWrite =
+          JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get(), 0);
+      return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override

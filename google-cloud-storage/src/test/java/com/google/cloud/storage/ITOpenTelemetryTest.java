@@ -55,7 +55,7 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
     Assert.assertEquals("googleapis/java-storage", getAttributeValue(spanData, "gcp.client.repo"));
     Assert.assertEquals(
-        "com.google.cloud.google-cloud-storage",
+        "com.google.cloud:google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
     Assert.assertEquals("http", getAttributeValue(spanData, "rpc.system"));
 
@@ -84,7 +84,7 @@ public final class ITOpenTelemetryTest {
     Assert.assertEquals("Storage", getAttributeValue(spanData, "gcp.client.service"));
     Assert.assertEquals("googleapis/java-storage", getAttributeValue(spanData, "gcp.client.repo"));
     Assert.assertEquals(
-        "com.google.cloud.google-cloud-storage",
+        "com.google.cloud:google-cloud-storage",
         getAttributeValue(spanData, "gcp.client.artifact"));
     Assert.assertEquals("grpc", getAttributeValue(spanData, "rpc.system"));
 
