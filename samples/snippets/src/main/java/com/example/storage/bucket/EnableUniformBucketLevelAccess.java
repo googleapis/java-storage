@@ -43,7 +43,8 @@ public class EnableUniformBucketLevelAccess {
         BucketInfo.IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build();
 
     storage.update(
-        bucket.toBuilder()
+        bucket
+            .toBuilder()
             .setIamConfiguration(iamConfiguration)
             .setAcl(null)
             .setDefaultAcl(null)
