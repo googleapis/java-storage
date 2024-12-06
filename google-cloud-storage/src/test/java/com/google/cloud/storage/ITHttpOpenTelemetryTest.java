@@ -206,7 +206,7 @@ public class ITHttpOpenTelemetryTest {
       Assert.assertEquals("Storage", getAttributeValue(span, "gcp.client.service"));
       Assert.assertEquals("googleapis/java-storage", getAttributeValue(span, "gcp.client.repo"));
       Assert.assertEquals(
-          "com.google.cloud.google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
+          "com.google.cloud:google-cloud-storage", getAttributeValue(span, "gcp.client.artifact"));
       Assert.assertEquals("http", getAttributeValue(span, "rpc.system"));
     }
   }
