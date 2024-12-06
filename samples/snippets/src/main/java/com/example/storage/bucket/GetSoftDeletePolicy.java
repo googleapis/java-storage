@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package com.example.storage.bucket;
 
-// [START storage_set_public_access_prevention_inherited]
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
+// [START storage_get_soft_delete_policy]
+import com.google.cloud.storage.BucketInfo.SoftDeletePolicy;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.time.Duration;
 
-public class SetPublicAccessPreventionInherited {
-  public static void setPublicAccessPreventionInherited(String projectId, String bucketName) {
+public class GetSoftDeletePolicy {
+  public static void getSoftDeletePolicy(String projectId, String bucketName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -31,18 +31,14 @@ public class SetPublicAccessPreventionInherited {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    SoftDeletePolicy policy = storage.get(bucketName).getSoftDeletePolicy();
 
-    // Sets public access prevention to 'inherited' for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                .build())
-        .build()
-        .update();
-
-    System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
+    if (Duration.ofSeconds(0).equals(policy.getRetentionDuration())) {
+      System.out.println("Soft delete is disabled for " + bucketName);
+    } else {
+      System.out.println("The soft delete policy for " + bucketName + " is:");
+      System.out.println(policy);
+    }
   }
 }
-// [END storage_set_public_access_prevention_inherited]
+// [END storage_get_soft_delete_policy]

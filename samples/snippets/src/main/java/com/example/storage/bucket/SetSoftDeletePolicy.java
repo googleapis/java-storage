@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package com.example.storage.bucket;
 
-// [START storage_set_public_access_prevention_inherited]
+// [START storage_set_soft_delete_policy]
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.time.Duration;
 
-public class SetPublicAccessPreventionInherited {
-  public static void setPublicAccessPreventionInherited(String projectId, String bucketName) {
+public class SetSoftDeletePolicy {
+  public static void setSoftDeletePolicy(String projectId, String bucketName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -32,17 +33,16 @@ public class SetPublicAccessPreventionInherited {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
-
-    // Sets public access prevention to 'inherited' for the bucket
     bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
+        .setSoftDeletePolicy(
+            BucketInfo.SoftDeletePolicy.newBuilder()
+                .setRetentionDuration(Duration.ofDays(10))
                 .build())
         .build()
         .update();
 
-    System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
+    System.out.println(
+        "Soft delete policy for " + bucketName + " was set to a 10-day retention period");
   }
 }
-// [END storage_set_public_access_prevention_inherited]
+// [END storage_set_soft_delete_policy]

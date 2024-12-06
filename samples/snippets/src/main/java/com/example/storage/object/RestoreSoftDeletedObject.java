@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package com.example.storage.bucket;
+package com.example.storage.object;
 
-// [START storage_set_bucket_public_iam]
-import com.google.cloud.Identity;
-import com.google.cloud.Policy;
+// [START storage_restore_object]
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.StorageRoles;
 
-public class MakeBucketPublic {
-  public static void makeBucketPublic(String projectId, String bucketName) {
+public class RestoreSoftDeletedObject {
+  public static void restoreSoftDeletedObject(
+      String projectId, String bucketName, String objectName, long generation) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Policy originalPolicy = storage.getIamPolicy(bucketName);
-    storage.setIamPolicy(
-        bucketName,
-        originalPolicy.toBuilder()
-            .addIdentity(StorageRoles.objectViewer(), Identity.allUsers()) // All users can view
-            .build());
+    // The name of your GCS object
+    // String objectName = "your-object-name";
 
-    System.out.println("Bucket " + bucketName + " is now publicly readable");
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Blob blob = storage.restore(BlobId.of(bucketName, objectName, generation));
+
+    System.out.println("Restored previously soft-deleted object " + blob.getName());
   }
 }
-// [END storage_set_bucket_public_iam]
+// [END storage_restore_object]

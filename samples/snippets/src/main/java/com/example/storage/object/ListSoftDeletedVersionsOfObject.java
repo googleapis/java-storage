@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,38 @@
  * limitations under the License.
  */
 
-package com.example.storage.bucket;
+package com.example.storage.object;
 
-// [START storage_set_public_access_prevention_inherited]
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
+// [START storage_list_soft_deleted_object_versions]
+import com.google.api.gax.paging.Page;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class SetPublicAccessPreventionInherited {
-  public static void setPublicAccessPreventionInherited(String projectId, String bucketName) {
+public class ListSoftDeletedVersionsOfObject {
+
+  public static void listSoftDeletedVersionOfObject(
+      String projectId, String bucketName, String objectName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
+    // The name of your GCS object
+    // String objectName = "your-object-name";
+
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    Page<Blob> blobs =
+        storage.list(
+            bucketName,
+            Storage.BlobListOption.softDeleted(true),
+            // See https://cloud.google.com/storage/docs/json_api/v1/objects/list#matchGlob
+            Storage.BlobListOption.matchGlob(objectName));
 
-    // Sets public access prevention to 'inherited' for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                .build())
-        .build()
-        .update();
-
-    System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
+    for (Blob blob : blobs.iterateAll()) {
+      System.out.println(blob.getName());
+    }
   }
 }
-// [END storage_set_public_access_prevention_inherited]
+// [END storage_list_soft_deleted_object_versions]
