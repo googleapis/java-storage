@@ -33,7 +33,8 @@ public class SetSoftDeletePolicy {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder()
+    bucket
+        .toBuilder()
         .setSoftDeletePolicy(
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(10))

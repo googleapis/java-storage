@@ -43,7 +43,8 @@ public class SetRetentionPolicy {
     Bucket bucket = storage.get(bucketName);
     Bucket bucketWithRetentionPolicy =
         storage.update(
-            bucket.toBuilder()
+            bucket
+                .toBuilder()
                 .setRetentionPeriodDuration(Duration.ofSeconds(retentionPeriodSeconds))
                 .build(),
             BucketTargetOption.metagenerationMatch());
