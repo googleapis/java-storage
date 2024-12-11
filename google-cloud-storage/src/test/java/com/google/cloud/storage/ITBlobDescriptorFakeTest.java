@@ -22,6 +22,7 @@ import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
@@ -82,6 +83,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1134,6 +1136,159 @@ public final class ITBlobDescriptorFakeTest {
             String messages = TestUtils.messagesToText(ee.getCause());
             assertThat(messages).contains("Unretryable error");
           });
+    }
+  }
+
+  /**
+   * Create a read that will attempt to read a range as a channel and read another range as an
+   * accumulated byte array.
+   *
+   * <p>Because a channel could block, this should result in two streams being opened against the
+   * server.
+   *
+   * <p>validate that two streams are opened and that getting the accumulated byte array can succeed
+   * while the channel hasn't been fully consumed.
+   */
+  @Test
+  public void blobDescriptorTransparentlyForksStreamIfNeeded() throws Exception {
+    ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
+    ChecksummedTestContent content1 = ChecksummedTestContent.of(content.getBytes(), 0, 10);
+    ChecksummedTestContent content2 = ChecksummedTestContent.of(content.getBytes(), 10, 10);
+    BidiReadObjectRequest req2 = read(1, 10, 20);
+    BidiReadObjectResponse res2_1 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content1.asChecksummedData())
+                    .setReadRange(getReadRange(1, 10, content1))
+                    .build())
+            .build();
+    BidiReadObjectResponse res2_2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2.asChecksummedData())
+                    .setReadRange(getReadRange(1, 20, content2))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    BidiReadObjectRequest req3 =
+        read(2, 10, 20)
+            .toBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(METADATA.getBucket())
+                    .setObject(METADATA.getName())
+                    .setGeneration(METADATA.getGeneration())
+                    .build())
+            .build();
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content.asChecksummedData())
+                    .setReadRange(getReadRange(2, 10, content))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    AtomicInteger bidiReadObjectCount = new AtomicInteger();
+    CountDownLatch cdl = new CountDownLatch(1);
+
+    StorageImplBase fakeStorage =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> respond) {
+            bidiReadObjectCount.getAndIncrement();
+            return new StreamObserver<BidiReadObjectRequest>() {
+              @Override
+              public void onNext(BidiReadObjectRequest request) {
+                if (request.equals(REQ_OPEN)) {
+                  respond.onNext(RES_OPEN);
+                } else if (request.equals(req2)) {
+                  // respond with the first half of the bytes, then wait for the second request to
+                  // be received before sending the second half.
+                  respond.onNext(res2_1);
+                  try {
+                    cdl.await();
+                  } catch (InterruptedException e) {
+                    respond.onError(TestUtils.apiException(Code.UNIMPLEMENTED, e.getMessage()));
+                  }
+                  respond.onNext(res2_2);
+                  respond.onCompleted();
+                } else if (request.equals(req3)) {
+                  respond.onNext(res3);
+                  respond.onCompleted();
+                  // signal the second request was received
+                  cdl.countDown();
+                } else {
+                  respond.onError(TestUtils.apiException(Code.UNIMPLEMENTED, "Unexpected request"));
+                }
+              }
+
+              @Override
+              public void onError(Throwable t) {
+                System.out.println("ITBlobDescriptorFakeTest.onError");
+                respond.onError(t);
+              }
+
+              @Override
+              public void onCompleted() {
+                System.out.println("ITBlobDescriptorFakeTest.onCompleted");
+                respond.onCompleted();
+              }
+            };
+          }
+        };
+    try (FakeServer fakeServer = FakeServer.of(fakeStorage);
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .build()
+                .getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+
+      ByteBuffer buf = ByteBuffer.allocate(50);
+      byte[] bytes = new byte[0];
+      Exception caught = null;
+      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        try (ScatteringByteChannel c = bd.readRangeAsChannel(RangeSpec.of(10L, 20L))) {
+          buf.limit(5);
+          Buffers.fillFrom(buf, c);
+          buf.limit(buf.capacity());
+          ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 20L));
+          bytes = future.get(3, TimeUnit.SECONDS);
+          Buffers.fillFrom(buf, c);
+        }
+      } catch (Exception e) {
+        // stash off any runtime failure so we can still do our assertions to help determine
+        // the true failure
+        caught = e;
+      } finally {
+        final byte[] finalBytes = bytes;
+        final Exception finalCaught = caught;
+        assertAll(
+            () -> assertThat(bidiReadObjectCount.get()).isEqualTo(2),
+            () ->
+                assertWithMessage("Channel bytes missmatch")
+                    .that(xxd(buf))
+                    .isEqualTo(xxd(content.getBytes())),
+            () ->
+                assertWithMessage("Future bytes missmatch")
+                    .that(xxd(finalBytes))
+                    .isEqualTo(xxd(content.getBytes())),
+            () -> {
+              if (finalCaught != null) {
+                throw new Exception("exception during test", finalCaught);
+              }
+            });
+      }
     }
   }
 

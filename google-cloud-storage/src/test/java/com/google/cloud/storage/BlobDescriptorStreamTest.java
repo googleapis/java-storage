@@ -325,14 +325,20 @@ public final class BlobDescriptorStreamTest {
     }
   }
 
-  private static class TestBlobDescriptorStreamRead extends BlobDescriptorStreamRead {
+  static class TestBlobDescriptorStreamRead extends BlobDescriptorStreamRead {
 
     private static final AtomicLong readIdSeq = new AtomicLong(1);
     private boolean readyToSend = false;
     private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
     TestBlobDescriptorStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
-      super(readId, rangeSpec, new AtomicLong(rangeSpec.begin()), retryContext, false);
+      super(
+          readId,
+          rangeSpec,
+          new AtomicLong(rangeSpec.begin()),
+          retryContext,
+          IOAutoCloseable.noOp(),
+          false);
     }
 
     @Override
@@ -366,7 +372,7 @@ public final class BlobDescriptorStreamTest {
     }
 
     @Override
-    public void close() throws IOException {}
+    protected void internalClose() throws IOException {}
 
     static TestBlobDescriptorStreamRead of() {
       long id = readIdSeq.getAndIncrement();

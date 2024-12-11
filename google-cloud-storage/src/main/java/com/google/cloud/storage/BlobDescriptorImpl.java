@@ -32,67 +32,98 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 
 final class BlobDescriptorImpl implements BlobDescriptor {
 
+  private final ScheduledExecutorService executor;
+  private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      callable;
   private final BlobDescriptorStream stream;
   @VisibleForTesting final BlobDescriptorState state;
   private final BlobInfo info;
   private final RetryContextProvider retryContextProvider;
 
+  @GuardedBy("this.lock")
+  private final IdentityHashMap<BlobDescriptorStream, BlobDescriptorState> children;
+
+  private final ReentrantLock lock;
+
+  @GuardedBy("this.lock")
+  private volatile boolean open;
+
   private BlobDescriptorImpl(
+      ScheduledExecutorService executor,
+      ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       BlobDescriptorStream stream,
       BlobDescriptorState state,
       RetryContextProvider retryContextProvider) {
+    this.executor = executor;
+    this.callable = callable;
     this.stream = stream;
     this.state = state;
     this.info = Conversions.grpc().blobInfo().decode(state.getMetadata());
     this.retryContextProvider = retryContextProvider;
+    this.children = new IdentityHashMap<>();
+    this.lock = new ReentrantLock();
+    this.open = true;
   }
 
   @Override
   public ApiFuture<byte[]> readRangeAsBytes(RangeSpec range) {
-    checkState(stream.isOpen(), "stream already closed");
-    long readId = state.newReadId();
-    SettableApiFuture<byte[]> future = SettableApiFuture.create();
-    AccumulatingRead<byte[]> read =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
-            readId, range, retryContextProvider.create(), future);
-    BidiReadObjectRequest request =
-        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
-    state.putOutstandingRead(readId, read);
-    stream.send(request);
-    return future;
+    lock.lock();
+    try {
+      checkState(open, "stream already closed");
+      long readId = state.newReadId();
+      SettableApiFuture<byte[]> future = SettableApiFuture.create();
+      AccumulatingRead<byte[]> read =
+          BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+              readId, range, retryContextProvider.create(), future);
+      registerReadInState(readId, read);
+      return future;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
   public ScatteringByteChannel readRangeAsChannel(RangeSpec range) {
-    checkState(stream.isOpen(), "stream already closed");
-    long readId = state.newReadId();
-    StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(readId, range, retryContextProvider.create());
-    BidiReadObjectRequest request =
-        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
-    // todo: fork the stream and state
-    state.putOutstandingRead(readId, read);
-    stream.send(request);
-    return read;
+    lock.lock();
+    try {
+      checkState(open, "stream already closed");
+      long readId = state.newReadId();
+      StreamingRead read =
+          BlobDescriptorStreamRead.streamingRead(readId, range, retryContextProvider.create());
+      registerReadInState(readId, read);
+      return read;
+    } finally {
+      lock.unlock();
+    }
   }
 
   public ApiFuture<DisposableByteString> readRangeAsByteString(RangeSpec range) {
-    checkState(stream.isOpen(), "stream already closed");
-    long readId = state.newReadId();
-    SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
-    AccumulatingRead<DisposableByteString> read =
-        BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
-            readId, range, future, retryContextProvider.create());
-    BidiReadObjectRequest request =
-        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
-    state.putOutstandingRead(readId, read);
-    stream.send(request);
-    return future;
+    lock.lock();
+    try {
+      checkState(open, "stream already closed");
+      long readId = state.newReadId();
+      SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
+      AccumulatingRead<DisposableByteString> read =
+          BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
+              readId, range, retryContextProvider.create(), future);
+      registerReadInState(readId, read);
+      return future;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
@@ -102,7 +133,49 @@ final class BlobDescriptorImpl implements BlobDescriptor {
 
   @Override
   public void close() throws IOException {
-    stream.close();
+    open = false;
+    lock.lock();
+    try {
+      Iterator<Entry<BlobDescriptorStream, BlobDescriptorState>> it =
+          children.entrySet().iterator();
+      ArrayList<ApiFuture<Void>> closing = new ArrayList<>(children.size());
+      while (it.hasNext()) {
+        Entry<BlobDescriptorStream, BlobDescriptorState> next = it.next();
+        BlobDescriptorStream subStream = next.getKey();
+        it.remove();
+        closing.add(subStream.closeAsync());
+      }
+      stream.close();
+      ApiFutures.allAsList(closing).get();
+    } catch (ExecutionException e) {
+      throw new IOException(e.getCause());
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new InterruptedIOException();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private void registerReadInState(long readId, BlobDescriptorStreamRead read) {
+    BidiReadObjectRequest request =
+        BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
+    if (state.canHandleNewRead(read)) {
+      state.putOutstandingRead(readId, read);
+      stream.send(request);
+    } else {
+      BlobDescriptorState child = state.forkChild();
+      BlobDescriptorStream newStream =
+          BlobDescriptorStream.create(executor, callable, child, retryContextProvider.create());
+      children.put(newStream, child);
+      read.setOnCloseCallback(
+          () -> {
+            children.remove(newStream);
+            newStream.close();
+          });
+      child.putOutstandingRead(readId, read);
+      newStream.send(request);
+    }
   }
 
   static ApiFuture<BlobDescriptor> create(
@@ -119,7 +192,8 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     ApiFuture<BlobDescriptor> blobDescriptorFuture =
         ApiFutures.transform(
             stream,
-            nowOpen -> new BlobDescriptorImpl(stream, state, retryContextProvider),
+            nowOpen ->
+                new BlobDescriptorImpl(executor, callable, stream, state, retryContextProvider),
             executor);
     stream.send(openRequest);
     return StorageException.coalesceAsync(blobDescriptorFuture);

@@ -58,7 +58,7 @@ import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BlobDescriptorStream
-    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, AutoCloseable {
+    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, IOAutoCloseable {
 
   private final SettableApiFuture<Void> blobDescriptorResolveFuture;
 

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
 import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
+import com.google.cloud.storage.BlobDescriptorStreamRead.ZeroCopyByteStringAccumulatingRead;
+import com.google.cloud.storage.BlobDescriptorStreamTest.TestBlobDescriptorStreamRead;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadRange;
@@ -448,6 +450,58 @@ public final class BlobDescriptorStreamReadTest {
           () -> assertThat(bytes1Close.get()).isTrue(),
           () -> assertThat(xxd(buf)).isEqualTo(xxd(bytes1.toByteArray())));
     }
+  }
+
+  @Test
+  public void canShareStreamWith() throws Exception {
+    try (AccumulatingRead<byte[]> bytes =
+            BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+                1, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+        ZeroCopyByteStringAccumulatingRead byteString =
+            BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
+                2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+        StreamingRead streamingRead =
+            BlobDescriptorStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry())) {
+      assertAll(
+          () -> assertThat(bytes.canShareStreamWith(byteString)).isTrue(),
+          () -> assertThat(byteString.canShareStreamWith(bytes)).isTrue(),
+          () -> assertThat(byteString.canShareStreamWith(streamingRead)).isFalse(),
+          () -> assertThat(bytes.canShareStreamWith(streamingRead)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(byteString)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(bytes)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(streamingRead)).isFalse());
+    }
+  }
+
+  @Test
+  public void onCloseCallbackIsCalled() throws IOException {
+    final AtomicBoolean closed = new AtomicBoolean(false);
+
+    try (TestBlobDescriptorStreamRead read = TestBlobDescriptorStreamRead.of()) {
+      read.setOnCloseCallback(() -> closed.set(true));
+    }
+
+    assertThat(closed.get()).isTrue();
+  }
+
+  @Test
+  public void onCloseCallbackIsCalled_evenIfThrown() throws Exception {
+    final AtomicBoolean closed = new AtomicBoolean(false);
+
+    TestBlobDescriptorStreamRead read =
+        new TestBlobDescriptorStreamRead(1, RangeSpec.all(), RetryContext.neverRetry()) {
+          @Override
+          protected void internalClose() throws IOException {
+            throw new IOException("Kaboom");
+          }
+        };
+    read.setOnCloseCallback(() -> closed.set(true));
+
+    IOException ioException = assertThrows(IOException.class, read::close);
+
+    assertAll(
+        () -> assertThat(ioException).hasMessageThat().isEqualTo("Kaboom"),
+        () -> assertThat(closed.get()).isTrue());
   }
 
   private static ResponseContentLifecycleHandle<ByteString> noopContentHandle(

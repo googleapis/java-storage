@@ -63,14 +63,50 @@ final class BlobDescriptorState {
 
   BlobDescriptorState(
       @NonNull GrpcCallContext baseContext, @NonNull BidiReadObjectRequest openRequest) {
+    this(
+        baseContext,
+        openRequest,
+        new AtomicLong(1),
+        new AtomicReference<>(),
+        new AtomicReference<>(),
+        new AtomicReference<>());
+  }
+
+  private BlobDescriptorState(
+      @NonNull GrpcCallContext baseContext,
+      @NonNull BidiReadObjectRequest openRequest,
+      AtomicLong readIdSeq,
+      AtomicReference<@Nullable BidiReadHandle> bidiReadHandle,
+      AtomicReference<@Nullable String> routingToken,
+      AtomicReference<@MonotonicNonNull Object> metadata) {
     this.baseContext = baseContext;
     this.openRequest = openRequest;
-    this.bidiReadHandle = new AtomicReference<>();
-    this.routingToken = new AtomicReference<>();
-    this.metadata = new AtomicReference<>();
-    this.readIdSeq = new AtomicLong(1);
+    this.bidiReadHandle = bidiReadHandle;
+    this.routingToken = routingToken;
+    this.metadata = metadata;
+    this.readIdSeq = readIdSeq;
     this.outstandingReads = new HashMap<>();
     this.lock = new ReentrantLock();
+  }
+
+  BlobDescriptorState forkChild() {
+    return new BlobDescriptorState(
+        baseContext,
+        openRequest,
+        readIdSeq,
+        new AtomicReference<>(bidiReadHandle.get()),
+        new AtomicReference<>(routingToken.get()),
+        new AtomicReference<>(metadata.get()));
+  }
+
+  boolean canHandleNewRead(BlobDescriptorStreamRead newRead) {
+    lock.lock();
+    try {
+      // when the map is empty this will also return true, see #allMatch docs
+      return outstandingReads.values().stream().allMatch(r -> r.canShareStreamWith(newRead));
+    } finally {
+      lock.unlock();
+    }
   }
 
   OpenArguments getOpenArguments() {

@@ -23,6 +23,8 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.BlobDescriptorState.OpenArguments;
 import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
+import com.google.cloud.storage.BlobDescriptorStreamTest.TestBlobDescriptorStreamRead;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
@@ -193,5 +195,34 @@ public final class BlobDescriptorStateTest {
                 "bucket=projects/_/buckets/my-bucket&routing_token=token%20with%2furl%20encoding"));
 
     assertThat(extraHeaders).isEqualTo(expected);
+  }
+
+  @Test
+  public void canHandleNewRead() throws Exception {
+    BidiReadObjectRequest base =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket("projects/_/buckets/my-bucket")
+                    .setObject("my-object"))
+            .build();
+
+    BlobDescriptorState state1 = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    BlobDescriptorState state2 = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+
+    state1.putOutstandingRead(1, TestBlobDescriptorStreamRead.of());
+    state2.putOutstandingRead(
+        3, BlobDescriptorStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry()));
+
+    try (AccumulatingRead<byte[]> bytes =
+            BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+                2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+        StreamingRead streaming2 =
+            BlobDescriptorStreamRead.streamingRead(4, RangeSpec.all(), RetryContext.neverRetry())) {
+      assertAll(
+          () -> assertThat(state1.canHandleNewRead(TestBlobDescriptorStreamRead.of())).isTrue(),
+          () -> assertThat(state1.canHandleNewRead(bytes)).isFalse(),
+          () -> assertThat(state2.canHandleNewRead(streaming2)).isFalse());
+    }
   }
 }

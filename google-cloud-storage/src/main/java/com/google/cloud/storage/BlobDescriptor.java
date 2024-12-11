@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.nio.channels.ScatteringByteChannel;
 
 /** Blob Descriptor is to blob, what File Descriptor is to a file */
-public interface BlobDescriptor extends AutoCloseable, Closeable {
+public interface BlobDescriptor extends IOAutoCloseable {
 
   BlobInfo getBlobInfo();
 
