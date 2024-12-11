@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -87,7 +88,18 @@ final class GapicUnbufferedReadableByteChannel
     this.blobOffset = req.getReadOffset();
     this.rclm = rclm;
     this.retryingDeps = retryingDependencies;
-    this.alg = alg;
+    this.alg =
+        new BasicResultRetryAlgorithm<java.lang.Object>() {
+          @Override
+          public boolean shouldRetry(
+              Throwable previousThrowable, java.lang.Object previousResponse) {
+            boolean shouldRetry = alg.shouldRetry(previousThrowable, null);
+            if (!shouldRetry) {
+              result.setException(previousThrowable);
+            }
+            return shouldRetry;
+          }
+        };
     // The reasoning for 2 elements below allow for a single response and the EOF/error signal
     // from onComplete or onError. Same thing com.google.api.gax.rpc.QueuingResponseObserver does.
     this.queue = new SimpleBlockingQueue<>(2);
@@ -337,9 +349,6 @@ final class GapicUnbufferedReadableByteChannel
       }
       if (!open.isDone()) {
         open.setException(t);
-        if (!alg.shouldRetry(t, null)) {
-          result.setException(StorageException.coalesce(t));
-        }
       }
       try {
         queue.offer(t);
