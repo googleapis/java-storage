@@ -476,6 +476,25 @@ import javax.annotation.Generated;
  *      </ul>
  *       </td>
  *    </tr>
+ *    <tr>
+ *      <td><p> MoveObject</td>
+ *      <td><p> Moves the source object to the destination object in the same bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> moveObject(MoveObjectRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> moveObject(BucketName bucket, String sourceObject, String destinationObject)
+ *           <li><p> moveObject(String bucket, String sourceObject, String destinationObject)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> moveObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
  *  </table>
  *
  * <p>See the individual methods for example code.
@@ -3239,6 +3258,151 @@ public class StorageClient implements BackgroundResource {
   public final UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable() {
     return stub.queryWriteStatusCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Moves the source object to the destination object in the same bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String sourceObject = "sourceObject1196439354";
+   *   String destinationObject = "destinationObject-1761603347";
+   *   Object response = storageClient.moveObject(bucket, sourceObject, destinationObject);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param sourceObject Required. Name of the source object.
+   * @param destinationObject Required. Name of the destination object.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object moveObject(BucketName bucket, String sourceObject, String destinationObject) {
+    MoveObjectRequest request =
+        MoveObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setSourceObject(sourceObject)
+            .setDestinationObject(destinationObject)
+            .build();
+    return moveObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Moves the source object to the destination object in the same bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   String sourceObject = "sourceObject1196439354";
+   *   String destinationObject = "destinationObject-1761603347";
+   *   Object response = storageClient.moveObject(bucket, sourceObject, destinationObject);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param sourceObject Required. Name of the source object.
+   * @param destinationObject Required. Name of the destination object.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object moveObject(String bucket, String sourceObject, String destinationObject) {
+    MoveObjectRequest request =
+        MoveObjectRequest.newBuilder()
+            .setBucket(bucket)
+            .setSourceObject(sourceObject)
+            .setDestinationObject(destinationObject)
+            .build();
+    return moveObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Moves the source object to the destination object in the same bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   MoveObjectRequest request =
+   *       MoveObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setSourceObject("sourceObject1196439354")
+   *           .setDestinationObject("destinationObject-1761603347")
+   *           .setIfSourceGenerationMatch(-1427877280)
+   *           .setIfSourceGenerationNotMatch(1575612532)
+   *           .setIfSourceMetagenerationMatch(1143319909)
+   *           .setIfSourceMetagenerationNotMatch(1900822777)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .build();
+   *   Object response = storageClient.moveObject(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object moveObject(MoveObjectRequest request) {
+    return moveObjectCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Moves the source object to the destination object in the same bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   MoveObjectRequest request =
+   *       MoveObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setSourceObject("sourceObject1196439354")
+   *           .setDestinationObject("destinationObject-1761603347")
+   *           .setIfSourceGenerationMatch(-1427877280)
+   *           .setIfSourceGenerationNotMatch(1575612532)
+   *           .setIfSourceMetagenerationMatch(1143319909)
+   *           .setIfSourceMetagenerationNotMatch(1900822777)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .build();
+   *   ApiFuture<Object> future = storageClient.moveObjectCallable().futureCall(request);
+   *   // Do something.
+   *   Object response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<MoveObjectRequest, Object> moveObjectCallable() {
+    return stub.moveObjectCallable();
   }
 
   @Override

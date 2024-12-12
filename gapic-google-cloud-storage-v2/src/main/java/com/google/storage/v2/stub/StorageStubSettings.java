@@ -69,6 +69,7 @@ import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -180,6 +181,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       startResumableWriteSettings;
   private final UnaryCallSettings<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusSettings;
+  private final UnaryCallSettings<MoveObjectRequest, Object> moveObjectSettings;
 
   private static final PagedListDescriptor<ListBucketsRequest, ListBucketsResponse, Bucket>
       LIST_BUCKETS_PAGE_STR_DESC =
@@ -401,6 +403,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return queryWriteStatusSettings;
   }
 
+  /** Returns the object with the settings used for calls to moveObject. */
+  public UnaryCallSettings<MoveObjectRequest, Object> moveObjectSettings() {
+    return moveObjectSettings;
+  }
+
   public StorageStub createStub() throws IOException {
     if (getTransportChannelProvider()
         .getTransportName()
@@ -503,6 +510,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     rewriteObjectSettings = settingsBuilder.rewriteObjectSettings().build();
     startResumableWriteSettings = settingsBuilder.startResumableWriteSettings().build();
     queryWriteStatusSettings = settingsBuilder.queryWriteStatusSettings().build();
+    moveObjectSettings = settingsBuilder.moveObjectSettings().build();
   }
 
   /** Builder for StorageStubSettings. */
@@ -544,6 +552,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
         startResumableWriteSettings;
     private final UnaryCallSettings.Builder<QueryWriteStatusRequest, QueryWriteStatusResponse>
         queryWriteStatusSettings;
+    private final UnaryCallSettings.Builder<MoveObjectRequest, Object> moveObjectSettings;
     private static final ImmutableMap<String, ImmutableSet<StatusCode.Code>>
         RETRYABLE_CODE_DEFINITIONS;
 
@@ -606,6 +615,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       rewriteObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       startResumableWriteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       queryWriteStatusSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      moveObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -627,7 +637,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listObjectsSettings,
               rewriteObjectSettings,
               startResumableWriteSettings,
-              queryWriteStatusSettings);
+              queryWriteStatusSettings,
+              moveObjectSettings);
       initDefaults(this);
     }
 
@@ -656,6 +667,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       rewriteObjectSettings = settings.rewriteObjectSettings.toBuilder();
       startResumableWriteSettings = settings.startResumableWriteSettings.toBuilder();
       queryWriteStatusSettings = settings.queryWriteStatusSettings.toBuilder();
+      moveObjectSettings = settings.moveObjectSettings.toBuilder();
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -677,7 +689,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listObjectsSettings,
               rewriteObjectSettings,
               startResumableWriteSettings,
-              queryWriteStatusSettings);
+              queryWriteStatusSettings,
+              moveObjectSettings);
     }
 
     private static Builder createDefault() {
@@ -790,6 +803,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
 
       builder
           .queryWriteStatusSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .moveObjectSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -932,6 +950,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     public UnaryCallSettings.Builder<QueryWriteStatusRequest, QueryWriteStatusResponse>
         queryWriteStatusSettings() {
       return queryWriteStatusSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to moveObject. */
+    public UnaryCallSettings.Builder<MoveObjectRequest, Object> moveObjectSettings() {
+      return moveObjectSettings;
     }
 
     @Override
