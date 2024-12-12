@@ -94,7 +94,7 @@ final class GapicUnbufferedReadableByteChannel
           public boolean shouldRetry(
               Throwable previousThrowable, java.lang.Object previousResponse) {
             boolean shouldRetry = alg.shouldRetry(previousThrowable, null);
-            if (!shouldRetry) {
+            if (previousThrowable != null && !shouldRetry) {
               result.setException(previousThrowable);
             }
             return shouldRetry;

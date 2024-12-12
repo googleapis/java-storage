@@ -89,7 +89,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           @Override
           public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
             boolean shouldRetry = resultRetryAlgorithm.shouldRetry(previousThrowable, null);
-            if (!shouldRetry) {
+            if (previousThrowable != null && !shouldRetry) {
               result.setException(previousThrowable);
             }
             return shouldRetry;
