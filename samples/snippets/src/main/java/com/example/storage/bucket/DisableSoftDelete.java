@@ -33,7 +33,8 @@ public class DisableSoftDelete {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder()
+    bucket
+        .toBuilder()
         .setSoftDeletePolicy(
             // Setting the retention duration to 0 disables Soft Delete.
             BucketInfo.SoftDeletePolicy.newBuilder()
