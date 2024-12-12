@@ -1283,20 +1283,18 @@ final class RpcMethodMappings {
                     (ctx, c) ->
                         ctx.peek(
                             state -> {
-                              try {
-                                ReadChannel reader =
-                                    ctx.getStorage().reader(ctx.getState().getBlob().getBlobId());
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              try (ReadChannel reader =
+                                  ctx.getStorage().reader(ctx.getState().getBlob().getBlobId())) {
                                 WritableByteChannel write = Channels.newChannel(baos);
                                 ByteStreams.copy(reader, write);
-
-                                assertThat(xxd(baos.toByteArray()))
-                                    .isEqualTo(xxd(c.getHelloWorldUtf8Bytes()));
                               } catch (IOException e) {
                                 if (e.getCause() instanceof BaseServiceException) {
                                   throw e.getCause();
                                 }
                               }
+                              assertThat(xxd(baos.toByteArray()))
+                                  .isEqualTo(xxd(c.getHelloWorldUtf8Bytes()));
                             }))
                 .build());
         a.add(
@@ -1305,23 +1303,46 @@ final class RpcMethodMappings {
                     (ctx, c) ->
                         ctx.peek(
                             state -> {
-                              try {
-                                ReadChannel reader =
-                                    ctx.getStorage()
-                                        .reader(
-                                            ctx.getState().getBlob().getBlobId().getBucket(),
-                                            ctx.getState().getBlob().getBlobId().getName());
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              try (ReadChannel reader =
+                                  ctx.getStorage()
+                                      .reader(
+                                          ctx.getState().getBlob().getBlobId().getBucket(),
+                                          ctx.getState().getBlob().getBlobId().getName())) {
                                 WritableByteChannel write = Channels.newChannel(baos);
                                 ByteStreams.copy(reader, write);
-
-                                assertThat(xxd(baos.toByteArray()))
-                                    .isEqualTo(xxd(c.getHelloWorldUtf8Bytes()));
                               } catch (IOException e) {
                                 if (e.getCause() instanceof BaseServiceException) {
                                   throw e.getCause();
                                 }
                               }
+
+                              assertThat(xxd(baos.toByteArray()))
+                                  .isEqualTo(xxd(c.getHelloWorldUtf8Bytes()));
+                            }))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(250, objects.get)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              try (ReadChannel reader =
+                                  ctx.getStorage()
+                                      .reader(
+                                          ctx.getState().getBlob().getBlobId(),
+                                          BlobSourceOption.shouldReturnRawInputStream(false))) {
+                                WritableByteChannel write = Channels.newChannel(baos);
+                                ByteStreams.copy(reader, write);
+                              } catch (IOException e) {
+                                if (e.getCause() instanceof BaseServiceException) {
+                                  throw e.getCause();
+                                }
+                              }
+
+                              assertThat(xxd(baos.toByteArray()))
+                                  .isEqualTo(xxd(c.getHelloWorldUtf8Bytes()));
                             }))
                 .build());
         a.add(
