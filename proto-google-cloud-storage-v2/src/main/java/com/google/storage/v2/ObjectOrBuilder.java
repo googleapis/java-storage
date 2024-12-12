@@ -452,6 +452,47 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   *
+   * @return Whether the finalizeTime field is set.
+   */
+  boolean hasFinalizeTime();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   *
+   * @return The finalizeTime.
+   */
+  com.google.protobuf.Timestamp getFinalizeTime();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   */
+  com.google.protobuf.TimestampOrBuilder getFinalizeTimeOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Content-Type of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
    * If an object is stored without a Content-Type, it is served as

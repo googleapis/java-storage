@@ -962,6 +962,45 @@ public final class StorageGrpc {
     return getQueryWriteStatusMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.v2.MoveObjectRequest, com.google.storage.v2.Object>
+      getMoveObjectMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "MoveObject",
+      requestType = com.google.storage.v2.MoveObjectRequest.class,
+      responseType = com.google.storage.v2.Object.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.v2.MoveObjectRequest, com.google.storage.v2.Object>
+      getMoveObjectMethod() {
+    io.grpc.MethodDescriptor<com.google.storage.v2.MoveObjectRequest, com.google.storage.v2.Object>
+        getMoveObjectMethod;
+    if ((getMoveObjectMethod = StorageGrpc.getMoveObjectMethod) == null) {
+      synchronized (StorageGrpc.class) {
+        if ((getMoveObjectMethod = StorageGrpc.getMoveObjectMethod) == null) {
+          StorageGrpc.getMoveObjectMethod =
+              getMoveObjectMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.v2.MoveObjectRequest, com.google.storage.v2.Object>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "MoveObject"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.MoveObjectRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.Object.getDefaultInstance()))
+                      .setSchemaDescriptor(new StorageMethodDescriptorSupplier("MoveObject"))
+                      .build();
+        }
+      }
+    }
+    return getMoveObjectMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static StorageStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<StorageStub> factory =
@@ -1434,6 +1473,19 @@ public final class StorageGrpc {
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getQueryWriteStatusMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Moves the source object to the destination object in the same bucket.
+     * </pre>
+     */
+    default void moveObject(
+        com.google.storage.v2.MoveObjectRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Object> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getMoveObjectMethod(), responseObserver);
     }
   }
 
@@ -1947,6 +1999,20 @@ public final class StorageGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Moves the source object to the destination object in the same bucket.
+     * </pre>
+     */
+    public void moveObject(
+        com.google.storage.v2.MoveObjectRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Object> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getMoveObjectMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -2273,6 +2339,19 @@ public final class StorageGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getQueryWriteStatusMethod(), getCallOptions(), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Moves the source object to the destination object in the same bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Object moveObject(
+        com.google.storage.v2.MoveObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getMoveObjectMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -2596,6 +2675,19 @@ public final class StorageGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getQueryWriteStatusMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Moves the source object to the destination object in the same bucket.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
+        moveObject(com.google.storage.v2.MoveObjectRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getMoveObjectMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_BUCKET = 0;
@@ -2618,8 +2710,9 @@ public final class StorageGrpc {
   private static final int METHODID_REWRITE_OBJECT = 17;
   private static final int METHODID_START_RESUMABLE_WRITE = 18;
   private static final int METHODID_QUERY_WRITE_STATUS = 19;
-  private static final int METHODID_WRITE_OBJECT = 20;
-  private static final int METHODID_BIDI_WRITE_OBJECT = 21;
+  private static final int METHODID_MOVE_OBJECT = 20;
+  private static final int METHODID_WRITE_OBJECT = 21;
+  private static final int METHODID_BIDI_WRITE_OBJECT = 22;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2745,6 +2838,11 @@ public final class StorageGrpc {
               (com.google.storage.v2.QueryWriteStatusRequest) request,
               (io.grpc.stub.StreamObserver<com.google.storage.v2.QueryWriteStatusResponse>)
                   responseObserver);
+          break;
+        case METHODID_MOVE_OBJECT:
+          serviceImpl.moveObject(
+              (com.google.storage.v2.MoveObjectRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.v2.Object>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -2909,6 +3007,12 @@ public final class StorageGrpc {
                     com.google.storage.v2.QueryWriteStatusRequest,
                     com.google.storage.v2.QueryWriteStatusResponse>(
                     service, METHODID_QUERY_WRITE_STATUS)))
+        .addMethod(
+            getMoveObjectMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.v2.MoveObjectRequest, com.google.storage.v2.Object>(
+                    service, METHODID_MOVE_OBJECT)))
         .build();
   }
 
@@ -2980,6 +3084,7 @@ public final class StorageGrpc {
                       .addMethod(getRewriteObjectMethod())
                       .addMethod(getStartResumableWriteMethod())
                       .addMethod(getQueryWriteStatusMethod())
+                      .addMethod(getMoveObjectMethod())
                       .build();
         }
       }
