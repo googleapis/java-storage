@@ -88,17 +88,6 @@
       </dependency>
       <dependency>
         <groupId>com.google.cloud.opentelemetry</groupId>
-        <artifactId>exporter-metrics</artifactId>
-        <version>0.31.0</version>
-        <exclusions>
-          <exclusion>
-            <groupId>io.opentelemetry.semconv</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.google.cloud.opentelemetry</groupId>
         <artifactId>detector-resources</artifactId>
         <version>0.27.0-alpha</version>
         <exclusions>
