@@ -445,7 +445,9 @@ public class ITObjectSnippets {
       assertNotNull(storage.get(tempBucket, retentionBlob).getRetention());
     } finally {
 
-      storage.get(tempBucket, retentionBlob).toBuilder()
+      storage
+          .get(tempBucket, retentionBlob)
+          .toBuilder()
           .setRetention(null)
           .build()
           .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
@@ -457,7 +459,9 @@ public class ITObjectSnippets {
   @Test
   public void testListSoftDeletedObjects() {
     // This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setSoftDeletePolicy(
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(7))
@@ -479,7 +483,9 @@ public class ITObjectSnippets {
   @Test
   public void testListSoftDeletedVersionsOfObject() {
     // This is already the default, but we set it here in case the default ever changes
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setSoftDeletePolicy(
             BucketInfo.SoftDeletePolicy.newBuilder()
                 .setRetentionDuration(Duration.ofDays(7))
@@ -512,7 +518,9 @@ public class ITObjectSnippets {
     storage.create(BucketInfo.of(bucket));
     try {
       // This is already the default, but we set it here in case the default ever changes
-      storage.get(bucket).toBuilder()
+      storage
+          .get(bucket)
+          .toBuilder()
           .setSoftDeletePolicy(
               BucketInfo.SoftDeletePolicy.newBuilder()
                   .setRetentionDuration(Duration.ofDays(7))
