@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.46.0](https://github.com/googleapis/java-storage/compare/v2.45.0...v2.46.0) (2024-12-13)
+
+
+### Features
+
+* Introduce `java.time` methods and variables ([#2826](https://github.com/googleapis/java-storage/issues/2826)) ([baf30ee](https://github.com/googleapis/java-storage/commit/baf30ee91febbcda7d0f64b0083b789c4384a3c0))
+
+
+### Bug Fixes
+
+* Update retry lifecycle when attempting to decompress a gzip object ([#2840](https://github.com/googleapis/java-storage/issues/2840)) ([7dba13c](https://github.com/googleapis/java-storage/commit/7dba13cbbfd38d3c2147b25264934f33c5dc78e3))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20241113-2.0.0 ([#2823](https://github.com/googleapis/java-storage/issues/2823)) ([503e518](https://github.com/googleapis/java-storage/commit/503e518550b67870c3e856957fdadbc012eff1ed))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20241206-2.0.0 ([#2839](https://github.com/googleapis/java-storage/issues/2839)) ([8f3cdd3](https://github.com/googleapis/java-storage/commit/8f3cdd39dbbbbd63c560c3cb44d1032c0bd41749))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.50.0 ([#2825](https://github.com/googleapis/java-storage/issues/2825)) ([9aa68a6](https://github.com/googleapis/java-storage/commit/9aa68a67d931b19175e23f883a109f22b99411ca))
+* Update sdk-platform-java dependencies ([#2841](https://github.com/googleapis/java-storage/issues/2841)) ([2a70481](https://github.com/googleapis/java-storage/commit/2a704815ee60b8ec7ff2c1af557fee4366ea2e19))
+
+
+### Documentation
+
+* Add samples for soft delete (objects) ([#2754](https://github.com/googleapis/java-storage/issues/2754)) ([41bc807](https://github.com/googleapis/java-storage/commit/41bc807e94f1c0eebd41b4a7baa12301858cc16f))
+
 ## [2.45.0](https://github.com/googleapis/java-storage/compare/v2.44.1...v2.45.0) (2024-11-18)
 
 
