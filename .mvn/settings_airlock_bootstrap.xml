@@ -1,0 +1,21 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!--
+      This settings.xml file helps to download the artifactregistry-maven-wagon extension in local
+      Maven repository with repository ID "mirror-of-all", which is the same as the repository
+      ID in settings_airlock.xml. Because this correspondence, Maven will not try to download
+      the artifactregistry-maven-wagon from Airlock when this artifact and its dependencies are
+      available in the local Maven repository.
+    -->
+
+    <mirrors>
+        <mirror>
+            <id>mirror-of-all</id>
+            <name>AR Maven Central mirror</name>
+            <url>https://repo1.maven.org/maven2</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>
+    </mirrors>
+
+</settings>

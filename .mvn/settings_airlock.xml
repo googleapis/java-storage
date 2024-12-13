@@ -1,0 +1,16 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!--
+      This settings.xml file forces the builds to download artifacts from Airlock.
+      This does not require changes in pom.xml files.
+    -->
+    <mirrors>
+        <mirror>
+            <id>mirror-of-all</id>
+            <name>Airlock Maven 3P Trusted</name>
+            <url>artifactregistry://us-maven.pkg.dev/artifact-foundry-prod/maven-3p-trusted</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>
+    </mirrors>
+</settings>
