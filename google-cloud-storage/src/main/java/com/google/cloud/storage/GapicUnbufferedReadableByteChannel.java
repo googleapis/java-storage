@@ -234,34 +234,41 @@ final class GapicUnbufferedReadableByteChannel
   }
 
   private void drainQueue() throws IOException {
-    IOException ioException = null;
-    while (queue.nonEmpty()) {
-      try {
-        java.lang.Object queueValue = queue.poll();
-        if (queueValue instanceof ReadObjectResponse) {
-          ReadObjectResponse resp = (ReadObjectResponse) queueValue;
-          ResponseContentLifecycleHandle handle = rclm.get(resp);
-          handle.close();
-        } else if (queueValue == EOF_MARKER || queueValue instanceof Throwable) {
-          break;
-        }
-      } catch (IOException e) {
-        if (ioException == null) {
-          ioException = e;
-        } else if (ioException != e) {
-          ioException.addSuppressed(e);
-        }
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        if (ioException == null) {
-          ioException = new InterruptedIOException();
-        } else {
-          ioException.addSuppressed(e);
+    boolean shouldInterupt = false;
+    try {
+      IOException ioException = null;
+      while (queue.nonEmpty()) {
+        try {
+          java.lang.Object queueValue = queue.poll();
+          if (queueValue instanceof ReadObjectResponse) {
+            ReadObjectResponse resp = (ReadObjectResponse) queueValue;
+            ResponseContentLifecycleHandle handle = rclm.get(resp);
+            handle.close();
+          } else if (queueValue == EOF_MARKER || queueValue instanceof Throwable) {
+            break;
+          }
+        } catch (IOException e) {
+          if (ioException == null) {
+            ioException = e;
+          } else if (ioException != e) {
+            ioException.addSuppressed(e);
+          }
+        } catch (InterruptedException e) {
+          shouldInterupt = true;
+          if (ioException == null) {
+            ioException = new InterruptedIOException();
+          } else {
+            ioException.addSuppressed(e);
+          }
         }
       }
-    }
-    if (ioException != null) {
-      throw ioException;
+      if (ioException != null) {
+        throw ioException;
+      }
+    } finally {
+      if (shouldInterupt) {
+        Thread.currentThread().interrupt();
+      }
     }
   }
 
