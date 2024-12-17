@@ -356,7 +356,7 @@ public final class GrpcStorageOptions extends StorageOptions
   public OpenTelemetrySdk getOpenTelemetrySdk() {
     return openTelemetrySdk;
   }
-  
+
   /** @since 2.14.0 */
   @Override
   public GrpcStorageOptions.Builder toBuilder() {
@@ -630,7 +630,6 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-
     /**
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
@@ -641,7 +640,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.openTelemetrySdk = openTelemetrySdk;
       return this;
     }
-    
+
     /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions build() {
