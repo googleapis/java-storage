@@ -255,11 +255,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     OpenTelemetryTraceUtil.Span otelSpan =
         openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
     try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return internalDirectUpload(
-              blobInfo,
-              opts,
-              ByteBuffer.wrap(content, offset, length),
-              openTelemetryTraceUtil.currentContext())
+      return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
           .asBlob(this);
     } catch (Exception e) {
       otelSpan.recordException(e);
@@ -322,7 +318,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
     try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-      return internalCreateFrom(path, blobInfo, opts, openTelemetryTraceUtil.currentContext());
+      return internalCreateFrom(path, blobInfo, opts);
     } catch (Exception e) {
       otelSpan.recordException(e);
       otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
@@ -333,11 +329,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   @Override
-  public Blob internalCreateFrom(
-      Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
+  public Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
       throws IOException {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalCreateFrom", MODULE_STORAGE, ctx);
+        openTelemetryTraceUtil.startSpan("internalCreateFrom", MODULE_STORAGE);
     requireNonNull(path, "path must be non null");
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
@@ -897,19 +892,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public BlobInfo internalDirectUpload(
       BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
-    return internalDirectUpload(blobInfo, opts, buf, null);
-  }
-
-  @Override
-  public BlobInfo internalDirectUpload(
-      BlobInfo blobInfo,
-      Opts<ObjectTargetOpt> opts,
-      ByteBuffer buf,
-      OpenTelemetryTraceUtil.Context ctx) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(buf, "content must be non null");
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalDirectUpload", MODULE_STORAGE, ctx);
+        openTelemetryTraceUtil.startSpan("internalDirectUpload", MODULE_STORAGE);
     Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
