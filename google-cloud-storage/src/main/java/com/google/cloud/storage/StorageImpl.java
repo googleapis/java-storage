@@ -294,7 +294,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     } catch (Exception e) {
       otelSpan.recordException(e);
       otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
+      throw e;
     } finally {
       otelSpan.end();
     }
