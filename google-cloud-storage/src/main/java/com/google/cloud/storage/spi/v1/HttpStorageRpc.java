@@ -1181,7 +1181,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return rewrite(rewriteRequest, null, openTelemetryTraceUtil.currentContext());
+      return rewrite(rewriteRequest, null);
     } finally {
       otelSpan.end();
       scope.close();
@@ -1196,10 +1196,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CONTINUE_REWRITE);
     Scope scope = tracer.withSpan(span);
     try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return rewrite(
-          previousResponse.rewriteRequest,
-          previousResponse.rewriteToken,
-          openTelemetryTraceUtil.currentContext());
+      return rewrite(previousResponse.rewriteRequest, previousResponse.rewriteToken);
     } finally {
       otelSpan.end();
       scope.close();
@@ -1207,10 +1204,9 @@ public class HttpStorageRpc implements StorageRpc {
     }
   }
 
-  private RewriteResponse rewrite(
-      RewriteRequest req, String token, OpenTelemetryTraceUtil.Context ctx) {
+  private RewriteResponse rewrite(RewriteRequest req, String token) {
     OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("rewrite", MODULE_STORAGE_RPC, ctx);
+        openTelemetryTraceUtil.startSpan("rewrite", MODULE_STORAGE_RPC);
     try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
       String userProject = Option.USER_PROJECT.getString(req.sourceOptions);
       if (userProject == null) {

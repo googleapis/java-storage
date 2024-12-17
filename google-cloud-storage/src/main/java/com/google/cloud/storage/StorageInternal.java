@@ -20,7 +20,6 @@ import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -32,22 +31,8 @@ interface StorageInternal {
     throw new UnsupportedOperationException("not implemented");
   }
 
-  default BlobInfo internalCreateFrom(
-      Path path, BlobInfo info, Opts<ObjectTargetOpt> opts, OpenTelemetryTraceUtil.Context ctx)
-      throws IOException {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
   default BlobInfo internalDirectUpload(
       BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
-  default BlobInfo internalDirectUpload(
-      BlobInfo info,
-      Opts<ObjectTargetOpt> opts,
-      ByteBuffer buf,
-      OpenTelemetryTraceUtil.Context ctx) {
     throw new UnsupportedOperationException("not implemented");
   }
 

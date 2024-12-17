@@ -1796,11 +1796,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   }
 
   @Override
-  public BlobInfo internalDirectUpload(
-      BlobInfo info,
-      Opts<ObjectTargetOpt> opts,
-      ByteBuffer buf,
-      OpenTelemetryTraceUtil.Context ctx) {
+  public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
 
     BlobInfo.Builder builder =
         info.toBuilder()
