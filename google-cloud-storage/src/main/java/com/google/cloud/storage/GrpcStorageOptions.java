@@ -16,12 +16,15 @@
 
 package com.google.cloud.storage;
 
+import static com.google.api.gax.util.TimeConversionUtils.toJavaTimeDuration;
+import static com.google.api.gax.util.TimeConversionUtils.toThreetenDuration;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.core.ObsoleteApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
@@ -98,10 +101,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.threeten.bp.Duration;
 
-/** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-@BetaApi
+/** @since 2.14.0 */
 @TransportCompatibility(Transport.GRPC)
 public final class GrpcStorageOptions extends StorageOptions
     implements Retrying.RetryingDependencies {
@@ -112,7 +113,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
-  private final Duration terminationAwaitDuration;
+  private final java.time.Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
   private final boolean enableGrpcClientMetrics;
 
@@ -129,7 +130,8 @@ public final class GrpcStorageOptions extends StorageOptions
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
     this.terminationAwaitDuration =
         MoreObjects.firstNonNull(
-            builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
+            builder.terminationAwaitDuration,
+            serviceDefaults.getTerminationAwaitDurationJavaTime());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.enableGrpcClientMetrics = builder.enableGrpcClientMetrics;
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
@@ -149,7 +151,7 @@ public final class GrpcStorageOptions extends StorageOptions
   }
 
   @InternalApi
-  Duration getTerminationAwaitDuration() {
+  java.time.Duration getTerminationAwaitDuration() {
     return terminationAwaitDuration;
   }
 
@@ -318,9 +320,9 @@ public final class GrpcStorageOptions extends StorageOptions
             // seconds.
             // To allow read streams to have longer lifespans, crank up their timeouts, instead rely
             // on idleTimeout below.
-            .setLogicalTimeout(Duration.ofDays(28))
+            .setLogicalTimeout(java.time.Duration.ofDays(28))
             .build();
-    Duration totalTimeout = baseRetrySettings.getTotalTimeout();
+    java.time.Duration totalTimeout = baseRetrySettings.getTotalTimeoutDuration();
     Set<Code> startResumableWriteRetryableCodes =
         builder.startResumableWriteSettings().getRetryableCodes();
 
@@ -328,7 +330,7 @@ public final class GrpcStorageOptions extends StorageOptions
     // StartResumableWrite
     builder.applyToAllUnaryMethods(
         input -> {
-          input.setSimpleTimeoutNoRetries(totalTimeout);
+          input.setSimpleTimeoutNoRetriesDuration(totalTimeout);
           return null;
         });
 
@@ -346,7 +348,7 @@ public final class GrpcStorageOptions extends StorageOptions
         // for reads, the stream can be held open for a long time in order to read all bytes,
         // this is totally valid. instead we want to monitor if the stream is doing work and if not
         // timeout.
-        .setIdleTimeout(totalTimeout);
+        .setIdleTimeoutDuration(totalTimeout);
     return Tuple.of(builder.build(), defaultOpts);
   }
 
@@ -354,9 +356,8 @@ public final class GrpcStorageOptions extends StorageOptions
   public OpenTelemetrySdk getOpenTelemetrySdk() {
     return openTelemetrySdk;
   }
-
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  
+  /** @since 2.14.0 */
   @Override
   public GrpcStorageOptions.Builder toBuilder() {
     return new GrpcStorageOptions.Builder(this);
@@ -392,20 +393,17 @@ public final class GrpcStorageOptions extends StorageOptions
         && this.baseEquals(that);
   }
 
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  /** @since 2.14.0 */
   public static GrpcStorageOptions.Builder newBuilder() {
     return new GrpcStorageOptions.Builder().setHost(DEFAULT_HOST);
   }
 
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  /** @since 2.14.0 */
   public static GrpcStorageOptions getDefaultInstance() {
     return newBuilder().build();
   }
 
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  /** @since 2.14.0 */
   public static GrpcStorageOptions.GrpcStorageDefaults defaults() {
     return GrpcStorageOptions.GrpcStorageDefaults.INSTANCE;
   }
@@ -421,12 +419,11 @@ public final class GrpcStorageOptions extends StorageOptions
     return super.shouldRefreshService(cachedService);
   }
 
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  /** @since 2.14.0 */
   public static final class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private Duration terminationAwaitDuration;
+    private java.time.Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
     private boolean enableGrpcClientMetrics =
         GrpcStorageDefaults.INSTANCE.isEnableGrpcClientMetrics();
@@ -454,15 +451,24 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     /**
+     * This method is obsolete. Use {@link #setTerminationAwaitJavaTimeDuration(java.time.Duration)}
+     * instead.
+     */
+    @ObsoleteApi("Use setTerminationAwaitJavaTimeDuration(java.time.Duration) instead")
+    public Builder setTerminationAwaitDuration(org.threeten.bp.Duration terminationAwaitDuration) {
+      return setTerminationAwaitJavaTimeDuration(toJavaTimeDuration(terminationAwaitDuration));
+    }
+
+    /**
      * Set the maximum duration in which to await termination of any outstanding requests when
      * calling {@link Storage#close()}
      *
      * @param terminationAwaitDuration a non-null Duration to use
      * @return the builder
-     * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.14.0
      */
-    @BetaApi
-    public Builder setTerminationAwaitDuration(Duration terminationAwaitDuration) {
+    public Builder setTerminationAwaitJavaTimeDuration(
+        java.time.Duration terminationAwaitDuration) {
       this.terminationAwaitDuration =
           requireNonNull(terminationAwaitDuration, "terminationAwaitDuration must be non null");
       return this;
@@ -475,9 +481,8 @@ public final class GrpcStorageOptions extends StorageOptions
      * underlying code will translate the normal {@code https://storage.googleapis.com:443} into the
      * proper Direct Google Access URI for you.
      *
-     * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.14.0
      */
-    @BetaApi
     public GrpcStorageOptions.Builder setAttemptDirectPath(boolean attemptDirectPath) {
       this.attemptDirectPath = attemptDirectPath;
       return this;
@@ -487,9 +492,8 @@ public final class GrpcStorageOptions extends StorageOptions
      * Monitoring. To disable metric reporting, set this to false. True by default. Emitting metrics
      * is free and requires minimal CPU and memory.
      *
-     * @since 2.41.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.41.0
      */
-    @BetaApi
     public GrpcStorageOptions.Builder setEnableGrpcClientMetrics(boolean enableGrpcClientMetrics) {
       this.enableGrpcClientMetrics = enableGrpcClientMetrics;
       if (enableGrpcClientMetrics) {
@@ -498,8 +502,7 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setTransportOptions(TransportOptions transportOptions) {
       if (!(transportOptions instanceof GrpcTransportOptions)) {
@@ -515,9 +518,8 @@ public final class GrpcStorageOptions extends StorageOptions
      * @param storageRetryStrategy a non-null storageRetryStrategy to use
      * @return the builder
      * @see StorageRetryStrategy#getDefaultStorageRetryStrategy()
-     * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.14.0
      */
-    @BetaApi
     public GrpcStorageOptions.Builder setStorageRetryStrategy(
         StorageRetryStrategy storageRetryStrategy) {
       this.storageRetryStrategy =
@@ -530,8 +532,7 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setServiceFactory(
         ServiceFactory<Storage, StorageOptions> serviceFactory) {
@@ -539,48 +540,42 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setClock(ApiClock clock) {
       super.setClock(clock);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setProjectId(String projectId) {
       super.setProjectId(projectId);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setHost(String host) {
       super.setHost(host);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setCredentials(Credentials credentials) {
       super.setCredentials(credentials);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setRetrySettings(RetrySettings retrySettings) {
       super.setRetrySettings(retrySettings);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setServiceRpcFactory(
         ServiceRpcFactory<StorageOptions> serviceRpcFactory) {
@@ -588,32 +583,28 @@ public final class GrpcStorageOptions extends StorageOptions
           "GrpcStorageOptions does not support setting a custom instance of ServiceRpcFactory");
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setHeaderProvider(HeaderProvider headerProvider) {
       super.setHeaderProvider(headerProvider);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setClientLibToken(String clientLibToken) {
       super.setClientLibToken(clientLibToken);
       return this;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions.Builder setQuotaProjectId(String quotaProjectId) {
       super.setQuotaProjectId(quotaProjectId);
       return this;
     }
 
-    /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.22.3 */
     public GrpcStorageOptions.Builder setGrpcInterceptorProvider(
         @NonNull GrpcInterceptorProvider grpcInterceptorProvider) {
       requireNonNull(grpcInterceptorProvider, "grpcInterceptorProvider must be non null");
@@ -639,6 +630,7 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
+
     /**
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
@@ -649,9 +641,8 @@ public final class GrpcStorageOptions extends StorageOptions
       this.openTelemetrySdk = openTelemetrySdk;
       return this;
     }
-
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    
+    /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions build() {
       GrpcStorageOptions options = new GrpcStorageOptions(this, defaults());
@@ -664,8 +655,7 @@ public final class GrpcStorageOptions extends StorageOptions
     }
   }
 
-  /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-  @BetaApi
+  /** @since 2.14.0 */
   public static final class GrpcStorageDefaults extends StorageDefaults {
     static final GrpcStorageDefaults INSTANCE = new GrpcStorageOptions.GrpcStorageDefaults();
     static final StorageFactory STORAGE_FACTORY = new GrpcStorageFactory();
@@ -675,59 +665,56 @@ public final class GrpcStorageOptions extends StorageOptions
 
     private GrpcStorageDefaults() {}
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public StorageFactory getDefaultServiceFactory() {
       return STORAGE_FACTORY;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public StorageRpcFactory getDefaultRpcFactory() {
       return STORAGE_RPC_FACTORY;
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     @Override
     public GrpcTransportOptions getDefaultTransportOptions() {
       return GrpcTransportOptions.newBuilder().build();
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
-    public Duration getTerminationAwaitDuration() {
-      return Duration.ofMinutes(1);
+    /** This method is obsolete. Use {@link #getTerminationAwaitDurationJavaTime()} instead. */
+    @ObsoleteApi("Use getTerminationAwaitDurationJavaTime() instead")
+    public org.threeten.bp.Duration getTerminationAwaitDuration() {
+      return toThreetenDuration(getTerminationAwaitDurationJavaTime());
     }
 
-    /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.14.0 */
+    public java.time.Duration getTerminationAwaitDurationJavaTime() {
+      return java.time.Duration.ofMinutes(1);
+    }
+
+    /** @since 2.14.0 */
     public boolean isAttemptDirectPath() {
       return true;
     }
 
-    /** @since 2.41.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.41.0 */
     public boolean isEnableGrpcClientMetrics() {
       return true;
     }
 
-    /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
+    /** @since 2.22.3 */
     public GrpcInterceptorProvider grpcInterceptorProvider() {
       return INTERCEPTOR_PROVIDER;
     }
 
     /** @since 2.26.0 This new api is in preview and is subject to breaking changes. */
-    @BetaApi
     public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
       return BlobWriteSessionConfigs.getDefault();
     }
@@ -743,10 +730,9 @@ public final class GrpcStorageOptions extends StorageOptions
    *
    * @see GrpcStorageOptions#defaults()
    * @see GrpcStorageOptions.GrpcStorageDefaults#getDefaultServiceFactory()
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
   @InternalApi
-  @BetaApi
   public static class GrpcStorageFactory implements StorageFactory {
 
     /**
@@ -762,13 +748,12 @@ public final class GrpcStorageOptions extends StorageOptions
      * @deprecated instead use {@link
      *     GrpcStorageOptions.GrpcStorageDefaults#getDefaultServiceFactory()
      *     GrpcStorageOptions.defaults().getDefaultServiceFactory()}
-     * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.14.0
      */
     // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
-    @BetaApi
     public GrpcStorageFactory() {}
 
     @Override
@@ -825,10 +810,9 @@ public final class GrpcStorageOptions extends StorageOptions
    *
    * @see GrpcStorageOptions#defaults()
    * @see GrpcStorageOptions.GrpcStorageDefaults#getDefaultRpcFactory()
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
   @InternalApi
-  @BetaApi
   @Deprecated
   public static class GrpcStorageRpcFactory implements StorageRpcFactory {
 
@@ -844,13 +828,12 @@ public final class GrpcStorageOptions extends StorageOptions
      * @see GrpcStorageOptions.GrpcStorageDefaults#getDefaultRpcFactory()
      * @deprecated instead use {@link GrpcStorageOptions.GrpcStorageDefaults#getDefaultRpcFactory()
      *     GrpcStorageOptions.defaults().getDefaultRpcFactory()}
-     * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.14.0
      */
     // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
-    @BetaApi
     public GrpcStorageRpcFactory() {}
 
     @Override

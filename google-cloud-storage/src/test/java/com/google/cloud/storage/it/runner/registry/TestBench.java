@@ -53,6 +53,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +61,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.threeten.bp.Duration;
 
 /**
  * A {@link ManagedLifecycle} which integrates with the <a target="_blank"
@@ -258,10 +258,10 @@ public final class TestBench implements ManagedLifecycle {
             runWithRetries(
                 TestBench.this::listRetryTests,
                 RetrySettings.newBuilder()
-                    .setTotalTimeout(Duration.ofSeconds(30))
-                    .setInitialRetryDelay(Duration.ofMillis(500))
+                    .setTotalTimeoutDuration(Duration.ofSeconds(30))
+                    .setInitialRetryDelayDuration(Duration.ofMillis(500))
                     .setRetryDelayMultiplier(1.5)
-                    .setMaxRetryDelay(Duration.ofSeconds(5))
+                    .setMaxRetryDelayDuration(Duration.ofSeconds(5))
                     .build(),
                 new BasicResultRetryAlgorithm<List<RetryTestResource>>() {
                   @Override
@@ -331,10 +331,10 @@ public final class TestBench implements ManagedLifecycle {
             throw new NotShutdownException();
           },
           RetrySettings.newBuilder()
-              .setTotalTimeout(Duration.ofSeconds(30))
-              .setInitialRetryDelay(Duration.ofMillis(500))
+              .setTotalTimeoutDuration(Duration.ofSeconds(30))
+              .setInitialRetryDelayDuration(Duration.ofMillis(500))
               .setRetryDelayMultiplier(1.5)
-              .setMaxRetryDelay(Duration.ofSeconds(5))
+              .setMaxRetryDelayDuration(Duration.ofSeconds(5))
               .build(),
           new BasicResultRetryAlgorithm<List<?>>() {
             @Override

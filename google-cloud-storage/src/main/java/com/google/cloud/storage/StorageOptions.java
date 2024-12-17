@@ -187,9 +187,8 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   /**
    * Builder factory method which will create a JSON over HTTP specific instance of storage options.
    *
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
-  @BetaApi
   @TransportCompatibility(Transport.HTTP)
   public static HttpStorageOptions.Builder http() {
     return HttpStorageOptions.newBuilder();
@@ -200,9 +199,8 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
    *
    * <p>Google Cloud Storage is in Private Preview for a gRPC centric transport.
    *
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
-  @BetaApi
   @TransportCompatibility(Transport.GRPC)
   public static GrpcStorageOptions.Builder grpc() {
     return GrpcStorageOptions.newBuilder();

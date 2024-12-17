@@ -41,15 +41,11 @@ import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
-import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
-import com.google.storage.v2.GetHmacKeyRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.ReadObjectRequest;
@@ -57,7 +53,6 @@ import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.UpdateBucketRequest;
-import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import java.io.Serializable;
@@ -247,39 +242,19 @@ final class UnifiedOpts {
   }
 
   /** Base interface for those Opts which are applicable to HmacKey List operations */
-  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {
-    default Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return Mapper.identity();
-    }
-  }
+  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {}
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Source (get/read/origin
    * relationship) operations
    */
-  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {
-    default Mapper<GetHmacKeyRequest.Builder> getHmacKey() {
-      return Mapper.identity();
-    }
-  }
+  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {}
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Target (set/write/destination
    * relationship) operations
    */
-  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {
-    default Mapper<CreateHmacKeyRequest.Builder> createHmacKey() {
-      return Mapper.identity();
-    }
-
-    default Mapper<UpdateHmacKeyRequest.Builder> updateHmacKey() {
-      return Mapper.identity();
-    }
-
-    default Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKey() {
-      return Mapper.identity();
-    }
-  }
+  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {}
 
   /**
    * Some Options have a corresponding "SOURCE" version, this interface provide a construct for
@@ -1472,11 +1447,6 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return b -> b.setPageSize(Math.toIntExact(val));
-    }
-
-    @Override
     public Mapper<ListBucketsRequest.Builder> listBuckets() {
       return b -> b.setPageSize(Math.toIntExact(val));
     }
@@ -1493,11 +1463,6 @@ final class UnifiedOpts {
 
     private PageToken(String val) {
       super(StorageRpc.Option.PAGE_TOKEN, val);
-    }
-
-    @Override
-    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return b -> b.setPageToken(val);
     }
 
     @Override
@@ -1626,21 +1591,6 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return b -> b.setProject(projectNameCodec.encode(val));
-    }
-
-    @Override
-    public Mapper<GetHmacKeyRequest.Builder> getHmacKey() {
-      return b -> b.setProject(projectNameCodec.encode(val));
-    }
-
-    @Override
-    public Mapper<CreateHmacKeyRequest.Builder> createHmacKey() {
-      return b -> b.setProject(projectNameCodec.encode(val));
-    }
-
-    @Override
     public Mapper<ListBucketsRequest.Builder> listBuckets() {
       return b -> b.setParent(projectNameCodec.encode(val));
     }
@@ -1759,11 +1709,6 @@ final class UnifiedOpts {
     private ServiceAccount(String val) {
       super(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL, val);
     }
-
-    @Override
-    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return b -> b.setServiceAccountEmail(val);
-    }
   }
 
   static final class SetContentType implements ObjectTargetOpt {
@@ -1866,11 +1811,6 @@ final class UnifiedOpts {
 
     private ShowDeletedKeys(boolean val) {
       super(StorageRpc.Option.SHOW_DELETED_KEYS, val);
-    }
-
-    @Override
-    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
-      return b -> b.setShowDeletedKeys(val);
     }
   }
 
@@ -2506,26 +2446,6 @@ final class UnifiedOpts {
                 }
               })
           .reduce(Mapper.identity(), Mapper::andThen);
-    }
-
-    Mapper<CreateHmacKeyRequest.Builder> createHmacKeysRequest() {
-      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::createHmacKey);
-    }
-
-    Mapper<GetHmacKeyRequest.Builder> getHmacKeysRequest() {
-      return fuseMappers(HmacKeySourceOpt.class, HmacKeySourceOpt::getHmacKey);
-    }
-
-    Mapper<ListHmacKeysRequest.Builder> listHmacKeysRequest() {
-      return fuseMappers(HmacKeyListOpt.class, HmacKeyListOpt::listHmacKeys);
-    }
-
-    Mapper<UpdateHmacKeyRequest.Builder> updateHmacKeysRequest() {
-      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::updateHmacKey);
-    }
-
-    Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKeysRequest() {
-      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::deleteHmacKey);
     }
 
     Mapper<GetIamPolicyRequest.Builder> getIamPolicyRequest() {

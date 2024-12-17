@@ -47,8 +47,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
-@BetaApi
+/** @since 2.14.0 */
 @TransportCompatibility(Transport.HTTP)
 // non-final because of mocking frameworks
 public class HttpStorageOptions extends StorageOptions {

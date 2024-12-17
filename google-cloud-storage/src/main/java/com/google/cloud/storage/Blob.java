@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.core.BetaApi;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.ReadChannel;
@@ -168,7 +167,6 @@ public class Blob extends BlobInfo {
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
-    @BetaApi
     public static BlobSourceOption[] dedupe(BlobSourceOption... os) {
       return Option.dedupe(BlobSourceOption[]::new, os);
     }
@@ -180,7 +178,6 @@ public class Blob extends BlobInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobSourceOption[] dedupe(
         Collection<BlobSourceOption> collection, BlobSourceOption... os) {
       return Option.dedupe(BlobSourceOption[]::new, collection, os);
@@ -193,7 +190,6 @@ public class Blob extends BlobInfo {
      * in the return. All options from {@code os} will override their counterparts in {@code
      * collection}.
      */
-    @BetaApi
     public static BlobSourceOption[] dedupe(BlobSourceOption[] array, BlobSourceOption... os) {
       return Option.dedupe(BlobSourceOption[]::new, array, os);
     }
@@ -1228,9 +1224,8 @@ public class Blob extends BlobInfo {
   /**
    * Drop the held {@link Storage} instance.
    *
-   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.14.0
    */
-  @BetaApi
   public BlobInfo asBlobInfo() {
     return this.toBuilder().infoBuilder.build();
   }

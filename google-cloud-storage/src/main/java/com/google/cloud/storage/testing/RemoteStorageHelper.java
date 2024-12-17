@@ -32,6 +32,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.threeten.bp.Duration;
 
 /**
  * Utility to create a remote storage configuration for testing. Storage options can be obtained via
@@ -233,13 +233,13 @@ public class RemoteStorageHelper {
   private static RetrySettings retrySettings() {
     return RetrySettings.newBuilder()
         .setMaxAttempts(10)
-        .setMaxRetryDelay(Duration.ofMillis(30000L))
-        .setTotalTimeout(Duration.ofMillis(120000L))
-        .setInitialRetryDelay(Duration.ofMillis(250L))
+        .setMaxRetryDelayDuration(Duration.ofMillis(30000L))
+        .setTotalTimeoutDuration(Duration.ofMillis(120000L))
+        .setInitialRetryDelayDuration(Duration.ofMillis(250L))
         .setRetryDelayMultiplier(1.0)
-        .setInitialRpcTimeout(Duration.ofMillis(120000L))
+        .setInitialRpcTimeoutDuration(Duration.ofMillis(120000L))
         .setRpcTimeoutMultiplier(1.0)
-        .setMaxRpcTimeout(Duration.ofMillis(120000L))
+        .setMaxRpcTimeoutDuration(Duration.ofMillis(120000L))
         .build();
   }
 

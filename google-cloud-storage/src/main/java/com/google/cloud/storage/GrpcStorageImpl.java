@@ -139,7 +139,6 @@ import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions>
     implements Storage, StorageInternal {
 
@@ -196,8 +195,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public void close() throws Exception {
     try (StorageClient s = storageClient) {
       s.shutdownNow();
-      org.threeten.bp.Duration terminationAwaitDuration =
-          getOptions().getTerminationAwaitDuration();
+      java.time.Duration terminationAwaitDuration = getOptions().getTerminationAwaitDuration();
       s.awaitTermination(terminationAwaitDuration.toMillis(), TimeUnit.MILLISECONDS);
     }
   }

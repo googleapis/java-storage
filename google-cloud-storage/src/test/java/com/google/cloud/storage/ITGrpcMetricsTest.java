@@ -50,9 +50,15 @@ public class ITGrpcMetricsTest {
 
     // What the project ID will be will depend on the environment, so we just make sure it's present
     // and not null/empty
-    assertThat(result.contains("project_id"));
     assertThat(result).doesNotContain("project_id=\"\"");
     assertThat(result).doesNotContain("project_id=null");
+    assertThat(result).contains("project_id");
+    assertThat(result).contains("host_id");
+    assertThat(result).contains("cloud_platform");
+    assertThat(result).contains("location");
+    assertThat(result).contains("instance_id");
+    assertThat(result).contains("gcp.resource_type");
+    assertThat(result).contains("api");
 
     // This is the check for the Seconds histogram boundary. We can't practically check for every
     // boundary,

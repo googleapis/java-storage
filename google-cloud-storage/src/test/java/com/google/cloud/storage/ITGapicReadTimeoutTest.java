@@ -36,10 +36,10 @@ import com.google.storage.v2.StorageSettings;
 import io.grpc.Status.Code;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
-import org.threeten.bp.Duration;
 
 /**
  * ReadObject leverages gRPC ServerStream to read a stream of ReadObjectResponse messages spanning
@@ -48,7 +48,7 @@ import org.threeten.bp.Duration;
  * #getTotalTimeout()}, gax will interrupt the stream with a DEADLINE_EXCEEDED error.
  *
  * <p>Instead of relying on total stream timeout, we rely on idleTimeout for the stream via {@link
- * com.google.api.gax.rpc.ServerStreamingCallSettings.Builder#setIdleTimeout(Duration)}.
+ * com.google.api.gax.rpc.ServerStreamingCallSettings.Builder#setIdleTimeoutDuration(Duration)}.
  *
  * <p>These tests force specific timeout scenarios to happen against an in-process grpc server to
  * ensure our configuration of the StorageClient properly translates to the behavior we want.
@@ -117,7 +117,7 @@ public final class ITGapicReadTimeoutTest {
               .setRetrySettings(
                   RetrySettings.newBuilder()
                       .setMaxAttempts(3)
-                      .setTotalTimeout(Duration.ofMillis(totalTimeoutMillis))
+                      .setTotalTimeoutDuration(Duration.ofMillis(totalTimeoutMillis))
                       .build())
               .build()
               .getStorageSettings();
@@ -196,7 +196,7 @@ public final class ITGapicReadTimeoutTest {
               .setRetrySettings(
                   RetrySettings.newBuilder()
                       .setMaxAttempts(3)
-                      .setTotalTimeout(Duration.ofMillis(totalTimeoutMillis))
+                      .setTotalTimeoutDuration(Duration.ofMillis(totalTimeoutMillis))
                       .build())
               .build()
               .getStorageSettings();

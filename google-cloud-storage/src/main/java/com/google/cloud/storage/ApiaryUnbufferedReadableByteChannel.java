@@ -23,12 +23,12 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
@@ -84,7 +84,17 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     this.storage = storage;
     this.result = result;
     this.options = options;
-    this.resultRetryAlgorithm = resultRetryAlgorithm;
+    this.resultRetryAlgorithm =
+        new BasicResultRetryAlgorithm<Object>() {
+          @Override
+          public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+            boolean shouldRetry = resultRetryAlgorithm.shouldRetry(previousThrowable, null);
+            if (previousThrowable != null && !shouldRetry) {
+              result.setException(previousThrowable);
+            }
+            return shouldRetry;
+          }
+        };
     this.open = true;
     this.returnEOF = false;
     this.position = apiaryReadRequest.getByteRangeSpec().beginOffset();
@@ -210,17 +220,11 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           throw new StorageException(404, "Failure while trying to resume download", e);
         }
       }
-      StorageException translate = StorageException.translate(e);
-      result.setException(translate);
-      throw translate;
+      throw StorageException.translate(e);
     } catch (IOException e) {
-      StorageException translate = StorageException.translate(e);
-      result.setException(translate);
-      throw translate;
+      throw StorageException.translate(e);
     } catch (Throwable t) {
-      BaseServiceException coalesce = StorageException.coalesce(t);
-      result.setException(coalesce);
-      throw coalesce;
+      throw StorageException.coalesce(t);
     }
   }
 
