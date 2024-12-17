@@ -320,7 +320,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     } catch (Exception e) {
       otelSpan.recordException(e);
       otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
+      throw e;
     } finally {
       otelSpan.end();
     }
