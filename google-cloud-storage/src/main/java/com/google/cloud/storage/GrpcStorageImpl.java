@@ -794,8 +794,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", MODULE_STORAGE);
+    try (Scope ignore = otelSpan.makeCurrent()) {
       Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
       ReadObjectRequest request = getReadObjectRequest(blob, opts);
       GrpcCallContext grpcCallContext = Retrying.newCallContext();
@@ -856,8 +856,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
+    try (Scope ignore = otelSpan.makeCurrent()) {
       Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
       GrpcCallContext grpcCallContext =
           opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());

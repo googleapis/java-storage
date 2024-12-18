@@ -746,8 +746,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
       Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
       StorageObject storageObject = Conversions.json().blobId().encode(blob);
       ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
@@ -789,8 +789,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
       Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
       final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
       BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
@@ -819,8 +819,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageWriteChannel writer(URL signedURL) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", this.getClass().getName());
-    try (Scope unused = otelSpan.makeCurrent()) {
+    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
       // TODO: is it possible to know if a signed url is configured to have a constraint which makes
       //   it idempotent?
       ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
