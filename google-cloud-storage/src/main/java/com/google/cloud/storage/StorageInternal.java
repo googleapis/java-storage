@@ -31,8 +31,7 @@ interface StorageInternal {
     throw new UnsupportedOperationException("not implemented");
   }
 
-  default BlobInfo internalDirectUpload(
-      BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+  default BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
     throw new UnsupportedOperationException("not implemented");
   }
 
