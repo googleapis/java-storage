@@ -29,6 +29,7 @@ import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -110,6 +111,9 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     public abstract StorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig);
 
+    public abstract StorageOptions.Builder setOpenTelemetrySdk(
+        @NonNull OpenTelemetrySdk openTelemetrySdk);
+
     @Override
     public abstract StorageOptions build();
   }
@@ -143,6 +147,8 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   public static String version() {
     return VERSION;
   }
+
+  public abstract OpenTelemetrySdk getOpenTelemetrySdk();
 
   @SuppressWarnings("unchecked")
   @Override
