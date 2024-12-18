@@ -201,6 +201,7 @@ public final class TestBench implements ManagedLifecycle {
       tempDirectory = Files.createTempDirectory(containerName);
       outPath = tempDirectory.resolve("stdout");
       errPath = tempDirectory.resolve("stderr");
+
       File outFile = outPath.toFile();
       File errFile = errPath.toFile();
       LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());

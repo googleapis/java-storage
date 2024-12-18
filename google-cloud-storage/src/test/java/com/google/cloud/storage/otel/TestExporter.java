@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class TestExporter implements SpanExporter {
+public class TestExporter implements SpanExporter {
 
   public final List<SpanData> exportedSpans = Collections.synchronizedList(new ArrayList<>());
 

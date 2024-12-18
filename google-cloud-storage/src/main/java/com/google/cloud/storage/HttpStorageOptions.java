@@ -60,7 +60,7 @@ public class HttpStorageOptions extends StorageOptions {
   private transient RetryDependenciesAdapter retryDepsAdapter;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
-  private OpenTelemetrySdk openTelemetrySdk;
+  private final OpenTelemetrySdk openTelemetrySdk;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -137,10 +137,6 @@ public class HttpStorageOptions extends StorageOptions {
   @InternalApi
   RetryingDependencies asRetryDependencies() {
     return retryDepsAdapter;
-  }
-
-  public void setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
-    this.openTelemetrySdk = openTelemetrySdk;
   }
 
   public static class Builder extends StorageOptions.Builder {
@@ -288,7 +284,9 @@ public class HttpStorageOptions extends StorageOptions {
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
      * @param openTelemetrySdk
+     * @since 2.34.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public HttpStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
       requireNonNull(openTelemetrySdk, "openTelemetry must be non null");
       this.openTelemetrySdk = openTelemetrySdk;

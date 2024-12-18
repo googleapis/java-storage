@@ -120,7 +120,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
-  private OpenTelemetrySdk openTelemetrySdk;
+  private final OpenTelemetrySdk openTelemetrySdk;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -634,7 +634,9 @@ public final class GrpcStorageOptions extends StorageOptions
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
      * @param openTelemetrySdk User defined instance of OpenTelemetry SDK to be used by the library
+     * @since 2.46.1 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public GrpcStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
       requireNonNull(openTelemetrySdk, "openTelemetry must be non null");
       this.openTelemetrySdk = openTelemetrySdk;
