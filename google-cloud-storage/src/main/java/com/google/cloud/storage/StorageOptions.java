@@ -111,6 +111,8 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     public abstract StorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig);
 
+    /** @since 2.46.1 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
     public abstract StorageOptions.Builder setOpenTelemetrySdk(
         @NonNull OpenTelemetrySdk openTelemetrySdk);
 

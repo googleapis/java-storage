@@ -284,7 +284,7 @@ public class HttpStorageOptions extends StorageOptions {
      * Enable OpenTelemetry Tracing and provide an instance for the client to use.
      *
      * @param openTelemetrySdk
-     * @since 2.34.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.46.1 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public HttpStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
