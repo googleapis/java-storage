@@ -322,7 +322,7 @@ public final class TestBench implements ManagedLifecycle {
         int shutdownProcessExitValue = shutdownProcess.exitValue();
         LOGGER.warning("Container exit value = " + shutdownProcessExitValue);
       }
-      
+
       // wait for the server to shutdown
       runWithRetries(
           () -> {
