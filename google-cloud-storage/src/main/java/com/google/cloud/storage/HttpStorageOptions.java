@@ -38,6 +38,7 @@ import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -59,6 +60,8 @@ public class HttpStorageOptions extends StorageOptions {
   private transient RetryDependenciesAdapter retryDepsAdapter;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
+  private final OpenTelemetrySdk openTelemetrySdk;
+
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
     this.retryAlgorithmManager =
@@ -67,6 +70,7 @@ public class HttpStorageOptions extends StorageOptions {
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
     retryDepsAdapter = new RetryDependenciesAdapter();
     blobWriteSessionConfig = builder.blobWriteSessionConfig;
+    openTelemetrySdk = builder.openTelemetrySdk;
   }
 
   @Override
@@ -82,6 +86,11 @@ public class HttpStorageOptions extends StorageOptions {
   @InternalApi
   StorageRpc getStorageRpcV1() {
     return (StorageRpc) getRpc();
+  }
+
+  @Override
+  public OpenTelemetrySdk getOpenTelemetrySdk() {
+    return openTelemetrySdk;
   }
 
   @Override
@@ -135,6 +144,7 @@ public class HttpStorageOptions extends StorageOptions {
     private StorageRetryStrategy storageRetryStrategy;
     private BlobWriteSessionConfig blobWriteSessionConfig =
         HttpStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
+    private OpenTelemetrySdk openTelemetrySdk;
 
     Builder() {}
 
@@ -143,6 +153,7 @@ public class HttpStorageOptions extends StorageOptions {
       HttpStorageOptions hso = (HttpStorageOptions) options;
       this.storageRetryStrategy = hso.retryAlgorithmManager.retryStrategy;
       this.blobWriteSessionConfig = hso.blobWriteSessionConfig;
+      this.openTelemetrySdk = hso.getOpenTelemetrySdk();
     }
 
     @Override
@@ -267,6 +278,19 @@ public class HttpStorageOptions extends StorageOptions {
         return new HttpStorageOptions(this, defaults());
       }
       return options;
+    }
+
+    /**
+     * Enable OpenTelemetry Tracing and provide an instance for the client to use.
+     *
+     * @param openTelemetrySdk
+     * @since 2.46.1 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public HttpStorageOptions.Builder setOpenTelemetrySdk(OpenTelemetrySdk openTelemetrySdk) {
+      requireNonNull(openTelemetrySdk, "openTelemetry must be non null");
+      this.openTelemetrySdk = openTelemetrySdk;
+      return this;
     }
   }
 
