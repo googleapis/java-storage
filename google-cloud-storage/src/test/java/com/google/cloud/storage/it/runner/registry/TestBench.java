@@ -230,6 +230,7 @@ public final class TestBench implements ManagedLifecycle {
         throw new IllegalStateException(
             String.format("Timeout while attempting to pull docker image '%s'", dockerImage));
       }
+
       int port = URI.create(baseUri).getPort();
       int gRPCPort = URI.create(gRPCBaseUri).getPort();
       final List<String> command =
@@ -309,6 +310,7 @@ public final class TestBench implements ManagedLifecycle {
       } catch (IllegalThreadStateException e) {
         attemptForceStopContainer = true;
       }
+
       if (attemptForceStopContainer) {
         LOGGER.warning("Container did not gracefully exit, attempting to explicitly stop it.");
         System.out.println("Container did not gracefully exit, attempting to explicitly stop it.");
@@ -320,6 +322,7 @@ public final class TestBench implements ManagedLifecycle {
         int shutdownProcessExitValue = shutdownProcess.exitValue();
         LOGGER.warning("Container exit value = " + shutdownProcessExitValue);
       }
+      
       // wait for the server to shutdown
       runWithRetries(
           () -> {
