@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.46.1](https://github.com/googleapis/java-storage/compare/v2.46.0...v2.46.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* De-beta storage-v2 artifacts ([#2852](https://github.com/googleapis/java-storage/issues/2852)) ([77a2e8a](https://github.com/googleapis/java-storage/commit/77a2e8af341528a4ff3c34a880a7983f828b8cfd))
+* Fix interrupt spiral in grpc ReadObject drainQueue ([#2850](https://github.com/googleapis/java-storage/issues/2850)) ([c1dac83](https://github.com/googleapis/java-storage/commit/c1dac837387ffc40f00344c8fb0e86e09d009358))
+
 ## [2.46.0](https://github.com/googleapis/java-storage/compare/v2.45.0...v2.46.0) (2024-12-13)
 
 
