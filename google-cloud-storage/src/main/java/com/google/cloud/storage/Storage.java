@@ -5838,8 +5838,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
-  default ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
-    return throwGrpcOnly(fmtMethodName("getBlobDescriptor", BlobId.class, BlobSourceOption.class));
+  default ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
+    return throwGrpcOnly(fmtMethodName("blobReadSession", BlobId.class, BlobSourceOption.class));
   }
 
   @BetaApi

@@ -22,10 +22,10 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
-import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
-import com.google.cloud.storage.BlobDescriptorStreamRead.ZeroCopyByteStringAccumulatingRead;
-import com.google.cloud.storage.BlobDescriptorStreamTest.TestBlobDescriptorStreamRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.ZeroCopyByteStringAccumulatingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamTest.TestObjectReadSessionStreamRead;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadRange;
@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import org.junit.Test;
 
-public final class BlobDescriptorStreamReadTest {
+public final class ObjectReadSessionStreamReadTest {
 
   @Test
   public void byteArrayAccumulatingRead_happyPath()
@@ -62,7 +62,7 @@ public final class BlobDescriptorStreamReadTest {
 
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
 
     byteArrayAccumulatingRead.accept(childRef);
@@ -92,7 +92,7 @@ public final class BlobDescriptorStreamReadTest {
 
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
 
     IOException ioException =
@@ -111,7 +111,7 @@ public final class BlobDescriptorStreamReadTest {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     int readId = 1;
     try (AccumulatingRead<byte[]> read =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             readId, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete)) {
 
       ReadRange readRange1 = read.makeReadRange();
@@ -161,7 +161,7 @@ public final class BlobDescriptorStreamReadTest {
     int readId = 1;
     ExecutorService exec = Executors.newSingleThreadExecutor();
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       ByteBuffer buffer = ByteBuffer.allocate(512);
 
@@ -220,7 +220,7 @@ public final class BlobDescriptorStreamReadTest {
     CountDownLatch eofAck = new CountDownLatch(1);
 
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
 
       Future<Void> f =
@@ -293,7 +293,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_fail() throws IOException {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       read.fail(new Kaboom());
 
@@ -307,7 +307,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_closedChannelException() throws IOException {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       read.close();
       assertThat(read.isOpen()).isFalse();
@@ -319,7 +319,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_leftoversAreOnlyClearedWhenFullyConsumed() throws Exception {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
@@ -354,7 +354,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_eofShouldBeReturnedIfNoOtherBytesRead() throws Exception {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       read.eof();
       assertThat(read.read(ByteBuffer.allocate(1))).isEqualTo(-1);
@@ -368,7 +368,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_closedOnceEofIsRead() throws Exception {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes1)) {
@@ -389,7 +389,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_leftoversAreClosedIfNonNullAndStreamClosed() throws Exception {
     try (StreamingRead read =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
@@ -412,7 +412,7 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void streamingRead_withNewReadIdDoesNotOrphanAnyData() throws Exception {
     try (StreamingRead read1 =
-        BlobDescriptorStreamRead.streamingRead(
+        ObjectReadSessionStreamRead.streamingRead(
             1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
@@ -455,13 +455,14 @@ public final class BlobDescriptorStreamReadTest {
   @Test
   public void canShareStreamWith() throws Exception {
     try (AccumulatingRead<byte[]> bytes =
-            BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+            ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
                 1, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
         ZeroCopyByteStringAccumulatingRead byteString =
-            BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
+            ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
                 2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
         StreamingRead streamingRead =
-            BlobDescriptorStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry())) {
+            ObjectReadSessionStreamRead.streamingRead(
+                3, RangeSpec.all(), RetryContext.neverRetry())) {
       assertAll(
           () -> assertThat(bytes.canShareStreamWith(byteString)).isTrue(),
           () -> assertThat(byteString.canShareStreamWith(bytes)).isTrue(),
@@ -477,7 +478,7 @@ public final class BlobDescriptorStreamReadTest {
   public void onCloseCallbackIsCalled() throws IOException {
     final AtomicBoolean closed = new AtomicBoolean(false);
 
-    try (TestBlobDescriptorStreamRead read = TestBlobDescriptorStreamRead.of()) {
+    try (TestObjectReadSessionStreamRead read = TestObjectReadSessionStreamRead.of()) {
       read.setOnCloseCallback(() -> closed.set(true));
     }
 
@@ -488,8 +489,8 @@ public final class BlobDescriptorStreamReadTest {
   public void onCloseCallbackIsCalled_evenIfThrown() throws Exception {
     final AtomicBoolean closed = new AtomicBoolean(false);
 
-    TestBlobDescriptorStreamRead read =
-        new TestBlobDescriptorStreamRead(1, RangeSpec.all(), RetryContext.neverRetry()) {
+    TestObjectReadSessionStreamRead read =
+        new TestObjectReadSessionStreamRead(1, RangeSpec.all(), RetryContext.neverRetry()) {
           @Override
           protected void internalClose() throws IOException {
             throw new IOException("Kaboom");

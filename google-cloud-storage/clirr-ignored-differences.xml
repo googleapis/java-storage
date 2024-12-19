@@ -124,7 +124,7 @@
   <difference>
     <differenceType>7012</differenceType>
     <className>com/google/cloud/storage/Storage</className>
-    <method>com.google.api.core.ApiFuture getBlobDescriptor(com.google.cloud.storage.BlobId, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
+    <method>com.google.api.core.ApiFuture blobReadSession(com.google.cloud.storage.BlobId, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
   </difference>
 
   <difference>

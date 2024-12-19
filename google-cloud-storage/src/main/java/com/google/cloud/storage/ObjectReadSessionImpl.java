@@ -22,15 +22,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
-import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
-import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
+import com.google.storage.v2.Object;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.channels.ScatteringByteChannel;
@@ -43,39 +43,44 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 
-final class BlobDescriptorImpl implements BlobDescriptor {
+final class ObjectReadSessionImpl implements ObjectReadSession {
 
   private final ScheduledExecutorService executor;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       callable;
-  private final BlobDescriptorStream stream;
-  @VisibleForTesting final BlobDescriptorState state;
-  private final BlobInfo info;
+  private final ObjectReadSessionStream stream;
+  @VisibleForTesting final ObjectReadSessionState state;
+  private final Object resource;
   private final RetryContextProvider retryContextProvider;
 
   @GuardedBy("this.lock")
-  private final IdentityHashMap<BlobDescriptorStream, BlobDescriptorState> children;
+  private final IdentityHashMap<ObjectReadSessionStream, ObjectReadSessionState> children;
 
   private final ReentrantLock lock;
 
   @GuardedBy("this.lock")
   private volatile boolean open;
 
-  private BlobDescriptorImpl(
+  private ObjectReadSessionImpl(
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      BlobDescriptorStream stream,
-      BlobDescriptorState state,
+      ObjectReadSessionStream stream,
+      ObjectReadSessionState state,
       RetryContextProvider retryContextProvider) {
     this.executor = executor;
     this.callable = callable;
     this.stream = stream;
     this.state = state;
-    this.info = Conversions.grpc().blobInfo().decode(state.getMetadata());
+    this.resource = state.getMetadata();
     this.retryContextProvider = retryContextProvider;
     this.children = new IdentityHashMap<>();
     this.lock = new ReentrantLock();
     this.open = true;
+  }
+
+  @Override
+  public Object getResource() {
+    return resource;
   }
 
   @Override
@@ -86,7 +91,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       long readId = state.newReadId();
       SettableApiFuture<byte[]> future = SettableApiFuture.create();
       AccumulatingRead<byte[]> read =
-          BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+          ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
               readId, range, retryContextProvider.create(), future);
       registerReadInState(readId, read);
       return future;
@@ -102,7 +107,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       checkState(open, "stream already closed");
       long readId = state.newReadId();
       StreamingRead read =
-          BlobDescriptorStreamRead.streamingRead(readId, range, retryContextProvider.create());
+          ObjectReadSessionStreamRead.streamingRead(readId, range, retryContextProvider.create());
       registerReadInState(readId, read);
       return read;
     } finally {
@@ -117,7 +122,7 @@ final class BlobDescriptorImpl implements BlobDescriptor {
       long readId = state.newReadId();
       SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
       AccumulatingRead<DisposableByteString> read =
-          BlobDescriptorStreamRead.createZeroCopyByteStringAccumulatingRead(
+          ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
               readId, range, retryContextProvider.create(), future);
       registerReadInState(readId, read);
       return future;
@@ -127,21 +132,16 @@ final class BlobDescriptorImpl implements BlobDescriptor {
   }
 
   @Override
-  public BlobInfo getBlobInfo() {
-    return info;
-  }
-
-  @Override
   public void close() throws IOException {
     open = false;
     lock.lock();
     try {
-      Iterator<Entry<BlobDescriptorStream, BlobDescriptorState>> it =
+      Iterator<Entry<ObjectReadSessionStream, ObjectReadSessionState>> it =
           children.entrySet().iterator();
       ArrayList<ApiFuture<Void>> closing = new ArrayList<>(children.size());
       while (it.hasNext()) {
-        Entry<BlobDescriptorStream, BlobDescriptorState> next = it.next();
-        BlobDescriptorStream subStream = next.getKey();
+        Entry<ObjectReadSessionStream, ObjectReadSessionState> next = it.next();
+        ObjectReadSessionStream subStream = next.getKey();
         it.remove();
         closing.add(subStream.closeAsync());
       }
@@ -157,16 +157,16 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     }
   }
 
-  private void registerReadInState(long readId, BlobDescriptorStreamRead read) {
+  private void registerReadInState(long readId, ObjectReadSessionStreamRead read) {
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     if (state.canHandleNewRead(read)) {
       state.putOutstandingRead(readId, read);
       stream.send(request);
     } else {
-      BlobDescriptorState child = state.forkChild();
-      BlobDescriptorStream newStream =
-          BlobDescriptorStream.create(executor, callable, child, retryContextProvider.create());
+      ObjectReadSessionState child = state.forkChild();
+      ObjectReadSessionStream newStream =
+          ObjectReadSessionStream.create(executor, callable, child, retryContextProvider.create());
       children.put(newStream, child);
       read.setOnCloseCallback(
           () -> {
@@ -178,40 +178,24 @@ final class BlobDescriptorImpl implements BlobDescriptor {
     }
   }
 
-  static ApiFuture<BlobDescriptor> create(
+  static ApiFuture<ObjectReadSession> create(
       BidiReadObjectRequest openRequest,
       GrpcCallContext context,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       ScheduledExecutorService executor,
       RetryContextProvider retryContextProvider) {
-    BlobDescriptorState state = new BlobDescriptorState(context, openRequest);
+    ObjectReadSessionState state = new ObjectReadSessionState(context, openRequest);
 
-    BlobDescriptorStream stream =
-        BlobDescriptorStream.create(executor, callable, state, retryContextProvider.create());
+    ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(executor, callable, state, retryContextProvider.create());
 
-    ApiFuture<BlobDescriptor> blobDescriptorFuture =
+    ApiFuture<ObjectReadSession> objectReadSessionFuture =
         ApiFutures.transform(
             stream,
             nowOpen ->
-                new BlobDescriptorImpl(executor, callable, stream, state, retryContextProvider),
+                new ObjectReadSessionImpl(executor, callable, stream, state, retryContextProvider),
             executor);
     stream.send(openRequest);
-    return StorageException.coalesceAsync(blobDescriptorFuture);
-  }
-
-  private static final class EmptyDisposableByteString implements DisposableByteString {
-    private static final EmptyDisposableByteString INSTANCE = new EmptyDisposableByteString();
-
-    private EmptyDisposableByteString() {}
-
-    @Override
-    public ByteString byteString() {
-      return ByteString.empty();
-    }
-
-    @Override
-    public void close() throws IOException {
-      // no-op
-    }
+    return objectReadSessionFuture;
   }
 }

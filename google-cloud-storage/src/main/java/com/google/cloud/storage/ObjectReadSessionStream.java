@@ -26,9 +26,9 @@ import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
-import com.google.cloud.storage.BlobDescriptorState.OpenArguments;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
+import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.common.annotations.VisibleForTesting;
@@ -57,12 +57,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class BlobDescriptorStream
+final class ObjectReadSessionStream
     implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, IOAutoCloseable {
 
-  private final SettableApiFuture<Void> blobDescriptorResolveFuture;
+  private final SettableApiFuture<Void> objectReadSessionResolveFuture;
 
-  private final BlobDescriptorState state;
+  private final ObjectReadSessionState state;
   private final ScheduledExecutorService executor;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       callable;
@@ -76,8 +76,8 @@ final class BlobDescriptorStream
   private volatile StreamController controller;
   private final AtomicInteger redirectCounter;
 
-  private BlobDescriptorStream(
-      BlobDescriptorState state,
+  private ObjectReadSessionStream(
+      ObjectReadSessionState state,
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       int maxRedirectsAllowed,
@@ -86,7 +86,7 @@ final class BlobDescriptorStream
     this.executor = executor;
     this.callable = callable;
     this.streamRetryContext = backoff;
-    this.blobDescriptorResolveFuture = SettableApiFuture.create();
+    this.objectReadSessionResolveFuture = SettableApiFuture.create();
     this.maxRedirectsAllowed = maxRedirectsAllowed;
     this.open = true;
     this.redirectCounter = new AtomicInteger();
@@ -170,33 +170,33 @@ final class BlobDescriptorStream
 
   @Override
   public void addListener(Runnable listener, Executor executor) {
-    blobDescriptorResolveFuture.addListener(listener, executor);
+    objectReadSessionResolveFuture.addListener(listener, executor);
   }
 
   @Override
   public boolean cancel(boolean mayInterruptIfRunning) {
-    return blobDescriptorResolveFuture.cancel(mayInterruptIfRunning);
+    return objectReadSessionResolveFuture.cancel(mayInterruptIfRunning);
   }
 
   @Override
   public Void get() throws InterruptedException, ExecutionException {
-    return blobDescriptorResolveFuture.get();
+    return objectReadSessionResolveFuture.get();
   }
 
   @Override
   public Void get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
-    return blobDescriptorResolveFuture.get(timeout, unit);
+    return objectReadSessionResolveFuture.get(timeout, unit);
   }
 
   @Override
   public boolean isCancelled() {
-    return blobDescriptorResolveFuture.isCancelled();
+    return objectReadSessionResolveFuture.isCancelled();
   }
 
   @Override
   public boolean isDone() {
-    return blobDescriptorResolveFuture.isDone();
+    return objectReadSessionResolveFuture.isDone();
   }
 
   boolean isOpen() {
@@ -214,7 +214,7 @@ final class BlobDescriptorStream
 
     OpenArguments openArguments = state.getOpenArguments();
     BidiReadObjectRequest req = openArguments.getReq();
-    if (!req.getReadRangesList().isEmpty() || !blobDescriptorResolveFuture.isDone()) {
+    if (!req.getReadRangesList().isEmpty() || !objectReadSessionResolveFuture.isDone()) {
       ClientStream<BidiReadObjectRequest> requestStream1 = getRequestStream(openArguments.getCtx());
       requestStream1.send(req);
     }
@@ -223,7 +223,7 @@ final class BlobDescriptorStream
   private void failAll(Throwable terminalFailure) {
     open = false;
     try {
-      blobDescriptorResolveFuture.setException(terminalFailure);
+      objectReadSessionResolveFuture.setException(terminalFailure);
       state.failAll(executor, () -> terminalFailure);
     } finally {
       cleanUp();
@@ -233,7 +233,7 @@ final class BlobDescriptorStream
   private ApiFuture<?> failAll(Supplier<Throwable> terminalFailure) {
     open = false;
     try {
-      blobDescriptorResolveFuture.setException(terminalFailure.get());
+      objectReadSessionResolveFuture.setException(terminalFailure.get());
       return state.failAll(executor, terminalFailure);
     } finally {
       cleanUp();
@@ -247,7 +247,7 @@ final class BlobDescriptorStream
 
     @Override
     public void onStart(StreamController controller) {
-      BlobDescriptorStream.this.controller = controller;
+      ObjectReadSessionStream.this.controller = controller;
       controller.disableAutoInboundFlowControl();
       controller.request(2);
     }
@@ -272,7 +272,7 @@ final class BlobDescriptorStream
           ObjectRangeData d = rangeData.get(i);
           ReadRange readRange = d.getReadRange();
           long id = readRange.getReadId();
-          BlobDescriptorStreamRead read = state.getOutstandingRead(id);
+          ObjectReadSessionStreamRead read = state.getOutstandingRead(id);
           if (read == null || !read.acceptingBytes()) {
             continue;
           }
@@ -362,7 +362,7 @@ final class BlobDescriptorStream
         //
         requestStream = null;
         streamRetryContext.recordError(
-            e, BlobDescriptorStream.this::restart, BlobDescriptorStream.this::failAll);
+            e, ObjectReadSessionStream.this::restart, ObjectReadSessionStream.this::failAll);
       }
     }
 
@@ -382,7 +382,7 @@ final class BlobDescriptorStream
         for (ReadRangeError rangeError : rangeErrors) {
           Status status = rangeError.getStatus();
           long id = rangeError.getReadId();
-          BlobDescriptorStreamRead read = state.getOutstandingRead(id);
+          ObjectReadSessionStreamRead read = state.getOutstandingRead(id);
           if (read == null) {
             continue;
           }
@@ -398,17 +398,17 @@ final class BlobDescriptorStream
         }
       } finally {
         streamRetryContext.recordError(
-            t, BlobDescriptorStream.this::restart, BlobDescriptorStream.this::failAll);
+            t, ObjectReadSessionStream.this::restart, ObjectReadSessionStream.this::failAll);
       }
     }
 
     private OnSuccess restartReadFromCurrentOffset(long id) {
       return () -> {
         //noinspection resource
-        BlobDescriptorStreamRead readWithNewId = state.assignNewReadId(id);
+        ObjectReadSessionStreamRead readWithNewId = state.assignNewReadId(id);
         BidiReadObjectRequest requestWithNewReadId =
             BidiReadObjectRequest.newBuilder().addReadRanges(readWithNewId.makeReadRange()).build();
-        BlobDescriptorStream.this.send(requestWithNewReadId);
+        ObjectReadSessionStream.this.send(requestWithNewReadId);
       };
     }
 
@@ -436,7 +436,7 @@ final class BlobDescriptorStream
     public void onResponse(BidiReadObjectResponse response) {
       delegate.onResponse(response);
       openSignal.set(null);
-      blobDescriptorResolveFuture.set(null);
+      objectReadSessionResolveFuture.set(null);
     }
 
     @Override
@@ -461,8 +461,8 @@ final class BlobDescriptorStream
             new StorageException(0, cause.getMessage(), apiException);
         streamRetryContext.recordError(
             storageException,
-            BlobDescriptorStream.this::restart,
-            blobDescriptorResolveFuture::setException);
+            ObjectReadSessionStream.this::restart,
+            objectReadSessionResolveFuture::setException);
       }
       openSignal.set(null);
       closeSignal.set(null);
@@ -503,7 +503,7 @@ final class BlobDescriptorStream
         // bubble all the way up to the invoker we'll be able to see it in a bug report.
         t.addSuppressed(new MaxRedirectsExceededException(maxRedirectsAllowed, redirectCount));
         delegate.onError(t);
-        blobDescriptorResolveFuture.setException(t);
+        objectReadSessionResolveFuture.setException(t);
         return;
       }
       if (error.hasReadHandle()) {
@@ -512,7 +512,7 @@ final class BlobDescriptorStream
       if (error.hasRoutingToken()) {
         state.setRoutingToken(error.getRoutingToken());
       }
-      executor.execute(BlobDescriptorStream.this::restart);
+      executor.execute(ObjectReadSessionStream.this::restart);
     }
 
     @Override
@@ -521,13 +521,14 @@ final class BlobDescriptorStream
     }
   }
 
-  static BlobDescriptorStream create(
+  static ObjectReadSessionStream create(
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      BlobDescriptorState state,
+      ObjectReadSessionState state,
       RetryContext retryContext) {
 
     int maxRedirectsAllowed = 3; // TODO: make this configurable in the ultimate public surface
-    return new BlobDescriptorStream(state, executor, callable, maxRedirectsAllowed, retryContext);
+    return new ObjectReadSessionStream(
+        state, executor, callable, maxRedirectsAllowed, retryContext);
   }
 }

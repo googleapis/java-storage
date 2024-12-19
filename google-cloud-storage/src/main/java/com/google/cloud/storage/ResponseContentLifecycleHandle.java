@@ -15,7 +15,7 @@
  */
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.protobuf.ByteString;

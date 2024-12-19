@@ -315,7 +315,13 @@ public final class TestUtils {
   }
 
   static String messagesToText(Throwable t) {
-    return messagesToText(t, "");
+    StringBuilder tmp = new StringBuilder();
+    tmp.append(messagesToText(t, ""));
+    Throwable curr = t;
+    while ((curr = curr.getCause()) != null) {
+      tmp.append("\n").append(messagesToText(curr, ""));
+    }
+    return tmp.toString();
   }
 
   static <T> T await(ApiFuture<T> future, long timeout, TimeUnit unit) throws TimeoutException {

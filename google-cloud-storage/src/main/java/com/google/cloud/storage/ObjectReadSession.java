@@ -17,15 +17,12 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.protobuf.ByteString;
-import java.io.Closeable;
-import java.io.IOException;
+import com.google.storage.v2.Object;
 import java.nio.channels.ScatteringByteChannel;
 
-/** Blob Descriptor is to blob, what File Descriptor is to a file */
-public interface BlobDescriptor extends IOAutoCloseable {
+public interface ObjectReadSession extends IOAutoCloseable {
 
-  BlobInfo getBlobInfo();
+  Object getResource();
 
   ApiFuture<byte[]> readRangeAsBytes(RangeSpec range);
 
@@ -37,16 +34,4 @@ public interface BlobDescriptor extends IOAutoCloseable {
    * to arrive.
    */
   ScatteringByteChannel readRangeAsChannel(RangeSpec range);
-
-  @Override
-  void close() throws IOException;
-
-  interface ZeroCopySupport {
-    interface DisposableByteString extends AutoCloseable, Closeable {
-      ByteString byteString();
-
-      @Override
-      void close() throws IOException;
-    }
-  }
 }

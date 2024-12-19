@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.GrpcStorageOptions.ZeroCopyResponseMarshaller;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;

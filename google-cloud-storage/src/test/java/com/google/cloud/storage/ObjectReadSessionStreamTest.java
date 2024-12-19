@@ -32,9 +32,9 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ClientStreamReadyObserver;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.cloud.storage.Backoff.Jitterer;
-import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
-import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
@@ -60,7 +60,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public final class BlobDescriptorStreamTest {
+public final class ObjectReadSessionStreamTest {
 
   private static final Object METADATA =
       Object.newBuilder()
@@ -81,8 +81,8 @@ public final class BlobDescriptorStreamTest {
   private static ScheduledExecutorService exec;
 
   private final RetrySettings retrySettings = RetrySettings.newBuilder().build();
-  private final BlobDescriptorState state =
-      new BlobDescriptorState(GrpcCallContext.createDefault(), REQ_OPEN);
+  private final ObjectReadSessionState state =
+      new ObjectReadSessionState(GrpcCallContext.createDefault(), REQ_OPEN);
   private final RetryContextProvider retryContextProvider =
       () ->
           RetryContext.of(
@@ -136,13 +136,13 @@ public final class BlobDescriptorStreamTest {
   @Test
   public void streamRestartShouldNotSendARequestIfAllReadsAreInBackoff() {
     RetryContext read1RetryContext = retryContextProvider.create();
-    TestBlobDescriptorStreamRead read1 =
-        new TestBlobDescriptorStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
+    TestObjectReadSessionStreamRead read1 =
+        new TestObjectReadSessionStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
     state.putOutstandingRead(1, read1);
 
     RetryContext streamRetryContext = retryContextProvider.create();
-    try (BlobDescriptorStream stream =
-        BlobDescriptorStream.create(exec, callable, state, streamRetryContext)) {
+    try (ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(exec, callable, state, streamRetryContext)) {
       BlockingOnSuccess blockingOnSuccess = new BlockingOnSuccess();
       read1RetryContext.recordError(
           new RuntimeException("read1err"), blockingOnSuccess, RetryContextTest.failOnFailure());
@@ -155,14 +155,14 @@ public final class BlobDescriptorStreamTest {
   @Test
   public void streamRestartShouldSendARequestIfReadsAreNotInBackoff() {
     RetryContext read1RetryContext = retryContextProvider.create();
-    TestBlobDescriptorStreamRead read1 =
-        new TestBlobDescriptorStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
+    TestObjectReadSessionStreamRead read1 =
+        new TestObjectReadSessionStreamRead(1, RangeSpec.of(1, 2), read1RetryContext);
     read1.readyToSend = true;
     state.putOutstandingRead(1, read1);
 
     RetryContext streamRetryContext = retryContextProvider.create();
-    try (BlobDescriptorStream stream =
-        BlobDescriptorStream.create(exec, callable, state, streamRetryContext)) {
+    try (ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(exec, callable, state, streamRetryContext)) {
       stream.restart();
     }
   }
@@ -171,8 +171,8 @@ public final class BlobDescriptorStreamTest {
   public void attemptingToRestartStreamThatIsAlreadyActiveThrows() {
 
     RetryContext streamRetryContext = retryContextProvider.create();
-    try (BlobDescriptorStream stream =
-        BlobDescriptorStream.create(exec, callable, state, streamRetryContext)) {
+    try (ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(exec, callable, state, streamRetryContext)) {
       stream.send(REQ_OPEN);
 
       IllegalStateException ise = assertThrows(IllegalStateException.class, stream::restart);
@@ -184,8 +184,8 @@ public final class BlobDescriptorStreamTest {
   public void sendErrorsIfNotOpen() throws Exception {
 
     RetryContext streamRetryContext = retryContextProvider.create();
-    BlobDescriptorStream stream =
-        BlobDescriptorStream.create(exec, callable, state, streamRetryContext);
+    ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(exec, callable, state, streamRetryContext);
     assertThat(stream.isOpen()).isTrue();
     stream.close();
 
@@ -201,16 +201,16 @@ public final class BlobDescriptorStreamTest {
   @Test
   public void closingShouldFailPendingReads() throws Exception {
 
-    TestBlobDescriptorStreamRead read1 = TestBlobDescriptorStreamRead.of();
-    TestBlobDescriptorStreamRead read2 = TestBlobDescriptorStreamRead.of();
-    TestBlobDescriptorStreamRead read3 = TestBlobDescriptorStreamRead.of();
+    TestObjectReadSessionStreamRead read1 = TestObjectReadSessionStreamRead.of();
+    TestObjectReadSessionStreamRead read2 = TestObjectReadSessionStreamRead.of();
+    TestObjectReadSessionStreamRead read3 = TestObjectReadSessionStreamRead.of();
     state.putOutstandingRead(read1.readId, read1);
     state.putOutstandingRead(read2.readId, read2);
     state.putOutstandingRead(read3.readId, read3);
 
     RetryContext streamRetryContext = retryContextProvider.create();
-    BlobDescriptorStream stream =
-        BlobDescriptorStream.create(exec, callable, state, streamRetryContext);
+    ObjectReadSessionStream stream =
+        ObjectReadSessionStream.create(exec, callable, state, streamRetryContext);
     ApiFuture<Void> closeAsync = stream.closeAsync();
     TestUtils.await(closeAsync, 5, TimeUnit.SECONDS);
 
@@ -238,10 +238,10 @@ public final class BlobDescriptorStreamTest {
   @Test
   public void streamingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
     try (StreamingRead read1 =
-        BlobDescriptorStreamRead.streamingRead(1, RangeSpec.all(), RetryContext.neverRetry())) {
+        ObjectReadSessionStreamRead.streamingRead(1, RangeSpec.all(), RetryContext.neverRetry())) {
       state.putOutstandingRead(1, read1);
-      BlobDescriptorStream stream =
-          BlobDescriptorStream.create(exec, callable, state, RetryContext.neverRetry());
+      ObjectReadSessionStream stream =
+          ObjectReadSessionStream.create(exec, callable, state, RetryContext.neverRetry());
 
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
       ByteString bytes2 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
@@ -284,11 +284,11 @@ public final class BlobDescriptorStreamTest {
   public void accumulatingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
     SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     try (AccumulatingRead<byte[]> read1 =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             1, RangeSpec.all(), RetryContext.neverRetry(), complete)) {
       state.putOutstandingRead(1, read1);
-      BlobDescriptorStream stream =
-          BlobDescriptorStream.create(exec, callable, state, RetryContext.neverRetry());
+      ObjectReadSessionStream stream =
+          ObjectReadSessionStream.create(exec, callable, state, RetryContext.neverRetry());
 
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
       ByteString bytes2 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(9));
@@ -325,13 +325,13 @@ public final class BlobDescriptorStreamTest {
     }
   }
 
-  static class TestBlobDescriptorStreamRead extends BlobDescriptorStreamRead {
+  static class TestObjectReadSessionStreamRead extends ObjectReadSessionStreamRead {
 
     private static final AtomicLong readIdSeq = new AtomicLong(1);
     private boolean readyToSend = false;
     private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
-    TestBlobDescriptorStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+    TestObjectReadSessionStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
       super(
           readId,
           rangeSpec,
@@ -359,7 +359,7 @@ public final class BlobDescriptorStreamTest {
     }
 
     @Override
-    BlobDescriptorStreamRead withNewReadId(long newReadId) {
+    ObjectReadSessionStreamRead withNewReadId(long newReadId) {
       return null;
     }
 
@@ -374,9 +374,10 @@ public final class BlobDescriptorStreamTest {
     @Override
     protected void internalClose() throws IOException {}
 
-    static TestBlobDescriptorStreamRead of() {
+    static TestObjectReadSessionStreamRead of() {
       long id = readIdSeq.getAndIncrement();
-      return new TestBlobDescriptorStreamRead(id, RangeSpec.of(0, 10), RetryContext.neverRetry());
+      return new TestObjectReadSessionStreamRead(
+          id, RangeSpec.of(0, 10), RetryContext.neverRetry());
     }
   }
 }

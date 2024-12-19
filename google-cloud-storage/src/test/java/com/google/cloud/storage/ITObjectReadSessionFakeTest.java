@@ -75,7 +75,6 @@ import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
 import java.security.Key;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -94,7 +93,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 
-public final class ITBlobDescriptorFakeTest {
+public final class ITObjectReadSessionFakeTest {
 
   private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
       Metadata.Key.of(
@@ -202,9 +201,9 @@ public final class ITBlobDescriptorFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         byte[] actual = bd.readRangeAsBytes(RangeSpec.of(10L, 10L)).get(1, TimeUnit.SECONDS);
 
         assertThat(xxd(actual)).isEqualTo(xxd(content.getBytes()));
@@ -282,9 +281,9 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         assertThat(bd).isNotNull();
       }
     }
@@ -336,8 +335,8 @@ public final class ITBlobDescriptorFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor =
-          storage.getBlobDescriptor(id, BlobSourceOption.userProject("user-project"));
+      ApiFuture<BlobReadSession> futureBlobDescriptor =
+          storage.blobReadSession(id, BlobSourceOption.userProject("user-project"));
 
       StorageException se =
           assertThrows(
@@ -431,19 +430,21 @@ public final class ITBlobDescriptorFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
-        assertThrows(
-            AbortedException.class,
-            () -> {
-              try {
-                ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 10L));
-                future.get(5, TimeUnit.SECONDS);
-              } catch (ExecutionException e) {
-                throw e.getCause();
-              }
-            });
+      try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+        StorageException se =
+            assertThrows(
+                StorageException.class,
+                () -> {
+                  try {
+                    ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 10L));
+                    future.get(5, TimeUnit.SECONDS);
+                  } catch (ExecutionException e) {
+                    throw e.getCause();
+                  }
+                });
+        assertThat(se).hasCauseThat().isInstanceOf(AbortedException.class);
         byte[] actual = bd.readRangeAsBytes(RangeSpec.of(15L, 5L)).get(2, TimeUnit.SECONDS);
         assertThat(actual).hasLength(5);
         assertThat(xxd(actual)).isEqualTo(xxd(content3.getBytes()));
@@ -636,18 +637,17 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
-      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
+      try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10, 10));
 
-        DataLossException dataLossException =
+        StorageException se =
             assertThrows(
-                DataLossException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
-
+                StorageException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
+        assertThat(se).hasCauseThat().isInstanceOf(DataLossException.class);
+        DataLossException dataLossException = (DataLossException) se.getCause();
         assertThat(dataLossException).isInstanceOf(UncheckedChecksumMismatchException.class);
-        Throwable[] suppressed = dataLossException.getSuppressed();
-        String suppressedMessages =
-            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.joining("\n"));
+        String suppressedMessages = TestUtils.messagesToText(se);
         assertAll(
             () ->
                 assertThat(suppressedMessages)
@@ -709,19 +709,16 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10L, 20L));
 
-        OutOfRangeException outOfRangeException =
+        StorageException se =
             assertThrows(
-                OutOfRangeException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
-
-        assertThat(outOfRangeException).isInstanceOf(OutOfRangeException.class);
-        Throwable[] suppressed = outOfRangeException.getSuppressed();
-        String suppressedMessages =
-            Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.joining("\n"));
+                StorageException.class, () -> TestUtils.await(future, 5, TimeUnit.SECONDS));
+        assertThat(se).hasCauseThat().isInstanceOf(OutOfRangeException.class);
+        String suppressedMessages = TestUtils.messagesToText(se);
         assertAll(
             () ->
                 assertThat(suppressedMessages)
@@ -764,23 +761,21 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
-        BlobDescriptorImpl bdi = null;
-        if (bd instanceof BlobDescriptorImpl) {
-          bdi = (BlobDescriptorImpl) bd;
-        } else {
-          fail("unable to locate state for validation");
-        }
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+        ObjectReadSessionImpl orsi = getObjectReadSessionImpl(bd);
 
         ApiFuture<byte[]> future = bd.readRangeAsBytes(RangeSpec.of(10, 20));
         ExecutionException ee =
             assertThrows(ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
 
-        assertThat(ee).hasCauseThat().isInstanceOf(UncheckedChecksumMismatchException.class);
+        assertThat(ee)
+            .hasCauseThat()
+            .hasCauseThat()
+            .isInstanceOf(UncheckedChecksumMismatchException.class);
 
-        BlobDescriptorStreamRead outstandingRead = bdi.state.getOutstandingRead(1L);
+        ObjectReadSessionStreamRead outstandingRead = orsi.state.getOutstandingRead(1L);
         assertThat(outstandingRead).isNull();
       }
     }
@@ -828,8 +823,8 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor =
-          storage.getBlobDescriptor(
+      ApiFuture<BlobReadSession> futureObjectDescriptor =
+          storage.blobReadSession(
               id,
               BlobSourceOption.generationMatch(1),
               BlobSourceOption.generationNotMatch(2),
@@ -838,7 +833,7 @@ public final class ITBlobDescriptorFakeTest {
               BlobSourceOption.decryptionKey(key),
               BlobSourceOption.userProject("my-awesome-project"));
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         // by the time we reach here the test has already passed/failed
         assertAll(
             () -> assertThat(bd).isNotNull(),
@@ -890,9 +885,9 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> f1 = bd.readRangeAsBytes(RangeSpec.of(1, 1));
         ApiFuture<byte[]> f2 = bd.readRangeAsBytes(RangeSpec.of(2, 2));
         ApiFuture<byte[]> f3 = bd.readRangeAsBytes(RangeSpec.of(3, 3));
@@ -907,11 +902,11 @@ public final class ITBlobDescriptorFakeTest {
                   reads.stream()
                       .map(BidiReadObjectRequest::getReadRangesList)
                       .flatMap(Collection::stream)
-                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .map(ITObjectReadSessionFakeTest::fmt)
                       .collect(Collectors.toSet());
               Set<String> expected =
                   Stream.of(getReadRange(1, 1, 1), getReadRange(2, 2, 2), getReadRange(3, 3, 3))
-                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .map(ITObjectReadSessionFakeTest::fmt)
                       .collect(Collectors.toSet());
               assertThat(readRanges).isEqualTo(expected);
             },
@@ -968,9 +963,9 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         // issue three different range reads
         ApiFuture<byte[]> f1 = bd.readRangeAsBytes(RangeSpec.of(1, 1));
         ApiFuture<byte[]> f2 = bd.readRangeAsBytes(RangeSpec.of(2, 2));
@@ -986,11 +981,11 @@ public final class ITBlobDescriptorFakeTest {
                   reads.stream()
                       .map(BidiReadObjectRequest::getReadRangesList)
                       .flatMap(Collection::stream)
-                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .map(ITObjectReadSessionFakeTest::fmt)
                       .collect(Collectors.toSet());
               Set<String> expected =
                   Stream.of(getReadRange(1, 1, 1), getReadRange(2, 2, 2), getReadRange(3, 3, 3))
-                      .map(ITBlobDescriptorFakeTest::fmt)
+                      .map(ITObjectReadSessionFakeTest::fmt)
                       .collect(Collectors.toSet());
               assertThat(readRanges).isEqualTo(expected);
             },
@@ -1058,10 +1053,10 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      try (BlobDescriptor bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS);
+      try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS);
           ScatteringByteChannel c = bd.readRangeAsChannel(RangeSpec.all())) {
         ByteStreams.copy(c, Channels.newChannel(baos));
       }
@@ -1099,8 +1094,8 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
-      try (BlobDescriptor bd = futureBlobDescriptor.get(20, TimeUnit.SECONDS)) {
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
+      try (BlobReadSession bd = futureBlobDescriptor.get(20, TimeUnit.SECONDS)) {
         assertThat(bd).isNotNull();
       }
     }
@@ -1123,7 +1118,7 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
       ExecutionException ee =
           assertThrows(
               ExecutionException.class, () -> futureBlobDescriptor.get(20, TimeUnit.SECONDS));
@@ -1230,13 +1225,13 @@ public final class ITBlobDescriptorFakeTest {
 
               @Override
               public void onError(Throwable t) {
-                System.out.println("ITBlobDescriptorFakeTest.onError");
+                System.out.println("ITObjectReadSessionFakeTest.onError");
                 respond.onError(t);
               }
 
               @Override
               public void onCompleted() {
-                System.out.println("ITBlobDescriptorFakeTest.onCompleted");
+                System.out.println("ITObjectReadSessionFakeTest.onCompleted");
                 respond.onCompleted();
               }
             };
@@ -1252,12 +1247,12 @@ public final class ITBlobDescriptorFakeTest {
                 .getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
       ByteBuffer buf = ByteBuffer.allocate(50);
       byte[] bytes = new byte[0];
       Exception caught = null;
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         try (ScatteringByteChannel c = bd.readRangeAsChannel(RangeSpec.of(10L, 20L))) {
           buf.limit(5);
           Buffers.fillFrom(buf, c);
@@ -1299,9 +1294,9 @@ public final class ITBlobDescriptorFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      ApiFuture<BlobDescriptor> futureObjectDescriptor = storage.getBlobDescriptor(id);
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
 
-      try (BlobDescriptor bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future = bd.readRangeAsBytes(range);
 
         byte[] actual = future.get(5, TimeUnit.SECONDS);
@@ -1354,6 +1349,21 @@ public final class ITBlobDescriptorFakeTest {
     return String.format(
         "ReadRange{id: %d, offset: %d, length: %d}",
         r.getReadId(), r.getReadOffset(), r.getReadLength());
+  }
+
+  static ObjectReadSessionImpl getObjectReadSessionImpl(BlobReadSession bd) {
+    ObjectReadSessionImpl orsi = null;
+    if (bd instanceof BlobReadSessionAdapter) {
+      BlobReadSessionAdapter brsa = (BlobReadSessionAdapter) bd;
+      ObjectReadSession session = brsa.session;
+      if (session instanceof ObjectReadSessionImpl) {
+        orsi = (ObjectReadSessionImpl) session;
+      }
+    }
+    if (orsi == null) {
+      fail("unable to locate state for validation");
+    }
+    return orsi;
   }
 
   private static final class FakeStorage extends StorageImplBase {

@@ -21,10 +21,10 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.cloud.storage.BlobDescriptorState.OpenArguments;
-import com.google.cloud.storage.BlobDescriptorStreamRead.AccumulatingRead;
-import com.google.cloud.storage.BlobDescriptorStreamRead.StreamingRead;
-import com.google.cloud.storage.BlobDescriptorStreamTest.TestBlobDescriptorStreamRead;
+import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
+import com.google.cloud.storage.ObjectReadSessionStreamTest.TestObjectReadSessionStreamRead;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
-public final class BlobDescriptorStateTest {
+public final class ObjectReadSessionStateTest {
 
   @Test
   public void getOpenArguments_includesAllRelevantModifications() throws Exception {
@@ -68,7 +68,8 @@ public final class BlobDescriptorStateTest {
                 BidiReadHandle.newBuilder().setHandle(ByteString.copyFromUtf8("read_handle_1")))
             .build();
 
-    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
 
     state.setMetadata(resp.getMetadata());
     state.setBidiReadHandle(resp.getReadHandle());
@@ -78,10 +79,10 @@ public final class BlobDescriptorStateTest {
     SettableApiFuture<byte[]> f2 = SettableApiFuture.create();
 
     AccumulatingRead<byte[]> r1 =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             1, RangeSpec.of(3, 4), neverRetry, f1);
     AccumulatingRead<byte[]> r2 =
-        BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
             2, RangeSpec.of(19, 14), neverRetry, f2);
 
     state.putOutstandingRead(1, r1);
@@ -132,7 +133,8 @@ public final class BlobDescriptorStateTest {
                     .setObject("my-object"))
             .build();
 
-    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
 
     state.setRoutingToken("token-1");
 
@@ -157,7 +159,8 @@ public final class BlobDescriptorStateTest {
                     .setObject("my-object"))
             .build();
 
-    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
 
     state.setRoutingToken(null);
 
@@ -181,7 +184,8 @@ public final class BlobDescriptorStateTest {
                     .setObject("my-object"))
             .build();
 
-    BlobDescriptorState state = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
 
     state.setRoutingToken("token%20with%2furl%20encoding");
 
@@ -207,20 +211,24 @@ public final class BlobDescriptorStateTest {
                     .setObject("my-object"))
             .build();
 
-    BlobDescriptorState state1 = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
-    BlobDescriptorState state2 = new BlobDescriptorState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state1 =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
+    ObjectReadSessionState state2 =
+        new ObjectReadSessionState(GrpcCallContext.createDefault(), base);
 
-    state1.putOutstandingRead(1, TestBlobDescriptorStreamRead.of());
+    state1.putOutstandingRead(1, TestObjectReadSessionStreamRead.of());
     state2.putOutstandingRead(
-        3, BlobDescriptorStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry()));
+        3,
+        ObjectReadSessionStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry()));
 
     try (AccumulatingRead<byte[]> bytes =
-            BlobDescriptorStreamRead.createByteArrayAccumulatingRead(
+            ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
                 2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
         StreamingRead streaming2 =
-            BlobDescriptorStreamRead.streamingRead(4, RangeSpec.all(), RetryContext.neverRetry())) {
+            ObjectReadSessionStreamRead.streamingRead(
+                4, RangeSpec.all(), RetryContext.neverRetry())) {
       assertAll(
-          () -> assertThat(state1.canHandleNewRead(TestBlobDescriptorStreamRead.of())).isTrue(),
+          () -> assertThat(state1.canHandleNewRead(TestObjectReadSessionStreamRead.of())).isTrue(),
           () -> assertThat(state1.canHandleNewRead(bytes)).isFalse(),
           () -> assertThat(state2.canHandleNewRead(streaming2)).isFalse());
     }

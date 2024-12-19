@@ -47,7 +47,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class BlobDescriptorState {
+final class ObjectReadSessionState {
 
   private final GrpcCallContext baseContext;
   private final BidiReadObjectRequest openRequest;
@@ -57,11 +57,11 @@ final class BlobDescriptorState {
   private final AtomicLong readIdSeq;
 
   @GuardedBy("this.lock") // https://errorprone.info/bugpattern/GuardedBy
-  private final Map<Long, BlobDescriptorStreamRead> outstandingReads;
+  private final Map<Long, ObjectReadSessionStreamRead> outstandingReads;
 
   private final ReentrantLock lock;
 
-  BlobDescriptorState(
+  ObjectReadSessionState(
       @NonNull GrpcCallContext baseContext, @NonNull BidiReadObjectRequest openRequest) {
     this(
         baseContext,
@@ -72,7 +72,7 @@ final class BlobDescriptorState {
         new AtomicReference<>());
   }
 
-  private BlobDescriptorState(
+  private ObjectReadSessionState(
       @NonNull GrpcCallContext baseContext,
       @NonNull BidiReadObjectRequest openRequest,
       AtomicLong readIdSeq,
@@ -89,8 +89,8 @@ final class BlobDescriptorState {
     this.lock = new ReentrantLock();
   }
 
-  BlobDescriptorState forkChild() {
-    return new BlobDescriptorState(
+  ObjectReadSessionState forkChild() {
+    return new ObjectReadSessionState(
         baseContext,
         openRequest,
         readIdSeq,
@@ -99,7 +99,7 @@ final class BlobDescriptorState {
         new AtomicReference<>(metadata.get()));
   }
 
-  boolean canHandleNewRead(BlobDescriptorStreamRead newRead) {
+  boolean canHandleNewRead(ObjectReadSessionStreamRead newRead) {
     lock.lock();
     try {
       // when the map is empty this will also return true, see #allMatch docs
@@ -131,8 +131,8 @@ final class BlobDescriptorState {
       }
 
       outstandingReads.values().stream()
-          .filter(BlobDescriptorStreamRead::readyToSend)
-          .map(BlobDescriptorStreamRead::makeReadRange)
+          .filter(ObjectReadSessionStreamRead::readyToSend)
+          .map(ObjectReadSessionStreamRead::makeReadRange)
           .forEach(b::addReadRanges);
 
       ImmutableMap<String, List<String>> headers =
@@ -167,7 +167,7 @@ final class BlobDescriptorState {
   }
 
   @Nullable
-  BlobDescriptorStreamRead getOutstandingRead(long key) {
+  ObjectReadSessionStreamRead getOutstandingRead(long key) {
     lock.lock();
     try {
       return outstandingReads.get(key);
@@ -176,7 +176,7 @@ final class BlobDescriptorState {
     }
   }
 
-  void putOutstandingRead(long key, BlobDescriptorStreamRead value) {
+  void putOutstandingRead(long key, ObjectReadSessionStreamRead value) {
     lock.lock();
     try {
       outstandingReads.put(key, value);
@@ -205,13 +205,13 @@ final class BlobDescriptorState {
     this.routingToken.set(routingToken);
   }
 
-  BlobDescriptorStreamRead assignNewReadId(long oldReadId) {
+  ObjectReadSessionStreamRead assignNewReadId(long oldReadId) {
     lock.lock();
     try {
-      BlobDescriptorStreamRead remove = outstandingReads.remove(oldReadId);
+      ObjectReadSessionStreamRead remove = outstandingReads.remove(oldReadId);
       checkState(remove != null, "unable to locate old read");
       long newReadId = newReadId();
-      BlobDescriptorStreamRead withNewReadId = remove.withNewReadId(newReadId);
+      ObjectReadSessionStreamRead withNewReadId = remove.withNewReadId(newReadId);
       outstandingReads.put(newReadId, withNewReadId);
       return withNewReadId;
     } finally {
@@ -222,12 +222,13 @@ final class BlobDescriptorState {
   ApiFuture<?> failAll(Executor executor, Supplier<Throwable> terminalFailure) {
     lock.lock();
     try {
-      Iterator<Entry<Long, BlobDescriptorStreamRead>> iter = outstandingReads.entrySet().iterator();
+      Iterator<Entry<Long, ObjectReadSessionStreamRead>> iter =
+          outstandingReads.entrySet().iterator();
       ArrayList<ApiFuture<?>> futures = new ArrayList<>();
       while (iter.hasNext()) {
-        Entry<Long, BlobDescriptorStreamRead> entry = iter.next();
+        Entry<Long, ObjectReadSessionStreamRead> entry = iter.next();
         iter.remove();
-        BlobDescriptorStreamRead read = entry.getValue();
+        ObjectReadSessionStreamRead read = entry.getValue();
         read.preFail();
         ApiFuture<?> f =
             ApiFutures.transformAsync(

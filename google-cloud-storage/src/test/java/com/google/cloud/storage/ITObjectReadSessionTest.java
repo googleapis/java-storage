@@ -25,10 +25,10 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -60,7 +60,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @SingleBackend(Backend.TEST_BENCH)
-public final class ITBlobDescriptorTest {
+public final class ITObjectReadSessionTest {
 
   private static final int _512KiB = 512 * 1024;
 
@@ -81,14 +81,14 @@ public final class ITBlobDescriptorTest {
     byte[] expected = obj512KiB.getContent().getBytes(_512KiB - 13);
     BlobId blobId = obj512KiB.getInfo().getBlobId();
 
-    try (BlobDescriptor blobDescriptor =
-        storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
+    try (BlobReadSession blobReadSession =
+        storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
-      BlobInfo info1 = blobDescriptor.getBlobInfo();
+      BlobInfo info1 = blobReadSession.getBlobInfo();
       assertThat(info1).isNotNull();
 
       ApiFuture<byte[]> futureRead1Bytes =
-          blobDescriptor.readRangeAsBytes(RangeSpec.of(_512KiB - 13L, 13L));
+          blobReadSession.readRangeAsBytes(RangeSpec.of(_512KiB - 13L, 13L));
 
       byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
       assertThat(read1Bytes.length).isEqualTo(13);
@@ -111,14 +111,14 @@ public final class ITBlobDescriptorTest {
     for (int j = 0; j < 2; j++) {
 
       Stopwatch sw = Stopwatch.createStarted();
-      try (BlobDescriptor blobDescriptor =
-          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
+      try (BlobReadSession blobReadSession =
+          storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
         int numRangesToRead = 256;
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, (long) _2MiB))
-                .map(blobDescriptor::readRangeAsBytes)
+                .map(blobReadSession::readRangeAsBytes)
                 .collect(Collectors.toList());
 
         ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
@@ -162,11 +162,11 @@ public final class ITBlobDescriptorTest {
     for (int j = 0; j < 2; j++) {
 
       Stopwatch sw = Stopwatch.createStarted();
-      try (BlobDescriptor blobDescriptor =
-          storage.getBlobDescriptor(blobId).get(30, TimeUnit.SECONDS)) {
+      try (BlobReadSession blobReadSession =
+          storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ScatteringByteChannel r = blobDescriptor.readRangeAsChannel(RangeSpec.all())) {
+        try (ScatteringByteChannel r = blobReadSession.readRangeAsChannel(RangeSpec.all())) {
           ByteBuffer buf = ByteBuffer.wrap(buffer);
           Buffers.copyUsingBuffer(buf, r, Channels.newChannel(baos));
         }
@@ -199,14 +199,16 @@ public final class ITBlobDescriptorTest {
     for (int j = 0; j < 2; j++) {
 
       Stopwatch sw = Stopwatch.createStarted();
-      try (BlobDescriptorImpl blobDescriptor =
-          (BlobDescriptorImpl) storage.getBlobDescriptor(blobId).get(2, TimeUnit.SECONDS)) {
+      try (BlobReadSession blobReadSession =
+          storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
+        ObjectReadSessionImpl orsi =
+            ITObjectReadSessionFakeTest.getObjectReadSessionImpl(blobReadSession);
 
         int numRangesToRead = 256;
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
-                .map(blobDescriptor::readRangeAsByteString)
+                .map(orsi::readRangeAsByteString)
                 .collect(Collectors.toList());
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
@@ -244,10 +246,11 @@ public final class ITBlobDescriptorTest {
   public void readFromBucketThatDoesNotExistShouldRaiseStorageExceptionWith404() {
     BlobId blobId = BlobId.of("gcs-grpc-team-bucket-that-does-not-exist", "someobject");
 
-    ApiFuture<BlobDescriptor> futureBlobDescriptor = storage.getBlobDescriptor(blobId);
+    ApiFuture<BlobReadSession> futureObjectReadSession = storage.blobReadSession(blobId);
 
     ExecutionException ee =
-        assertThrows(ExecutionException.class, () -> futureBlobDescriptor.get(5, TimeUnit.SECONDS));
+        assertThrows(
+            ExecutionException.class, () -> futureObjectReadSession.get(5, TimeUnit.SECONDS));
 
     assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
     StorageException cause = (StorageException) ee.getCause();

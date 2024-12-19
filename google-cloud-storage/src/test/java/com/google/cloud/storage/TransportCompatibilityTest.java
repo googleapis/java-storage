@@ -42,8 +42,8 @@ public final class TransportCompatibilityTest {
         new GrpcStorageImpl(
             options,
             null,
+            null,
             ResponseContentLifecycleManager.noop(),
-            ResponseContentLifecycleManager.noopBidiReadObjectResponse(),
             null,
             Opts.empty());
     ImmutableList<String> messages =

@@ -27,17 +27,21 @@ import com.google.api.core.InternalApi;
 import com.google.api.core.ObsoleteApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.rpc.NoHeaderProvider;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.RequestParamsBuilder;
 import com.google.api.gax.rpc.RequestParamsExtractor;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -54,6 +58,9 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
+import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -109,6 +116,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -810,6 +818,23 @@ public final class GrpcStorageOptions extends StorageOptions
           Tuple<StorageSettings, Opts<UserProject>> t = grpcStorageOptions.resolveSettingsAndOpts();
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
+
+          ScheduledExecutorService executor =
+              Utils.firstNonNull(
+                      storageSettings::getBackgroundExecutorProvider,
+                      () -> {
+                        // TODO: if we make it to here, ensure we track the need to shutdown the
+                        //   executor separate from StorageClient
+                        return InstantiatingExecutorProvider.newBuilder().build();
+                      })
+                  .getExecutor();
+          RetryContextProvider retryContextProvider =
+              RetryContext.providerFrom(
+                  executor,
+                  grpcStorageOptions,
+                  new ReadObjectRangeResultRetryAlgorithmDecorator(
+                      grpcStorageOptions.getRetryAlgorithmManager().idempotent()));
+
           if (ZeroCopyReadinessChecker.isReady()) {
             LOGGER.config("zero-copy protobuf deserialization available, using it");
             StorageStubSettings baseSettings =
@@ -823,26 +848,40 @@ public final class GrpcStorageOptions extends StorageOptions
             InternalStorageClient client =
                 new InternalStorageClient(internalStorageSettingsBuilder);
             InternalZeroCopyGrpcStorageStub stub = client.getStub();
-            GrpcStorageImpl grpcStorage =
-                new GrpcStorageImpl(
-                    grpcStorageOptions,
-                    client,
-                    stub.readObjectResponseMarshaller,
-                    stub.bidiReadObjectResponseMarshaller,
-                    grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
-                    defaultOpts);
+            StorageDataClient dataClient =
+                StorageDataClient.create(
+                    executor,
+                    new ZeroCopyBidiStreamingCallable<>(
+                        stub.bidiReadObjectCallable(), stub.bidiReadObjectResponseMarshaller),
+                    retryContextProvider,
+                    IOAutoCloseable.noOp());
+            GrpcStorageImpl grpcStorage = new GrpcStorageImpl(
+                grpcStorageOptions,
+                client,
+                dataClient,
+                stub.readObjectResponseMarshaller,
+                grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                defaultOpts);
             return OtelStorageDecorator.decorate(
                 grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
           } else {
             LOGGER.config(
                 "zero-copy protobuf deserialization unavailable, proceeding with default");
             StorageClient client = StorageClient.create(storageSettings);
+            StorageDataClient dataClient =
+                StorageDataClient.create(
+                    executor,
+                    new ZeroCopyBidiStreamingCallable<>(
+                        client.bidiReadObjectCallable(),
+                        ResponseContentLifecycleManager.noopBidiReadObjectResponse()),
+                    retryContextProvider,
+                    IOAutoCloseable.noOp());
             GrpcStorageImpl grpcStorage =
                 new GrpcStorageImpl(
                     grpcStorageOptions,
                     client,
+                    dataClient,
                     ResponseContentLifecycleManager.noop(),
-                    ResponseContentLifecycleManager.noopBidiReadObjectResponse(),
                     grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
                     defaultOpts);
             return OtelStorageDecorator.decorate(
@@ -1254,6 +1293,24 @@ public final class GrpcStorageOptions extends StorageOptions
 
     public static boolean isReady() {
       return isZeroCopyReady;
+    }
+  }
+
+  private static class ReadObjectRangeResultRetryAlgorithmDecorator
+      extends BasicResultRetryAlgorithm<Object> {
+
+    private final ResultRetryAlgorithm<?> delegate;
+
+    private ReadObjectRangeResultRetryAlgorithmDecorator(ResultRetryAlgorithm<?> delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+      // this is only retryable with read object range, not other requests
+      return previousThrowable instanceof UncheckedChecksumMismatchException
+          || previousThrowable instanceof OutOfRangeException
+          || delegate.shouldRetry(StorageException.coalesce(previousThrowable), null);
     }
   }
 }

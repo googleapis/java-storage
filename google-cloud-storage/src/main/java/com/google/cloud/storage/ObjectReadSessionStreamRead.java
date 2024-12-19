@@ -19,11 +19,11 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.BaseServiceException;
-import com.google.cloud.storage.BlobDescriptor.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ReadRange;
@@ -41,7 +41,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
+abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
 
   protected final long readId;
   protected final RangeSpec rangeSpec;
@@ -51,7 +51,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
   protected boolean tombstoned;
   protected IOAutoCloseable onCloseCallback;
 
-  BlobDescriptorStreamRead(
+  ObjectReadSessionStreamRead(
       long readId,
       RangeSpec rangeSpec,
       RetryContext retryContext,
@@ -60,7 +60,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
         readId, rangeSpec, new AtomicLong(rangeSpec.begin()), retryContext, onCloseCallback, false);
   }
 
-  BlobDescriptorStreamRead(
+  ObjectReadSessionStreamRead(
       long readId,
       RangeSpec rangeSpec,
       AtomicLong readOffset,
@@ -92,7 +92,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
 
   abstract ApiFuture<?> fail(Throwable t);
 
-  abstract BlobDescriptorStreamRead withNewReadId(long newReadId);
+  abstract ObjectReadSessionStreamRead withNewReadId(long newReadId);
 
   final ReadRange makeReadRange() {
     long currentOffset = readOffset.get();
@@ -115,11 +115,11 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
     return !tombstoned && !retryContext.inBackoff();
   }
 
-  boolean canShareStreamWith(BlobDescriptorStreamRead other) {
+  boolean canShareStreamWith(ObjectReadSessionStreamRead other) {
     return canShareStreamWith(other.getClass());
   }
 
-  protected boolean canShareStreamWith(Class<? extends BlobDescriptorStreamRead> clazz) {
+  protected boolean canShareStreamWith(Class<? extends ObjectReadSessionStreamRead> clazz) {
     return clazz == this.getClass();
   }
 
@@ -161,7 +161,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
   }
 
   /** Base class of a read that will accumulate before completing by resolving a future */
-  abstract static class AccumulatingRead<Result> extends BlobDescriptorStreamRead {
+  abstract static class AccumulatingRead<Result> extends ObjectReadSessionStreamRead {
     protected final List<ChildRef> childRefs;
     protected final SettableApiFuture<Result> complete;
 
@@ -226,7 +226,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
     }
 
     @Override
-    protected boolean canShareStreamWith(Class<? extends BlobDescriptorStreamRead> clazz) {
+    protected boolean canShareStreamWith(Class<? extends ObjectReadSessionStreamRead> clazz) {
       return AccumulatingRead.class.isAssignableFrom(clazz);
     }
   }
@@ -235,7 +235,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
    * Base class of a read that will be processed in a streaming manner (e.g. {@link
    * ReadableByteChannel})
    */
-  static class StreamingRead extends BlobDescriptorStreamRead
+  static class StreamingRead extends ObjectReadSessionStreamRead
       implements UnbufferedReadableByteChannel {
     private final SettableApiFuture<Void> failFuture;
     private final BlockingQueue<Closeable> queue;
@@ -328,7 +328,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
     }
 
     @Override
-    boolean canShareStreamWith(BlobDescriptorStreamRead other) {
+    boolean canShareStreamWith(ObjectReadSessionStreamRead other) {
       return false;
     }
 
@@ -369,7 +369,7 @@ abstract class BlobDescriptorStreamRead implements IOAutoCloseable {
         }
       }
 
-      java.lang.Object poll;
+      Object poll;
       while (read < dstsRemaining && (poll = queue.poll()) != null) {
         if (poll instanceof ChildRef) {
           ChildRefHelper ref = new ChildRefHelper((ChildRef) poll);

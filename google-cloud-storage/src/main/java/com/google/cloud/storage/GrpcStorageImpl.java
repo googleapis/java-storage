@@ -32,17 +32,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
-import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
-import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
@@ -52,14 +49,11 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
-import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
-import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
-import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -86,7 +80,6 @@ import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.storage.v2.BidiReadObjectRequest;
-import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
@@ -111,7 +104,6 @@ import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
-import com.google.storage.v2.StorageSettings;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
@@ -141,7 +133,6 @@ import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -175,59 +166,34 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
+  final StorageDataClient storageDataClient;
   final ResponseContentLifecycleManager<ReadObjectResponse> responseContentLifecycleManager;
-  final ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
-  final ScheduledExecutorService executor;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
   @Deprecated private final Supplier<ProjectId> defaultProjectId;
-  private final RetryContextProvider retryContextProvider;
 
   GrpcStorageImpl(
       GrpcStorageOptions options,
       StorageClient storageClient,
+      StorageDataClient storageDataClient,
       ResponseContentLifecycleManager<ReadObjectResponse> responseContentLifecycleManager,
-      ResponseContentLifecycleManager<BidiReadObjectResponse> bidiResponseContentLifecycleManager,
       WriterFactory writerFactory,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.storageDataClient = storageDataClient;
     this.responseContentLifecycleManager = responseContentLifecycleManager;
-    this.bidiResponseContentLifecycleManager = bidiResponseContentLifecycleManager;
     this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = Suppliers.memoize(() -> UnifiedOpts.projectId(options.getProjectId()));
-    this.executor =
-        Utils.firstNonNull(
-                () -> {
-                  if (storageClient == null) {
-                    return null;
-                  }
-                  StorageSettings settings = storageClient.getSettings();
-                  if (settings == null) {
-                    return null;
-                  }
-                  return settings.getBackgroundExecutorProvider();
-                },
-                () -> {
-                  // TODO: if we make it to here, ensure we track the need to shutdown the executor
-                  //   separate from StorageClient
-                  return InstantiatingExecutorProvider.newBuilder().build();
-                })
-            .getExecutor();
-    retryContextProvider =
-        RetryContext.providerFrom(
-            executor,
-            getOptions(),
-            new ReadObjectRangeResultRetryAlgorithmDecorator(retryAlgorithmManager.idempotent()));
   }
 
   @Override
@@ -1518,7 +1484,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   @Override
-  public ApiFuture<BlobDescriptor> getBlobDescriptor(BlobId id, BlobSourceOption... options) {
+  public ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options);
     Object object = codecs.blobId().encode(id);
 
@@ -1534,13 +1500,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     opts.bidiReadObjectRequest().apply(b);
     BidiReadObjectRequest req = b.build();
 
-    ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
-        new ZeroCopyBidiStreamingCallable<>(
-            storageClient.bidiReadObjectCallable(), bidiResponseContentLifecycleManager);
-
     GrpcCallContext context = opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    ApiFuture<ObjectReadSession> session = storageDataClient.readSession(req, context);
 
-    return BlobDescriptorImpl.create(req, context, callable, executor, retryContextProvider);
+    return BlobReadSessionAdapter.wrap(session);
   }
 
   @Override
@@ -2083,23 +2046,5 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return new ZeroCopyServerStreamingCallable<>(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
         responseContentLifecycleManager);
-  }
-
-  private static class ReadObjectRangeResultRetryAlgorithmDecorator
-      extends BasicResultRetryAlgorithm<Object> {
-
-    private final ResultRetryAlgorithm<?> delegate;
-
-    private ReadObjectRangeResultRetryAlgorithmDecorator(ResultRetryAlgorithm<?> delegate) {
-      this.delegate = delegate;
-    }
-
-    @Override
-    public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
-      // this is only retryable with read object range, not other requests
-      return previousThrowable instanceof UncheckedChecksumMismatchException
-          || previousThrowable instanceof OutOfRangeException
-          || delegate.shouldRetry(StorageException.coalesce(previousThrowable), null);
-    }
   }
 }
