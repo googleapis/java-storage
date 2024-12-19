@@ -16,6 +16,11 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.client.util.Sleeper;
+import com.google.api.core.ApiClock;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.cloud.storage.Backoff.BackoffDuration;
 import com.google.cloud.storage.Backoff.BackoffResult;
@@ -23,13 +28,21 @@ import com.google.cloud.storage.Backoff.BackoffResults;
 import com.google.cloud.storage.Backoff.Jitterer;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.primitives.Longs;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -198,7 +211,7 @@ final class RetryContext {
 
   static RetryContext neverRetry() {
     return new RetryContext(
-        Executors.newSingleThreadScheduledExecutor(),
+        directScheduledExecutorService(),
         RetryingDependencies.attemptOnce(),
         Retrying.neverRetry(),
         Jitterer.threadLocalRandom());
@@ -209,6 +222,10 @@ final class RetryContext {
       RetryingDependencies deps,
       ResultRetryAlgorithm<?> alg) {
     return () -> RetryContext.of(scheduledExecutorService, deps, alg, Jitterer.threadLocalRandom());
+  }
+
+  static ScheduledExecutorService directScheduledExecutorService() {
+    return DirectScheduledExecutorService.INSTANCE;
   }
 
   @FunctionalInterface
@@ -252,6 +269,171 @@ final class RetryContext {
 
     private static BackoffComment of(String message) {
       return new BackoffComment(message);
+    }
+  }
+
+  private static final class DirectScheduledExecutorService implements ScheduledExecutorService {
+    private static final DirectScheduledExecutorService INSTANCE =
+        new DirectScheduledExecutorService(Sleeper.DEFAULT, NanoClock.getDefaultClock());
+
+    private static final Comparator<Delayed> COMP =
+        Comparator.comparingLong(delay -> delay.getDelay(TimeUnit.NANOSECONDS));
+    private final Sleeper sleeper;
+    private final ApiClock apiClock;
+
+    private DirectScheduledExecutorService(Sleeper sleeper, ApiClock apiClock) {
+      this.sleeper = sleeper;
+      this.apiClock = apiClock;
+    }
+
+    @Override
+    public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+      return new DirectScheduledFuture(unit, delay, command);
+    }
+
+    @Override
+    public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleAtFixedRate(
+        Runnable command, long initialDelay, long period, TimeUnit unit) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleWithFixedDelay(
+        Runnable command, long initialDelay, long delay, TimeUnit unit) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void shutdown() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isShutdown() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isTerminated() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Future<T> submit(Callable<T> task) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Future<T> submit(Runnable task, T result) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Future<?> submit(Runnable task) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> List<Future<T>> invokeAll(
+        Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+        throws InterruptedException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException, ExecutionException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void execute(Runnable command) {
+      throw new UnsupportedOperationException();
+    }
+
+    private final class DirectScheduledFuture implements ScheduledFuture<Object> {
+
+      private final long origDelayNs;
+      private final long beginNs;
+      private final ApiFuture<Object> delegate;
+
+      public DirectScheduledFuture(TimeUnit unit, long delay, Runnable command) {
+        origDelayNs = unit.toNanos(delay);
+        beginNs = apiClock.nanoTime();
+        delegate =
+            ApiFutures.transformAsync(
+                ApiFutures.immediateFuture(null),
+                ignore -> {
+                  sleeper.sleep(unit.toMillis(delay));
+                  command.run();
+                  return ApiFutures.immediateFuture(null);
+                },
+                MoreExecutors.directExecutor());
+      }
+
+      @Override
+      public long getDelay(TimeUnit unit) {
+        long nowNs = apiClock.nanoTime();
+        return Longs.max(0L, (nowNs - beginNs) - origDelayNs);
+      }
+
+      @Override
+      public int compareTo(Delayed o) {
+        return COMP.compare(this, o);
+      }
+
+      @Override
+      public boolean cancel(boolean mayInterruptIfRunning) {
+        return delegate.cancel(mayInterruptIfRunning);
+      }
+
+      @Override
+      public boolean isCancelled() {
+        return delegate.isCancelled();
+      }
+
+      @Override
+      public boolean isDone() {
+        return delegate.isDone();
+      }
+
+      @Override
+      public Object get() throws InterruptedException, ExecutionException {
+        return delegate.get();
+      }
+
+      @Override
+      public Object get(long timeout, TimeUnit unit)
+          throws InterruptedException, ExecutionException, TimeoutException {
+        return delegate.get(timeout, unit);
+      }
     }
   }
 }

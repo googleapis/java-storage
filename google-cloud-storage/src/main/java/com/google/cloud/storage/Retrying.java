@@ -16,15 +16,13 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
-
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.storage.Backoff.Jitterer;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import com.google.common.base.MoreObjects;
@@ -32,6 +30,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -63,10 +63,11 @@ final class Retrying {
     HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
     try {
       httpRpcContext.newInvocationId();
-      T result = runWithRetries(c, options.getRetrySettings(), algorithm, options.getClock());
-      return result == null ? null : f.apply(result);
-    } catch (RetryHelperException e) {
-      throw StorageException.coalesce(e);
+      return run(
+          RetryingDependencies.simple(options.getClock(), options.getRetrySettings()),
+          algorithm,
+          c,
+          f::apply);
     } finally {
       httpRpcContext.clearInvocationId();
     }
@@ -95,34 +96,41 @@ final class Retrying {
       ResultRetryAlgorithm<?> algorithm,
       Callable<T> c,
       Decoder<T, U> f) {
-    try {
-      T result =
-          runWithRetries(
-              () -> {
-                try {
-                  return c.call();
-                } catch (StorageException se) {
-                  // we hope for this case
-                  throw se;
-                } catch (IllegalArgumentException iae) {
-                  // IllegalArgumentException can happen if there is no json in the body and we try
-                  // to parse it Our retry algorithms have special case for this, so in an effort to
-                  // keep compatibility with those existing behaviors, explicitly rethrow an
-                  // IllegalArgumentException that may have happened
-                  throw iae;
-                } catch (Exception e) {
-                  // Wire in this fall through just in case.
-                  // all of our retry algorithms are centered around StorageException so this helps
-                  // those be more effective
-                  throw StorageException.coalesce(e);
-                }
-              },
-              deps.getRetrySettings(),
-              algorithm,
-              deps.getClock());
-      return result == null ? null : f.decode(result);
-    } catch (RetryHelperException e) {
-      throw StorageException.coalesce(e.getCause());
+    RetryContext ctx =
+        RetryContext.of(
+            RetryContext.directScheduledExecutorService(),
+            deps,
+            algorithm,
+            Jitterer.threadLocalRandom());
+    AtomicReference<Exception> failure = new AtomicReference<>();
+    AtomicBoolean attemptAgain = new AtomicBoolean(false);
+    do {
+      attemptAgain.set(false);
+      try {
+        T result = c.call();
+        return result == null ? null : f.decode(result);
+      } catch (StorageException se) {
+        // we hope for this case
+        ctx.recordError(se, () -> attemptAgain.set(true), failure::set);
+      } catch (IllegalArgumentException iae) {
+        // IllegalArgumentException can happen if there is no json in the body and we try
+        // to parse it Our retry algorithms have special case for this, so in an effort to
+        // keep compatibility with those existing behaviors, explicitly rethrow an
+        // IllegalArgumentException that may have happened
+        ctx.recordError(iae, () -> attemptAgain.set(true), failure::set);
+      } catch (Exception e) {
+        // Wire in this fall through just in case.
+        // all of our retry algorithms are centered around StorageException so this helps
+        // those be more effective
+        ctx.recordError(StorageException.coalesce(e), () -> attemptAgain.set(true), failure::set);
+      }
+    } while (attemptAgain.get());
+
+    Exception throwable = failure.get();
+    if (throwable instanceof StorageException) {
+      throw (StorageException) throwable;
+    } else {
+      throw StorageException.coalesce(throwable);
     }
   }
 
