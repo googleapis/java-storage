@@ -549,4 +549,24 @@ public class MockStorageImpl extends StorageImplBase {
                   Exception.class.getName())));
     }
   }
+
+  @Override
+  public void moveObject(MoveObjectRequest request, StreamObserver<Object> responseObserver) {
+    java.lang.Object response = responses.poll();
+    if (response instanceof Object) {
+      requests.add(request);
+      responseObserver.onNext(((Object) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method MoveObject, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  Object.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
 }

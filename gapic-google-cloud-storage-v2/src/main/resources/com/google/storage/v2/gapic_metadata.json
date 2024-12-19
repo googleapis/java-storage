@@ -46,6 +46,9 @@
             "LockBucketRetentionPolicy": {
               "methods": ["lockBucketRetentionPolicy", "lockBucketRetentionPolicy", "lockBucketRetentionPolicy", "lockBucketRetentionPolicyCallable"]
             },
+            "MoveObject": {
+              "methods": ["moveObject", "moveObject", "moveObject", "moveObjectCallable"]
+            },
             "QueryWriteStatus": {
               "methods": ["queryWriteStatus", "queryWriteStatus", "queryWriteStatusCallable"]
             },
