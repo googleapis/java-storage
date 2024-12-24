@@ -212,6 +212,11 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     return ((StorageStubSettings) getStubSettings()).queryWriteStatusSettings();
   }
 
+  /** Returns the object with the settings used for calls to moveObject. */
+  public UnaryCallSettings<MoveObjectRequest, Object> moveObjectSettings() {
+    return ((StorageStubSettings) getStubSettings()).moveObjectSettings();
+  }
+
   public static final StorageSettings create(StorageStubSettings stub) throws IOException {
     return new StorageSettings.Builder(stub.toBuilder()).build();
   }
@@ -428,6 +433,11 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     public UnaryCallSettings.Builder<QueryWriteStatusRequest, QueryWriteStatusResponse>
         queryWriteStatusSettings() {
       return getStubSettingsBuilder().queryWriteStatusSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to moveObject. */
+    public UnaryCallSettings.Builder<MoveObjectRequest, Object> moveObjectSettings() {
+      return getStubSettingsBuilder().moveObjectSettings();
     }
 
     @Override
