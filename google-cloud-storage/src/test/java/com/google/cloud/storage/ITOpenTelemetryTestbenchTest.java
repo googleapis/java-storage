@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +81,7 @@ public class ITOpenTelemetryTestbenchTest {
 
   @Test
   public void runCreateBucket() {
-    String bucket = "random-bucket";
+    String bucket = "random-bucket" + UUID.randomUUID();
     storage.create(BucketInfo.of(bucket));
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
