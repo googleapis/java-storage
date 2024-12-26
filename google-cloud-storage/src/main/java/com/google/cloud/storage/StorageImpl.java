@@ -222,22 +222,32 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
       final int offset,
       final int length,
       Opts<ObjectTargetOpt> opts) {
-    Preconditions.checkNotNull(content);
-    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    OpenTelemetryTraceUtil.Span otelSpan =
+        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
+    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
+      Preconditions.checkNotNull(content);
+      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
 
-    BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
-    final StorageObject blobPb = codecs.blobInfo().encode(updated);
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsCreate(blobPb, optionsMap);
-    return run(
-        algorithm,
-        () ->
-            storageRpc.create(
-                blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
-        (x) -> {
-          BlobInfo info1 = Conversions.json().blobInfo().decode(x);
-          return info1.asBlob(this);
-        });
+      BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
+      final StorageObject blobPb = codecs.blobInfo().encode(updated);
+      ResultRetryAlgorithm<?> algorithm =
+          retryAlgorithmManager.getForObjectsCreate(blobPb, optionsMap);
+      return run(
+          algorithm,
+          () ->
+              storageRpc.create(
+                  blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
+          (x) -> {
+            BlobInfo info1 = Conversions.json().blobInfo().decode(x);
+            return info1.asBlob(this);
+          });
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -692,30 +702,40 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public CopyWriter copy(final CopyRequest copyRequest) {
-    BlobId source = copyRequest.getSource();
-    BlobInfo target = copyRequest.getTarget();
-    Opts<ObjectSourceOpt> sourceOpts =
-        Opts.unwrap(copyRequest.getSourceOptions()).resolveFrom(source).projectAsSource();
-    Opts<ObjectTargetOpt> targetOpts =
-        Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(target);
+    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
+      BlobId source = copyRequest.getSource();
+      BlobInfo target = copyRequest.getTarget();
+      Opts<ObjectSourceOpt> sourceOpts =
+          Opts.unwrap(copyRequest.getSourceOptions()).resolveFrom(source).projectAsSource();
+      Opts<ObjectTargetOpt> targetOpts =
+          Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(target);
 
-    StorageObject sourcePb = codecs.blobId().encode(source);
-    StorageObject targetPb = codecs.blobInfo().encode(target);
-    ImmutableMap<StorageRpc.Option, ?> sourceOptions = sourceOpts.getRpcOptions();
-    ImmutableMap<StorageRpc.Option, ?> targetOptions = targetOpts.getRpcOptions();
-    RewriteRequest rewriteRequest =
-        new RewriteRequest(
-            sourcePb,
-            sourceOptions,
-            copyRequest.overrideInfo(),
-            targetPb,
-            targetOptions,
-            copyRequest.getMegabytesCopiedPerChunk());
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsRewrite(rewriteRequest);
-    return run(
-        algorithm,
-        () -> storageRpc.openRewrite(rewriteRequest),
-        (r) -> new HttpCopyWriter(getOptions(), r));
+      StorageObject sourcePb = codecs.blobId().encode(source);
+      StorageObject targetPb = codecs.blobInfo().encode(target);
+      ImmutableMap<StorageRpc.Option, ?> sourceOptions = sourceOpts.getRpcOptions();
+      ImmutableMap<StorageRpc.Option, ?> targetOptions = targetOpts.getRpcOptions();
+      RewriteRequest rewriteRequest =
+          new RewriteRequest(
+              sourcePb,
+              sourceOptions,
+              copyRequest.overrideInfo(),
+              targetPb,
+              targetOptions,
+              copyRequest.getMegabytesCopiedPerChunk());
+      ResultRetryAlgorithm<?> algorithm =
+          retryAlgorithmManager.getForObjectsRewrite(rewriteRequest);
+      return run(
+          algorithm,
+          () -> storageRpc.openRewrite(rewriteRequest),
+          (r) -> new HttpCopyWriter(getOptions(), r));
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -725,13 +745,22 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    final StorageObject storageObject = codecs.blobId().encode(blob);
-    Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
-    Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
-    return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
+    Span otelSpan = openTelemetryTraceUtil.startSpan("readAllBytes", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
+      final StorageObject storageObject = codecs.blobId().encode(blob);
+      Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
+      Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
+      ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
+      ResultRetryAlgorithm<?> algorithm =
+          retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
+      return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
@@ -772,19 +801,28 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
-    final StorageObject pb = codecs.blobId().encode(blob);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
-    run(
-        algorithm,
-        callable(
-            () -> {
-              storageRpc.read(
-                  pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
-            }),
-        Function.identity());
+    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
+    try (Scope ignored = otelSpan.makeCurrent()) {
+      final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
+      final StorageObject pb = codecs.blobId().encode(blob);
+      ImmutableMap<StorageRpc.Option, ?> optionsMap =
+          Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+      ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
+      run(
+          algorithm,
+          callable(
+              () -> {
+                storageRpc.read(
+                    pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
+              }),
+          Function.identity());
+    } catch (Exception e) {
+      otelSpan.recordException(e);
+      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
+      throw e;
+    } finally {
+      otelSpan.end();
+    }
   }
 
   @Override
