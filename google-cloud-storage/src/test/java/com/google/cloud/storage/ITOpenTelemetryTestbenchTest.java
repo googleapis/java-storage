@@ -97,7 +97,6 @@ public class ITOpenTelemetryTestbenchTest {
     List<SpanData> spanData = testExported.getExportedSpans();
     checkCommonAttributes(spanData);
     Assert.assertTrue(spanData.stream().anyMatch(x -> x.getName().contains("create")));
-    Assert.assertEquals(spanData.get(1).getSpanContext(), spanData.get(0).getParentSpanContext());
   }
 
   @Test
