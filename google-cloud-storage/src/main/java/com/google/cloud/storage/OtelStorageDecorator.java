@@ -520,13 +520,12 @@ final class OtelStorageDecorator implements Storage {
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       CopyWriter copyWriter = delegate.copy(copyRequest);
-      return new OtelDecoratedCopyWriter(copyWriter);
+      return new OtelDecoratedCopyWriter(copyWriter, span);
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
-      throw t;
-    } finally {
       span.end();
+      throw t;
     }
   }
 
@@ -1502,7 +1501,7 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private static class OtelDecoratedReadChannel implements ReadChannel {
+  private static final class OtelDecoratedReadChannel implements ReadChannel {
 
     private final ReadChannel reader;
     private final Span span;
@@ -1557,7 +1556,7 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private class OtelDecoratedBlobWriteSession implements BlobWriteSession {
+  private final class OtelDecoratedBlobWriteSession implements BlobWriteSession {
 
     private final BlobWriteSession delegate;
     private final Tracer tracer;
@@ -1621,7 +1620,7 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private static class OtelDecoratedWriteChannel implements WriteChannel {
+  private static final class OtelDecoratedWriteChannel implements WriteChannel {
     private final WriteChannel delegate;
     private final Span openSpan;
 
@@ -1660,14 +1659,16 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private class OtelDecoratedCopyWriter extends CopyWriter {
+  private final class OtelDecoratedCopyWriter extends CopyWriter {
 
     private final CopyWriter copyWriter;
+    private final Span span;
     private final Context parentContext;
     private final Tracer tracer;
 
-    public OtelDecoratedCopyWriter(CopyWriter copyWriter) {
+    public OtelDecoratedCopyWriter(CopyWriter copyWriter, Span span) {
       this.copyWriter = copyWriter;
+      this.span = span;
       this.parentContext = Context.current();
       this.tracer =
           TracerDecorator.decorate(
@@ -1679,7 +1680,15 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public Blob getResult() {
-      return copyWriter.getResult();
+      try {
+        return copyWriter.getResult();
+      } catch (Throwable t) {
+        span.recordException(t);
+        span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        throw t;
+      } finally {
+        span.end();
+      }
     }
 
     @Override
@@ -1689,7 +1698,11 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public boolean isDone() {
-      return copyWriter.isDone();
+      boolean done = copyWriter.isDone();
+      if (done) {
+        span.end();
+      }
+      return done;
     }
 
     @Override
@@ -1704,15 +1717,16 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public void copyChunk() {
-      Span span = tracer.spanBuilder("copyChunk").setParent(parentContext).startSpan();
-      try (Scope ignore = span.makeCurrent()) {
+      Span copyChunkSpan = tracer.spanBuilder("copyChunk").setParent(parentContext).startSpan();
+      try (Scope ignore = copyChunkSpan.makeCurrent()) {
         copyWriter.copyChunk();
       } catch (Throwable t) {
-        span.recordException(t);
-        span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        copyChunkSpan.recordException(t);
+        copyChunkSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        span.end();
         throw t;
       } finally {
-        span.end();
+        copyChunkSpan.end();
       }
     }
   }
