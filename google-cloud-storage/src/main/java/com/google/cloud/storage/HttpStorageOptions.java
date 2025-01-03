@@ -292,7 +292,7 @@ public class HttpStorageOptions extends StorageOptions {
      */
     @BetaApi
     public HttpStorageOptions.Builder setOpenTelemetry(OpenTelemetry openTelemetry) {
-      requireNonNull(this.openTelemetry, "openTelemetry must be non null");
+      requireNonNull(openTelemetry, "openTelemetry must be non null");
       this.openTelemetry = openTelemetry;
       return this;
     }
