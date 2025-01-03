@@ -60,7 +60,7 @@ public class HttpStorageOptions extends StorageOptions {
   private transient RetryDependenciesAdapter retryDepsAdapter;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
-  private final OpenTelemetry openTelemetry;
+  private transient OpenTelemetry openTelemetry;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -124,6 +124,7 @@ public class HttpStorageOptions extends StorageOptions {
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     this.retryDepsAdapter = new RetryDependenciesAdapter();
+    this.openTelemetry = HttpStorageOptions.getDefaultInstance().getOpenTelemetry();
   }
 
   public static HttpStorageOptions.Builder newBuilder() {

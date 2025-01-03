@@ -85,6 +85,7 @@ import io.opentelemetry.api.OpenTelemetry;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -120,7 +121,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
-  private final OpenTelemetry openTelemetry;
+  private transient OpenTelemetry openTelemetry;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -158,6 +159,11 @@ public final class GrpcStorageOptions extends StorageOptions
   @InternalApi
   StorageSettings getStorageSettings() throws IOException {
     return resolveSettingsAndOpts().x();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    this.openTelemetry = HttpStorageOptions.getDefaultInstance().getOpenTelemetry();
   }
 
   /**
