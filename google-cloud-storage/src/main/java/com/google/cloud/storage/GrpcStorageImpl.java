@@ -656,16 +656,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         RewriteObjectRequest.newBuilder()
             .setDestinationName(dstProto.getName())
             .setDestinationBucket(dstProto.getBucket())
-            // destination_kms_key comes from dstOpts
-            // according to the docs in the protos, it is illegal to populate the following fields,
-            // clear them out if they are set
-            // destination_predefined_acl comes from dstOpts
-            // if_*_match come from srcOpts and dstOpts
-            // copy_source_encryption_* come from srcOpts
-            // common_object_request_params come from dstOpts
-            .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
             .setSourceBucket(srcProto.getBucket())
             .setSourceObject(srcProto.getName());
+
+    // according to the docs in the protos, it is illegal to populate the following fields,
+    // clear them out if they are set
+    // * destination_kms_key comes from dstOpts
+    // * destination_predefined_acl comes from dstOpts
+    // * if_*_match come from srcOpts and dstOpts
+    // * copy_source_encryption_* come from srcOpts
+    // * common_object_request_params come from dstOpts
+    Object cleanedDst = dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build();
+    // only set the destination if it is not equal to the default instance
+    // otherwise we will clobber default values populated in the gcs server side for the object
+    // metadata
+    if (!cleanedDst.equals(Object.getDefaultInstance())) {
+      b.setDestination(cleanedDst);
+    }
 
     if (src.getGeneration() != null) {
       b.setSourceGeneration(src.getGeneration());
@@ -685,7 +692,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> callable.call(req, retryContext),
-        (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
+        (resp) ->
+            new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), req, resp));
   }
 
   @Override

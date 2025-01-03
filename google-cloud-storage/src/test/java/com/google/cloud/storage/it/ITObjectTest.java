@@ -39,6 +39,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
@@ -562,7 +563,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // When gRPC support is added for matchGlob, enable this test for gRPC.
   public void testListBlobsWithMatchGlob() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     try (TemporaryBucket tempBucket =
@@ -848,8 +848,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
   public void testCopyBlob() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";
@@ -872,8 +870,35 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
+  public void copyBlob_classChange_multipleChunks() {
+
+    String sourceBlobName = generator.randomObjectName() + "-source";
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
+    ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
+    BlobInfo blob = BlobInfo.newBuilder(source).setMetadata(metadata).build();
+    int _5MiB = 5 * 1024 * 1024;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(_5MiB);
+    Blob remoteBlob = storage.create(blob, bytes);
+    assertThat(remoteBlob).isNotNull();
+    String targetBlobName = generator.randomObjectName() + "-target";
+    CopyRequest req =
+        CopyRequest.newBuilder()
+            .setSource(source)
+            .setTarget(
+                BlobInfo.newBuilder(bucket, targetBlobName)
+                    // change the storage class to force GCS to copy bytes
+                    .setStorageClass(StorageClass.NEARLINE)
+                    .build(),
+                BlobTargetOption.doesNotExist())
+            .setMegabytesCopiedPerChunk(2L)
+            .build();
+    CopyWriter copyWriter = storage.copy(req);
+    BlobInfo remoteBlob2 = copyWriter.getResult();
+    assertThat(copyWriter.isDone()).isTrue();
+    assertThat(remoteBlob2).isNotNull();
+  }
+
+  @Test
   public void testCopyBlobWithPredefinedAcl() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";
@@ -903,8 +928,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
   public void testCopyBlobWithEncryptionKeys() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";
@@ -955,8 +978,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
   public void testCopyBlobUpdateMetadata() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";
@@ -981,9 +1002,7 @@ public class ITObjectTest {
     assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
-  // Re-enable this test when it stops failing
-  // @Test
-  @Exclude(transports = Transport.GRPC)
+  @Test
   public void testCopyBlobUpdateStorageClass() {
     String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
@@ -1007,8 +1026,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
   public void testCopyBlobNoContentType() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";
@@ -1022,7 +1039,9 @@ public class ITObjectTest {
     CopyWriter copyWriter = storage.copy(req);
     assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertNull(copyWriter.getResult().getContentType());
+    assertTrue(
+        copyWriter.getResult().getContentType() == null
+            || copyWriter.getResult().getContentType().isEmpty());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
@@ -1030,9 +1049,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Verified against testbench
-  // Bucket attribute extration on allowlist bug b/246634709
-  @Exclude(transports = Transport.GRPC)
   public void testCopyBlobFail() {
 
     String sourceBlobName = "test-copy-blob-source-fail";
