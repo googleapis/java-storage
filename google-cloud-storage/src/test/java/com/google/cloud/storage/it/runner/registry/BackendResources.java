@@ -83,7 +83,7 @@ final class BackendResources implements ManagedLifecycle {
   }
 
   @SuppressWarnings("SwitchStatementWithTooFewBranches")
-  static BackendResources of(Backend backend) {
+  static BackendResources of(Backend backend, TestRunScopedInstance<OtelSdkShim> otelSdk) {
     ProtectedBucketNames protectedBucketNames = new ProtectedBucketNames();
     TestRunScopedInstance<StorageInstance> storageJson =
         TestRunScopedInstance.of(
@@ -99,7 +99,8 @@ final class BackendResources implements ManagedLifecycle {
                           .setProjectId("test-project-id");
                   break;
                 default: // PROD, java8 doesn't have exhaustive checking for enum switch
-                  optionsBuilder = StorageOptions.http();
+                  // Register the exporters with OpenTelemetry
+                  optionsBuilder = StorageOptions.http().setOpenTelemetry(otelSdk.get().get());
                   break;
               }
               HttpStorageOptions built = optionsBuilder.build();
@@ -121,7 +122,8 @@ final class BackendResources implements ManagedLifecycle {
                           .setProjectId("test-project-id");
                   break;
                 default: // PROD, java8 doesn't have exhaustive checking for enum switch
-                  optionsBuilder = StorageOptions.grpc();
+                  // Register the exporters with OpenTelemetry
+                  optionsBuilder = StorageOptions.grpc().setOpenTelemetry(otelSdk.get().get());
                   break;
               }
               GrpcStorageOptions built =

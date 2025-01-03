@@ -20,6 +20,8 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratedReadChannel;
+import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratedWriteChannel;
 import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.StorageClient;
 import java.util.Optional;
@@ -49,6 +51,10 @@ public final class PackagePrivateMethodWorkarounds {
 
   public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {
     return (w) -> {
+      if (w instanceof OtelDecoratedWriteChannel) {
+        OtelDecoratedWriteChannel odwc = (OtelDecoratedWriteChannel) w;
+        w = odwc.delegate;
+      }
       if (w instanceof BlobWriteChannelV2) {
         BlobWriteChannelV2 blobWriteChannel = (BlobWriteChannelV2) w;
         return Optional.ofNullable(blobWriteChannel.getResolvedObject())
@@ -71,13 +77,16 @@ public final class PackagePrivateMethodWorkarounds {
   }
 
   public static ApiFuture<BlobInfo> getBlobInfoFromReadChannelFunction(ReadChannel c) {
+    if (c instanceof OtelDecoratedReadChannel) {
+      OtelDecoratedReadChannel odrc = (OtelDecoratedReadChannel) c;
+      c = odrc.reader;
+    }
     if (c instanceof StorageReadChannel) {
       StorageReadChannel src = (StorageReadChannel) c;
       return src.getObject();
-    } else {
-      return ApiFutures.immediateFailedFuture(
-          new IllegalStateException("Unsupported ReadChannel Type " + c.getClass().getName()));
     }
+    return ApiFutures.immediateFailedFuture(
+        new IllegalStateException("Unsupported ReadChannel Type " + c.getClass().getName()));
   }
 
   @Nullable
@@ -87,6 +96,10 @@ public final class PackagePrivateMethodWorkarounds {
     }
     // handle instances of AbstractStorageProxy
     Storage service = s.getOptions().getService();
+    if (service instanceof OtelStorageDecorator) {
+      OtelStorageDecorator osd = (OtelStorageDecorator) service;
+      service = osd.delegate;
+    }
     if (service instanceof GrpcStorageImpl) {
       return ((GrpcStorageImpl) service).storageClient;
     }
