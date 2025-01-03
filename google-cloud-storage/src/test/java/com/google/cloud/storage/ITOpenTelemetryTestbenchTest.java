@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,6 @@ public class ITOpenTelemetryTestbenchTest {
   @Inject public Generator generator;
   @Inject public BucketInfo testBucket;
   @Inject public Storage storage;
-  private StorageOptions options;
   private SpanExporter exporter;
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
   private BlobId blobId;
@@ -73,10 +73,18 @@ public class ITOpenTelemetryTestbenchTest {
                     .addSpanProcessor(SimpleSpanProcessor.create(exporter))
                     .build())
             .build();
-    options = storage.getOptions().toBuilder().setOpenTelemetrySdk(openTelemetrySdk).build();
+    StorageOptions options =
+        storage.getOptions().toBuilder().setOpenTelemetry(openTelemetrySdk).build();
     storage = options.getService();
     String objectString = generator.randomObjectName();
     blobId = BlobId.of(testBucket.getName(), objectString);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    if (storage != null) {
+      storage.close();
+    }
   }
 
   @Test

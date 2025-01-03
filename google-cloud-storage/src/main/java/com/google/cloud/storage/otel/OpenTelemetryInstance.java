@@ -43,7 +43,7 @@ class OpenTelemetryInstance implements OpenTelemetryTraceUtil {
 
   OpenTelemetryInstance(StorageOptions storageOptions) {
     this.storageOptions = storageOptions;
-    this.openTelemetry = storageOptions.getOpenTelemetrySdk();
+    this.openTelemetry = storageOptions.getOpenTelemetry();
     this.tracer = openTelemetry.getTracer(LIBRARY_NAME, storageOptions.getLibraryVersion());
     this.transport = storageOptions instanceof GrpcStorageOptions ? "grpc" : "http";
   }

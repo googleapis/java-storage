@@ -32,7 +32,7 @@ public interface OpenTelemetryTraceUtil {
 
   @InternalApi
   static OpenTelemetryTraceUtil getInstance(@Nonnull StorageOptions storageOptions) {
-    boolean createNoOp = storageOptions.getOpenTelemetrySdk() == null;
+    boolean createNoOp = storageOptions.getOpenTelemetry() == null;
 
     if (createNoOp) {
       return new NoOpOpenTelemetryInstance();
