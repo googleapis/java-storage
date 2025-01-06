@@ -29,7 +29,7 @@ import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.api.OpenTelemetry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -111,10 +111,14 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     public abstract StorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig);
 
-    /** @since 2.46.1 This new api is in preview and is subject to breaking changes. */
+    /**
+     * Enable OpenTelemetry Tracing and provide an instance for the client to use.
+     *
+     * @param openTelemetry User defined instance of OpenTelemetry to be used by the library
+     * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
-    public abstract StorageOptions.Builder setOpenTelemetrySdk(
-        @NonNull OpenTelemetrySdk openTelemetrySdk);
+    public abstract StorageOptions.Builder setOpenTelemetry(OpenTelemetry openTelemetry);
 
     @Override
     public abstract StorageOptions build();
@@ -150,7 +154,9 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     return VERSION;
   }
 
-  public abstract OpenTelemetrySdk getOpenTelemetrySdk();
+  /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+  @BetaApi
+  public abstract OpenTelemetry getOpenTelemetry();
 
   @SuppressWarnings("unchecked")
   @Override

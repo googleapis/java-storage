@@ -26,7 +26,6 @@ import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltE
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
-import static com.google.cloud.storage.otel.OpenTelemetryTraceUtil.MODULE_STORAGE;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -69,9 +68,6 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Scope;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -171,7 +167,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
   @Deprecated private final ProjectId defaultProjectId;
-  private final OpenTelemetryTraceUtil openTelemetryTraceUtil;
 
   GrpcStorageImpl(
       GrpcStorageOptions options,
@@ -188,7 +183,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
-    this.openTelemetryTraceUtil = OpenTelemetryTraceUtil.getInstance(options);
   }
 
   @Override
@@ -202,8 +196,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -218,20 +210,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> storageClient.createBucketCallable().call(req, merge),
-          syntaxDecoders.bucket);
-    } catch (Exception ex) {
-      otelSpan.recordException(ex);
-      otelSpan.setStatus(
-          io.opentelemetry.api.trace.StatusCode.ERROR, ex.getClass().getSimpleName());
-      throw StorageException.coalesce(ex);
-    } finally {
-      otelSpan.end();
-    }
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.createBucketCallable().call(req, merge),
+        syntaxDecoders.bucket);
   }
 
   @Override
@@ -249,26 +232,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    // Start the otel span to retain information of the origin of the request
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
-          .asBlob(this);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
-    }
+    return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
+        .asBlob(this);
   }
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
+    try {
       requireNonNull(blobInfo, "blobInfo must be non null");
       InputStream inputStreamParam = firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES));
 
@@ -295,11 +265,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       ApiFuture<WriteObjectResponse> responseApiFuture = session.getResult();
       return this.getBlob(responseApiFuture);
     } catch (IOException | ApiException e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
     }
   }
 
@@ -312,50 +278,39 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-      return internalCreateFrom(path, blobInfo, opts);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    return internalCreateFrom(path, blobInfo, opts);
   }
 
   @Override
   public Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
       throws IOException {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalCreateFrom", MODULE_STORAGE);
     requireNonNull(path, "path must be non null");
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      GrpcCallContext grpcCallContext =
-          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-      WriteObjectRequest req = getWriteObjectRequest(info, opts);
 
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
-          storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(info, opts);
 
-      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
-      ApiFuture<GrpcResumableSession> session2 =
-          ApiFutures.transform(
-              start,
-              rw ->
-                  ResumableSession.grpc(
-                      getOptions(),
-                      retryAlgorithmManager.idempotent(),
-                      write,
-                      storageClient.queryWriteStatusCallable(),
-                      rw,
-                      Hasher.noop()),
-              MoreExecutors.directExecutor());
+    ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
+        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
+
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
+    ApiFuture<GrpcResumableSession> session2 =
+        ApiFutures.transform(
+            start,
+            rw ->
+                ResumableSession.grpc(
+                    getOptions(),
+                    retryAlgorithmManager.idempotent(),
+                    write,
+                    storageClient.queryWriteStatusCallable(),
+                    rw,
+                    Hasher.noop()),
+            MoreExecutors.directExecutor());
+    try {
       GrpcResumableSession got = session2.get();
       ResumableOperationResult<@Nullable Object> put = got.put(RewindableContent.of(path));
       Object object = put.getObject();
@@ -366,11 +321,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       }
       return codecs.blobInfo().decode(object).asBlob(this);
     } catch (InterruptedException | ExecutionException e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
     }
   }
 
@@ -384,46 +335,37 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public Blob createFrom(
       BlobInfo blobInfo, InputStream in, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      requireNonNull(blobInfo, "blobInfo must be non null");
+    requireNonNull(blobInfo, "blobInfo must be non null");
 
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-      GrpcCallContext grpcCallContext =
-          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-      WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req, opts);
 
-      BufferedWritableByteChannelSession<WriteObjectResponse> session =
-          ResumableMedia.gapic()
-              .write()
-              .byteChannel(
-                  storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-              .setHasher(Hasher.noop())
-              .setByteStringStrategy(ByteStringStrategy.noCopy())
-              .resumable()
-              .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
-              .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
-              .setStartAsync(start)
-              .build();
+    BufferedWritableByteChannelSession<WriteObjectResponse> session =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(
+                storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+            .setHasher(Hasher.noop())
+            .setByteStringStrategy(ByteStringStrategy.noCopy())
+            .resumable()
+            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
+            .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
+            .setStartAsync(start)
+            .build();
 
-      // Specifically not in the try-with, so we don't close the provided stream
-      ReadableByteChannel src =
-          Channels.newChannel(firstNonNull(in, new ByteArrayInputStream(ZERO_BYTES)));
-      try (BufferedWritableByteChannel dst = session.open()) {
-        ByteStreams.copy(src, dst);
-      } catch (Exception e) {
-        otelSpan.recordException(e);
-        otelSpan.setStatus(
-            io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-        throw StorageException.coalesce(e);
-      }
-      return getBlob(session.getResult());
-    } finally {
-      otelSpan.end();
+    // Specifically not in the try-with, so we don't close the provided stream
+    ReadableByteChannel src =
+        Channels.newChannel(firstNonNull(in, new ByteArrayInputStream(ZERO_BYTES)));
+    try (BufferedWritableByteChannel dst = session.open()) {
+      ByteStreams.copy(src, dst);
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
     }
+    return getBlob(session.getResult());
   }
 
   @Override
@@ -694,66 +636,56 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public CopyWriter copy(CopyRequest copyRequest) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      BlobId src = copyRequest.getSource();
-      BlobInfo dst = copyRequest.getTarget();
-      Opts<ObjectSourceOpt> srcOpts =
-          Opts.unwrap(copyRequest.getSourceOptions())
-              .projectAsSource()
-              .resolveFrom(src)
-              .prepend(defaultOpts);
-      Opts<ObjectTargetOpt> dstOpts =
-          Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
+    BlobId src = copyRequest.getSource();
+    BlobInfo dst = copyRequest.getTarget();
+    Opts<ObjectSourceOpt> srcOpts =
+        Opts.unwrap(copyRequest.getSourceOptions())
+            .projectAsSource()
+            .resolveFrom(src)
+            .prepend(defaultOpts);
+    Opts<ObjectTargetOpt> dstOpts =
+        Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
 
-      Mapper<RewriteObjectRequest.Builder> mapper =
-          srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
+    Mapper<RewriteObjectRequest.Builder> mapper =
+        srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
 
-      Object srcProto = codecs.blobId().encode(src);
-      Object dstProto = codecs.blobInfo().encode(dst);
+    Object srcProto = codecs.blobId().encode(src);
+    Object dstProto = codecs.blobInfo().encode(dst);
 
-      RewriteObjectRequest.Builder b =
-          RewriteObjectRequest.newBuilder()
-              .setDestinationName(dstProto.getName())
-              .setDestinationBucket(dstProto.getBucket())
-              // destination_kms_key comes from dstOpts
-              // according to the docs in the protos, it is illegal to populate the following
-              // fields,
-              // clear them out if they are set
-              // destination_predefined_acl comes from dstOpts
-              // if_*_match come from srcOpts and dstOpts
-              // copy_source_encryption_* come from srcOpts
-              // common_object_request_params come from dstOpts
-              .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
-              .setSourceBucket(srcProto.getBucket())
-              .setSourceObject(srcProto.getName());
+    RewriteObjectRequest.Builder b =
+        RewriteObjectRequest.newBuilder()
+            .setDestinationName(dstProto.getName())
+            .setDestinationBucket(dstProto.getBucket())
+            // destination_kms_key comes from dstOpts
+            // according to the docs in the protos, it is illegal to populate the following fields,
+            // clear them out if they are set
+            // destination_predefined_acl comes from dstOpts
+            // if_*_match come from srcOpts and dstOpts
+            // copy_source_encryption_* come from srcOpts
+            // common_object_request_params come from dstOpts
+            .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
+            .setSourceBucket(srcProto.getBucket())
+            .setSourceObject(srcProto.getName());
 
-      if (src.getGeneration() != null) {
-        b.setSourceGeneration(src.getGeneration());
-      }
-
-      if (copyRequest.getMegabytesCopiedPerChunk() != null) {
-        b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
-      }
-
-      RewriteObjectRequest req = mapper.apply(b).build();
-      GrpcCallContext grpcCallContext =
-          srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-      UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
-          storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
-      GrpcCallContext retryContext = Retrying.newCallContext();
-      return Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> callable.call(req, retryContext),
-          (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
+    if (src.getGeneration() != null) {
+      b.setSourceGeneration(src.getGeneration());
     }
+
+    if (copyRequest.getMegabytesCopiedPerChunk() != null) {
+      b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
+    }
+
+    RewriteObjectRequest req = mapper.apply(b).build();
+    GrpcCallContext grpcCallContext =
+        srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
+        storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
+    GrpcCallContext retryContext = Retrying.newCallContext();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> callable.call(req, retryContext),
+        (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
   }
 
   @Override
@@ -763,21 +695,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("readAllBytes", MODULE_STORAGE);
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent();
-        UnbufferedReadableByteChannel r = session.open();
+    try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(baos)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
     }
     return baos.toByteArray();
   }
@@ -794,97 +719,66 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", MODULE_STORAGE);
-    try (Scope ignore = otelSpan.makeCurrent()) {
-      Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
-      ReadObjectRequest request = getReadObjectRequest(blob, opts);
-      GrpcCallContext grpcCallContext = Retrying.newCallContext();
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
+    ReadObjectRequest request = getReadObjectRequest(blob, opts);
+    GrpcCallContext grpcCallContext = Retrying.newCallContext();
 
-      return new GrpcBlobReadChannel(
-          storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
-          getOptions(),
-          retryAlgorithmManager.getFor(request),
-          responseContentLifecycleManager,
-          request,
-          !opts.autoGzipDecompression());
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
-    }
+    return new GrpcBlobReadChannel(
+        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        getOptions(),
+        retryAlgorithmManager.getFor(request),
+        responseContentLifecycleManager,
+        request,
+        !opts.autoGzipDecompression());
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (Scope ignored = otelSpan.makeCurrent();
-        UnbufferedReadableByteChannel r = session.open();
+    try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
     }
   }
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
 
     UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
-    try (Scope ignored = otelSpan.makeCurrent();
-        UnbufferedReadableByteChannel r = session.open();
+    try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
       ByteStreams.copy(r, w);
     } catch (ApiException | IOException e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
       throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
     }
   }
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
-    try (Scope ignore = otelSpan.makeCurrent()) {
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-      GrpcCallContext grpcCallContext =
-          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-      WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-      Hasher hasher = Hasher.noop();
-      // in JSON, the starting of the resumable session happens before the invocation of write can
-      // happen. Emulate the same thing here.
-      //  1. create the future
-      ApiFuture<ResumableWrite> startResumableWrite =
-          startResumableWrite(grpcCallContext, req, opts);
-      //  2. await the result of the future
-      ResumableWrite resumableWrite = ApiFutureUtils.await(startResumableWrite);
-      //  3. wrap the result in another future container before constructing the BlobWriteChannel
-      ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
-      return new GrpcBlobWriteChannel(
-          storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
-          getOptions(),
-          retryAlgorithmManager.idempotent(),
-          () -> wrapped,
-          hasher);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
-    }
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+    Hasher hasher = Hasher.noop();
+    // in JSON, the starting of the resumable session happens before the invocation of write can
+    // happen. Emulate the same thing here.
+    //  1. create the future
+    ApiFuture<ResumableWrite> startResumableWrite = startResumableWrite(grpcCallContext, req, opts);
+    //  2. await the result of the future
+    ResumableWrite resumableWrite = ApiFutureUtils.await(startResumableWrite);
+    //  3. wrap the result in another future container before constructing the BlobWriteChannel
+    ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
+    return new GrpcBlobWriteChannel(
+        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
+        getOptions(),
+        retryAlgorithmManager.idempotent(),
+        () -> wrapped,
+        hasher);
   }
 
   @Override
@@ -892,8 +786,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(buf, "content must be non null");
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("internalDirectUpload", MODULE_STORAGE);
     Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -901,36 +793,28 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Hasher hasher = Hasher.enabled();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     RewindableContent content = RewindableContent.of(buf);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      return Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> {
-            content.rewindTo(0);
-            UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
-                ResumableMedia.gapic()
-                    .write()
-                    .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
-                    .setByteStringStrategy(ByteStringStrategy.noCopy())
-                    .setHasher(hasher)
-                    .direct()
-                    .unbuffered()
-                    .setRequest(req)
-                    .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          content.rewindTo(0);
+          UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+              ResumableMedia.gapic()
+                  .write()
+                  .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
+                  .setByteStringStrategy(ByteStringStrategy.noCopy())
+                  .setHasher(hasher)
+                  .direct()
+                  .unbuffered()
+                  .setRequest(req)
+                  .build();
 
-            try (UnbufferedWritableByteChannel c = session.open()) {
-              content.writeTo(c);
-            }
-            return session.getResult();
-          },
-          this::getBlob);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw StorageException.coalesce(e);
-    } finally {
-      otelSpan.end();
-    }
+          try (UnbufferedWritableByteChannel c = session.open()) {
+            content.writeTo(c);
+          }
+          return session.getResult();
+        },
+        this::getBlob);
   }
 
   @Override

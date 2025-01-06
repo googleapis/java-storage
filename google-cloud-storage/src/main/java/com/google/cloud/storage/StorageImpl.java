@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
-import static com.google.cloud.storage.otel.OpenTelemetryTraceUtil.MODULE_STORAGE;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -51,9 +50,6 @@ import com.google.cloud.storage.UnifiedOpts.NestedNamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Scope;
-import com.google.cloud.storage.otel.OpenTelemetryTraceUtil.Span;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.common.base.CharMatcher;
@@ -69,7 +65,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
 import com.google.common.primitives.Ints;
-import io.opentelemetry.api.trace.StatusCode;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -127,38 +122,26 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   final HttpRetryAlgorithmManager retryAlgorithmManager;
   final StorageRpc storageRpc;
   final WriterFactory writerFactory;
-  private final OpenTelemetryTraceUtil openTelemetryTraceUtil;
 
   StorageImpl(HttpStorageOptions options, WriterFactory writerFactory) {
     super(options);
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.storageRpc = options.getStorageRpcV1();
     this.writerFactory = writerFactory;
-    this.openTelemetryTraceUtil = OpenTelemetryTraceUtil.getInstance(options);
   }
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      final com.google.api.services.storage.model.Bucket bucketPb =
-          codecs.bucketInfo().encode(bucketInfo);
-      final Map<StorageRpc.Option, ?> optionsMap =
-          Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
-      ResultRetryAlgorithm<?> algorithm =
-          retryAlgorithmManager.getForBucketsCreate(bucketPb, optionsMap);
-      return run(
-          algorithm,
-          () -> storageRpc.create(bucketPb, optionsMap),
-          (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    final com.google.api.services.storage.model.Bucket bucketPb =
+        codecs.bucketInfo().encode(bucketInfo);
+    final Map<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForBucketsCreate(bucketPb, optionsMap);
+    return run(
+        algorithm,
+        () -> storageRpc.create(bucketPb, optionsMap),
+        (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
   }
 
   @Override
@@ -211,29 +194,19 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   @Override
   @Deprecated
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-      Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-      BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
-      BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
-      StorageObject blobPb = codecs.blobInfo().encode(updated);
-      InputStream inputStreamParam =
-          firstNonNull(content, new ByteArrayInputStream(EMPTY_BYTE_ARRAY));
-      // retries are not safe when the input is an InputStream, so we can't retry.
-      BlobInfo info =
-          Conversions.json()
-              .blobInfo()
-              .decode(storageRpc.create(blobPb, inputStreamParam, optionsMap));
-      return info.asBlob(this);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    StorageObject blobPb = codecs.blobInfo().encode(updated);
+    InputStream inputStreamParam =
+        firstNonNull(content, new ByteArrayInputStream(EMPTY_BYTE_ARRAY));
+    // retries are not safe when the input is an InputStream, so we can't retry.
+    BlobInfo info =
+        Conversions.json()
+            .blobInfo()
+            .decode(storageRpc.create(blobPb, inputStreamParam, optionsMap));
+    return info.asBlob(this);
   }
 
   private Blob internalCreate(
@@ -242,32 +215,22 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
       final int offset,
       final int length,
       Opts<ObjectTargetOpt> opts) {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("create", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      Preconditions.checkNotNull(content);
-      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    Preconditions.checkNotNull(content);
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
 
-      BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
-      final StorageObject blobPb = codecs.blobInfo().encode(updated);
-      ResultRetryAlgorithm<?> algorithm =
-          retryAlgorithmManager.getForObjectsCreate(blobPb, optionsMap);
-      return run(
-          algorithm,
-          () ->
-              storageRpc.create(
-                  blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
-          (x) -> {
-            BlobInfo info1 = Conversions.json().blobInfo().decode(x);
-            return info1.asBlob(this);
-          });
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
+    final StorageObject blobPb = codecs.blobInfo().encode(updated);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsCreate(blobPb, optionsMap);
+    return run(
+        algorithm,
+        () ->
+            storageRpc.create(
+                blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
+        (x) -> {
+          BlobInfo info1 = Conversions.json().blobInfo().decode(x);
+          return info1.asBlob(this);
+        });
   }
 
   @Override
@@ -279,55 +242,45 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
-      if (Files.isDirectory(path)) {
-        throw new StorageException(0, path + " is a directory");
-      }
-      long size = Files.size(path);
-      if (size == 0L) {
-        return create(blobInfo, null, options);
-      }
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-      BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
-      BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
-      StorageObject encode = codecs.blobInfo().encode(updated);
-
-      Supplier<String> uploadIdSupplier =
-          ResumableMedia.startUploadForBlobInfo(
-              getOptions(),
-              updated,
-              optionsMap,
-              retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
-      JsonResumableWrite jsonResumableWrite =
-          JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
-
-      JsonResumableSession session =
-          ResumableSession.json(
-              HttpClientContext.from(storageRpc),
-              getOptions().asRetryDependencies(),
-              retryAlgorithmManager.idempotent(),
-              jsonResumableWrite);
-      HttpContentRange contentRange = HttpContentRange.of(ByteRangeSpec.explicit(0L, size), size);
-      ResumableOperationResult<StorageObject> put =
-          session.put(RewindableContent.of(path), contentRange);
-      // all exception translation is taken care of down in the JsonResumableSession
-      StorageObject object = put.getObject();
-      if (object == null) {
-        // if by some odd chance the put didn't get the StorageObject, query for it
-        ResumableOperationResult<@Nullable StorageObject> query = session.query();
-        object = query.getObject();
-      }
-      return codecs.blobInfo().decode(object).asBlob(this);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
     }
+    long size = Files.size(path);
+    if (size == 0L) {
+      return create(blobInfo, null, options);
+    }
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    StorageObject encode = codecs.blobInfo().encode(updated);
+
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForBlobInfo(
+            getOptions(),
+            updated,
+            optionsMap,
+            retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+
+    JsonResumableSession session =
+        ResumableSession.json(
+            HttpClientContext.from(storageRpc),
+            getOptions().asRetryDependencies(),
+            retryAlgorithmManager.idempotent(),
+            jsonResumableWrite);
+    HttpContentRange contentRange = HttpContentRange.of(ByteRangeSpec.explicit(0L, size), size);
+    ResumableOperationResult<StorageObject> put =
+        session.put(RewindableContent.of(path), contentRange);
+    // all exception translation is taken care of down in the JsonResumableSession
+    StorageObject object = put.getObject();
+    if (object == null) {
+      // if by some odd chance the put didn't get the StorageObject, query for it
+      ResumableOperationResult<@Nullable StorageObject> query = session.query();
+      object = query.getObject();
+    }
+    return codecs.blobInfo().decode(object).asBlob(this);
   }
 
   @Override
@@ -340,35 +293,20 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   public Blob createFrom(
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    OpenTelemetryTraceUtil.Span otelSpan =
-        openTelemetryTraceUtil.startSpan("createFrom", MODULE_STORAGE);
-    try (OpenTelemetryTraceUtil.Scope ignored = otelSpan.makeCurrent()) {
 
-      ApiFuture<BlobInfo> objectFuture;
-      try (StorageWriteChannel writer = writer(blobInfo, options)) {
-        objectFuture = writer.getObject();
-        uploadHelper(Channels.newChannel(content), writer, bufferSize);
-      }
-      // keep these two try blocks separate for the time being
-      // leaving the above will cause the writer to close writing and finalizing the session and
-      // (hopefully, on successful finalization) resolve our future
-      try {
-        BlobInfo info = objectFuture.get(10, TimeUnit.SECONDS);
-        return info.asBlob(this);
-      } catch (ExecutionException | InterruptedException | TimeoutException e) {
-        otelSpan.recordException(e);
-        otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-        throw StorageException.coalesce(e);
-      }
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
-      // We don't want to wrap the storage exception, but we want to record any other exception
-      // we simply throw the exception after recording in the span.
-      throw e;
-
-    } finally {
-      otelSpan.end();
+    ApiFuture<BlobInfo> objectFuture;
+    try (StorageWriteChannel writer = writer(blobInfo, options)) {
+      objectFuture = writer.getObject();
+      uploadHelper(Channels.newChannel(content), writer, bufferSize);
+    }
+    // keep these two try blocks separate for the time being
+    // leaving the above will cause the writer to close writing and finalizing the session and
+    // (hopefully, on successful finalization) resolve our future
+    try {
+      BlobInfo info = objectFuture.get(10, TimeUnit.SECONDS);
+      return info.asBlob(this);
+    } catch (ExecutionException | InterruptedException | TimeoutException e) {
+      throw StorageException.coalesce(e);
     }
   }
 
@@ -722,40 +660,30 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public CopyWriter copy(final CopyRequest copyRequest) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("copy", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      BlobId source = copyRequest.getSource();
-      BlobInfo target = copyRequest.getTarget();
-      Opts<ObjectSourceOpt> sourceOpts =
-          Opts.unwrap(copyRequest.getSourceOptions()).resolveFrom(source).projectAsSource();
-      Opts<ObjectTargetOpt> targetOpts =
-          Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(target);
+    BlobId source = copyRequest.getSource();
+    BlobInfo target = copyRequest.getTarget();
+    Opts<ObjectSourceOpt> sourceOpts =
+        Opts.unwrap(copyRequest.getSourceOptions()).resolveFrom(source).projectAsSource();
+    Opts<ObjectTargetOpt> targetOpts =
+        Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(target);
 
-      StorageObject sourcePb = codecs.blobId().encode(source);
-      StorageObject targetPb = codecs.blobInfo().encode(target);
-      ImmutableMap<StorageRpc.Option, ?> sourceOptions = sourceOpts.getRpcOptions();
-      ImmutableMap<StorageRpc.Option, ?> targetOptions = targetOpts.getRpcOptions();
-      RewriteRequest rewriteRequest =
-          new RewriteRequest(
-              sourcePb,
-              sourceOptions,
-              copyRequest.overrideInfo(),
-              targetPb,
-              targetOptions,
-              copyRequest.getMegabytesCopiedPerChunk());
-      ResultRetryAlgorithm<?> algorithm =
-          retryAlgorithmManager.getForObjectsRewrite(rewriteRequest);
-      return run(
-          algorithm,
-          () -> storageRpc.openRewrite(rewriteRequest),
-          (r) -> new HttpCopyWriter(getOptions(), r));
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    StorageObject sourcePb = codecs.blobId().encode(source);
+    StorageObject targetPb = codecs.blobInfo().encode(target);
+    ImmutableMap<StorageRpc.Option, ?> sourceOptions = sourceOpts.getRpcOptions();
+    ImmutableMap<StorageRpc.Option, ?> targetOptions = targetOpts.getRpcOptions();
+    RewriteRequest rewriteRequest =
+        new RewriteRequest(
+            sourcePb,
+            sourceOptions,
+            copyRequest.overrideInfo(),
+            targetPb,
+            targetOptions,
+            copyRequest.getMegabytesCopiedPerChunk());
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsRewrite(rewriteRequest);
+    return run(
+        algorithm,
+        () -> storageRpc.openRewrite(rewriteRequest),
+        (r) -> new HttpCopyWriter(getOptions(), r));
   }
 
   @Override
@@ -765,22 +693,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("readAllBytes", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      final StorageObject storageObject = codecs.blobId().encode(blob);
-      Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
-      Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
-      ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
-      ResultRetryAlgorithm<?> algorithm =
-          retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
-      return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    final StorageObject storageObject = codecs.blobId().encode(blob);
+    Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
+    Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
+    return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
   }
 
   @Override
@@ -795,19 +714,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("reader", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-      StorageObject storageObject = Conversions.json().blobId().encode(blob);
-      ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-      return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    StorageObject storageObject = Conversions.json().blobId().encode(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
   }
 
   @Override
@@ -821,84 +731,57 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("downloadTo", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
-      final StorageObject pb = codecs.blobId().encode(blob);
-      ImmutableMap<StorageRpc.Option, ?> optionsMap =
-          Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-      ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
-      run(
-          algorithm,
-          callable(
-              () -> {
-                storageRpc.read(
-                    pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
-              }),
-          Function.identity());
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
+    final StorageObject pb = codecs.blobId().encode(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
+    run(
+        algorithm,
+        callable(
+            () -> {
+              storageRpc.read(
+                  pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
+            }),
+        Function.identity());
   }
 
   @Override
   public StorageWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-      final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-      BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
-      BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
 
-      StorageObject encode = codecs.blobInfo().encode(updated);
-      // open the resumable session outside the write channel
-      // the exception behavior of open is different from #write(ByteBuffer)
-      Supplier<String> uploadIdSupplier =
-          ResumableMedia.startUploadForBlobInfo(
-              getOptions(),
-              updated,
-              optionsMap,
-              retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
-      JsonResumableWrite jsonResumableWrite =
-          JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
-      return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    StorageObject encode = codecs.blobInfo().encode(updated);
+    // open the resumable session outside the write channel
+    // the exception behavior of open is different from #write(ByteBuffer)
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForBlobInfo(
+            getOptions(),
+            updated,
+            optionsMap,
+            retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 
   @Override
   public StorageWriteChannel writer(URL signedURL) {
-    Span otelSpan = openTelemetryTraceUtil.startSpan("writer", MODULE_STORAGE);
-    try (Scope ignored = otelSpan.makeCurrent()) {
-      // TODO: is it possible to know if a signed url is configured to have a constraint which makes
-      //   it idempotent?
-      ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
-          retryAlgorithmManager.getForResumableUploadSessionCreate(Collections.emptyMap());
-      // open the resumable session outside the write channel
-      // the exception behavior of open is different from #write(ByteBuffer)
-      String signedUrlString = signedURL.toString();
-      Supplier<String> uploadIdSupplier =
-          ResumableMedia.startUploadForSignedUrl(
-              getOptions(), signedURL, forResumableUploadSessionCreate);
-      JsonResumableWrite jsonResumableWrite =
-          JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get(), 0);
-      return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
-    } catch (Exception e) {
-      otelSpan.recordException(e);
-      otelSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR, e.getClass().getSimpleName());
-      throw e;
-    } finally {
-      otelSpan.end();
-    }
+    // TODO: is it possible to know if a signed url is configured to have a constraint which makes
+    //   it idempotent?
+    ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
+        retryAlgorithmManager.getForResumableUploadSessionCreate(Collections.emptyMap());
+    // open the resumable session outside the write channel
+    // the exception behavior of open is different from #write(ByteBuffer)
+    String signedUrlString = signedURL.toString();
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForSignedUrl(
+            getOptions(), signedURL, forResumableUploadSessionCreate);
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get(), 0);
+    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 
   @Override
