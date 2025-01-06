@@ -114,6 +114,8 @@ final class BackendResources implements ManagedLifecycle {
                 case TEST_BENCH:
                   optionsBuilder =
                       StorageOptions.grpc()
+                          .setGrpcInterceptorProvider(
+                              GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                           .setCredentials(NoCredentials.getInstance())
                           .setHost(Registry.getInstance().testBench().getGRPCBaseUri())
                           .setProjectId("test-project-id");
@@ -190,6 +192,17 @@ final class BackendResources implements ManagedLifecycle {
                   storageJson.get().getStorage(),
                   ctrl.get().getCtrl());
             });
+    TestRunScopedInstance<BucketInfoShim> bucketVersioned =
+        TestRunScopedInstance.of(
+            "BUCKET_VERSIONED_" + backend.name(),
+            () -> {
+              String bucketName = String.format("java-storage-grpc-v-%s", UUID.randomUUID());
+              protectedBucketNames.add(bucketName);
+              return new BucketInfoShim(
+                  BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build(),
+                  storageJson.get().getStorage(),
+                  ctrl.get().getCtrl());
+            });
     TestRunScopedInstance<BucketInfoShim> bucketHns =
         TestRunScopedInstance.of(
             "BUCKET_HNS_" + backend.name(),
@@ -246,6 +259,11 @@ final class BackendResources implements ManagedLifecycle {
                 BucketInfo.class,
                 bucketHns,
                 backendIs(backend).and(bucketTypeIs(BucketType.HNS))),
+            RegistryEntry.of(
+                62,
+                BucketInfo.class,
+                bucketVersioned,
+                backendIs(backend).and(bucketTypeIs(BucketType.VERSIONED))),
             RegistryEntry.of(
                 70, BucketInfo.class, bucket, backendIs(backend).and(isDefaultBucket())),
             RegistryEntry.of(

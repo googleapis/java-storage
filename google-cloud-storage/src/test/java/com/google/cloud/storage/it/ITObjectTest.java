@@ -63,6 +63,7 @@ import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.CrossRun.Exclude;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -91,6 +92,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -102,6 +104,7 @@ import org.junit.runner.RunWith;
 @CrossRun(
     transports = {Transport.HTTP, Transport.GRPC},
     backends = {Backend.PROD})
+@ParallelFriendly
 public class ITObjectTest {
 
   private static final String CONTENT_TYPE = "text/plain";
@@ -129,6 +132,10 @@ public class ITObjectTest {
   @Inject
   @BucketFixture(BucketType.REQUESTER_PAYS)
   public BucketInfo requesterPaysBucket;
+
+  @Inject
+  @BucketFixture(BucketType.VERSIONED)
+  public BucketInfo versionedBucket;
 
   @Inject public Storage storage;
 
@@ -320,7 +327,7 @@ public class ITObjectTest {
 
   @Test
   public void testGetBlobFailNonExistingGeneration() {
-    String blobName = "test-get-blob-fail-non-existing-generation";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -423,98 +430,132 @@ public class ITObjectTest {
 
   @Test
   public void testListBlobsVersioned() throws ExecutionException, InterruptedException {
-    String bucketName = generator.randomBucketName();
-    Bucket bucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
-    try {
-      String[] blobNames = {"test-list-blobs-versioned-blob1", "test-list-blobs-versioned-blob2"};
-      BlobInfo blob1 =
-          BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
-      BlobInfo blob2 =
-          BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
-      Blob remoteBlob1 = storage.create(blob1);
-      Blob remoteBlob2 = storage.create(blob2);
-      Blob remoteBlob3 = storage.create(blob2);
-      assertNotNull(remoteBlob1);
-      assertNotNull(remoteBlob2);
-      assertNotNull(remoteBlob3);
-      Page<Blob> page =
-          storage.list(
-              bucketName,
-              BlobListOption.prefix("test-list-blobs-versioned-blob"),
-              BlobListOption.versions(true));
-      // https://cloud.google.com/storage/docs/consistency#strongly_consistent_operations
-      // enabling versioning on an existing bucket seems to have some backpressure on when new
-      // versions can safely be made, but listing is not eventually consistent.
+    String bucketName = versionedBucket.getName();
+    String baseName = generator.randomObjectName();
+    String[] blobNames = {baseName + "-blob1", baseName + "-blob2"};
+    BlobInfo blob1 =
+        BlobInfo.newBuilder(versionedBucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob2 =
+        BlobInfo.newBuilder(versionedBucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
+    Blob remoteBlob1 = storage.create(blob1);
+    Blob remoteBlob2 = storage.create(blob2);
+    Blob remoteBlob3 = storage.create(blob2);
+    assertNotNull(remoteBlob1);
+    assertNotNull(remoteBlob2);
+    assertNotNull(remoteBlob3);
+    Page<Blob> page =
+        storage.list(
+            bucketName, BlobListOption.prefix(baseName + "-blob"), BlobListOption.versions(true));
+    // https://cloud.google.com/storage/docs/consistency#strongly_consistent_operations
+    // enabling versioning on an existing bucket seems to have some backpressure on when new
+    // versions can safely be made, but listing is not eventually consistent.
 
-      // TODO: make hermetic
-      // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
-      // test fails if timeout is reached.
-      while (Iterators.size(page.iterateAll().iterator()) != 3) {
-        Thread.sleep(500);
-        page =
-            storage.list(
-                bucketName,
-                BlobListOption.prefix("test-list-blobs-versioned-blob"),
-                BlobListOption.versions(true));
-      }
-      Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1]);
-      Iterator<Blob> iterator = page.iterateAll().iterator();
-      while (iterator.hasNext()) {
-        Blob remoteBlob = iterator.next();
-        assertEquals(bucketName, remoteBlob.getBucket());
-        assertTrue(blobSet.contains(remoteBlob.getName()));
-        assertNotNull(remoteBlob.getGeneration());
-      }
-    } finally {
-      BucketCleaner.doCleanup(bucketName, storage);
+    // TODO: make hermetic
+    // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
+    // test fails if timeout is reached.
+    while (Iterators.size(page.iterateAll().iterator()) != 3) {
+      Thread.sleep(500);
+      page =
+          storage.list(
+              bucketName, BlobListOption.prefix(baseName + "-blob"), BlobListOption.versions(true));
+    }
+    Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1]);
+    Iterator<Blob> iterator = page.iterateAll().iterator();
+    while (iterator.hasNext()) {
+      Blob remoteBlob = iterator.next();
+      assertEquals(bucketName, remoteBlob.getBucket());
+      assertTrue(blobSet.contains(remoteBlob.getName()));
+      assertNotNull(remoteBlob.getGeneration());
     }
   }
 
   @Test
-  public void testListBlobsWithOffset() throws ExecutionException, InterruptedException {
-    String bucketName = generator.randomBucketName();
-    Bucket bucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
-    try {
-      List<String> blobNames =
-          ImmutableList.of("startOffset_blob1", "startOffset_blob2", "blob3_endOffset");
-      BlobInfo blob1 =
-          BlobInfo.newBuilder(bucket, blobNames.get(0)).setContentType(CONTENT_TYPE).build();
-      BlobInfo blob2 =
-          BlobInfo.newBuilder(bucket, blobNames.get(1)).setContentType(CONTENT_TYPE).build();
-      BlobInfo blob3 =
-          BlobInfo.newBuilder(bucket, blobNames.get(2)).setContentType(CONTENT_TYPE).build();
+  public void testListBlobsWithOffset() throws Exception {
+    String bucketName = bucket.getName();
+    String baseName = generator.randomObjectName();
 
-      Blob remoteBlob1 = storage.create(blob1);
-      Blob remoteBlob2 = storage.create(blob2);
-      Blob remoteBlob3 = storage.create(blob3);
-      assertNotNull(remoteBlob1);
-      assertNotNull(remoteBlob2);
-      assertNotNull(remoteBlob3);
+    List<BlobId> blobs =
+        IntStream.rangeClosed(0, 2)
+            .mapToObj(i -> baseName + "-" + i)
+            .map(n -> BlobInfo.newBuilder(bucket, n).build())
+            .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+            .map(BlobInfo::getBlobId)
+            .collect(Collectors.toList());
 
-      // Listing blobs without BlobListOptions.
-      Page<Blob> page1 = storage.list(bucketName);
-      assertEquals(3, Iterators.size(page1.iterateAll().iterator()));
-
-      // Listing blobs with startOffset.
-      Page<Blob> page2 = storage.list(bucketName, BlobListOption.startOffset("startOffset"));
-      assertEquals(2, Iterators.size(page2.iterateAll().iterator()));
-
-      // Listing blobs with endOffset.
-      Page<Blob> page3 = storage.list(bucketName, BlobListOption.endOffset("endOffset"));
-      assertEquals(1, Iterators.size(page3.iterateAll().iterator()));
-
-      // Listing blobs with startOffset and endOffset.
-      Page<Blob> page4 =
-          storage.list(
-              bucketName,
-              BlobListOption.startOffset("startOffset"),
-              BlobListOption.endOffset("endOffset"));
-      assertEquals(0, Iterators.size(page4.iterateAll().iterator()));
-    } finally {
-      BucketCleaner.doCleanup(bucketName, storage);
-    }
+    assertAll(
+        () -> {
+          // Listing blobs without BlobListOptions.
+          Page<Blob> page1 = storage.list(bucketName, BlobListOption.prefix(baseName));
+          assertThat(
+                  page1
+                      .streamAll()
+                      .map(BlobInfo::getBlobId)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()))
+              .isEqualTo(
+                  blobs.stream()
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()));
+        },
+        () -> {
+          // Listing blobs starting from 1.
+          Page<Blob> page2 =
+              storage.list(
+                  bucketName,
+                  BlobListOption.prefix(baseName),
+                  BlobListOption.startOffset(blobs.get(1).getName()));
+          assertThat(
+                  page2
+                      .streamAll()
+                      .map(BlobInfo::getBlobId)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()))
+              .isEqualTo(
+                  blobs.stream()
+                      .skip(1)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()));
+        },
+        () -> {
+          // Listing blobs until 2.
+          Page<Blob> page3 =
+              storage.list(
+                  bucketName,
+                  BlobListOption.prefix(baseName),
+                  BlobListOption.endOffset(blobs.get(2).getName()));
+          assertThat(
+                  page3
+                      .streamAll()
+                      .map(BlobInfo::getBlobId)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()))
+              .isEqualTo(
+                  blobs.stream()
+                      .limit(2)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()));
+        },
+        () -> {
+          // Listing blobs with startOffset and endOffset.
+          Page<Blob> page4 =
+              storage.list(
+                  bucketName,
+                  BlobListOption.prefix(baseName),
+                  BlobListOption.startOffset(blobs.get(1).getName()),
+                  BlobListOption.endOffset(blobs.get(2).getName()));
+          assertThat(
+                  page4
+                      .streamAll()
+                      .map(BlobInfo::getBlobId)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()))
+              .isEqualTo(
+                  blobs.stream()
+                      .skip(1)
+                      .limit(1)
+                      .map(BlobId::toGsUtilUriWithGeneration)
+                      .collect(Collectors.toList()));
+        });
   }
 
   @Test
@@ -547,7 +588,7 @@ public class ITObjectTest {
     ImmutableSet<BlobInfo> actual =
         blobs.stream()
             .map(Blob::asBlobInfo)
-            .map(info -> PackagePrivateMethodWorkarounds.noAcl(info))
+            .map(PackagePrivateMethodWorkarounds::noAcl)
             .collect(ImmutableSet.toImmutableSet());
 
     // obj1Gen1 is "in subdirectory" and we don't expect to receive it as a result when listing
@@ -564,54 +605,47 @@ public class ITObjectTest {
 
   @Test
   public void testListBlobsWithMatchGlob() throws Exception {
-    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
-    try (TemporaryBucket tempBucket =
-        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
-      BucketInfo bucket = tempBucket.getBucket();
-      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/bar").build()));
-      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/baz").build()));
-      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/foobar").build()));
-      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foobar").build()));
+    assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/bar").build()));
+    assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/baz").build()));
+    assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/foobar").build()));
+    assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foobar").build()));
 
-      Page<Blob> page1 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo*bar"));
-      Page<Blob> page2 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo**bar"));
-      Page<Blob> page3 = storage.list(bucket.getName(), BlobListOption.matchGlob("**/foobar"));
-      Page<Blob> page4 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[rz]"));
-      Page<Blob> page5 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[!a-y]"));
-      Page<Blob> page6 =
-          storage.list(bucket.getName(), BlobListOption.matchGlob("**/{foobar,baz}"));
-      Page<Blob> page7 =
-          storage.list(bucket.getName(), BlobListOption.matchGlob("foo/{foo*,*baz}"));
-      assertAll(
-          () ->
-              assertThat(Iterables.transform(page1.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foobar")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page2.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/bar", "foo/foobar", "foobar")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page3.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/foobar", "foobar")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page4.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/bar", "foo/baz")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page5.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/baz")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page6.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/baz", "foo/foobar", "foobar")
-                  .inOrder(),
-          () ->
-              assertThat(Iterables.transform(page7.iterateAll(), blob -> blob.getName()))
-                  .containsExactly("foo/baz", "foo/foobar")
-                  .inOrder());
-    }
+    Page<Blob> page1 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo*bar"));
+    Page<Blob> page2 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo**bar"));
+    Page<Blob> page3 = storage.list(bucket.getName(), BlobListOption.matchGlob("**/foobar"));
+    Page<Blob> page4 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[rz]"));
+    Page<Blob> page5 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[!a-y]"));
+    Page<Blob> page6 = storage.list(bucket.getName(), BlobListOption.matchGlob("**/{foobar,baz}"));
+    Page<Blob> page7 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo/{foo*,*baz}"));
+    assertAll(
+        () ->
+            assertThat(Iterables.transform(page1.iterateAll(), BlobInfo::getName))
+                .containsExactly("foobar")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page2.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/bar", "foo/foobar", "foobar")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page3.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/foobar", "foobar")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page4.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/bar", "foo/baz")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page5.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/baz")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page6.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/baz", "foo/foobar", "foobar")
+                .inOrder(),
+        () ->
+            assertThat(Iterables.transform(page7.iterateAll(), BlobInfo::getName))
+                .containsExactly("foo/baz", "foo/foobar")
+                .inOrder());
   }
 
   @Test
@@ -623,7 +657,7 @@ public class ITObjectTest {
             .mapToObj(i -> String.format("%s/%2d", basePath, i))
             .map(name -> BlobInfo.newBuilder(bucket, name).build())
             .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
-            .map(info1 -> PackagePrivateMethodWorkarounds.noAcl(info1))
+            .map(PackagePrivateMethodWorkarounds::noAcl)
             .collect(ImmutableList.toImmutableList());
 
     Page<Blob> page =
@@ -631,7 +665,7 @@ public class ITObjectTest {
 
     ImmutableList<BlobInfo> actual =
         ImmutableList.copyOf(page.iterateAll()).stream()
-            .map(info -> PackagePrivateMethodWorkarounds.noAcl(info))
+            .map(PackagePrivateMethodWorkarounds::noAcl)
             .collect(ImmutableList.toImmutableList());
 
     try {
@@ -644,7 +678,7 @@ public class ITObjectTest {
 
   @Test
   public void testUpdateBlob() {
-    String blobName = "test-update-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -657,7 +691,7 @@ public class ITObjectTest {
 
   @Test
   public void testUpdateBlobReplaceMetadata() {
-    String blobName = "test-update-blob-replace-metadata";
+    String blobName = generator.randomObjectName();
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
     ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
     BlobInfo blob =
@@ -678,7 +712,7 @@ public class ITObjectTest {
 
   @Test
   public void testUpdateBlobMergeMetadata() {
-    String blobName = "test-update-blob-merge-metadata";
+    String blobName = generator.randomObjectName();
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
     ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
     ImmutableMap<String, String> expectedMetadata = ImmutableMap.of("k1", "a", "k2", "b");
@@ -699,7 +733,7 @@ public class ITObjectTest {
   @Test
   public void testUpdateBlobUnsetMetadata() {
 
-    String blobName = "test-update-blob-unset-metadata";
+    String blobName = generator.randomObjectName();
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a", "k2", "b");
     Map<String, String> newMetadata = new HashMap<>();
     newMetadata.put("k1", "a");
@@ -721,7 +755,7 @@ public class ITObjectTest {
 
   @Test
   public void testUpdateBlobFail() {
-    String blobName = "test-update-blob-fail";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -737,13 +771,13 @@ public class ITObjectTest {
 
   @Test
   public void testDeleteNonExistingBlob() {
-    String blobName = "test-delete-non-existing-blob";
+    String blobName = generator.randomObjectName();
     assertFalse(storage.delete(bucket.getName(), blobName));
   }
 
   @Test
   public void testDeleteBlobNonExistingGeneration() {
-    String blobName = "test-delete-blob-non-existing-generation";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     assertNotNull(storage.create(blob));
     try {
@@ -756,7 +790,7 @@ public class ITObjectTest {
 
   @Test
   public void testDeleteBlobFail() {
-    String blobName = "test-delete-blob-fail";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -771,15 +805,16 @@ public class ITObjectTest {
 
   @Test
   public void testComposeBlob() {
-    String sourceBlobName1 = "test-compose-blob-source-1";
-    String sourceBlobName2 = "test-compose-blob-source-2";
+    String baseName = generator.randomObjectName();
+    String sourceBlobName1 = baseName + "-1";
+    String sourceBlobName2 = baseName + "-2";
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1, BLOB_BYTE_CONTENT);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2, BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
-    String targetBlobName = "test-compose-blob-target";
+    String targetBlobName = baseName + "-target";
     BlobInfo targetBlob = BlobInfo.newBuilder(bucket, targetBlobName).build();
     ComposeRequest req =
         ComposeRequest.of(ImmutableList.of(sourceBlobName1, sourceBlobName2), targetBlob);
@@ -796,15 +831,16 @@ public class ITObjectTest {
 
   @Test
   public void testComposeBlobWithContentType() {
-    String sourceBlobName1 = "test-compose-blob-with-content-type-source-1";
-    String sourceBlobName2 = "test-compose-blob-with-content-type-source-2";
+    String baseName = generator.randomObjectName();
+    String sourceBlobName1 = baseName + "-source-1";
+    String sourceBlobName2 = baseName + "-source-2";
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1, BLOB_BYTE_CONTENT);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2, BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
-    String targetBlobName = "test-compose-blob-with-content-type-target";
+    String targetBlobName = baseName + "-target";
     BlobInfo targetBlob =
         BlobInfo.newBuilder(bucket, targetBlobName).setContentType(CONTENT_TYPE).build();
     ComposeRequest req =
@@ -823,15 +859,16 @@ public class ITObjectTest {
 
   @Test
   public void testComposeBlobFail() {
-    String sourceBlobName1 = "test-compose-blob-fail-source-1";
-    String sourceBlobName2 = "test-compose-blob-fail-source-2";
+    String baseName = generator.randomObjectName();
+    String sourceBlobName1 = baseName + "-source-1";
+    String sourceBlobName2 = baseName + "-source-2";
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
-    String targetBlobName = "test-compose-blob-fail-target";
+    String targetBlobName = baseName + "-target";
     BlobInfo targetBlob = BlobInfo.newBuilder(bucket, targetBlobName).build();
     ComposeRequest req =
         ComposeRequest.newBuilder()
@@ -1051,11 +1088,12 @@ public class ITObjectTest {
   @Test
   public void testCopyBlobFail() {
 
-    String sourceBlobName = "test-copy-blob-source-fail";
+    String baseName = generator.randomObjectName();
+    String sourceBlobName = baseName + "-source-fail";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName, -1L);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
-    String targetBlobName = "test-copy-blob-target-fail";
+    String targetBlobName = baseName + "-target-fail";
     BlobInfo target =
         BlobInfo.newBuilder(bucket, targetBlobName).setContentType(CONTENT_TYPE).build();
     CopyRequest req =
@@ -1086,7 +1124,7 @@ public class ITObjectTest {
 
   @Test
   public void testReadAndWriteChannelWithEncryptionKey() throws IOException {
-    String blobName = "test-read-write-channel-with-customer-key-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
     try (WriteChannel writer = storage.writer(blob, BlobWriteOption.encryptionKey(BASE64_KEY))) {
