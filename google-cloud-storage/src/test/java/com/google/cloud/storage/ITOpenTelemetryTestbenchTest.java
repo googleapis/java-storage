@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.cloud.ReadChannel;
@@ -166,7 +167,9 @@ public class ITOpenTelemetryTestbenchTest {
             .setSourceOptions(BlobSourceOption.generationMatch(cpySrc.getGeneration()))
             .setTarget(dst, BlobTargetOption.doesNotExist())
             .build();
-    storage.copy(copyRequest);
+    CopyWriter copyWriter = storage.copy(copyRequest);
+    BlobInfo result = copyWriter.getResult();
+    assertThat(result).isNotNull();
     TestExporter testExported = (TestExporter) exporter;
     List<SpanData> spanData = testExported.getExportedSpans();
     checkCommonAttributes(spanData);
