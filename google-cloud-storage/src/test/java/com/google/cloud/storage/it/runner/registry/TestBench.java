@@ -112,7 +112,7 @@ public final class TestBench implements ManagedLifecycle {
       String dockerImageName,
       String dockerImageTag,
       String containerName) {
-    this.ignorePullError = ignorePullError;
+    this.ignorePullError = true;
     this.baseUri = baseUri;
     this.gRPCBaseUri = gRPCBaseUri;
     this.dockerImageName = dockerImageName;

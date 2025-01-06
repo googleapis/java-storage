@@ -54,6 +54,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import io.grpc.Status.Code;
+import io.opentelemetry.context.Context;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
@@ -145,7 +146,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       BlobInfo ultimateObject,
       Opts<ObjectTargetOpt> opts) {
     this.bufferPool = bufferPool;
-    this.exec = exec;
+    this.exec = Context.current().wrap(exec);
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
     this.maxElementsPerCompact = maxElementsPerCompact;
@@ -154,7 +155,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     this.storage = storage;
     this.ultimateObject = ultimateObject;
     this.opts = opts;
-    this.queue = AsyncAppendingQueue.of(exec, maxElementsPerCompact, this::compose);
+    this.queue = AsyncAppendingQueue.of(this.exec, maxElementsPerCompact, this::compose);
     this.pendingParts = new ArrayList<>();
     // this can be modified by another thread
     this.successfulParts = Collections.synchronizedList(new ArrayList<>());

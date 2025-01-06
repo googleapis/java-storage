@@ -81,9 +81,11 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import io.grpc.protobuf.ProtoUtils;
+import io.opentelemetry.api.OpenTelemetry;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -119,6 +121,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final boolean grpcClientMetricsManuallyEnabled;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
+  private transient OpenTelemetry openTelemetry;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -135,6 +138,7 @@ public final class GrpcStorageOptions extends StorageOptions
     this.grpcClientMetricsManuallyEnabled = builder.grpcMetricsManuallyEnabled;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
     this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
+    this.openTelemetry = builder.openTelemetry;
   }
 
   @Override
@@ -155,6 +159,11 @@ public final class GrpcStorageOptions extends StorageOptions
   @InternalApi
   StorageSettings getStorageSettings() throws IOException {
     return resolveSettingsAndOpts().x();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    this.openTelemetry = HttpStorageOptions.getDefaultInstance().getOpenTelemetry();
   }
 
   /**
@@ -349,6 +358,13 @@ public final class GrpcStorageOptions extends StorageOptions
     return Tuple.of(builder.build(), defaultOpts);
   }
 
+  /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+  @BetaApi
+  @Override
+  public OpenTelemetry getOpenTelemetry() {
+    return openTelemetry;
+  }
+
   /** @since 2.14.0 */
   @Override
   public GrpcStorageOptions.Builder toBuilder() {
@@ -364,6 +380,7 @@ public final class GrpcStorageOptions extends StorageOptions
         enableGrpcClientMetrics,
         grpcInterceptorProvider,
         blobWriteSessionConfig,
+        openTelemetry,
         baseHashCode());
   }
 
@@ -382,6 +399,7 @@ public final class GrpcStorageOptions extends StorageOptions
         && Objects.equals(terminationAwaitDuration, that.terminationAwaitDuration)
         && Objects.equals(grpcInterceptorProvider, that.grpcInterceptorProvider)
         && Objects.equals(blobWriteSessionConfig, that.blobWriteSessionConfig)
+        && Objects.equals(openTelemetry, that.openTelemetry)
         && this.baseEquals(that);
   }
 
@@ -423,6 +441,7 @@ public final class GrpcStorageOptions extends StorageOptions
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
     private BlobWriteSessionConfig blobWriteSessionConfig =
         GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
+    private OpenTelemetry openTelemetry = GrpcStorageDefaults.INSTANCE.getDefaultOpenTelemetry();
 
     private boolean grpcMetricsManuallyEnabled = false;
 
@@ -437,6 +456,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.enableGrpcClientMetrics = gso.enableGrpcClientMetrics;
       this.grpcInterceptorProvider = gso.grpcInterceptorProvider;
       this.blobWriteSessionConfig = gso.blobWriteSessionConfig;
+      this.openTelemetry = gso.openTelemetry;
     }
 
     /**
@@ -619,6 +639,19 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
+    /**
+     * Enable OpenTelemetry Tracing and provide an instance for the client to use.
+     *
+     * @param openTelemetry User defined instance of OpenTelemetry to be used by the library
+     * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public GrpcStorageOptions.Builder setOpenTelemetry(OpenTelemetry openTelemetry) {
+      requireNonNull(openTelemetry, "openTelemetry must be non null");
+      this.openTelemetry = openTelemetry;
+      return this;
+    }
+
     /** @since 2.14.0 */
     @Override
     public GrpcStorageOptions build() {
@@ -695,6 +728,12 @@ public final class GrpcStorageOptions extends StorageOptions
     public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
       return BlobWriteSessionConfigs.getDefault();
     }
+
+    /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public OpenTelemetry getDefaultOpenTelemetry() {
+      return OpenTelemetry.noop();
+    }
   }
 
   /**
@@ -751,22 +790,27 @@ public final class GrpcStorageOptions extends StorageOptions
                 new InternalZeroCopyGrpcStorageStub(
                     stubSettings, clientContext, grpcStorageCallableFactory);
             StorageClient client = new InternalStorageClient(stub);
-            return new GrpcStorageImpl(
-                grpcStorageOptions,
-                client,
-                stub.getObjectMediaResponseMarshaller,
-                grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
-                defaultOpts);
+            GrpcStorageImpl grpcStorage =
+                new GrpcStorageImpl(
+                    grpcStorageOptions,
+                    client,
+                    stub.getObjectMediaResponseMarshaller,
+                    grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                    defaultOpts);
+            return OtelStorageDecorator.decorate(
+                grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
           } else {
             StorageClient client = StorageClient.create(storageSettings);
-            return new GrpcStorageImpl(
-                grpcStorageOptions,
-                client,
-                ResponseContentLifecycleManager.noop(),
-                grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
-                defaultOpts);
+            GrpcStorageImpl grpcStorage =
+                new GrpcStorageImpl(
+                    grpcStorageOptions,
+                    client,
+                    ResponseContentLifecycleManager.noop(),
+                    grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                    defaultOpts);
+            return OtelStorageDecorator.decorate(
+                grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
           }
-
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate gRPC com.google.cloud.storage.Storage client.", e);
