@@ -31,6 +31,7 @@ final class GapicCopyWriter extends CopyWriter {
   private final GrpcStorageOptions options;
   private final UnaryCallable<RewriteObjectRequest, RewriteResponse> callable;
   private final ResultRetryAlgorithm<?> alg;
+  private final RewriteObjectRequest originalRequest;
   private final RewriteResponse initialResponse;
 
   private RewriteResponse mostRecentResponse;
@@ -39,6 +40,7 @@ final class GapicCopyWriter extends CopyWriter {
       GrpcStorageImpl storage,
       UnaryCallable<RewriteObjectRequest, RewriteResponse> callable,
       ResultRetryAlgorithm<?> alg,
+      RewriteObjectRequest originalRequest,
       RewriteResponse initialResponse) {
     this.storage = storage;
     this.options = storage.getOptions();
@@ -46,6 +48,7 @@ final class GapicCopyWriter extends CopyWriter {
     this.alg = alg;
     this.initialResponse = initialResponse;
     this.mostRecentResponse = initialResponse;
+    this.originalRequest = originalRequest;
   }
 
   @Override
@@ -76,9 +79,7 @@ final class GapicCopyWriter extends CopyWriter {
   public void copyChunk() {
     if (!isDone()) {
       RewriteObjectRequest req =
-          RewriteObjectRequest.newBuilder()
-              .setRewriteToken(mostRecentResponse.getRewriteToken())
-              .build();
+          originalRequest.toBuilder().setRewriteToken(mostRecentResponse.getRewriteToken()).build();
       GrpcCallContext retryContext = Retrying.newCallContext();
       mostRecentResponse =
           Retrying.run(options, alg, () -> callable.call(req, retryContext), Decoder.identity());
