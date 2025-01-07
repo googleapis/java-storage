@@ -1,85 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- see http://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
-  <!-- Allow addition of new Bucket.RetentionPolicy.retention_duration field -->
   <difference>
     <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *RetentionDuration*(*)</method>
-  </difference>
-  <!-- Allow addition of new object_checksums to ComposeObjectRequest, RewriteObjectRequest, StartResumableWriteRequest -->
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *ObjectChecksums*(*)</method>
-  </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/Bucket*</className>
-    <method>* *TerminalStorageClass*(*)</method>
-  </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/ListObjectsRequestOrBuilder</className>
-    <method>* *MatchGlob*(*)</method>
-  </difference>
-
-  <!-- Allow rename from Notification to NotificationConfig-->
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/*Notification*</className>
-  </difference>
-
-  <!-- Allow removal of Bucket.RetentionPolicy.retention_period field (replaced by retention_duration) -->
-  <difference>
-    <differenceType>6011</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <field>RETENTION_PERIOD_FIELD_NUMBER</field>
-  </difference>
-  <difference>
-    <differenceType>7002</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *RetentionPeriod*(*)</method>
-  </difference>
-
-  <!-- Allow addition of new Soft Delete -->
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *SoftDeletePolicy*(*)</method>
+    <className>com/google/storage/v2/*OrBuilder</className>
+    <method>* get*(*)</method>
   </difference>
   <difference>
     <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *SoftDeleted*(*)</method>
-  </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *SoftDeleteTime*(*)</method>
+    <className>com/google/storage/v2/*OrBuilder</className>
+    <method>boolean contains*(*)</method>
   </difference>
   <difference>
     <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *HardDeleteTime*(*)</method>
+    <className>com/google/storage/v2/*OrBuilder</className>
+    <method>boolean has*(*)</method>
   </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *HierarchicalNamespace*(*)</method>
-  </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *IncludeFoldersAsPrefixes*(*)</method>
-  </difference>
-
-  <!-- The following 7006 exemptions are related to Protobuf 4.27.4+ runtime upgrade -->
+  <!-- The following 7006 exemptions are related to Protobuf 4.27.4 upgrade -->
   <difference>
     <differenceType>7006</differenceType>
     <className>com/google/storage/v2/**</className>
@@ -139,163 +76,5 @@
     <className>com/google/storage/v2/**</className>
     <method>* setUnknownFields(*)</method>
     <to>**</to>
-  </difference>
-
-  <!-- Hmac RPCs never worked, this isn't breaking -->
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyRequestOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyResponse</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyResponse$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/CreateHmacKeyResponseOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/DeleteHmacKeyRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/DeleteHmacKeyRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/DeleteHmacKeyRequestOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetHmacKeyRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetHmacKeyRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetHmacKeyRequestOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetServiceAccountRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetServiceAccountRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/GetServiceAccountRequestOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/HmacKeyMetadata</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/HmacKeyMetadata$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/HmacKeyMetadataOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysRequestOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysResponse</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysResponse$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ListHmacKeysResponseOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ServiceAccount</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ServiceAccount$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/ServiceAccountOrBuilder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/UpdateHmacKeyRequest</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/UpdateHmacKeyRequest$Builder</className>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/UpdateHmacKeyRequestOrBuilder</className>
-  </difference>
-
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/GetObjectRequestOrBuilder</className>
-    <method>java.lang.String getRestoreToken()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/GetObjectRequestOrBuilder</className>
-    <method>com.google.protobuf.ByteString getRestoreTokenBytes()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/ObjectOrBuilder</className>
-    <method>java.lang.String getRestoreToken()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/ObjectOrBuilder</className>
-    <method>com.google.protobuf.ByteString getRestoreTokenBytes()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/ObjectOrBuilder</className>
-    <method>boolean hasRestoreToken()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/RestoreObjectRequestOrBuilder</className>
-    <method>java.lang.String getRestoreToken()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/RestoreObjectRequestOrBuilder</className>
-    <method>com.google.protobuf.ByteString getRestoreTokenBytes()</method>
   </difference>
 </differences>
