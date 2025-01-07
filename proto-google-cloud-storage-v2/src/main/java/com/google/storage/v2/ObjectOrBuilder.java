@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -447,6 +447,47 @@ public interface ObjectOrBuilder
    * </code>
    */
   com.google.protobuf.TimestampOrBuilder getDeleteTimeOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   *
+   * @return Whether the finalizeTime field is set.
+   */
+  boolean hasFinalizeTime();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   *
+   * @return The finalizeTime.
+   */
+  com.google.protobuf.Timestamp getFinalizeTime();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The time when the object was finalized.
+   * </pre>
+   *
+   * <code>
+   * .google.protobuf.Timestamp finalize_time = 36 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
+   */
+  com.google.protobuf.TimestampOrBuilder getFinalizeTimeOrBuilder();
 
   /**
    *

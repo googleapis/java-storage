@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1014,6 +1014,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1271,6 +1272,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1346,6 +1348,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1458,6 +1461,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1530,6 +1534,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1602,6 +1607,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1677,6 +1683,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -1823,6 +1830,7 @@ public class StorageClientTest {
             .addAllAcl(new ArrayList<ObjectAccessControl>())
             .setContentLanguage("contentLanguage810066673")
             .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
             .setContentType("contentType-389131437")
             .setCreateTime(Timestamp.newBuilder().build())
             .setComponentCount(-485073075)
@@ -2296,6 +2304,158 @@ public class StorageClientTest {
     try {
       String uploadId = "uploadId1563990780";
       client.queryWriteStatus(uploadId);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void moveObjectTest() throws Exception {
+    Object expectedResponse =
+        Object.newBuilder()
+            .setName("name3373707")
+            .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
+            .setGeneration(305703192)
+            .setRestoreToken("restoreToken1638686731")
+            .setMetageneration(1048558813)
+            .setStorageClass("storageClass871353277")
+            .setSize(3530753)
+            .setContentEncoding("contentEncoding-160088852")
+            .setContentDisposition("contentDisposition1034341758")
+            .setCacheControl("cacheControl-1336592517")
+            .addAllAcl(new ArrayList<ObjectAccessControl>())
+            .setContentLanguage("contentLanguage810066673")
+            .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
+            .setContentType("contentType-389131437")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setComponentCount(-485073075)
+            .setChecksums(ObjectChecksums.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setKmsKey(
+                CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+                    .toString())
+            .setUpdateStorageClassTime(Timestamp.newBuilder().build())
+            .setTemporaryHold(true)
+            .setRetentionExpireTime(Timestamp.newBuilder().build())
+            .putAllMetadata(new HashMap<String, String>())
+            .setEventBasedHold(true)
+            .setOwner(Owner.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
+            .setCustomTime(Timestamp.newBuilder().build())
+            .setSoftDeleteTime(Timestamp.newBuilder().build())
+            .setHardDeleteTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+    String sourceObject = "sourceObject1196439354";
+    String destinationObject = "destinationObject-1761603347";
+
+    Object actualResponse = client.moveObject(bucket, sourceObject, destinationObject);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    MoveObjectRequest actualRequest = ((MoveObjectRequest) actualRequests.get(0));
+
+    Assert.assertEquals(bucket.toString(), actualRequest.getBucket());
+    Assert.assertEquals(sourceObject, actualRequest.getSourceObject());
+    Assert.assertEquals(destinationObject, actualRequest.getDestinationObject());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void moveObjectExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+      String sourceObject = "sourceObject1196439354";
+      String destinationObject = "destinationObject-1761603347";
+      client.moveObject(bucket, sourceObject, destinationObject);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void moveObjectTest2() throws Exception {
+    Object expectedResponse =
+        Object.newBuilder()
+            .setName("name3373707")
+            .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
+            .setGeneration(305703192)
+            .setRestoreToken("restoreToken1638686731")
+            .setMetageneration(1048558813)
+            .setStorageClass("storageClass871353277")
+            .setSize(3530753)
+            .setContentEncoding("contentEncoding-160088852")
+            .setContentDisposition("contentDisposition1034341758")
+            .setCacheControl("cacheControl-1336592517")
+            .addAllAcl(new ArrayList<ObjectAccessControl>())
+            .setContentLanguage("contentLanguage810066673")
+            .setDeleteTime(Timestamp.newBuilder().build())
+            .setFinalizeTime(Timestamp.newBuilder().build())
+            .setContentType("contentType-389131437")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setComponentCount(-485073075)
+            .setChecksums(ObjectChecksums.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setKmsKey(
+                CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+                    .toString())
+            .setUpdateStorageClassTime(Timestamp.newBuilder().build())
+            .setTemporaryHold(true)
+            .setRetentionExpireTime(Timestamp.newBuilder().build())
+            .putAllMetadata(new HashMap<String, String>())
+            .setEventBasedHold(true)
+            .setOwner(Owner.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
+            .setCustomTime(Timestamp.newBuilder().build())
+            .setSoftDeleteTime(Timestamp.newBuilder().build())
+            .setHardDeleteTime(Timestamp.newBuilder().build())
+            .build();
+    mockStorage.addResponse(expectedResponse);
+
+    String bucket = "bucket-1378203158";
+    String sourceObject = "sourceObject1196439354";
+    String destinationObject = "destinationObject-1761603347";
+
+    Object actualResponse = client.moveObject(bucket, sourceObject, destinationObject);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    MoveObjectRequest actualRequest = ((MoveObjectRequest) actualRequests.get(0));
+
+    Assert.assertEquals(bucket, actualRequest.getBucket());
+    Assert.assertEquals(sourceObject, actualRequest.getSourceObject());
+    Assert.assertEquals(destinationObject, actualRequest.getDestinationObject());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void moveObjectExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String bucket = "bucket-1378203158";
+      String sourceObject = "sourceObject1196439354";
+      String destinationObject = "destinationObject-1761603347";
+      client.moveObject(bucket, sourceObject, destinationObject);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.

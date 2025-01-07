@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -287,6 +288,14 @@ public class GrpcStorageStub extends StorageStub {
                   ProtoUtils.marshaller(QueryWriteStatusResponse.getDefaultInstance()))
               .build();
 
+  private static final MethodDescriptor<MoveObjectRequest, Object> moveObjectMethodDescriptor =
+      MethodDescriptor.<MoveObjectRequest, Object>newBuilder()
+          .setType(MethodDescriptor.MethodType.UNARY)
+          .setFullMethodName("google.storage.v2.Storage/MoveObject")
+          .setRequestMarshaller(ProtoUtils.marshaller(MoveObjectRequest.getDefaultInstance()))
+          .setResponseMarshaller(ProtoUtils.marshaller(Object.getDefaultInstance()))
+          .build();
+
   private final UnaryCallable<DeleteBucketRequest, Empty> deleteBucketCallable;
   private final UnaryCallable<GetBucketRequest, Bucket> getBucketCallable;
   private final UnaryCallable<CreateBucketRequest, Bucket> createBucketCallable;
@@ -320,6 +329,7 @@ public class GrpcStorageStub extends StorageStub {
       startResumableWriteCallable;
   private final UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable;
+  private final UnaryCallable<MoveObjectRequest, Object> moveObjectCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -371,6 +381,8 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate QUERY_WRITE_STATUS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate MOVE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
 
   public static final GrpcStorageStub create(StorageStubSettings settings) throws IOException {
     return new GrpcStorageStub(settings, ClientContext.create(settings));
@@ -655,6 +667,16 @@ public class GrpcStorageStub extends StorageStub {
                       return builder.build();
                     })
                 .build();
+    GrpcCallSettings<MoveObjectRequest, Object> moveObjectTransportSettings =
+        GrpcCallSettings.<MoveObjectRequest, Object>newBuilder()
+            .setMethodDescriptor(moveObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getBucket(), "bucket", MOVE_OBJECT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
 
     this.deleteBucketCallable =
         callableFactory.createUnaryCallable(
@@ -736,6 +758,9 @@ public class GrpcStorageStub extends StorageStub {
     this.queryWriteStatusCallable =
         callableFactory.createUnaryCallable(
             queryWriteStatusTransportSettings, settings.queryWriteStatusSettings(), clientContext);
+    this.moveObjectCallable =
+        callableFactory.createUnaryCallable(
+            moveObjectTransportSettings, settings.moveObjectSettings(), clientContext);
 
     this.backgroundResources =
         new BackgroundResourceAggregation(clientContext.getBackgroundResources());
@@ -869,6 +894,11 @@ public class GrpcStorageStub extends StorageStub {
   public UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable() {
     return queryWriteStatusCallable;
+  }
+
+  @Override
+  public UnaryCallable<MoveObjectRequest, Object> moveObjectCallable() {
+    return moveObjectCallable;
   }
 
   @Override

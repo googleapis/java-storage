@@ -30,5 +30,10 @@
     <className>com/google/storage/v2/*</className>
     <method>* bidiWriteObject(*)</method>
   </difference>
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* moveObject(*)</method>
+  </difference>
 
 </differences>

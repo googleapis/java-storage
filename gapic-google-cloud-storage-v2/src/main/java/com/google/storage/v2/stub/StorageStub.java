@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -171,6 +172,10 @@ public abstract class StorageStub implements BackgroundResource {
   public UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable() {
     throw new UnsupportedOperationException("Not implemented: queryWriteStatusCallable()");
+  }
+
+  public UnaryCallable<MoveObjectRequest, Object> moveObjectCallable() {
+    throw new UnsupportedOperationException("Not implemented: moveObjectCallable()");
   }
 
   @Override

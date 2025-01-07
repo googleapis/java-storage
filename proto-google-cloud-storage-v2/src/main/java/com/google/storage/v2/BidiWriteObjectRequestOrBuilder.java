@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,8 @@ public interface BidiWriteObjectRequestOrBuilder
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
    * don't match the specified checksums the call will fail. May only be
-   * provided in last request (with finish_write set).
+   * provided in the first request or the
+   * last request (with finish_write set).
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
@@ -185,7 +186,8 @@ public interface BidiWriteObjectRequestOrBuilder
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
    * don't match the specified checksums the call will fail. May only be
-   * provided in last request (with finish_write set).
+   * provided in the first request or the
+   * last request (with finish_write set).
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
@@ -199,7 +201,8 @@ public interface BidiWriteObjectRequestOrBuilder
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
    * don't match the specified checksums the call will fail. May only be
-   * provided in last request (with finish_write set).
+   * provided in the first request or the
+   * last request (with finish_write set).
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
