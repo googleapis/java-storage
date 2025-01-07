@@ -80,6 +80,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>exporter-trace</artifactId>
+      <version>0.31.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>propagators-gcp</artifactId>
+      <version>0.33.0-alpha</version>
+    </dependency>
+    <dependency>
       <!-- tests jars aren't in the bom, manually include the version here -->
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
