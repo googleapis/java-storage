@@ -1613,6 +1613,10 @@ final class OtelStorageDecorator implements Storage {
       public void close() throws IOException {
         try {
           delegate.close();
+        } catch (IOException | RuntimeException e) {
+          openSpan.recordException(e);
+          openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          throw e;
         } finally {
           openSpan.end();
         }
@@ -1653,6 +1657,10 @@ final class OtelStorageDecorator implements Storage {
     public void close() throws IOException {
       try {
         delegate.close();
+      } catch (IOException | RuntimeException e) {
+        openSpan.recordException(e);
+        openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+        throw e;
       } finally {
         openSpan.end();
       }
