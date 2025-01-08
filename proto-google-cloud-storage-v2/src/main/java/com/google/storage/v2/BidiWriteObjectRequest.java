@@ -73,6 +73,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
           com.google.protobuf.AbstractMessage.InternalOneOfEnum {
     UPLOAD_ID(1),
     WRITE_OBJECT_SPEC(2),
+    APPEND_OBJECT_SPEC(11),
     FIRSTMESSAGE_NOT_SET(0);
     private final int value;
 
@@ -95,6 +96,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
           return UPLOAD_ID;
         case 2:
           return WRITE_OBJECT_SPEC;
+        case 11:
+          return APPEND_OBJECT_SPEC;
         case 0:
           return FIRSTMESSAGE_NOT_SET;
         default:
@@ -282,6 +285,57 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       return (com.google.storage.v2.WriteObjectSpec) firstMessage_;
     }
     return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
+  }
+
+  public static final int APPEND_OBJECT_SPEC_FIELD_NUMBER = 11;
+  /**
+   *
+   *
+   * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   *
+   * @return Whether the appendObjectSpec field is set.
+   */
+  @java.lang.Override
+  public boolean hasAppendObjectSpec() {
+    return firstMessageCase_ == 11;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   *
+   * @return The appendObjectSpec.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.AppendObjectSpec getAppendObjectSpec() {
+    if (firstMessageCase_ == 11) {
+      return (com.google.storage.v2.AppendObjectSpec) firstMessage_;
+    }
+    return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
+  }
+  /**
+   *
+   *
+   * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.AppendObjectSpecOrBuilder getAppendObjectSpecOrBuilder() {
+    if (firstMessageCase_ == 11) {
+      return (com.google.storage.v2.AppendObjectSpec) firstMessage_;
+    }
+    return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
   }
 
   public static final int WRITE_OFFSET_FIELD_NUMBER = 3;
@@ -590,6 +644,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     if (((bitField0_ & 0x00000002) != 0)) {
       output.writeMessage(10, getCommonObjectRequestParams());
     }
+    if (firstMessageCase_ == 11) {
+      output.writeMessage(11, (com.google.storage.v2.AppendObjectSpec) firstMessage_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -632,6 +689,11 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               10, getCommonObjectRequestParams());
     }
+    if (firstMessageCase_ == 11) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(
+              11, (com.google.storage.v2.AppendObjectSpec) firstMessage_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -668,6 +730,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         break;
       case 2:
         if (!getWriteObjectSpec().equals(other.getWriteObjectSpec())) return false;
+        break;
+      case 11:
+        if (!getAppendObjectSpec().equals(other.getAppendObjectSpec())) return false;
         break;
       case 0:
       default:
@@ -715,6 +780,10 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       case 2:
         hash = (37 * hash) + WRITE_OBJECT_SPEC_FIELD_NUMBER;
         hash = (53 * hash) + getWriteObjectSpec().hashCode();
+        break;
+      case 11:
+        hash = (37 * hash) + APPEND_OBJECT_SPEC_FIELD_NUMBER;
+        hash = (53 * hash) + getAppendObjectSpec().hashCode();
         break;
       case 0:
       default:
@@ -879,6 +948,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       if (writeObjectSpecBuilder_ != null) {
         writeObjectSpecBuilder_.clear();
       }
+      if (appendObjectSpecBuilder_ != null) {
+        appendObjectSpecBuilder_.clear();
+      }
       writeOffset_ = 0L;
       if (checksummedDataBuilder_ != null) {
         checksummedDataBuilder_.clear();
@@ -937,25 +1009,25 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
     private void buildPartial0(com.google.storage.v2.BidiWriteObjectRequest result) {
       int from_bitField0_ = bitField0_;
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000008) != 0)) {
         result.writeOffset_ = writeOffset_;
       }
       int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000010) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.objectChecksums_ =
             objectChecksumsBuilder_ == null ? objectChecksums_ : objectChecksumsBuilder_.build();
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.stateLookup_ = stateLookup_;
       }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
+      if (((from_bitField0_ & 0x00000080) != 0)) {
         result.flush_ = flush_;
       }
-      if (((from_bitField0_ & 0x00000080) != 0)) {
+      if (((from_bitField0_ & 0x00000100) != 0)) {
         result.finishWrite_ = finishWrite_;
       }
-      if (((from_bitField0_ & 0x00000100) != 0)) {
+      if (((from_bitField0_ & 0x00000200) != 0)) {
         result.commonObjectRequestParams_ =
             commonObjectRequestParamsBuilder_ == null
                 ? commonObjectRequestParams_
@@ -970,6 +1042,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       result.firstMessage_ = this.firstMessage_;
       if (firstMessageCase_ == 2 && writeObjectSpecBuilder_ != null) {
         result.firstMessage_ = writeObjectSpecBuilder_.build();
+      }
+      if (firstMessageCase_ == 11 && appendObjectSpecBuilder_ != null) {
+        result.firstMessage_ = appendObjectSpecBuilder_.build();
       }
       result.dataCase_ = dataCase_;
       result.data_ = this.data_;
@@ -1054,6 +1129,11 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             mergeWriteObjectSpec(other.getWriteObjectSpec());
             break;
           }
+        case APPEND_OBJECT_SPEC:
+          {
+            mergeAppendObjectSpec(other.getAppendObjectSpec());
+            break;
+          }
         case FIRSTMESSAGE_NOT_SET:
           {
             break;
@@ -1112,7 +1192,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             case 24:
               {
                 writeOffset_ = input.readInt64();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 24
             case 34:
@@ -1124,34 +1204,41 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             case 50:
               {
                 input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 50
             case 56:
               {
                 stateLookup_ = input.readBool();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 56
             case 64:
               {
                 flush_ = input.readBool();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 64
             case 72:
               {
                 finishWrite_ = input.readBool();
-                bitField0_ |= 0x00000080;
+                bitField0_ |= 0x00000100;
                 break;
               } // case 72
             case 82:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000100;
+                bitField0_ |= 0x00000200;
                 break;
               } // case 82
+            case 90:
+              {
+                input.readMessage(
+                    getAppendObjectSpecFieldBuilder().getBuilder(), extensionRegistry);
+                firstMessageCase_ = 11;
+                break;
+              } // case 90
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1557,6 +1644,215 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       return writeObjectSpecBuilder_;
     }
 
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.AppendObjectSpec,
+            com.google.storage.v2.AppendObjectSpec.Builder,
+            com.google.storage.v2.AppendObjectSpecOrBuilder>
+        appendObjectSpecBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     *
+     * @return Whether the appendObjectSpec field is set.
+     */
+    @java.lang.Override
+    public boolean hasAppendObjectSpec() {
+      return firstMessageCase_ == 11;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     *
+     * @return The appendObjectSpec.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.AppendObjectSpec getAppendObjectSpec() {
+      if (appendObjectSpecBuilder_ == null) {
+        if (firstMessageCase_ == 11) {
+          return (com.google.storage.v2.AppendObjectSpec) firstMessage_;
+        }
+        return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
+      } else {
+        if (firstMessageCase_ == 11) {
+          return appendObjectSpecBuilder_.getMessage();
+        }
+        return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    public Builder setAppendObjectSpec(com.google.storage.v2.AppendObjectSpec value) {
+      if (appendObjectSpecBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        firstMessage_ = value;
+        onChanged();
+      } else {
+        appendObjectSpecBuilder_.setMessage(value);
+      }
+      firstMessageCase_ = 11;
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    public Builder setAppendObjectSpec(
+        com.google.storage.v2.AppendObjectSpec.Builder builderForValue) {
+      if (appendObjectSpecBuilder_ == null) {
+        firstMessage_ = builderForValue.build();
+        onChanged();
+      } else {
+        appendObjectSpecBuilder_.setMessage(builderForValue.build());
+      }
+      firstMessageCase_ = 11;
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    public Builder mergeAppendObjectSpec(com.google.storage.v2.AppendObjectSpec value) {
+      if (appendObjectSpecBuilder_ == null) {
+        if (firstMessageCase_ == 11
+            && firstMessage_ != com.google.storage.v2.AppendObjectSpec.getDefaultInstance()) {
+          firstMessage_ =
+              com.google.storage.v2.AppendObjectSpec.newBuilder(
+                      (com.google.storage.v2.AppendObjectSpec) firstMessage_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          firstMessage_ = value;
+        }
+        onChanged();
+      } else {
+        if (firstMessageCase_ == 11) {
+          appendObjectSpecBuilder_.mergeFrom(value);
+        } else {
+          appendObjectSpecBuilder_.setMessage(value);
+        }
+      }
+      firstMessageCase_ = 11;
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    public Builder clearAppendObjectSpec() {
+      if (appendObjectSpecBuilder_ == null) {
+        if (firstMessageCase_ == 11) {
+          firstMessageCase_ = 0;
+          firstMessage_ = null;
+          onChanged();
+        }
+      } else {
+        if (firstMessageCase_ == 11) {
+          firstMessageCase_ = 0;
+          firstMessage_ = null;
+        }
+        appendObjectSpecBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    public com.google.storage.v2.AppendObjectSpec.Builder getAppendObjectSpecBuilder() {
+      return getAppendObjectSpecFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.AppendObjectSpecOrBuilder getAppendObjectSpecOrBuilder() {
+      if ((firstMessageCase_ == 11) && (appendObjectSpecBuilder_ != null)) {
+        return appendObjectSpecBuilder_.getMessageOrBuilder();
+      } else {
+        if (firstMessageCase_ == 11) {
+          return (com.google.storage.v2.AppendObjectSpec) firstMessage_;
+        }
+        return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * For appendable uploads. Describes the object to append to.
+     * </pre>
+     *
+     * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.AppendObjectSpec,
+            com.google.storage.v2.AppendObjectSpec.Builder,
+            com.google.storage.v2.AppendObjectSpecOrBuilder>
+        getAppendObjectSpecFieldBuilder() {
+      if (appendObjectSpecBuilder_ == null) {
+        if (!(firstMessageCase_ == 11)) {
+          firstMessage_ = com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
+        }
+        appendObjectSpecBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.AppendObjectSpec,
+                com.google.storage.v2.AppendObjectSpec.Builder,
+                com.google.storage.v2.AppendObjectSpecOrBuilder>(
+                (com.google.storage.v2.AppendObjectSpec) firstMessage_,
+                getParentForChildren(),
+                isClean());
+        firstMessage_ = null;
+      }
+      firstMessageCase_ = 11;
+      onChanged();
+      return appendObjectSpecBuilder_;
+    }
+
     private long writeOffset_;
     /**
      *
@@ -1612,7 +1908,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public Builder setWriteOffset(long value) {
 
       writeOffset_ = value;
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1640,7 +1936,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return This builder for chaining.
      */
     public Builder clearWriteOffset() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       writeOffset_ = 0L;
       onChanged();
       return this;
@@ -1882,7 +2178,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return Whether the objectChecksums field is set.
      */
     public boolean hasObjectChecksums() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1928,7 +2224,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       } else {
         objectChecksumsBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1951,7 +2247,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       } else {
         objectChecksumsBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1969,7 +2265,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) != 0)
+        if (((bitField0_ & 0x00000020) != 0)
             && objectChecksums_ != null
             && objectChecksums_ != com.google.storage.v2.ObjectChecksums.getDefaultInstance()) {
           getObjectChecksumsBuilder().mergeFrom(value);
@@ -1980,7 +2276,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         objectChecksumsBuilder_.mergeFrom(value);
       }
       if (objectChecksums_ != null) {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
         onChanged();
       }
       return this;
@@ -1998,7 +2294,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
      */
     public Builder clearObjectChecksums() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000020);
       objectChecksums_ = null;
       if (objectChecksumsBuilder_ != null) {
         objectChecksumsBuilder_.dispose();
@@ -2020,7 +2316,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
@@ -2119,7 +2415,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public Builder setStateLookup(boolean value) {
 
       stateLookup_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -2142,7 +2438,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return This builder for chaining.
      */
     public Builder clearStateLookup() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000040);
       stateLookup_ = false;
       onChanged();
       return this;
@@ -2189,7 +2485,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public Builder setFlush(boolean value) {
 
       flush_ = value;
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2210,7 +2506,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return This builder for chaining.
      */
     public Builder clearFlush() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000080);
       flush_ = false;
       onChanged();
       return this;
@@ -2257,7 +2553,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public Builder setFinishWrite(boolean value) {
 
       finishWrite_ = value;
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2278,7 +2574,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return This builder for chaining.
      */
     public Builder clearFinishWrite() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000100);
       finishWrite_ = false;
       onChanged();
       return this;
@@ -2302,7 +2598,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return ((bitField0_ & 0x00000100) != 0);
+      return ((bitField0_ & 0x00000200) != 0);
     }
     /**
      *
@@ -2343,7 +2639,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2363,7 +2659,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2379,7 +2675,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0)
+        if (((bitField0_ & 0x00000200) != 0)
             && commonObjectRequestParams_ != null
             && commonObjectRequestParams_
                 != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
@@ -2391,7 +2687,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
       if (commonObjectRequestParams_ != null) {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         onChanged();
       }
       return this;
@@ -2406,7 +2702,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000200);
       commonObjectRequestParams_ = null;
       if (commonObjectRequestParamsBuilder_ != null) {
         commonObjectRequestParamsBuilder_.dispose();
@@ -2426,7 +2722,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

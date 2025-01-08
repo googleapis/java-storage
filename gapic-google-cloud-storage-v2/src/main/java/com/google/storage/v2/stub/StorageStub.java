@@ -30,6 +30,8 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
@@ -137,6 +139,11 @@ public abstract class StorageStub implements BackgroundResource {
 
   public ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable() {
     throw new UnsupportedOperationException("Not implemented: readObjectCallable()");
+  }
+
+  public BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectCallable() {
+    throw new UnsupportedOperationException("Not implemented: bidiReadObjectCallable()");
   }
 
   public UnaryCallable<UpdateObjectRequest, Object> updateObjectCallable() {

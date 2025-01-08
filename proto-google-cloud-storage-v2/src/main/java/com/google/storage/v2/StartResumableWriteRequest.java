@@ -68,8 +68,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any
-   * preconditions.
+   * Required. Contains the information necessary to start a resumable write.
    * </pre>
    *
    * <code>
@@ -86,8 +85,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any
-   * preconditions.
+   * Required. Contains the information necessary to start a resumable write.
    * </pre>
    *
    * <code>
@@ -106,8 +104,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any
-   * preconditions.
+   * Required. Contains the information necessary to start a resumable write.
    * </pre>
    *
    * <code>
@@ -127,7 +124,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * A set of parameters common to Storage API requests related to an object.
    * </pre>
    *
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -142,7 +139,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * A set of parameters common to Storage API requests related to an object.
    * </pre>
    *
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -159,7 +156,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * A set of parameters common to Storage API requests related to an object.
    * </pre>
    *
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -178,10 +175,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * uploaded object. For each upload, object_checksums can be provided with
-   * either StartResumableWriteRequest or the WriteObjectRequest with
-   * finish_write set to `true`.
+   * The checksums of the complete object. This is used to validate the
+   * uploaded object. For each upload, `object_checksums` can be provided when
+   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * completing a write with `WriteObjectRequest` with
+   * `finish_write` set to `true`.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -196,10 +194,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * uploaded object. For each upload, object_checksums can be provided with
-   * either StartResumableWriteRequest or the WriteObjectRequest with
-   * finish_write set to `true`.
+   * The checksums of the complete object. This is used to validate the
+   * uploaded object. For each upload, `object_checksums` can be provided when
+   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * completing a write with `WriteObjectRequest` with
+   * `finish_write` set to `true`.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -216,10 +215,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * uploaded object. For each upload, object_checksums can be provided with
-   * either StartResumableWriteRequest or the WriteObjectRequest with
-   * finish_write set to `true`.
+   * The checksums of the complete object. This is used to validate the
+   * uploaded object. For each upload, `object_checksums` can be provided when
+   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * completing a write with `WriteObjectRequest` with
+   * `finish_write` set to `true`.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -677,8 +677,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -694,8 +693,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -717,8 +715,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -742,8 +739,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -765,8 +761,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -795,8 +790,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -817,8 +811,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -834,8 +827,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -855,8 +847,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any
-     * preconditions.
+     * Required. Contains the information necessary to start a resumable write.
      * </pre>
      *
      * <code>
@@ -890,7 +881,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -904,7 +895,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -924,7 +915,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -947,7 +938,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -967,7 +958,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -996,7 +987,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -1015,7 +1006,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -1030,7 +1021,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -1049,7 +1040,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * A set of parameters common to Storage API requests related to an object.
      * </pre>
      *
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
@@ -1081,10 +1072,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1098,10 +1090,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1121,10 +1114,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1146,10 +1140,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1169,10 +1164,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1199,10 +1195,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1221,10 +1218,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1238,10 +1236,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
@@ -1259,10 +1258,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * uploaded object. For each upload, object_checksums can be provided with
-     * either StartResumableWriteRequest or the WriteObjectRequest with
-     * finish_write set to `true`.
+     * The checksums of the complete object. This is used to validate the
+     * uploaded object. For each upload, `object_checksums` can be provided when
+     * initiating a resumable upload with`StartResumableWriteRequest` or when
+     * completing a write with `WriteObjectRequest` with
+     * `finish_write` set to `true`.
      * </pre>
      *
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>

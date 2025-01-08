@@ -106,6 +106,41 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   *
+   * @return Whether the appendObjectSpec field is set.
+   */
+  boolean hasAppendObjectSpec();
+  /**
+   *
+   *
+   * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   *
+   * @return The appendObjectSpec.
+   */
+  com.google.storage.v2.AppendObjectSpec getAppendObjectSpec();
+  /**
+   *
+   *
+   * <pre>
+   * For appendable uploads. Describes the object to append to.
+   * </pre>
+   *
+   * <code>.google.storage.v2.AppendObjectSpec append_object_spec = 11;</code>
+   */
+  com.google.storage.v2.AppendObjectSpecOrBuilder getAppendObjectSpecOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Required. The offset from the beginning of the object at which the data
    * should be written.
    *

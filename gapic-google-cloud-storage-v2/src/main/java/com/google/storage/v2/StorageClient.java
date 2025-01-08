@@ -273,8 +273,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> DeleteObject</td>
- *      <td><p> Deletes an object and its metadata.
- * <p>  Deletions are normally permanent when versioning is disabled or whenever the generation parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be restored using RestoreObject until the soft delete retention period has passed.</td>
+ *      <td><p> Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for the bucket, or if the generation parameter is used, or if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When this API is used to delete an object from a bucket that has soft delete policy enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
+ * <p>  You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore soft-deleted objects until the soft delete retention period has passed.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.delete` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -334,7 +336,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetObject</td>
- *      <td><p> Retrieves an object's metadata.</td>
+ *      <td><p> Retrieves object metadata.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.get` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -355,11 +359,28 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ReadObject</td>
- *      <td><p> Reads an object's data.</td>
+ *      <td><p> Retrieves object data.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.get` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
  *           <li><p> readObjectCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> BidiReadObject</td>
+ *      <td><p> Reads an object's data.
+ * <p>  This is a bi-directional API with the added support for reading multiple ranges within one stream both within and across multiple messages. If the server encountered an error for any of the inputs, the stream will be closed with the relevant error code. Because the API allows for multiple outstanding requests, when the stream is closed the error response will contain a BidiReadObjectRangesError proto in the error extension describing the error for each outstanding read_id.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.get`
+ * <p>  [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+ * <p>  This API is currently in preview and is not yet available for general use.</td>
+ *      <td>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> bidiReadObjectCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -387,8 +408,10 @@ import javax.annotation.Generated;
  * <p>  An object can be written either in a single message stream or in a resumable sequence of message streams. To write using a single stream, the client should include in the first message of the stream an `WriteObjectSpec` describing the destination bucket, object, and any preconditions. Additionally, the final message must set 'finish_write' to true, or else it is an error.
  * <p>  For a resumable write, the client should instead call `StartResumableWrite()`, populating a `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the first message of each following call to `WriteObject`. If the stream is closed before finishing the upload (either explicitly by the client or due to a network error or an error response from the server), the client should do as follows:   - Check the result Status of the stream, to determine if writing can be     resumed on this stream or must be restarted from scratch (by calling     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,     INTERNAL, and UNAVAILABLE. For each case, the client should use binary     exponential backoff before retrying.  Additionally, writes can be     resumed after RESOURCE_EXHAUSTED errors, but only after taking     appropriate measures, which may include reducing aggregate send rate     across clients and/or requesting a quota increase for your project.   - If the call to `WriteObject` returns `ABORTED`, that indicates     concurrent attempts to update the resumable write, caused either by     multiple racing clients or by a single client where the previous     request was timed out on the client side but nonetheless reached the     server. In this case the client should take steps to prevent further     concurrent writes (e.g., increase the timeouts, stop using more than     one process to perform the upload, etc.), and then should follow the     steps below for resuming the upload.   - For resumable errors, the client should call `QueryWriteStatus()` and     then continue writing from the returned `persisted_size`. This may be     less than the amount of data the client previously sent. Note also that     it is acceptable to send data starting at an offset earlier than the     returned `persisted_size`; in this case, the service will skip data at     offsets that were already persisted (without checking that it matches     the previously written data), and write only the data starting from the     persisted offset. Even though the data isn't written, it may still     incur a performance cost over resuming at the correct write offset.     This behavior can make client-side handling simpler in some cases.   - Clients must only send data that is a multiple of 256 KiB per message,     unless the object is being finished with `finish_write` set to `true`.
  * <p>  The service will not view the object as complete until the client has sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after sending a request with `finish_write` set to `true` will cause an error. The client &#42;&#42;should&#42;&#42; check the response it receives to determine how much data the service was able to commit and whether the service views the object as complete.
- * <p>  Attempting to resume an already finalized object will result in an OK status, with a WriteObjectResponse containing the finalized object's metadata.
- * <p>  Alternatively, the BidiWriteObject operation may be used to write an object with controls over flushing and the ability to fetch the ability to determine the current persisted size.</td>
+ * <p>  Attempting to resume an already finalized object will result in an OK status, with a `WriteObjectResponse` containing the finalized object's metadata.
+ * <p>  Alternatively, the BidiWriteObject operation may be used to write an object with controls over flushing and the ability to fetch the ability to determine the current persisted size.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.create` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
@@ -410,7 +433,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ListObjects</td>
- *      <td><p> Retrieves a list of objects matching the criteria.</td>
+ *      <td><p> Retrieves a list of objects matching the criteria.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  The authenticated user requires `storage.objects.list` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -444,7 +469,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> StartResumableWrite</td>
- *      <td><p> Starts a resumable write. How long the write operation remains valid, and what happens when the write operation becomes invalid, are service-dependent.</td>
+ *      <td><p> Starts a resumable write operation. This method is part of the [Resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to upload large objects in multiple chunks, which is more resilient to network interruptions than a single upload. The validity duration of the write operation, and the consequences of it becoming invalid, are service-dependent.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.create` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -458,9 +485,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> QueryWriteStatus</td>
- *      <td><p> Determines the `persisted_size` for an object that is being written, which can then be used as the `write_offset` for the next `Write()` call.
- * <p>  If the object does not exist (i.e., the object has been deleted, or the first `Write()` has not yet reached the service), this method returns the error `NOT_FOUND`.
- * <p>  The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how much data has been processed for this object. This is useful if the client is buffering data and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()` calls for a given object name, the sequence of returned `persisted_size` values will be non-decreasing.</td>
+ *      <td><p> Determines the `persisted_size` of an object that is being written. This method is part of the [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The returned value is the size of the object that has been persisted so far. The value can be used as the `write_offset` for the next `Write()` call.
+ * <p>  If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet reached the service, this method returns the error `NOT_FOUND`.
+ * <p>  This method is useful for clients that buffer data and need to know which data can be safely evicted. The client can call `QueryWriteStatus()` at any time to determine how much data has been logged for this object. For any sequence of `QueryWriteStatus()` calls for a given object name, the sequence of returned `persisted_size` values are non-decreasing.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -1824,11 +1851,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -1861,11 +1898,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -1895,11 +1942,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -1936,11 +1993,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -1977,11 +2044,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -2016,11 +2093,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata.
+   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
+   * the bucket, or if the generation parameter is used, or if [soft
+   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
+   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
+   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
+   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
+   * objects are permanently deleted according to their `hardDeleteTime`.
    *
-   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
-   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
-   * restored using RestoreObject until the soft delete retention period has passed.
+   * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
+   * soft-deleted objects until the soft delete retention period has passed.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.delete` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -2294,7 +2381,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2326,7 +2420,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2355,7 +2456,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2391,7 +2499,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2427,7 +2542,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2465,7 +2587,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves an object's metadata.
+   * Retrieves object metadata.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
+   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2502,7 +2631,12 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Reads an object's data.
+   * Retrieves object data.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -2536,6 +2670,53 @@ public class StorageClient implements BackgroundResource {
    */
   public final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable() {
     return stub.readObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Reads an object's data.
+   *
+   * <p>This is a bi-directional API with the added support for reading multiple ranges within one
+   * stream both within and across multiple messages. If the server encountered an error for any of
+   * the inputs, the stream will be closed with the relevant error code. Because the API allows for
+   * multiple outstanding requests, when the stream is closed the error response will contain a
+   * BidiReadObjectRangesError proto in the error extension describing the error for each
+   * outstanding read_id.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.get`
+   *
+   * <p>[IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   *
+   * <p>This API is currently in preview and is not yet available for general use.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BidiStream<BidiReadObjectRequest, BidiReadObjectResponse> bidiStream =
+   *       storageClient.bidiReadObjectCallable().call();
+   *   BidiReadObjectRequest request =
+   *       BidiReadObjectRequest.newBuilder()
+   *           .setReadObjectSpec(BidiReadObjectSpec.newBuilder().build())
+   *           .addAllReadRanges(new ArrayList<ReadRange>())
+   *           .build();
+   *   bidiStream.send(request);
+   *   for (BidiReadObjectResponse response : bidiStream) {
+   *     // Do something when a response is received.
+   *   }
+   * }
+   * }</pre>
+   */
+  public final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectCallable() {
+    return stub.bidiReadObjectCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2688,10 +2869,15 @@ public class StorageClient implements BackgroundResource {
    * service was able to commit and whether the service views the object as complete.
    *
    * <p>Attempting to resume an already finalized object will result in an OK status, with a
-   * WriteObjectResponse containing the finalized object's metadata.
+   * `WriteObjectResponse` containing the finalized object's metadata.
    *
    * <p>Alternatively, the BidiWriteObject operation may be used to write an object with controls
    * over flushing and the ability to fetch the ability to determine the current persisted size.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.create` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -2790,6 +2976,13 @@ public class StorageClient implements BackgroundResource {
   /**
    * Retrieves a list of objects matching the criteria.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>The authenticated user requires `storage.objects.list` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2821,6 +3014,13 @@ public class StorageClient implements BackgroundResource {
   /**
    * Retrieves a list of objects matching the criteria.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>The authenticated user requires `storage.objects.list` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2848,6 +3048,13 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of objects matching the criteria.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>The authenticated user requires `storage.objects.list` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -2891,6 +3098,13 @@ public class StorageClient implements BackgroundResource {
   /**
    * Retrieves a list of objects matching the criteria.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>The authenticated user requires `storage.objects.list` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2932,6 +3146,13 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Retrieves a list of objects matching the criteria.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>The authenticated user requires `storage.objects.list` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
+   * permission.
    *
    * <p>Sample code:
    *
@@ -3082,8 +3303,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Starts a resumable write. How long the write operation remains valid, and what happens when the
-   * write operation becomes invalid, are service-dependent.
+   * Starts a resumable write operation. This method is part of the [Resumable
+   * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to
+   * upload large objects in multiple chunks, which is more resilient to network interruptions than
+   * a single upload. The validity duration of the write operation, and the consequences of it
+   * becoming invalid, are service-dependent.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.create` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -3113,8 +3342,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Starts a resumable write. How long the write operation remains valid, and what happens when the
-   * write operation becomes invalid, are service-dependent.
+   * Starts a resumable write operation. This method is part of the [Resumable
+   * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to
+   * upload large objects in multiple chunks, which is more resilient to network interruptions than
+   * a single upload. The validity duration of the write operation, and the consequences of it
+   * becoming invalid, are service-dependent.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.create` [IAM
+   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
    *
    * <p>Sample code:
    *
@@ -3145,17 +3382,18 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `persisted_size` for an object that is being written, which can then be used as
-   * the `write_offset` for the next `Write()` call.
+   * Determines the `persisted_size` of an object that is being written. This method is part of the
+   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
+   * returned value is the size of the object that has been persisted so far. The value can be used
+   * as the `write_offset` for the next `Write()` call.
    *
-   * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
-   * not yet reached the service), this method returns the error `NOT_FOUND`.
+   * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
+   * reached the service, this method returns the error `NOT_FOUND`.
    *
-   * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
-   * much data has been processed for this object. This is useful if the client is buffering data
-   * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `persisted_size` values will be
-   * non-decreasing.
+   * <p>This method is useful for clients that buffer data and need to know which data can be safely
+   * evicted. The client can call `QueryWriteStatus()` at any time to determine how much data has
+   * been logged for this object. For any sequence of `QueryWriteStatus()` calls for a given object
+   * name, the sequence of returned `persisted_size` values are non-decreasing.
    *
    * <p>Sample code:
    *
@@ -3183,17 +3421,18 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `persisted_size` for an object that is being written, which can then be used as
-   * the `write_offset` for the next `Write()` call.
+   * Determines the `persisted_size` of an object that is being written. This method is part of the
+   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
+   * returned value is the size of the object that has been persisted so far. The value can be used
+   * as the `write_offset` for the next `Write()` call.
    *
-   * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
-   * not yet reached the service), this method returns the error `NOT_FOUND`.
+   * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
+   * reached the service, this method returns the error `NOT_FOUND`.
    *
-   * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
-   * much data has been processed for this object. This is useful if the client is buffering data
-   * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `persisted_size` values will be
-   * non-decreasing.
+   * <p>This method is useful for clients that buffer data and need to know which data can be safely
+   * evicted. The client can call `QueryWriteStatus()` at any time to determine how much data has
+   * been logged for this object. For any sequence of `QueryWriteStatus()` calls for a given object
+   * name, the sequence of returned `persisted_size` values are non-decreasing.
    *
    * <p>Sample code:
    *
@@ -3222,17 +3461,18 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `persisted_size` for an object that is being written, which can then be used as
-   * the `write_offset` for the next `Write()` call.
+   * Determines the `persisted_size` of an object that is being written. This method is part of the
+   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
+   * returned value is the size of the object that has been persisted so far. The value can be used
+   * as the `write_offset` for the next `Write()` call.
    *
-   * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
-   * not yet reached the service), this method returns the error `NOT_FOUND`.
+   * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
+   * reached the service, this method returns the error `NOT_FOUND`.
    *
-   * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
-   * much data has been processed for this object. This is useful if the client is buffering data
-   * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `persisted_size` values will be
-   * non-decreasing.
+   * <p>This method is useful for clients that buffer data and need to know which data can be safely
+   * evicted. The client can call `QueryWriteStatus()` at any time to determine how much data has
+   * been logged for this object. For any sequence of `QueryWriteStatus()` calls for a given object
+   * name, the sequence of returned `persisted_size` values are non-decreasing.
    *
    * <p>Sample code:
    *

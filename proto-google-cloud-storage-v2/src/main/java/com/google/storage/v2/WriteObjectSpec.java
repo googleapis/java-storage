@@ -356,6 +356,41 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     return objectSize_;
   }
 
+  public static final int APPENDABLE_FIELD_NUMBER = 9;
+  private boolean appendable_ = false;
+  /**
+   *
+   *
+   * <pre>
+   * If true, the object will be created in appendable mode.
+   * This field may only be set when using BidiWriteObject.
+   * </pre>
+   *
+   * <code>optional bool appendable = 9;</code>
+   *
+   * @return Whether the appendable field is set.
+   */
+  @java.lang.Override
+  public boolean hasAppendable() {
+    return ((bitField0_ & 0x00000040) != 0);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * If true, the object will be created in appendable mode.
+   * This field may only be set when using BidiWriteObject.
+   * </pre>
+   *
+   * <code>optional bool appendable = 9;</code>
+   *
+   * @return The appendable.
+   */
+  @java.lang.Override
+  public boolean getAppendable() {
+    return appendable_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -391,6 +426,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (((bitField0_ & 0x00000020) != 0)) {
       output.writeInt64(8, objectSize_);
     }
+    if (((bitField0_ & 0x00000040) != 0)) {
+      output.writeBool(9, appendable_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -420,6 +458,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
     if (((bitField0_ & 0x00000020) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, objectSize_);
+    }
+    if (((bitField0_ & 0x00000040) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, appendable_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -461,6 +502,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (hasObjectSize()) {
       if (getObjectSize() != other.getObjectSize()) return false;
     }
+    if (hasAppendable() != other.hasAppendable()) return false;
+    if (hasAppendable()) {
+      if (getAppendable() != other.getAppendable()) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -497,6 +542,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (hasObjectSize()) {
       hash = (37 * hash) + OBJECT_SIZE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getObjectSize());
+    }
+    if (hasAppendable()) {
+      hash = (37 * hash) + APPENDABLE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getAppendable());
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -656,6 +705,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       ifMetagenerationMatch_ = 0L;
       ifMetagenerationNotMatch_ = 0L;
       objectSize_ = 0L;
+      appendable_ = false;
       return this;
     }
 
@@ -719,6 +769,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       if (((from_bitField0_ & 0x00000040) != 0)) {
         result.objectSize_ = objectSize_;
         to_bitField0_ |= 0x00000020;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.appendable_ = appendable_;
+        to_bitField0_ |= 0x00000040;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -791,6 +845,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       if (other.hasObjectSize()) {
         setObjectSize(other.getObjectSize());
       }
+      if (other.hasAppendable()) {
+        setAppendable(other.getAppendable());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -859,6 +916,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
                 bitField0_ |= 0x00000040;
                 break;
               } // case 64
+            case 72:
+              {
+                appendable_ = input.readBool();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 72
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1572,6 +1635,78 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public Builder clearObjectSize() {
       bitField0_ = (bitField0_ & ~0x00000040);
       objectSize_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private boolean appendable_;
+    /**
+     *
+     *
+     * <pre>
+     * If true, the object will be created in appendable mode.
+     * This field may only be set when using BidiWriteObject.
+     * </pre>
+     *
+     * <code>optional bool appendable = 9;</code>
+     *
+     * @return Whether the appendable field is set.
+     */
+    @java.lang.Override
+    public boolean hasAppendable() {
+      return ((bitField0_ & 0x00000080) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, the object will be created in appendable mode.
+     * This field may only be set when using BidiWriteObject.
+     * </pre>
+     *
+     * <code>optional bool appendable = 9;</code>
+     *
+     * @return The appendable.
+     */
+    @java.lang.Override
+    public boolean getAppendable() {
+      return appendable_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, the object will be created in appendable mode.
+     * This field may only be set when using BidiWriteObject.
+     * </pre>
+     *
+     * <code>optional bool appendable = 9;</code>
+     *
+     * @param value The appendable to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAppendable(boolean value) {
+
+      appendable_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, the object will be created in appendable mode.
+     * This field may only be set when using BidiWriteObject.
+     * </pre>
+     *
+     * <code>optional bool appendable = 9;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearAppendable() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      appendable_ = false;
       onChanged();
       return this;
     }

@@ -53,6 +53,8 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
@@ -170,6 +172,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
   private final UnaryCallSettings<GetObjectRequest, Object> getObjectSettings;
   private final ServerStreamingCallSettings<ReadObjectRequest, ReadObjectResponse>
       readObjectSettings;
+  private final StreamingCallSettings<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectSettings;
   private final UnaryCallSettings<UpdateObjectRequest, Object> updateObjectSettings;
   private final StreamingCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectSettings;
   private final StreamingCallSettings<BidiWriteObjectRequest, BidiWriteObjectResponse>
@@ -364,6 +368,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return readObjectSettings;
   }
 
+  /** Returns the object with the settings used for calls to bidiReadObject. */
+  public StreamingCallSettings<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectSettings() {
+    return bidiReadObjectSettings;
+  }
+
   /** Returns the object with the settings used for calls to updateObject. */
   public UnaryCallSettings<UpdateObjectRequest, Object> updateObjectSettings() {
     return updateObjectSettings;
@@ -503,6 +513,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     cancelResumableWriteSettings = settingsBuilder.cancelResumableWriteSettings().build();
     getObjectSettings = settingsBuilder.getObjectSettings().build();
     readObjectSettings = settingsBuilder.readObjectSettings().build();
+    bidiReadObjectSettings = settingsBuilder.bidiReadObjectSettings().build();
     updateObjectSettings = settingsBuilder.updateObjectSettings().build();
     writeObjectSettings = settingsBuilder.writeObjectSettings().build();
     bidiWriteObjectSettings = settingsBuilder.bidiWriteObjectSettings().build();
@@ -538,6 +549,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     private final UnaryCallSettings.Builder<GetObjectRequest, Object> getObjectSettings;
     private final ServerStreamingCallSettings.Builder<ReadObjectRequest, ReadObjectResponse>
         readObjectSettings;
+    private final StreamingCallSettings.Builder<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectSettings;
     private final UnaryCallSettings.Builder<UpdateObjectRequest, Object> updateObjectSettings;
     private final StreamingCallSettings.Builder<WriteObjectRequest, WriteObjectResponse>
         writeObjectSettings;
@@ -608,6 +621,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       cancelResumableWriteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       getObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       readObjectSettings = ServerStreamingCallSettings.newBuilder();
+      bidiReadObjectSettings = StreamingCallSettings.newBuilder();
       updateObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       writeObjectSettings = StreamingCallSettings.newBuilder();
       bidiWriteObjectSettings = StreamingCallSettings.newBuilder();
@@ -660,6 +674,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       cancelResumableWriteSettings = settings.cancelResumableWriteSettings.toBuilder();
       getObjectSettings = settings.getObjectSettings.toBuilder();
       readObjectSettings = settings.readObjectSettings.toBuilder();
+      bidiReadObjectSettings = settings.bidiReadObjectSettings.toBuilder();
       updateObjectSettings = settings.updateObjectSettings.toBuilder();
       writeObjectSettings = settings.writeObjectSettings.toBuilder();
       bidiWriteObjectSettings = settings.bidiWriteObjectSettings.toBuilder();
@@ -908,6 +923,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     public ServerStreamingCallSettings.Builder<ReadObjectRequest, ReadObjectResponse>
         readObjectSettings() {
       return readObjectSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to bidiReadObject. */
+    public StreamingCallSettings.Builder<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectSettings() {
+      return bidiReadObjectSettings;
     }
 
     /** Returns the builder for the settings used for calls to updateObject. */
