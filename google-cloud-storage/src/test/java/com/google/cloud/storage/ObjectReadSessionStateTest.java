@@ -80,10 +80,10 @@ public final class ObjectReadSessionStateTest {
 
     AccumulatingRead<byte[]> r1 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(3, 4), neverRetry, f1);
+            1, RangeSpec.of(3, 4), neverRetry);
     AccumulatingRead<byte[]> r2 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            2, RangeSpec.of(19, 14), neverRetry, f2);
+            2, RangeSpec.of(19, 14), neverRetry);
 
     state.putOutstandingRead(1, r1);
     state.putOutstandingRead(2, r2);
@@ -223,7 +223,7 @@ public final class ObjectReadSessionStateTest {
 
     try (AccumulatingRead<byte[]> bytes =
             ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+                2, RangeSpec.all(), RetryContext.neverRetry());
         StreamingRead streaming2 =
             ObjectReadSessionStreamRead.streamingRead(
                 4, RangeSpec.all(), RetryContext.neverRetry())) {

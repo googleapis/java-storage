@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
@@ -89,12 +88,11 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     try {
       checkState(open, "stream already closed");
       long readId = state.newReadId();
-      SettableApiFuture<byte[]> future = SettableApiFuture.create();
       AccumulatingRead<byte[]> read =
           ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-              readId, range, retryContextProvider.create(), future);
+              readId, range, retryContextProvider.create());
       registerReadInState(readId, read);
-      return future;
+      return read;
     } finally {
       lock.unlock();
     }
@@ -120,12 +118,11 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     try {
       checkState(open, "stream already closed");
       long readId = state.newReadId();
-      SettableApiFuture<DisposableByteString> future = SettableApiFuture.create();
       AccumulatingRead<DisposableByteString> read =
           ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-              readId, range, retryContextProvider.create(), future);
+              readId, range, retryContextProvider.create());
       registerReadInState(readId, read);
-      return future;
+      return read;
     } finally {
       lock.unlock();
     }

@@ -282,10 +282,9 @@ public final class ObjectReadSessionStreamTest {
 
   @Test
   public void accumulatingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
-    SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     try (AccumulatingRead<byte[]> read1 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.all(), RetryContext.neverRetry(), complete)) {
+            1, RangeSpec.all(), RetryContext.neverRetry())) {
       state.putOutstandingRead(1, read1);
       ObjectReadSessionStream stream =
           ObjectReadSessionStream.create(exec, callable, state, RetryContext.neverRetry());
@@ -314,8 +313,7 @@ public final class ObjectReadSessionStreamTest {
       stream.close();
 
       StorageException se =
-          assertThrows(
-              StorageException.class, () -> TestUtils.await(complete, 2, TimeUnit.SECONDS));
+          assertThrows(StorageException.class, () -> TestUtils.await(read1, 2, TimeUnit.SECONDS));
       assertAll(
           () -> assertThat(bytes1Close.get()).isTrue(),
           () -> assertThat(bytes2Close.get()).isTrue(),

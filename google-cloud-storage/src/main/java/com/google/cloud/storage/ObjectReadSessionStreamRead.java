@@ -38,6 +38,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -139,21 +144,14 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
   protected abstract void internalClose() throws IOException;
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
-      long readId,
-      RangeSpec rangeSpec,
-      RetryContext retryContext,
-      SettableApiFuture<byte[]> complete) {
-    return new ByteArrayAccumulatingRead(
-        readId, rangeSpec, retryContext, complete, IOAutoCloseable.noOp());
+      long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+    return new ByteArrayAccumulatingRead(readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
   }
 
   static ZeroCopyByteStringAccumulatingRead createZeroCopyByteStringAccumulatingRead(
-      long readId,
-      RangeSpec rangeSpec,
-      RetryContext retryContext,
-      SettableApiFuture<DisposableByteString> complete) {
+      long readId, RangeSpec rangeSpec, RetryContext retryContext) {
     return new ZeroCopyByteStringAccumulatingRead(
-        readId, rangeSpec, retryContext, complete, IOAutoCloseable.noOp());
+        readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
   }
 
   static StreamingRead streamingRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
@@ -161,7 +159,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
   }
 
   /** Base class of a read that will accumulate before completing by resolving a future */
-  abstract static class AccumulatingRead<Result> extends ObjectReadSessionStreamRead {
+  abstract static class AccumulatingRead<Result> extends ObjectReadSessionStreamRead
+      implements ApiFuture<Result> {
     protected final List<ChildRef> childRefs;
     protected final SettableApiFuture<Result> complete;
 
@@ -169,10 +168,9 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
         long readId,
         RangeSpec rangeSpec,
         RetryContext retryContext,
-        SettableApiFuture<Result> complete,
         IOAutoCloseable onCloseCallback) {
       super(readId, rangeSpec, retryContext, onCloseCallback);
-      this.complete = complete;
+      this.complete = SettableApiFuture.create();
       this.childRefs = Collections.synchronizedList(new ArrayList<>());
     }
 
@@ -209,7 +207,7 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
         tombstoned = true;
         close();
       } catch (IOException e) {
-        t.addSuppressed(t);
+        t.addSuppressed(e);
       } finally {
         complete.setException(t);
       }
@@ -223,6 +221,40 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
         closed = true;
         GrpcUtils.closeAll(childRefs);
       }
+    }
+
+    @Override
+    public void addListener(Runnable listener, Executor executor) {
+      complete.addListener(listener, executor);
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+      if (!complete.isCancelled()) {
+        fail(new CancellationException());
+      }
+      return complete.cancel(mayInterruptIfRunning);
+    }
+
+    @Override
+    public Result get() throws InterruptedException, ExecutionException {
+      return complete.get();
+    }
+
+    @Override
+    public Result get(long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
+      return complete.get(timeout, unit);
+    }
+
+    @Override
+    public boolean isCancelled() {
+      return complete.isCancelled();
+    }
+
+    @Override
+    public boolean isDone() {
+      return complete.isDone();
     }
 
     @Override
@@ -476,9 +508,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
         long readId,
         RangeSpec rangeSpec,
         RetryContext retryContext,
-        SettableApiFuture<byte[]> complete,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, retryContext, complete, onCloseCallback);
+      super(readId, rangeSpec, retryContext, onCloseCallback);
     }
 
     private ByteArrayAccumulatingRead(
@@ -539,9 +570,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
         long readId,
         RangeSpec rangeSpec,
         RetryContext retryContext,
-        SettableApiFuture<DisposableByteString> complete,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, retryContext, complete, onCloseCallback);
+      super(readId, rangeSpec, retryContext, onCloseCallback);
     }
 
     public ZeroCopyByteStringAccumulatingRead(

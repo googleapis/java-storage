@@ -21,7 +21,6 @@ import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.ZeroCopyByteStringAccumulatingRead;
@@ -60,17 +59,16 @@ public final class ObjectReadSessionStreamReadTest {
         handle.borrow(Function.identity());
     handle.close();
 
-    SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
+            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
 
     byteArrayAccumulatingRead.accept(childRef);
     byteArrayAccumulatingRead.eof();
 
     String expectedBytes = xxd(genBytes);
 
-    byte[] actualFutureBytes = complete.get(1, TimeUnit.SECONDS);
+    byte[] actualFutureBytes = byteArrayAccumulatingRead.get(1, TimeUnit.SECONDS);
     assertThat(xxd(actualFutureBytes)).isEqualTo(expectedBytes);
     assertThat(closed.get()).isTrue();
   }
@@ -90,10 +88,9 @@ public final class ObjectReadSessionStreamReadTest {
         handle.borrow(Function.identity());
     handle.close();
 
-    SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete);
+            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
 
     IOException ioException =
         assertThrows(
@@ -108,11 +105,10 @@ public final class ObjectReadSessionStreamReadTest {
   @Test
   public void byteArrayAccumulatingRead_producesAnAccurateReadRange()
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
-    SettableApiFuture<byte[]> complete = SettableApiFuture.create();
     int readId = 1;
     try (AccumulatingRead<byte[]> read =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            readId, RangeSpec.of(0, 137), RetryContext.neverRetry(), complete)) {
+            readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
 
       ReadRange readRange1 = read.makeReadRange();
       ReadRange expectedReadRange1 =
@@ -151,7 +147,7 @@ public final class ObjectReadSessionStreamReadTest {
           ReadRange.newBuilder().setReadId(readId).setReadOffset(137).setReadLength(0).build();
       assertThat(readRange4).isEqualTo(expectedReadRange4);
 
-      byte[] actualBytes = complete.get(1, TimeUnit.SECONDS);
+      byte[] actualBytes = read.get(1, TimeUnit.SECONDS);
       assertThat(xxd(actualBytes)).isEqualTo(xxd(DataGenerator.base64Characters().genBytes(137)));
     }
   }
@@ -456,10 +452,10 @@ public final class ObjectReadSessionStreamReadTest {
   public void canShareStreamWith() throws Exception {
     try (AccumulatingRead<byte[]> bytes =
             ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                1, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+                1, RangeSpec.all(), RetryContext.neverRetry());
         ZeroCopyByteStringAccumulatingRead byteString =
             ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-                2, RangeSpec.all(), RetryContext.neverRetry(), SettableApiFuture.create());
+                2, RangeSpec.all(), RetryContext.neverRetry());
         StreamingRead streamingRead =
             ObjectReadSessionStreamRead.streamingRead(
                 3, RangeSpec.all(), RetryContext.neverRetry())) {
@@ -503,6 +499,30 @@ public final class ObjectReadSessionStreamReadTest {
     assertAll(
         () -> assertThat(ioException).hasMessageThat().isEqualTo("Kaboom"),
         () -> assertThat(closed.get()).isTrue());
+  }
+
+  @Test
+  public void accumulating_futureCancel_disposes() throws IOException {
+    byte[] genBytes = DataGenerator.base64Characters().genBytes(137);
+    ByteString byteString = UnsafeByteOperations.unsafeWrap(genBytes);
+    AtomicBoolean closed = new AtomicBoolean(false);
+    Closeable close = () -> closed.set(true);
+    ResponseContentLifecycleHandle<ByteString> handle =
+        ResponseContentLifecycleHandle.create(
+            byteString, ByteString::asReadOnlyByteBufferList, close);
+    ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
+        handle.borrow(Function.identity());
+    handle.close();
+
+    AccumulatingRead<byte[]> byteArrayAccumulatingRead =
+        ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
+            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
+
+    byteArrayAccumulatingRead.accept(childRef);
+
+    byteArrayAccumulatingRead.cancel(true);
+
+    assertThat(closed.get()).isTrue();
   }
 
   private static ResponseContentLifecycleHandle<ByteString> noopContentHandle(
