@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.47.0](https://github.com/googleapis/java-storage/compare/v2.46.0...v2.47.0) (2025-01-08)
+
+
+### Features
+
+* Add MoveObject RPC ([34b8ac4](https://github.com/googleapis/java-storage/commit/34b8ac4239bab67b53c73050d2341615254a3ae0))
+* Introductory beta level support for OpenTelemetry tracing on c.g.c.storage.Storage methods ([#2837](https://github.com/googleapis/java-storage/issues/2837)) ([dd889ea](https://github.com/googleapis/java-storage/commit/dd889ea0d0a57490ef106ab92ba557f26d414406))
+
+
+### Bug Fixes
+
+* De-beta storage-v2 artifacts ([#2852](https://github.com/googleapis/java-storage/issues/2852)) ([77a2e8a](https://github.com/googleapis/java-storage/commit/77a2e8af341528a4ff3c34a880a7983f828b8cfd))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.51.0 ([34b8ac4](https://github.com/googleapis/java-storage/commit/34b8ac4239bab67b53c73050d2341615254a3ae0))
+* Fix interrupt spiral in grpc ReadObject drainQueue ([#2850](https://github.com/googleapis/java-storage/issues/2850)) ([c1dac83](https://github.com/googleapis/java-storage/commit/c1dac837387ffc40f00344c8fb0e86e09d009358))
+* Update request handling of gRPC based CopyWriter ([#2858](https://github.com/googleapis/java-storage/issues/2858)) ([093cb87](https://github.com/googleapis/java-storage/commit/093cb8759d5cfaafa6fd9df43de1bb91c1285f35))
+
+
+### Dependencies
+
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.51.0 ([#2860](https://github.com/googleapis/java-storage/issues/2860)) ([980ac4e](https://github.com/googleapis/java-storage/commit/980ac4ebe09636d0de255e89f747bde8cc9ce041))
+* Update googleapis/sdk-platform-java action to v2.51.1 ([#2864](https://github.com/googleapis/java-storage/issues/2864)) ([b731c06](https://github.com/googleapis/java-storage/commit/b731c06b11186e9695fb89f32abf35988d558bc9))
+* Update sdk-platform-java dependencies ([#2866](https://github.com/googleapis/java-storage/issues/2866)) ([562df7f](https://github.com/googleapis/java-storage/commit/562df7f087b34db0f3d49c6e0b87643a606ef9c6))
+
 ## [2.46.0](https://github.com/googleapis/java-storage/compare/v2.45.0...v2.46.0) (2024-12-13)
 
 
