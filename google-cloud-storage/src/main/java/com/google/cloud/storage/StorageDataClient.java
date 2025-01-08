@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
@@ -44,12 +46,15 @@ final class StorageDataClient implements IOAutoCloseable {
   }
 
   ApiFuture<ObjectReadSession> readSession(BidiReadObjectRequest req, GrpcCallContext ctx) {
-    // todo limit reads being included
+    checkArgument(
+        req.getReadRangesList().isEmpty(),
+        "ranged included in the initial request are not supported");
     return ObjectReadSessionImpl.create(req, ctx, read, executor, retryContextProvider);
   }
 
   @Override
   public void close() throws IOException {
+    //noinspection EmptyTryBlock
     try (IOAutoCloseable ignore = onClose) {
       // intentional
     }
