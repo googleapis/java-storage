@@ -238,4 +238,31 @@ public interface WriteObjectSpecOrBuilder
    * @return The objectSize.
    */
   long getObjectSize();
+
+  /**
+   *
+   *
+   * <pre>
+   * If true, the object will be created in appendable mode.
+   * This field may only be set when using BidiWriteObject.
+   * </pre>
+   *
+   * <code>optional bool appendable = 9;</code>
+   *
+   * @return Whether the appendable field is set.
+   */
+  boolean hasAppendable();
+  /**
+   *
+   *
+   * <pre>
+   * If true, the object will be created in appendable mode.
+   * This field may only be set when using BidiWriteObject.
+   * </pre>
+   *
+   * <code>optional bool appendable = 9;</code>
+   *
+   * @return The appendable.
+   */
+  boolean getAppendable();
 }

@@ -23,103 +23,64 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response object for `StartResumableWrite`.
+ * BidiWriteHandle contains a handle from a previous BidiWriteObject
+ * invocation. The client can use this as an optimized way of opening subsequent
+ * bidirectional streams to the same object.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.StartResumableWriteResponse}
+ * Protobuf type {@code google.storage.v2.BidiWriteHandle}
  */
-public final class StartResumableWriteResponse extends com.google.protobuf.GeneratedMessageV3
+public final class BidiWriteHandle extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.StartResumableWriteResponse)
-    StartResumableWriteResponseOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.BidiWriteHandle)
+    BidiWriteHandleOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use StartResumableWriteResponse.newBuilder() to construct.
-  private StartResumableWriteResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use BidiWriteHandle.newBuilder() to construct.
+  private BidiWriteHandle(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private StartResumableWriteResponse() {
-    uploadId_ = "";
+  private BidiWriteHandle() {
+    handle_ = com.google.protobuf.ByteString.EMPTY;
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new StartResumableWriteResponse();
+    return new BidiWriteHandle();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_StartResumableWriteResponse_descriptor;
+        .internal_static_google_storage_v2_BidiWriteHandle_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_StartResumableWriteResponse_fieldAccessorTable
+        .internal_static_google_storage_v2_BidiWriteHandle_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.StartResumableWriteResponse.class,
-            com.google.storage.v2.StartResumableWriteResponse.Builder.class);
+            com.google.storage.v2.BidiWriteHandle.class,
+            com.google.storage.v2.BidiWriteHandle.Builder.class);
   }
 
-  public static final int UPLOAD_ID_FIELD_NUMBER = 1;
-
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object uploadId_ = "";
+  public static final int HANDLE_FIELD_NUMBER = 1;
+  private com.google.protobuf.ByteString handle_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
    * <pre>
-   * A unique identifier for the initiated resumable write operation.
-   * As the ID grants write access, you should keep it confidential during
-   * the upload to prevent unauthorized access and data tampering during your
-   * upload. This ID should be included in subsequent `WriteObject` requests to
-   * upload the object data.
+   * Required. Opaque value describing a previous write.
    * </pre>
    *
-   * <code>string upload_id = 1;</code>
+   * <code>bytes handle = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
-   * @return The uploadId.
+   * @return The handle.
    */
   @java.lang.Override
-  public java.lang.String getUploadId() {
-    java.lang.Object ref = uploadId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      uploadId_ = s;
-      return s;
-    }
-  }
-  /**
-   *
-   *
-   * <pre>
-   * A unique identifier for the initiated resumable write operation.
-   * As the ID grants write access, you should keep it confidential during
-   * the upload to prevent unauthorized access and data tampering during your
-   * upload. This ID should be included in subsequent `WriteObject` requests to
-   * upload the object data.
-   * </pre>
-   *
-   * <code>string upload_id = 1;</code>
-   *
-   * @return The bytes for uploadId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString getUploadIdBytes() {
-    java.lang.Object ref = uploadId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      uploadId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.google.protobuf.ByteString getHandle() {
+    return handle_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -136,8 +97,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uploadId_);
+    if (!handle_.isEmpty()) {
+      output.writeBytes(1, handle_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -148,8 +109,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uploadId_);
+    if (!handle_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, handle_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -161,13 +122,12 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.StartResumableWriteResponse)) {
+    if (!(obj instanceof com.google.storage.v2.BidiWriteHandle)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.StartResumableWriteResponse other =
-        (com.google.storage.v2.StartResumableWriteResponse) obj;
+    com.google.storage.v2.BidiWriteHandle other = (com.google.storage.v2.BidiWriteHandle) obj;
 
-    if (!getUploadId().equals(other.getUploadId())) return false;
+    if (!getHandle().equals(other.getHandle())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -179,78 +139,77 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + UPLOAD_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getUploadId().hashCode();
+    hash = (37 * hash) + HANDLE_FIELD_NUMBER;
+    hash = (53 * hash) + getHandle().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
-      java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(java.nio.ByteBuffer data)
+      throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
-      com.google.protobuf.ByteString data)
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(byte[] data)
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
-      java.io.InputStream input) throws java.io.IOException {
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(java.io.InputStream input)
+      throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseDelimitedFrom(
-      java.io.InputStream input) throws java.io.IOException {
+  public static com.google.storage.v2.BidiWriteHandle parseDelimitedFrom(java.io.InputStream input)
+      throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseDelimitedFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse parseFrom(
+  public static com.google.storage.v2.BidiWriteHandle parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -267,7 +226,7 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.StartResumableWriteResponse prototype) {
+  public static Builder newBuilder(com.google.storage.v2.BidiWriteHandle prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -285,31 +244,33 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
    *
    *
    * <pre>
-   * Response object for `StartResumableWrite`.
+   * BidiWriteHandle contains a handle from a previous BidiWriteObject
+   * invocation. The client can use this as an optimized way of opening subsequent
+   * bidirectional streams to the same object.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.StartResumableWriteResponse}
+   * Protobuf type {@code google.storage.v2.BidiWriteHandle}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.StartResumableWriteResponse)
-      com.google.storage.v2.StartResumableWriteResponseOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.BidiWriteHandle)
+      com.google.storage.v2.BidiWriteHandleOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_StartResumableWriteResponse_descriptor;
+          .internal_static_google_storage_v2_BidiWriteHandle_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_StartResumableWriteResponse_fieldAccessorTable
+          .internal_static_google_storage_v2_BidiWriteHandle_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.StartResumableWriteResponse.class,
-              com.google.storage.v2.StartResumableWriteResponse.Builder.class);
+              com.google.storage.v2.BidiWriteHandle.class,
+              com.google.storage.v2.BidiWriteHandle.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.StartResumableWriteResponse.newBuilder()
+    // Construct using com.google.storage.v2.BidiWriteHandle.newBuilder()
     private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
@@ -320,24 +281,24 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
-      uploadId_ = "";
+      handle_ = com.google.protobuf.ByteString.EMPTY;
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_StartResumableWriteResponse_descriptor;
+          .internal_static_google_storage_v2_BidiWriteHandle_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.StartResumableWriteResponse getDefaultInstanceForType() {
-      return com.google.storage.v2.StartResumableWriteResponse.getDefaultInstance();
+    public com.google.storage.v2.BidiWriteHandle getDefaultInstanceForType() {
+      return com.google.storage.v2.BidiWriteHandle.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.StartResumableWriteResponse build() {
-      com.google.storage.v2.StartResumableWriteResponse result = buildPartial();
+    public com.google.storage.v2.BidiWriteHandle build() {
+      com.google.storage.v2.BidiWriteHandle result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -345,9 +306,9 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     }
 
     @java.lang.Override
-    public com.google.storage.v2.StartResumableWriteResponse buildPartial() {
-      com.google.storage.v2.StartResumableWriteResponse result =
-          new com.google.storage.v2.StartResumableWriteResponse(this);
+    public com.google.storage.v2.BidiWriteHandle buildPartial() {
+      com.google.storage.v2.BidiWriteHandle result =
+          new com.google.storage.v2.BidiWriteHandle(this);
       if (bitField0_ != 0) {
         buildPartial0(result);
       }
@@ -355,10 +316,10 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
       return result;
     }
 
-    private void buildPartial0(com.google.storage.v2.StartResumableWriteResponse result) {
+    private void buildPartial0(com.google.storage.v2.BidiWriteHandle result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.uploadId_ = uploadId_;
+        result.handle_ = handle_;
       }
     }
 
@@ -397,21 +358,18 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.StartResumableWriteResponse) {
-        return mergeFrom((com.google.storage.v2.StartResumableWriteResponse) other);
+      if (other instanceof com.google.storage.v2.BidiWriteHandle) {
+        return mergeFrom((com.google.storage.v2.BidiWriteHandle) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.StartResumableWriteResponse other) {
-      if (other == com.google.storage.v2.StartResumableWriteResponse.getDefaultInstance())
-        return this;
-      if (!other.getUploadId().isEmpty()) {
-        uploadId_ = other.uploadId_;
-        bitField0_ |= 0x00000001;
-        onChanged();
+    public Builder mergeFrom(com.google.storage.v2.BidiWriteHandle other) {
+      if (other == com.google.storage.v2.BidiWriteHandle.getDefaultInstance()) return this;
+      if (other.getHandle() != com.google.protobuf.ByteString.EMPTY) {
+        setHandle(other.getHandle());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -441,7 +399,7 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
               break;
             case 10:
               {
-                uploadId_ = input.readStringRequireUtf8();
+                handle_ = input.readBytes();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 10
@@ -464,80 +422,39 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
 
     private int bitField0_;
 
-    private java.lang.Object uploadId_ = "";
+    private com.google.protobuf.ByteString handle_ = com.google.protobuf.ByteString.EMPTY;
     /**
      *
      *
      * <pre>
-     * A unique identifier for the initiated resumable write operation.
-     * As the ID grants write access, you should keep it confidential during
-     * the upload to prevent unauthorized access and data tampering during your
-     * upload. This ID should be included in subsequent `WriteObject` requests to
-     * upload the object data.
+     * Required. Opaque value describing a previous write.
      * </pre>
      *
-     * <code>string upload_id = 1;</code>
+     * <code>bytes handle = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @return The uploadId.
+     * @return The handle.
      */
-    public java.lang.String getUploadId() {
-      java.lang.Object ref = uploadId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        uploadId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public com.google.protobuf.ByteString getHandle() {
+      return handle_;
     }
     /**
      *
      *
      * <pre>
-     * A unique identifier for the initiated resumable write operation.
-     * As the ID grants write access, you should keep it confidential during
-     * the upload to prevent unauthorized access and data tampering during your
-     * upload. This ID should be included in subsequent `WriteObject` requests to
-     * upload the object data.
+     * Required. Opaque value describing a previous write.
      * </pre>
      *
-     * <code>string upload_id = 1;</code>
+     * <code>bytes handle = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @return The bytes for uploadId.
-     */
-    public com.google.protobuf.ByteString getUploadIdBytes() {
-      java.lang.Object ref = uploadId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        uploadId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A unique identifier for the initiated resumable write operation.
-     * As the ID grants write access, you should keep it confidential during
-     * the upload to prevent unauthorized access and data tampering during your
-     * upload. This ID should be included in subsequent `WriteObject` requests to
-     * upload the object data.
-     * </pre>
-     *
-     * <code>string upload_id = 1;</code>
-     *
-     * @param value The uploadId to set.
+     * @param value The handle to set.
      * @return This builder for chaining.
      */
-    public Builder setUploadId(java.lang.String value) {
+    public Builder setHandle(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      uploadId_ = value;
+      handle_ = value;
       bitField0_ |= 0x00000001;
       onChanged();
       return this;
@@ -546,46 +463,16 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
      *
      *
      * <pre>
-     * A unique identifier for the initiated resumable write operation.
-     * As the ID grants write access, you should keep it confidential during
-     * the upload to prevent unauthorized access and data tampering during your
-     * upload. This ID should be included in subsequent `WriteObject` requests to
-     * upload the object data.
+     * Required. Opaque value describing a previous write.
      * </pre>
      *
-     * <code>string upload_id = 1;</code>
+     * <code>bytes handle = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearUploadId() {
-      uploadId_ = getDefaultInstance().getUploadId();
+    public Builder clearHandle() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A unique identifier for the initiated resumable write operation.
-     * As the ID grants write access, you should keep it confidential during
-     * the upload to prevent unauthorized access and data tampering during your
-     * upload. This ID should be included in subsequent `WriteObject` requests to
-     * upload the object data.
-     * </pre>
-     *
-     * <code>string upload_id = 1;</code>
-     *
-     * @param value The bytes for uploadId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setUploadIdBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-      uploadId_ = value;
-      bitField0_ |= 0x00000001;
+      handle_ = getDefaultInstance().getHandle();
       onChanged();
       return this;
     }
@@ -601,24 +488,24 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.StartResumableWriteResponse)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.BidiWriteHandle)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.StartResumableWriteResponse)
-  private static final com.google.storage.v2.StartResumableWriteResponse DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.BidiWriteHandle)
+  private static final com.google.storage.v2.BidiWriteHandle DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.StartResumableWriteResponse();
+    DEFAULT_INSTANCE = new com.google.storage.v2.BidiWriteHandle();
   }
 
-  public static com.google.storage.v2.StartResumableWriteResponse getDefaultInstance() {
+  public static com.google.storage.v2.BidiWriteHandle getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<StartResumableWriteResponse> PARSER =
-      new com.google.protobuf.AbstractParser<StartResumableWriteResponse>() {
+  private static final com.google.protobuf.Parser<BidiWriteHandle> PARSER =
+      new com.google.protobuf.AbstractParser<BidiWriteHandle>() {
         @java.lang.Override
-        public StartResumableWriteResponse parsePartialFrom(
+        public BidiWriteHandle parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
@@ -637,17 +524,17 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
         }
       };
 
-  public static com.google.protobuf.Parser<StartResumableWriteResponse> parser() {
+  public static com.google.protobuf.Parser<BidiWriteHandle> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<StartResumableWriteResponse> getParserForType() {
+  public com.google.protobuf.Parser<BidiWriteHandle> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.StartResumableWriteResponse getDefaultInstanceForType() {
+  public com.google.storage.v2.BidiWriteHandle getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

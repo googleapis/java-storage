@@ -61,6 +61,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
             com.google.storage.v2.BidiWriteObjectResponse.Builder.class);
   }
 
+  private int bitField0_;
   private int writeStatusCase_ = 0;
 
   @SuppressWarnings("serial")
@@ -201,6 +202,62 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     return com.google.storage.v2.Object.getDefaultInstance();
   }
 
+  public static final int WRITE_HANDLE_FIELD_NUMBER = 3;
+  private com.google.storage.v2.BidiWriteHandle writeHandle_;
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   *
+   * @return Whether the writeHandle field is set.
+   */
+  @java.lang.Override
+  public boolean hasWriteHandle() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   *
+   * @return The writeHandle.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.BidiWriteHandle getWriteHandle() {
+    return writeHandle_ == null
+        ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
+        : writeHandle_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.BidiWriteHandleOrBuilder getWriteHandleOrBuilder() {
+    return writeHandle_ == null
+        ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
+        : writeHandle_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -221,6 +278,9 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     if (writeStatusCase_ == 2) {
       output.writeMessage(2, (com.google.storage.v2.Object) writeStatus_);
     }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(3, getWriteHandle());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -240,6 +300,9 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               2, (com.google.storage.v2.Object) writeStatus_);
     }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, getWriteHandle());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -256,6 +319,10 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     com.google.storage.v2.BidiWriteObjectResponse other =
         (com.google.storage.v2.BidiWriteObjectResponse) obj;
 
+    if (hasWriteHandle() != other.hasWriteHandle()) return false;
+    if (hasWriteHandle()) {
+      if (!getWriteHandle().equals(other.getWriteHandle())) return false;
+    }
     if (!getWriteStatusCase().equals(other.getWriteStatusCase())) return false;
     switch (writeStatusCase_) {
       case 1:
@@ -278,6 +345,10 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasWriteHandle()) {
+      hash = (37 * hash) + WRITE_HANDLE_FIELD_NUMBER;
+      hash = (53 * hash) + getWriteHandle().hashCode();
+    }
     switch (writeStatusCase_) {
       case 1:
         hash = (37 * hash) + PERSISTED_SIZE_FIELD_NUMBER;
@@ -419,10 +490,19 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     }
 
     // Construct using com.google.storage.v2.BidiWriteObjectResponse.newBuilder()
-    private Builder() {}
+    private Builder() {
+      maybeForceBuilderInitialization();
+    }
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
+      maybeForceBuilderInitialization();
+    }
+
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+        getWriteHandleFieldBuilder();
+      }
     }
 
     @java.lang.Override
@@ -431,6 +511,11 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       bitField0_ = 0;
       if (resourceBuilder_ != null) {
         resourceBuilder_.clear();
+      }
+      writeHandle_ = null;
+      if (writeHandleBuilder_ != null) {
+        writeHandleBuilder_.dispose();
+        writeHandleBuilder_ = null;
       }
       writeStatusCase_ = 0;
       writeStatus_ = null;
@@ -471,6 +556,13 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
 
     private void buildPartial0(com.google.storage.v2.BidiWriteObjectResponse result) {
       int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.writeHandle_ =
+            writeHandleBuilder_ == null ? writeHandle_ : writeHandleBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     private void buildPartialOneofs(com.google.storage.v2.BidiWriteObjectResponse result) {
@@ -526,6 +618,9 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
 
     public Builder mergeFrom(com.google.storage.v2.BidiWriteObjectResponse other) {
       if (other == com.google.storage.v2.BidiWriteObjectResponse.getDefaultInstance()) return this;
+      if (other.hasWriteHandle()) {
+        mergeWriteHandle(other.getWriteHandle());
+      }
       switch (other.getWriteStatusCase()) {
         case PERSISTED_SIZE:
           {
@@ -580,6 +675,12 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
                 writeStatusCase_ = 2;
                 break;
               } // case 18
+            case 26:
+              {
+                input.readMessage(getWriteHandleFieldBuilder().getBuilder(), extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -899,6 +1000,209 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       writeStatusCase_ = 2;
       onChanged();
       return resourceBuilder_;
+    }
+
+    private com.google.storage.v2.BidiWriteHandle writeHandle_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.BidiWriteHandle,
+            com.google.storage.v2.BidiWriteHandle.Builder,
+            com.google.storage.v2.BidiWriteHandleOrBuilder>
+        writeHandleBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     *
+     * @return Whether the writeHandle field is set.
+     */
+    public boolean hasWriteHandle() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     *
+     * @return The writeHandle.
+     */
+    public com.google.storage.v2.BidiWriteHandle getWriteHandle() {
+      if (writeHandleBuilder_ == null) {
+        return writeHandle_ == null
+            ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
+            : writeHandle_;
+      } else {
+        return writeHandleBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public Builder setWriteHandle(com.google.storage.v2.BidiWriteHandle value) {
+      if (writeHandleBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        writeHandle_ = value;
+      } else {
+        writeHandleBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public Builder setWriteHandle(com.google.storage.v2.BidiWriteHandle.Builder builderForValue) {
+      if (writeHandleBuilder_ == null) {
+        writeHandle_ = builderForValue.build();
+      } else {
+        writeHandleBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public Builder mergeWriteHandle(com.google.storage.v2.BidiWriteHandle value) {
+      if (writeHandleBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0)
+            && writeHandle_ != null
+            && writeHandle_ != com.google.storage.v2.BidiWriteHandle.getDefaultInstance()) {
+          getWriteHandleBuilder().mergeFrom(value);
+        } else {
+          writeHandle_ = value;
+        }
+      } else {
+        writeHandleBuilder_.mergeFrom(value);
+      }
+      if (writeHandle_ != null) {
+        bitField0_ |= 0x00000004;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public Builder clearWriteHandle() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      writeHandle_ = null;
+      if (writeHandleBuilder_ != null) {
+        writeHandleBuilder_.dispose();
+        writeHandleBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public com.google.storage.v2.BidiWriteHandle.Builder getWriteHandleBuilder() {
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return getWriteHandleFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    public com.google.storage.v2.BidiWriteHandleOrBuilder getWriteHandleOrBuilder() {
+      if (writeHandleBuilder_ != null) {
+        return writeHandleBuilder_.getMessageOrBuilder();
+      } else {
+        return writeHandle_ == null
+            ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
+            : writeHandle_;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An optional write handle that will periodically be present in response
+     * messages. Clients should save it for later use in establishing a new stream
+     * if a connection is interrupted.
+     * </pre>
+     *
+     * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.BidiWriteHandle,
+            com.google.storage.v2.BidiWriteHandle.Builder,
+            com.google.storage.v2.BidiWriteHandleOrBuilder>
+        getWriteHandleFieldBuilder() {
+      if (writeHandleBuilder_ == null) {
+        writeHandleBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.BidiWriteHandle,
+                com.google.storage.v2.BidiWriteHandle.Builder,
+                com.google.storage.v2.BidiWriteHandleOrBuilder>(
+                getWriteHandle(), getParentForChildren(), isClean());
+        writeHandle_ = null;
+      }
+      return writeHandleBuilder_;
     }
 
     @java.lang.Override

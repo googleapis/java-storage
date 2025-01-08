@@ -37,6 +37,8 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiReadObjectRequest;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
@@ -217,6 +219,17 @@ public class GrpcStorageStub extends StorageStub {
               .setResponseMarshaller(ProtoUtils.marshaller(ReadObjectResponse.getDefaultInstance()))
               .build();
 
+  private static final MethodDescriptor<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectMethodDescriptor =
+          MethodDescriptor.<BidiReadObjectRequest, BidiReadObjectResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.BIDI_STREAMING)
+              .setFullMethodName("google.storage.v2.Storage/BidiReadObject")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(BidiReadObjectRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(BidiReadObjectResponse.getDefaultInstance()))
+              .build();
+
   private static final MethodDescriptor<UpdateObjectRequest, Object> updateObjectMethodDescriptor =
       MethodDescriptor.<UpdateObjectRequest, Object>newBuilder()
           .setType(MethodDescriptor.MethodType.UNARY)
@@ -316,6 +329,8 @@ public class GrpcStorageStub extends StorageStub {
       cancelResumableWriteCallable;
   private final UnaryCallable<GetObjectRequest, Object> getObjectCallable;
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable;
+  private final BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectCallable;
   private final UnaryCallable<UpdateObjectRequest, Object> updateObjectCallable;
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse>
       writeObjectCallable;
@@ -368,6 +383,8 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate GET_OBJECT_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
   private static final PathTemplate READ_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate BIDI_READ_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate UPDATE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
@@ -593,6 +610,22 @@ public class GrpcStorageStub extends StorageStub {
                   return builder.build();
                 })
             .build();
+    GrpcCallSettings<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectTransportSettings =
+            GrpcCallSettings.<BidiReadObjectRequest, BidiReadObjectResponse>newBuilder()
+                .setMethodDescriptor(bidiReadObjectMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      if (request.getReadObjectSpec() != null) {
+                        builder.add(
+                            request.getReadObjectSpec().getBucket(),
+                            "bucket",
+                            BIDI_READ_OBJECT_0_PATH_TEMPLATE);
+                      }
+                      return builder.build();
+                    })
+                .build();
     GrpcCallSettings<UpdateObjectRequest, Object> updateObjectTransportSettings =
         GrpcCallSettings.<UpdateObjectRequest, Object>newBuilder()
             .setMethodDescriptor(updateObjectMethodDescriptor)
@@ -732,6 +765,9 @@ public class GrpcStorageStub extends StorageStub {
     this.readObjectCallable =
         callableFactory.createServerStreamingCallable(
             readObjectTransportSettings, settings.readObjectSettings(), clientContext);
+    this.bidiReadObjectCallable =
+        callableFactory.createBidiStreamingCallable(
+            bidiReadObjectTransportSettings, settings.bidiReadObjectSettings(), clientContext);
     this.updateObjectCallable =
         callableFactory.createUnaryCallable(
             updateObjectTransportSettings, settings.updateObjectSettings(), clientContext);
@@ -851,6 +887,12 @@ public class GrpcStorageStub extends StorageStub {
   @Override
   public ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable() {
     return readObjectCallable;
+  }
+
+  @Override
+  public BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectCallable() {
+    return bidiReadObjectCallable;
   }
 
   @Override

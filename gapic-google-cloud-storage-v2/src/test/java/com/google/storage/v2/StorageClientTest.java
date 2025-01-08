@@ -1813,6 +1813,65 @@ public class StorageClientTest {
   }
 
   @Test
+  public void bidiReadObjectTest() throws Exception {
+    BidiReadObjectResponse expectedResponse =
+        BidiReadObjectResponse.newBuilder()
+            .addAllObjectDataRanges(new ArrayList<ObjectRangeData>())
+            .setMetadata(Object.newBuilder().build())
+            .setReadHandle(BidiReadHandle.newBuilder().build())
+            .build();
+    mockStorage.addResponse(expectedResponse);
+    BidiReadObjectRequest request =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(BidiReadObjectSpec.newBuilder().build())
+            .addAllReadRanges(new ArrayList<ReadRange>())
+            .build();
+
+    MockStreamObserver<BidiReadObjectResponse> responseObserver = new MockStreamObserver<>();
+
+    BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        client.bidiReadObjectCallable();
+    ApiStreamObserver<BidiReadObjectRequest> requestObserver =
+        callable.bidiStreamingCall(responseObserver);
+
+    requestObserver.onNext(request);
+    requestObserver.onCompleted();
+
+    List<BidiReadObjectResponse> actualResponses = responseObserver.future().get();
+    Assert.assertEquals(1, actualResponses.size());
+    Assert.assertEquals(expectedResponse, actualResponses.get(0));
+  }
+
+  @Test
+  public void bidiReadObjectExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+    BidiReadObjectRequest request =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(BidiReadObjectSpec.newBuilder().build())
+            .addAllReadRanges(new ArrayList<ReadRange>())
+            .build();
+
+    MockStreamObserver<BidiReadObjectResponse> responseObserver = new MockStreamObserver<>();
+
+    BidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        client.bidiReadObjectCallable();
+    ApiStreamObserver<BidiReadObjectRequest> requestObserver =
+        callable.bidiStreamingCall(responseObserver);
+
+    requestObserver.onNext(request);
+
+    try {
+      List<BidiReadObjectResponse> actualResponses = responseObserver.future().get();
+      Assert.fail("No exception thrown");
+    } catch (ExecutionException e) {
+      Assert.assertTrue(e.getCause() instanceof InvalidArgumentException);
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
   public void updateObjectTest() throws Exception {
     Object expectedResponse =
         Object.newBuilder()
@@ -1945,7 +2004,10 @@ public class StorageClientTest {
 
   @Test
   public void bidiWriteObjectTest() throws Exception {
-    BidiWriteObjectResponse expectedResponse = BidiWriteObjectResponse.newBuilder().build();
+    BidiWriteObjectResponse expectedResponse =
+        BidiWriteObjectResponse.newBuilder()
+            .setWriteHandle(BidiWriteHandle.newBuilder().build())
+            .build();
     mockStorage.addResponse(expectedResponse);
     BidiWriteObjectRequest request =
         BidiWriteObjectRequest.newBuilder()

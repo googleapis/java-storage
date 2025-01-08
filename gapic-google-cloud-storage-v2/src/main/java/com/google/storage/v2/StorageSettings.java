@@ -173,6 +173,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     return ((StorageStubSettings) getStubSettings()).readObjectSettings();
   }
 
+  /** Returns the object with the settings used for calls to bidiReadObject. */
+  public StreamingCallSettings<BidiReadObjectRequest, BidiReadObjectResponse>
+      bidiReadObjectSettings() {
+    return ((StorageStubSettings) getStubSettings()).bidiReadObjectSettings();
+  }
+
   /** Returns the object with the settings used for calls to updateObject. */
   public UnaryCallSettings<UpdateObjectRequest, Object> updateObjectSettings() {
     return ((StorageStubSettings) getStubSettings()).updateObjectSettings();
@@ -391,6 +397,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     public ServerStreamingCallSettings.Builder<ReadObjectRequest, ReadObjectResponse>
         readObjectSettings() {
       return getStubSettingsBuilder().readObjectSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to bidiReadObject. */
+    public StreamingCallSettings.Builder<BidiReadObjectRequest, BidiReadObjectResponse>
+        bidiReadObjectSettings() {
+      return getStubSettingsBuilder().bidiReadObjectSettings();
     }
 
     /** Returns the builder for the settings used for calls to updateObject. */

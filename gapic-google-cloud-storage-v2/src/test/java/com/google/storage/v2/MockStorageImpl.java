@@ -372,6 +372,43 @@ public class MockStorageImpl extends StorageImplBase {
   }
 
   @Override
+  public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+      final StreamObserver<BidiReadObjectResponse> responseObserver) {
+    StreamObserver<BidiReadObjectRequest> requestObserver =
+        new StreamObserver<BidiReadObjectRequest>() {
+          @Override
+          public void onNext(BidiReadObjectRequest value) {
+            requests.add(value);
+            final java.lang.Object response = responses.remove();
+            if (response instanceof BidiReadObjectResponse) {
+              responseObserver.onNext(((BidiReadObjectResponse) response));
+            } else if (response instanceof Exception) {
+              responseObserver.onError(((Exception) response));
+            } else {
+              responseObserver.onError(
+                  new IllegalArgumentException(
+                      String.format(
+                          "Unrecognized response type %s for method BidiReadObject, expected %s or %s",
+                          response == null ? "null" : response.getClass().getName(),
+                          BidiReadObjectResponse.class.getName(),
+                          Exception.class.getName())));
+            }
+          }
+
+          @Override
+          public void onError(Throwable t) {
+            responseObserver.onError(t);
+          }
+
+          @Override
+          public void onCompleted() {
+            responseObserver.onCompleted();
+          }
+        };
+    return requestObserver;
+  }
+
+  @Override
   public void updateObject(UpdateObjectRequest request, StreamObserver<Object> responseObserver) {
     java.lang.Object response = responses.poll();
     if (response instanceof Object) {

@@ -89,5 +89,46 @@ public interface BidiWriteObjectResponseOrBuilder
    */
   com.google.storage.v2.ObjectOrBuilder getResourceOrBuilder();
 
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   *
+   * @return Whether the writeHandle field is set.
+   */
+  boolean hasWriteHandle();
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   *
+   * @return The writeHandle.
+   */
+  com.google.storage.v2.BidiWriteHandle getWriteHandle();
+  /**
+   *
+   *
+   * <pre>
+   * An optional write handle that will periodically be present in response
+   * messages. Clients should save it for later use in establishing a new stream
+   * if a connection is interrupted.
+   * </pre>
+   *
+   * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 3;</code>
+   */
+  com.google.storage.v2.BidiWriteHandleOrBuilder getWriteHandleOrBuilder();
+
   com.google.storage.v2.BidiWriteObjectResponse.WriteStatusCase getWriteStatusCase();
 }

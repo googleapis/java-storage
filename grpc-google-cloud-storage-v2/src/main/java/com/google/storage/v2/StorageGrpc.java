@@ -664,6 +664,48 @@ public final class StorageGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.v2.BidiReadObjectRequest, com.google.storage.v2.BidiReadObjectResponse>
+      getBidiReadObjectMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "BidiReadObject",
+      requestType = com.google.storage.v2.BidiReadObjectRequest.class,
+      responseType = com.google.storage.v2.BidiReadObjectResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.v2.BidiReadObjectRequest, com.google.storage.v2.BidiReadObjectResponse>
+      getBidiReadObjectMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.v2.BidiReadObjectRequest,
+            com.google.storage.v2.BidiReadObjectResponse>
+        getBidiReadObjectMethod;
+    if ((getBidiReadObjectMethod = StorageGrpc.getBidiReadObjectMethod) == null) {
+      synchronized (StorageGrpc.class) {
+        if ((getBidiReadObjectMethod = StorageGrpc.getBidiReadObjectMethod) == null) {
+          StorageGrpc.getBidiReadObjectMethod =
+              getBidiReadObjectMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.v2.BidiReadObjectRequest,
+                          com.google.storage.v2.BidiReadObjectResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "BidiReadObject"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.BidiReadObjectRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.BidiReadObjectResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(new StorageMethodDescriptorSupplier("BidiReadObject"))
+                      .build();
+        }
+      }
+    }
+    return getBidiReadObjectMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.google.storage.v2.UpdateObjectRequest, com.google.storage.v2.Object>
       getUpdateObjectMethod;
 
@@ -1222,11 +1264,23 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Deletes an object and its metadata.
-     * Deletions are normally permanent when versioning is disabled or whenever
-     * the generation parameter is used. However, if soft delete is enabled for
-     * the bucket, deleted objects can be restored using RestoreObject until the
-     * soft delete retention period has passed.
+     * Deletes an object and its metadata. Deletions are permanent if versioning
+     * is not enabled for the bucket, or if the generation parameter is used, or
+     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * enabled for the bucket.
+     * When this API is used to delete an object from a bucket that has soft
+     * delete policy enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+     * This API cannot be used to permanently delete soft-deleted objects.
+     * Soft-deleted objects are permanently deleted according to their
+     * `hardDeleteTime`.
+     * You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject]
+     * API to restore soft-deleted objects until the soft delete retention period
+     * has passed.
+     * **IAM Permissions**:
+     * Requires `storage.objects.delete`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     default void deleteObject(
@@ -1274,7 +1328,12 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves an object's metadata.
+     * Retrieves object metadata.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket. To return object ACLs, the authenticated user must also have
+     * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     default void getObject(
@@ -1287,13 +1346,44 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Reads an object's data.
+     * Retrieves object data.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     default void readObject(
         com.google.storage.v2.ReadObjectRequest request,
         io.grpc.stub.StreamObserver<com.google.storage.v2.ReadObjectResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadObjectMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Reads an object's data.
+     * This is a bi-directional API with the added support for reading multiple
+     * ranges within one stream both within and across multiple messages.
+     * If the server encountered an error for any of the inputs, the stream will
+     * be closed with the relevant error code.
+     * Because the API allows for multiple outstanding requests, when the stream
+     * is closed the error response will contain a BidiReadObjectRangesError proto
+     * in the error extension describing the error for each outstanding read_id.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * This API is currently in preview and is not yet available for general
+     * use.
+     * </pre>
+     */
+    default io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectRequest> bidiReadObject(
+        io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectResponse>
+            responseObserver) {
+      return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(
+          getBidiReadObjectMethod(), responseObserver);
     }
 
     /**
@@ -1364,11 +1454,15 @@ public final class StorageGrpc {
      * receives to determine how much data the service was able to commit and
      * whether the service views the object as complete.
      * Attempting to resume an already finalized object will result in an OK
-     * status, with a WriteObjectResponse containing the finalized object's
+     * status, with a `WriteObjectResponse` containing the finalized object's
      * metadata.
      * Alternatively, the BidiWriteObject operation may be used to write an
      * object with controls over flushing and the ability to fetch the ability to
      * determine the current persisted size.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     default io.grpc.stub.StreamObserver<com.google.storage.v2.WriteObjectRequest> writeObject(
@@ -1409,6 +1503,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Retrieves a list of objects matching the criteria.
+     * **IAM Permissions**:
+     * The authenticated user requires `storage.objects.list`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
+     * to use this method. To return object ACLs, the authenticated user must also
+     * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     default void listObjects(
@@ -1437,9 +1536,17 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Starts a resumable write. How long the write operation remains valid, and
-     * what happens when the write operation becomes invalid, are
-     * service-dependent.
+     * Starts a resumable write operation. This
+     * method is part of the [Resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * This allows you to upload large objects in multiple chunks, which is more
+     * resilient to network interruptions than a single upload. The validity
+     * duration of the write operation, and the consequences of it becoming
+     * invalid, are service-dependent.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     default void startResumableWrite(
@@ -1454,16 +1561,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Determines the `persisted_size` for an object that is being written, which
-     * can then be used as the `write_offset` for the next `Write()` call.
-     * If the object does not exist (i.e., the object has been deleted, or the
-     * first `Write()` has not yet reached the service), this method returns the
+     * Determines the `persisted_size` of an object that is being written. This
+     * method is part of the [resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * The returned value is the size of the object that has been persisted so
+     * far. The value can be used as the `write_offset` for the next `Write()`
+     * call.
+     * If the object does not exist, meaning if it was deleted, or the
+     * first `Write()` has not yet reached the service, this method returns the
      * error `NOT_FOUND`.
-     * The client **may** call `QueryWriteStatus()` at any time to determine how
-     * much data has been processed for this object. This is useful if the
-     * client is buffering data and needs to know which data can be safely
-     * evicted. For any sequence of `QueryWriteStatus()` calls for a given
-     * object name, the sequence of returned `persisted_size` values will be
+     * This method is useful for clients that buffer data and need to know which
+     * data can be safely evicted. The client can call `QueryWriteStatus()` at any
+     * time to determine how much data has been logged for this object.
+     * For any sequence of `QueryWriteStatus()` calls for a given
+     * object name, the sequence of returned `persisted_size` values are
      * non-decreasing.
      * </pre>
      */
@@ -1729,11 +1840,23 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Deletes an object and its metadata.
-     * Deletions are normally permanent when versioning is disabled or whenever
-     * the generation parameter is used. However, if soft delete is enabled for
-     * the bucket, deleted objects can be restored using RestoreObject until the
-     * soft delete retention period has passed.
+     * Deletes an object and its metadata. Deletions are permanent if versioning
+     * is not enabled for the bucket, or if the generation parameter is used, or
+     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * enabled for the bucket.
+     * When this API is used to delete an object from a bucket that has soft
+     * delete policy enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+     * This API cannot be used to permanently delete soft-deleted objects.
+     * Soft-deleted objects are permanently deleted according to their
+     * `hardDeleteTime`.
+     * You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject]
+     * API to restore soft-deleted objects until the soft delete retention period
+     * has passed.
+     * **IAM Permissions**:
+     * Requires `storage.objects.delete`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public void deleteObject(
@@ -1787,7 +1910,12 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves an object's metadata.
+     * Retrieves object metadata.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket. To return object ACLs, the authenticated user must also have
+     * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public void getObject(
@@ -1801,7 +1929,11 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Reads an object's data.
+     * Retrieves object data.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public void readObject(
@@ -1809,6 +1941,33 @@ public final class StorageGrpc {
         io.grpc.stub.StreamObserver<com.google.storage.v2.ReadObjectResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getReadObjectMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Reads an object's data.
+     * This is a bi-directional API with the added support for reading multiple
+     * ranges within one stream both within and across multiple messages.
+     * If the server encountered an error for any of the inputs, the stream will
+     * be closed with the relevant error code.
+     * Because the API allows for multiple outstanding requests, when the stream
+     * is closed the error response will contain a BidiReadObjectRangesError proto
+     * in the error extension describing the error for each outstanding read_id.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * This API is currently in preview and is not yet available for general
+     * use.
+     * </pre>
+     */
+    public io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectRequest> bidiReadObject(
+        io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectResponse>
+            responseObserver) {
+      return io.grpc.stub.ClientCalls.asyncBidiStreamingCall(
+          getChannel().newCall(getBidiReadObjectMethod(), getCallOptions()), responseObserver);
     }
 
     /**
@@ -1881,11 +2040,15 @@ public final class StorageGrpc {
      * receives to determine how much data the service was able to commit and
      * whether the service views the object as complete.
      * Attempting to resume an already finalized object will result in an OK
-     * status, with a WriteObjectResponse containing the finalized object's
+     * status, with a `WriteObjectResponse` containing the finalized object's
      * metadata.
      * Alternatively, the BidiWriteObject operation may be used to write an
      * object with controls over flushing and the ability to fetch the ability to
      * determine the current persisted size.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public io.grpc.stub.StreamObserver<com.google.storage.v2.WriteObjectRequest> writeObject(
@@ -1926,6 +2089,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Retrieves a list of objects matching the criteria.
+     * **IAM Permissions**:
+     * The authenticated user requires `storage.objects.list`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
+     * to use this method. To return object ACLs, the authenticated user must also
+     * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public void listObjects(
@@ -1958,9 +2126,17 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Starts a resumable write. How long the write operation remains valid, and
-     * what happens when the write operation becomes invalid, are
-     * service-dependent.
+     * Starts a resumable write operation. This
+     * method is part of the [Resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * This allows you to upload large objects in multiple chunks, which is more
+     * resilient to network interruptions than a single upload. The validity
+     * duration of the write operation, and the consequences of it becoming
+     * invalid, are service-dependent.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public void startResumableWrite(
@@ -1977,16 +2153,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Determines the `persisted_size` for an object that is being written, which
-     * can then be used as the `write_offset` for the next `Write()` call.
-     * If the object does not exist (i.e., the object has been deleted, or the
-     * first `Write()` has not yet reached the service), this method returns the
+     * Determines the `persisted_size` of an object that is being written. This
+     * method is part of the [resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * The returned value is the size of the object that has been persisted so
+     * far. The value can be used as the `write_offset` for the next `Write()`
+     * call.
+     * If the object does not exist, meaning if it was deleted, or the
+     * first `Write()` has not yet reached the service, this method returns the
      * error `NOT_FOUND`.
-     * The client **may** call `QueryWriteStatus()` at any time to determine how
-     * much data has been processed for this object. This is useful if the
-     * client is buffering data and needs to know which data can be safely
-     * evicted. For any sequence of `QueryWriteStatus()` calls for a given
-     * object name, the sequence of returned `persisted_size` values will be
+     * This method is useful for clients that buffer data and need to know which
+     * data can be safely evicted. The client can call `QueryWriteStatus()` at any
+     * time to determine how much data has been logged for this object.
+     * For any sequence of `QueryWriteStatus()` calls for a given
+     * object name, the sequence of returned `persisted_size` values are
      * non-decreasing.
      * </pre>
      */
@@ -2192,11 +2372,23 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Deletes an object and its metadata.
-     * Deletions are normally permanent when versioning is disabled or whenever
-     * the generation parameter is used. However, if soft delete is enabled for
-     * the bucket, deleted objects can be restored using RestoreObject until the
-     * soft delete retention period has passed.
+     * Deletes an object and its metadata. Deletions are permanent if versioning
+     * is not enabled for the bucket, or if the generation parameter is used, or
+     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * enabled for the bucket.
+     * When this API is used to delete an object from a bucket that has soft
+     * delete policy enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+     * This API cannot be used to permanently delete soft-deleted objects.
+     * Soft-deleted objects are permanently deleted according to their
+     * `hardDeleteTime`.
+     * You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject]
+     * API to restore soft-deleted objects until the soft delete retention period
+     * has passed.
+     * **IAM Permissions**:
+     * Requires `storage.objects.delete`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public com.google.protobuf.Empty deleteObject(
@@ -2240,7 +2432,12 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves an object's metadata.
+     * Retrieves object metadata.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket. To return object ACLs, the authenticated user must also have
+     * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request) {
@@ -2252,7 +2449,11 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Reads an object's data.
+     * Retrieves object data.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public java.util.Iterator<com.google.storage.v2.ReadObjectResponse> readObject(
@@ -2280,6 +2481,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Retrieves a list of objects matching the criteria.
+     * **IAM Permissions**:
+     * The authenticated user requires `storage.objects.list`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
+     * to use this method. To return object ACLs, the authenticated user must also
+     * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public com.google.storage.v2.ListObjectsResponse listObjects(
@@ -2306,9 +2512,17 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Starts a resumable write. How long the write operation remains valid, and
-     * what happens when the write operation becomes invalid, are
-     * service-dependent.
+     * Starts a resumable write operation. This
+     * method is part of the [Resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * This allows you to upload large objects in multiple chunks, which is more
+     * resilient to network interruptions than a single upload. The validity
+     * duration of the write operation, and the consequences of it becoming
+     * invalid, are service-dependent.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public com.google.storage.v2.StartResumableWriteResponse startResumableWrite(
@@ -2321,16 +2535,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Determines the `persisted_size` for an object that is being written, which
-     * can then be used as the `write_offset` for the next `Write()` call.
-     * If the object does not exist (i.e., the object has been deleted, or the
-     * first `Write()` has not yet reached the service), this method returns the
+     * Determines the `persisted_size` of an object that is being written. This
+     * method is part of the [resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * The returned value is the size of the object that has been persisted so
+     * far. The value can be used as the `write_offset` for the next `Write()`
+     * call.
+     * If the object does not exist, meaning if it was deleted, or the
+     * first `Write()` has not yet reached the service, this method returns the
      * error `NOT_FOUND`.
-     * The client **may** call `QueryWriteStatus()` at any time to determine how
-     * much data has been processed for this object. This is useful if the
-     * client is buffering data and needs to know which data can be safely
-     * evicted. For any sequence of `QueryWriteStatus()` calls for a given
-     * object name, the sequence of returned `persisted_size` values will be
+     * This method is useful for clients that buffer data and need to know which
+     * data can be safely evicted. The client can call `QueryWriteStatus()` at any
+     * time to determine how much data has been logged for this object.
+     * For any sequence of `QueryWriteStatus()` calls for a given
+     * object name, the sequence of returned `persisted_size` values are
      * non-decreasing.
      * </pre>
      */
@@ -2536,11 +2754,23 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Deletes an object and its metadata.
-     * Deletions are normally permanent when versioning is disabled or whenever
-     * the generation parameter is used. However, if soft delete is enabled for
-     * the bucket, deleted objects can be restored using RestoreObject until the
-     * soft delete retention period has passed.
+     * Deletes an object and its metadata. Deletions are permanent if versioning
+     * is not enabled for the bucket, or if the generation parameter is used, or
+     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * enabled for the bucket.
+     * When this API is used to delete an object from a bucket that has soft
+     * delete policy enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+     * This API cannot be used to permanently delete soft-deleted objects.
+     * Soft-deleted objects are permanently deleted according to their
+     * `hardDeleteTime`.
+     * You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject]
+     * API to restore soft-deleted objects until the soft delete retention period
+     * has passed.
+     * **IAM Permissions**:
+     * Requires `storage.objects.delete`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
@@ -2585,7 +2815,12 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves an object's metadata.
+     * Retrieves object metadata.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket. To return object ACLs, the authenticated user must also have
+     * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
@@ -2613,6 +2848,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Retrieves a list of objects matching the criteria.
+     * **IAM Permissions**:
+     * The authenticated user requires `storage.objects.list`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
+     * to use this method. To return object ACLs, the authenticated user must also
+     * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -2640,9 +2880,17 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Starts a resumable write. How long the write operation remains valid, and
-     * what happens when the write operation becomes invalid, are
-     * service-dependent.
+     * Starts a resumable write operation. This
+     * method is part of the [Resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * This allows you to upload large objects in multiple chunks, which is more
+     * resilient to network interruptions than a single upload. The validity
+     * duration of the write operation, and the consequences of it becoming
+     * invalid, are service-dependent.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -2656,16 +2904,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Determines the `persisted_size` for an object that is being written, which
-     * can then be used as the `write_offset` for the next `Write()` call.
-     * If the object does not exist (i.e., the object has been deleted, or the
-     * first `Write()` has not yet reached the service), this method returns the
+     * Determines the `persisted_size` of an object that is being written. This
+     * method is part of the [resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * The returned value is the size of the object that has been persisted so
+     * far. The value can be used as the `write_offset` for the next `Write()`
+     * call.
+     * If the object does not exist, meaning if it was deleted, or the
+     * first `Write()` has not yet reached the service, this method returns the
      * error `NOT_FOUND`.
-     * The client **may** call `QueryWriteStatus()` at any time to determine how
-     * much data has been processed for this object. This is useful if the
-     * client is buffering data and needs to know which data can be safely
-     * evicted. For any sequence of `QueryWriteStatus()` calls for a given
-     * object name, the sequence of returned `persisted_size` values will be
+     * This method is useful for clients that buffer data and need to know which
+     * data can be safely evicted. The client can call `QueryWriteStatus()` at any
+     * time to determine how much data has been logged for this object.
+     * For any sequence of `QueryWriteStatus()` calls for a given
+     * object name, the sequence of returned `persisted_size` values are
      * non-decreasing.
      * </pre>
      */
@@ -2711,8 +2963,9 @@ public final class StorageGrpc {
   private static final int METHODID_START_RESUMABLE_WRITE = 18;
   private static final int METHODID_QUERY_WRITE_STATUS = 19;
   private static final int METHODID_MOVE_OBJECT = 20;
-  private static final int METHODID_WRITE_OBJECT = 21;
-  private static final int METHODID_BIDI_WRITE_OBJECT = 22;
+  private static final int METHODID_BIDI_READ_OBJECT = 21;
+  private static final int METHODID_WRITE_OBJECT = 22;
+  private static final int METHODID_BIDI_WRITE_OBJECT = 23;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2854,6 +3107,11 @@ public final class StorageGrpc {
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_BIDI_READ_OBJECT:
+          return (io.grpc.stub.StreamObserver<Req>)
+              serviceImpl.bidiReadObject(
+                  (io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectResponse>)
+                      responseObserver);
         case METHODID_WRITE_OBJECT:
           return (io.grpc.stub.StreamObserver<Req>)
               serviceImpl.writeObject(
@@ -2962,6 +3220,13 @@ public final class StorageGrpc {
                 new MethodHandlers<
                     com.google.storage.v2.ReadObjectRequest,
                     com.google.storage.v2.ReadObjectResponse>(service, METHODID_READ_OBJECT)))
+        .addMethod(
+            getBidiReadObjectMethod(),
+            io.grpc.stub.ServerCalls.asyncBidiStreamingCall(
+                new MethodHandlers<
+                    com.google.storage.v2.BidiReadObjectRequest,
+                    com.google.storage.v2.BidiReadObjectResponse>(
+                    service, METHODID_BIDI_READ_OBJECT)))
         .addMethod(
             getUpdateObjectMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -3077,6 +3342,7 @@ public final class StorageGrpc {
                       .addMethod(getCancelResumableWriteMethod())
                       .addMethod(getGetObjectMethod())
                       .addMethod(getReadObjectMethod())
+                      .addMethod(getBidiReadObjectMethod())
                       .addMethod(getUpdateObjectMethod())
                       .addMethod(getWriteObjectMethod())
                       .addMethod(getBidiWriteObjectMethod())

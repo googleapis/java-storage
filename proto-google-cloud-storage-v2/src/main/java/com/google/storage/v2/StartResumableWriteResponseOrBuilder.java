@@ -28,8 +28,11 @@ public interface StartResumableWriteResponseOrBuilder
    *
    *
    * <pre>
-   * The upload_id of the newly started resumable write operation. This
-   * value should be copied into the `WriteObjectRequest.upload_id` field.
+   * A unique identifier for the initiated resumable write operation.
+   * As the ID grants write access, you should keep it confidential during
+   * the upload to prevent unauthorized access and data tampering during your
+   * upload. This ID should be included in subsequent `WriteObject` requests to
+   * upload the object data.
    * </pre>
    *
    * <code>string upload_id = 1;</code>
@@ -41,8 +44,11 @@ public interface StartResumableWriteResponseOrBuilder
    *
    *
    * <pre>
-   * The upload_id of the newly started resumable write operation. This
-   * value should be copied into the `WriteObjectRequest.upload_id` field.
+   * A unique identifier for the initiated resumable write operation.
+   * As the ID grants write access, you should keep it confidential during
+   * the upload to prevent unauthorized access and data tampering during your
+   * upload. This ID should be included in subsequent `WriteObject` requests to
+   * upload the object data.
    * </pre>
    *
    * <code>string upload_id = 1;</code>
