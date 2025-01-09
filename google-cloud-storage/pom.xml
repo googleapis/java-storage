@@ -164,6 +164,12 @@
       <groupId>com.google.cloud.opentelemetry</groupId>
       <artifactId>exporter-metrics</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>exporter-trace</artifactId>
+      <version>0.32.0</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.opentelemetry.contrib</groupId>

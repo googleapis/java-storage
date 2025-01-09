@@ -16,11 +16,13 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.CrossRunIntersection;
 import com.google.cloud.storage.it.runner.TestInitializer;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
@@ -28,6 +30,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -70,16 +78,26 @@ public final class Registry extends RunListener {
   private final TestRunScopedInstance<Generator> generator =
       TestRunScopedInstance.of("GENERATOR", Generator::new);
 
-  private final BackendResources prodBackendResources = BackendResources.of(Backend.PROD);
-  private final BackendResources testBenchBackendResource = BackendResources.of(Backend.TEST_BENCH);
+  final TestRunScopedInstance<OtelSdkShim> otelSdk =
+      TestRunScopedInstance.of(
+          "OTEL_SDK",
+          () -> {
+            String projectId = StorageOptions.getDefaultInstance().getProjectId();
+            return new OtelSdkShim(projectId);
+          });
+
+  private final BackendResources prodBackendResources = BackendResources.of(Backend.PROD, otelSdk);
+  private final BackendResources testBenchBackendResource =
+      BackendResources.of(Backend.TEST_BENCH, otelSdk);
 
   private final ImmutableList<RegistryEntry<?>> entries =
       new ImmutableList.Builder<RegistryEntry<?>>()
           .add(
-              RegistryEntry.of(0, TestBench.class, testBench),
-              RegistryEntry.of(1, Generator.class, generator),
-              registryEntry(2, Backend.class, CrossRunIntersection::getBackend),
-              registryEntry(3, Transport.class, CrossRunIntersection::getTransport))
+              RegistryEntry.of(0, OpenTelemetry.class, otelSdk),
+              RegistryEntry.of(1, TestBench.class, testBench),
+              RegistryEntry.of(2, Generator.class, generator),
+              registryEntry(3, Backend.class, CrossRunIntersection::getBackend),
+              registryEntry(4, Transport.class, CrossRunIntersection::getTransport))
           .addAll(prodBackendResources.getRegistryEntries())
           .addAll(testBenchBackendResource.getRegistryEntries())
           .build();
@@ -87,7 +105,23 @@ public final class Registry extends RunListener {
   private final ImmutableSet<Class<?>> injectableTypes =
       entries.stream().map(RegistryEntry::getType).collect(ImmutableSet.toImmutableSet());
   private final String injectableTypesString = Joiner.on("|").join(injectableTypes);
-  private final ThreadLocal<Description> currentTest = new ThreadLocal<>();
+  private final ThreadLocal<CurrentTest> currentTest = new ThreadLocal<>();
+
+  private static final class CurrentTest {
+    private final Description desc;
+    private final Span span;
+    private final Scope scope;
+
+    private CurrentTest(Description desc, Span span, Scope scope) {
+      this.desc = desc;
+      this.span = span;
+      this.scope = scope;
+    }
+
+    public static CurrentTest of(Description desc, Span span, Scope scope) {
+      return new CurrentTest(desc, span, scope);
+    }
+  }
 
   private Registry() {}
 
@@ -117,17 +151,38 @@ public final class Registry extends RunListener {
 
   @Nullable
   public Description getCurrentTest() {
-    return currentTest.get();
+    return currentTest.get().desc;
   }
 
   @Override
   public void testStarted(Description description) {
-    currentTest.set(description);
+    OpenTelemetry sdk;
+    if (description.getDisplayName().contains("[TEST_BENCH]")
+        || isClassAnnotatedSingleBackendTestBench(description)
+        || Arrays.stream(description.getTestClass().getDeclaredFields())
+            .anyMatch(field -> field.getType() == TestBench.class)) {
+      sdk = OpenTelemetry.noop();
+    } else {
+      sdk = otelSdk.get().get();
+    }
+
+    Tracer tracer = sdk.getTracer("test");
+    Span span =
+        tracer
+            .spanBuilder(
+                String.format("%s/%s", description.getClassName(), description.getMethodName()))
+            .setAttribute("service.name", "test")
+            .startSpan();
+    Scope scope = span.makeCurrent();
+    currentTest.set(CurrentTest.of(description, span, scope));
   }
 
   @Override
   public void testFinished(Description description) {
-    currentTest.remove();
+    CurrentTest currentTest = this.currentTest.get();
+    currentTest.scope.close();
+    currentTest.span.end();
+    this.currentTest.remove();
   }
 
   public RunnerScheduler parallelScheduler() {
@@ -182,16 +237,40 @@ public final class Registry extends RunListener {
   // private volatile ListenableFuture<?> shutdownF;
 
   private void shutdown() {
-    entries.stream()
-        .sorted()
-        .forEach(
-            re -> {
-              try {
-                re.getInstance().shutdown();
-              } catch (Exception e) {
-                throw new RuntimeException(e);
-              }
-            });
+    Span span =
+        otelSdk
+            .get()
+            .get()
+            .getTracer("registry")
+            .spanBuilder("registry/shutdown")
+            .setAttribute("service.name", "registry")
+            .startSpan();
+    try (Scope ignore = span.makeCurrent()) {
+      entries.stream()
+          .sorted()
+          .filter(e -> e.getShutdownPriority() > 0)
+          .forEach(
+              re -> {
+                try {
+                  re.getInstance().shutdown();
+                } catch (Exception e) {
+                  throw new RuntimeException(e);
+                }
+              });
+    } catch (Throwable t) {
+      span.recordException(t);
+      span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      throw t;
+    } finally {
+      span.end();
+      try {
+        // manually shutdown otelSdk so that the previous span can be recorded as ending
+        otelSdk.shutdown();
+      } catch (Exception e) {
+        //noinspection ThrowFromFinallyBlock
+        throw new RuntimeException(e);
+      }
+    }
   }
 
   @FunctionalInterface
@@ -225,5 +304,18 @@ public final class Registry extends RunListener {
 
   private static <T> StatelessManagedLifecycle<T> lift(Function<CrossRunIntersection, T> f) {
     return (ff, cell) -> f.apply(cell);
+  }
+
+  private static boolean isClassAnnotatedSingleBackendTestBench(Description description) {
+    return Arrays.stream(description.getTestClass().getAnnotations())
+        .anyMatch(
+            a -> {
+              if (a instanceof SingleBackend) {
+                SingleBackend sb = (SingleBackend) a;
+                return sb.value() == Backend.TEST_BENCH;
+              } else {
+                return false;
+              }
+            });
   }
 }

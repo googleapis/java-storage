@@ -31,6 +31,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.common.annotations.VisibleForTesting;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
@@ -58,7 +59,7 @@ final class OtelStorageDecorator implements Storage {
   /** Becomes the {@code otel.scope.name} attribute in a span */
   private static final String OTEL_SCOPE_NAME = "cloud.google.com/java/storage";
 
-  private final Storage delegate;
+  @VisibleForTesting final Storage delegate;
   private final OpenTelemetry otel;
   private final Attributes baseAttributes;
   private final Tracer tracer;
@@ -1501,9 +1502,10 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private static final class OtelDecoratedReadChannel implements ReadChannel {
+  @VisibleForTesting
+  static final class OtelDecoratedReadChannel implements ReadChannel {
 
-    private final ReadChannel reader;
+    @VisibleForTesting final ReadChannel reader;
     private final Span span;
 
     private OtelDecoratedReadChannel(ReadChannel reader, Span span) {
@@ -1624,8 +1626,9 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private static final class OtelDecoratedWriteChannel implements WriteChannel {
-    private final WriteChannel delegate;
+  @VisibleForTesting
+  static final class OtelDecoratedWriteChannel implements WriteChannel {
+    @VisibleForTesting final WriteChannel delegate;
     private final Span openSpan;
 
     private OtelDecoratedWriteChannel(WriteChannel delegate, Span openSpan) {

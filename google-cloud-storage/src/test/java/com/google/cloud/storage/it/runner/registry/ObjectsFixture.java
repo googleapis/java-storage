@@ -102,7 +102,8 @@ public final class ObjectsFixture implements ManagedLifecycle {
     BlobInfo info2 = BlobInfo.newBuilder(blobId2).setMetadata(ImmutableMap.of("pow", "2")).build();
     BlobInfo info3 = BlobInfo.newBuilder(blobId3).setMetadata(ImmutableMap.of("pow", "3")).build();
     BlobInfo info4 = BlobInfo.newBuilder(blobId4).setMetadata(ImmutableMap.of("pow", "4")).build();
-    s.create(info1, "A".getBytes(StandardCharsets.UTF_8), blobTargetOptions);
+    this.info1 =
+        s.create(info1, "A".getBytes(StandardCharsets.UTF_8), blobTargetOptions).asBlobInfo();
 
     ComposeRequest c2 =
         ComposeRequest.newBuilder()
@@ -122,14 +123,9 @@ public final class ObjectsFixture implements ManagedLifecycle {
             .setTarget(info4)
             .setTargetOptions(blobTargetOptions)
             .build();
-    s.compose(c2);
-    s.compose(c3);
-    s.compose(c4);
-
-    this.info1 = s.get(blobId1, blobGetOptions).asBlobInfo();
-    this.info2 = s.get(blobId2, blobGetOptions).asBlobInfo();
-    this.info3 = s.get(blobId3, blobGetOptions).asBlobInfo();
-    this.info4 = s.get(blobId4, blobGetOptions).asBlobInfo();
+    this.info2 = s.compose(c2).asBlobInfo();
+    this.info3 = s.compose(c3).asBlobInfo();
+    this.info4 = s.compose(c4).asBlobInfo();
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
     Blob obj512KiB =

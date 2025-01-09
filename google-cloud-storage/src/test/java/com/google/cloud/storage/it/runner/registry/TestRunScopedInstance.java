@@ -17,6 +17,9 @@
 package com.google.cloud.storage.it.runner.registry;
 
 import com.google.common.base.MoreObjects;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Scope;
 import java.util.function.Supplier;
 import org.junit.runner.notification.RunListener.ThreadSafe;
 
@@ -40,13 +43,42 @@ final class TestRunScopedInstance<T extends ManagedLifecycle> implements Supplie
     return new TestRunScopedInstance<>(name, ctor);
   }
 
+  public String getName() {
+    return name;
+  }
+
   public T get() {
     if (instance == null) {
       synchronized (this) {
         if (instance == null) {
-          T tmp = ctor.get();
-          tmp.start();
-          instance = tmp;
+          // if we don't short-circuit for OTEL_SDK we will cause a stack overflow, because we would
+          // be trying to get our instance to record that we're starting our instance.
+          if (name.equals("OTEL_SDK")) {
+            T tmp = ctor.get();
+            tmp.start();
+            instance = tmp;
+          } else {
+            Span span =
+                Registry.getInstance()
+                    .otelSdk
+                    .get()
+                    .get()
+                    .getTracer("test")
+                    .spanBuilder("registry/" + name + "/start")
+                    .setAttribute("service.name", "registry")
+                    .startSpan();
+            try (Scope ignore = span.makeCurrent()) {
+              T tmp = ctor.get();
+              tmp.start();
+              instance = tmp;
+            } catch (Throwable t) {
+              span.recordException(t);
+              span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+              throw t;
+            } finally {
+              span.end();
+            }
+          }
         }
       }
     }
@@ -59,7 +91,28 @@ final class TestRunScopedInstance<T extends ManagedLifecycle> implements Supplie
       synchronized (this) {
         instance = null;
       }
-      tmp.stop();
+      if (name.equals("OTEL_SDK")) {
+        tmp.stop();
+      } else {
+        Span span =
+            Registry.getInstance()
+                .otelSdk
+                .get()
+                .get()
+                .getTracer("test")
+                .spanBuilder("registry/" + name + "/stop")
+                .setAttribute("service.name", "registry")
+                .startSpan();
+        try (Scope ignore = span.makeCurrent()) {
+          tmp.stop();
+        } catch (Throwable t) {
+          span.recordException(t);
+          span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+          throw t;
+        } finally {
+          span.end();
+        }
+      }
     }
   }
 
