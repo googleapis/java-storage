@@ -22,15 +22,19 @@ import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.common.collect.ImmutableSet;
+import com.google.protobuf.TextFormat;
 import io.grpc.StatusException;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -127,9 +131,6 @@ public final class StorageException extends BaseHttpServiceException {
   static StorageException asStorageException(ApiException apiEx) {
     // https://cloud.google.com/storage/docs/json_api/v1/status-codes
     // https://cloud.google.com/apis/design/errors#http_mapping
-    // https://cloud.google.com/apis/design/errors#error_payloads
-    // TODO: flush this out more to wire through "error" and "details" when we're able to get real
-    //   errors from GCS
     int httpStatusCode = 0;
     StatusCode statusCode = apiEx.getStatusCode();
     if (statusCode instanceof GrpcStatusCode) {
@@ -155,10 +156,39 @@ public final class StorageException extends BaseHttpServiceException {
       message = "Error: " + statusCodeName;
     }
 
+    // https://cloud.google.com/apis/design/errors#error_payloads
+    attachErrorDetails(apiEx);
+
     // It'd be better to use ExceptionData and BaseServiceException#<init>(ExceptionData) but,
     // BaseHttpServiceException does not pass that through so we're stuck using this for now.
     // TODO: When we can break the coupling to BaseHttpServiceException replace this
     return new StorageException(httpStatusCode, message, apiEx.getReason(), apiEx);
+  }
+
+  private static void attachErrorDetails(ApiException ae) {
+    if (ae != null && ae.getErrorDetails() != null) {
+      final StringBuilder sb = new StringBuilder();
+      ErrorDetails ed = ae.getErrorDetails();
+      sb.append("ErrorDetails {\n");
+      Stream.of(
+              ed.getErrorInfo(),
+              ed.getDebugInfo(),
+              ed.getQuotaFailure(),
+              ed.getPreconditionFailure(),
+              ed.getBadRequest(),
+              ed.getHelp())
+          .filter(Objects::nonNull)
+          .forEach(
+              msg ->
+                  sb.append("\t\t")
+                      .append(msg.getClass().getSimpleName())
+                      .append(": {")
+                      .append(TextFormat.printer().shortDebugString(msg))
+                      .append(" }\n"));
+      sb.append("\t}");
+
+      ae.addSuppressed(new ApiExceptionErrorDetailsComment(sb.toString()));
+    }
   }
 
   /**
@@ -221,5 +251,11 @@ public final class StorageException extends BaseHttpServiceException {
   @FunctionalInterface
   interface IOExceptionRunnable {
     void run() throws IOException;
+  }
+
+  private static final class ApiExceptionErrorDetailsComment extends Throwable {
+    private ApiExceptionErrorDetailsComment(String message) {
+      super(message, null, true, false);
+    }
   }
 }
