@@ -16,7 +16,7 @@
 
 package com.example.storage;
 
-// [START storage_enable_otel_tracing]
+
 
 import com.google.cloud.opentelemetry.propagators.XCloudTraceContextPropagator;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
@@ -31,6 +31,7 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 
+// [START storage_enable_otel_tracing]
 public class QuickstartOpenTelemetrySample {
   public static void main(String... args) throws Exception {
     SpanExporter exporter = TraceExporter.createWithDefaultConfiguration();
