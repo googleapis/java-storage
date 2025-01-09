@@ -88,7 +88,7 @@ public class QuickstartSampleIT {
   }
 
   @Test
-  public void testQuickstartOpenTelemetry() {
+  public void testQuickstartOpenTelemetry() throws Exception {
     QuickstartOpenTelemetrySample.main();
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got)
