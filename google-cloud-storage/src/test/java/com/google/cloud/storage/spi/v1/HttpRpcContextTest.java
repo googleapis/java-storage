@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
@@ -66,6 +67,8 @@ public class HttpRpcContextTest {
     Storage service =
         StorageOptions.getDefaultInstance()
             .toBuilder()
+            .setProjectId("test-project")
+            .setCredentials(NoCredentials.getInstance())
             .setTransportOptions(transportOptions)
             .build()
             .getService();
