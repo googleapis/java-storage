@@ -34,7 +34,7 @@ import io.opentelemetry.sdk.trace.samplers.Sampler;
 // [START storage_enable_otel_tracing]
 public class QuickstartOpenTelemetrySample {
   public static void main(String... args) throws Exception {
-    SpanExporter exporter = TraceExporter.createWithDefaultConfiguration();
+    SpanExporter spanExporter = TraceExporter.createWithDefaultConfiguration();
     TextMapPropagator propagators = TextMapPropagator.composite(
         W3CTraceContextPropagator.getInstance(),
         new XCloudTraceContextPropagator(/*oneway=*/true));
@@ -44,9 +44,11 @@ public class QuickstartOpenTelemetrySample {
             .setPropagators(ContextPropagators.create(propagators))
             .setTracerProvider(
                 SdkTracerProvider.builder()
-                    // Sample Rate set to always
+                    // Sample Rate is set to alwaysOn
+                    // It is recommended to sample based on a ratio for standard use ie.
+                    // .setSampler(Sampler.traceIdRatioBased(0.2)) // sample only 20% of trace ids
                     .setSampler(Sampler.alwaysOn())
-                    .addSpanProcessor(BatchSpanProcessor.builder(exporter).build())
+                    .addSpanProcessor(BatchSpanProcessor.builder(spanExporter).build())
                     .build())
             .build();
     StorageOptions options = StorageOptions.newBuilder().setOpenTelemetry(openTelemetry).build();
