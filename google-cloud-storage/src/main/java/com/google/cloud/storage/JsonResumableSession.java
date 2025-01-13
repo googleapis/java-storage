@@ -54,14 +54,13 @@ final class JsonResumableSession {
    * have the concept of nested retry handling.
    */
   ResumableOperationResult<@Nullable StorageObject> query() {
-    return new JsonResumableSessionQueryTask(context, resumableWrite.getUploadId()).call();
+    return new JsonResumableSessionQueryTask(context, resumableWrite).call();
   }
 
   ResumableOperationResult<@Nullable StorageObject> put(
       RewindableContent content, HttpContentRange contentRange) {
     JsonResumableSessionPutTask task =
-        new JsonResumableSessionPutTask(
-            context, resumableWrite.getUploadId(), content, contentRange);
+        new JsonResumableSessionPutTask(context, resumableWrite, content, contentRange);
     HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
     try {
       httpRpcContext.newInvocationId();

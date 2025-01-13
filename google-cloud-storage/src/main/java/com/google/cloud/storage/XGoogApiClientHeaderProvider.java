@@ -24,7 +24,6 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collector;
@@ -98,7 +97,7 @@ final class XGoogApiClientHeaderProvider implements HeaderProvider {
     for (Entry<String, String> e : orig.entrySet()) {
       String k = e.getKey();
       String v = e.getValue();
-      tmp.put(k.toLowerCase(Locale.US), v);
+      tmp.put(Utils.headerNameToLowerCase(k), v);
     }
     return tmp;
   }

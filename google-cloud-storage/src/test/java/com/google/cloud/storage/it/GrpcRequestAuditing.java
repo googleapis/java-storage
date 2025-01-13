@@ -33,16 +33,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class GrpcRequestAuditing implements ClientInterceptor {
+public final class GrpcRequestAuditing implements ClientInterceptor, AssertRequestHeaders {
 
   private final List<Metadata> requestHeaders;
 
-  GrpcRequestAuditing() {
+  public GrpcRequestAuditing() {
     requestHeaders = Collections.synchronizedList(new ArrayList<>());
   }
 
-  void clear() {
+  public void clear() {
     requestHeaders.clear();
   }
 
@@ -53,13 +56,31 @@ final class GrpcRequestAuditing implements ClientInterceptor {
     return next.newCall(method, withStreamTracerFactory);
   }
 
+  @Override
+  public IterableSubject assertRequestHeader(String headerName, FilteringPolicy filteringPolicy) {
+    Metadata.Key<String> key = Metadata.Key.of(headerName, Metadata.ASCII_STRING_MARSHALLER);
+    Function<Stream<String>, Stream<String>> filter;
+    switch (filteringPolicy) {
+      case DISTINCT:
+        filter = Stream::distinct;
+        break;
+      case NO_FILTER:
+        filter = Function.identity();
+        break;
+      default:
+        throw new IllegalStateException("Unhandled enum value: " + filteringPolicy);
+    }
+    return getIterableSubject(key, filter);
+  }
+
   public <T> IterableSubject assertRequestHeader(Metadata.Key<T> key) {
-    ImmutableList<Object> actual =
-        requestHeaders.stream()
-            .map(m -> m.get(key))
-            .filter(Objects::nonNull)
-            .distinct()
-            .collect(ImmutableList.toImmutableList());
+    return getIterableSubject(key, Stream::distinct);
+  }
+
+  private <T> @NonNull IterableSubject getIterableSubject(
+      Metadata.Key<T> key, Function<Stream<T>, Stream<T>> f) {
+    Stream<T> stream = requestHeaders.stream().map(m -> m.get(key)).filter(Objects::nonNull);
+    ImmutableList<Object> actual = f.apply(stream).collect(ImmutableList.toImmutableList());
     return assertWithMessage(String.format("Headers %s", key.name())).that(actual);
   }
 

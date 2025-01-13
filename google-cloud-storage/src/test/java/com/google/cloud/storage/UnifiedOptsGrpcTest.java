@@ -21,10 +21,12 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.Storage.PredefinedAcl;
+import com.google.cloud.storage.UnifiedOpts.Headers;
 import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.UnifiedOpts.NoOpObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
@@ -1300,6 +1302,102 @@ public final class UnifiedOptsGrpcTest {
 
       RewriteObjectRequest actual = mapper.apply(RewriteObjectRequest.newBuilder()).build();
       assertThat(actual).isEqualTo(expected);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static final class HeadersOptTest {
+
+    @Test
+    public void duplicateHeaderValues_firstWins_grpc() {
+      Opts<Headers> o1 = Opts.from(UnifiedOpts.extraHeaders(ImmutableMap.of("k", "1")));
+      Opts<Headers> o2 = Opts.from(UnifiedOpts.extraHeaders(ImmutableMap.of("k", "2")));
+
+      Mapper<GrpcCallContext> mapper = o1.grpcMetadataMapper().andThen(o2.grpcMetadataMapper());
+
+      GrpcCallContext grpcCallContext = mapper.apply(GrpcCallContext.createDefault());
+      assertThat(grpcCallContext.getExtraHeaders())
+          .containsExactlyEntriesIn(ImmutableMap.of("k", ImmutableList.of("1")));
+    }
+
+    @Test
+    public void duplicateHeaderValues_firstWins_rpcOptions() {
+      Opts<Headers> o1 =
+          Opts.from(
+              UnifiedOpts.extraHeaders(ImmutableMap.of("k", "1", "a", "A")),
+              UnifiedOpts.extraHeaders(ImmutableMap.of("k", "2", "b", "B")));
+
+      ImmutableMap<StorageRpc.Option, ?> rpcOptions = o1.getRpcOptions();
+
+      ImmutableMap<String, String> extraHeaders =
+          (ImmutableMap<String, String>) rpcOptions.get(StorageRpc.Option.EXTRA_HEADERS);
+      assertThat(extraHeaders).isNotNull();
+      assertThat(extraHeaders)
+          .containsExactlyEntriesIn(ImmutableMap.of("k", "1", "a", "A", "b", "B"));
+    }
+
+    @Test
+    public void duplicateHeaderValues_firstWins_keyComparisonIsCaseInsensitive() {
+      Opts<Headers> o1 =
+          Opts.from(
+              UnifiedOpts.extraHeaders(ImmutableMap.of("K", "1", "a", "A")),
+              UnifiedOpts.extraHeaders(ImmutableMap.of("k", "2", "b", "B")));
+
+      ImmutableMap<StorageRpc.Option, ?> rpcOptions = o1.getRpcOptions();
+
+      ImmutableMap<String, String> extraHeaders =
+          (ImmutableMap<String, String>) rpcOptions.get(StorageRpc.Option.EXTRA_HEADERS);
+      assertThat(extraHeaders).isNotNull();
+      assertThat(extraHeaders)
+          .containsExactlyEntriesIn(ImmutableMap.of("k", "1", "a", "A", "b", "B"));
+    }
+
+    @Test
+    public void headersOnBlocklistResultInIllegalArgumentException() {
+      IllegalArgumentException expected =
+          assertThrows(
+              IllegalArgumentException.class,
+              () ->
+                  UnifiedOpts.extraHeaders(
+                      ImmutableMap.<String, String>builder()
+                          .put("Accept-Encoding", "a")
+                          .put("Cache-Control", "a")
+                          .put("Connection", "a")
+                          .put("Content-ID", "a")
+                          .put("Content-Length", "a")
+                          .put("Content-Range", "a")
+                          .put("Content-Transfer-Encoding", "a")
+                          .put("Content-Type", "a")
+                          .put("Date", "a")
+                          .put("ETag", "a")
+                          .put("If-Match", "a")
+                          .put("If-None-Match", "a")
+                          .put("Keep-Alive", "a")
+                          .put("Range", "a")
+                          .put("TE", "a")
+                          .put("Trailer", "a")
+                          .put("Transfer-Encoding", "a")
+                          .put("User-Agent", "a")
+                          .put("X-Goog-Api-Client", "a")
+                          .put("X-Goog-Content-Length-Range", "a")
+                          .put("X-Goog-Copy-Source-Encryption-Algorithm", "a")
+                          .put("X-Goog-Copy-Source-Encryption-Key", "a")
+                          .put("X-Goog-Copy-Source-Encryption-Key-Sha256", "a")
+                          .put("X-Goog-Encryption-Algorithm", "a")
+                          .put("X-Goog-Encryption-Key", "a")
+                          .put("X-Goog-Encryption-Key-Sha256", "a")
+                          .put("X-Goog-Meta-A", "a")
+                          .put("X-Goog-Request-Params", "a")
+                          .put("X-Goog-User-Project", "a")
+                          .put("X-HTTP-Method-Override", "a")
+                          .put("X-Upload-Content-Length", "a")
+                          .put("X-Upload-Content-Type", "a")
+                          .put("A", "a")
+                          .build()));
+      assertThat(expected)
+          .hasMessageThat()
+          .contains(
+              "[accept-encoding, cache-control, connection, content-id, content-length, content-range, content-transfer-encoding, content-type, date, etag, if-match, if-none-match, keep-alive, range, te, trailer, transfer-encoding, user-agent, x-goog-api-client, x-goog-content-length-range, x-goog-copy-source-encryption-algorithm, x-goog-copy-source-encryption-key, x-goog-copy-source-encryption-key-sha256, x-goog-encryption-algorithm, x-goog-encryption-key, x-goog-encryption-key-sha256, x-goog-meta-a, x-goog-request-params, x-goog-user-project, x-http-method-override, x-upload-content-length, x-upload-content-type]");
     }
   }
 

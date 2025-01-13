@@ -96,7 +96,6 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -159,6 +158,11 @@ public final class GrpcStorageOptions extends StorageOptions
   @InternalApi
   StorageSettings getStorageSettings() throws IOException {
     return resolveSettingsAndOpts().x();
+  }
+
+  @InternalApi
+  GrpcInterceptorProvider getGrpcInterceptorProvider() {
+    return grpcInterceptorProvider;
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -225,7 +229,7 @@ public final class GrpcStorageOptions extends StorageOptions
           Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
           for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
             String key = e.getKey();
-            if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
+            if ("x-goog-user-project".equals(Utils.headerNameToLowerCase(key.trim()))) {
               List<String> value = e.getValue();
               if (!value.isEmpty()) {
                 foundQuotaProject = true;
