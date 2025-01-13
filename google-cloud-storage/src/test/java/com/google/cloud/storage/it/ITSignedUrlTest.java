@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,6 +35,7 @@ import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -45,6 +48,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
@@ -259,6 +263,26 @@ public class ITSignedUrlTest {
 
       assertEquals(bytesArrayToUpload.length, lengthOfDownLoadBytes);
       assertTrue(storage.delete(bucketName, blobName));
+    }
+  }
+
+  @Test
+  public void generatingSignedURLForHttpProducesTheCorrectScheme() throws Exception {
+    StorageOptions options =
+        storage.getOptions().toBuilder().setHost("http://[::1]").setProjectId("no-project").build();
+    try (Storage s = options.getService()) {
+      BlobInfo info = BlobInfo.newBuilder("no-bucket", "no-object").build();
+      URL urlV2 = s.signUrl(info, 5, TimeUnit.MINUTES, SignUrlOption.withV2Signature());
+      URL urlV4 = s.signUrl(info, 5, TimeUnit.MINUTES, SignUrlOption.withV4Signature());
+      URI uriV2 = urlV2.toURI();
+      URI uriV4 = urlV4.toURI();
+      assertAll(
+          () -> assertThat(uriV2.getScheme()).isEqualTo("http"),
+          () -> assertThat(uriV2.getHost()).isEqualTo("[::1]"),
+          () -> assertThat(uriV2.getPath()).contains("no-bucket/no-object"),
+          () -> assertThat(uriV4.getScheme()).isEqualTo("http"),
+          () -> assertThat(uriV4.getHost()).isEqualTo("[::1]"),
+          () -> assertThat(uriV4.getPath()).contains("no-bucket/no-object"));
     }
   }
 }

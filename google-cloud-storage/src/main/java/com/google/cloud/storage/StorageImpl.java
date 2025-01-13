@@ -72,6 +72,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
@@ -104,15 +105,9 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   private static final String EMPTY_BYTE_ARRAY_MD5 = "1B2M2Y8AsgTpgAmY7PhCfg==";
   private static final String EMPTY_BYTE_ARRAY_CRC32C = "AAAAAA==";
   private static final String PATH_DELIMITER = "/";
-  /** Signed URLs are only supported through the GCS XML API endpoint. */
-  private static final String STORAGE_XML_URI_SCHEME = "https";
 
-  // TODO: in the future, this can be replaced by getOptions().getHost()
-  private final String STORAGE_XML_URI_HOST_NAME =
-      getOptions()
-          .getResolvedApiaryHost("storage")
-          .replaceFirst("http(s)?://", "")
-          .replace("/", "");
+  private final String STORAGE_XML_URI_SCHEME;
+  private final String STORAGE_XML_URI_HOST_NAME;
 
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
@@ -128,6 +123,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.storageRpc = options.getStorageRpcV1();
     this.writerFactory = writerFactory;
+    try {
+      String resolvedApiaryHost = options.getResolvedApiaryHost("storage");
+      URI uri = new URI(resolvedApiaryHost);
+      STORAGE_XML_URI_HOST_NAME = uri.getHost();
+      STORAGE_XML_URI_SCHEME = firstNonNull(uri.getScheme(), "https");
+    } catch (URISyntaxException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
