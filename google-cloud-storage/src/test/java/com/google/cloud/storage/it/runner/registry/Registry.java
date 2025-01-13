@@ -73,14 +73,14 @@ public final class Registry extends RunListener {
               new ThreadFactoryBuilder().setDaemon(true).setNameFormat("test-run-%d").build()));
 
   private final TestRunScopedInstance<TestBench> testBench =
-      TestRunScopedInstance.of("TEST_BENCH", () -> TestBench.newBuilder().build());
+      TestRunScopedInstance.of("fixture/TEST_BENCH", () -> TestBench.newBuilder().build());
 
   private final TestRunScopedInstance<Generator> generator =
-      TestRunScopedInstance.of("GENERATOR", Generator::new);
+      TestRunScopedInstance.of("fixture/GENERATOR", Generator::new);
 
   final TestRunScopedInstance<OtelSdkShim> otelSdk =
       TestRunScopedInstance.of(
-          "OTEL_SDK",
+          "fixture/OTEL_SDK",
           () -> {
             String projectId = StorageOptions.getDefaultInstance().getProjectId();
             return new OtelSdkShim(projectId);
