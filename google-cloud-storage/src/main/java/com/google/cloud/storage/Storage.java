@@ -50,6 +50,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -73,6 +74,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -2779,6 +2781,150 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   /**
+   * A class to contain all information needed for a Google Cloud Storage Object Move.
+   *
+   * @since 2.48.0
+   * @see Storage#moveBlob(MoveBlobRequest)
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  final class MoveBlobRequest {
+    private final BlobId source;
+    private final BlobId target;
+    private final ImmutableList<BlobSourceOption> sourceOptions;
+    private final ImmutableList<BlobTargetOption> targetOptions;
+
+    MoveBlobRequest(
+        BlobId source,
+        BlobId target,
+        ImmutableList<BlobSourceOption> sourceOptions,
+        ImmutableList<BlobTargetOption> targetOptions) {
+      this.source = source;
+      this.target = target;
+      this.sourceOptions = sourceOptions;
+      this.targetOptions = targetOptions;
+    }
+
+    public BlobId getSource() {
+      return source;
+    }
+
+    public BlobId getTarget() {
+      return target;
+    }
+
+    public List<BlobSourceOption> getSourceOptions() {
+      return sourceOptions;
+    }
+
+    public List<BlobTargetOption> getTargetOptions() {
+      return targetOptions;
+    }
+
+    public Builder toBuilder() {
+      return new Builder(source, target, sourceOptions, targetOptions);
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof MoveBlobRequest)) {
+        return false;
+      }
+      MoveBlobRequest that = (MoveBlobRequest) o;
+      return Objects.equals(source, that.source)
+          && Objects.equals(target, that.target)
+          && Objects.equals(sourceOptions, that.sourceOptions)
+          && Objects.equals(targetOptions, that.targetOptions);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(source, target, sourceOptions, targetOptions);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("source", source)
+          .add("target", target)
+          .add("sourceOptions", sourceOptions)
+          .add("targetOptions", targetOptions)
+          .toString();
+    }
+
+    public static final class Builder {
+
+      private BlobId source;
+      private BlobId target;
+      private ImmutableList<BlobSourceOption> sourceOptions;
+      private ImmutableList<BlobTargetOption> targetOptions;
+
+      private Builder() {
+        this(null, null, ImmutableList.of(), ImmutableList.of());
+      }
+
+      private Builder(
+          BlobId source,
+          BlobId target,
+          ImmutableList<BlobSourceOption> sourceOptions,
+          ImmutableList<BlobTargetOption> targetOptions) {
+        this.source = source;
+        this.target = target;
+        this.sourceOptions = sourceOptions;
+        this.targetOptions = targetOptions;
+      }
+
+      public Builder setSource(BlobId source) {
+        this.source = requireNonNull(source, "source must be non null");
+        return this;
+      }
+
+      public Builder setTarget(BlobId target) {
+        this.target = requireNonNull(target, "target must be non null");
+        return this;
+      }
+
+      public Builder setSourceOptions(Iterable<BlobSourceOption> sourceOptions) {
+        this.sourceOptions =
+            ImmutableList.copyOf(requireNonNull(sourceOptions, "sourceOptions must be non null"));
+        return this;
+      }
+
+      public Builder setTargetOptions(Iterable<BlobTargetOption> targetOptions) {
+        this.targetOptions =
+            ImmutableList.copyOf(requireNonNull(targetOptions, "targetOptions must be non null"));
+        return this;
+      }
+
+      public Builder setSourceOptions(BlobSourceOption... sourceOptions) {
+        this.sourceOptions =
+            ImmutableList.copyOf(requireNonNull(sourceOptions, "sourceOptions must be non null"));
+        return this;
+      }
+
+      public Builder setTargetOptions(BlobTargetOption... targetOptions) {
+        this.targetOptions =
+            ImmutableList.copyOf(requireNonNull(targetOptions, "targetOptions must be non null"));
+        return this;
+      }
+
+      public MoveBlobRequest build() {
+        return new MoveBlobRequest(
+            requireNonNull(source, "source must be non null"),
+            requireNonNull(target, "target must be non null"),
+            sourceOptions,
+            targetOptions);
+      }
+    }
+  }
+
+  /**
    * Creates a new bucket.
    *
    * <p>Accepts an optional userProject {@link BucketTargetOption} option which defines the project
@@ -4882,4 +5028,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   default BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
     return throwGrpcOnly(fmtMethodName("blobWriteSession", BlobInfo.class, BlobWriteOption.class));
   }
+
+  /**
+   * Atomically move an object from one name to another.
+   *
+   * <p>This new method is an atomic equivalent of the previous rewrite + delete, however without
+   * the ability to change metadata fields for the target object.
+   *
+   * @since 2.48.0
+   */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  Blob moveBlob(MoveBlobRequest request);
 }

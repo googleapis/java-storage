@@ -495,6 +495,11 @@ abstract class AbstractStorageProxy implements Storage {
   }
 
   @Override
+  public Blob moveBlob(MoveBlobRequest request) {
+    return delegate.moveBlob(request);
+  }
+
+  @Override
   public StorageOptions getOptions() {
     return delegate.getOptions();
   }

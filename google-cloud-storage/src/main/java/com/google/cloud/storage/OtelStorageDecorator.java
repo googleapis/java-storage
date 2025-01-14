@@ -1435,6 +1435,25 @@ final class OtelStorageDecorator implements Storage {
   }
 
   @Override
+  public Blob moveBlob(MoveBlobRequest request) {
+    Span span =
+        tracer
+            .spanBuilder("moveBlob")
+            .setAttribute("gsutil.uri.source", request.getSource().toGsUtilUriWithGeneration())
+            .setAttribute("gsutil.uri.target", request.getTarget().toGsUtilUriWithGeneration())
+            .startSpan();
+    try (Scope ignore = span.makeCurrent()) {
+      return delegate.moveBlob(request);
+    } catch (Throwable t) {
+      span.recordException(t);
+      span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      throw t;
+    } finally {
+      span.end();
+    }
+  }
+
+  @Override
   public StorageOptions getOptions() {
     return delegate.getOptions();
   }

@@ -48,6 +48,7 @@ import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
@@ -155,6 +156,10 @@ final class UnifiedOpts {
       return Mapper.identity();
     }
 
+    default Mapper<MoveObjectRequest.Builder> moveObject() {
+      return Mapper.identity();
+    }
+
     default Mapper<RestoreObjectRequest.Builder> restoreObject() {
       return Mapper.identity();
     }
@@ -190,6 +195,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<MoveObjectRequest.Builder> moveObject() {
       return Mapper.identity();
     }
 
@@ -293,6 +302,11 @@ final class UnifiedOpts {
 
     @Override
     default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    default Mapper<MoveObjectRequest.Builder> moveObject() {
       return Mapper.identity();
     }
   }
@@ -877,6 +891,11 @@ final class UnifiedOpts {
       return Mapper.identity();
     }
 
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return Mapper.identity();
+    }
+
     /**
      * Define a decoder which can clear out any fields which may have not been selected.
      *
@@ -1091,6 +1110,11 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
     public SourceGenerationMatch asSource() {
       return new SourceGenerationMatch(val);
     }
@@ -1151,6 +1175,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
       return b -> b.setIfGenerationNotMatch(val);
     }
 
@@ -1330,6 +1359,11 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
     public Mapper<UpdateBucketRequest.Builder> updateBucket() {
       return b -> b.setIfMetagenerationMatch(val);
     }
@@ -1414,6 +1448,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
       return b -> b.setIfMetagenerationNotMatch(val);
     }
 
@@ -1620,6 +1659,11 @@ final class UnifiedOpts {
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return b -> b.setIfSourceGenerationMatch(val);
     }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return b -> b.setIfSourceGenerationMatch(val);
+    }
   }
 
   /**
@@ -1636,6 +1680,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
       return b -> b.setIfSourceGenerationNotMatch(val);
     }
   }
@@ -1656,6 +1705,11 @@ final class UnifiedOpts {
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return b -> b.setIfSourceMetagenerationMatch(val);
     }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return b -> b.setIfSourceMetagenerationMatch(val);
+    }
   }
 
   /**
@@ -1672,6 +1726,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
       return b -> b.setIfSourceMetagenerationNotMatch(val);
     }
   }
@@ -1852,6 +1911,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
       return Mapper.identity();
     }
   }
@@ -2440,6 +2504,27 @@ final class UnifiedOpts {
                 } else if (o instanceof ObjectSourceOpt) {
                   ObjectSourceOpt oso = (ObjectSourceOpt) o;
                   return oso.rewriteObject();
+                } else {
+                  // in practice this shouldn't happen because of the filter guard upstream
+                  throw new IllegalStateException("Unexpected type: %s" + o.getClass());
+                }
+              })
+          .reduce(Mapper.identity(), Mapper::andThen);
+    }
+
+    Mapper<MoveObjectRequest.Builder> moveObjectsRequest() {
+      return opts.stream()
+          .filter(isInstanceOf(ObjectTargetOpt.class).or(isInstanceOf(ObjectSourceOpt.class)))
+          .map(
+              o -> {
+                // TODO: Do we need to formalize this type of dual relationship with it's own
+                // interface?
+                if (o instanceof ObjectTargetOpt) {
+                  ObjectTargetOpt oto = (ObjectTargetOpt) o;
+                  return oto.moveObject();
+                } else if (o instanceof ObjectSourceOpt) {
+                  ObjectSourceOpt oso = (ObjectSourceOpt) o;
+                  return oso.moveObject();
                 } else {
                   // in practice this shouldn't happen because of the filter guard upstream
                   throw new IllegalStateException("Unexpected type: %s" + o.getClass());

@@ -1697,6 +1697,27 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   }
 
   @Override
+  public Blob moveBlob(MoveBlobRequest request) {
+    Opts<ObjectSourceOpt> srcOpts =
+        Opts.unwrap(request.getSourceOptions()).resolveFrom(request.getSource()).projectAsSource();
+    Opts<ObjectTargetOpt> dstOpts =
+        Opts.unwrap(request.getTargetOptions()).resolveFrom(request.getTarget());
+    ImmutableMap<StorageRpc.Option, ?> sourceOptions = srcOpts.getRpcOptions();
+    ImmutableMap<StorageRpc.Option, ?> targetOptions = dstOpts.getRpcOptions();
+
+    return run(
+        retryAlgorithmManager.getForObjectsMove(sourceOptions, targetOptions),
+        () ->
+            storageRpc.moveObject(
+                request.getSource().getBucket(),
+                request.getSource().getName(),
+                request.getTarget().getName(),
+                sourceOptions,
+                targetOptions),
+        o -> codecs.blobInfo().decode(o).asBlob(this));
+  }
+
+  @Override
   public BlobInfo internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
       throws IOException {
     if (Files.isDirectory(path)) {

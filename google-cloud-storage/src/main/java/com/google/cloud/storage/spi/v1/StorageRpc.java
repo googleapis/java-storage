@@ -393,6 +393,13 @@ public interface StorageRpc extends ServiceRpc {
       int length,
       boolean last);
 
+  StorageObject moveObject(
+      String bucket,
+      String sourceObject,
+      String destinationObject,
+      Map<Option, ?> sourceOptions,
+      Map<Option, ?> targetOptions);
+
   /**
    * Sends a rewrite request to open a rewrite channel.
    *

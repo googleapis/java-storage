@@ -90,6 +90,7 @@ import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
@@ -1416,6 +1417,31 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
         writerFactory.writeSession(this, info, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
+  }
+
+  @Override
+  public Blob moveBlob(MoveBlobRequest request) {
+    Object srcObj = codecs.blobId().encode(request.getSource());
+    Object dstObj = codecs.blobId().encode(request.getTarget());
+    Opts<ObjectSourceOpt> srcOpts =
+        Opts.unwrap(request.getSourceOptions()).resolveFrom(request.getSource()).projectAsSource();
+    Opts<ObjectTargetOpt> dstOpts =
+        Opts.unwrap(request.getTargetOptions()).resolveFrom(request.getTarget());
+    MoveObjectRequest.Builder b =
+        MoveObjectRequest.newBuilder()
+            .setBucket(srcObj.getBucket())
+            .setSourceObject(srcObj.getName())
+            .setDestinationObject(dstObj.getName());
+
+    srcOpts.moveObjectsRequest().apply(b);
+    dstOpts.moveObjectsRequest().apply(b);
+
+    MoveObjectRequest req = b.build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.moveObjectCallable().call(req),
+        syntaxDecoders.blob);
   }
 
   @Override
