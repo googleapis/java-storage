@@ -88,7 +88,8 @@ public final class ITObjectReadSessionTest {
       assertThat(info1).isNotNull();
 
       ApiFuture<byte[]> futureRead1Bytes =
-          blobReadSession.readRangeAsBytes(RangeSpec.of(_512KiB - 13L, 13L));
+          blobReadSession.readRange(
+              RangeSpec.of(_512KiB - 13L, 13L), RangeProjectionConfigs.asFutureBytes());
 
       byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
       assertThat(read1Bytes.length).isEqualTo(13);
@@ -118,7 +119,7 @@ public final class ITObjectReadSessionTest {
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, (long) _2MiB))
-                .map(blobReadSession::readRangeAsBytes)
+                .map(r -> blobReadSession.readRange(r, RangeProjectionConfigs.asFutureBytes()))
                 .collect(Collectors.toList());
 
         ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
@@ -166,7 +167,8 @@ public final class ITObjectReadSessionTest {
           storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ScatteringByteChannel r = blobReadSession.readRangeAsChannel(RangeSpec.all())) {
+        try (ScatteringByteChannel r =
+            blobReadSession.readRange(RangeSpec.all(), RangeProjectionConfigs.asChannel())) {
           ByteBuffer buf = ByteBuffer.wrap(buffer);
           Buffers.copyUsingBuffer(buf, r, Channels.newChannel(baos));
         }
@@ -208,7 +210,7 @@ public final class ITObjectReadSessionTest {
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
-                .map(orsi::readRangeAsByteString)
+                .map(r -> orsi.readRange(r, RangeProjectionConfigs.asFutureByteString()))
                 .collect(Collectors.toList());
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);

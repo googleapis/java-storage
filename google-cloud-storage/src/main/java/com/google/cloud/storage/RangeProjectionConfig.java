@@ -16,11 +16,11 @@
 
 package com.google.cloud.storage;
 
-import com.google.storage.v2.Object;
+import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
 
-public interface ObjectReadSession extends IOAutoCloseable {
+public abstract class RangeProjectionConfig<Projection> {
 
-  Object getResource();
+  RangeProjectionConfig() {}
 
-  <Projection> Projection readRange(RangeSpec range, RangeProjectionConfig<Projection> config);
+  abstract BaseConfig<Projection, ?> cast();
 }

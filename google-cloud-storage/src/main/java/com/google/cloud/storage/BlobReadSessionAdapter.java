@@ -21,7 +21,6 @@ import com.google.api.core.ApiFutures;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
-import java.nio.channels.ScatteringByteChannel;
 
 final class BlobReadSessionAdapter implements BlobReadSession {
 
@@ -36,14 +35,18 @@ final class BlobReadSessionAdapter implements BlobReadSession {
     return Conversions.grpc().blobInfo().decode(session.getResource());
   }
 
+  // ApiFutures type is erased, but that's okay. We're only decorating the errors. not changing
+  // the return type.
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
-  public ApiFuture<byte[]> readRangeAsBytes(RangeSpec range) {
-    return StorageException.coalesceAsync(session.readRangeAsBytes(range));
-  }
-
-  @Override
-  public ScatteringByteChannel readRangeAsChannel(RangeSpec range) {
-    return session.readRangeAsChannel(range);
+  public <Projection> Projection readRange(
+      RangeSpec range, RangeProjectionConfig<Projection> config) {
+    Projection projection = session.readRange(range, config);
+    if (projection instanceof ApiFuture) {
+      ApiFuture apiFuture = (ApiFuture) projection;
+      return (Projection) StorageException.coalesceAsync(apiFuture);
+    }
+    return projection;
   }
 
   @Override

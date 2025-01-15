@@ -22,17 +22,13 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
-import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.Object;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -83,46 +79,16 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   }
 
   @Override
-  public ApiFuture<byte[]> readRangeAsBytes(RangeSpec range) {
+  public <Projection> Projection readRange(
+      RangeSpec range, RangeProjectionConfig<Projection> config) {
     lock.lock();
     try {
       checkState(open, "stream already closed");
       long readId = state.newReadId();
-      AccumulatingRead<byte[]> read =
-          ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-              readId, range, retryContextProvider.create());
+      ObjectReadSessionStreamRead<Projection, ?> read =
+          config.cast().newRead(readId, range, retryContextProvider.create());
       registerReadInState(readId, read);
-      return read;
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @Override
-  public ScatteringByteChannel readRangeAsChannel(RangeSpec range) {
-    lock.lock();
-    try {
-      checkState(open, "stream already closed");
-      long readId = state.newReadId();
-      StreamingRead read =
-          ObjectReadSessionStreamRead.streamingRead(readId, range, retryContextProvider.create());
-      registerReadInState(readId, read);
-      return read;
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  public ApiFuture<DisposableByteString> readRangeAsByteString(RangeSpec range) {
-    lock.lock();
-    try {
-      checkState(open, "stream already closed");
-      long readId = state.newReadId();
-      AccumulatingRead<DisposableByteString> read =
-          ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-              readId, range, retryContextProvider.create());
-      registerReadInState(readId, read);
-      return read;
+      return read.project();
     } finally {
       lock.unlock();
     }

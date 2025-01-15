@@ -323,7 +323,8 @@ public final class ObjectReadSessionStreamTest {
     }
   }
 
-  static class TestObjectReadSessionStreamRead extends ObjectReadSessionStreamRead {
+  static class TestObjectReadSessionStreamRead
+      extends ObjectReadSessionStreamRead<java.lang.Object, TestObjectReadSessionStreamRead> {
 
     private static final AtomicLong readIdSeq = new AtomicLong(1);
     private boolean readyToSend = false;
@@ -337,6 +338,11 @@ public final class ObjectReadSessionStreamTest {
           retryContext,
           IOAutoCloseable.noOp(),
           false);
+    }
+
+    @Override
+    java.lang.Object project() {
+      return this;
     }
 
     @Override
@@ -357,7 +363,7 @@ public final class ObjectReadSessionStreamTest {
     }
 
     @Override
-    ObjectReadSessionStreamRead withNewReadId(long newReadId) {
+    TestObjectReadSessionStreamRead withNewReadId(long newReadId) {
       return null;
     }
 

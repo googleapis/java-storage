@@ -21,10 +21,12 @@ import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamRead.ZeroCopyByteStringAccumulatingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamTest.TestObjectReadSessionStreamRead;
+import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadRange;
@@ -523,6 +525,32 @@ public final class ObjectReadSessionStreamReadTest {
     byteArrayAccumulatingRead.cancel(true);
 
     assertThat(closed.get()).isTrue();
+  }
+
+  @Test
+  public void projections() throws Exception {
+    assertAll(
+        () -> {
+          AccumulatingRead<byte[]> read =
+              ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
+                  1, RangeSpec.all(), RetryContext.neverRetry());
+          ApiFuture<byte[]> projected = read.project();
+          assertThat(projected).isSameInstanceAs(read);
+        },
+        () -> {
+          StreamingRead read =
+              ObjectReadSessionStreamRead.streamingRead(
+                  1, RangeSpec.all(), RetryContext.neverRetry());
+          UnbufferedReadableByteChannel projected = read.project();
+          assertThat(projected).isSameInstanceAs(read);
+        },
+        () -> {
+          AccumulatingRead<ZeroCopySupport.DisposableByteString> read =
+              ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
+                  1, RangeSpec.all(), RetryContext.neverRetry());
+          ApiFuture<ZeroCopySupport.DisposableByteString> projected = read.project();
+          assertThat(projected).isSameInstanceAs(read);
+        });
   }
 
   private static ResponseContentLifecycleHandle<ByteString> noopContentHandle(

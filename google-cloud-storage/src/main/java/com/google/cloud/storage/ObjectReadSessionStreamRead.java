@@ -33,6 +33,7 @@ import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
+abstract class ObjectReadSessionStreamRead<
+        Projection, Self extends ObjectReadSessionStreamRead<Projection, Self>>
+    implements IOAutoCloseable {
 
   protected final long readId;
   protected final RangeSpec rangeSpec;
@@ -81,6 +84,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
     this.onCloseCallback = onCloseCallback;
   }
 
+  abstract Projection project();
+
   long readOffset() {
     return readOffset.get();
   }
@@ -97,7 +102,7 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
 
   abstract ApiFuture<?> fail(Throwable t);
 
-  abstract ObjectReadSessionStreamRead withNewReadId(long newReadId);
+  abstract Self withNewReadId(long newReadId);
 
   final ReadRange makeReadRange() {
     long currentOffset = readOffset.get();
@@ -120,10 +125,11 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
     return !tombstoned && !retryContext.inBackoff();
   }
 
-  boolean canShareStreamWith(ObjectReadSessionStreamRead other) {
+  boolean canShareStreamWith(ObjectReadSessionStreamRead<?, ?> other) {
     return canShareStreamWith(other.getClass());
   }
 
+  @SuppressWarnings("rawtypes")
   protected boolean canShareStreamWith(Class<? extends ObjectReadSessionStreamRead> clazz) {
     return clazz == this.getClass();
   }
@@ -159,7 +165,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
   }
 
   /** Base class of a read that will accumulate before completing by resolving a future */
-  abstract static class AccumulatingRead<Result> extends ObjectReadSessionStreamRead
+  abstract static class AccumulatingRead<Result>
+      extends ObjectReadSessionStreamRead<ApiFuture<Result>, AccumulatingRead<Result>>
       implements ApiFuture<Result> {
     protected final List<ChildRef> childRefs;
     protected final SettableApiFuture<Result> complete;
@@ -257,6 +264,7 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
       return complete.isDone();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     protected boolean canShareStreamWith(Class<? extends ObjectReadSessionStreamRead> clazz) {
       return AccumulatingRead.class.isAssignableFrom(clazz);
@@ -267,7 +275,8 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
    * Base class of a read that will be processed in a streaming manner (e.g. {@link
    * ReadableByteChannel})
    */
-  static class StreamingRead extends ObjectReadSessionStreamRead
+  static class StreamingRead
+      extends ObjectReadSessionStreamRead<ScatteringByteChannel, StreamingRead>
       implements UnbufferedReadableByteChannel {
     private final SettableApiFuture<Void> failFuture;
     private final BlockingQueue<Closeable> queue;
@@ -360,7 +369,7 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
     }
 
     @Override
-    boolean canShareStreamWith(ObjectReadSessionStreamRead other) {
+    boolean canShareStreamWith(ObjectReadSessionStreamRead<?, ?> other) {
       return false;
     }
 
@@ -379,6 +388,21 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
     @Override
     public boolean isOpen() {
       return !closed;
+    }
+
+    @Override
+    UnbufferedReadableByteChannel project() {
+      return this;
+    }
+
+    @Override
+    public int read(ByteBuffer dst) throws IOException {
+      return Math.toIntExact(read(new ByteBuffer[] {dst}, 0, 1));
+    }
+
+    @Override
+    public long read(ByteBuffer[] dsts) throws IOException {
+      return read(dsts, 0, dsts.length);
     }
 
     @Override
@@ -533,6 +557,11 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
     }
 
     @Override
+    ApiFuture<byte[]> project() {
+      return this;
+    }
+
+    @Override
     void eof() throws IOException {
       retryContext.reset();
       try {
@@ -594,6 +623,11 @@ abstract class ObjectReadSessionStreamRead implements IOAutoCloseable {
           complete,
           onCloseCallback);
       this.byteString = byteString;
+    }
+
+    @Override
+    ApiFuture<DisposableByteString> project() {
+      return this;
     }
 
     @Override

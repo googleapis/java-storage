@@ -16,25 +16,19 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.core.ApiFuture;
+import com.google.api.core.BetaApi;
 import java.io.IOException;
-import java.nio.channels.ScatteringByteChannel;
 
+@BetaApi
 public interface BlobReadSession extends IOAutoCloseable {
 
+  @BetaApi
   BlobInfo getBlobInfo();
 
-  ApiFuture<byte[]> readRangeAsBytes(RangeSpec range);
-
-  /**
-   * Read the provided range as a non-blocking Channel.
-   *
-   * <p>The returned channel will be non-blocking for all read calls. If bytes have not yet
-   * asynchronously been delivered from gcs the method will return rather than waiting for the bytes
-   * to arrive.
-   */
-  ScatteringByteChannel readRangeAsChannel(RangeSpec range);
+  @BetaApi
+  <Projection> Projection readRange(RangeSpec range, RangeProjectionConfig<Projection> config);
 
   @Override
+  @BetaApi
   void close() throws IOException;
 }

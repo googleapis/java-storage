@@ -855,13 +855,14 @@ public final class GrpcStorageOptions extends StorageOptions
                         stub.bidiReadObjectCallable(), stub.bidiReadObjectResponseMarshaller),
                     retryContextProvider,
                     IOAutoCloseable.noOp());
-            GrpcStorageImpl grpcStorage = new GrpcStorageImpl(
-                grpcStorageOptions,
-                client,
-                dataClient,
-                stub.readObjectResponseMarshaller,
-                grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
-                defaultOpts);
+            GrpcStorageImpl grpcStorage =
+                new GrpcStorageImpl(
+                    grpcStorageOptions,
+                    client,
+                    dataClient,
+                    stub.readObjectResponseMarshaller,
+                    grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                    defaultOpts);
             return OtelStorageDecorator.decorate(
                 grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
           } else {
