@@ -95,7 +95,8 @@ final class StorageDataClient implements IOAutoCloseable {
                 new FastOpenObjectReadSession<>(
                     new ObjectReadSessionImpl(
                         executor, bidiReadObject, stream, state, retryContextProvider),
-                    read),
+                    read,
+                    stream),
             executor);
     OpenArguments openArguments = state.getOpenArguments();
     BidiReadObjectRequest req = openArguments.getReq();
@@ -120,17 +121,32 @@ final class StorageDataClient implements IOAutoCloseable {
     return new StorageDataClient(executor, read, retryContextProvider, onClose);
   }
 
+  @FunctionalInterface
+  interface Borrowable {
+    void borrow();
+  }
+
   static final class FastOpenObjectReadSession<Projection> implements IOAutoCloseable {
     private final ObjectReadSession session;
     private final ObjectReadSessionStreamRead<Projection, ?> read;
+    private final Borrowable borrowable;
+    private boolean sessionLeased;
 
     private FastOpenObjectReadSession(
-        ObjectReadSession session, ObjectReadSessionStreamRead<Projection, ?> read) {
+        ObjectReadSession session,
+        ObjectReadSessionStreamRead<Projection, ?> read,
+        Borrowable borrowable) {
       this.session = session;
       this.read = read;
+      this.borrowable = borrowable;
+      this.sessionLeased = false;
     }
 
     ObjectReadSession getSession() {
+      if (!sessionLeased) {
+        sessionLeased = true;
+        borrowable.borrow();
+      }
       return session;
     }
 
@@ -152,8 +168,10 @@ final class StorageDataClient implements IOAutoCloseable {
     }
 
     public static <Projection> FastOpenObjectReadSession<Projection> of(
-        ObjectReadSession session, ObjectReadSessionStreamRead<Projection, ?> read) {
-      return new FastOpenObjectReadSession<>(session, read);
+        ObjectReadSession session,
+        ObjectReadSessionStreamRead<Projection, ?> read,
+        Borrowable borrowable) {
+      return new FastOpenObjectReadSession<>(session, read, borrowable);
     }
   }
 }

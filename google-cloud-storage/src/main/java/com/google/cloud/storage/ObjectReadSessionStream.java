@@ -31,6 +31,7 @@ import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnSuccess;
+import com.google.cloud.storage.StorageDataClient.Borrowable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
@@ -58,7 +59,7 @@ import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class ObjectReadSessionStream
-    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, IOAutoCloseable {
+    implements ClientStream<BidiReadObjectRequest>, ApiFuture<Void>, IOAutoCloseable, Borrowable {
 
   private final SettableApiFuture<Void> objectReadSessionResolveFuture;
 
@@ -69,7 +70,7 @@ final class ObjectReadSessionStream
   private final RetryContext streamRetryContext;
   private final int maxRedirectsAllowed;
 
-  private volatile boolean open;
+  private final AtomicInteger openLeases;
   private volatile MonitoringResponseObserver monitoringResponseObserver;
   private volatile ResponseObserver<BidiReadObjectResponse> responseObserver;
   private volatile ClientStream<BidiReadObjectRequest> requestStream;
@@ -88,7 +89,7 @@ final class ObjectReadSessionStream
     this.streamRetryContext = backoff;
     this.objectReadSessionResolveFuture = SettableApiFuture.create();
     this.maxRedirectsAllowed = maxRedirectsAllowed;
-    this.open = true;
+    this.openLeases = new AtomicInteger(1);
     this.redirectCounter = new AtomicInteger();
   }
 
@@ -118,14 +119,17 @@ final class ObjectReadSessionStream
   }
 
   public ApiFuture<Void> closeAsync() {
-    if (!open) {
+    if (!isOpen()) {
       return ApiFutures.immediateFuture(null);
     }
-    open = false;
-    cleanUp();
-    AsynchronousCloseException cause = new AsynchronousCloseException();
-    ApiFuture<?> f = failAll(() -> new StorageException(0, "Parent stream shutdown", cause));
-    return ApiFutures.transformAsync(f, ignore -> ApiFutures.immediateFuture(null), executor);
+    int updatedLeaseCount = openLeases.decrementAndGet();
+    if (updatedLeaseCount == 0) {
+      AsynchronousCloseException cause = new AsynchronousCloseException();
+      ApiFuture<?> f = failAll(() -> new StorageException(0, "Parent stream shutdown", cause));
+      return ApiFutures.transformAsync(f, ignore -> ApiFutures.immediateFuture(null), executor);
+    } else {
+      return ApiFutures.immediateFuture(null);
+    }
   }
 
   private void cleanUp() {
@@ -200,11 +204,16 @@ final class ObjectReadSessionStream
   }
 
   boolean isOpen() {
-    return open;
+    return openLeases.get() > 0;
+  }
+
+  public void borrow() {
+    checkOpen();
+    openLeases.incrementAndGet();
   }
 
   private void checkOpen() {
-    Preconditions.checkState(open, "Stream closed");
+    Preconditions.checkState(isOpen(), "Stream closed");
   }
 
   @VisibleForTesting
@@ -221,7 +230,7 @@ final class ObjectReadSessionStream
   }
 
   private void failAll(Throwable terminalFailure) {
-    open = false;
+    openLeases.set(0);
     try {
       objectReadSessionResolveFuture.setException(terminalFailure);
       state.failAll(executor, () -> terminalFailure);
@@ -231,7 +240,7 @@ final class ObjectReadSessionStream
   }
 
   private ApiFuture<?> failAll(Supplier<Throwable> terminalFailure) {
-    open = false;
+    openLeases.set(0);
     try {
       objectReadSessionResolveFuture.setException(terminalFailure.get());
       return state.failAll(executor, terminalFailure);

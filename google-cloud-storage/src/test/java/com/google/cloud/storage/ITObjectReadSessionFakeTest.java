@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiException;
@@ -37,6 +38,8 @@ import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.StorageDataClient.FastOpenObjectReadSession;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.cloud.storage.it.GrpcRequestAuditing;
@@ -49,6 +52,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.TextFormat;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
@@ -986,6 +990,9 @@ public final class ITObjectReadSessionFakeTest {
         ApiFuture<byte[]> f3 =
             bd.readRange(RangeSpec.of(3, 3), RangeProjectionConfigs.asFutureBytes());
 
+        // make sure the first read succeeded
+        byte[] actual = TestUtils.await(f1, 5, TimeUnit.SECONDS);
+
         // close the "parent"
         bd.close();
 
@@ -1005,8 +1012,6 @@ public final class ITObjectReadSessionFakeTest {
               assertThat(readRanges).isEqualTo(expected);
             },
             () -> {
-              // make sure the first read succeeded
-              byte[] actual = TestUtils.await(f1, 5, TimeUnit.SECONDS);
               assertThat(ByteString.copyFrom(actual)).isEqualTo(ByteString.copyFromUtf8("A"));
             },
             // make sure the other two pending reads fail
@@ -1296,6 +1301,134 @@ public final class ITObjectReadSessionFakeTest {
                 assertWithMessage("Future bytes missmatch")
                     .that(xxd(finalBytes))
                     .isEqualTo(xxd(content.getBytes())),
+            () -> {
+              if (finalCaught != null) {
+                throw new Exception("exception during test", finalCaught);
+              }
+            });
+      }
+    }
+  }
+
+  @Test
+  public void gettingSessionFromFastOpenKeepsTheSessionOpenUntilClosed() throws Exception {
+    ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 30);
+
+    ChecksummedTestContent content1 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
+    ChecksummedTestContent content2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 20, 10);
+    ChecksummedTestContent content3 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 30, 10);
+    BidiReadObjectRequest req1 =
+        BidiReadObjectRequest.newBuilder()
+            .setReadObjectSpec(
+                BidiReadObjectSpec.newBuilder()
+                    .setBucket(METADATA.getBucket())
+                    .setObject(METADATA.getName())
+                    .build())
+            .addReadRanges(getReadRange(1, 10, 10))
+            .build();
+    BidiReadObjectResponse res1 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(METADATA)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(getReadRange(1, 10, content1))
+                    .setChecksummedData(content1.asChecksummedData())
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    BidiReadObjectRequest req2 = read(2, 20, 10);
+    BidiReadObjectResponse res2 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(getReadRange(2, 20, content2))
+                    .setChecksummedData(content2.asChecksummedData())
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+    BidiReadObjectRequest req3 = read(3, 30, 10);
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setReadRange(getReadRange(3, 30, content3))
+                    .setChecksummedData(content3.asChecksummedData())
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    System.out.println("req1 = " + TextFormat.printer().shortDebugString(req1));
+    System.out.println("req2 = " + TextFormat.printer().shortDebugString(req2));
+    System.out.println("req3 = " + TextFormat.printer().shortDebugString(req3));
+    ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
+        ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
+            .put(req1, res1)
+            .put(req2, res2)
+            .put(req3, res3)
+            .buildOrThrow();
+
+    FakeStorage fakeStorage = FakeStorage.from(db);
+
+    try (FakeServer fakeServer = FakeServer.of(fakeStorage);
+        GrpcStorageImpl storage =
+            (GrpcStorageImpl)
+                fakeServer
+                    .getGrpcStorageOptions()
+                    .toBuilder()
+                    .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                    .build()
+                    .getService()) {
+      StorageDataClient dataClient = storage.storageDataClient;
+
+      BidiReadObjectRequest req =
+          BidiReadObjectRequest.newBuilder()
+              .setReadObjectSpec(
+                  BidiReadObjectSpec.newBuilder()
+                      .setBucket(METADATA.getBucket())
+                      .setObject(METADATA.getName())
+                      .build())
+              .build();
+
+      ApiFuture<FastOpenObjectReadSession<ApiFuture<DisposableByteString>>> future =
+          dataClient.fastOpenReadSession(
+              req,
+              GrpcCallContext.createDefault(),
+              RangeSpec.of(10, 10),
+              RangeProjectionConfigs.asFutureByteString());
+
+      ByteString bytes = ByteString.empty();
+      Exception caught = null;
+
+      try (FastOpenObjectReadSession<ApiFuture<DisposableByteString>> fastOpenChannel =
+              future.get(5, TimeUnit.SECONDS);
+          ObjectReadSession session = fastOpenChannel.getSession()) {
+        ApiFuture<DisposableByteString> futureBytes1 = fastOpenChannel.getProjection();
+        try (DisposableByteString disposableByteString = futureBytes1.get()) {
+          bytes = bytes.concat(disposableByteString.byteString());
+        }
+
+        ApiFuture<DisposableByteString> futureBytes2 =
+            session.readRange(RangeSpec.of(20, 10), RangeProjectionConfigs.asFutureByteString());
+        try (DisposableByteString disposableByteString = futureBytes2.get()) {
+          bytes = bytes.concat(disposableByteString.byteString());
+        }
+
+        ApiFuture<DisposableByteString> futureBytes3 =
+            session.readRange(RangeSpec.of(30, 10), RangeProjectionConfigs.asFutureByteString());
+        try (DisposableByteString disposableByteString = futureBytes3.get()) {
+          bytes = bytes.concat(disposableByteString.byteString());
+        }
+
+      } catch (Exception e) {
+        // stash off any runtime failure so we can still do our assertions to help determine
+        // the true failure
+        caught = e;
+      } finally {
+        final ByteString finalBytes = bytes;
+        final Exception finalCaught = caught;
+        assertAll(
+            () -> assertThat(xxd(finalBytes)).isEqualTo(xxd(expected.getBytes())),
             () -> {
               if (finalCaught != null) {
                 throw new Exception("exception during test", finalCaught);
