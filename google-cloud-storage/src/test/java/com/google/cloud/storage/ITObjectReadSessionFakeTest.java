@@ -1332,30 +1332,29 @@ public final class ITObjectReadSessionFakeTest {
     }
   }
 
-  private static BidiReadObjectRequest read(int readId, int readOffset, int readLimit) {
+  static BidiReadObjectRequest read(int readId, int readOffset, int readLength) {
     return BidiReadObjectRequest.newBuilder()
-        .addReadRanges(getReadRange(readId, readOffset, readLimit))
+        .addReadRanges(getReadRange(readId, readOffset, readLength))
         .build();
   }
 
-  private static ReadRange getReadRange(
-      int readId, int readOffset, ChecksummedTestContent content) {
+  static ReadRange getReadRange(int readId, int readOffset, ChecksummedTestContent content) {
     return getReadRange(readId, readOffset, content.asChecksummedData().getContent().size());
   }
 
-  private static ReadRange getReadRange(int readId, int readOffset, int readLimit) {
+  static ReadRange getReadRange(int readId, int readOffset, int readLength) {
     return ReadRange.newBuilder()
         .setReadId(readId)
         .setReadOffset(readOffset)
-        .setReadLength(readLimit)
+        .setReadLength(readLength)
         .build();
   }
 
-  private static ThrowingRunnable assert503(ApiFuture<?> f) {
+  static ThrowingRunnable assert503(ApiFuture<?> f) {
     return assertStatusCodeIs(f, 503);
   }
 
-  private static ThrowingRunnable assertStatusCodeIs(ApiFuture<?> f, int expected) {
+  static ThrowingRunnable assertStatusCodeIs(ApiFuture<?> f, int expected) {
     return () -> {
       StorageException se =
           assertThrows(StorageException.class, () -> TestUtils.await(f, 5, TimeUnit.SECONDS));
@@ -1363,7 +1362,7 @@ public final class ITObjectReadSessionFakeTest {
     };
   }
 
-  private static String fmt(ReadRange r) {
+  static String fmt(ReadRange r) {
     return String.format(
         "ReadRange{id: %d, offset: %d, length: %d}",
         r.getReadId(), r.getReadOffset(), r.getReadLength());
@@ -1384,7 +1383,7 @@ public final class ITObjectReadSessionFakeTest {
     return orsi;
   }
 
-  private static final class FakeStorage extends StorageImplBase {
+  static final class FakeStorage extends StorageImplBase {
 
     private final Map<BidiReadObjectRequest, Consumer<StreamObserver<BidiReadObjectResponse>>> db;
 
@@ -1408,17 +1407,17 @@ public final class ITObjectReadSessionFakeTest {
       };
     }
 
-    private static FakeStorage of(
+    static FakeStorage of(
         Map<BidiReadObjectRequest, Consumer<StreamObserver<BidiReadObjectResponse>>> db) {
       return new FakeStorage(db);
     }
 
-    private static FakeStorage from(Map<BidiReadObjectRequest, BidiReadObjectResponse> db) {
+    static FakeStorage from(Map<BidiReadObjectRequest, BidiReadObjectResponse> db) {
       return new FakeStorage(Maps.transformValues(db, resp -> (respond) -> respond.onNext(resp)));
     }
   }
 
-  private abstract static class AbstractObserver implements StreamObserver<BidiReadObjectRequest> {
+  abstract static class AbstractObserver implements StreamObserver<BidiReadObjectRequest> {
 
     protected final StreamObserver<BidiReadObjectResponse> respond;
 

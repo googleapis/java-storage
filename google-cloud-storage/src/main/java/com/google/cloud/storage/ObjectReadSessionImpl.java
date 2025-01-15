@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
@@ -56,7 +55,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   @GuardedBy("this.lock")
   private volatile boolean open;
 
-  private ObjectReadSessionImpl(
+  ObjectReadSessionImpl(
       ScheduledExecutorService executor,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
       ObjectReadSessionStream stream,
@@ -120,7 +119,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     }
   }
 
-  private void registerReadInState(long readId, ObjectReadSessionStreamRead read) {
+  private void registerReadInState(long readId, ObjectReadSessionStreamRead<?, ?> read) {
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     if (state.canHandleNewRead(read)) {
@@ -139,26 +138,5 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
       child.putOutstandingRead(readId, read);
       newStream.send(request);
     }
-  }
-
-  static ApiFuture<ObjectReadSession> create(
-      BidiReadObjectRequest openRequest,
-      GrpcCallContext context,
-      ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable,
-      ScheduledExecutorService executor,
-      RetryContextProvider retryContextProvider) {
-    ObjectReadSessionState state = new ObjectReadSessionState(context, openRequest);
-
-    ObjectReadSessionStream stream =
-        ObjectReadSessionStream.create(executor, callable, state, retryContextProvider.create());
-
-    ApiFuture<ObjectReadSession> objectReadSessionFuture =
-        ApiFutures.transform(
-            stream,
-            nowOpen ->
-                new ObjectReadSessionImpl(executor, callable, stream, state, retryContextProvider),
-            executor);
-    stream.send(openRequest);
-    return objectReadSessionFuture;
   }
 }
