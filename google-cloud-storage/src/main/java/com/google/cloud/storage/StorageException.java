@@ -182,7 +182,7 @@ public final class StorageException extends BaseHttpServiceException {
               msg ->
                   sb.append("\t\t")
                       .append(msg.getClass().getSimpleName())
-                      .append(": {")
+                      .append(": { ")
                       .append(TextFormat.printer().shortDebugString(msg))
                       .append(" }\n"));
       sb.append("\t}");
