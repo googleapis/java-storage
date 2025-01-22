@@ -53,7 +53,7 @@ final class TestRunScopedInstance<T extends ManagedLifecycle> implements Supplie
         if (instance == null) {
           // if we don't short-circuit for OTEL_SDK we will cause a stack overflow, because we would
           // be trying to get our instance to record that we're starting our instance.
-          if (name.equals("OTEL_SDK")) {
+          if (name.equals("fixture/OTEL_SDK")) {
             T tmp = ctor.get();
             tmp.start();
             instance = tmp;

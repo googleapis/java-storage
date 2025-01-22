@@ -87,7 +87,7 @@ final class BackendResources implements ManagedLifecycle {
     ProtectedBucketNames protectedBucketNames = new ProtectedBucketNames();
     TestRunScopedInstance<StorageInstance> storageJson =
         TestRunScopedInstance.of(
-            "STORAGE_JSON_" + backend.name(),
+            "fixture/STORAGE/[JSON][" + backend.name() + "]",
             () -> {
               HttpStorageOptions.Builder optionsBuilder;
               switch (backend) {
@@ -108,7 +108,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<StorageInstance> storageGrpc =
         TestRunScopedInstance.of(
-            "STORAGE_GRPC_" + backend.name(),
+            "fixture/STORAGE/[GRPC][" + backend.name() + "]",
             () -> {
               GrpcStorageOptions.Builder optionsBuilder;
               switch (backend) {
@@ -137,7 +137,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<StorageControlInstance> ctrl =
         TestRunScopedInstance.of(
-            "STORAGE_CONTROL_" + backend.name(),
+            "fixture/STORAGE_CONTROL/[" + backend.name() + "]",
             () -> {
               StorageControlSettings.Builder builder;
               switch (backend) {
@@ -176,7 +176,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<BucketInfoShim> bucket =
         TestRunScopedInstance.of(
-            "BUCKET_" + backend.name(),
+            "fixture/BUCKET/[" + backend.name() + "]",
             () -> {
               String bucketName = String.format("java-storage-grpc-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
@@ -185,7 +185,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<BucketInfoShim> bucketRp =
         TestRunScopedInstance.of(
-            "BUCKET_REQUESTER_PAYS_" + backend.name(),
+            "fixture/BUCKET/[" + backend.name() + "]/REQUESTER_PAYS",
             () -> {
               String bucketName = String.format("java-storage-grpc-rp-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
@@ -196,7 +196,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<BucketInfoShim> bucketVersioned =
         TestRunScopedInstance.of(
-            "BUCKET_VERSIONED_" + backend.name(),
+            "fixture/BUCKET/[" + backend.name() + "]/VERSIONED",
             () -> {
               String bucketName = String.format("java-storage-grpc-v-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
@@ -207,7 +207,7 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<BucketInfoShim> bucketHns =
         TestRunScopedInstance.of(
-            "BUCKET_HNS_" + backend.name(),
+            "fixture/BUCKET/[" + backend.name() + "]/HNS",
             () -> {
               String bucketName = String.format("java-storage-grpc-hns-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
@@ -225,22 +225,23 @@ final class BackendResources implements ManagedLifecycle {
             });
     TestRunScopedInstance<ObjectsFixture> objectsFixture =
         TestRunScopedInstance.of(
-            "OBJECTS_FIXTURE_" + backend.name(),
+            "fixture/OBJECTS/[" + backend.name() + "]",
             () -> new ObjectsFixture(storageJson.get().getStorage(), bucket.get().getBucketInfo()));
     TestRunScopedInstance<ObjectsFixture> objectsFixtureRp =
         TestRunScopedInstance.of(
-            "OBJECTS_FIXTURE_REQUESTER_PAYS_" + backend.name(),
+            "fixture/OBJECTS/[" + backend.name() + "]/REQUESTER_PAYS",
             () ->
                 new ObjectsFixture(storageJson.get().getStorage(), bucketRp.get().getBucketInfo()));
     TestRunScopedInstance<ObjectsFixture> objectsFixtureHns =
         TestRunScopedInstance.of(
-            "OBJECTS_FIXTURE_HNS_" + backend.name(),
+            "fixture/OBJECTS/[" + backend.name() + "]/HNS",
             () ->
                 new ObjectsFixture(
                     storageJson.get().getStorage(), bucketHns.get().getBucketInfo()));
     TestRunScopedInstance<KmsFixture> kmsFixture =
         TestRunScopedInstance.of(
-            "KMS_FIXTURE_" + backend.name(), () -> KmsFixture.of(storageJson.get().getStorage()));
+            "fixture/KMS/[" + backend.name() + "]",
+            () -> KmsFixture.of(storageJson.get().getStorage()));
 
     return new BackendResources(
         backend,

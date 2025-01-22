@@ -18,6 +18,7 @@ package com.google.cloud.storage.it;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeNotNull;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -43,6 +44,10 @@ public class ITUniverseDomainTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
+    assumeNotNull(TEST_UNIVERSE_DOMAIN);
+    assumeNotNull(TEST_PROJECT_ID);
+    assumeNotNull(TEST_UNIVERSE_LOCATION);
+    assumeNotNull(CREDENTIAL_PATH);
     GoogleCredentials creds =
         ServiceAccountCredentials.fromStream(Files.newInputStream(Paths.get(CREDENTIAL_PATH)))
             .toBuilder()
