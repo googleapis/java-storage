@@ -32,6 +32,7 @@ import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.MoveObjectRequest;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RestoreObjectRequest;
@@ -119,6 +120,12 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(RewriteObjectRequest req) {
+    return req.hasIfGenerationMatch()
+        ? retryStrategy.getIdempotentHandler()
+        : retryStrategy.getNonidempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getFor(MoveObjectRequest req) {
     return req.hasIfGenerationMatch()
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();

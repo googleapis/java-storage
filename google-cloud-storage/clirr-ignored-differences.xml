@@ -108,5 +108,16 @@
     <method>io.opentelemetry.api.OpenTelemetry getOpenTelemetry()</method>
   </difference>
 
+  <!-- Move Object -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/Storage</className>
+    <method>* moveBlob(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+    <method>* moveObject(*)</method>
+  </difference>
 
 </differences>

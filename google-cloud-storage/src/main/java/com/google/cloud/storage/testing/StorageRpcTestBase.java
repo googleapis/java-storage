@@ -323,6 +323,16 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
+  public StorageObject moveObject(
+      String bucket,
+      String sourceObject,
+      String destinationObject,
+      Map<Option, ?> sourceOptions,
+      Map<Option, ?> targetOptions) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
   public Storage getStorage() {
     throw new UnsupportedOperationException("Not implemented yet");
   }

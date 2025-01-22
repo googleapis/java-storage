@@ -27,6 +27,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -232,6 +233,14 @@ final class HttpRetryAlgorithmManager implements Serializable {
 
   public ResultRetryAlgorithm<?> getForObjectsRewrite(RewriteRequest pb) {
     return pb.targetOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? retryStrategy.getIdempotentHandler()
+        : retryStrategy.getNonidempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getForObjectsMove(
+      ImmutableMap<StorageRpc.Option, ?> sourceOptions,
+      ImmutableMap<StorageRpc.Option, ?> targetOptions) {
+    return targetOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();
   }

@@ -46,6 +46,7 @@ import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects.Compose;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
+import com.google.api.services.storage.Storage.Objects.Move;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.RetentionPolicy;
 import com.google.api.services.storage.model.BucketAccessControl;
@@ -1140,6 +1141,42 @@ public class HttpStorageRpc implements StorageRpc {
     } finally {
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
+  }
+
+  @Override
+  public StorageObject moveObject(
+      String bucket,
+      String sourceObject,
+      String destinationObject,
+      Map<Option, ?> sourceOptions,
+      Map<Option, ?> targetOptions) {
+
+    String userProject = Option.USER_PROJECT.getString(sourceOptions);
+    if (userProject == null) {
+      userProject = Option.USER_PROJECT.getString(targetOptions);
+    }
+    try {
+      Move move =
+          storage
+              .objects()
+              .move(bucket, sourceObject, destinationObject)
+              .setIfSourceMetagenerationMatch(
+                  Option.IF_SOURCE_METAGENERATION_MATCH.getLong(sourceOptions))
+              .setIfSourceMetagenerationNotMatch(
+                  Option.IF_SOURCE_METAGENERATION_NOT_MATCH.getLong(sourceOptions))
+              .setIfSourceGenerationMatch(Option.IF_SOURCE_GENERATION_MATCH.getLong(sourceOptions))
+              .setIfSourceGenerationNotMatch(
+                  Option.IF_SOURCE_GENERATION_NOT_MATCH.getLong(sourceOptions))
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(targetOptions))
+              .setIfMetagenerationNotMatch(
+                  Option.IF_METAGENERATION_NOT_MATCH.getLong(targetOptions))
+              .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
+              .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(targetOptions))
+              .setUserProject(userProject);
+      return move.execute();
+    } catch (IOException e) {
+      throw translate(e);
     }
   }
 
