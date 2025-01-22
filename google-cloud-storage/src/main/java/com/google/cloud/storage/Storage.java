@@ -5032,8 +5032,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /**
    * Atomically move an object from one name to another.
    *
-   * <p>This new method is an atomic equivalent of the previous rewrite + delete, however without
-   * the ability to change metadata fields for the target object.
+   * <p>This new method is an atomic equivalent of the existing {@link Storage#copy(CopyRequest)} +
+   * {@link Storage#delete(BlobId)}, however without the ability to change metadata fields for the
+   * target object.
    *
    * @since 2.48.0
    */
