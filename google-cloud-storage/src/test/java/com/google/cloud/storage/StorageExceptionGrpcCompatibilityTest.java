@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.grpc.GrpcStatusCode;
@@ -25,11 +26,21 @@ import com.google.api.gax.rpc.ErrorDetails;
 import com.google.cloud.BaseServiceException;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Any;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.Printer;
+import com.google.rpc.BadRequest;
+import com.google.rpc.BadRequest.FieldViolation;
 import com.google.rpc.DebugInfo;
 import com.google.rpc.ErrorInfo;
+import com.google.rpc.Help;
+import com.google.rpc.Help.Link;
+import com.google.rpc.LocalizedMessage;
+import com.google.rpc.PreconditionFailure;
+import com.google.rpc.QuotaFailure;
 import io.grpc.Status;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
+import java.util.List;
 import org.junit.Test;
 
 public final class StorageExceptionGrpcCompatibilityTest {
@@ -112,6 +123,88 @@ public final class StorageExceptionGrpcCompatibilityTest {
   @Test
   public void testCoalesce_UNAUTHENTICATED() {
     doTestCoalesce(401, Code.UNAUTHENTICATED);
+  }
+
+  @Test
+  public void apiExceptionErrorDetails() throws Exception {
+    ErrorInfo errorInfo =
+        ErrorInfo.newBuilder()
+            .setReason("STACKOUT")
+            .setDomain("spanner.googlepais.com")
+            .putMetadata("availableRegions", "us-central1,us-east2")
+            .build();
+    DebugInfo debugInfo =
+        DebugInfo.newBuilder()
+            .addStackEntries("HEAD")
+            .addStackEntries("HEAD~1")
+            .addStackEntries("HEAD~2")
+            .addStackEntries("HEAD~3")
+            .setDetail("some detail")
+            .build();
+    QuotaFailure quotaFailure =
+        QuotaFailure.newBuilder()
+            .addViolations(
+                QuotaFailure.Violation.newBuilder()
+                    .setSubject("clientip:127.0.3.3")
+                    .setDescription("Daily limit")
+                    .build())
+            .build();
+    PreconditionFailure preconditionFailure =
+        PreconditionFailure.newBuilder()
+            .addViolations(
+                PreconditionFailure.Violation.newBuilder()
+                    .setType("TOS")
+                    .setSubject("google.com/cloud")
+                    .setDescription("Terms of service not accepted")
+                    .build())
+            .build();
+    BadRequest badRequest =
+        BadRequest.newBuilder()
+            .addFieldViolations(
+                FieldViolation.newBuilder()
+                    .setField("email_addresses[3].type[2]")
+                    .setDescription("duplicate value 'WORK'")
+                    .setReason("INVALID_EMAIL_ADDRESS_TYPE")
+                    .setLocalizedMessage(
+                        LocalizedMessage.newBuilder()
+                            .setLocale("en-US")
+                            .setMessage("Invalid email type: duplicate value")
+                            .build())
+                    .build())
+            .build();
+    Help help =
+        Help.newBuilder()
+            .addLinks(
+                Link.newBuilder().setDescription("link1").setUrl("https://google.com").build())
+            .build();
+    List<Any> errors =
+        ImmutableList.of(
+            Any.pack(errorInfo),
+            Any.pack(debugInfo),
+            Any.pack(quotaFailure),
+            Any.pack(preconditionFailure),
+            Any.pack(badRequest),
+            Any.pack(help));
+    ErrorDetails errorDetails = ErrorDetails.builder().setRawErrorMessages(errors).build();
+    ApiException ae =
+        ApiExceptionFactory.createException(
+            Code.OUT_OF_RANGE.toStatus().asRuntimeException(),
+            GrpcStatusCode.of(Code.OUT_OF_RANGE),
+            false,
+            errorDetails);
+
+    BaseServiceException se = StorageException.coalesce(ae);
+    String message = se.getCause().getSuppressed()[0].getMessage();
+    Printer printer = TextFormat.printer();
+    assertAll(
+        () -> assertThat(message).contains("ErrorDetails {"),
+        () -> assertThat(message).contains(printer.shortDebugString(errorInfo)),
+        () -> assertThat(message).contains(printer.shortDebugString(debugInfo)),
+        () -> assertThat(message).contains(printer.shortDebugString(quotaFailure)),
+        () -> assertThat(message).contains(printer.shortDebugString(preconditionFailure)),
+        () -> assertThat(message).contains(printer.shortDebugString(badRequest)),
+        () -> assertThat(message).contains(printer.shortDebugString(help)),
+        () -> assertThat(message).contains("\t}"));
   }
 
   private void doTestCoalesce(int expectedCode, Code code) {
