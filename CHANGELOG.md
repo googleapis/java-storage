@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.48.0](https://github.com/googleapis/java-storage/compare/v2.47.0...v2.48.0) (2025-01-27)
+
+
+### Features
+
+* Add new Storage#moveBlob method to atomically rename an object ([#2882](https://github.com/googleapis/java-storage/issues/2882)) ([c49fd08](https://github.com/googleapis/java-storage/commit/c49fd08582c7235919270c1dd4eb2ece6933d302))
+* Next release from main branch is 2.48.0 ([#2885](https://github.com/googleapis/java-storage/issues/2885)) ([34e5903](https://github.com/googleapis/java-storage/commit/34e5903df9b7221ba9ebabc07046d7b819f9f209))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.51.1 ([09ed029](https://github.com/googleapis/java-storage/commit/09ed02995f4688db69c0e0db1c3d72cadce0c395))
+* Update Signed URL default scheme to resolve from storage options host ([#2880](https://github.com/googleapis/java-storage/issues/2880)) ([7ae7e39](https://github.com/googleapis/java-storage/commit/7ae7e3998930c1bec72ff7c06ebc2b66343852ca)), closes [#2870](https://github.com/googleapis/java-storage/issues/2870)
+* Update StorageException translation of an ApiException to include error details ([#2872](https://github.com/googleapis/java-storage/issues/2872)) ([8ad5010](https://github.com/googleapis/java-storage/commit/8ad501012fab0dfd8d0f0dce49d7c681540022a9))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud.opentelemetry:exporter-trace to v0.33.0 ([#2873](https://github.com/googleapis/java-storage/issues/2873)) ([39509d5](https://github.com/googleapis/java-storage/commit/39509d53ee283694526efbec58daa24c3d8ca080))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.52.0 ([#2883](https://github.com/googleapis/java-storage/issues/2883)) ([a64a3d5](https://github.com/googleapis/java-storage/commit/a64a3d58410dd2e9db20a36cd7169037f71eaeeb))
+
 ## [2.47.0](https://github.com/googleapis/java-storage/compare/v2.46.0...v2.47.0) (2025-01-08)
 
 
