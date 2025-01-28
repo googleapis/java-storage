@@ -78,6 +78,8 @@ public final class Registry extends RunListener {
   private final TestRunScopedInstance<Generator> generator =
       TestRunScopedInstance.of("fixture/GENERATOR", Generator::new);
 
+  private final TestRunScopedInstance<Zone.ZoneShim> zone =
+      TestRunScopedInstance.of("fixture/ZONE", Zone.ZoneShim::new);
   final TestRunScopedInstance<OtelSdkShim> otelSdk =
       TestRunScopedInstance.of(
           "fixture/OTEL_SDK",
@@ -86,14 +88,16 @@ public final class Registry extends RunListener {
             return new OtelSdkShim(projectId);
           });
 
-  private final BackendResources prodBackendResources = BackendResources.of(Backend.PROD, otelSdk);
+  private final BackendResources prodBackendResources =
+      BackendResources.of(Backend.PROD, otelSdk, zone);
   private final BackendResources testBenchBackendResource =
-      BackendResources.of(Backend.TEST_BENCH, otelSdk);
+      BackendResources.of(Backend.TEST_BENCH, otelSdk, zone);
 
   private final ImmutableList<RegistryEntry<?>> entries =
       new ImmutableList.Builder<RegistryEntry<?>>()
           .add(
               RegistryEntry.of(0, OpenTelemetry.class, otelSdk),
+              RegistryEntry.of(1, Zone.class, zone),
               RegistryEntry.of(1, TestBench.class, testBench),
               RegistryEntry.of(2, Generator.class, generator),
               registryEntry(3, Backend.class, CrossRunIntersection::getBackend),

@@ -145,7 +145,7 @@ public class ITKmsTest {
     assertEquals(bucket.getDefaultKmsKeyName(), kms.getKey1().getName());
 
     try {
-      String blobName = "test-create-with-default-kms-key-name-blob";
+      String blobName = generator.randomObjectName();
       BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
       Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
       assertNotNull(remoteBlob);

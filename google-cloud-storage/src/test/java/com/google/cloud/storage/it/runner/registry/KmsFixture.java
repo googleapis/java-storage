@@ -99,11 +99,12 @@ public class KmsFixture implements ManagedLifecycle {
     // KMS prevents key and ring deletion, https://cloud.google.com/kms/docs/faq#cannot_delete
   }
 
-  static KmsFixture of(Storage s) {
+  static KmsFixture of(Storage s, Zone zone) {
     // KMS prevents key and ring deletion, https://cloud.google.com/kms/docs/faq#cannot_delete
     // therefore we instead prefer stable names to not blow out the number of keys and rings
     // in a project.
-    return new KmsFixture(s, "us", "gcs_test_kms_key_ring", "gcs_kms_key_one", "gcs_kms_key_two");
+    return new KmsFixture(
+        s, zone.getRegion(), "gcs_test_kms_key_ring", "gcs_kms_key_one", "gcs_kms_key_two");
   }
 
   private KeyRing resolveKeyRing(KeyManagementServiceClient kms) throws StatusRuntimeException {

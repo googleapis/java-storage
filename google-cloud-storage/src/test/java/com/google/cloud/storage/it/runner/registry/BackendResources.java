@@ -83,7 +83,10 @@ final class BackendResources implements ManagedLifecycle {
   }
 
   @SuppressWarnings("SwitchStatementWithTooFewBranches")
-  static BackendResources of(Backend backend, TestRunScopedInstance<OtelSdkShim> otelSdk) {
+  static BackendResources of(
+      Backend backend,
+      TestRunScopedInstance<OtelSdkShim> otelSdk,
+      TestRunScopedInstance<Zone.ZoneShim> zone) {
     ProtectedBucketNames protectedBucketNames = new ProtectedBucketNames();
     TestRunScopedInstance<StorageInstance> storageJson =
         TestRunScopedInstance.of(
@@ -181,7 +184,11 @@ final class BackendResources implements ManagedLifecycle {
               String bucketName = String.format("java-storage-grpc-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
-                  BucketInfo.of(bucketName), storageJson.get().getStorage(), ctrl.get().getCtrl());
+                  BucketInfo.newBuilder(bucketName)
+                      .setLocation(zone.get().get().getRegion())
+                      .build(),
+                  storageJson.get().getStorage(),
+                  ctrl.get().getCtrl());
             });
     TestRunScopedInstance<BucketInfoShim> bucketRp =
         TestRunScopedInstance.of(
@@ -190,7 +197,10 @@ final class BackendResources implements ManagedLifecycle {
               String bucketName = String.format("java-storage-grpc-rp-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
-                  BucketInfo.newBuilder(bucketName).setRequesterPays(true).build(),
+                  BucketInfo.newBuilder(bucketName)
+                      .setLocation(zone.get().get().getRegion())
+                      .setRequesterPays(true)
+                      .build(),
                   storageJson.get().getStorage(),
                   ctrl.get().getCtrl());
             });
@@ -201,7 +211,10 @@ final class BackendResources implements ManagedLifecycle {
               String bucketName = String.format("java-storage-grpc-v-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
-                  BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build(),
+                  BucketInfo.newBuilder(bucketName)
+                      .setLocation(zone.get().get().getRegion())
+                      .setVersioningEnabled(true)
+                      .build(),
                   storageJson.get().getStorage(),
                   ctrl.get().getCtrl());
             });
@@ -213,6 +226,7 @@ final class BackendResources implements ManagedLifecycle {
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
                   BucketInfo.newBuilder(bucketName)
+                      .setLocation(zone.get().get().getRegion())
                       .setHierarchicalNamespace(
                           HierarchicalNamespace.newBuilder().setEnabled(true).build())
                       .setIamConfiguration(
@@ -241,7 +255,7 @@ final class BackendResources implements ManagedLifecycle {
     TestRunScopedInstance<KmsFixture> kmsFixture =
         TestRunScopedInstance.of(
             "fixture/KMS/[" + backend.name() + "]",
-            () -> KmsFixture.of(storageJson.get().getStorage()));
+            () -> KmsFixture.of(storageJson.get().getStorage(), zone.get().get()));
 
     return new BackendResources(
         backend,
