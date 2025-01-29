@@ -86,4 +86,12 @@ public class QuickstartSampleIT {
                 "Performed getStorageLayout request for %s",
                 StorageLayoutName.format("_", bucketName)));
   }
+
+  @Test
+  public void testQuickstartOpenTelemetry() throws Exception {
+    QuickstartOpenTelemetrySample.main();
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got)
+        .contains("Created an instance of storage with OpenTelemetry configured");
+  }
 }

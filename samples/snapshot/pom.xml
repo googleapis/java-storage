@@ -68,6 +68,16 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>exporter-trace</artifactId>
+      <version>0.31.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud.opentelemetry</groupId>
+      <artifactId>propagators-gcp</artifactId>
+      <version>0.33.0-alpha</version>
+    </dependency>
   </dependencies>
 
   <!-- compile and run all snippet tests -->
