@@ -23,12 +23,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageException;
@@ -40,6 +43,14 @@ import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -207,5 +218,47 @@ public class ITBatchTest {
     } catch (StorageException e) {
       assertThat(e.getMessage()).contains("Invalid argument");
     }
+  }
+
+  @Test
+  public void batchSuccessiveUpdatesWork() {
+    byte[] bytes = DataGenerator.base64Characters().genBytes(137);
+
+    List<BlobId> blobs =
+        IntStream.range(0, 2)
+            .mapToObj(
+                i -> {
+                  BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+                  try (WriteChannel writer = storage.writer(info, BlobWriteOption.doesNotExist())) {
+                    writer.write(ByteBuffer.wrap(bytes));
+                  } catch (IOException e) {
+                    throw new RuntimeException(e);
+                  }
+                  return info.getBlobId();
+                })
+            .collect(Collectors.toList());
+
+    OffsetDateTime now1 = Clock.systemUTC().instant().atOffset(ZoneOffset.UTC);
+
+    List<Blob> update1 =
+        storage.update(
+            blobs.stream()
+                .map(id -> BlobInfo.newBuilder(id).setCustomTimeOffsetDateTime(now1).build())
+                .collect(Collectors.toList()));
+
+    OffsetDateTime now2 = Clock.systemUTC().instant().atOffset(ZoneOffset.UTC);
+    List<Blob> update2 =
+        storage.update(
+            blobs.stream()
+                .map(id -> BlobInfo.newBuilder(id).setCustomTimeOffsetDateTime(now2).build())
+                .collect(Collectors.toList()));
+
+    assertThat(
+            update2.stream()
+                .filter(b -> !now2.equals(b.getCustomTimeOffsetDateTime()))
+                .map(BlobInfo::getBlobId)
+                .map(BlobId::toGsUtilUriWithGeneration)
+                .collect(Collectors.toList()))
+        .isEmpty();
   }
 }

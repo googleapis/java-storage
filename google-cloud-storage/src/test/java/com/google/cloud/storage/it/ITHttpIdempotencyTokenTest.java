@@ -33,6 +33,8 @@ import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketListOption;
+import com.google.cloud.storage.StorageBatch;
+import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -42,6 +44,9 @@ import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.truth.IterableSubject;
 import java.nio.ByteBuffer;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -178,5 +183,35 @@ public final class ITHttpIdempotencyTokenTest {
     //  3. PUT second 256KiB
     //  4. Finalize session and put final 45B
     assertAll(() -> subject.hasSize(4), () -> assertThat(actualXxd).isEqualTo(expectedXxd));
+  }
+
+  @Test
+  public void batch() throws Exception {
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    BlobInfo info2 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    BlobInfo info3 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    storage.create(info1, BlobTargetOption.doesNotExist());
+    storage.create(info2, BlobTargetOption.doesNotExist());
+    storage.create(info3, BlobTargetOption.doesNotExist());
+
+    requestAuditing.clear();
+    OffsetDateTime now = Clock.systemUTC().instant().atOffset(ZoneOffset.UTC);
+
+    StorageBatch batch = storage.batch();
+    StorageBatchResult<Blob> r1 = batch.get(info1.getBlobId());
+    StorageBatchResult<Blob> r2 =
+        batch.update(info2.toBuilder().setCustomTimeOffsetDateTime(now).build());
+    StorageBatchResult<Boolean> r3 = batch.delete(info3.getBlobId());
+
+    batch.submit();
+    assertAll(
+        () -> assertThat(r1).isNotNull(),
+        () -> assertThat(r2.get().getCustomTimeOffsetDateTime()).isEqualTo(now),
+        () -> assertThat(r3.get()).isTrue(),
+        () -> {
+          IterableSubject subject =
+              requestAuditing.assertRequestHeader(X_GOOG_GCS_IDEMPOTENCY_TOKEN);
+          subject.hasSize(3);
+        });
   }
 }

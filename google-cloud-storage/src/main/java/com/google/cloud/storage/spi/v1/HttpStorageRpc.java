@@ -44,9 +44,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects.Compose;
+import com.google.api.services.storage.Storage.Objects.Delete;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.Storage.Objects.Move;
+import com.google.api.services.storage.Storage.Objects.Patch;
+import com.google.api.services.storage.StorageRequest;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.RetentionPolicy;
 import com.google.api.services.storage.model.BucketAccessControl;
@@ -109,6 +112,7 @@ public class HttpStorageRpc implements StorageRpc {
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
   private static final boolean IS_RECORD_EVENTS = true;
+  private static final String X_GOOG_GCS_IDEMPOTENCY_TOKEN = "x-goog-gcs-idempotency-token";
 
   private final StorageOptions options;
   private final Storage storage;
@@ -208,7 +212,7 @@ public class HttpStorageRpc implements StorageRpc {
                 .filter(java.util.Objects::nonNull)
                 .collect(JOINER);
         headers.set("x-goog-api-client", newValue);
-        headers.set("x-goog-gcs-idempotency-token", invocationId);
+        headers.set(X_GOOG_GCS_IDEMPOTENCY_TOKEN, invocationId);
 
         String userAgent = headers.getUserAgent();
         if ((userAgent == null
@@ -247,7 +251,9 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        deleteCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Delete call = deleteCall(storageObject, options);
+        addIdempotencyTokenToCall(call);
+        call.queue(batches.getLast(), toJsonCallback(callback));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
@@ -264,7 +270,9 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        patchCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Patch call = patchCall(storageObject, options);
+        addIdempotencyTokenToCall(call);
+        call.queue(batches.getLast(), toJsonCallback(callback));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
@@ -281,7 +289,9 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        getCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Get call = getCall(storageObject, options);
+        addIdempotencyTokenToCall(call);
+        call.queue(batches.getLast(), toJsonCallback(callback));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
@@ -309,6 +319,12 @@ public class HttpStorageRpc implements StorageRpc {
         scope.close();
         span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
       }
+    }
+
+    private void addIdempotencyTokenToCall(StorageRequest<?> call) {
+      HttpRpcContext instance = HttpRpcContext.getInstance();
+      call.getRequestHeaders().set(X_GOOG_GCS_IDEMPOTENCY_TOKEN, instance.newInvocationId());
+      instance.clearInvocationId();
     }
   }
 
