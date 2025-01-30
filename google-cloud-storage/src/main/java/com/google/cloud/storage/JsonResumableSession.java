@@ -63,23 +63,27 @@ final class JsonResumableSession {
         new JsonResumableSessionPutTask(
             context, resumableWrite.getUploadId(), content, contentRange);
     HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
-    httpRpcContext.newInvocationId();
-    AtomicBoolean dirty = new AtomicBoolean(false);
-    return Retrying.run(
-        deps,
-        alg,
-        () -> {
-          if (dirty.getAndSet(true)) {
-            ResumableOperationResult<@Nullable StorageObject> query = query();
-            long persistedSize = query.getPersistedSize();
-            if (contentRange.endOffsetEquals(persistedSize) || query.getObject() != null) {
-              return query;
-            } else {
-              task.rewindTo(persistedSize);
+    try {
+      httpRpcContext.newInvocationId();
+      AtomicBoolean dirty = new AtomicBoolean(false);
+      return Retrying.run(
+          deps,
+          alg,
+          () -> {
+            if (dirty.getAndSet(true)) {
+              ResumableOperationResult<@Nullable StorageObject> query = query();
+              long persistedSize = query.getPersistedSize();
+              if (contentRange.endOffsetEquals(persistedSize) || query.getObject() != null) {
+                return query;
+              } else {
+                task.rewindTo(persistedSize);
+              }
             }
-          }
-          return task.call();
-        },
-        Decoder.identity());
+            return task.call();
+          },
+          Decoder.identity());
+    } finally {
+      httpRpcContext.clearInvocationId();
+    }
   }
 }

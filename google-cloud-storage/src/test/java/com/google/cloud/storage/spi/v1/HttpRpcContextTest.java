@@ -43,11 +43,15 @@ public class HttpRpcContextTest {
     UUID uuid = UUID.fromString("28220dff-1e8b-4770-9e10-022c2a99d8f3");
     HttpRpcContext testContext = new HttpRpcContext(() -> uuid);
 
-    assertThat(testContext.newInvocationId()).isEqualTo(uuid);
-    assertThat(testContext.getInvocationId()).isEqualTo(uuid);
-    // call again to ensure the id is consistent with our supplier
-    assertThat(testContext.newInvocationId()).isEqualTo(uuid);
-    assertThat(testContext.getInvocationId()).isEqualTo(uuid);
+    try {
+      assertThat(testContext.newInvocationId()).isEqualTo(uuid);
+      assertThat(testContext.getInvocationId()).isEqualTo(uuid);
+      // call again to ensure the id is consistent with our supplier
+      assertThat(testContext.newInvocationId()).isEqualTo(uuid);
+      assertThat(testContext.getInvocationId()).isEqualTo(uuid);
+    } finally {
+      testContext.clearInvocationId();
+    }
   }
 
   @Test
