@@ -91,7 +91,6 @@ public class QuickstartSampleIT {
   public void testQuickstartOpenTelemetry() throws Exception {
     QuickstartOpenTelemetrySample.main();
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(got)
-        .contains("Created an instance of storage with OpenTelemetry configured");
+    assertThat(got).contains("Created an instance of storage with OpenTelemetry configured");
   }
 }
