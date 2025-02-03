@@ -16,8 +16,6 @@
 
 package com.example.storage;
 
-
-
 import com.google.cloud.opentelemetry.propagators.XCloudTraceContextPropagator;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
 import com.google.cloud.storage.Storage;
@@ -35,9 +33,10 @@ import io.opentelemetry.sdk.trace.samplers.Sampler;
 public class QuickstartOpenTelemetrySample {
   public static void main(String... args) throws Exception {
     SpanExporter spanExporter = TraceExporter.createWithDefaultConfiguration();
-    TextMapPropagator propagators = TextMapPropagator.composite(
-        W3CTraceContextPropagator.getInstance(),
-        new XCloudTraceContextPropagator(/*oneway=*/true));
+    TextMapPropagator propagators =
+        TextMapPropagator.composite(
+            W3CTraceContextPropagator.getInstance(),
+            new XCloudTraceContextPropagator(/*oneway=*/ true));
 
     OpenTelemetrySdk openTelemetry =
         OpenTelemetrySdk.builder()
@@ -54,7 +53,6 @@ public class QuickstartOpenTelemetrySample {
     StorageOptions options = StorageOptions.newBuilder().setOpenTelemetry(openTelemetry).build();
     Storage storage = options.getService();
     System.out.println("Created an instance of storage with OpenTelemetry configured");
-
   }
 }
 // [END storage_enable_otel_tracing]
