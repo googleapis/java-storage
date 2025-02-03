@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.48.1](https://github.com/googleapis/java-storage/compare/v2.48.0...v2.48.1) (2025-02-03)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.52.0 ([00754bc](https://github.com/googleapis/java-storage/commit/00754bc0b30da4ebc13e75f55525d9bd885b0572))
+* Update batch handling to ensure each operation has its own unique idempotency-token ([#2905](https://github.com/googleapis/java-storage/issues/2905)) ([8d79b8d](https://github.com/googleapis/java-storage/commit/8d79b8d9cea30c6bba0d2550fa397b8c8b7acc3c))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.42.0 ([#2895](https://github.com/googleapis/java-storage/issues/2895)) ([145afb0](https://github.com/googleapis/java-storage/commit/145afb0d3a783fe73a388a7be174b598a195a2c6))
+* Update dependency com.google.cloud.opentelemetry:exporter-trace to v0.33.0 ([#2904](https://github.com/googleapis/java-storage/issues/2904)) ([2a5242e](https://github.com/googleapis/java-storage/commit/2a5242e580185a5952181f922c4eca25790bcec6))
+
+
+### Documentation
+
+* Create OpenTelemetry Quickstart Sample ([#2861](https://github.com/googleapis/java-storage/issues/2861)) ([31df9b7](https://github.com/googleapis/java-storage/commit/31df9b7a6350714ff354934ccbd27c5dd68762f5))
+
 ## [2.48.0](https://github.com/googleapis/java-storage/compare/v2.47.0...v2.48.0) (2025-01-27)
 
 
