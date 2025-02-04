@@ -134,7 +134,7 @@ public class ITObjectSnippets {
   }
 
   @Test
-  public void testCopyObject() {
+  public void testCopyObject() throws Exception {
     String newBucket = RemoteStorageHelper.generateBucketName();
     storage.create(BucketInfo.newBuilder(newBucket).build());
     try {
