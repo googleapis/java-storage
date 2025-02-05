@@ -19,12 +19,16 @@ package com.example.storage.object;
 // [START storage_copy_file]
 
 import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.StorageOptions;
 
 public class CopyObject {
   public static void copyObject(
-      String projectId, String sourceBucketName, String objectName, String targetBucketName) {
+      String projectId, String sourceBucketName, String objectName, String targetBucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -37,40 +41,46 @@ public class CopyObject {
     // The ID of the bucket to copy the object to
     // String targetBucketName = "target-object-bucket";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    BlobId source = BlobId.of(sourceBucketName, objectName);
-    BlobId target =
-        BlobId.of(
-            targetBucketName, objectName); // you could change "objectName" to rename the object
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId sourceId = BlobId.of(sourceBucketName, objectName);
+      // you could change "objectName" to rename the object
+      BlobId targetId = BlobId.of(targetBucketName, objectName);
 
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request returns a 412 error if the
-    // preconditions are not met.
-    Storage.BlobTargetOption precondition;
-    if (storage.get(targetBucketName, objectName) == null) {
-      // For a target object that does not yet exist, set the DoesNotExist precondition.
-      // This will cause the request to fail if the object is created before the request runs.
-      precondition = Storage.BlobTargetOption.doesNotExist();
+      // Recommended: set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request returns a 412 error if the
+      // preconditions are not met.
+      Storage.BlobTargetOption precondition;
+      BlobInfo existingTarget = storage.get(targetBucketName, objectName);
+      if (existingTarget == null) {
+        // For a target object that does not yet exist, set the DoesNotExist precondition.
+        // This will cause the request to fail if the object is created before the request runs.
+        precondition = Storage.BlobTargetOption.doesNotExist();
+      } else {
+        // If the destination already exists in your bucket, instead set a generation-match
+        // precondition. This will cause the request to fail if the existing object's generation
+        // changes before the request runs.
+        precondition = Storage.BlobTargetOption.generationMatch(existingTarget.getGeneration());
+      }
 
-    } else {
-      // If the destination already exists in your bucket, instead set a generation-match
-      // precondition. This will cause the request to fail if the existing object's generation
-      // changes before the request runs.
-      precondition =
-          Storage.BlobTargetOption.generationMatch(
-              storage.get(targetBucketName, objectName).getGeneration());
+      CopyRequest copyRequest =
+          CopyRequest.newBuilder()
+              .setSource(sourceId)
+              .setTarget(targetId, precondition)
+              // limit the number of bytes Cloud Storage will attempt to copy before responding to
+              // an individual request.
+              // If you see Read Timeout errors, try reducing this value.
+              .setMegabytesCopiedPerChunk(2048L) // 2GiB
+              .build();
+      CopyWriter copyWriter = storage.copy(copyRequest);
+      BlobInfo successfulCopyResult = copyWriter.getResult();
+
+      System.out.printf(
+          "Copied object gs://%s/%s to %s%n",
+          sourceBucketName,
+          objectName,
+          successfulCopyResult.getBlobId().toGsUtilUriWithGeneration());
     }
-
-    storage.copy(
-        Storage.CopyRequest.newBuilder().setSource(source).setTarget(target, precondition).build());
-
-    System.out.println(
-        "Copied object "
-            + objectName
-            + " from bucket "
-            + sourceBucketName
-            + " to "
-            + targetBucketName);
   }
 }
 // [END storage_copy_file]
