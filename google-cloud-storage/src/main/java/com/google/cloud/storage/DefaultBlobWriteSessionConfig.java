@@ -304,12 +304,6 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                     throw StorageException.coalesce(e);
                   }
                 }
-
-                @Override
-                public UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel
-                    getChannel() {
-                  return delegate.getChannel();
-                }
               },
           MoreExecutors.directExecutor());
     }

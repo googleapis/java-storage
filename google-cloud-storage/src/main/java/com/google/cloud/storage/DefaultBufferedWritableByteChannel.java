@@ -189,11 +189,6 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
     }
   }
 
-  @Override
-  public UnbufferedWritableByteChannel getChannel() {
-    return channel;
-  }
-
   private boolean enqueuedBytes() {
     return handle.position() > 0;
   }

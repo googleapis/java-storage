@@ -25,9 +25,5 @@ interface BufferedWritableByteChannelSession<ResultT>
 
   interface BufferedWritableByteChannel extends WritableByteChannel {
     void flush() throws IOException;
-
-    default UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel getChannel() {
-      return null;
-    }
   }
 }

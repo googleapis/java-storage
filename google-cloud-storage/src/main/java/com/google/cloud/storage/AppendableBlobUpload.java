@@ -17,16 +17,18 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class AppendableBlobUpload implements AutoCloseable {
-  private final BufferedWritableByteChannelSession.BufferedWritableByteChannel channel;
+  private final AppendableObjectBufferedWritableByteChannel channel;
   private final ApiFuture<BlobInfo> result;
 
   private AppendableBlobUpload(BlobInfo blob, BlobWriteSession session) throws IOException {
-    channel = (BufferedWritableByteChannelSession.BufferedWritableByteChannel) (session.open());
+    channel = (AppendableObjectBufferedWritableByteChannel) (session.open());
     result = session.getResult();
   }
 
@@ -36,9 +38,7 @@ public final class AppendableBlobUpload implements AutoCloseable {
   }
 
   public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
-    ((GapicBidiUnbufferedWritableByteChannel) channel.getChannel()).setFinalFlush();
-    channel.flush();
-    ((GapicBidiUnbufferedWritableByteChannel) channel.getChannel()).finalizeWrite();
+    channel.finalizeWrite();
     close();
     return result.get();
   }
@@ -51,6 +51,80 @@ public final class AppendableBlobUpload implements AutoCloseable {
   public void close() throws IOException {
     if (channel.isOpen()) {
       channel.close();
+    }
+  }
+
+  /**
+   * This class extends BufferedWritableByteChannel to handle a special case for Appendable writes,
+   * namely closing the stream without finalizing the write. It adds the {@code finalizeWrite}
+   * method, which must be manually called to finalize the write. This couldn't be accomplished with
+   * the base BufferedWritableByteChannel class because it only has a close() method, which it
+   * assumes should finalize the write before the close. It also re-implements
+   * SynchronizedBufferedWritableByteChannel to avoid needing to make a decorator class for it and
+   * wrap it over this one.
+   */
+  static final class AppendableObjectBufferedWritableByteChannel
+      implements BufferedWritableByteChannel {
+    private final BufferedWritableByteChannel buffered;
+    private final GapicBidiUnbufferedAppendableWritableByteChannel unbuffered;
+    private final ReentrantLock lock;
+
+    AppendableObjectBufferedWritableByteChannel(
+        BufferedWritableByteChannel buffered,
+        GapicBidiUnbufferedAppendableWritableByteChannel unbuffered) {
+      this.buffered = buffered;
+      this.unbuffered = unbuffered;
+      lock = new ReentrantLock();
+    }
+
+    @Override
+    public void flush() throws IOException {
+      lock.lock();
+      try {
+        buffered.flush();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      lock.lock();
+      try {
+        return buffered.write(src);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      lock.lock();
+      try {
+        return buffered.isOpen();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public void close() throws IOException {
+      lock.lock();
+      try {
+        buffered.close();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    public void finalizeWrite() throws IOException {
+      lock.lock();
+      try {
+        buffered.flush();
+        unbuffered.finalizeWrite();
+      } finally {
+        lock.unlock();
+      }
     }
   }
 }

@@ -232,9 +232,9 @@ final class GapicBidiWritableByteChannelSessionBuilder {
             ((BiFunction<
                         BidiAppendableWrite,
                         SettableApiFuture<BidiWriteObjectResponse>,
-                        UnbufferedWritableByteChannel>)
+                        GapicBidiUnbufferedAppendableWritableByteChannel>)
                     (start, resultFuture) ->
-                        new GapicBidiUnbufferedWritableByteChannel(
+                        new GapicBidiUnbufferedAppendableWritableByteChannel(
                             write,
                             deps,
                             alg,
@@ -243,8 +243,10 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                                 boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
                             new BidiWriteCtx<>(start),
                             Retrying::newCallContext))
-                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
-                .andThen(StorageByteChannels.writable()::createSynchronized));
+                .andThen(
+                    c ->
+                        new AppendableBlobUpload.AppendableObjectBufferedWritableByteChannel(
+                            new DefaultBufferedWritableByteChannel(bufferHandle, c), c)));
       }
     }
   }

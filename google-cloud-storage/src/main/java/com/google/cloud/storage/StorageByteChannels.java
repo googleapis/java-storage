@@ -163,16 +163,6 @@ final class StorageByteChannels {
         lock.unlock();
       }
     }
-
-    @Override
-    public UnbufferedWritableByteChannel getChannel() {
-      lock.lock();
-      try {
-        return delegate.getChannel();
-      } finally {
-        lock.unlock();
-      }
-    }
   }
 
   private static final class SynchronizedUnbufferedReadableByteChannel
