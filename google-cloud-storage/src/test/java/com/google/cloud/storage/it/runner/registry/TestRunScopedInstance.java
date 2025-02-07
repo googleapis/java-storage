@@ -28,7 +28,7 @@ import org.junit.runner.notification.RunListener.ThreadSafe;
  * com.google.cloud.storage.it.runner.registry.ManagedLifecycle} instance.
  */
 @ThreadSafe
-final class TestRunScopedInstance<T extends ManagedLifecycle> implements Supplier<T> {
+public final class TestRunScopedInstance<T extends ManagedLifecycle> implements Supplier<T> {
 
   private final String name;
   private final Supplier<T> ctor;

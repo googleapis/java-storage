@@ -57,7 +57,7 @@ final class ObjectReadSessionState {
   private final AtomicLong readIdSeq;
 
   @GuardedBy("this.lock") // https://errorprone.info/bugpattern/GuardedBy
-  private final Map<Long, ObjectReadSessionStreamRead> outstandingReads;
+  private final Map<Long, ObjectReadSessionStreamRead<?>> outstandingReads;
 
   private final ReentrantLock lock;
 
@@ -99,7 +99,7 @@ final class ObjectReadSessionState {
         new AtomicReference<>(metadata.get()));
   }
 
-  boolean canHandleNewRead(ObjectReadSessionStreamRead newRead) {
+  boolean canHandleNewRead(ObjectReadSessionStreamRead<?> newRead) {
     lock.lock();
     try {
       // when the map is empty this will also return true, see #allMatch docs
@@ -167,7 +167,7 @@ final class ObjectReadSessionState {
   }
 
   @Nullable
-  ObjectReadSessionStreamRead getOutstandingRead(long key) {
+  ObjectReadSessionStreamRead<?> getOutstandingRead(long key) {
     lock.lock();
     try {
       return outstandingReads.get(key);
@@ -176,7 +176,7 @@ final class ObjectReadSessionState {
     }
   }
 
-  void putOutstandingRead(long key, ObjectReadSessionStreamRead value) {
+  void putOutstandingRead(long key, ObjectReadSessionStreamRead<?> value) {
     lock.lock();
     try {
       outstandingReads.put(key, value);
@@ -205,13 +205,13 @@ final class ObjectReadSessionState {
     this.routingToken.set(routingToken);
   }
 
-  ObjectReadSessionStreamRead assignNewReadId(long oldReadId) {
+  ObjectReadSessionStreamRead<?> assignNewReadId(long oldReadId) {
     lock.lock();
     try {
-      ObjectReadSessionStreamRead remove = outstandingReads.remove(oldReadId);
+      ObjectReadSessionStreamRead<?> remove = outstandingReads.remove(oldReadId);
       checkState(remove != null, "unable to locate old read");
       long newReadId = newReadId();
-      ObjectReadSessionStreamRead withNewReadId = remove.withNewReadId(newReadId);
+      ObjectReadSessionStreamRead<?> withNewReadId = remove.withNewReadId(newReadId);
       outstandingReads.put(newReadId, withNewReadId);
       return withNewReadId;
     } finally {
@@ -222,13 +222,13 @@ final class ObjectReadSessionState {
   ApiFuture<?> failAll(Executor executor, Supplier<Throwable> terminalFailure) {
     lock.lock();
     try {
-      Iterator<Entry<Long, ObjectReadSessionStreamRead>> iter =
+      Iterator<Entry<Long, ObjectReadSessionStreamRead<?>>> iter =
           outstandingReads.entrySet().iterator();
       ArrayList<ApiFuture<?>> futures = new ArrayList<>();
       while (iter.hasNext()) {
-        Entry<Long, ObjectReadSessionStreamRead> entry = iter.next();
+        Entry<Long, ObjectReadSessionStreamRead<?>> entry = iter.next();
         iter.remove();
-        ObjectReadSessionStreamRead read = entry.getValue();
+        ObjectReadSessionStreamRead<?> read = entry.getValue();
         read.preFail();
         ApiFuture<?> f =
             ApiFutures.transformAsync(

@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
@@ -26,12 +27,20 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.ApiFutureUtils.OnFailureApiFutureCallback;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.RetryContext.OnFailure;
+import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.ReadRange;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
@@ -1454,6 +1463,41 @@ final class OtelStorageDecorator implements Storage {
   }
 
   @Override
+  public ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
+    Span blobReadSessionSpan =
+        tracer
+            .spanBuilder("blobReadSession")
+            .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
+            .startSpan();
+    try (Scope ignore1 = blobReadSessionSpan.makeCurrent()) {
+      Context blobReadSessionContext = Context.current();
+      ApiFuture<BlobReadSession> blobReadSessionApiFuture = delegate.blobReadSession(id, options);
+      ApiFuture<BlobReadSession> futureDecorated =
+          ApiFutures.transform(
+              blobReadSessionApiFuture,
+              delegate ->
+                  new OtelDecoratingBlobReadSession(
+                      delegate, id, blobReadSessionContext, blobReadSessionSpan),
+              MoreExecutors.directExecutor());
+      ApiFutures.addCallback(
+          futureDecorated,
+          (OnFailureApiFutureCallback<BlobReadSession>)
+              t -> {
+                blobReadSessionSpan.recordException(t);
+                blobReadSessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+                blobReadSessionSpan.end();
+              },
+          MoreExecutors.directExecutor());
+      return futureDecorated;
+    } catch (Throwable t) {
+      blobReadSessionSpan.recordException(t);
+      blobReadSessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      blobReadSessionSpan.end();
+      throw t;
+    }
+  }
+
+  @Override
   public StorageOptions getOptions() {
     return delegate.getOptions();
   }
@@ -1758,6 +1802,208 @@ final class OtelStorageDecorator implements Storage {
       } finally {
         copyChunkSpan.end();
       }
+    }
+  }
+
+  private static final class OtelRangeProjectionConfig<Projection>
+      extends RangeProjectionConfig<Projection> {
+    private final BaseConfig<Projection, ?> delegate;
+    private final Span parentSpan;
+
+    private OtelRangeProjectionConfig(RangeProjectionConfig<Projection> delegate, Span parentSpan) {
+      this.delegate = delegate.cast();
+      this.parentSpan = parentSpan;
+    }
+
+    @Override
+    BaseConfig<Projection, ?> cast() {
+      return new OtelBaseConfigDecorator();
+    }
+
+    private class OtelBaseConfigDecorator
+        extends BaseConfig<Projection, ObjectReadSessionStreamRead<Projection>> {
+
+      @Override
+      ObjectReadSessionStreamRead<Projection> newRead(
+          long readId, RangeSpec range, RetryContext retryContext) {
+        ObjectReadSessionStreamRead<Projection> read =
+            delegate.newRead(readId, range, retryContext);
+        read.setOnCloseCallback(parentSpan::end);
+        return new OtelDecoratingObjectReadSessionStreamRead<>(read, parentSpan);
+      }
+
+      @Override
+      BaseConfig<Projection, ?> cast() {
+        return this;
+      }
+    }
+  }
+
+  @VisibleForTesting
+  class OtelDecoratingBlobReadSession implements BlobReadSession {
+
+    @VisibleForTesting final BlobReadSession delegate;
+    private final BlobId id;
+    private final Context blobReadSessionContext;
+    private final Span blobReadSessionSpan;
+
+    private OtelDecoratingBlobReadSession(
+        BlobReadSession delegate,
+        BlobId id,
+        Context blobReadSessionContext,
+        Span blobReadSessionSpan) {
+      this.delegate = delegate;
+      this.id = id;
+      this.blobReadSessionContext = blobReadSessionContext;
+      this.blobReadSessionSpan = blobReadSessionSpan;
+    }
+
+    @Override
+    public BlobInfo getBlobInfo() {
+      return delegate.getBlobInfo();
+    }
+
+    @Override
+    public <Projection> Projection readRange(
+        RangeSpec range, RangeProjectionConfig<Projection> config) {
+      Span readRangeSpan =
+          tracer
+              .spanBuilder("readRange")
+              .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
+              .setParent(blobReadSessionContext)
+              .startSpan();
+      try (Scope ignore2 = readRangeSpan.makeCurrent()) {
+        OtelRangeProjectionConfig<Projection> c =
+            new OtelRangeProjectionConfig<>(config, readRangeSpan);
+        return delegate.readRange(range, c);
+      } catch (Throwable t) {
+        readRangeSpan.recordException(t);
+        readRangeSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        readRangeSpan.end();
+        throw t;
+      }
+    }
+
+    @Override
+    public void close() throws IOException {
+      try {
+        delegate.close();
+      } finally {
+        blobReadSessionSpan.end();
+      }
+    }
+  }
+
+  @VisibleForTesting
+  static final class OtelDecoratingObjectReadSessionStreamRead<Projection>
+      implements ObjectReadSessionStreamRead<Projection> {
+    private final ObjectReadSessionStreamRead<Projection> delegate;
+    private final Span parentSpan;
+
+    @VisibleForTesting
+    OtelDecoratingObjectReadSessionStreamRead(
+        ObjectReadSessionStreamRead<Projection> delegate, Span parentSpan) {
+      this.delegate = delegate;
+      this.parentSpan = parentSpan;
+    }
+
+    @Override
+    public Projection project() {
+      return delegate.project();
+    }
+
+    @Override
+    public long readOffset() {
+      return delegate.readOffset();
+    }
+
+    @Override
+    public boolean acceptingBytes() {
+      return delegate.acceptingBytes();
+    }
+
+    @Override
+    public void accept(ChildRef childRef) throws IOException {
+      delegate.accept(childRef);
+    }
+
+    @Override
+    public void eof() throws IOException {
+      delegate.eof();
+    }
+
+    @Override
+    public void preFail() {
+      delegate.preFail();
+    }
+
+    @Override
+    public ApiFuture<?> fail(Throwable t) {
+      ApiFuture<?> fail = delegate.fail(t);
+      ApiFutures.addCallback(
+          fail,
+          (OnFailureApiFutureCallback<Object>)
+              t1 -> {
+                parentSpan.recordException(t1);
+                parentSpan.setStatus(StatusCode.ERROR, t1.getClass().getSimpleName());
+              },
+          MoreExecutors.directExecutor());
+      return fail;
+    }
+
+    @Override
+    public ObjectReadSessionStreamRead<Projection> withNewReadId(long newReadId) {
+      return new OtelDecoratingObjectReadSessionStreamRead<>(
+          delegate.withNewReadId(newReadId), parentSpan);
+    }
+
+    @Override
+    public ReadRange makeReadRange() {
+      return delegate.makeReadRange();
+    }
+
+    @Override
+    public <T extends Throwable> void recordError(
+        T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+      delegate.recordError(t, onSuccess, onFailure);
+    }
+
+    @Override
+    public boolean readyToSend() {
+      return delegate.readyToSend();
+    }
+
+    @Override
+    public boolean canShareStreamWith(ObjectReadSessionStreamRead<?> other) {
+      if (other instanceof OtelDecoratingObjectReadSessionStreamRead<?>) {
+        OtelDecoratingObjectReadSessionStreamRead<?> dec =
+            (OtelDecoratingObjectReadSessionStreamRead<?>) other;
+        return delegate.canShareStreamWith(dec.delegate);
+      }
+      return delegate.canShareStreamWith(other);
+    }
+
+    @Override
+    public void setOnCloseCallback(IOAutoCloseable onCloseCallback) {
+      delegate.setOnCloseCallback(onCloseCallback);
+    }
+
+    @Override
+    public void internalClose() throws IOException {
+      delegate.internalClose();
+    }
+
+    @Override
+    public void close() throws IOException {
+      delegate.close();
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("delegate", delegate)
+          // .add("parentSpan", parentSpan)
+          .toString();
     }
   }
 }

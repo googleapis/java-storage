@@ -84,7 +84,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     try {
       checkState(open, "stream already closed");
       long readId = state.newReadId();
-      ObjectReadSessionStreamRead<Projection, ?> read =
+      ObjectReadSessionStreamRead<Projection> read =
           config.cast().newRead(readId, range, retryContextProvider.create());
       registerReadInState(readId, read);
       return read.project();
@@ -119,7 +119,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     }
   }
 
-  private void registerReadInState(long readId, ObjectReadSessionStreamRead<?, ?> read) {
+  private void registerReadInState(long readId, ObjectReadSessionStreamRead<?> read) {
     BidiReadObjectRequest request =
         BidiReadObjectRequest.newBuilder().addReadRanges(read.makeReadRange()).build();
     if (state.canHandleNewRead(read)) {

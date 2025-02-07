@@ -203,14 +203,12 @@ public final class ITObjectReadSessionTest {
       Stopwatch sw = Stopwatch.createStarted();
       try (BlobReadSession blobReadSession =
           storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
-        ObjectReadSessionImpl orsi =
-            ITObjectReadSessionFakeTest.getObjectReadSessionImpl(blobReadSession);
 
         int numRangesToRead = 256;
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
-                .map(r -> orsi.readRange(r, RangeProjectionConfigs.asFutureByteString()))
+                .map(r -> blobReadSession.readRange(r, RangeProjectionConfigs.asFutureByteString()))
                 .collect(Collectors.toList());
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);

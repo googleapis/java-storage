@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.maybeGetStorageDataClient;
 import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
@@ -37,12 +38,16 @@ import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
+import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratingBlobReadSession;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageDataClient.FastOpenObjectReadSession;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.cloud.storage.it.GrpcRequestAuditing;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -96,7 +101,10 @@ import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
+import org.junit.runner.RunWith;
 
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.TEST_BENCH)
 public final class ITObjectReadSessionFakeTest {
 
   private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
@@ -1371,15 +1379,15 @@ public final class ITObjectReadSessionFakeTest {
     FakeStorage fakeStorage = FakeStorage.from(db);
 
     try (FakeServer fakeServer = FakeServer.of(fakeStorage);
-        GrpcStorageImpl storage =
-            (GrpcStorageImpl)
-                fakeServer
-                    .getGrpcStorageOptions()
-                    .toBuilder()
-                    .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
-                    .build()
-                    .getService()) {
-      StorageDataClient dataClient = storage.storageDataClient;
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
+                .build()
+                .getService()) {
+      StorageDataClient dataClient = maybeGetStorageDataClient(storage);
+      assertThat(dataClient).isNotNull();
 
       BidiReadObjectRequest req =
           BidiReadObjectRequest.newBuilder()
@@ -1503,6 +1511,10 @@ public final class ITObjectReadSessionFakeTest {
 
   static ObjectReadSessionImpl getObjectReadSessionImpl(BlobReadSession bd) {
     ObjectReadSessionImpl orsi = null;
+    if (bd instanceof OtelDecoratingBlobReadSession) {
+      OtelDecoratingBlobReadSession odbrs = (OtelDecoratingBlobReadSession) bd;
+      bd = odbrs.delegate;
+    }
     if (bd instanceof BlobReadSessionAdapter) {
       BlobReadSessionAdapter brsa = (BlobReadSessionAdapter) bd;
       ObjectReadSession session = brsa.session;

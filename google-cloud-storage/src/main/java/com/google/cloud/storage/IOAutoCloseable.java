@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import com.google.common.base.MoreObjects;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -29,6 +30,16 @@ interface IOAutoCloseable extends AutoCloseable, Closeable {
   @Override
   void close() throws IOException;
 
+  default IOAutoCloseable andThen(IOAutoCloseable then) {
+    if (NoOpIOAutoCloseable.INSTANCE.equals(this)) {
+      return then;
+    } else if (NoOpIOAutoCloseable.INSTANCE.equals(then)) {
+      return this;
+    } else {
+      return new AndThenIOAutoClosable(this, then);
+    }
+  }
+
   static IOAutoCloseable noOp() {
     return NoOpIOAutoCloseable.INSTANCE;
   }
@@ -40,5 +51,27 @@ interface IOAutoCloseable extends AutoCloseable, Closeable {
 
     @Override
     public void close() throws IOException {}
+  }
+
+  final class AndThenIOAutoClosable implements IOAutoCloseable {
+    private final IOAutoCloseable first;
+    private final IOAutoCloseable second;
+
+    private AndThenIOAutoClosable(IOAutoCloseable first, IOAutoCloseable second) {
+      this.first = first;
+      this.second = second;
+    }
+
+    @Override
+    public void close() throws IOException {
+      //noinspection EmptyTryBlock
+      try (IOAutoCloseable ignore2 = second;
+          IOAutoCloseable ignore1 = first) {}
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("first", first).add("second", second).toString();
+    }
   }
 }

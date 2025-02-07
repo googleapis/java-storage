@@ -17,15 +17,14 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import java.nio.channels.ScatteringByteChannel;
 
 public final class RangeProjectionConfigs {
 
-  abstract static class BaseConfig<
-          Projection, Read extends ObjectReadSessionStreamRead<Projection, Read>>
+  abstract static class BaseConfig<Projection, Read extends ObjectReadSessionStreamRead<Projection>>
       extends RangeProjectionConfig<Projection> {
     abstract Read newRead(long readId, RangeSpec range, RetryContext retryContext);
   }

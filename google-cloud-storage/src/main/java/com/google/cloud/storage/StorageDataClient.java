@@ -84,7 +84,7 @@ final class StorageDataClient implements IOAutoCloseable {
             executor, bidiReadObject, state, retryContextProvider.create());
 
     long readId = state.newReadId();
-    ObjectReadSessionStreamRead<Projection, ?> read =
+    ObjectReadSessionStreamRead<Projection> read =
         config.cast().newRead(readId, range, retryContextProvider.create());
     state.putOutstandingRead(readId, read);
 
@@ -128,13 +128,13 @@ final class StorageDataClient implements IOAutoCloseable {
 
   static final class FastOpenObjectReadSession<Projection> implements IOAutoCloseable {
     private final ObjectReadSession session;
-    private final ObjectReadSessionStreamRead<Projection, ?> read;
+    private final ObjectReadSessionStreamRead<Projection> read;
     private final Borrowable borrowable;
     private boolean sessionLeased;
 
     private FastOpenObjectReadSession(
         ObjectReadSession session,
-        ObjectReadSessionStreamRead<Projection, ?> read,
+        ObjectReadSessionStreamRead<Projection> read,
         Borrowable borrowable) {
       this.session = session;
       this.read = read;
@@ -150,7 +150,7 @@ final class StorageDataClient implements IOAutoCloseable {
       return session;
     }
 
-    ObjectReadSessionStreamRead<Projection, ?> getRead() {
+    ObjectReadSessionStreamRead<Projection> getRead() {
       return read;
     }
 
@@ -169,7 +169,7 @@ final class StorageDataClient implements IOAutoCloseable {
 
     public static <Projection> FastOpenObjectReadSession<Projection> of(
         ObjectReadSession session,
-        ObjectReadSessionStreamRead<Projection, ?> read,
+        ObjectReadSessionStreamRead<Projection> read,
         Borrowable borrowable) {
       return new FastOpenObjectReadSession<>(session, read, borrowable);
     }

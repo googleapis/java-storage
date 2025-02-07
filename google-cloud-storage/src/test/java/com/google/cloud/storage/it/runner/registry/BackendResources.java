@@ -123,6 +123,7 @@ final class BackendResources implements ManagedLifecycle {
                               GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                           .setCredentials(NoCredentials.getInstance())
                           .setHost(Registry.getInstance().testBench().getGRPCBaseUri())
+                          .setAttemptDirectPath(false)
                           .setProjectId("test-project-id");
                   break;
                 default: // PROD, java8 doesn't have exhaustive checking for enum switch

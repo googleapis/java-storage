@@ -32,9 +32,9 @@ import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ClientStreamReadyObserver;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.cloud.storage.Backoff.Jitterer;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
@@ -324,7 +324,7 @@ public final class ObjectReadSessionStreamTest {
   }
 
   static class TestObjectReadSessionStreamRead
-      extends ObjectReadSessionStreamRead<java.lang.Object, TestObjectReadSessionStreamRead> {
+      extends BaseObjectReadSessionStreamRead<java.lang.Object> {
 
     private static final AtomicLong readIdSeq = new AtomicLong(1);
     private boolean readyToSend = false;
@@ -341,34 +341,35 @@ public final class ObjectReadSessionStreamTest {
     }
 
     @Override
-    java.lang.Object project() {
+    public java.lang.Object project() {
       return this;
     }
 
     @Override
-    boolean acceptingBytes() {
+    public boolean acceptingBytes() {
       return false;
     }
 
     @Override
-    void accept(ChildRef childRef) {}
+    public void accept(ChildRef childRef) {}
 
     @Override
-    void eof() {}
+    public void eof() {}
 
     @Override
-    ApiFuture<Throwable> fail(Throwable t) {
+    public ApiFuture<Throwable> fail(Throwable t) {
       fail.set(t);
       return fail;
     }
 
     @Override
-    TestObjectReadSessionStreamRead withNewReadId(long newReadId) {
+    public TestObjectReadSessionStreamRead withNewReadId(long newReadId) {
       return null;
     }
 
     @Override
-    <T extends Throwable> void recordError(T t, OnSuccess onSuccess, OnFailure<T> onFailure) {}
+    public <T extends Throwable> void recordError(
+        T t, OnSuccess onSuccess, OnFailure<T> onFailure) {}
 
     @Override
     public boolean readyToSend() {
@@ -376,7 +377,7 @@ public final class ObjectReadSessionStreamTest {
     }
 
     @Override
-    protected void internalClose() throws IOException {}
+    public void internalClose() throws IOException {}
 
     static TestObjectReadSessionStreamRead of() {
       long id = readIdSeq.getAndIncrement();

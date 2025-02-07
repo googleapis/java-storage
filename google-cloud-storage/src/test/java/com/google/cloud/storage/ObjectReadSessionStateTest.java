@@ -21,9 +21,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamTest.TestObjectReadSessionStreamRead;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

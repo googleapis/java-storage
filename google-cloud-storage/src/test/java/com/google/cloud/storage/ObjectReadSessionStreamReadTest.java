@@ -22,18 +22,22 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.AccumulatingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.StreamingRead;
-import com.google.cloud.storage.ObjectReadSessionStreamRead.ZeroCopyByteStringAccumulatingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
+import com.google.cloud.storage.BaseObjectReadSessionStreamRead.ZeroCopyByteStringAccumulatingRead;
 import com.google.cloud.storage.ObjectReadSessionStreamTest.TestObjectReadSessionStreamRead;
+import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratingObjectReadSessionStreamRead;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ReadRange;
+import io.opentelemetry.api.trace.Span;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ScatteringByteChannel;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -473,6 +477,34 @@ public final class ObjectReadSessionStreamReadTest {
   }
 
   @Test
+  public void canShareStreamWith_otelDecorated() throws Exception {
+    try (OtelDecoratingObjectReadSessionStreamRead<ApiFuture<byte[]>> bytes =
+            new OtelDecoratingObjectReadSessionStreamRead<>(
+                ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
+                    1, RangeSpec.all(), RetryContext.neverRetry()),
+                Span.getInvalid());
+        OtelDecoratingObjectReadSessionStreamRead<ApiFuture<DisposableByteString>> byteString =
+            new OtelDecoratingObjectReadSessionStreamRead<>(
+                ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
+                    2, RangeSpec.all(), RetryContext.neverRetry()),
+                Span.getInvalid());
+        OtelDecoratingObjectReadSessionStreamRead<ScatteringByteChannel> streamingRead =
+            new OtelDecoratingObjectReadSessionStreamRead<>(
+                ObjectReadSessionStreamRead.streamingRead(
+                    3, RangeSpec.all(), RetryContext.neverRetry()),
+                Span.getInvalid())) {
+      assertAll(
+          () -> assertThat(bytes.canShareStreamWith(byteString)).isTrue(),
+          () -> assertThat(byteString.canShareStreamWith(bytes)).isTrue(),
+          () -> assertThat(byteString.canShareStreamWith(streamingRead)).isFalse(),
+          () -> assertThat(bytes.canShareStreamWith(streamingRead)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(byteString)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(bytes)).isFalse(),
+          () -> assertThat(streamingRead.canShareStreamWith(streamingRead)).isFalse());
+    }
+  }
+
+  @Test
   public void onCloseCallbackIsCalled() throws IOException {
     final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -490,7 +522,7 @@ public final class ObjectReadSessionStreamReadTest {
     TestObjectReadSessionStreamRead read =
         new TestObjectReadSessionStreamRead(1, RangeSpec.all(), RetryContext.neverRetry()) {
           @Override
-          protected void internalClose() throws IOException {
+          public void internalClose() throws IOException {
             throw new IOException("Kaboom");
           }
         };

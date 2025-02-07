@@ -106,6 +106,23 @@ public final class PackagePrivateMethodWorkarounds {
     return null;
   }
 
+  @Nullable
+  public static StorageDataClient maybeGetStorageDataClient(Storage s) {
+    if (s instanceof GrpcStorageImpl) {
+      return ((GrpcStorageImpl) s).storageDataClient;
+    }
+    // handle instances of AbstractStorageProxy
+    Storage service = s.getOptions().getService();
+    if (service instanceof OtelStorageDecorator) {
+      OtelStorageDecorator osd = (OtelStorageDecorator) service;
+      service = osd.delegate;
+    }
+    if (service instanceof GrpcStorageImpl) {
+      return ((GrpcStorageImpl) service).storageDataClient;
+    }
+    return null;
+  }
+
   public static <T> void ifNonNull(@Nullable T t, Consumer<T> c) {
     Utils.ifNonNull(t, c);
   }

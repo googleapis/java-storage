@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
+import com.google.cloud.storage.it.runner.registry.Registry;
 import com.google.storage.v2.StorageGrpc;
 import com.google.storage.v2.StorageSettings;
 import io.grpc.Server;
@@ -65,6 +66,7 @@ final class FakeServer implements AutoCloseable {
             .setGrpcInterceptorProvider(GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
             .setEnableGrpcClientMetrics(false)
             .setAttemptDirectPath(false)
+            .setOpenTelemetry(Registry.getInstance().otelSdk.get().get())
             // cut most retry settings by half. we're hitting an in process server.
             .setRetrySettings(
                 RetrySettings.newBuilder()

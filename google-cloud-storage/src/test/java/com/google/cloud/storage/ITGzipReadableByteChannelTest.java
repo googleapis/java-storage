@@ -347,8 +347,7 @@ public class ITGzipReadableByteChannelTest {
                 .read()
                 .byteChannel(
                     new ZeroCopyServerStreamingCallable<>(
-                        sc.readObjectCallable(),
-                        ResponseContentLifecycleManager.noop()),
+                        sc.readObjectCallable(), ResponseContentLifecycleManager.noop()),
                     TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions()),
                     StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler())
                 .setHasher(Hasher.noop())
