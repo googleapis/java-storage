@@ -26,14 +26,6 @@ final class TransferManagerUtils {
 
   private TransferManagerUtils() {}
 
-  static String createBlobName(ParallelUploadConfig config, Path file) {
-    if (config.getPrefix().isEmpty()) {
-      return file.toString();
-    } else {
-      return config.getPrefix().concat(file.toString());
-    }
-  }
-
   static Path createDestPath(ParallelDownloadConfig config, BlobInfo originalBlob) {
     Path newPath =
         config
