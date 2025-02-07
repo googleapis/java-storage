@@ -59,6 +59,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -1520,6 +1521,14 @@ final class OtelStorageDecorator implements Storage {
     return new OtelStorageDecorator(delegate, otel, baseAttributes);
   }
 
+  static UnaryOperator<RetryContext> retryContextDecorator(OpenTelemetry otel) {
+    requireNonNull(otel, "otel must be non null");
+    if (otel == OpenTelemetry.noop()) {
+      return UnaryOperator.identity();
+    }
+    return ctx -> new OtelRetryContextDecorator(ctx, Span.current());
+  }
+
   private static @NonNull String fmtBucket(String bucket) {
     return String.format(Locale.US, "gs://%s/", bucket);
   }
@@ -1826,8 +1835,10 @@ final class OtelStorageDecorator implements Storage {
       @Override
       ObjectReadSessionStreamRead<Projection> newRead(
           long readId, RangeSpec range, RetryContext retryContext) {
+        OtelRetryContextDecorator otelRetryContext =
+            new OtelRetryContextDecorator(retryContext, parentSpan);
         ObjectReadSessionStreamRead<Projection> read =
-            delegate.newRead(readId, range, retryContext);
+            delegate.newRead(readId, range, otelRetryContext);
         read.setOnCloseCallback(parentSpan::end);
         return new OtelDecoratingObjectReadSessionStreamRead<>(read, parentSpan);
       }
@@ -1836,6 +1847,42 @@ final class OtelStorageDecorator implements Storage {
       BaseConfig<Projection, ?> cast() {
         return this;
       }
+    }
+  }
+
+  private static final class OtelRetryContextDecorator implements RetryContext {
+    private final RetryContext delegate;
+    private final Span span;
+
+    private OtelRetryContextDecorator(RetryContext delegate, Span span) {
+      this.delegate = delegate;
+      this.span = span;
+    }
+
+    @Override
+    public boolean inBackoff() {
+      return delegate.inBackoff();
+    }
+
+    @Override
+    public void reset() {
+      delegate.reset();
+    }
+
+    @Override
+    public <T extends Throwable> void recordError(
+        T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+      span.recordException(t);
+      delegate.recordError(
+          t,
+          () -> {
+            span.addEvent("retrying");
+            onSuccess.onSuccess();
+          },
+          (tt) -> {
+            span.addEvent("terminal_failure");
+            onFailure.onFailure(tt);
+          });
     }
   }
 

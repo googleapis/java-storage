@@ -119,7 +119,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -838,7 +837,9 @@ public final class GrpcStorageOptions extends StorageOptions
                       grpcStorageOptions.getRetryAlgorithmManager().idempotent()));
 
           OpenTelemetry otel = options.getOpenTelemetry();
-          DefaultRetrier retrier = new DefaultRetrier(UnaryOperator.identity(), grpcStorageOptions);
+          DefaultRetrier retrier =
+              new DefaultRetrier(
+                  OtelStorageDecorator.retryContextDecorator(otel), grpcStorageOptions);
           if (ZeroCopyReadinessChecker.isReady()) {
             LOGGER.config("zero-copy protobuf deserialization available, using it");
             StorageStubSettings baseSettings =

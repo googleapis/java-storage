@@ -49,7 +49,6 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 */
@@ -405,7 +404,7 @@ public class HttpStorageOptions extends StorageOptions {
                   factory,
                   new HttpRetrier(
                       new DefaultRetrier(
-                          UnaryOperator.identity(),
+                          OtelStorageDecorator.retryContextDecorator(otel),
                           RetryingDependencies.simple(
                               options.getClock(), options.getRetrySettings()))));
           return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
