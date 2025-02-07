@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.cloud.RestorableState;
 import com.google.cloud.ServiceOptions;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
@@ -111,7 +112,7 @@ public class CopyWriterTest {
   public void testRewriteWithObject() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .thenReturn(RESPONSE_WITH_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT, Retrier.attemptOnce());
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -123,7 +124,7 @@ public class CopyWriterTest {
   public void testRewriteWithoutObject() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .thenReturn(RESPONSE_WITHOUT_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT, Retrier.attemptOnce());
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -135,7 +136,7 @@ public class CopyWriterTest {
   public void testRewriteWithObjectMultipleRequests() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .thenReturn(RESPONSE_WITH_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT, Retrier.attemptOnce());
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -147,7 +148,7 @@ public class CopyWriterTest {
   public void testRewriteWithoutObjectMultipleRequests() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .thenReturn(RESPONSE_WITHOUT_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT, Retrier.attemptOnce());
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -159,7 +160,7 @@ public class CopyWriterTest {
   public void testSaveAndRestoreWithObject() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .thenReturn(RESPONSE_WITH_OBJECT, RESPONSE_WITH_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT, Retrier.attemptOnce());
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
     assertEquals(21L, copyWriter.getTotalBytesCopied());
@@ -177,7 +178,7 @@ public class CopyWriterTest {
   public void testSaveAndRestoreWithoutObject() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .thenReturn(RESPONSE_WITHOUT_OBJECT, RESPONSE_WITHOUT_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT, Retrier.attemptOnce());
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
     assertEquals(21L, copyWriter.getTotalBytesCopied());
@@ -195,7 +196,7 @@ public class CopyWriterTest {
   public void testSaveAndRestoreWithResult() {
     when(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .thenReturn(RESPONSE_WITH_OBJECT_DONE);
-    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT, Retrier.attemptOnce());
     copyWriter.copyChunk();
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());

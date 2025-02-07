@@ -25,14 +25,13 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.TimedAttemptSettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
-import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -63,7 +62,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
   private final SettableApiFuture<WriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
   private final WriteCtx<ResumableWrite> writeCtx;
-  private final RetryingDependencies deps;
+  private final Retrier retrier;
   private final ResultRetryAlgorithm<?> alg;
   private final RecoveryFile rf;
 
@@ -83,7 +82,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
       UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query,
       SettableApiFuture<WriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
-      RetryingDependencies deps,
+      Retrier retrier,
       ResultRetryAlgorithm<?> alg,
       WriteCtx<ResumableWrite> writeCtx,
       RecoveryFile rf,
@@ -96,7 +95,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
     this.writeCtx = writeCtx;
-    this.deps = deps;
+    this.retrier = retrier;
     this.alg = new Alg(alg, resultFuture);
     this.rf = rf;
     this.uploadId = writeCtx.newRequestBuilder().getUploadId();
@@ -205,8 +204,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
 
   private void doUpload(boolean closing, ChunkSegment[] segments, long goalSize) {
     AtomicBoolean recover = new AtomicBoolean(false);
-    Retrying.run(
-        deps,
+    retrier.run(
         alg,
         () -> {
           if (closing && sync != null) {
@@ -271,10 +269,10 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
                   stream.onNext(message);
                   finished = true;
                 }
-                recover.compareAndSet(true, false);
                 if (closing || finished) {
                   stream.onCompleted();
                 }
+                recover.compareAndSet(true, false);
               }
             } else {
               Object resource = resp.getResource();
@@ -411,7 +409,8 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
     }
 
     void await() {
-      ApiExceptions.callAndTranslateApiException(invocationHandle);
+      // ApiExceptions.callAndTranslateApiException(invocationHandle);
+      ApiFutureUtils.await(invocationHandle);
     }
   }
 

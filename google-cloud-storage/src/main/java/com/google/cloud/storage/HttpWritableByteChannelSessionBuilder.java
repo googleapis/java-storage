@@ -20,11 +20,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
@@ -56,14 +55,12 @@ final class HttpWritableByteChannelSessionBuilder {
   static final class ResumableUploadBuilder {
 
     @NonNull private final HttpClientContext httpClientContext;
-    private RetryingDependencies deps;
-    private ResultRetryAlgorithm<?> alg;
+    private RetrierWithAlg retrier;
     private LongConsumer committedBytesCallback;
 
     ResumableUploadBuilder(@NonNull HttpClientContext httpClientContext) {
       this.httpClientContext = httpClientContext;
-      this.deps = RetryingDependencies.attemptOnce();
-      this.alg = Retrying.neverRetry();
+      this.retrier = RetrierWithAlg.attemptOnce();
       this.committedBytesCallback = l -> {};
     }
 
@@ -73,10 +70,8 @@ final class HttpWritableByteChannelSessionBuilder {
       return this;
     }
 
-    ResumableUploadBuilder withRetryConfig(
-        @NonNull RetryingDependencies deps, @NonNull ResultRetryAlgorithm<?> alg) {
-      this.deps = requireNonNull(deps, "deps must be non null");
-      this.alg = requireNonNull(alg, "alg must be non null");
+    ResumableUploadBuilder withRetryConfig(@NonNull RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
       return this;
     }
 
@@ -121,11 +116,10 @@ final class HttpWritableByteChannelSessionBuilder {
       // To ensure we are using the specified values at the point in time they are bound to the
       // function read them into local variables which will be closed over rather than the class
       // fields.
-      RetryingDependencies boundDeps = deps;
-      ResultRetryAlgorithm<?> boundAlg = alg;
+      RetrierWithAlg boundRetrier = retrier;
       return (start, resultFuture) ->
           new ApiaryUnbufferedWritableByteChannel(
-              httpClientContext, boundDeps, boundAlg, start, resultFuture, committedBytesCallback);
+              httpClientContext, boundRetrier, start, resultFuture, committedBytesCallback);
     }
 
     final class UnbufferedResumableUploadBuilder {

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.ITGapicUnbufferedWritableByteChannelTest.DirectWriteService;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
@@ -124,8 +124,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       ByteBuffer bb = DataGenerator.base64Characters().genByteBuffer(_256KiB);
@@ -206,8 +205,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
@@ -287,8 +285,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
@@ -370,8 +367,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       channel.close();
@@ -452,8 +448,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
@@ -536,8 +531,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       StorageException se = assertThrows(StorageException.class, channel::close);
@@ -627,8 +621,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       ByteBuffer bb = DataGenerator.base64Characters().genByteBuffer(_256KiB);
@@ -689,8 +682,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       ByteBuffer buf = DataGenerator.base64Characters().genByteBuffer(_256KiB);
@@ -737,8 +729,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               CHUNK_SEGMENTER,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       ByteBuffer buf = DataGenerator.base64Characters().genByteBuffer(_256KiB);
@@ -787,8 +778,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
               chunkSegmenter,
               storageClient.writeObjectCallable(),
               writeCtx,
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               GrpcCallContext::createDefault);
 
       ByteBuffer buf = DataGenerator.base64Characters().genByteBuffer(_512KiB);

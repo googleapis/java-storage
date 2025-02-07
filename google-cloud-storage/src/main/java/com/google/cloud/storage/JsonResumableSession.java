@@ -16,10 +16,9 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Conversions.Decoder;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import io.opencensus.trace.EndSpanOptions;
@@ -35,18 +34,13 @@ final class JsonResumableSession {
       EndSpanOptions.builder().setSampleToLocalSpanStore(true).build();
 
   private final HttpClientContext context;
-  private final RetryingDependencies deps;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final JsonResumableWrite resumableWrite;
 
   JsonResumableSession(
-      HttpClientContext context,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
-      JsonResumableWrite resumableWrite) {
+      HttpClientContext context, RetrierWithAlg retrier, JsonResumableWrite resumableWrite) {
     this.context = context;
-    this.deps = deps;
-    this.alg = alg;
+    this.retrier = retrier;
     this.resumableWrite = resumableWrite;
   }
 
@@ -66,9 +60,7 @@ final class JsonResumableSession {
     try {
       httpRpcContext.newInvocationId();
       AtomicBoolean dirty = new AtomicBoolean(false);
-      return Retrying.run(
-          deps,
-          alg,
+      return retrier.run(
           () -> {
             if (dirty.getAndSet(true)) {
               ResumableOperationResult<@Nullable StorageObject> query = query();

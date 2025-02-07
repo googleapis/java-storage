@@ -29,7 +29,7 @@ import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
@@ -60,7 +60,7 @@ final class GapicUnbufferedReadableByteChannel
   private final ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
   private final ReadObjectRequest req;
   private final Hasher hasher;
-  private final RetryingDependencies retryingDeps;
+  private final Retrier retrier;
   private final ResultRetryAlgorithm<?> alg;
   private final SimpleBlockingQueue<java.lang.Object> queue;
 
@@ -78,7 +78,7 @@ final class GapicUnbufferedReadableByteChannel
       ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest req,
       Hasher hasher,
-      RetryingDependencies retryingDependencies,
+      Retrier retrier,
       ResultRetryAlgorithm<?> alg) {
     this.result = result;
     this.read = read;
@@ -86,7 +86,7 @@ final class GapicUnbufferedReadableByteChannel
     this.hasher = hasher;
     this.fetchOffset = new AtomicLong(req.getReadOffset());
     this.blobOffset = req.getReadOffset();
-    this.retryingDeps = retryingDependencies;
+    this.retrier = retrier;
     this.alg =
         new BasicResultRetryAlgorithm<java.lang.Object>() {
           @Override
@@ -292,8 +292,7 @@ final class GapicUnbufferedReadableByteChannel
         return;
       }
       readObjectObserver =
-          Retrying.run(
-              retryingDeps,
+          retrier.run(
               alg,
               () -> {
                 ReadObjectObserver tmp = new ReadObjectObserver();

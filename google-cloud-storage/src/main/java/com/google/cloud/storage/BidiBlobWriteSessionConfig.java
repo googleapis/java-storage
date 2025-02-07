@@ -122,7 +122,7 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()
                           .withRetryConfig(
-                              grpc.getOptions(), grpc.retryAlgorithmManager.idempotent())
+                              grpc.retrier.withAlg(grpc.retryAlgorithmManager.idempotent()))
                           .buffered(BufferHandle.allocate(bufferSize))
                           .setStartAsync(startResumableWrite)
                           .build();

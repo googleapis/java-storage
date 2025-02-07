@@ -28,6 +28,7 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.DataLossException;
 import com.google.cloud.storage.ChannelSession.UnbufferedReadSession;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
@@ -119,6 +120,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     try (FakeServer server = FakeServer.of(fakeStorage);
         StorageClient storageClient = StorageClient.create(server.storageSettings())) {
+      Retrier retrier = TestUtils.retrierFromStorageOptions(server.getGrpcStorageOptions());
 
       UnbufferedReadableByteChannelSession<Object> session =
           new UnbufferedReadSession<>(
@@ -131,7 +133,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           ResponseContentLifecycleManager.noop()),
                       start,
                       Hasher.noop(),
-                      server.getGrpcStorageOptions(),
+                      retrier,
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -148,6 +150,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     try (FakeServer server = FakeServer.of(fakeStorage);
         StorageClient storageClient = StorageClient.create(server.storageSettings())) {
+      Retrier retrier = TestUtils.retrierFromStorageOptions(server.getGrpcStorageOptions());
 
       UnbufferedReadableByteChannelSession<Object> session =
           new UnbufferedReadSession<>(
@@ -160,7 +163,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           ResponseContentLifecycleManager.noop()),
                       start,
                       Hasher.noop(),
-                      server.getGrpcStorageOptions(),
+                      retrier,
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[40];
       ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(actualBytes, 2);
@@ -207,6 +210,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
 
     try (FakeServer server = FakeServer.of(fakeStorage);
         StorageClient storageClient = StorageClient.create(server.storageSettings())) {
+      Retrier retrier = TestUtils.retrierFromStorageOptions(server.getGrpcStorageOptions());
 
       UnbufferedReadableByteChannelSession<Object> session =
           new UnbufferedReadSession<>(
@@ -219,7 +223,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           ResponseContentLifecycleManager.noop()),
                       start,
                       Hasher.noop(),
-                      server.getGrpcStorageOptions(),
+                      retrier,
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -255,6 +259,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
         };
     try (FakeServer server = FakeServer.of(fakeStorage);
         StorageClient storageClient = StorageClient.create(server.storageSettings())) {
+      Retrier retrier = TestUtils.retrierFromStorageOptions(server.getGrpcStorageOptions());
 
       UnbufferedReadableByteChannelSession<Object> session =
           new UnbufferedReadSession<>(
@@ -266,8 +271,8 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           storageClient.readObjectCallable(),
                           ResponseContentLifecycleManager.noop()),
                       start,
-                      Hasher.noop(),
-                      server.getGrpcStorageOptions(),
+                      Hasher.enabled(),
+                      retrier,
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
@@ -295,6 +300,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
         };
     try (FakeServer server = FakeServer.of(fakeStorage);
         StorageClient storageClient = StorageClient.create(server.storageSettings())) {
+      Retrier retrier = TestUtils.retrierFromStorageOptions(server.getGrpcStorageOptions());
 
       UnbufferedReadableByteChannelSession<Object> session =
           new UnbufferedReadSession<>(
@@ -307,7 +313,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                           ResponseContentLifecycleManager.noop()),
                       start,
                       Hasher.noop(),
-                      server.getGrpcStorageOptions(),
+                      retrier,
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[41];
       //noinspection resource

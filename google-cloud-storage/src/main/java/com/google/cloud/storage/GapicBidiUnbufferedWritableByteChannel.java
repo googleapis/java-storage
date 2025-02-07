@@ -20,7 +20,6 @@ import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
@@ -29,7 +28,7 @@ import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -51,8 +50,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
   private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
-  private final RetryingDependencies deps;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
 
@@ -69,15 +67,13 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
 
   GapicBidiUnbufferedWritableByteChannel(
       BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       SettableApiFuture<BidiWriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
       BidiWriteCtx<BidiResumableWrite> writeCtx,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.write = write;
-    this.deps = deps;
-    this.alg = alg;
+    this.retrier = retrier;
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
 
@@ -241,9 +237,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
   }
 
   private void flush(@NonNull List<BidiWriteObjectRequest> segments) {
-    Retrying.run(
-        deps,
-        alg,
+    retrier.run(
         () -> {
           try {
             ApiStreamObserver<BidiWriteObjectRequest> opened = openedStream();

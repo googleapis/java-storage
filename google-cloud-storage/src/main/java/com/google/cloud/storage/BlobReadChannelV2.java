@@ -22,6 +22,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
 import com.google.cloud.storage.HttpDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
@@ -150,16 +151,19 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
     private final HttpRetryAlgorithmManager retryAlgorithmManager;
     private final HttpClientContext httpClientContext;
     private final Storage apiaryClient;
+    private final Retrier retrier;
 
     private BlobReadChannelContext(
         HttpStorageOptions storageOptions,
         HttpRetryAlgorithmManager retryAlgorithmManager,
         HttpClientContext httpClientContext,
-        Storage apiaryClient) {
+        Storage apiaryClient,
+        Retrier retrier) {
       this.storageOptions = storageOptions;
       this.retryAlgorithmManager = retryAlgorithmManager;
       this.httpClientContext = httpClientContext;
       this.apiaryClient = apiaryClient;
+      this.retrier = retrier;
     }
 
     public HttpStorageOptions getStorageOptions() {
@@ -178,21 +182,40 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
       return apiaryClient;
     }
 
+    public Retrier getRetrier() {
+      return retrier;
+    }
+
+    /**
+     * This method is pretty unsafe, but so is all of the Capture/Restore API, and it leaks its
+     * sludge all over everything. In general, prefer {@link
+     * #from(com.google.cloud.storage.StorageImpl)} over this method.
+     *
+     * <p>Essentially, cause options to instantiate a StorageImpl if it hasn't done so already, then
+     * root around to try and find its retrier.
+     */
     static BlobReadChannelContext from(HttpStorageOptions options) {
+      com.google.cloud.storage.Storage storage = options.getService();
+      if (storage instanceof OtelStorageDecorator) {
+        OtelStorageDecorator decorator = (OtelStorageDecorator) storage;
+        storage = decorator.delegate;
+      }
+      if (storage instanceof StorageImpl) {
+        StorageImpl impl = (StorageImpl) storage;
+        return from(impl);
+      }
+      throw new IllegalArgumentException(
+          "Unable to restore context from provided options instance");
+    }
+
+    static BlobReadChannelContext from(com.google.cloud.storage.StorageImpl s) {
+      HttpStorageOptions options = s.getOptions();
       return new BlobReadChannelContext(
           options,
           options.getRetryAlgorithmManager(),
           HttpClientContext.from(options.getStorageRpcV1()),
-          options.getStorageRpcV1().getStorage());
-    }
-
-    static BlobReadChannelContext from(com.google.cloud.storage.Storage s) {
-      StorageOptions options = s.getOptions();
-      if (options instanceof HttpStorageOptions) {
-        HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
-        return from(httpStorageOptions);
-      }
-      throw new IllegalArgumentException("Only HttpStorageOptions based instance supported");
+          options.getStorageRpcV1().getStorage(),
+          s.retrier);
     }
 
     @Override

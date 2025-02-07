@@ -204,7 +204,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
                 .setByteStringStrategy(ByteStringStrategy.copy())
                 .journaling()
                 .withRetryConfig(
-                    grpcStorage.getOptions(),
+                    grpcStorage.retrier,
                     grpcStorage.retryAlgorithmManager.idempotent(),
                     grpcStorage.storageClient.queryWriteStatusCallable())
                 .withBuffer(BufferHandle.allocate(Values.MAX_WRITE_CHUNK_BYTES_VALUE))

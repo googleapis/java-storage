@@ -54,6 +54,8 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -172,6 +174,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
+  final Retrier retrier;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -183,12 +186,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       StorageDataClient storageDataClient,
       ResponseContentLifecycleManager<ReadObjectResponse> responseContentLifecycleManager,
       WriterFactory writerFactory,
+      Retrier retrier,
       Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
     this.storageDataClient = storageDataClient;
     this.responseContentLifecycleManager = responseContentLifecycleManager;
     this.writerFactory = writerFactory;
+    this.retrier = retrier;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
@@ -221,8 +226,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.createBucketCallable().call(req, merge),
         syntaxDecoders.bucket);
@@ -314,8 +318,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             start,
             rw ->
                 ResumableSession.grpc(
-                    getOptions(),
-                    retryAlgorithmManager.idempotent(),
+                    retrier.withAlg(retryAlgorithmManager.idempotent()),
                     write,
                     storageClient.queryWriteStatusCallable(),
                     rw,
@@ -363,7 +366,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setHasher(Hasher.noop())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
-            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
+            .withRetryConfig(retrier.withAlg(retryAlgorithmManager.idempotent()))
             .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
             .setStartAsync(start)
             .build();
@@ -396,8 +399,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     LockBucketRetentionPolicyRequest req =
         opts.lockBucketRetentionPolicyRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.lockBucketRetentionPolicyCallable().call(req, merge),
         syntaxDecoders.bucket);
@@ -436,8 +438,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ifNonNull(blobId.getGeneration(), builder::setGeneration);
     RestoreObjectRequest req = finalOpts.restoreObjectRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.restoreObjectCallable().call(req, merge),
         resp -> {
@@ -460,15 +461,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .build();
     try {
       GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-      return Retrying.run(
-          getOptions(),
+      return retrier.run(
           retryAlgorithmManager.getFor(request),
           () -> storageClient.listBucketsPagedCallable().call(request, merge),
           resp ->
               new TransformingPageDecorator<>(
                   resp.getPage(),
                   syntaxDecoders.bucket.andThen(opts.clearBucketFields()),
-                  getOptions(),
+                  retrier,
                   retryAlgorithmManager.getFor(request)));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
@@ -485,8 +485,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     try {
       GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-      return Retrying.run(
-          getOptions(),
+      return retrier.run(
           retryAlgorithmManager.getFor(req),
           () -> storageClient.listObjectsCallable().call(req, merge),
           resp -> new ListObjectsWithSyntheticDirectoriesPage(grpcCallContext, req, resp));
@@ -515,8 +514,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                 .collect(ImmutableList.toImmutableList()));
     UpdateBucketRequest req = builder.build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.updateBucketCallable().call(req, merge),
         syntaxDecoders.bucket);
@@ -542,8 +540,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                 .collect(ImmutableList.toImmutableList()));
     UpdateObjectRequest req = builder.build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.updateObjectCallable().call(req, merge),
         syntaxDecoders.blob);
@@ -564,8 +561,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     DeleteBucketRequest req = opts.deleteBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Boolean.TRUE.equals(
-        Retrying.run(
-            getOptions(),
+        retrier.run(
             retryAlgorithmManager.getFor(req),
             () -> {
               try {
@@ -616,8 +612,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ifNonNull(id.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = finalOpts.deleteObjectsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> {
           storageClient.deleteObjectCallable().call(req, merge);
@@ -639,8 +634,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     builder.setDestination(target);
     ComposeObjectRequest req = opts.composeObjectsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.composeObjectCallable().call(req, merge),
         syntaxDecoders.blob);
@@ -701,12 +695,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
         storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
     GrpcCallContext retryContext = Retrying.newCallContext();
-    return Retrying.run(
-        getOptions(),
+    RetrierWithAlg retrierWithAlg = retrier.withAlg(retryAlgorithmManager.idempotent());
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> callable.call(req, retryContext),
-        (resp) ->
-            new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), req, resp));
+        (resp) -> new GapicCopyWriter(this, callable, retrierWithAlg, req, resp));
   }
 
   @Override
@@ -746,7 +739,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     return new GrpcBlobReadChannel(
         readObjectCallable(grpcCallContext),
-        getOptions(),
+        retrier,
         retryAlgorithmManager.getFor(request),
         request,
         !opts.autoGzipDecompression());
@@ -795,8 +788,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ApiFuture<ResumableWrite> wrapped = ApiFutures.immediateFuture(resumableWrite);
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext),
-        getOptions(),
-        retryAlgorithmManager.idempotent(),
+        retrier.withAlg(retryAlgorithmManager.idempotent()),
         () -> wrapped,
         hasher);
   }
@@ -813,8 +805,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Hasher hasher = Hasher.enabled();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     RewindableContent content = RewindableContent.of(buf);
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> {
           content.rewindTo(0);
@@ -1346,8 +1337,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         GetIamPolicyRequest.newBuilder().setResource(bucketNameCodec.encode(bucket));
     GetIamPolicyRequest req = opts.getIamPolicyRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getIamPolicyCallable().call(req, merge),
         codecs.policyCodec());
@@ -1364,8 +1354,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setPolicy(codecs.policyCodec().encode(policy))
             .build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.setIamPolicyCallable().call(req, merge),
         codecs.policyCodec());
@@ -1383,8 +1372,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .addAllPermissions(permissions)
             .build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.testIamPermissionsCallable().call(req, merge),
         resp -> {
@@ -1445,7 +1433,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setHasher(Hasher.noop())
             .setByteStringStrategy(ByteStringStrategy.copy())
             .appendable()
-            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
+            .withRetryConfig(retrier.withAlg(retryAlgorithmManager.idempotent()))
             .buffered(BufferHandle.allocate(bufferSize))
             .setStartAsync(startAppendableWrite)
             .build();
@@ -1476,8 +1464,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     dstOpts.moveObjectsRequest().apply(b);
 
     MoveObjectRequest req = b.build();
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.moveObjectCallable().call(req),
         syntaxDecoders.blob);
@@ -1578,8 +1565,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       try {
         GrpcCallContext merge = Utils.merge(ctx, Retrying.newCallContext());
         ListObjectsResponse nextPageResp =
-            Retrying.run(
-                GrpcStorageImpl.this.getOptions(),
+            retrier.run(
                 retryAlgorithmManager.getFor(nextPageReq),
                 () -> storageClient.listObjectsCallable().call(nextPageReq, merge),
                 Decoder.identity());
@@ -1633,17 +1619,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     private final PageT page;
     private final Decoder<ResourceT, ModelT> translator;
-    private final Retrying.RetryingDependencies deps;
+    private final Retrier retrier;
     private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
 
     TransformingPageDecorator(
         PageT page,
         Decoder<ResourceT, ModelT> translator,
-        Retrying.RetryingDependencies deps,
+        Retrier retrier,
         ResultRetryAlgorithm<?> resultRetryAlgorithm) {
       this.page = page;
       this.translator = translator;
-      this.deps = deps;
+      this.retrier = retrier;
       this.resultRetryAlgorithm = resultRetryAlgorithm;
     }
 
@@ -1660,7 +1646,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     @Override
     public Page<ModelT> getNextPage() {
       return new TransformingPageDecorator<>(
-          page.getNextPage(), translator, deps, resultRetryAlgorithm);
+          page.getNextPage(), translator, retrier, resultRetryAlgorithm);
     }
 
     @SuppressWarnings({"Convert2MethodRef"})
@@ -1680,7 +1666,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                     // prevent a javac 1.8 exception
                     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8056984
                     Callable<PageT> c = () -> prev.getNextPage();
-                    return Retrying.run(deps, resultRetryAlgorithm, c, Decoder.identity());
+                    return retrier.run(resultRetryAlgorithm, c, Decoder.identity());
                   })
               .filter(Objects::nonNull)
               .flatMap(p -> StreamSupport.stream(p.getValues().spliterator(), false))
@@ -1806,7 +1792,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         .read()
         .byteChannel(
             readObjectCallable(grpcCallContext),
-            getOptions(),
+            retrier,
             retryAlgorithmManager.getFor(readObjectRequest))
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
@@ -1866,8 +1852,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .build();
 
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getBucketCallable().call(req, merge),
         Decoder.identity());
@@ -1886,8 +1871,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .build();
 
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getBucketCallable().call(req, merge),
         Decoder.identity());
@@ -1896,8 +1880,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   private com.google.storage.v2.Bucket updateBucket(UpdateBucketRequest req) {
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.updateBucketCallable().call(req, merge),
         Decoder.identity());
@@ -1950,8 +1933,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .build();
 
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getObjectCallable().call(req, merge),
         Decoder.identity());
@@ -1978,8 +1960,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   private Object updateObject(UpdateObjectRequest req) {
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.updateObjectCallable().call(req, merge),
         Decoder.identity());
@@ -1999,8 +1980,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GetObjectRequest req = finalOpts.getObjectsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     //noinspection DataFlowIssue
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getObjectCallable().call(req, merge),
         resp -> {
@@ -2034,8 +2014,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
+    return retrier.run(
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getBucketCallable().call(req, merge),
         syntaxDecoders.bucket.andThen(opts.clearBucketFields()));

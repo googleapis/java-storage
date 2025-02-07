@@ -29,6 +29,9 @@ import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -62,6 +65,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -138,6 +142,10 @@ public final class TestUtils {
   static RetryingDependencies defaultRetryingDeps() {
     return RetryingDependencies.simple(
         NanoClock.getDefaultClock(), StorageOptions.getDefaultRetrySettings());
+  }
+
+  static Retrier defaultRetrier() {
+    return new DefaultRetrier(UnaryOperator.identity(), defaultRetryingDeps());
   }
 
   /**
@@ -337,6 +345,21 @@ public final class TestUtils {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new RuntimeException(e);
+    }
+  }
+
+  static Retrier retrierFromStorageOptions(StorageOptions options) {
+    if (options instanceof HttpStorageOptions) {
+      HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
+      DefaultRetrier retrier =
+          new DefaultRetrier(UnaryOperator.identity(), httpStorageOptions.asRetryDependencies());
+      return new HttpRetrier(retrier);
+    } else if (options instanceof GrpcStorageOptions) {
+      GrpcStorageOptions grpcStorageOptions = (GrpcStorageOptions) options;
+
+      return new DefaultRetrier(UnaryOperator.identity(), grpcStorageOptions);
+    } else {
+      return Retrier.attemptOnce();
     }
   }
 

@@ -16,11 +16,11 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.net.URL;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 final class ResumableMedia {
@@ -29,31 +29,24 @@ final class ResumableMedia {
       final HttpStorageOptions storageOptions,
       final BlobInfo blob,
       final Map<StorageRpc.Option, ?> optionsMap,
-      ResultRetryAlgorithm<?> algorithm) {
+      final RetrierWithAlg retrier) {
     return () ->
-        Retrying.run(
-            storageOptions,
-            algorithm,
+        retrier.run(
             () ->
                 storageOptions
                     .getStorageRpcV1()
                     .open(Conversions.json().blobInfo().encode(blob), optionsMap),
-            Function.identity());
+            Decoder.identity());
   }
 
   static Supplier<String> startUploadForSignedUrl(
-      final HttpStorageOptions storageOptions,
-      final URL signedURL,
-      ResultRetryAlgorithm<?> algorithm) {
+      final HttpStorageOptions storageOptions, final URL signedURL, final RetrierWithAlg retrier) {
     if (!isValidSignedURL(signedURL.getQuery())) {
       throw new StorageException(2, "invalid signedURL");
     }
     return () ->
-        Retrying.run(
-            storageOptions,
-            algorithm,
-            () -> storageOptions.getStorageRpcV1().open(signedURL.toString()),
-            Function.identity());
+        retrier.run(
+            () -> storageOptions.getStorageRpcV1().open(signedURL.toString()), Decoder.identity());
   }
 
   static GapicMediaSession gapic() {

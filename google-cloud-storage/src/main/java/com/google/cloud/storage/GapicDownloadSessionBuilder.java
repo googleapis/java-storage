@@ -23,7 +23,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.Object;
@@ -47,25 +47,25 @@ final class GapicDownloadSessionBuilder {
 
   public ReadableByteChannelSessionBuilder byteChannel(
       ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
-      RetryingDependencies retryingDependencies,
+      Retrier retrier,
       ResultRetryAlgorithm<?> resultRetryAlgorithm) {
-    return new ReadableByteChannelSessionBuilder(read, retryingDependencies, resultRetryAlgorithm);
+    return new ReadableByteChannelSessionBuilder(read, retrier, resultRetryAlgorithm);
   }
 
   public static final class ReadableByteChannelSessionBuilder {
 
     private final ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
-    private final RetryingDependencies retryingDependencies;
+    private final Retrier retrier;
     private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
     private boolean autoGzipDecompression;
     private Hasher hasher;
 
     private ReadableByteChannelSessionBuilder(
         ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
-        RetryingDependencies retryingDependencies,
+        Retrier retrier,
         ResultRetryAlgorithm<?> resultRetryAlgorithm) {
       this.read = read;
-      this.retryingDependencies = retryingDependencies;
+      this.retrier = retrier;
       this.resultRetryAlgorithm = resultRetryAlgorithm;
       this.hasher = Hasher.noop();
       this.autoGzipDecompression = false;
@@ -107,12 +107,12 @@ final class GapicDownloadSessionBuilder {
         if (autoGzipDecompression) {
           return new GzipReadableByteChannel(
               new GapicUnbufferedReadableByteChannel(
-                  resultFuture, read, object, hasher, retryingDependencies, resultRetryAlgorithm),
+                  resultFuture, read, object, hasher, retrier, resultRetryAlgorithm),
               ApiFutures.transform(
                   resultFuture, Object::getContentEncoding, MoreExecutors.directExecutor()));
         } else {
           return new GapicUnbufferedReadableByteChannel(
-              resultFuture, read, object, hasher, retryingDependencies, resultRetryAlgorithm);
+              resultFuture, read, object, hasher, retrier, resultRetryAlgorithm);
         }
       };
     }

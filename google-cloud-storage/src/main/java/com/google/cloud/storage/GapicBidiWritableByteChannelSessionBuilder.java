@@ -20,10 +20,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
@@ -87,17 +86,14 @@ final class GapicBidiWritableByteChannelSessionBuilder {
 
   final class ResumableUploadBuilder {
 
-    private RetryingDependencies deps;
-    private ResultRetryAlgorithm<?> alg;
+    private RetrierWithAlg retrier;
 
     ResumableUploadBuilder() {
-      this.deps = RetryingDependencies.attemptOnce();
-      this.alg = Retrying.neverRetry();
+      this.retrier = RetrierWithAlg.attemptOnce();
     }
 
-    ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
-      this.deps = requireNonNull(deps, "deps must be non null");
-      this.alg = requireNonNull(alg, "alg must be non null");
+    ResumableUploadBuilder withRetryConfig(RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
       return this;
     }
 
@@ -145,6 +141,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         // fields.
         ByteStringStrategy boundStrategy = byteStringStrategy;
         Hasher boundHasher = hasher;
+        RetrierWithAlg boundRetrier = retrier;
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             ((BiFunction<
@@ -154,8 +151,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                     (start, resultFuture) ->
                         new GapicBidiUnbufferedWritableByteChannel(
                             write,
-                            deps,
-                            alg,
+                            boundRetrier,
                             resultFuture,
                             new ChunkSegmenter(
                                 boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
@@ -168,18 +164,14 @@ final class GapicBidiWritableByteChannelSessionBuilder {
   }
 
   final class AppendableUploadBuilder {
-    private RetryingDependencies deps;
-    private ResultRetryAlgorithm<?> alg;
+    private RetrierWithAlg retrier;
 
     AppendableUploadBuilder() {
-      this.deps = RetryingDependencies.attemptOnce();
-      this.alg = Retrying.neverRetry();
+      this.retrier = RetrierWithAlg.attemptOnce();
     }
 
-    AppendableUploadBuilder withRetryConfig(
-        RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
-      this.deps = requireNonNull(deps, "deps must be non null");
-      this.alg = requireNonNull(alg, "alg must be non null");
+    AppendableUploadBuilder withRetryConfig(RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
       return this;
     }
 
@@ -227,6 +219,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         // fields.
         ByteStringStrategy boundStrategy = byteStringStrategy;
         Hasher boundHasher = hasher;
+        RetrierWithAlg boundRetrier = retrier;
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             ((BiFunction<
@@ -236,8 +229,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                     (start, resultFuture) ->
                         new GapicBidiUnbufferedAppendableWritableByteChannel(
                             write,
-                            deps,
-                            alg,
+                            boundRetrier,
                             resultFuture,
                             new ChunkSegmenter(
                                 boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),

@@ -94,7 +94,7 @@ final class HttpDownloadSessionBuilder {
                   request,
                   blobReadChannelContext.getApiaryClient(),
                   resultFuture,
-                  blobReadChannelContext.getStorageOptions(),
+                  blobReadChannelContext.getRetrier(),
                   blobReadChannelContext.getRetryAlgorithmManager().idempotent()),
               ApiFutures.transform(
                   resultFuture, StorageObject::getContentEncoding, MoreExecutors.directExecutor()));
@@ -103,7 +103,7 @@ final class HttpDownloadSessionBuilder {
               request,
               blobReadChannelContext.getApiaryClient(),
               resultFuture,
-              blobReadChannelContext.getStorageOptions(),
+              blobReadChannelContext.getRetrier(),
               blobReadChannelContext.getRetryAlgorithmManager().idempotent());
         }
       };

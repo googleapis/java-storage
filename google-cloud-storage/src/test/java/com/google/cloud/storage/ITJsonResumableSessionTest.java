@@ -29,12 +29,12 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatu
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
@@ -61,20 +62,13 @@ public final class ITJsonResumableSessionTest {
   private static final NetHttpTransport transport = new NetHttpTransport.Builder().build();
   private static final HttpResponseStatus RESUME_INCOMPLETE =
       HttpResponseStatus.valueOf(308, "Resume Incomplete");
-  private static final RetryingDependencies RETRYING_DEPENDENCIES =
-      new RetryingDependencies() {
-        @Override
-        public RetrySettings getRetrySettings() {
-          return RetrySettings.newBuilder().setMaxAttempts(3).build();
-        }
-
-        @Override
-        public ApiClock getClock() {
-          return NanoClock.getDefaultClock();
-        }
-      };
-  private static final ResultRetryAlgorithm<?> RETRY_ALGORITHM =
-      StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler();
+  private static final RetrierWithAlg RETRIER =
+      new DefaultRetrier(
+              UnaryOperator.identity(),
+              RetryingDependencies.simple(
+                  NanoClock.getDefaultClock(),
+                  RetrySettings.newBuilder().setMaxAttempts(3).build()))
+          .withAlg(StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler());
   private HttpClientContext httpClientContext;
 
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
@@ -118,8 +112,7 @@ public final class ITJsonResumableSessionTest {
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
-          new JsonResumableSession(
-              httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
+          new JsonResumableSession(httpClientContext, RETRIER, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult =
           session.put(RewindableContent.of(tmpFile.getPath()), range1);
@@ -174,8 +167,7 @@ public final class ITJsonResumableSessionTest {
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
-          new JsonResumableSession(
-              httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
+          new JsonResumableSession(httpClientContext, RETRIER, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult1 =
           session.put(RewindableContent.of(buf1), range1);
@@ -243,8 +235,7 @@ public final class ITJsonResumableSessionTest {
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
-          new JsonResumableSession(
-              httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
+          new JsonResumableSession(httpClientContext, RETRIER, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult1 =
           session.put(RewindableContent.of(buf1), range1);

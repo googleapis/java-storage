@@ -21,7 +21,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -30,20 +30,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
   private final ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
-  private final RetryingDependencies retryingDependencies;
+  private final Retrier retrier;
   private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
   private final ReadObjectRequest request;
   private final boolean autoGzipDecompression;
 
   GrpcBlobReadChannel(
       ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
-      RetryingDependencies retryingDependencies,
+      Retrier retrier,
       ResultRetryAlgorithm<?> resultRetryAlgorithm,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
     super(Conversions.grpc().blobInfo());
     this.read = read;
-    this.retryingDependencies = retryingDependencies;
+    this.retrier = retrier;
     this.resultRetryAlgorithm = resultRetryAlgorithm;
     this.request = request;
     this.autoGzipDecompression = autoGzipDecompression;
@@ -61,7 +61,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
           ReadableByteChannelSessionBuilder b =
               ResumableMedia.gapic()
                   .read()
-                  .byteChannel(read, retryingDependencies, resultRetryAlgorithm)
+                  .byteChannel(read, retrier, resultRetryAlgorithm)
                   .setHasher(Hasher.noop())
                   .setAutoGzipDecompression(autoGzipDecompression);
           BufferHandle bufferHandle = getBufferHandle();

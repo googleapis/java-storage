@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
@@ -131,8 +131,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -214,8 +213,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -296,8 +294,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -379,8 +376,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -461,8 +457,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -545,8 +540,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -638,8 +632,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -703,8 +696,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -754,8 +746,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               CHUNK_SEGMENTER,
               writeCtx,
@@ -807,8 +798,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       GapicBidiUnbufferedWritableByteChannel channel =
           new GapicBidiUnbufferedWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               done,
               chunkSegmenter,
               writeCtx,

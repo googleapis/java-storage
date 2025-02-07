@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.defaultRetryingDeps;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -30,6 +31,7 @@ import com.google.api.gax.retrying.TimedAttemptSettings;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
 import com.google.cloud.storage.SyncAndUploadUnbufferedWritableByteChannel.Alg;
 import com.google.cloud.storage.SyncAndUploadUnbufferedWritableByteChannel.RequestStream;
 import com.google.cloud.storage.SyncAndUploadUnbufferedWritableByteChannel.ResponseStream;
@@ -74,6 +76,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -299,6 +302,19 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
     }
   }
 
+  @Example
+  void debug() throws Exception {
+    testUploads(
+        Scenario.of(
+            "object--853610591",
+            11428,
+            1353,
+            196608,
+            32768,
+            new FailuresQueue(
+                ImmutableList.of(FailureOffset.of(0), FailureOffset.of(0), FailureOffset.of(0)))));
+  }
+
   //  25 tries leads to ~0m:30s of runtime
   // 250 tries leads to ~6m:00s of runtime
   @Property(tries = 25)
@@ -327,7 +343,8 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
               storageClient.queryWriteStatusCallable(),
               resultFuture,
               s.chunkSegmenter,
-              TestUtils.defaultRetryingDeps(),
+              // TestUtils.defaultRetrier(),
+              new DefaultRetrier(UnaryOperator.identity(), defaultRetryingDeps()),
               StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
               new WriteCtx<>(resumableWrite),
               rf,

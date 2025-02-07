@@ -61,6 +61,7 @@ import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -118,6 +119,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -835,6 +837,8 @@ public final class GrpcStorageOptions extends StorageOptions
                   new ReadObjectRangeResultRetryAlgorithmDecorator(
                       grpcStorageOptions.getRetryAlgorithmManager().idempotent()));
 
+          OpenTelemetry otel = options.getOpenTelemetry();
+          DefaultRetrier retrier = new DefaultRetrier(UnaryOperator.identity(), grpcStorageOptions);
           if (ZeroCopyReadinessChecker.isReady()) {
             LOGGER.config("zero-copy protobuf deserialization available, using it");
             StorageStubSettings baseSettings =
@@ -862,9 +866,9 @@ public final class GrpcStorageOptions extends StorageOptions
                     dataClient,
                     stub.readObjectResponseMarshaller,
                     grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                    retrier,
                     defaultOpts);
-            return OtelStorageDecorator.decorate(
-                grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
+            return OtelStorageDecorator.decorate(grpcStorage, otel, Transport.GRPC);
           } else {
             LOGGER.config(
                 "zero-copy protobuf deserialization unavailable, proceeding with default");
@@ -884,9 +888,9 @@ public final class GrpcStorageOptions extends StorageOptions
                     dataClient,
                     ResponseContentLifecycleManager.noop(),
                     grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+                    retrier,
                     defaultOpts);
-            return OtelStorageDecorator.decorate(
-                grpcStorage, options.getOpenTelemetry(), Transport.GRPC);
+            return OtelStorageDecorator.decorate(grpcStorage, otel, Transport.GRPC);
           }
         } catch (IOException e) {
           throw new IllegalStateException(

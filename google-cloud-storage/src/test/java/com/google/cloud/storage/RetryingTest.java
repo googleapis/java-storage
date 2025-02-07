@@ -26,19 +26,32 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import io.grpc.Status.Code;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import org.junit.Test;
 
 public final class RetryingTest {
   private static final Pattern UUID_PATTERN =
       Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+
+  private static final RetryingDependencies RETRYING_DEPENDENCIES =
+      RetryingDependencies.simple(
+          NanoClock.getDefaultClock(),
+          RetrySettings.newBuilder()
+              .setMaxAttempts(3)
+              .setInitialRetryDelayDuration(Duration.ofMillis(30))
+              .setMaxRetryDelayDuration(Duration.ofSeconds(35))
+              .setRetryDelayMultiplier(1.0)
+              .build());
 
   @Test
   public void run() throws Exception {
@@ -47,20 +60,14 @@ public final class RetryingTest {
     ApiException t3 = apiException(Code.RESOURCE_EXHAUSTED, "{resource exhausted}");
 
     AtomicInteger counter = new AtomicInteger(0);
+    RetrierWithAlg retrier =
+        new DefaultRetrier(UnaryOperator.identity(), RETRYING_DEPENDENCIES)
+            .withAlg(Retrying.alwaysRetry());
     StorageException actual =
         assertThrows(
             StorageException.class,
             () ->
-                Retrying.run(
-                    RetryingDependencies.simple(
-                        NanoClock.getDefaultClock(),
-                        RetrySettings.newBuilder()
-                            .setMaxAttempts(3)
-                            .setInitialRetryDelayDuration(Duration.ofMillis(30))
-                            .setMaxRetryDelayDuration(Duration.ofSeconds(35))
-                            .setRetryDelayMultiplier(1.0)
-                            .build()),
-                    Retrying.alwaysRetry(),
+                retrier.run(
                     () -> {
                       int i = counter.incrementAndGet();
                       switch (i) {
@@ -76,8 +83,6 @@ public final class RetryingTest {
                     },
                     Decoder.identity()));
     String messages = TestUtils.messagesToText(actual);
-    actual.printStackTrace(System.out);
-    System.out.println(messages);
     assertAll(
         () ->
             assertThat(messages)
@@ -90,26 +95,16 @@ public final class RetryingTest {
   @Test
   public void http() throws Exception {
 
-    HttpStorageOptions options =
-        StorageOptions.http()
-            .setRetrySettings(
-                RetrySettings.newBuilder()
-                    .setMaxAttempts(3)
-                    .setInitialRetryDelayDuration(Duration.ofMillis(30))
-                    .setMaxRetryDelayDuration(Duration.ofSeconds(35))
-                    .setRetryDelayMultiplier(1.0)
-                    .build())
-            .setClock(NanoClock.getDefaultClock())
-            .build();
+    RetrierWithAlg retrier =
+        new HttpRetrier(new DefaultRetrier(UnaryOperator.identity(), RETRYING_DEPENDENCIES))
+            .withAlg(Retrying.alwaysRetry());
 
     AtomicInteger counter = new AtomicInteger(0);
     StorageException actual =
         assertThrows(
             StorageException.class,
             () ->
-                Retrying.run(
-                    options,
-                    Retrying.alwaysRetry(),
+                retrier.run(
                     () -> {
                       int i = counter.incrementAndGet();
                       UUID invocationId = HttpRpcContext.getInstance().getInvocationId();
@@ -125,7 +120,7 @@ public final class RetryingTest {
                           throw new RuntimeException("unexpected");
                       }
                     },
-                    Function.identity()));
+                    Decoder.identity()));
     String messages = TestUtils.messagesToText(actual);
     assertAll(
         () ->

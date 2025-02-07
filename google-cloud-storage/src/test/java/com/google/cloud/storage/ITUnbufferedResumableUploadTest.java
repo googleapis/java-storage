@@ -23,6 +23,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ITUnbufferedResumableUploadTest.ObjectSizes;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
@@ -87,12 +88,14 @@ public final class ITUnbufferedResumableUploadTest {
 
     StorageObject encode = Conversions.json().blobInfo().encode(updated);
     HttpStorageOptions options = (HttpStorageOptions) storage.getOptions();
+    Retrier retrier = TestUtils.retrierFromStorageOptions(options);
     Supplier<String> uploadIdSupplier =
         ResumableMedia.startUploadForBlobInfo(
             options,
             updated,
             optionsMap,
-            StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler());
+            retrier.withAlg(
+                StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler()));
     JsonResumableWrite jsonResumableWrite =
         JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
 

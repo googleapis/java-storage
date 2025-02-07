@@ -31,6 +31,9 @@ import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -46,6 +49,7 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** @since 2.14.0 */
@@ -389,12 +393,22 @@ public class HttpStorageOptions extends StorageOptions {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
         Clock clock = Clock.systemUTC();
         try {
+          OpenTelemetry otel = httpStorageOptions.getOpenTelemetry();
+          BlobWriteSessionConfig blobWriteSessionConfig = httpStorageOptions.blobWriteSessionConfig;
+          if (blobWriteSessionConfig == null) {
+            blobWriteSessionConfig = HttpStorageOptions.defaults().getDefaultStorageWriterConfig();
+          }
+          WriterFactory factory = blobWriteSessionConfig.createFactory(clock);
           StorageImpl storage =
               new StorageImpl(
                   httpStorageOptions,
-                  httpStorageOptions.blobWriteSessionConfig.createFactory(clock));
-          return OtelStorageDecorator.decorate(
-              storage, httpStorageOptions.getOpenTelemetry(), Transport.HTTP);
+                  factory,
+                  new HttpRetrier(
+                      new DefaultRetrier(
+                          UnaryOperator.identity(),
+                          RetryingDependencies.simple(
+                              options.getClock(), options.getRetrySettings()))));
+          return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate HTTP com.google.cloud.storage.Storage client.", e);
