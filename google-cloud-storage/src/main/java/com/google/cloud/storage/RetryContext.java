@@ -129,7 +129,7 @@ final class RetryContext {
         maxAttempts = Integer.MAX_VALUE;
       }
       boolean shouldRetry = algorithm.shouldRetry(t, null);
-      Duration elapsedOverall = backoff.getCumulativeBackoff().plus(elapsed);
+      Duration cumulativeBackoff = backoff.getCumulativeBackoff();
       BackoffResult nextBackoff = backoff.nextBackoff(elapsed);
       String msgPrefix = null;
       if (shouldRetry && failureCount >= maxAttempts) {
@@ -167,7 +167,7 @@ final class RetryContext {
                 maxAttempts == Integer.MAX_VALUE
                     ? ""
                     : String.format(", maxAttempts: %d", maxAttempts),
-                elapsedOverall,
+                cumulativeBackoff,
                 nextBackoff.errorString(),
                 Durations.eq(backoff.getTimeout(), Durations.EFFECTIVE_INFINITY)
                     ? ""
@@ -291,6 +291,7 @@ final class RetryContext {
       return new DirectScheduledFuture(unit, delay, command);
     }
 
+    // <editor-fold desc="UnsupportedOperations">
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
       throw new UnsupportedOperationException();
@@ -377,6 +378,7 @@ final class RetryContext {
     public void execute(Runnable command) {
       throw new UnsupportedOperationException();
     }
+    // </editor-fold>
 
     private final class DirectScheduledFuture implements ScheduledFuture<Object> {
 

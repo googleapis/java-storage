@@ -23,22 +23,28 @@ import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ResourceExhaustedException;
+import com.google.cloud.RetryHelper;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.storage.Backoff.Jitterer;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.common.base.Stopwatch;
 import io.grpc.Status.Code;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -73,7 +79,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0.001S, nextBackoff: PT3S)");
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
         });
   }
 
@@ -110,7 +116,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3, elapsed: PT15.003S, nextBackoff: PT3S) previous failures follow in order of occurrence",
+                  "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3, elapsed: PT9.002S, nextBackoff: PT3S) previous failures follow in order of occurrence",
                   "{unavailable}",
                   "{internal}");
         });
@@ -133,7 +139,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 1, maxAttempts: 3, elapsed: PT0.001S, nextBackoff: PT3S)");
+                  "Unretryable error (attempts: 1, maxAttempts: 3, elapsed: PT0S, nextBackoff: PT3S)");
         });
   }
 
@@ -167,7 +173,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 3, maxAttempts: 6, elapsed: PT15.003S, nextBackoff: PT3S) previous failures follow in order of occurrence",
+                  "Unretryable error (attempts: 3, maxAttempts: 6, elapsed: PT9.002S, nextBackoff: PT3S) previous failures follow in order of occurrence",
                   "{unavailable}",
                   "{internal}");
         });
@@ -204,7 +210,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT9.003S, nextBackoff: PT3S)");
+                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT9.002S, nextBackoff: PT3S)");
         });
   }
 
@@ -252,7 +258,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within backoff budget (attempts: 3, elapsed: PT24S, nextBackoff: EXHAUSTED, timeout: PT24S) previous failures follow in order of occurrence",
+                  "Operation failed to complete within backoff budget (attempts: 3, elapsed: PT15S, nextBackoff: EXHAUSTED, timeout: PT24S) previous failures follow in order of occurrence",
                   "{unavailable 1}",
                   "{unavailable 2}");
         });
@@ -313,6 +319,65 @@ public final class RetryContextTest {
       scheduledExecutorService.shutdownNow();
       scheduledExecutorService.awaitTermination(5, TimeUnit.SECONDS);
     }
+  }
+
+  @Test
+  public void similarToRetryingHelper() {
+    RetrySettings retrySettings =
+        StorageOptions.getDefaultRetrySettings()
+            .toBuilder()
+            .setTotalTimeoutDuration(Duration.ofMillis(3_125))
+            .setInitialRetryDelayDuration(Duration.ofNanos(12_500_000))
+            .setRetryDelayMultiplier(2.0)
+            .setMaxRetryDelayDuration(Duration.ofSeconds(2))
+            .setMaxAttempts(6)
+            .setJittered(false)
+            .build();
+    ResultRetryAlgorithm<?> alg =
+        new BasicResultRetryAlgorithm<Object>() {
+          @Override
+          public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+            return previousThrowable instanceof Invocation;
+          }
+        };
+    ApiClock clock = NanoClock.getDefaultClock();
+
+    RetryContext ctx =
+        RetryContext.of(
+            RetryContext.directScheduledExecutorService(),
+            RetryingDependencies.simple(clock, retrySettings),
+            alg,
+            Jitterer.noJitter());
+
+    List<Duration> retryHelperSplits = new ArrayList<>();
+    Stopwatch retryHelperStopwatch = Stopwatch.createStarted();
+    try {
+      RetryHelper.runWithRetries(
+          () -> {
+            retryHelperSplits.add(retryHelperStopwatch.elapsed());
+            throw new Invocation();
+          },
+          retrySettings,
+          alg,
+          clock);
+    } catch (RetryHelperException ignore) {
+    }
+
+    List<Duration> retryContextSplits = new ArrayList<>();
+    Stopwatch retryContextStopwatch = Stopwatch.createStarted();
+    ctx.reset();
+    AtomicBoolean attemptAgain = new AtomicBoolean(false);
+    do {
+      attemptAgain.set(false);
+      try {
+        retryContextSplits.add(retryContextStopwatch.elapsed());
+        throw new Invocation();
+      } catch (Exception e) {
+        ctx.recordError(e, () -> attemptAgain.set(true), noop -> {});
+      }
+    } while (attemptAgain.get());
+
+    assertThat(retryContextSplits.size()).isEqualTo(retryHelperSplits.size());
   }
 
   private static ApiException apiException(Code code, String message) {
@@ -390,6 +455,12 @@ public final class RetryContextTest {
 
     public void release() {
       cdl.countDown();
+    }
+  }
+
+  static final class Invocation extends Exception {
+    private Invocation() {
+      super();
     }
   }
 }
