@@ -81,14 +81,16 @@ final class Backoff {
    *
    * <ol>
    *   <li>If the existing {@link #cumulativeBackoff} + {@code elapsed} is >= {@link #timeout}
-   *   <li>If the existing {@link #cumulativeBackoff} + {@code elapsed} + {@code
-   *       nextBackoffDuration} is >= {@link #timeout}
    * </ol>
    */
   BackoffResult nextBackoff(Duration elapsed) {
     checkArgument(
         Durations.gtEq(elapsed, ZERO), "elapsed must be >= PT0S (%s >= %s)", elapsed, ZERO);
     Duration cumulativeAndElapsed = cumulativeBackoff.plus(elapsed);
+    if (Durations.gtEq(cumulativeAndElapsed, timeout)) {
+      cumulativeBackoff = cumulativeAndElapsed;
+      return BackoffResults.EXHAUSTED;
+    }
 
     Duration nextDelay =
         Duration.ofNanos(Math.round(previousBackoff.toNanos() * retryDelayMultiplier));
@@ -97,15 +99,10 @@ final class Backoff {
     }
     Duration nextBackoffWithJitter = jitterer.jitter(nextDelay);
     Duration cappedBackoff = Durations.min(nextBackoffWithJitter, maxBackoff);
-    Duration newCumulativeElapsed = cumulativeAndElapsed.plus(cappedBackoff);
-    cumulativeBackoff = newCumulativeElapsed;
+    cumulativeBackoff = cumulativeAndElapsed.plus(cappedBackoff);
     previousBackoff = cappedBackoff;
 
-    if (Durations.gtEq(newCumulativeElapsed, timeout)) {
-      return BackoffResults.EXHAUSTED;
-    } else {
-      return BackoffDuration.of(cappedBackoff);
-    }
+    return BackoffDuration.of(cappedBackoff);
   }
 
   /**

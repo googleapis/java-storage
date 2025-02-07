@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.time.Duration.ZERO;
+import static java.time.Duration.ofSeconds;
 import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.Backoff.BackoffDuration;
@@ -83,15 +84,17 @@ public final class BackoffTest {
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test
-  public void happyPath() {
+  public void backoffDuration_min_of_backoff_maxBackoff_remainingFromTimeout() {
     Backoff backoff = defaultBackoff();
 
     Duration elapsed = Duration.ofMinutes(6).plusSeconds(58);
-    assertThat(backoff.nextBackoff(elapsed)).isEqualTo(BackoffResults.EXHAUSTED);
+    assertThat(backoff.nextBackoff(elapsed)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
+    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test
@@ -116,7 +119,8 @@ public final class BackoffTest {
             .setRetryDelayMultiplier(2.0)
             .build();
 
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
+    assertThat(backoff.nextBackoff(Duration.ofSeconds(4)))
+        .isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
     backoff.reset();
     assertThat(backoff.nextBackoff(Duration.ofSeconds(10))).isEqualTo(BackoffResults.EXHAUSTED);
@@ -139,8 +143,14 @@ public final class BackoffTest {
     assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
   }
 
+  /**
+   * If a next computed backoff would exceed the timeout, truncate the backoff to the amount of time
+   * remaining until timeout.
+   *
+   * <p>This is primarily here to preserve behavior of {@link com.google.cloud.RetryHelper}.
+   */
   @Test
-  public void ifANextBackoffWouldExceedTheTimeoutItShouldBeConsideredExhausted() {
+  public void ifANextBackoffWouldExceedTheTimeoutTheBackoffDurationShouldBeTruncated() {
     Backoff backoff =
         Backoff.newBuilder()
             .setInitialBackoff(Duration.ofSeconds(2))
@@ -150,10 +160,9 @@ public final class BackoffTest {
             .setRetryDelayMultiplier(2.0)
             .build();
 
-    assertThat(backoff.nextBackoff(Duration.ofSeconds(5)))
-        .isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
-
-    assertThat(backoff.nextBackoff(Duration.ofSeconds(15))).isEqualTo(BackoffResults.EXHAUSTED);
+    assertThat(backoff.nextBackoff(Duration.ofSeconds(22)))
+        .isEqualTo(BackoffDuration.of(ofSeconds(2)));
+    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test
