@@ -274,19 +274,20 @@ public final class RetryContextTest {
     ScheduledExecutorService scheduledExecutorService =
         Executors.newSingleThreadScheduledExecutor();
     try {
-      RetryContext ctx =
-          RetryContext.of(
-              scheduledExecutorService,
-              RetryingDependencies.simple(
-                  NanoClock.getDefaultClock(),
-                  RetrySettings.newBuilder()
-                      .setMaxAttempts(4)
-                      .setInitialRetryDelayDuration(Duration.ofMillis(250))
-                      .setMaxRetryDelayDuration(Duration.ofSeconds(1))
-                      .setRetryDelayMultiplier(2.0)
-                      .build()),
-              Retrying.alwaysRetry(),
-              Jitterer.noJitter());
+      DefaultRetryContext ctx =
+          (DefaultRetryContext)
+              RetryContext.of(
+                  scheduledExecutorService,
+                  RetryingDependencies.simple(
+                      NanoClock.getDefaultClock(),
+                      RetrySettings.newBuilder()
+                          .setMaxAttempts(4)
+                          .setInitialRetryDelayDuration(Duration.ofMillis(250))
+                          .setMaxRetryDelayDuration(Duration.ofSeconds(1))
+                          .setRetryDelayMultiplier(2.0)
+                          .build()),
+                  Retrying.alwaysRetry(),
+                  Jitterer.noJitter());
 
       BlockingOnSuccess s1 = new BlockingOnSuccess();
 
