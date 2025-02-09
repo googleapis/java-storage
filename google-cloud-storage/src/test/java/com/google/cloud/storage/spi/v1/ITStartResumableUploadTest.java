@@ -68,7 +68,7 @@ public final class ITStartResumableUploadTest {
                     .setCors(
                         ImmutableList.of(
                             Cors.newBuilder()
-                                .setOrigins(ImmutableList.of(Origin.of("fake.fake.fake")))
+                                .setOrigins(ImmutableList.of(Origin.of("example.com")))
                                 .setMethods(ImmutableList.copyOf(HttpMethod.values()))
                                 .setMaxAgeSeconds(15 * 60) // 15 minutes
                                 .build()))
@@ -92,6 +92,7 @@ public final class ITStartResumableUploadTest {
         HttpRequest req = fac.buildPutRequest(new GenericUrl(location), new EmptyContent());
         req.getHeaders().set("User-Agent", "unauthed");
         req.getHeaders().set("Content-Range", "bytes */0");
+        req.getHeaders().set("Origin", "example.com");
         HttpResponse res = req.execute();
 
         try (InputStream inputStream = res.getContent()) {
