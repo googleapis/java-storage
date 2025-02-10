@@ -50,6 +50,7 @@ import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.auth.Credentials;
+import com.google.auth.oauth2.ComputeEngineCredentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceOptions;
@@ -318,7 +319,8 @@ public final class GrpcStorageOptions extends StorageOptions
         InstantiatingGrpcChannelProvider.newBuilder()
             .setEndpoint(endpoint)
             .setAllowNonDefaultServiceAccount(true)
-            .setAttemptDirectPath(attemptDirectPath);
+            .setAttemptDirectPath(attemptDirectPath)
+            .setAllowHardBoundTokenTypes(Arrays.asList(InstantiatingGrpcChannelProvider.HardBoundTokenTypes.ALTS));
 
     if (!NoopGrpcInterceptorProvider.INSTANCE.equals(grpcInterceptorProvider)) {
       channelProviderBuilder.setInterceptorProvider(grpcInterceptorProvider);
