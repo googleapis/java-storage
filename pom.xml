@@ -84,7 +84,7 @@
       <dependency>
         <groupId>io.opentelemetry.semconv</groupId>
         <artifactId>opentelemetry-semconv</artifactId>
-        <version>1.27.0-alpha</version>
+        <version>1.26.0-alpha</version>
       </dependency>
       <dependency>
         <groupId>com.google.cloud.opentelemetry</groupId>
