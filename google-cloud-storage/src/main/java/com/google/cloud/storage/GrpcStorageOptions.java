@@ -50,7 +50,6 @@ import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.auth.Credentials;
-import com.google.auth.oauth2.ComputeEngineCredentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceOptions;
