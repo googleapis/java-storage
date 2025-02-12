@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.48.2](https://github.com/googleapis/java-storage/compare/v2.48.1...v2.48.2) (2025-02-11)
+
+
+### Dependencies
+
+* Update sdk-platform-java dependencies ([#2921](https://github.com/googleapis/java-storage/issues/2921)) ([fa9b0a8](https://github.com/googleapis/java-storage/commit/fa9b0a8d6e2b185c0588d824329b409718bef302))
+
+
+### Documentation
+
+* Update storage_copy_file to include MegabytesCopiedPerChunk ([#2910](https://github.com/googleapis/java-storage/issues/2910)) ([971ca5d](https://github.com/googleapis/java-storage/commit/971ca5d107967960e6db6ca76a55e44b9aefc605))
+
 ## [2.48.1](https://github.com/googleapis/java-storage/compare/v2.48.0...v2.48.1) (2025-02-03)
 
 
