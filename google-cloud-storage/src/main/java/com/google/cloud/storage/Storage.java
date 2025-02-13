@@ -5036,6 +5036,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * {@link Storage#delete(BlobId)}, however without the ability to change metadata fields for the
    * target object.
    *
+   * <p>This feature is currently only supported for HNS (Hierarchical Namespace) buckets.
+   *
    * @since 2.48.0
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
