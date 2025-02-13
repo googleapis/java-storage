@@ -16,7 +16,7 @@
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
-    <pubsub-proto.version>1.118.1</pubsub-proto.version>
+    <pubsub-proto.version>1.119.0</pubsub-proto.version>
   </properties>
   <dependencies>
     <dependency>
