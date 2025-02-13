@@ -69,6 +69,7 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
@@ -130,6 +131,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -167,7 +169,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
-  @Deprecated private final ProjectId defaultProjectId;
+  @Deprecated private final Supplier<ProjectId> defaultProjectId;
 
   GrpcStorageImpl(
       GrpcStorageOptions options,
@@ -183,7 +185,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
-    this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
+    this.defaultProjectId = Suppliers.memoize(() -> UnifiedOpts.projectId(options.getProjectId()));
   }
 
   @Override
@@ -443,6 +445,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListBucketsRequest request =
         defaultProjectId
+            .get()
             .listBuckets()
             .andThen(opts.listBucketsRequest())
             .apply(ListBucketsRequest.newBuilder())
