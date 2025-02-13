@@ -33,7 +33,6 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.common.collect.ImmutableList;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -73,12 +72,32 @@ public final class ITStorageOptionsTest {
   }
 
   @Test
-  @Ignore("waiting on conformation from the backend team if this should even be possible")
   public void clientShouldConstructCleanly_directPath() throws Exception {
     assumeTrue(
         "Unable to determine environment can access directPath", TestUtils.isOnComputeEngine());
     StorageOptions options =
-        StorageOptions.grpc().setCredentials(credentials).setAttemptDirectPath(true).build();
+        StorageOptions.grpc()
+            .setCredentials(credentials)
+            .setAttemptDirectPath(true)
+            .setEnableGrpcClientMetrics(false)
+            .build();
+    doTest(options);
+  }
+
+  @Test
+  public void lackOfProjectIdDoesNotPreventConstruction_http() throws Exception {
+    StorageOptions options = StorageOptions.http().setCredentials(credentials).build();
+    doTest(options);
+  }
+
+  @Test
+  public void lackOfProjectIdDoesNotPreventConstruction_grpc() throws Exception {
+    StorageOptions options =
+        StorageOptions.grpc()
+            .setCredentials(credentials)
+            .setAttemptDirectPath(false)
+            .setEnableGrpcClientMetrics(false)
+            .build();
     doTest(options);
   }
 
