@@ -5035,7 +5035,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <p>This new method is an atomic equivalent of the existing {@link Storage#copy(CopyRequest)} +
    * {@link Storage#delete(BlobId)}, however without the ability to change metadata fields for the
    * target object.
-   * 
+   *
    * <p>This feature is currently only supported for HNS (Hierarchical Namespace) buckets.
    *
    * @since 2.48.0
