@@ -111,7 +111,7 @@ public class ITBucketSnippets {
 
   private static final Logger log = Logger.getLogger(ITBucketSnippets.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String PROJECT_ID = Env.GOOGLE_CLOUD_PROJECT;
   private static final String KMS_KEY_NAME =
       "projects/cloud-java-ci-sample/locations/us/keyRings/"
           + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";

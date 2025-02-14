@@ -16,30 +16,43 @@
 
 package com.example.storage.object;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
+import com.example.storage.Env;
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class PrintFileAclForUserTest extends TestBase {
+public class RemoveBlobOwnerTest extends TestBase {
 
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
+
+  public static final String IT_SERVICE_ACCOUNT_EMAIL = Env.IT_SERVICE_ACCOUNT_EMAIL;
 
   @Test
-  public void testPrintBucketAclByUser() {
+  public void testRemoveBlobOwner() {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    Entity testUser = new User(IT_SERVICE_ACCOUNT_EMAIL);
-    blob.createAcl(Acl.of(testUser, Role.READER));
-    PrintFileAclForUser.printFileAclForUser(bucketName, blobName, IT_SERVICE_ACCOUNT_EMAIL);
+    BlobInfo gen1 = createEmptyObject();
+    BlobId id = gen1.getBlobId();
+    // Add User as Owner
+    Acl newFileOwner = Acl.of(Env.IT_SERVICE_ACCOUNT_USER, Role.OWNER);
+    storage.createAcl(id, newFileOwner);
+
+    // Remove User as owner
+    RemoveBlobOwner.removeBlobOwner(
+        GOOGLE_CLOUD_PROJECT, id.getBucket(), IT_SERVICE_ACCOUNT_EMAIL, id.getName());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
+    assertThat(storage.getAcl(id, Env.IT_SERVICE_ACCOUNT_USER)).isNull();
   }
 
   @Test
@@ -47,10 +60,12 @@ public class PrintFileAclForUserTest extends TestBase {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    // Delete Acl just in case to make sure the User ACL is not present
-    blob.deleteAcl(new User(IT_SERVICE_ACCOUNT_EMAIL));
-    PrintFileAclForUser.printFileAclForUser(bucketName, blobName, IT_SERVICE_ACCOUNT_EMAIL);
+    BlobInfo gen1 = createEmptyObject();
+    BlobId id = gen1.getBlobId();
+    // Remove User without Owner Permissions
+    RemoveBlobOwner.removeBlobOwner(
+        GOOGLE_CLOUD_PROJECT, id.getBucket(), IT_SERVICE_ACCOUNT_EMAIL, id.getName());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("not found");
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
   }
 }

@@ -16,28 +16,37 @@
 
 package com.example.storage.bucket;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
 import org.junit.Test;
 
 public class PrintBucketAclTest extends TestBase {
-
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
 
   @Test
   public void testPrintBucketAcls() {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    Entity testUser = new User(IT_SERVICE_ACCOUNT_EMAIL);
-    storage.createAcl(bucketName, Acl.of(testUser, Role.READER));
-    PrintBucketAcl.printBucketAcl(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName);
+    storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
+    PrintBucketAcl.printBucketAcl(GOOGLE_CLOUD_PROJECT, bucketName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("READER: USER");
+  }
+
+  @Test
+  public void testPrintBucketAclByUser() {
+    // Check for user email before the actual test.
+    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+
+    storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
+    PrintBucketAclFilterByUser.printBucketAclFilterByUser(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
   }
 }

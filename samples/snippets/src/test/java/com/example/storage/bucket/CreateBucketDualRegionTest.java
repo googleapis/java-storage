@@ -16,6 +16,7 @@
 
 package com.example.storage.bucket;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
@@ -25,14 +26,12 @@ import org.junit.Test;
 
 public class CreateBucketDualRegionTest extends TestBase {
 
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-
   @Test
   public void testCreateBucketDualRegion() {
-    assertNotNull("Unable to determine Project ID", PROJECT_ID);
+    assertNotNull("Unable to determine Project ID", GOOGLE_CLOUD_PROJECT);
     String newBucket = RemoteStorageHelper.generateBucketName();
     CreateBucketDualRegion.createBucketDualRegion(
-        PROJECT_ID, newBucket, "US", "US-EAST1", "US-WEST1");
+        GOOGLE_CLOUD_PROJECT, newBucket, "US", "US-EAST1", "US-WEST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("US-WEST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("US-EAST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Created bucket");

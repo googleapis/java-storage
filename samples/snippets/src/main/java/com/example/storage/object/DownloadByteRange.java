@@ -66,7 +66,7 @@ public class DownloadByteRange {
       ByteStreams.copy(from, to);
 
       System.out.printf(
-          "%s downloaded to %s from byte %d to byte %d",
+          "%s downloaded to %s from byte %d to byte %d%n",
           blobId.toGsUtilUri(), destFileName, startByte, endBytes);
     }
   }
