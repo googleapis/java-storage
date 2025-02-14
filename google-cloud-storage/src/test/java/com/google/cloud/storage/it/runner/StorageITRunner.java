@@ -27,11 +27,13 @@ import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.registry.Registry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -115,8 +117,8 @@ public final class StorageITRunner extends Suite {
 
     Parameterized parameterized = testClass.getAnnotation(Parameterized.class);
 
-    CrossRun crossRun = testClass.getAnnotation(CrossRun.class);
-    SingleBackend singleBackend = testClass.getAnnotation(SingleBackend.class);
+    CrossRun crossRun = getClassAnnotation(testClass, CrossRun.class);
+    SingleBackend singleBackend = getClassAnnotation(testClass, SingleBackend.class);
     StorageITRunner.validateBackendAnnotations(crossRun, singleBackend);
 
     final ImmutableList<?> parameters;
@@ -190,6 +192,19 @@ public final class StorageITRunner extends Suite {
         return ImmutableList.of(StorageITLeafRunner.of(testClass, crossRunIntersection, null, ti));
       }
     }
+  }
+
+  private static <A extends Annotation> @Nullable A getClassAnnotation(
+      TestClass testClass, Class<A> annotation) {
+    A a = testClass.getAnnotation(annotation);
+    if (a != null) {
+      return a;
+    }
+    Class<?> parent = testClass.getJavaClass().getSuperclass();
+    if (parent == null) {
+      return null;
+    }
+    return getClassAnnotation(new TestClass(parent), annotation);
   }
 
   private static String fmtParam(Object param) {
