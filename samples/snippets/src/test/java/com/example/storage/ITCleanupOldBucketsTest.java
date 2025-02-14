@@ -34,6 +34,7 @@ import com.google.storage.control.v2.StorageControlClient;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,11 +47,15 @@ public final class ITCleanupOldBucketsTest {
   public Storage storage;
   @Inject
   public StorageControlClient ctrl;
+  @Inject
+  public BucketInfo bucket;
 
   @Test
   public void cleanupOldBuckets() {
     Page<Bucket> page = storage.list(
         BucketListOption.fields(BucketField.NAME, BucketField.TIME_CREATED));
+
+    String bucketNamePrefix = bucket.getName().substring(0, UUID.randomUUID().toString().length());
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
     OffsetDateTime _24hoursAgo = now.minusHours(24);
@@ -59,7 +64,9 @@ public final class ITCleanupOldBucketsTest {
         .map(Bucket::asBucketInfo)
         .filter(bucket -> {
           OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
-          return ctime.isBefore(_24hoursAgo);
+          String name = bucket.getName();
+          return ctime.isBefore(_24hoursAgo)
+              && (name.startsWith("gcloud") || name.startsWith(bucketNamePrefix));
         })
         .map(BucketInfo::getName)
         .collect(ImmutableList.toImmutableList());

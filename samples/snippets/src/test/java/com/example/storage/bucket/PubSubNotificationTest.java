@@ -48,6 +48,7 @@ public class PubSubNotificationTest extends TestBase {
   };
   private static TopicAdminClient topicAdminClient;
 
+  private String bucketName;
   private String topic;
   private NotificationInfo notificationInfo;
 
@@ -66,8 +67,11 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @Before
-  public void makeTopic() {
+  public void setUp() {
     assertThat(GOOGLE_CLOUD_PROJECT).isNotNull();
+
+    bucketName = bucket.getName();
+
     String id = UUID.randomUUID().toString().substring(0, 8);
     topic = String.format("projects/%s/topics/new-topic-%s", GOOGLE_CLOUD_PROJECT, id);
     topicAdminClient.createTopic(topic);

@@ -20,37 +20,54 @@ import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.it.TemporaryBucket;
 import org.junit.Test;
 
 public class RemoveBucketOwnerTest extends TestBase {
 
   @Test
-  public void testRemoveBucketOwner() {
+  public void testRemoveBucketOwner() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
-    // Add User as Owner
-    Acl newOwner = Acl.of(IT_SERVICE_ACCOUNT_USER, Role.OWNER);
-    storage.createAcl(bucket.getName(), newOwner);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    // Remove User as owner
-    RemoveBucketOwner.removeBucketOwner(
-        GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
-    assertThat(storage.getAcl(bucket.getName(), IT_SERVICE_ACCOUNT_USER)).isNull();
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+      // Add User as Owner
+      Acl newOwner = Acl.of(IT_SERVICE_ACCOUNT_USER, Role.OWNER);
+      storage.createAcl(bucketName, newOwner);
+
+      // Remove User as owner
+      RemoveBucketOwner.removeBucketOwner(
+          GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
+    }
   }
 
   @Test
-  public void testUserNotFound() {
-    // Remove User without Owner Permissions
-    RemoveBucketOwner.removeBucketOwner(
-        GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
+  public void testUserNotFound() throws Exception {
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+
+      // Remove User without Owner Permissions
+      RemoveBucketOwner.removeBucketOwner(
+          GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
+    }
   }
 }

@@ -28,7 +28,6 @@ import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -43,13 +42,6 @@ public abstract class TestBase {
   public Storage storage;
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
-
-  protected String bucketName;
-
-  @Before
-  public void setUp() {
-    bucketName = bucket.getName();
-  }
 
   protected BlobInfo info() {
     return BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();

@@ -20,7 +20,7 @@ import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.BlobId;
@@ -32,7 +32,7 @@ public class AddBlobOwnerTest extends TestBase {
   @Test
   public void testAddBlobOwner() {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
     BlobInfo gen1 = createEmptyObject();
     BlobId id = gen1.getBlobId();

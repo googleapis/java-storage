@@ -20,33 +20,49 @@ import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
 import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.it.TemporaryBucket;
 import org.junit.Test;
 
 public class PrintBucketAclTest extends TestBase {
 
   @Test
-  public void testPrintBucketAcls() {
+  public void testPrintBucketAcls() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
-    PrintBucketAcl.printBucketAcl(GOOGLE_CLOUD_PROJECT, bucketName);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("READER: USER");
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+      storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
+      PrintBucketAcl.printBucketAcl(GOOGLE_CLOUD_PROJECT, bucketName);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("READER: USER");
+    }
   }
 
   @Test
-  public void testPrintBucketAclByUser() {
+  public void testPrintBucketAclByUser() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
-    PrintBucketAclFilterByUser.printBucketAclFilterByUser(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+      storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
+      PrintBucketAclFilterByUser.printBucketAclFilterByUser(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
+    }
   }
 }
