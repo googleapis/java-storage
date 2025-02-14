@@ -47,7 +47,7 @@ public class ITStorageSnippets {
   private static final Logger log = Logger.getLogger(ITStorageSnippets.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static Storage storage;
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String PROJECT_ID = Env.GOOGLE_CLOUD_PROJECT;
 
   @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
 
