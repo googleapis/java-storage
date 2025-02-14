@@ -96,7 +96,7 @@ public class ITObjectSnippets {
   private static final String BLOB = "blob";
   private static final String STRING_CONTENT = "Hello, World!";
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String PROJECT_ID = Env.GOOGLE_CLOUD_PROJECT;
   private static final String KMS_KEY_NAME =
       "projects/cloud-java-ci-sample/locations/us/keyRings/"
           + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
