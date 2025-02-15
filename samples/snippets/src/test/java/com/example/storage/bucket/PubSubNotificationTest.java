@@ -32,6 +32,7 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -59,10 +60,11 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @AfterClass
-  public static void deleteTopicAndClient() {
+  public static void deleteTopicAndClient() throws InterruptedException {
     /* Delete the Pub/Sub topic */
     if (topicAdminClient != null) {
-      topicAdminClient.close();
+      topicAdminClient.shutdownNow();
+      topicAdminClient.awaitTermination(5, TimeUnit.SECONDS);
     }
   }
 

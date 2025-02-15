@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class BatchSetObjectMetadata {
   public static void batchSetObjectMetadata(
-      String projectId, String bucketName, String directoryPrefix) {
+      String projectId, String bucketName, String pathPrefix) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,7 +36,7 @@ public class BatchSetObjectMetadata {
 
     // The directory prefix. All objects in the bucket with this prefix will have their metadata
     // updated
-    // String directoryPrefix = "yourDirectory/";
+    // String pathPrefix = "yourPath/";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Map<String, String> newMetadata = new HashMap<>();
@@ -44,7 +44,7 @@ public class BatchSetObjectMetadata {
     Page<Blob> blobs =
         storage.list(
             bucketName,
-            Storage.BlobListOption.prefix(directoryPrefix),
+            Storage.BlobListOption.prefix(pathPrefix),
             Storage.BlobListOption.currentDirectory());
     StorageBatch batchRequest = storage.batch();
 
@@ -60,7 +60,7 @@ public class BatchSetObjectMetadata {
         "All blobs in bucket "
             + bucketName
             + " with prefix '"
-            + directoryPrefix
+            + pathPrefix
             + "' had their metadata updated.");
   }
 }
