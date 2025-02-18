@@ -319,7 +319,9 @@ public final class GrpcStorageOptions extends StorageOptions
             .setEndpoint(endpoint)
             .setAllowNonDefaultServiceAccount(true)
             .setAttemptDirectPath(attemptDirectPath)
-            .setAllowHardBoundTokenTypes(Arrays.asList(InstantiatingGrpcChannelProvider.HardBoundTokenTypes.ALTS));
+            .setAllowHardBoundTokenTypes(
+                Collections.singletonList(
+                    InstantiatingGrpcChannelProvider.HardBoundTokenTypes.ALTS));
 
     if (!NoopGrpcInterceptorProvider.INSTANCE.equals(grpcInterceptorProvider)) {
       channelProviderBuilder.setInterceptorProvider(grpcInterceptorProvider);
