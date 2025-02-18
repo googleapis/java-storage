@@ -110,8 +110,17 @@ final class TransferManagerImpl implements TransferManager {
     List<ApiFuture<UploadResult>> uploadTasks = new ArrayList<>();
     for (Path file : files) {
       if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
-      String blobName = TransferManagerUtils.createBlobName(config, file);
-      BlobInfo blobInfo = BlobInfo.newBuilder(config.getBucketName(), blobName).build();
+      String bucketName = config.getBucketName();
+      BlobInfo blobInfo =
+          config.getUploadBlobInfoFactory().apply(bucketName, file.toAbsolutePath().toString());
+      if (!blobInfo.getBucket().equals(bucketName)) {
+        uploadTasks.add(
+            ApiFutures.immediateFuture(
+                UploadResult.newBuilder(blobInfo, TransferStatus.FAILED_TO_START)
+                    .setException(new BucketNameMismatchException(blobInfo.getBucket(), bucketName))
+                    .build()));
+        continue;
+      }
       if (transferManagerConfig.isAllowParallelCompositeUpload()
           && qos.parallelCompositeUpload(Files.size(file))) {
         ParallelCompositeUploadCallable callable =

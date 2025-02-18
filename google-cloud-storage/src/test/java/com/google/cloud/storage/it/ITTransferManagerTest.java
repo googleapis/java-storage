@@ -36,6 +36,7 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.transfermanager.BucketNameMismatchException;
 import com.google.cloud.storage.transfermanager.DownloadJob;
 import com.google.cloud.storage.transfermanager.DownloadResult;
 import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
@@ -47,6 +48,7 @@ import com.google.cloud.storage.transfermanager.TransferStatus;
 import com.google.cloud.storage.transfermanager.UploadJob;
 import com.google.cloud.storage.transfermanager.UploadResult;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -57,7 +59,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -522,6 +528,108 @@ public class ITTransferManagerTest {
                 .filter(res -> res.getStatus() == TransferStatus.SUCCESS)
                 .collect(Collectors.toList()));
       }
+    }
+  }
+
+  @Test
+  public void uploadChangePrefix() throws Exception {
+    try (TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, 373);
+        TmpFile tmpFile2 =
+            DataGenerator.base64Characters().tempFile(baseDir, 2 * 1024 * 1024 + 13);
+        TransferManager tm =
+            TransferManagerConfig.newBuilder()
+                .setMaxWorkers(1)
+                .setPerWorkerBufferSize(4 * 1024 * 1024)
+                .setAllowDivideAndConquerDownload(false)
+                .setAllowParallelCompositeUpload(false)
+                .setStorageOptions(storage.getOptions())
+                .build()
+                .getService()) {
+
+      String prefix = "asdfasdf";
+      ImmutableMap<@NonNull String, @Nullable String> metadata = ImmutableMap.of("k", "v");
+      String contentType = "text/plain;charset=utf-8";
+      ParallelUploadConfig uploadConfig =
+          ParallelUploadConfig.newBuilder()
+              .setBucketName(bucket.getName())
+              .setSkipIfExists(false)
+              .setUploadBlobInfoFactory(
+                  (b, f) ->
+                      BlobInfo.newBuilder(
+                              b, prefix + f.replace(baseDir.toAbsolutePath().toString(), ""))
+                          .setContentType(contentType)
+                          .setMetadata(metadata)
+                          .build())
+              .setWriteOptsPerRequest(ImmutableList.of(BlobWriteOption.doesNotExist()))
+              .build();
+
+      ImmutableList<Path> files = ImmutableList.of(tmpFile1.getPath(), tmpFile2.getPath());
+      UploadJob uploadJob = tm.uploadFiles(files, uploadConfig);
+      List<UploadResult> uploadResults = uploadJob.getUploadResults();
+
+      List<String> expected =
+          files.stream()
+              .map(p -> p.getFileName().toString())
+              .map(s -> prefix + "/" + s)
+              .collect(Collectors.toList());
+
+      List<String> actualGsUtilUris =
+          uploadResults.stream()
+              .map(UploadResult::getUploadedBlob)
+              .map(BlobInfo::getName)
+              .collect(Collectors.toList());
+      assertThat(actualGsUtilUris).containsExactlyElementsIn(expected);
+
+      List<Map<@NonNull String, @Nullable String>> actualMetadatas =
+          uploadResults.stream()
+              .map(UploadResult::getUploadedBlob)
+              .map(BlobInfo::getMetadata)
+              .collect(Collectors.toList());
+
+      assertThat(actualMetadatas).isEqualTo(ImmutableList.of(metadata, metadata));
+
+      List<String> actualContentTypes =
+          uploadResults.stream()
+              .map(UploadResult::getUploadedBlob)
+              .map(BlobInfo::getContentType)
+              .collect(Collectors.toList());
+
+      assertThat(actualContentTypes).isEqualTo(ImmutableList.of(contentType, contentType));
+    }
+  }
+
+  @Test
+  public void bucketNameFromUploadBlobInfoFactoryMustMatchConfig() throws Exception {
+    try (TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, 373);
+        TransferManager tm =
+            TransferManagerConfig.newBuilder()
+                .setMaxWorkers(1)
+                .setPerWorkerBufferSize(4 * 1024 * 1024)
+                .setAllowDivideAndConquerDownload(false)
+                .setAllowParallelCompositeUpload(false)
+                .setStorageOptions(storage.getOptions())
+                .build()
+                .getService()) {
+
+      ParallelUploadConfig uploadConfig =
+          ParallelUploadConfig.newBuilder()
+              .setBucketName(bucket.getName())
+              .setSkipIfExists(false)
+              .setUploadBlobInfoFactory((b, f) -> BlobInfo.newBuilder(b + "x", f).build())
+              .setWriteOptsPerRequest(ImmutableList.of(BlobWriteOption.doesNotExist()))
+              .build();
+
+      ImmutableList<Path> files = ImmutableList.of(tmpFile1.getPath());
+      UploadJob uploadJob = tm.uploadFiles(files, uploadConfig);
+      List<UploadResult> uploadResults = uploadJob.getUploadResults();
+
+      Optional<UploadResult> failedToStart =
+          uploadResults.stream()
+              .filter(r -> r.getStatus() == TransferStatus.FAILED_TO_START)
+              .findAny();
+      assertThat(failedToStart).isPresent();
+      UploadResult result = failedToStart.get();
+      assertThat(result.getException()).isInstanceOf(BucketNameMismatchException.class);
     }
   }
 
