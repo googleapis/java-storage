@@ -238,6 +238,7 @@ public class ITKmsTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.HTTP) // b/395940239
   public void testWriterWithKmsKeyName() throws IOException {
     // Write an empty object with a kmsKeyName.
     String blobName = generator.randomObjectName();
