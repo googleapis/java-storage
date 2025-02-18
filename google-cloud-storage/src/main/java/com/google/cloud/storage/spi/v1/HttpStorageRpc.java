@@ -1082,7 +1082,7 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       String kmsKeyName = object.getKmsKeyName();
       if (kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions")) {
-        object.setKmsKeyName("");
+        object.setKmsKeyName(Data.nullOf(String.class));
       }
       Insert req =
           storage
