@@ -61,10 +61,12 @@ final class JsonResumableWrite implements Serializable {
     this.beginOffset = beginOffset;
   }
 
-  ImmutableMap<String, String> getExtraheaders() {
-    return MoreObjects.firstNonNull(
-        (ImmutableMap<String, String>) options.get(StorageRpc.Option.EXTRA_HEADERS),
-        ImmutableMap.of());
+  ImmutableMap<String, String> getExtraHeaders() {
+    Object tmp = options.get(StorageRpc.Option.EXTRA_HEADERS);
+    if (tmp != null) {
+      return (ImmutableMap<String, String>) tmp;
+    }
+    return ImmutableMap.of();
   }
 
   public @NonNull String getUploadId() {

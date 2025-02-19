@@ -98,7 +98,7 @@ final class JsonResumableSessionPutTask
     req.setThrowExceptionOnExecuteError(false);
     HttpHeaders headers = req.getHeaders();
     headers.setContentRange(contentRange.getHeaderValue());
-    for (Entry<String, String> e : jsonResumableWrite.getExtraheaders().entrySet()) {
+    for (Entry<String, String> e : jsonResumableWrite.getExtraHeaders().entrySet()) {
       headers.set(e.getKey(), e.getValue());
     }
 
