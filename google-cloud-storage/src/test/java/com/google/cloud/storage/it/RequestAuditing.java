@@ -38,12 +38,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-final class RequestAuditing extends HttpTransportOptions {
+public final class RequestAuditing extends HttpTransportOptions implements AssertRequestHeaders {
 
   private final List<HttpRequest> requests;
 
-  RequestAuditing() {
+  public RequestAuditing() {
     super(HttpTransportOptions.newBuilder());
     requests = Collections.synchronizedList(new ArrayList<>());
   }
@@ -61,7 +62,7 @@ final class RequestAuditing extends HttpTransportOptions {
     return ImmutableList.copyOf(requests);
   }
 
-  void clear() {
+  public void clear() {
     requests.clear();
   }
 
@@ -196,16 +197,28 @@ final class RequestAuditing extends HttpTransportOptions {
         .isEqualTo(ImmutableList.of(expectedValue));
   }
 
-  IterableSubject assertRequestHeader(String headerName) {
+  @Override
+  public IterableSubject assertRequestHeader(String headerName, FilteringPolicy filteringPolicy) {
+    Function<Stream<Object>, Stream<Object>> filter;
+    switch (filteringPolicy) {
+      case DISTINCT:
+        filter = Stream::distinct;
+        break;
+      case NO_FILTER:
+        filter = Function.identity();
+        break;
+      default:
+        throw new IllegalStateException("Unhandled enum value: " + filteringPolicy);
+    }
+
     ImmutableList<HttpRequest> requests = getRequests();
 
-    List<Object> actual =
+    Stream<Object> stream =
         requests.stream()
             .map(HttpRequest::getHeaders)
             .map(headers -> headers.get(headerName))
-            .filter(Objects::nonNull)
-            .distinct()
-            .collect(Collectors.toList());
+            .filter(Objects::nonNull);
+    List<Object> actual = filter.apply(stream).collect(Collectors.toList());
 
     return assertWithMessage(String.format("Headers %s", headerName)).that(actual);
   }

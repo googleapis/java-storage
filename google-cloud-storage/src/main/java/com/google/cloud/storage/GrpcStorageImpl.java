@@ -650,8 +650,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Opts<ObjectTargetOpt> dstOpts =
         Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
 
-    Mapper<RewriteObjectRequest.Builder> mapper =
+    Mapper<RewriteObjectRequest.Builder> requestBuilderMapper =
         srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
+    Mapper<GrpcCallContext> grpcCallContextMapper =
+        srcOpts.grpcMetadataMapper().andThen(dstOpts.grpcMetadataMapper());
 
     Object srcProto = codecs.blobId().encode(src);
     Object dstProto = codecs.blobInfo().encode(dst);
@@ -686,9 +688,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
     }
 
-    RewriteObjectRequest req = mapper.apply(b).build();
-    GrpcCallContext grpcCallContext =
-        srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    RewriteObjectRequest req = requestBuilderMapper.apply(b).build();
+    GrpcCallContext grpcCallContext = grpcCallContextMapper.apply(GrpcCallContext.createDefault());
     UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
         storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
     GrpcCallContext retryContext = Retrying.newCallContext();
@@ -733,7 +734,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
-    GrpcCallContext grpcCallContext = Retrying.newCallContext();
+    GrpcCallContext grpcCallContext = opts.grpcMetadataMapper().apply(Retrying.newCallContext());
 
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),

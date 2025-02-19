@@ -62,7 +62,10 @@ import java.net.URLConnection;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -563,6 +566,18 @@ final class UnifiedOpts {
   @Deprecated
   static Md5MatchExtractor md5MatchExtractor() {
     return Md5MatchExtractor.INSTANCE;
+  }
+
+  static Headers extraHeaders(ImmutableMap<String, String> extraHeaders) {
+    requireNonNull(extraHeaders, "extraHeaders must be non null");
+    String blockedHeaders =
+        extraHeaders.keySet().stream()
+            .map(Utils::headerNameToLowerCase)
+            .filter(Headers.BLOCKLIST)
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.joining(", ", "[", "]"));
+    checkArgument("[]".equals(blockedHeaders), "Disallowed headers: %s", blockedHeaders);
+    return new Headers(extraHeaders);
   }
 
   static final class Crc32cMatch implements ObjectTargetOpt {
@@ -1920,6 +1935,184 @@ final class UnifiedOpts {
     }
   }
 
+  static final class Headers extends RpcOptVal<ImmutableMap<String, String>>
+      implements BucketSourceOpt,
+          BucketTargetOpt,
+          BucketListOpt,
+          ObjectSourceOpt,
+          ObjectTargetOpt,
+          ObjectListOpt,
+          HmacKeySourceOpt,
+          HmacKeyTargetOpt,
+          HmacKeyListOpt {
+
+    /**
+     * The set of header names which are blocked from being able to be provided for an instance of
+     * this class.
+     *
+     * <p>Most values here are from <a
+     * href="https://cloud.google.com/storage/docs/json_api/v1/parameters">the json api
+     * parameters</a> list or general http headers our client otherwise sets during the course of
+     * normal operation.
+     */
+    private static final Predicate<String> BLOCKLIST;
+
+    static {
+      ImmutableSet<String> fullHeaderNames =
+          Stream.of(
+                  "Accept-Encoding",
+                  "Cache-Control",
+                  "Connection",
+                  "Content-ID",
+                  "Content-Length",
+                  "Content-Range",
+                  "Content-Transfer-Encoding",
+                  "Content-Type",
+                  "Date",
+                  "ETag",
+                  "If-Match",
+                  "If-None-Match",
+                  "Keep-Alive",
+                  "Range",
+                  "TE",
+                  "Trailer",
+                  "Transfer-Encoding",
+                  "User-Agent",
+                  "X-Goog-Api-Client",
+                  "X-Goog-Content-Length-Range",
+                  "X-Goog-Copy-Source-Encryption-Algorithm",
+                  "X-Goog-Copy-Source-Encryption-Key",
+                  "X-Goog-Copy-Source-Encryption-Key-Sha256",
+                  "X-Goog-Encryption-Algorithm",
+                  "X-Goog-Encryption-Key",
+                  "X-Goog-Encryption-Key-Sha256",
+                  "X-Goog-Gcs-Idempotency-Token",
+                  "X-Goog-Request-Params",
+                  "X-Goog-User-Project",
+                  "X-HTTP-Method-Override",
+                  "X-Upload-Content-Length",
+                  "X-Upload-Content-Type")
+              .map(Utils::headerNameToLowerCase)
+              .collect(ImmutableSet.toImmutableSet());
+
+      ImmutableSet<String> prefixes =
+          Stream.of("X-Goog-Meta-")
+              .map(Utils::headerNameToLowerCase)
+              .collect(ImmutableSet.toImmutableSet());
+
+      BLOCKLIST =
+          name -> {
+            if (fullHeaderNames.contains(name)) {
+              return true;
+            }
+
+            for (String prefix : prefixes) {
+              if (name.startsWith(prefix)) {
+                return true;
+              }
+            }
+            return false;
+          };
+    }
+
+    private Headers(ImmutableMap<String, String> val) {
+      super(StorageRpc.Option.EXTRA_HEADERS, val);
+    }
+
+    @Override
+    public Mapper<GrpcCallContext> getGrpcMetadataMapper() {
+      return ctx -> {
+        if (val.isEmpty()) {
+          return ctx;
+        }
+        Set<String> existingHeaderNames =
+            ctx.getExtraHeaders().keySet().stream()
+                .map(Utils::headerNameToLowerCase)
+                .collect(Collectors.toSet());
+        Map<String, List<String>> wrapped = new HashMap<>();
+        for (Entry<String, String> e : val.entrySet()) {
+          String key = Utils.headerNameToLowerCase(e.getKey());
+          if (existingHeaderNames.contains(key)) {
+            continue;
+          }
+          wrapped.put(key, ImmutableList.of(e.getValue()));
+        }
+        return ctx.withExtraHeaders(wrapped);
+      };
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> mapper() {
+      return optionBuilder -> {
+        if (val.isEmpty()) {
+          return optionBuilder;
+        }
+        // not ideal, but ImmutableMap.Builder doesn't have any read methods so we can detect
+        // collision
+        // before build time.
+        ImmutableMap<StorageRpc.Option, Object> builtOptions = Utils.mapBuild(optionBuilder);
+        ImmutableMap<String, String> tmp =
+            (ImmutableMap<String, String>) builtOptions.get(StorageRpc.Option.EXTRA_HEADERS);
+        if (tmp == null) {
+          ImmutableMap.Builder<String, String> b = ImmutableMap.builder();
+          for (Entry<String, String> e : val.entrySet()) {
+            String key = Utils.headerNameToLowerCase(e.getKey());
+            b.put(key, e.getValue());
+          }
+          optionBuilder.put(key, Utils.mapBuild(b));
+          return optionBuilder;
+        } else {
+          ImmutableMap.Builder<StorageRpc.Option, Object> newOptionBuilder = ImmutableMap.builder();
+          for (Entry<StorageRpc.Option, Object> e : builtOptions.entrySet()) {
+            if (e.getKey() != key) {
+              newOptionBuilder.put(e.getKey(), e.getValue());
+            }
+          }
+
+          ImmutableMap.Builder<String, String> extraHeadersBuilder = ImmutableMap.builder();
+          copyEntries(tmp, extraHeadersBuilder);
+          newOptionBuilder.put(key, Utils.mapBuild(extraHeadersBuilder));
+          return newOptionBuilder;
+        }
+      };
+    }
+
+    public Mapper<ImmutableMap<String, String>> extraHeadersMapper() {
+      return map -> {
+        if (val.isEmpty()) {
+          return map;
+        }
+        ImmutableMap.Builder<String, String> b = ImmutableMap.builder();
+        copyEntries(map, b);
+        return Utils.mapBuild(b);
+      };
+    }
+
+    private void copyEntries(
+        ImmutableMap<String, String> map, ImmutableMap.Builder<String, String> b) {
+      Set<String> existingHeaderNames =
+          map.keySet().stream().map(Utils::headerNameToLowerCase).collect(Collectors.toSet());
+      b.putAll(map);
+      for (Entry<String, String> e : val.entrySet()) {
+        String key = Utils.headerNameToLowerCase(e.getKey());
+        if (!existingHeaderNames.contains(key)) {
+          b.put(key, e.getValue());
+        }
+      }
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<MoveObjectRequest.Builder> moveObject() {
+      return Mapper.identity();
+    }
+  }
+
   static final class VersionsFilter extends RpcOptVal<@NonNull Boolean> implements ObjectListOpt {
     private VersionsFilter(boolean val) {
       super(StorageRpc.Option.VERSIONS, val);
@@ -2003,7 +2196,7 @@ final class UnifiedOpts {
 
     private ObjectTargetOpt detectForName(String name) {
       if (name != null) {
-        String nameLower = name.toLowerCase(Locale.ENGLISH);
+        String nameLower = Utils.headerNameToLowerCase(name);
         String contentTypeFor = FILE_NAME_MAP.getContentTypeFor(nameLower);
         if (contentTypeFor != null) {
           return new SetContentType(contentTypeFor);

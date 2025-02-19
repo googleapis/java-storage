@@ -20,6 +20,7 @@ import static com.google.cloud.storage.HttpClientContext.firstHeaderValue;
 
 import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
@@ -27,6 +28,7 @@ import com.google.api.services.storage.model.StorageObject;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -34,15 +36,16 @@ final class JsonResumableSessionQueryTask
     implements Callable<ResumableOperationResult<@Nullable StorageObject>> {
 
   private final HttpClientContext context;
-  private final String uploadId;
+  private final JsonResumableWrite jsonResumableWrite;
 
-  JsonResumableSessionQueryTask(HttpClientContext context, String uploadId) {
+  JsonResumableSessionQueryTask(HttpClientContext context, JsonResumableWrite jsonResumableWrite) {
     this.context = context;
-    this.uploadId = uploadId;
+    this.jsonResumableWrite = jsonResumableWrite;
   }
 
   public ResumableOperationResult<@Nullable StorageObject> call() {
     HttpResponse response = null;
+    String uploadId = jsonResumableWrite.getUploadId();
     try {
       HttpRequest req =
           context
@@ -50,7 +53,11 @@ final class JsonResumableSessionQueryTask
               .buildPutRequest(new GenericUrl(uploadId), new EmptyContent())
               .setParser(context.getObjectParser());
       req.setThrowExceptionOnExecuteError(false);
-      req.getHeaders().setContentRange(HttpContentRange.query().getHeaderValue());
+      HttpHeaders headers = req.getHeaders();
+      headers.setContentRange(HttpContentRange.query().getHeaderValue());
+      for (Entry<String, String> e : jsonResumableWrite.getExtraHeaders().entrySet()) {
+        headers.set(e.getKey(), e.getValue());
+      }
 
       response = req.execute();
 

@@ -43,17 +43,28 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
+import com.google.api.services.storage.Storage.BucketAccessControls;
+import com.google.api.services.storage.Storage.Buckets;
+import com.google.api.services.storage.Storage.Buckets.LockRetentionPolicy;
+import com.google.api.services.storage.Storage.Buckets.SetIamPolicy;
+import com.google.api.services.storage.Storage.Buckets.TestIamPermissions;
+import com.google.api.services.storage.Storage.DefaultObjectAccessControls;
+import com.google.api.services.storage.Storage.Notifications;
+import com.google.api.services.storage.Storage.ObjectAccessControls;
 import com.google.api.services.storage.Storage.Objects.Compose;
 import com.google.api.services.storage.Storage.Objects.Delete;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.Storage.Objects.Move;
 import com.google.api.services.storage.Storage.Objects.Patch;
+import com.google.api.services.storage.Storage.Projects;
+import com.google.api.services.storage.Storage.Projects.HmacKeys;
+import com.google.api.services.storage.Storage.Projects.HmacKeys.Create;
+import com.google.api.services.storage.Storage.Projects.HmacKeys.Update;
 import com.google.api.services.storage.StorageRequest;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.RetentionPolicy;
 import com.google.api.services.storage.model.BucketAccessControl;
-import com.google.api.services.storage.model.Buckets;
 import com.google.api.services.storage.model.ComposeRequest;
 import com.google.api.services.storage.model.ComposeRequest.SourceObjects.ObjectPreconditions;
 import com.google.api.services.storage.model.HmacKey;
@@ -73,6 +84,7 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
@@ -97,6 +109,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -375,15 +388,18 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .insert(this.options.getProjectId(), bucket)
-          .setProjection(DEFAULT_PROJECTION)
-          .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
-          .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options))
-          .execute();
+      Storage.Buckets.Insert insert =
+          storage
+              .buckets()
+              .insert(this.options.getProjectId(), bucket)
+              .setProjection(DEFAULT_PROJECTION)
+              .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
+              .setPredefinedDefaultObjectAcl(
+                  Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
+              .setUserProject(Option.USER_PROJECT.getString(options))
+              .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options));
+      setExtraHeaders(insert, options);
+      return insert.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -412,6 +428,7 @@ public class HttpStorageRpc implements StorageRpc {
         insert.setDisableGZipContent(disableGzipContent);
       }
       setEncryptionHeaders(insert.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+      setExtraHeaders(insert, options);
       return insert
           .setProjection(DEFAULT_PROJECTION)
           .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
@@ -436,7 +453,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_BUCKETS);
     Scope scope = tracer.withSpan(span);
     try {
-      Buckets buckets =
+      Storage.Buckets.List list =
           storage
               .buckets()
               .list(this.options.getProjectId())
@@ -445,8 +462,9 @@ public class HttpStorageRpc implements StorageRpc {
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setFields(Option.FIELDS.getString(options))
-              .setUserProject(Option.USER_PROJECT.getString(options))
-              .execute();
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(list, options);
+      com.google.api.services.storage.model.Buckets buckets = list.execute();
       return Tuple.<String, Iterable<Bucket>>of(buckets.getNextPageToken(), buckets.getItems());
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -462,7 +480,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_OBJECTS);
     Scope scope = tracer.withSpan(span);
     try {
-      Objects objects =
+      Storage.Objects.List list =
           storage
               .objects()
               .list(bucket)
@@ -478,8 +496,9 @@ public class HttpStorageRpc implements StorageRpc {
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
               .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options))
-              .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options))
-              .execute();
+              .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options));
+      setExtraHeaders(list, options);
+      Objects objects = list.execute();
       Iterable<StorageObject> storageObjects =
           Iterables.concat(
               firstNonNull(objects.getItems(), ImmutableList.<StorageObject>of()),
@@ -503,7 +522,7 @@ public class HttpStorageRpc implements StorageRpc {
     }
 
     if (Boolean.TRUE == Option.DETECT_CONTENT_TYPE.get(options)) {
-      contentType = FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.ENGLISH));
+      contentType = FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.US));
     }
 
     return firstNonNull(contentType, "application/octet-stream");
@@ -527,15 +546,17 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .get(bucket.getName())
-          .setProjection(DEFAULT_PROJECTION)
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-          .setFields(Option.FIELDS.getString(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      Storage.Buckets.Get get =
+          storage
+              .buckets()
+              .get(bucket.getName())
+              .setProjection(DEFAULT_PROJECTION)
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+              .setFields(Option.FIELDS.getString(options))
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(get, options);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -553,6 +574,7 @@ public class HttpStorageRpc implements StorageRpc {
       throws IOException {
     Storage.Objects.Get get = storage.objects().get(object.getBucket(), object.getName());
     setEncryptionHeaders(get.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+    setExtraHeaders(get, options);
     return get.setGeneration(object.getGeneration())
         .setProjection(DEFAULT_PROJECTION)
         .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
@@ -590,6 +612,7 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       Storage.Objects.Restore restore =
           storage.objects().restore(object.getBucket(), object.getName(), object.getGeneration());
+      setExtraHeaders(restore, options);
       return restore
           .setProjection(DEFAULT_PROJECTION)
           .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
@@ -644,16 +667,19 @@ public class HttpStorageRpc implements StorageRpc {
           projection = NO_ACL_PROJECTION;
         }
       }
-      return storage
-          .buckets()
-          .patch(bucket.getName(), bucket)
-          .setProjection(projection == null ? DEFAULT_PROJECTION : projection)
-          .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
-          .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      Buckets.Patch patch =
+          storage
+              .buckets()
+              .patch(bucket.getName(), bucket)
+              .setProjection(projection == null ? DEFAULT_PROJECTION : projection)
+              .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
+              .setPredefinedDefaultObjectAcl(
+                  Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(patch, options);
+      return patch.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -665,17 +691,20 @@ public class HttpStorageRpc implements StorageRpc {
 
   private Storage.Objects.Patch patchCall(StorageObject storageObject, Map<Option, ?> options)
       throws IOException {
-    return storage
-        .objects()
-        .patch(storageObject.getBucket(), storageObject.getName(), storageObject)
-        .setProjection(DEFAULT_PROJECTION)
-        .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
-        .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-        .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-        .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
-        .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
-        .setOverrideUnlockedRetention(Option.OVERRIDE_UNLOCKED_RETENTION.getBoolean(options))
-        .setUserProject(Option.USER_PROJECT.getString(options));
+    Storage.Objects.Patch patch =
+        storage
+            .objects()
+            .patch(storageObject.getBucket(), storageObject.getName(), storageObject)
+            .setProjection(DEFAULT_PROJECTION)
+            .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
+            .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+            .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+            .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
+            .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+            .setOverrideUnlockedRetention(Option.OVERRIDE_UNLOCKED_RETENTION.getBoolean(options))
+            .setUserProject(Option.USER_PROJECT.getString(options));
+    setExtraHeaders(patch, options);
+    return patch;
   }
 
   @Override
@@ -698,13 +727,15 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      storage
-          .buckets()
-          .delete(bucket.getName())
-          .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-          .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      Buckets.Delete delete =
+          storage
+              .buckets()
+              .delete(bucket.getName())
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(delete, options);
+      delete.execute();
       return true;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -721,15 +752,18 @@ public class HttpStorageRpc implements StorageRpc {
 
   private Storage.Objects.Delete deleteCall(StorageObject blob, Map<Option, ?> options)
       throws IOException {
-    return storage
-        .objects()
-        .delete(blob.getBucket(), blob.getName())
-        .setGeneration(blob.getGeneration())
-        .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
-        .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
-        .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
-        .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
-        .setUserProject(Option.USER_PROJECT.getString(options));
+    Storage.Objects.Delete delete =
+        storage
+            .objects()
+            .delete(blob.getBucket(), blob.getName())
+            .setGeneration(blob.getGeneration())
+            .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+            .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+            .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
+            .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+            .setUserProject(Option.USER_PROJECT.getString(options));
+    setExtraHeaders(delete, options);
+    return delete;
   }
 
   @Override
@@ -781,6 +815,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(targetOptions))
               .setUserProject(Option.USER_PROJECT.getString(targetOptions));
       setEncryptionHeaders(compose.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, targetOptions);
+      setExtraHeaders(compose, targetOptions);
       return compose.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -807,6 +842,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
               .setUserProject(Option.USER_PROJECT.getString(options));
       setEncryptionHeaders(getRequest.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+      setExtraHeaders(getRequest, options);
       if (Option.RETURN_RAW_INPUT_STREAM.getBoolean(options) != null) {
         getRequest.setReturnRawInputStream(Option.RETURN_RAW_INPUT_STREAM.getBoolean(options));
       }
@@ -846,6 +882,7 @@ public class HttpStorageRpc implements StorageRpc {
             .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
             .setUserProject(Option.USER_PROJECT.getString(options));
     setEncryptionHeaders(req.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
+    setExtraHeaders(req, options);
     return req;
   }
 
@@ -1112,6 +1149,7 @@ public class HttpStorageRpc implements StorageRpc {
         requestHeaders.set("X-Upload-Content-Length", xUploadContentLength);
       }
       setEncryptionHeaders(requestHeaders, "x-goog-encryption-", options);
+      setExtraHeaders(Option.EXTRA_HEADERS.get(options), requestHeaders);
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 200) {
         throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
@@ -1263,6 +1301,8 @@ public class HttpStorageRpc implements StorageRpc {
       HttpHeaders requestHeaders = rewrite.getRequestHeaders();
       setEncryptionHeaders(requestHeaders, SOURCE_ENCRYPTION_KEY_PREFIX, req.sourceOptions);
       setEncryptionHeaders(requestHeaders, ENCRYPTION_KEY_PREFIX, req.targetOptions);
+      setExtraHeaders(rewrite, req.sourceOptions);
+      setExtraHeaders(rewrite, req.targetOptions);
       com.google.api.services.storage.model.RewriteResponse rewriteResponse = rewrite.execute();
       return new RewriteResponse(
           req,
@@ -1282,11 +1322,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_BUCKET_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .bucketAccessControls()
-          .get(bucket, entity)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      BucketAccessControls.Get get =
+          storage
+              .bucketAccessControls()
+              .get(bucket, entity)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(get, options);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -1305,11 +1347,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      storage
-          .bucketAccessControls()
-          .delete(bucket, entity)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      BucketAccessControls.Delete delete =
+          storage
+              .bucketAccessControls()
+              .delete(bucket, entity)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(delete, options);
+      delete.execute();
       return true;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1329,11 +1373,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .bucketAccessControls()
-          .insert(acl.getBucket(), acl)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      BucketAccessControls.Insert insert =
+          storage
+              .bucketAccessControls()
+              .insert(acl.getBucket(), acl)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(insert, options);
+      return insert.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1348,11 +1394,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_PATCH_BUCKET_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .bucketAccessControls()
-          .patch(acl.getBucket(), acl.getEntity(), acl)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      BucketAccessControls.Patch patch =
+          storage
+              .bucketAccessControls()
+              .patch(acl.getBucket(), acl.getEntity(), acl)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(patch, options);
+      return patch.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1367,12 +1415,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_BUCKET_ACLS);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .bucketAccessControls()
-          .list(bucket)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute()
-          .getItems();
+      BucketAccessControls.List list =
+          storage
+              .bucketAccessControls()
+              .list(bucket)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(list, options);
+      return list.execute().getItems();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1387,7 +1436,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_OBJECT_DEFAULT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.defaultObjectAccessControls().get(bucket, entity).execute();
+      DefaultObjectAccessControls.Get get =
+          storage.defaultObjectAccessControls().get(bucket, entity);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -1406,7 +1457,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_OBJECT_DEFAULT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      storage.defaultObjectAccessControls().delete(bucket, entity).execute();
+      DefaultObjectAccessControls.Delete delete =
+          storage.defaultObjectAccessControls().delete(bucket, entity);
+      delete.execute();
       return true;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1426,7 +1479,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_OBJECT_DEFAULT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.defaultObjectAccessControls().insert(acl.getBucket(), acl).execute();
+      DefaultObjectAccessControls.Insert insert =
+          storage.defaultObjectAccessControls().insert(acl.getBucket(), acl);
+      return insert.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1441,10 +1496,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_PATCH_OBJECT_DEFAULT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .defaultObjectAccessControls()
-          .patch(acl.getBucket(), acl.getEntity(), acl)
-          .execute();
+      DefaultObjectAccessControls.Patch patch =
+          storage.defaultObjectAccessControls().patch(acl.getBucket(), acl.getEntity(), acl);
+      return patch.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1459,7 +1513,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_OBJECT_DEFAULT_ACLS);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.defaultObjectAccessControls().list(bucket).execute().getItems();
+      DefaultObjectAccessControls.List list = storage.defaultObjectAccessControls().list(bucket);
+      return list.execute().getItems();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1474,11 +1529,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_OBJECT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objectAccessControls()
-          .get(bucket, object, entity)
-          .setGeneration(generation)
-          .execute();
+      ObjectAccessControls.Get get =
+          storage.objectAccessControls().get(bucket, object, entity).setGeneration(generation);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -1497,11 +1550,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_OBJECT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      storage
-          .objectAccessControls()
-          .delete(bucket, object, entity)
-          .setGeneration(generation)
-          .execute();
+      ObjectAccessControls.Delete delete =
+          storage.objectAccessControls().delete(bucket, object, entity).setGeneration(generation);
+      delete.execute();
       return true;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1521,11 +1572,12 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_OBJECT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objectAccessControls()
-          .insert(acl.getBucket(), acl.getObject(), acl)
-          .setGeneration(acl.getGeneration())
-          .execute();
+      ObjectAccessControls.Insert insert =
+          storage
+              .objectAccessControls()
+              .insert(acl.getBucket(), acl.getObject(), acl)
+              .setGeneration(acl.getGeneration());
+      return insert.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1540,11 +1592,12 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_PATCH_OBJECT_ACL);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objectAccessControls()
-          .patch(acl.getBucket(), acl.getObject(), acl.getEntity(), acl)
-          .setGeneration(acl.getGeneration())
-          .execute();
+      ObjectAccessControls.Patch patch =
+          storage
+              .objectAccessControls()
+              .patch(acl.getBucket(), acl.getObject(), acl.getEntity(), acl)
+              .setGeneration(acl.getGeneration());
+      return patch.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1559,12 +1612,9 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_OBJECT_ACLS);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .objectAccessControls()
-          .list(bucket, object)
-          .setGeneration(generation)
-          .execute()
-          .getItems();
+      ObjectAccessControls.List list =
+          storage.objectAccessControls().list(bucket, object).setGeneration(generation);
+      return list.execute().getItems();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1583,13 +1633,14 @@ public class HttpStorageRpc implements StorageRpc {
       projectId = this.options.getProjectId();
     }
     try {
-      return storage
-          .projects()
-          .hmacKeys()
-          .create(projectId, serviceAccountEmail)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .setDisableGZipContent(true)
-          .execute();
+      Create create =
+          storage
+              .projects()
+              .hmacKeys()
+              .create(projectId, serviceAccountEmail)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(create, options);
+      return create.setDisableGZipContent(true).execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1608,7 +1659,7 @@ public class HttpStorageRpc implements StorageRpc {
       projectId = this.options.getProjectId();
     }
     try {
-      HmacKeysMetadata hmacKeysMetadata =
+      HmacKeys.List list =
           storage
               .projects()
               .hmacKeys()
@@ -1617,8 +1668,9 @@ public class HttpStorageRpc implements StorageRpc {
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setShowDeletedKeys(Option.SHOW_DELETED_KEYS.getBoolean(options))
-              .setUserProject(Option.USER_PROJECT.getString(options))
-              .execute();
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(list, options);
+      HmacKeysMetadata hmacKeysMetadata = list.execute();
       return Tuple.<String, Iterable<HmacKeyMetadata>>of(
           hmacKeysMetadata.getNextPageToken(), hmacKeysMetadata.getItems());
     } catch (IOException ex) {
@@ -1639,12 +1691,14 @@ public class HttpStorageRpc implements StorageRpc {
       projectId = this.options.getProjectId();
     }
     try {
-      return storage
-          .projects()
-          .hmacKeys()
-          .get(projectId, accessId)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      HmacKeys.Get get =
+          storage
+              .projects()
+              .hmacKeys()
+              .get(projectId, accessId)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(get, options);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1663,12 +1717,14 @@ public class HttpStorageRpc implements StorageRpc {
       projectId = this.options.getProjectId();
     }
     try {
-      return storage
-          .projects()
-          .hmacKeys()
-          .update(projectId, hmacKeyMetadata.getAccessId(), hmacKeyMetadata)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      Update update =
+          storage
+              .projects()
+              .hmacKeys()
+              .update(projectId, hmacKeyMetadata.getAccessId(), hmacKeyMetadata)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(update, options);
+      return update.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1687,12 +1743,14 @@ public class HttpStorageRpc implements StorageRpc {
       projectId = this.options.getProjectId();
     }
     try {
-      storage
-          .projects()
-          .hmacKeys()
-          .delete(projectId, hmacKeyMetadata.getAccessId())
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      HmacKeys.Delete delete =
+          storage
+              .projects()
+              .hmacKeys()
+              .delete(projectId, hmacKeyMetadata.getAccessId())
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(delete, options);
+      delete.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1716,6 +1774,7 @@ public class HttpStorageRpc implements StorageRpc {
         getIamPolicy.setOptionsRequestedPolicyVersion(
             Option.REQUESTED_POLICY_VERSION.getLong(options).intValue());
       }
+      setExtraHeaders(getIamPolicy, options);
       return getIamPolicy.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1731,11 +1790,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_SET_BUCKET_IAM_POLICY);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .setIamPolicy(bucket, policy)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      SetIamPolicy setIamPolicy =
+          storage
+              .buckets()
+              .setIamPolicy(bucket, policy)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(setIamPolicy, options);
+      return setIamPolicy.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1751,11 +1812,13 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_TEST_BUCKET_IAM_PERMISSIONS);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .testIamPermissions(bucket, permissions)
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .execute();
+      TestIamPermissions testIamPermissions =
+          storage
+              .buckets()
+              .testIamPermissions(bucket, permissions)
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(testIamPermissions, options);
+      return testIamPermissions.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1770,7 +1833,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_NOTIFICATION);
     Scope scope = tracer.withSpan(span);
     try {
-      storage.notifications().delete(bucket, notification).execute();
+      Notifications.Delete delete = storage.notifications().delete(bucket, notification);
+      delete.execute();
       return true;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1790,7 +1854,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_LIST_NOTIFICATIONS);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.notifications().list(bucket).execute().getItems();
+      Notifications.List list = storage.notifications().list(bucket);
+      return list.execute().getItems();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1805,7 +1870,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_NOTIFICATION);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.notifications().insert(bucket, notification).execute();
+      Notifications.Insert insert = storage.notifications().insert(bucket, notification);
+      return insert.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1820,7 +1886,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_NOTIFICATION);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.notifications().get(bucket, notification).execute();
+      Notifications.Get get = storage.notifications().get(bucket, notification);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
@@ -1839,12 +1906,14 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_LOCK_RETENTION_POLICY);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .lockRetentionPolicy(bucket.getName(), Option.IF_METAGENERATION_MATCH.getLong(options))
-          .setUserProject(Option.USER_PROJECT.getString(options))
-          .setDisableGZipContent(true)
-          .execute();
+      LockRetentionPolicy lockRetentionPolicy =
+          storage
+              .buckets()
+              .lockRetentionPolicy(
+                  bucket.getName(), Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setUserProject(Option.USER_PROJECT.getString(options));
+      setExtraHeaders(lockRetentionPolicy, options);
+      return lockRetentionPolicy.setDisableGZipContent(true).execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1859,7 +1928,8 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_SERVICE_ACCOUNT);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage.projects().serviceAccount().get(projectId).execute();
+      Projects.ServiceAccount.Get get = storage.projects().serviceAccount().get(projectId);
+      return get.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1874,5 +1944,24 @@ public class HttpStorageRpc implements StorageRpc {
     error.setCode(statusCode);
     error.setMessage(statusMessage);
     return translate(error);
+  }
+
+  private static <Resource, Request extends StorageRequest<Resource>> void setExtraHeaders(
+      Request req, Map<Option, ?> options) {
+    ImmutableMap<String, String> extraHeaders = Option.EXTRA_HEADERS.get(options);
+    HttpHeaders headers = req.getRequestHeaders();
+    setExtraHeaders(extraHeaders, headers);
+  }
+
+  private static void setExtraHeaders(
+      @Nullable ImmutableMap<String, String> extraHeaders, HttpHeaders headers) {
+    if (extraHeaders != null) {
+      for (Entry<String, String> e : extraHeaders.entrySet()) {
+        String key = e.getKey();
+        if (!headers.containsKey(key) || key.equals("authorization")) {
+          headers.set(key, e.getValue());
+        }
+      }
+    }
   }
 }

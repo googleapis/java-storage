@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
@@ -31,6 +32,7 @@ import io.opencensus.trace.Status;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -38,7 +40,7 @@ final class JsonResumableSessionPutTask
     implements Callable<ResumableOperationResult<@Nullable StorageObject>> {
 
   private final HttpClientContext context;
-  private final String uploadId;
+  private final JsonResumableWrite jsonResumableWrite;
   private final RewindableContent content;
   private final HttpContentRange originalContentRange;
 
@@ -47,11 +49,11 @@ final class JsonResumableSessionPutTask
   @VisibleForTesting
   JsonResumableSessionPutTask(
       HttpClientContext httpClientContext,
-      String uploadId,
+      JsonResumableWrite jsonResumableWrite,
       RewindableContent content,
       HttpContentRange originalContentRange) {
     this.context = httpClientContext;
-    this.uploadId = uploadId;
+    this.jsonResumableWrite = jsonResumableWrite;
     this.content = content;
     this.originalContentRange = originalContentRange;
     this.contentRange = originalContentRange;
@@ -87,13 +89,18 @@ final class JsonResumableSessionPutTask
     boolean success = false;
     boolean finalizing = originalContentRange.isFinalizing();
 
+    String uploadId = jsonResumableWrite.getUploadId();
     HttpRequest req =
         context
             .getRequestFactory()
             .buildPutRequest(new GenericUrl(uploadId), content)
             .setParser(context.getObjectParser());
     req.setThrowExceptionOnExecuteError(false);
-    req.getHeaders().setContentRange(contentRange.getHeaderValue());
+    HttpHeaders headers = req.getHeaders();
+    headers.setContentRange(contentRange.getHeaderValue());
+    for (Entry<String, String> e : jsonResumableWrite.getExtraHeaders().entrySet()) {
+      headers.set(e.getKey(), e.getValue());
+    }
 
     HttpResponse response = null;
     try {

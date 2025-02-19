@@ -78,7 +78,12 @@ public interface StorageRpc extends ServiceRpc {
     COPY_SOURCE_ACL("copySourceAcl"),
     GENERATION("generation"),
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes"),
-    X_UPLOAD_CONTENT_LENGTH("x-upload-content-length");
+    X_UPLOAD_CONTENT_LENGTH("x-upload-content-length"),
+    /**
+     * An {@link com.google.common.collect.ImmutableMap ImmutableMap&lt;String, String>} of values
+     * which will be set as additional headers on the request.
+     */
+    EXTRA_HEADERS("extra_headers");
 
     private final String value;
 

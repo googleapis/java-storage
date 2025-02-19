@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._256KiBL;
+import static com.google.cloud.storage.ITJsonResumableSessionPutTaskTest.jsonResumableWrite;
 import static com.google.common.truth.Truth.assertThat;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -84,7 +85,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       StorageObject object = result.getObject();
@@ -107,7 +108,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       StorageObject object = result.getObject();
@@ -134,7 +135,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       assertThat(result.getPersistedSize()).isEqualTo(_256KiBL);
@@ -150,7 +151,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       assertThat(result.getPersistedSize()).isEqualTo(0);
@@ -167,7 +168,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -193,7 +194,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -221,7 +222,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);

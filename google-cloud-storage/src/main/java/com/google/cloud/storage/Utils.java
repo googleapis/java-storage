@@ -40,6 +40,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -318,5 +319,9 @@ final class Utils {
 
   static <K, V> ImmutableMap<K, V> mapBuild(ImmutableMap.Builder<K, V> b) {
     return (ImmutableMap<K, V>) mapBuild.apply(b);
+  }
+
+  static String headerNameToLowerCase(String headerName) {
+    return headerName.toLowerCase(Locale.US);
   }
 }

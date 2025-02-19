@@ -33,6 +33,7 @@ import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedR
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -51,8 +52,8 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -273,6 +274,14 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
               "x-goog-encryption-key-sha256",
               base64.encode(hashFunction.hashBytes(base64.decode(key)).asBytes()));
         });
+    ifNonNull(
+        options.get(StorageRpc.Option.EXTRA_HEADERS),
+        ApiaryUnbufferedReadableByteChannel::cast,
+        (ImmutableMap<String, String> extraHeaders) -> {
+          for (Entry<String, String> e : extraHeaders.entrySet()) {
+            headers.set(e.getKey(), e.getValue());
+          }
+        });
 
     // gzip handling is performed upstream of here. Ensure we always get the raw input stream from
     // the request
@@ -302,7 +311,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       if (list.isEmpty()) {
         return null;
       } else {
-        return list.get(0).trim().toLowerCase(Locale.ENGLISH);
+        return Utils.headerNameToLowerCase(list.get(0).trim());
       }
     } else if (o instanceof String) {
       return (String) o;
