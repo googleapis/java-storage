@@ -62,9 +62,11 @@ final class JsonResumableWrite implements Serializable {
   }
 
   ImmutableMap<String, String> getExtraHeaders() {
-    Object tmp = options.get(StorageRpc.Option.EXTRA_HEADERS);
-    if (tmp != null) {
-      return (ImmutableMap<String, String>) tmp;
+    if (options != null) {
+      Object tmp = options.get(StorageRpc.Option.EXTRA_HEADERS);
+      if (tmp != null) {
+        return (ImmutableMap<String, String>) tmp;
+      }
     }
     return ImmutableMap.of();
   }
