@@ -42,6 +42,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage custom runner which will handle {@link CrossRun}, {@link SingleBackend}, {@link
@@ -53,6 +55,12 @@ import org.junit.runners.model.TestClass;
  * @see org.junit.runners.BlockJUnit4ClassRunner
  */
 public final class StorageITRunner extends Suite {
+  static {
+    org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
+    org.slf4j.bridge.SLF4JBridgeHandler.install();
+  }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(StorageITRunner.class);
 
   private final Lock childrenLock = new ReentrantLock();
   private volatile ImmutableList<Runner> filteredChildren = null;
@@ -67,6 +75,7 @@ public final class StorageITRunner extends Suite {
 
   @Override
   public void run(RunNotifier notifier) {
+    LOGGER.debug("run(notifier : {})", notifier);
     super.run(new RunNotifierUnion(notifier, Registry.getInstance()));
   }
 
