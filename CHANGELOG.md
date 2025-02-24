@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.49.0](https://github.com/googleapis/java-storage/compare/v2.48.2...v2.49.0) (2025-02-24)
+
+
+### Features
+
+* **transfer-manager:** Add ParallelUploadConfig.Builder#setUploadBlobInfoFactory ([#2936](https://github.com/googleapis/java-storage/issues/2936)) ([86e9ae8](https://github.com/googleapis/java-storage/commit/86e9ae80772aa202d0b6563b8dd37722d8b5e0e0)), closes [#2638](https://github.com/googleapis/java-storage/issues/2638)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.53.0 ([9946d6b](https://github.com/googleapis/java-storage/commit/9946d6bdc7ec8398bf1bd1df63f272df1351539e))
+* Update grpc based Storage to defer project id validation ([#2930](https://github.com/googleapis/java-storage/issues/2930)) ([cc03784](https://github.com/googleapis/java-storage/commit/cc037848be7d21cb827c97d7f71618f1bfae941d))
+* Update kms key handling when opening a resumable upload to clear the value in the json to be null rather than empty string ([#2939](https://github.com/googleapis/java-storage/issues/2939)) ([43553de](https://github.com/googleapis/java-storage/commit/43553dedce33093e751143fadb372024d975706c))
+
+
+### Documentation
+
+* Add note about HNS support to moveBlob ([#2929](https://github.com/googleapis/java-storage/issues/2929)) ([c461546](https://github.com/googleapis/java-storage/commit/c461546bfd016b21eb99f8e25604ee3fd001c9c6))
+
 ## [2.48.2](https://github.com/googleapis/java-storage/compare/v2.48.1...v2.48.2) (2025-02-11)
 
 
