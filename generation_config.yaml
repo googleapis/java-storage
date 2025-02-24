@@ -1,6 +1,6 @@
 gapic_generator_version: 2.53.0
-googleapis_commitish: a003cab30e2a263e16e9252256041f8934f40e2c
-libraries_bom_version: 26.54.0
+googleapis_commitish: 3b2e8657f0bef4d9638f2957ed9d988adc65427c
+libraries_bom_version: 26.55.0
 libraries:
   - api_shortname: storage
     name_pretty: Cloud Storage
