@@ -40,6 +40,7 @@ import com.google.protobuf.Message;
 import com.google.rpc.Status;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
+import com.google.storage.v2.BidiWriteObjectRedirectedError;
 import io.grpc.StatusRuntimeException;
 import java.io.Closeable;
 import java.io.IOException;
@@ -106,6 +107,16 @@ final class GrpcUtils {
   @Nullable
   static BidiReadObjectRedirectedError getBidiReadObjectRedirectedError(Throwable t) {
     return findFirstPackedAny(t, BidiReadObjectRedirectedError.class);
+  }
+
+  /**
+   * Returns the first occurrence of a {@link BidiWriteObjectRedirectedError} if the throwable is an
+   * {@link ApiException} with {@link ErrorDetails} that contain an entry that is a {@link
+   * BidiWriteObjectRedirectedError} (evaluated from index 0 to length). {@code null} otherwise.
+   */
+  @Nullable
+  static BidiWriteObjectRedirectedError getBidiWriteObjectRedirectedError(Throwable t) {
+    return findFirstPackedAny(t, BidiWriteObjectRedirectedError.class);
   }
 
   /**

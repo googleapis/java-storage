@@ -35,7 +35,9 @@ import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -1433,7 +1435,30 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .setHasher(Hasher.noop())
             .setByteStringStrategy(ByteStringStrategy.copy())
             .appendable()
-            .withRetryConfig(retrier.withAlg(retryAlgorithmManager.idempotent()))
+            .withRetryConfig(
+                retrier.withAlg(
+                    new BasicResultRetryAlgorithm<Object>() {
+                      @Override
+                      public boolean shouldRetry(
+                          Throwable previousThrowable, Object previousResponse) {
+                        // TODO: remove this later once the redirects are not handled by the retry
+                        // loop
+                        ApiException apiEx = null;
+                        if (previousThrowable instanceof StorageException) {
+                          StorageException se = (StorageException) previousThrowable;
+                          Throwable cause = se.getCause();
+                          if (cause instanceof ApiException) {
+                            apiEx = (ApiException) cause;
+                          }
+                        }
+                        if (apiEx instanceof AbortedException) {
+                          return true;
+                        }
+                        return retryAlgorithmManager
+                            .idempotent()
+                            .shouldRetry(previousThrowable, null);
+                      }
+                    }))
             .buffered(BufferHandle.allocate(bufferSize))
             .setStartAsync(startAppendableWrite)
             .build();
