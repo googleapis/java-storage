@@ -210,7 +210,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT9.002S, nextBackoff: PT3S)");
+                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT0S, nextBackoff: PT3S)");
         });
   }
 
@@ -379,6 +379,35 @@ public final class RetryContextTest {
     } while (attemptAgain.get());
 
     assertThat(retryContextSplits.size()).isEqualTo(retryHelperSplits.size());
+  }
+
+  @Test
+  public void resetAlsoResetsBackoffState() throws Exception {
+    Throwable t1 = apiException(Code.INTERNAL, "{err1}");
+    Throwable t2 = apiException(Code.INTERNAL, "{err2}");
+    RetryContext ctx =
+        RetryContext.of(
+            scheduledExecutorService, maxAttempts(1), Retrying.alwaysRetry(), Jitterer.noJitter());
+
+    AtomicReference<Throwable> err1 = new AtomicReference<>();
+    AtomicReference<Throwable> err2 = new AtomicReference<>();
+    ctx.recordError(t1, failOnSuccess(), err1::set);
+    ctx.reset();
+    ctx.recordError(t2, failOnSuccess(), err2::set);
+
+    assertAll(
+        () -> {
+          String messages = TestUtils.messagesToText(err1.get());
+          assertThat(messages)
+              .contains(
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
+        },
+        () -> {
+          String messages = TestUtils.messagesToText(err2.get());
+          assertThat(messages)
+              .contains(
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
+        });
   }
 
   private static ApiException apiException(Code code, String message) {

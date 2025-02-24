@@ -82,6 +82,7 @@ final class DefaultRetryContext implements RetryContext {
       }
       lastRecordedErrorNs = retryingDependencies.getClock().nanoTime();
       clearPendingBackoff();
+      backoff.reset();
     } finally {
       lock.unlock();
     }
