@@ -78,8 +78,8 @@
   <logger name="jdk.event.security" level="warn"/>
   <!-- http request logging -->
   <logger name="sun.net.www.protocol.http.HttpURLConnection" level="warn"/>
-  <logger name="com.google.api.client.http.HttpTransport" level="debug"/>
-  <logger name="com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor" level="trace"/>
+  <logger name="com.google.api.client.http.HttpTransport" level="warn"/>
+  <logger name="com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor" level="warn"/>
   <!-- grpc netty traffic logging -->
   <!--<logger name="io.grpc.netty.shaded.io.netty.handler.ssl.SslHandler" level="debug"/>-->
   <!--<logger name="io.grpc.netty.shaded.io.grpc.netty.NettyClientHandler" level="debug"/>-->

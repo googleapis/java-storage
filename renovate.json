@@ -94,7 +94,9 @@
         "^org.mockito:mockito-core",
         "^org.objenesis:objenesis",
         "^com.google.cloud:google-cloud-conformance-tests",
-        "^io.github.classgraph:classgraph"
+        "^io.github.classgraph:classgraph",
+        "^ch.qos.logback:logback-classic",
+        "^org.slf4j:jul-to-slf4j"
       ],
       "semanticCommitType": "test",
       "semanticCommitScope": "deps"
@@ -139,6 +141,12 @@
         "^com.google.cloud:sdk-platform-java-config"
       ],
       "groupName": "sdk-platform-java dependencies"
+    },
+    {
+      "packagePatterns": [
+        "^ch.qos.logback:logback-classic"
+      ],
+      "allowedVersions": "<1.5.0"
     }
   ],
   "semanticCommits": true,
