@@ -2049,8 +2049,7 @@ final class UnifiedOpts {
           return optionBuilder;
         }
         // not ideal, but ImmutableMap.Builder doesn't have any read methods so we can detect
-        // collision
-        // before build time.
+        // collision before build time.
         ImmutableMap<StorageRpc.Option, Object> builtOptions = Utils.mapBuild(optionBuilder);
         ImmutableMap<String, String> tmp =
             (ImmutableMap<String, String>) builtOptions.get(StorageRpc.Option.EXTRA_HEADERS);
