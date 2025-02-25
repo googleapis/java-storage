@@ -20,21 +20,35 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
-public final class AppendableBlobUpload implements AutoCloseable {
+public final class AppendableBlobUpload implements AutoCloseable, WritableByteChannel {
   private final AppendableObjectBufferedWritableByteChannel channel;
   private final ApiFuture<BlobInfo> result;
 
-  private AppendableBlobUpload(BlobInfo blob, BlobWriteSession session) throws IOException {
+  private AppendableBlobUpload(BlobInfo blob, BlobWriteSession session, boolean takeover)
+      throws IOException {
     channel = (AppendableObjectBufferedWritableByteChannel) (session.open());
     result = session.getResult();
+    if (takeover) {
+      channel.startTakeoverStream();
+    }
   }
 
   static AppendableBlobUpload createNewAppendableBlob(BlobInfo blob, BlobWriteSession session)
       throws IOException {
-    return new AppendableBlobUpload(blob, session);
+    return new AppendableBlobUpload(blob, session, false);
+  }
+
+  static AppendableBlobUpload resumeAppendableUpload(BlobInfo blob, BlobWriteSession session)
+      throws IOException {
+    return new AppendableBlobUpload(blob, session, true);
+  }
+
+  void startTakeoverStream() {
+    channel.startTakeoverStream();
   }
 
   public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
@@ -43,8 +57,14 @@ public final class AppendableBlobUpload implements AutoCloseable {
     return result.get();
   }
 
-  public void write(ByteBuffer buffer) throws IOException {
-    channel.write(buffer);
+  @Override
+  public int write(ByteBuffer buffer) throws IOException {
+    return channel.write(buffer);
+  }
+
+  @Override
+  public boolean isOpen() {
+    return channel.isOpen();
   }
 
   @Override
@@ -125,6 +145,10 @@ public final class AppendableBlobUpload implements AutoCloseable {
       } finally {
         lock.unlock();
       }
+    }
+
+    void startTakeoverStream() {
+      unbuffered.startAppendableTakeoverStream();
     }
   }
 }

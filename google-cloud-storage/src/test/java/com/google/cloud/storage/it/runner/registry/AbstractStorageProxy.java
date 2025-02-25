@@ -498,9 +498,9 @@ abstract class AbstractStorageProxy implements Storage {
   }
 
   @Override
-  public AppendableBlobUpload createAppendableBlobUpload(
+  public AppendableBlobUpload appendableBlobUpload(
       BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
-    return delegate.createAppendableBlobUpload(blob, bufferSize, options);
+    return delegate.appendableBlobUpload(blob, bufferSize, options);
   }
 
   @Override

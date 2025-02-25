@@ -202,7 +202,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
       }
 
       /**
-       * Set the Future which will contain the ResumableWrite information necessary to open the
+       * Set the Future which will contain the AppendableWrite information necessary to open the
        * Write stream.
        */
       BufferedAppendableUploadBuilder setStartAsync(ApiFuture<BidiAppendableWrite> start) {

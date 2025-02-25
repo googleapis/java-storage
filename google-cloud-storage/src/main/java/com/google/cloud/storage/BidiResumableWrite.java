@@ -100,11 +100,19 @@ final class BidiAppendableWrite implements BidiWriteObjectRequestBuilderFactory 
   private final BidiWriteObjectRequest req;
 
   public BidiAppendableWrite(BidiWriteObjectRequest req) {
-    req =
-        req.toBuilder()
-            .setWriteObjectSpec(req.getWriteObjectSpec().toBuilder().setAppendable(true).build())
-            .build();
-    this.req = req;
+    this(req, false);
+  }
+
+  public BidiAppendableWrite(BidiWriteObjectRequest req, boolean takeOver) {
+    if (takeOver) {
+      this.req = req;
+    } else {
+      req =
+          req.toBuilder()
+              .setWriteObjectSpec(req.getWriteObjectSpec().toBuilder().setAppendable(true).build())
+              .build();
+      this.req = req;
+    }
   }
 
   public BidiWriteObjectRequest getReq() {
@@ -120,6 +128,8 @@ final class BidiAppendableWrite implements BidiWriteObjectRequestBuilderFactory 
   public @Nullable String bucketName() {
     if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
       return req.getWriteObjectSpec().getResource().getBucket();
+    } else if (req.hasAppendObjectSpec()) {
+      return req.getAppendObjectSpec().getBucket();
     }
     return null;
   }

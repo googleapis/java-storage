@@ -47,9 +47,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -255,42 +253,5 @@ public final class ITObjectReadSessionTest {
     assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
     StorageException cause = (StorageException) ee.getCause();
     assertThat(cause.getCode()).isEqualTo(404);
-  }
-
-  @Test
-  public void testAppendableBlobUpload()
-      throws IOException, ExecutionException, InterruptedException {
-    AppendableBlobUpload upload =
-        storage.createAppendableBlobUpload(
-            BlobInfo.newBuilder(bucket, String.valueOf(UUID.randomUUID())).build(), 256 * 1024);
-    byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
-    byte[] a1 = Arrays.copyOfRange(bytes, 0, bytes.length / 2);
-    byte[] a2 = Arrays.copyOfRange(bytes, bytes.length / 2 + 1, bytes.length);
-
-    upload.write(ByteBuffer.wrap(a1));
-    upload.write(ByteBuffer.wrap(a2));
-    BlobInfo blob = upload.finalizeUpload();
-
-    assertThat(blob.getSize()).isEqualTo(a1.length + a2.length);
-  }
-
-  @Test
-  public void appendableBlobUploadWithoutFinalizing() throws IOException {
-
-    AppendableBlobUpload upload =
-        storage.createAppendableBlobUpload(
-            BlobInfo.newBuilder(bucket, String.valueOf(UUID.randomUUID())).build(), 256 * 1024);
-
-    byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
-    byte[] a1 = Arrays.copyOfRange(bytes, 0, bytes.length / 2);
-    byte[] a2 = Arrays.copyOfRange(bytes, bytes.length / 2 + 1, bytes.length);
-
-    upload.write(ByteBuffer.wrap(a1));
-    upload.write(ByteBuffer.wrap(a2));
-
-    upload.close();
-
-    // Can't takeover the stream yet, so for now we just test that closing without finalizing
-    // doesn't cause an exception
   }
 }

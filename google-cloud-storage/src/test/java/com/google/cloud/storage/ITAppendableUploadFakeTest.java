@@ -194,8 +194,7 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.createAppendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
       assertThat(bi.getSize()).isEqualTo(10);
@@ -258,8 +257,7 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.createAppendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
       StorageException e =
           assertThrows(
               StorageException.class,
@@ -372,8 +370,7 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.createAppendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -485,8 +482,7 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.createAppendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -1279,6 +1275,130 @@ public class ITAppendableUploadFakeTest {
       assertThat(map.get(req4)).isEqualTo(1);
       assertThat(map.get(req5)).isEqualTo(1);
       assertThat(map.get(reconnect)).isEqualTo(1);
+    }
+  }
+
+  @Test
+  public void takeoverRedirectError() throws Exception {
+    BidiWriteHandle writeHandle =
+        BidiWriteHandle.newBuilder()
+            .setHandle(ByteString.copyFromUtf8(UUID.randomUUID().toString()))
+            .build();
+    String routingToken = UUID.randomUUID().toString();
+
+    BidiWriteObjectRequest req1 =
+        BidiWriteObjectRequest.newBuilder()
+            .setAppendObjectSpec(
+                AppendObjectSpec.newBuilder()
+                    .setBucket(METADATA.getBucket())
+                    .setObject(METADATA.getName())
+                    .setGeneration(METADATA.getGeneration())
+                    .build())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+
+    BidiWriteObjectRequest req2 =
+        BidiWriteObjectRequest.newBuilder()
+            .setAppendObjectSpec(
+                AppendObjectSpec.newBuilder()
+                    .setBucket(METADATA.getBucket())
+                    .setObject(METADATA.getName())
+                    .setGeneration(METADATA.getGeneration())
+                    .setWriteHandle(writeHandle)
+                    .setRoutingToken(routingToken)
+                    .build())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+
+    BidiWriteObjectRequest req3 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(10)
+            .setChecksummedData(
+                ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("KLMNO")).build())
+            .setStateLookup(true)
+            .setFlush(true)
+            .build();
+
+    BidiWriteObjectRequest req4 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(15)
+            .setChecksummedData(
+                ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("PQRST")).build())
+            .setStateLookup(true)
+            .setFlush(true)
+            .build();
+
+    BidiWriteObjectRequest req5 =
+        BidiWriteObjectRequest.newBuilder().setWriteOffset(20).setFinishWrite(true).build();
+
+    BidiWriteObjectResponse res2 =
+        BidiWriteObjectResponse.newBuilder().setPersistedSize(10).build();
+
+    BidiWriteObjectResponse res3 =
+        BidiWriteObjectResponse.newBuilder().setPersistedSize(15).build();
+
+    BidiWriteObjectResponse res4 =
+        BidiWriteObjectResponse.newBuilder().setPersistedSize(20).build();
+
+    BidiWriteObjectResponse res5 =
+        BidiWriteObjectResponse.newBuilder()
+            .setResource(
+                Object.newBuilder()
+                    .setName(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setGeneration(METADATA.getGeneration())
+                    .setSize(20)
+                    // real object would have some extra fields like metageneration and storage
+                    // class
+                    .build())
+            .setWriteHandle(writeHandle)
+            .build();
+
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                req1,
+                respond -> {
+                  BidiWriteObjectRedirectedError redirect =
+                      BidiWriteObjectRedirectedError.newBuilder()
+                          .setWriteHandle(writeHandle)
+                          .setRoutingToken(routingToken)
+                          .setGeneration(METADATA.getGeneration())
+                          .build();
+
+                  com.google.rpc.Status grpcStatusDetails =
+                      com.google.rpc.Status.newBuilder()
+                          .setCode(Code.ABORTED_VALUE)
+                          .setMessage("redirect")
+                          .addDetails(Any.pack(redirect))
+                          .build();
+
+                  Metadata trailers = new Metadata();
+                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  StatusRuntimeException statusRuntimeException =
+                      Status.ABORTED.withDescription("redirect").asRuntimeException(trailers);
+                  respond.onError(statusRuntimeException);
+                },
+                req2,
+                respond -> respond.onNext(res2),
+                req3,
+                respond -> respond.onNext(res3),
+                req4,
+                respond -> respond.onNext(res4),
+                req5,
+                respond -> respond.onNext(res5)));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
+
+      BlobId id = BlobId.of("b", "o", METADATA.getGeneration());
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
+      b.write(ByteBuffer.wrap(content.getBytes()));
+      BlobInfo bi = b.finalizeUpload();
+      assertThat(bi.getSize()).isEqualTo(20);
     }
   }
 

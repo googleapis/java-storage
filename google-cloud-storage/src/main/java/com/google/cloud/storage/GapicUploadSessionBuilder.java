@@ -104,9 +104,4 @@ final class GapicUploadSessionBuilder {
         (resp) -> new BidiResumableWrite(req, resp, f),
         MoreExecutors.directExecutor());
   }
-
-  ApiFuture<BidiAppendableWrite> bidiAppendableWrite(BidiWriteObjectRequest req) {
-    BidiAppendableWrite baw = new BidiAppendableWrite(req);
-    return ApiFutures.immediateFuture(baw);
-  }
 }

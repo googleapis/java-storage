@@ -170,6 +170,14 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
     }
   }
 
+  public void startAppendableTakeoverStream() {
+    BidiWriteObjectRequest req =
+        writeCtx.newRequestBuilder().setFlush(true).setStateLookup(true).build();
+    this.messages = Collections.singletonList(req);
+    flush();
+    first = false;
+  }
+
   @VisibleForTesting
   BidiWriteCtx<BidiAppendableWrite> getWriteCtx() {
     return writeCtx;
@@ -209,6 +217,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
         builder.clearUploadId();
         builder.clearObjectChecksums();
         builder.clearWriteObjectSpec();
+        builder.clearAppendObjectSpec();
       } else {
         first = false;
       }
@@ -251,7 +260,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
 
     BidiWriteObjectRequest.Builder b = writeCtx.newRequestBuilder();
     if (!first) {
-      b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec();
+      b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec().clearAppendObjectSpec();
     }
     b.setFinishWrite(true).setWriteOffset(offset);
     if (crc32cValue != null) {
@@ -282,6 +291,10 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
             retry = false;
             restart();
             processRetryingMessages();
+            if (this.messages.isEmpty()) {
+              // This can happen if proccessRetryingMessages ends up dropping every message
+              return null;
+            }
           }
           try {
             ApiStreamObserver<BidiWriteObjectRequest> opened = openedStream(context);
@@ -314,6 +327,13 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
     long bytesSeen = begin;
     boolean caughtUp = false;
     for (BidiWriteObjectRequest message : this.messages) {
+      if (message.hasAppendObjectSpec() && first) {
+        // If this is the first message of a takeover, then running the restart() method will
+        // actually get us to the state we want to be in (i.e. the persisted_size has been
+        // captured), so we don't actually need to try to write the original message again--we just
+        // drop it entirely
+        continue;
+      }
       if (message.hasWriteObjectSpec()
           && redirecting) { // This is a first message and we got a Redirect
         message = message.toBuilder().clearWriteObjectSpec().clearObjectChecksums().build();
@@ -365,6 +385,14 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
     public void onNext(BidiWriteObjectResponse value) {
       if (value.hasWriteHandle()) {
         bidiWriteHandle.set(value.getWriteHandle());
+      }
+      if (lastWrittenRequest.hasAppendObjectSpec() && first) {
+        long persistedSize =
+            value.hasPersistedSize() ? value.getPersistedSize() : value.getResource().getSize();
+        writeCtx.getConfirmedBytes().set(persistedSize);
+        writeCtx.getTotalSentBytes().set(persistedSize);
+        ok(value);
+        return;
       }
       boolean finalizing = lastWrittenRequest.getFinishWrite();
       boolean firstResponse = !finalizing && value.hasResource();

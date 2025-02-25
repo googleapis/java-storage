@@ -83,6 +83,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BidiWriteObjectRequest;
@@ -1422,11 +1423,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @BetaApi
   @Override
-  public AppendableBlobUpload createAppendableBlobUpload(
+  public AppendableBlobUpload appendableBlobUpload(
       BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+    boolean takeOver = blob.getGeneration() != null;
+    return getAppendableBlobUpload(blob, bufferSize, takeOver, options);
+  }
+
+  private AppendableBlobUpload getAppendableBlobUpload(
+      BlobInfo blob, int bufferSize, boolean takeOver, BlobWriteOption... options)
+      throws IOException {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-    BidiWriteObjectRequest req = getBidiWriteObjectRequest(blob, opts);
-    BidiAppendableWrite baw = new BidiAppendableWrite(req);
+    BidiWriteObjectRequest req =
+        takeOver
+            ? getBidiWriteObjectRequestForTakeover(blob, opts)
+            : getBidiWriteObjectRequest(blob, opts);
+    BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
     ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
     WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
         ResumableMedia.gapic()
@@ -1468,7 +1479,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
                 build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
     BlobWriteSession session = BlobWriteSessions.of(dec);
-    return AppendableBlobUpload.createNewAppendableBlob(blob, session);
+    return takeOver
+        ? AppendableBlobUpload.resumeAppendableUpload(blob, session)
+        : AppendableBlobUpload.createNewAppendableBlob(blob, session);
   }
 
   @Override
@@ -1803,6 +1816,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     BidiWriteObjectRequest.Builder requestBuilder =
         BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
+
+    return opts.bidiWriteObjectRequest().apply(requestBuilder).build();
+  }
+
+  BidiWriteObjectRequest getBidiWriteObjectRequestForTakeover(
+      BlobInfo info, Opts<ObjectTargetOpt> opts) {
+    Object object = codecs.blobInfo().encode(info);
+    AppendObjectSpec.Builder specBuilder =
+        AppendObjectSpec.newBuilder()
+            .setObject(object.getName())
+            .setBucket(object.getBucket())
+            .setGeneration(object.getGeneration());
+
+    BidiWriteObjectRequest.Builder requestBuilder =
+        BidiWriteObjectRequest.newBuilder().setAppendObjectSpec(specBuilder.build());
 
     return opts.bidiWriteObjectRequest().apply(requestBuilder).build();
   }
