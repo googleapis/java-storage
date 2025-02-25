@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
+import com.google.api.gax.rpc.WatchdogTimeoutException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
@@ -93,7 +94,12 @@ final class GapicUnbufferedReadableByteChannel
           @Override
           public boolean shouldRetry(
               Throwable previousThrowable, java.lang.Object previousResponse) {
-            boolean shouldRetry = alg.shouldRetry(previousThrowable, null);
+            // unfortunately we can't unit test this as this time, because WatchdogTimeoutException
+            // does not have a publicly accessible way of constructing it.
+            boolean isWatchdogTimeout =
+                previousThrowable instanceof StorageException
+                    && previousThrowable.getCause() instanceof WatchdogTimeoutException;
+            boolean shouldRetry = isWatchdogTimeout || alg.shouldRetry(previousThrowable, null);
             if (previousThrowable != null && !shouldRetry) {
               result.setException(previousThrowable);
             }
