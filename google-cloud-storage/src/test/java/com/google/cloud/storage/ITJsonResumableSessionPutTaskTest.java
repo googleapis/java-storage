@@ -50,6 +50,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
@@ -99,7 +100,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 0L), 0));
 
@@ -147,7 +148,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
@@ -228,7 +229,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
 
@@ -297,7 +298,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
@@ -366,7 +367,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
@@ -444,7 +445,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
@@ -526,7 +527,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
@@ -606,7 +607,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.empty(),
               HttpContentRange.of(_128KiBL));
 
@@ -684,7 +685,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
@@ -716,7 +717,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              uploadUrl,
+              jsonResumableWrite(uploadUrl),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
@@ -756,7 +757,10 @@ public final class ITJsonResumableSessionPutTaskTest {
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
-              httpClientContext, uploadUrl, RewindableContent.empty(), HttpContentRange.of(0));
+              httpClientContext,
+              jsonResumableWrite(uploadUrl),
+              RewindableContent.empty(),
+              HttpContentRange.of(0));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       // the parse error happens while trying to read the success object, make sure we raise it as
@@ -791,7 +795,10 @@ public final class ITJsonResumableSessionPutTaskTest {
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
-              httpClientContext, uploadUrl, RewindableContent.empty(), HttpContentRange.of(0));
+              httpClientContext,
+              jsonResumableWrite(uploadUrl),
+              RewindableContent.empty(),
+              HttpContentRange.of(0));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
@@ -856,5 +863,9 @@ public final class ITJsonResumableSessionPutTaskTest {
     task.rewindTo(_256KiBL + 13);
     assertThat(buf1.remaining()).isEqualTo(0);
     assertThat(buf2.position()).isEqualTo(13);
+  }
+
+  static @NonNull JsonResumableWrite jsonResumableWrite(String uploadUrl) {
+    return JsonResumableWrite.of(new StorageObject(), ImmutableMap.of(), uploadUrl, 0);
   }
 }

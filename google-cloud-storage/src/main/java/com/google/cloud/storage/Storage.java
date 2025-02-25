@@ -472,6 +472,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketTargetOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BucketTargetOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -543,6 +596,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption requestedPolicyVersion(long version) {
       return new BucketSourceOption(UnifiedOpts.requestedPolicyVersion(version));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketSourceOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BucketSourceOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -634,6 +740,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static ListHmacKeysOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new ListHmacKeysOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -692,6 +851,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static CreateHmacKeyOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new CreateHmacKeyOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -726,6 +938,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /** Class for specifying getHmacKey options */
   class GetHmacKeyOption extends Option<HmacKeySourceOpt> {
+
     private GetHmacKeyOption(HmacKeySourceOpt opt) {
       super(opt);
     }
@@ -746,6 +959,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static GetHmacKeyOption projectId(@NonNull String projectId) {
       return new GetHmacKeyOption(UnifiedOpts.projectId(projectId));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static GetHmacKeyOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new GetHmacKeyOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -782,6 +1048,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /** Class for specifying deleteHmacKey options */
   class DeleteHmacKeyOption extends Option<HmacKeyTargetOpt> {
+
     private DeleteHmacKeyOption(HmacKeyTargetOpt opt) {
       super(opt);
     }
@@ -793,6 +1060,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static DeleteHmacKeyOption userProject(@NonNull String userProject) {
       return new DeleteHmacKeyOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static DeleteHmacKeyOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new DeleteHmacKeyOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -830,6 +1150,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /** Class for specifying updateHmacKey options */
   class UpdateHmacKeyOption extends Option<HmacKeyTargetOpt> {
+
     private UpdateHmacKeyOption(HmacKeyTargetOpt opt) {
       super(opt);
     }
@@ -841,6 +1162,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static UpdateHmacKeyOption userProject(@NonNull String userProject) {
       return new UpdateHmacKeyOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static UpdateHmacKeyOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new UpdateHmacKeyOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -927,6 +1301,58 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
               .add(fields)
               .build();
       return new BucketGetOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketGetOption extraHeaders(@NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BucketGetOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -1118,6 +1544,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP})
     public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {
       return new BlobTargetOption(UnifiedOpts.overrideUnlockedRetention(overrideUnlockedRetention));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobTargetOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -1347,6 +1826,58 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobWriteOption extraHeaders(@NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobWriteOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -1488,6 +2019,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobSourceOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobSourceOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -1659,6 +2243,58 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobGetOption extraHeaders(@NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobGetOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
+
+    /**
      * Deduplicate any options which are the same parameter. The value which comes last in {@code
      * os} will be the value included in the return.
      */
@@ -1743,6 +2379,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BlobRestoreOption copySourceAcl(boolean copySourceAcl) {
       return new BlobRestoreOption(UnifiedOpts.copySourceAcl(copySourceAcl));
     }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobRestoreOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobRestoreOption(UnifiedOpts.extraHeaders(extraHeaders));
+    }
   }
 
   /** Class for specifying bucket list options. */
@@ -1800,6 +2489,59 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
                       .map(f -> NamedField.prefixed("items/", f)))
               .collect(ImmutableSet.toImmutableSet());
       return new BucketListOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketListOption extraHeaders(
+        @NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BucketListOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -1977,6 +2719,58 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption softDeleted(boolean softDeleted) {
       return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
+    }
+
+    /**
+     * A set of extra headers to be set for all requests performed within the scope of the operation
+     * this option is passed to (a get, read, resumable upload etc).
+     *
+     * <p>If the same header name is specified across multiple options provided to a method, the
+     * first occurrence will be the value included in the request(s).
+     *
+     * <p>The following headers are not allowed to be specified, and will result in an {@link
+     * IllegalArgumentException}.
+     *
+     * <ol>
+     *   <li>{@code Accept-Encoding}
+     *   <li>{@code Cache-Control}
+     *   <li>{@code Connection}
+     *   <li>{@code Content-ID}
+     *   <li>{@code Content-Length}
+     *   <li>{@code Content-Range}
+     *   <li>{@code Content-Transfer-Encoding}
+     *   <li>{@code Content-Type}
+     *   <li>{@code Date}
+     *   <li>{@code ETag}
+     *   <li>{@code If-Match}
+     *   <li>{@code If-None-Match}
+     *   <li>{@code Keep-Alive}
+     *   <li>{@code Range}
+     *   <li>{@code TE}
+     *   <li>{@code Trailer}
+     *   <li>{@code Transfer-Encoding}
+     *   <li>{@code User-Agent}
+     *   <li>{@code X-Goog-Api-Client}
+     *   <li>{@code X-Goog-Content-Length-Range}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key}
+     *   <li>{@code X-Goog-Copy-Source-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Encryption-Algorithm}
+     *   <li>{@code X-Goog-Encryption-Key}
+     *   <li>{@code X-Goog-Encryption-Key-Sha256}
+     *   <li>{@code X-Goog-Gcs-Idempotency-Token}
+     *   <li>{@code X-Goog-Meta-*}
+     *   <li>{@code X-Goog-User-Project}
+     *   <li>{@code X-HTTP-Method-Override}
+     *   <li>{@code X-Upload-Content-Length}
+     *   <li>{@code X-Upload-Content-Type}
+     * </ol>
+     *
+     * @since 2.49.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption extraHeaders(@NonNull ImmutableMap<String, String> extraHeaders) {
+      return new BlobListOption(UnifiedOpts.extraHeaders(extraHeaders));
     }
 
     /**
@@ -5035,8 +5829,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <p>This new method is an atomic equivalent of the existing {@link Storage#copy(CopyRequest)} +
    * {@link Storage#delete(BlobId)}, however without the ability to change metadata fields for the
    * target object.
-   *
-   * <p>This feature is currently only supported for HNS (Hierarchical Namespace) buckets.
    *
    * @since 2.48.0
    */

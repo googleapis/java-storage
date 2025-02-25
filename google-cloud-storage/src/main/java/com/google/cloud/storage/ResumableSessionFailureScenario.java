@@ -35,7 +35,6 @@ import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -295,12 +294,12 @@ enum ResumableSessionFailureScenario {
   // The header names from HttpHeaders are lower cased, define some utility methods to create
   // predicates where we can specify values ignoring case
   private static Predicate<String> matches(String expected) {
-    String lower = expected.toLowerCase(Locale.US);
+    String lower = Utils.headerNameToLowerCase(expected);
     return lower::equals;
   }
 
   private static Predicate<String> startsWith(String prefix) {
-    String lower = prefix.toLowerCase(Locale.US);
+    String lower = Utils.headerNameToLowerCase(prefix);
     return s -> s.startsWith(lower);
   }
 

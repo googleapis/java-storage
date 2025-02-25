@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
@@ -58,6 +59,16 @@ final class JsonResumableWrite implements Serializable {
     this.signedUrl = signedUrl;
     this.uploadId = uploadId;
     this.beginOffset = beginOffset;
+  }
+
+  ImmutableMap<String, String> getExtraHeaders() {
+    if (options != null) {
+      Object tmp = options.get(StorageRpc.Option.EXTRA_HEADERS);
+      if (tmp != null) {
+        return (ImmutableMap<String, String>) tmp;
+      }
+    }
+    return ImmutableMap.of();
   }
 
   public @NonNull String getUploadId() {
