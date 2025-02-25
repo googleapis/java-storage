@@ -146,7 +146,7 @@
       "packagePatterns": [
         "^ch.qos.logback:logback-classic"
       ],
-      "allowedVersions": "<1.5.0"
+      "allowedVersions": "<1.4.0"
     }
   ],
   "semanticCommits": true,
