@@ -22,7 +22,9 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ErrorDetails;
+import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.OutOfRangeException;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
@@ -33,12 +35,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
 import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiWriteHandle;
 import com.google.storage.v2.BidiWriteObjectRedirectedError;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -61,6 +66,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 final class GapicBidiUnbufferedAppendableWritableByteChannel
     implements UnbufferedWritableByteChannel {
   private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
+  private final UnaryCallable<GetObjectRequest, Object> get;
   private final RetrierWithAlg retrier;
   private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
   private final ChunkSegmenter chunkSegmenter;
@@ -87,16 +93,17 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
 
   GapicBidiUnbufferedAppendableWritableByteChannel(
       BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
+      UnaryCallable<GetObjectRequest, Object> get,
       RetrierWithAlg retrier,
       SettableApiFuture<BidiWriteObjectResponse> resultFuture,
       ChunkSegmenter chunkSegmenter,
       BidiWriteCtx<BidiAppendableWrite> writeCtx,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.write = write;
+    this.get = get;
     this.retrier = retrier;
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
-
     this.writeCtx = writeCtx;
     this.responseObserver = new RedirectHandlingResponseObserver(new BidiObserver());
     this.baseContextSupplier = baseContextSupplier;
@@ -163,16 +170,24 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
     if (!resultFuture.isDone()) {
       ApiStreamObserver<BidiWriteObjectRequest> requestStream1 =
           openedStream(reconnectArguments.getCtx());
-      requestStream1.onNext(req);
-      lastWrittenRequest = req;
-      responseObserver.await();
-      first = false;
+      if (req != null) {
+        requestStream1.onNext(req);
+        lastWrittenRequest = req;
+        responseObserver.await();
+        first = false;
+      } else {
+        // This means we did a metadata lookup and determined that GCS never received the initial
+        // WriteObjectSpec,
+        // So we can just start over and send it again
+        first = true;
+      }
     }
   }
 
   public void startAppendableTakeoverStream() {
     BidiWriteObjectRequest req =
         writeCtx.newRequestBuilder().setFlush(true).setStateLookup(true).build();
+    generation.set(req.getAppendObjectSpec().getGeneration());
     this.messages = Collections.singletonList(req);
     flush();
     first = false;
@@ -259,9 +274,9 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
     Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
     BidiWriteObjectRequest.Builder b = writeCtx.newRequestBuilder();
-    if (!first) {
-      b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec().clearAppendObjectSpec();
-    }
+
+    b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec().clearAppendObjectSpec();
+
     b.setFinishWrite(true).setWriteOffset(offset);
     if (crc32cValue != null) {
       b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
@@ -299,6 +314,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
           try {
             ApiStreamObserver<BidiWriteObjectRequest> opened = openedStream(context);
             for (BidiWriteObjectRequest message : this.messages) {
+
               opened.onNext(message);
               lastWrittenRequest = message;
             }
@@ -509,6 +525,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
 
     private void ok(BidiWriteObjectResponse value) {
       last = value;
+      first = false;
       sem.release();
     }
 
@@ -685,6 +702,42 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
       long generation = this.generation.get();
       if (generation > 0) {
         spec.setGeneration(generation);
+      } else {
+        GetObjectRequest req =
+            GetObjectRequest.newBuilder()
+                .setBucket(spec.getBucket())
+                .setObject(spec.getObject())
+                .setReadMask(
+                    FieldMask.newBuilder()
+                        .addPaths(Storage.BlobField.GENERATION.getGrpcName())
+                        .build())
+                .build();
+        boolean objectNotFound = false;
+        try {
+          retrier.run(
+              () -> {
+                this.generation.set(get.call(req).getGeneration());
+                return null;
+              },
+              Decoder.identity());
+        } catch (Throwable t) {
+          if (t.getCause() instanceof NotFoundException) {
+            objectNotFound = true;
+          } else {
+            t.addSuppressed(new AsyncStorageTaskException());
+            throw t;
+          }
+        }
+        generation = this.generation.get();
+        if (generation > 0) {
+          spec.setGeneration(generation);
+        } else if (objectNotFound) {
+          // If the object wasn't found, that means GCS never saw the initial WriteObjectSpec, which
+          // means we'll need
+          // to send it again. We can process this retry by just starting over again
+          return ReconnectArguments.of(
+              baseContextSupplier.get().withExtraHeaders(getHeaders()), null);
+        }
       }
 
       BidiWriteHandle bidiWriteHandle = this.bidiWriteHandle.get();

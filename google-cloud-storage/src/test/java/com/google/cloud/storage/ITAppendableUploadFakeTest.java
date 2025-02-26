@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
 import com.google.rpc.Code;
 import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiWriteHandle;
@@ -36,6 +37,7 @@ import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageGrpc;
@@ -574,6 +576,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -635,9 +638,7 @@ public class ITAppendableUploadFakeTest {
                 AppendObjectSpec.newBuilder()
                     .setBucket(METADATA.getBucket())
                     .setObject(METADATA.getName())
-                    // todo: add generation back on takeover PR
-                    // .setGeneration(METADATA.getGeneration())
-                    // .setWriteHandle(writeHandle)
+                    .setGeneration(METADATA.getGeneration())
                     .build())
             .setFlush(true)
             .setStateLookup(true)
@@ -674,7 +675,17 @@ public class ITAppendableUploadFakeTest {
                 req4,
                 maxRetries(req4, incrementalResponse(10), map, 1),
                 req5,
-                maxRetries(req5, last, map, 1)));
+                maxRetries(req5, last, map, 1)),
+            ImmutableMap.of(
+                GetObjectRequest.newBuilder()
+                    .setObject(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setReadMask(
+                        (FieldMask.newBuilder()
+                            .addPaths(Storage.BlobField.GENERATION.getGrpcName())
+                            .build()))
+                    .build(),
+                Object.newBuilder().setGeneration(METADATA.getGeneration()).build()));
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         GrpcStorageImpl storage =
@@ -698,6 +709,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -764,9 +776,7 @@ public class ITAppendableUploadFakeTest {
                 AppendObjectSpec.newBuilder()
                     .setBucket(METADATA.getBucket())
                     .setObject(METADATA.getName())
-                    // todo set these once we have takeover
-                    // .setGeneration(METADATA.getGeneration())
-                    // .setWriteHandle(writeHandle)
+                    .setGeneration(METADATA.getGeneration())
                     .build())
             .setFlush(true)
             .setStateLookup(true)
@@ -807,7 +817,17 @@ public class ITAppendableUploadFakeTest {
                 req5,
                 maxRetries(req5, incrementalResponse(10), map, 1),
                 req6,
-                maxRetries(req6, last, map, 1)));
+                maxRetries(req6, last, map, 1)),
+            ImmutableMap.of(
+                GetObjectRequest.newBuilder()
+                    .setObject(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setReadMask(
+                        (FieldMask.newBuilder()
+                            .addPaths(Storage.BlobField.GENERATION.getGrpcName())
+                            .build()))
+                    .build(),
+                Object.newBuilder().setGeneration(METADATA.getGeneration()).build()));
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         GrpcStorageImpl storage =
@@ -831,6 +851,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -979,6 +1000,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -1124,6 +1146,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -1257,6 +1280,7 @@ public class ITAppendableUploadFakeTest {
       GapicBidiUnbufferedAppendableWritableByteChannel channel =
           new GapicBidiUnbufferedAppendableWritableByteChannel(
               storageClient.bidiWriteObjectCallable(),
+              storageClient.getObjectCallable(),
               TestUtils.retrierFromStorageOptions(fakeServer.getGrpcStorageOptions())
                   .withAlg(
                       fakeServer.getGrpcStorageOptions().getRetryAlgorithmManager().idempotent()),
@@ -1402,6 +1426,61 @@ public class ITAppendableUploadFakeTest {
     }
   }
 
+  /**
+   * We get a retryable error in our first flush. We don't have a generation so we do a metadata
+   * lookup, but we get an ObjectNotFound, which means that GCS never received the WriteObjectSpec
+   * and never created the object. Thus, we just send the WriteObjectSpec again
+   */
+  @Test
+  public void retryableError_ObjectNotFound() throws Exception {
+    BidiWriteObjectRequest req1 = REQ_OPEN.toBuilder().setFlush(true).setStateLookup(true).build();
+
+    Map<BidiWriteObjectRequest, Integer> map = new ConcurrentHashMap<>();
+    BidiWriteObjectResponse res =
+        BidiWriteObjectResponse.newBuilder()
+            .setResource(
+                Object.newBuilder()
+                    .setName(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setGeneration(METADATA.getGeneration())
+                    .setSize(5)
+                    // real object would have some extra fields like metageneration and storage
+                    // class
+                    .build())
+            .build();
+
+    BidiWriteObjectRequest req2 = finishMessage(5);
+
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                req1, retryableErrorOnce(req1, res, map, 2), req2, maxRetries(req2, res, map, 1)),
+            ImmutableMap.of(
+                GetObjectRequest.newBuilder()
+                    .setObject(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setReadMask(
+                        (FieldMask.newBuilder()
+                            .addPaths(Storage.BlobField.GENERATION.getGrpcName())
+                            .build()))
+                    .build(),
+                Object.getDefaultInstance()));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 5);
+      b.write(ByteBuffer.wrap(content.getBytes()));
+      BlobInfo bi = b.finalizeUpload();
+      assertThat(bi.getSize()).isEqualTo(5);
+
+      assertThat(map.get(req1)).isEqualTo(2);
+      assertThat(map.get(req2)).isEqualTo(1);
+    }
+  }
+
   private Consumer<StreamObserver<BidiWriteObjectResponse>> maxRetries(
       BidiWriteObjectRequest req,
       BidiWriteObjectResponse res,
@@ -1477,10 +1556,35 @@ public class ITAppendableUploadFakeTest {
   static final class FakeStorage extends StorageGrpc.StorageImplBase {
 
     private final Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db;
+    private final Map<GetObjectRequest, Object> getdb;
 
     private FakeStorage(
         Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db) {
       this.db = db;
+      getdb = null;
+    }
+
+    private FakeStorage(
+        Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db,
+        Map<GetObjectRequest, Object> getdb) {
+      this.db = db;
+      this.getdb = getdb;
+    }
+
+    @Override
+    public void getObject(GetObjectRequest request, StreamObserver<Object> responseObserver) {
+      if (getdb.containsKey(request)) {
+        Object resp = getdb.get(request);
+        if (resp.getGeneration() == 0) {
+          responseObserver.onError(TestUtils.apiException(Status.Code.NOT_FOUND, "not found"));
+        } else {
+          responseObserver.onNext(getdb.get(request));
+          responseObserver.onCompleted();
+        }
+      } else {
+        responseObserver.onError(
+            TestUtils.apiException(Status.Code.UNIMPLEMENTED, "Unexpected request"));
+      }
     }
 
     @Override
@@ -1502,6 +1606,12 @@ public class ITAppendableUploadFakeTest {
     static FakeStorage of(
         Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db) {
       return new FakeStorage(db);
+    }
+
+    static FakeStorage of(
+        Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db,
+        Map<GetObjectRequest, Object> getdb) {
+      return new FakeStorage(db, getdb);
     }
 
     static FakeStorage from(Map<BidiWriteObjectRequest, BidiWriteObjectResponse> db) {

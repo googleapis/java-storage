@@ -21,11 +21,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
+import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.Object;
 import com.google.storage.v2.ServiceConstants.Values;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
@@ -192,10 +195,9 @@ final class GapicBidiWritableByteChannelSessionBuilder {
     }
 
     final class BufferedAppendableUploadBuilder {
-
       private final BufferHandle bufferHandle;
-
       private ApiFuture<BidiAppendableWrite> start;
+      private UnaryCallable<GetObjectRequest, Object> get;
 
       BufferedAppendableUploadBuilder(BufferHandle bufferHandle) {
         this.bufferHandle = bufferHandle;
@@ -210,6 +212,12 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         return this;
       }
 
+      public BufferedAppendableUploadBuilder setGetCallable(
+          UnaryCallable<GetObjectRequest, Object> get) {
+        this.get = get;
+        return this;
+      }
+
       BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
         // it is theoretically possible that the setter methods for the following variables could
         // be called again between when this method is invoked and the resulting function is
@@ -220,6 +228,8 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         ByteStringStrategy boundStrategy = byteStringStrategy;
         Hasher boundHasher = hasher;
         RetrierWithAlg boundRetrier = retrier;
+        UnaryCallable<GetObjectRequest, Object> boundGet =
+            requireNonNull(get, "get must be non null");
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             ((BiFunction<
@@ -229,6 +239,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                     (start, resultFuture) ->
                         new GapicBidiUnbufferedAppendableWritableByteChannel(
                             write,
+                            boundGet,
                             boundRetrier,
                             resultFuture,
                             new ChunkSegmenter(

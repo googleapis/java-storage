@@ -1472,6 +1472,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                     }))
             .buffered(BufferHandle.allocate(bufferSize))
             .setStartAsync(startAppendableWrite)
+            .setGetCallable(storageClient.getObjectCallable())
             .build();
     DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<
             BufferedWritableByteChannel, BidiWriteObjectResponse>
