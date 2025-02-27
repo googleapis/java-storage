@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.49.1](https://github.com/googleapis/java-storage/compare/v2.49.0...v2.49.1) (2025-02-27)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.54.0 ([22e7e3d](https://github.com/googleapis/java-storage/commit/22e7e3d4e8c56184f9c91b1e0bf52d5c4aa4cf9f))
+
 ## [2.49.0](https://github.com/googleapis/java-storage/compare/v2.48.2...v2.49.0) (2025-02-26)
 
 
