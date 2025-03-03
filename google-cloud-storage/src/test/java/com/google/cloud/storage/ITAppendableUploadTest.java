@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -85,6 +86,7 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  @Ignore("Pending work in testbench, manually verified internally on 2025-03-03")
   public void appendableBlobUploadTakeover() throws Exception {
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
     AppendableBlobUpload upload = storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 5);
