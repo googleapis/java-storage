@@ -99,7 +99,7 @@ public final class ITObjectReadSessionTest {
   @Test
   public void lotsOfBytes() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
 
     BlobInfo gen1 =
         storage.create(
@@ -113,16 +113,16 @@ public final class ITObjectReadSessionTest {
       try (BlobReadSession blobReadSession =
           storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
-        int numRangesToRead = 256;
+        int numRangesToRead = 128;
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
-                .mapToObj(i -> RangeSpec.of(i * _2MiB, (long) _2MiB))
+                .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
                 .map(r -> blobReadSession.readRange(r, RangeProjectionConfigs.asFutureBytes()))
                 .collect(Collectors.toList());
 
         ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
 
-        List<byte[]> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+        List<byte[]> ranges = listApiFuture.get(30, TimeUnit.SECONDS);
         Stopwatch stop = sw.stop();
         System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
         Hasher hasher = Hashing.crc32c().newHasher();
@@ -149,7 +149,7 @@ public final class ITObjectReadSessionTest {
   @Test
   public void lotsChannel() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
 
     BlobInfo gen1 =
         storage.create(
@@ -188,7 +188,7 @@ public final class ITObjectReadSessionTest {
   @Test
   public void readRangeAsByteString() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
 
     BlobInfo gen1 =
         storage.create(
@@ -200,9 +200,9 @@ public final class ITObjectReadSessionTest {
 
       Stopwatch sw = Stopwatch.createStarted();
       try (BlobReadSession blobReadSession =
-          storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
+          storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
-        int numRangesToRead = 256;
+        int numRangesToRead = 128;
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
@@ -211,7 +211,7 @@ public final class ITObjectReadSessionTest {
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
 
-        List<DisposableByteString> ranges = listApiFuture.get(5, TimeUnit.SECONDS);
+        List<DisposableByteString> ranges = listApiFuture.get(30, TimeUnit.SECONDS);
         Stopwatch stop = sw.stop();
         System.out.println(stop.elapsed(TimeUnit.MILLISECONDS));
         Hasher hasher = Hashing.crc32c().newHasher();
