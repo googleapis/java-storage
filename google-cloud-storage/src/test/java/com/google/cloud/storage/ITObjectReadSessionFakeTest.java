@@ -45,9 +45,6 @@ import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
 import com.google.cloud.storage.it.GrpcRequestAuditing;
-import com.google.cloud.storage.it.runner.StorageITRunner;
-import com.google.cloud.storage.it.runner.annotations.Backend;
-import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -102,10 +99,7 @@ import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
-import org.junit.runner.RunWith;
 
-@RunWith(StorageITRunner.class)
-@SingleBackend(Backend.TEST_BENCH)
 public final class ITObjectReadSessionFakeTest {
 
   private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
