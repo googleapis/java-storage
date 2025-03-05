@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 import org.junit.Test;
 
 public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
@@ -107,7 +108,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
   private static StringSubject assertField(String fmt, int idx) {
     String[] split = fmt.split(";");
     String s = split[idx];
-    return assertWithMessage(String.format("Formatted name '%s', field[%d] = %s", fmt, idx, s))
+    return assertWithMessage(
+            String.format(Locale.US, "Formatted name '%s', field[%d] = %s", fmt, idx, s))
         .that(s);
   }
 }

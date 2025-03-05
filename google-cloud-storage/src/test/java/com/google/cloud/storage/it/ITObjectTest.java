@@ -87,6 +87,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -564,9 +565,12 @@ public class ITObjectTest {
     String directoryName = generator.randomObjectName();
     String subdirectoryName = "subdirectory";
 
-    String uriSubDir = String.format("gs://%s/%s/%s/", bucketName, directoryName, subdirectoryName);
-    String uri1 = String.format("gs://%s/%s/%s/blob1", bucketName, directoryName, subdirectoryName);
-    String uri2 = String.format("gs://%s/%s/blob2", bucketName, directoryName);
+    String uriSubDir =
+        String.format(Locale.US, "gs://%s/%s/%s/", bucketName, directoryName, subdirectoryName);
+    String uri1 =
+        String.format(
+            Locale.US, "gs://%s/%s/%s/blob1", bucketName, directoryName, subdirectoryName);
+    String uri2 = String.format(Locale.US, "gs://%s/%s/blob2", bucketName, directoryName);
 
     BlobId id1 = BlobId.fromGsUtilUri(uri1);
     BlobId id2 = BlobId.fromGsUtilUri(uri2);
@@ -654,7 +658,7 @@ public class ITObjectTest {
 
     ImmutableList<BlobInfo> expected =
         IntStream.rangeClosed(1, 10)
-            .mapToObj(i -> String.format("%s/%2d", basePath, i))
+            .mapToObj(i -> String.format(Locale.US, "%s/%2d", basePath, i))
             .map(name -> BlobInfo.newBuilder(bucket, name).build())
             .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
             .map(PackagePrivateMethodWorkarounds::noAcl)
@@ -1182,7 +1186,7 @@ public class ITObjectTest {
   }
 
   private void doTestReadAndWriteChannelsWithSize(int blobSize) throws IOException {
-    String blobName = String.format("%s-%d", generator.randomObjectName(), blobSize);
+    String blobName = String.format(Locale.US, "%s-%d", generator.randomObjectName(), blobSize);
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Random rnd = new Random();
     byte[] bytes = new byte[blobSize];

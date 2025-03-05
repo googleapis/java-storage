@@ -44,6 +44,7 @@ import io.grpc.MethodDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,8 +84,9 @@ public class ITGrpcInterceptorTest {
             .map(m -> m.get(X_GOOG_REQUEST_PARAMS))
             .collect(Collectors.toList());
 
-    String expected = String.format("project=projects/%s", options.getProjectId());
-    String expectedEncoded = String.format("project=projects%%2F%s", options.getProjectId());
+    String expected = String.format(Locale.US, "project=projects/%s", options.getProjectId());
+    String expectedEncoded =
+        String.format(Locale.US, "project=projects%%2F%s", options.getProjectId());
     assertThat(requestParams).containsAnyOf(expected, expectedEncoded);
   }
 

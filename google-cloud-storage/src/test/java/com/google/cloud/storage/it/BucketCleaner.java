@@ -41,6 +41,7 @@ import com.google.storage.control.v2.StorageLayoutName;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -137,7 +138,8 @@ public final class BucketCleaner {
                   .sorted(Collections.reverseOrder(Comparator.comparing(Folder::getName)))
                   .map(
                       folder -> {
-                        String formatted = String.format("folder = %s", folder.getName());
+                        String formatted =
+                            String.format(Locale.US, "folder = %s", folder.getName());
                         LOGGER.warning(formatted);
                         boolean success = true;
                         try {
@@ -173,7 +175,7 @@ public final class BucketCleaner {
                   .map(
                       managedFolder -> {
                         String formatted =
-                            String.format("managedFolder = %s", managedFolder.getName());
+                            String.format(Locale.US, "managedFolder = %s", managedFolder.getName());
                         LOGGER.warning(formatted);
                         boolean success = true;
                         try {
@@ -214,8 +216,10 @@ public final class BucketCleaner {
       } else {
         LOGGER.warning(
             String.format(
+                Locale.US,
                 "Unable to delete bucket %s due to previous failed %s deletes",
-                bucketName, failed));
+                bucketName,
+                failed));
       }
 
       LOGGER.warning("Bucket cleanup complete: " + bucketName);
@@ -231,7 +235,8 @@ public final class BucketCleaner {
     failedDeletes.forEach(
         r ->
             LOGGER.warning(
-                String.format("Failed to delete %s %s/%s", resourceType, bucketName, r.name)));
+                String.format(
+                    Locale.US, "Failed to delete %s %s/%s", resourceType, bucketName, r.name)));
     return !failedDeletes.isEmpty();
   }
 

@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -84,7 +85,7 @@ public abstract class DataGenerator {
   public final TmpFile tempFile(Path baseDir, long size) throws IOException {
     requireNonNull(baseDir, "baseDir must be non null");
     checkState(size > 0, "size must be > 0");
-    TmpFile bin = TmpFile.of(baseDir, String.format("%015d-", size), ".bin");
+    TmpFile bin = TmpFile.of(baseDir, String.format(Locale.US, "%015d-", size), ".bin");
     ReadableByteChannel src =
         new ReadableByteChannel() {
           long read = 0;

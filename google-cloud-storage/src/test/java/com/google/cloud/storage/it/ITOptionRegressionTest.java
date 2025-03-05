@@ -59,6 +59,7 @@ import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 import org.junit.Before;
@@ -1189,11 +1190,11 @@ public final class ITOptionRegressionTest {
   }
 
   private static String bucketName() {
-    return String.format("bucket-%03d", bucketCounter++);
+    return String.format(Locale.US, "bucket-%03d", bucketCounter++);
   }
 
   private static String objectName() {
-    return String.format("object-%03d", objectCounter++);
+    return String.format(Locale.US, "object-%03d", objectCounter++);
   }
 
   private static Function<String, Set<String>> splitOnCommaToSet() {

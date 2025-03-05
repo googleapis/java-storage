@@ -16,12 +16,16 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import java.util.Locale;
+
 public final class BucketNameMismatchException extends RuntimeException {
 
   public BucketNameMismatchException(String actual, String expected) {
     super(
         String.format(
+            Locale.US,
             "Bucket name in produced BlobInfo did not match bucket name from config. (%s != %s)",
-            actual, expected));
+            actual,
+            expected));
   }
 }

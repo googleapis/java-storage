@@ -37,6 +37,7 @@ import com.google.errorprone.annotations.Immutable;
 import com.google.pubsub.v1.TopicName;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -345,7 +346,7 @@ final class State {
 
   private <T> T getValue(Key<T> key) {
     Object o = data.get(key);
-    requireNonNull(o, () -> String.format("%s was not found in state", key.name));
+    requireNonNull(o, () -> String.format(Locale.US, "%s was not found in state", key.name));
     return key.cast(o);
   }
 

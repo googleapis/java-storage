@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -644,11 +645,11 @@ public final class ByteRangeSpecTest {
   }
 
   private static String headerRangeOpen(long min) {
-    return String.format("bytes=%d-", min);
+    return String.format(Locale.US, "bytes=%d-", min);
   }
 
   private static String headerRangeClosed(long min, long max) {
-    return String.format("bytes=%d-%d", min, max);
+    return String.format(Locale.US, "bytes=%d-%d", min, max);
   }
 
   private static ReadObjectRequest reqOpen(long offset) {
@@ -683,7 +684,7 @@ public final class ByteRangeSpecTest {
     @Override
     public String toString() {
       return String.format(
-          "Expect that %s is applicable to %s", expectations.testNameFormat(), spec);
+          Locale.US, "Expect that %s is applicable to %s", expectations.testNameFormat(), spec);
     }
 
     static ExpectationsBuilder expectThat() {
@@ -769,7 +770,7 @@ public final class ByteRangeSpecTest {
           // to the max value at a glance. In an effort to help this, for any value that is within
           // 20 of Long.MAX_VALUE format it as a difference.
           if (diff <= 20) {
-            return String.format("(Long.MAX_VALUE - %d)", diff);
+            return String.format(Locale.US, "(Long.MAX_VALUE - %d)", diff);
           } else {
             return l.toString();
           }

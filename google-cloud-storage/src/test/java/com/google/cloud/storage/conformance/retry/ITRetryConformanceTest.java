@@ -58,6 +58,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -268,7 +269,8 @@ public class ITRetryConformanceTest {
 
       InputStream dataJson = cl.getResourceAsStream(retryTestsJsonResourcePath);
       assertNotNull(
-          String.format("Unable to load test definition: %s", retryTestsJsonResourcePath),
+          String.format(
+              Locale.US, "Unable to load test definition: %s", retryTestsJsonResourcePath),
           dataJson);
 
       InputStreamReader reader = new InputStreamReader(dataJson, Charsets.UTF_8);
@@ -290,7 +292,9 @@ public class ITRetryConformanceTest {
               String methodName = method.getName();
               RpcMethod key = RpcMethod.storage.lookup.get(methodName);
               assertNotNull(
-                  String.format("Unable to resolve RpcMethod for value '%s'", methodName), key);
+                  String.format(
+                      Locale.US, "Unable to resolve RpcMethod for value '%s'", methodName),
+                  key);
               // get all RpcMethodMappings which are defined for key
               List<RpcMethodMapping> mappings =
                   rpcMethodMappings.get(key).stream()
@@ -373,6 +377,7 @@ public class ITRetryConformanceTest {
       if (!unusedMappings.isEmpty()) {
         LOGGER.warning(
             String.format(
+                Locale.US,
                 "Declared but unused mappings with ids: [%s]",
                 Joiner.on(", ").join(unusedMappings)));
       }
@@ -498,7 +503,8 @@ public class ITRetryConformanceTest {
                           throw new IllegalStateException("Unable to generate seed");
                         });
             String msg =
-                String.format("Shuffling test order using Random with seed: 0x%016X", seed);
+                String.format(
+                    Locale.US, "Shuffling test order using Random with seed: 0x%016X", seed);
             LOGGER.info(msg);
           }
           return new Random(seed);

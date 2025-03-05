@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Locale;
 
 abstract class RewindableContent extends AbstractHttpContent {
 
@@ -65,8 +66,11 @@ abstract class RewindableContent extends AbstractHttpContent {
     if (!(0 <= srcsOffset && srcsOffset <= srcs.length)) {
       throw new ArrayIndexOutOfBoundsException(
           String.format(
+              Locale.US,
               "srcsOffset out of bounds (0 <= %d && %d <= %d)",
-              srcsOffset, srcsOffset, srcs.length));
+              srcsOffset,
+              srcsOffset,
+              srcs.length));
     }
     Preconditions.checkArgument(srcsLength >= 0, "srcsLength >= 0 (%d >= 0)", srcsLength);
     int end = srcsOffset + srcsLength;

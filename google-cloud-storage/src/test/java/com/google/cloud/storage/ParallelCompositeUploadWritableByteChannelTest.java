@@ -62,6 +62,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
@@ -949,7 +950,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
 
     @Override
     String fmtName(String ultimateObjectName, PartRange partRange) {
-      return String.format("%s/%s/%s.part", prefix, ultimateObjectName, partRange.encode());
+      return String.format(
+          Locale.US, "%s/%s/%s.part", prefix, ultimateObjectName, partRange.encode());
     }
 
     @Override

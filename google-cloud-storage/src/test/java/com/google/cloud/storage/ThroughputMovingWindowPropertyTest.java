@@ -29,6 +29,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -190,7 +191,9 @@ final class ThroughputMovingWindowPropertyTest {
       return MoreObjects.toStringHelper(this)
           .add("i", i)
           .add("t", t)
-          .add("tenSecMovingAvg", String.format("%,.03f", expectedMovingAvgBytesPerSecond))
+          .add(
+              "tenSecMovingAvg",
+              String.format(Locale.US, "%,.03f", expectedMovingAvgBytesPerSecond))
           .toString();
     }
   }

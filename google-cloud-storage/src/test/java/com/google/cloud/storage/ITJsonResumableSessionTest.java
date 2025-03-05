@@ -46,6 +46,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -111,7 +112,8 @@ public final class ITJsonResumableSessionTest {
         TmpFile tmpFile =
             DataGenerator.base64Characters().tempFile(temp.newFolder().toPath(), _512KiBL)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
@@ -166,7 +168,8 @@ public final class ITJsonResumableSessionTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
@@ -234,7 +237,8 @@ public final class ITJsonResumableSessionTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableWrite resumableWrite =
           JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);

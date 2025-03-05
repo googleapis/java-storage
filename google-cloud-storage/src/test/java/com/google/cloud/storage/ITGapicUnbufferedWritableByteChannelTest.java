@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -194,9 +195,9 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
       try {
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
         for (ByteBuffer buf : buffers) {
-          debugMessages.add(String.format("Writing buffer. buf = %s", buf));
+          debugMessages.add(String.format(Locale.US, "Writing buffer. buf = %s", buf));
           int written = c.write(buf);
-          debugMessages.add(String.format("Wrote bytes. written = %2d", written));
+          debugMessages.add(String.format(Locale.US, "Wrote bytes. written = %2d", written));
         }
         // explicitly only close on success so we can trap the original error that maybe have
         // happened before we reach here.
@@ -371,6 +372,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
       Collector<CharSequence, ?, String> oneLine = Collectors.joining(",", "[", "]");
       String msg =
           String.format(
+              Locale.US,
               "Unexpected Request Chain.%nexpected one of: %s%n        but was: %s",
               writes.stream()
                   .map(l -> l.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine))

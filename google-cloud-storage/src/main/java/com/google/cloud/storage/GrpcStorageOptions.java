@@ -96,6 +96,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -210,10 +211,10 @@ public final class GrpcStorageOptions extends StorageOptions
     // unless for Direct Google Access try and strip here if we can
     switch (scheme) {
       case "http":
-        endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 80);
+        endpoint = String.format(Locale.US, "%s:%s", uri.getHost(), port > 0 ? port : 80);
         break;
       case "https":
-        endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 443);
+        endpoint = String.format(Locale.US, "%s:%s", uri.getHost(), port > 0 ? port : 443);
         break;
     }
 

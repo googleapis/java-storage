@@ -62,6 +62,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
@@ -137,7 +138,7 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testLimit_downloadToFile() throws IOException {
-    String blobName = String.format("%s/src", generator.randomObjectName());
+    String blobName = String.format(Locale.US, "%s/src", generator.randomObjectName());
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
@@ -596,7 +597,7 @@ public final class ITBlobReadChannelTest {
 
   private void doLimitTest(int srcContentSize, int rangeBegin, int rangeEnd, int chunkSize)
       throws IOException {
-    String blobName = String.format("%s/src", generator.randomObjectName());
+    String blobName = String.format(Locale.US, "%s/src", generator.randomObjectName());
     BlobInfo src = BlobInfo.newBuilder(bucket, blobName).build();
     ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(srcContentSize);
     ByteBuffer dup = content.duplicate();

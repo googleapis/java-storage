@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.jqwik.api.Arbitraries;
@@ -562,11 +563,16 @@ public final class DefaultBufferedWritableByteChannelTest {
       if (fullWriteCount > 0 && remainingWrite > 0) {
         dbgExpectedWriteSizes =
             String.format(
-                "[%s * %s, %s]", fmt(writeSize), fmt(fullWriteCount), fmt(remainingWrite));
+                Locale.US,
+                "[%s * %s, %s]",
+                fmt(writeSize),
+                fmt(fullWriteCount),
+                fmt(remainingWrite));
       } else if (remainingWrite > 0) {
-        dbgExpectedWriteSizes = String.format("[%s]", fmt(remainingWrite));
+        dbgExpectedWriteSizes = String.format(Locale.US, "[%s]", fmt(remainingWrite));
       } else {
-        dbgExpectedWriteSizes = String.format("[%s * %s]", fmt(writeSize), fmt(fullWriteCount));
+        dbgExpectedWriteSizes =
+            String.format(Locale.US, "[%s * %s]", fmt(writeSize), fmt(fullWriteCount));
       }
       return new WriteOps(
           bytes,

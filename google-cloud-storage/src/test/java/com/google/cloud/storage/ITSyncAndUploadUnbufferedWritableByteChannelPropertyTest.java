@@ -64,6 +64,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -433,7 +434,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
               int objectSize = t.get3();
               int writeSize = t.get4();
               return Scenario.of(
-                  String.format("object-%d", t.hashCode()),
+                  String.format(Locale.US, "object-%d", t.hashCode()),
                   objectSize,
                   writeSize,
                   segmentSize,
@@ -456,7 +457,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
   }
 
   private static String fmt(int i) {
-    return String.format("% 10d (0x%08x)", i, i);
+    return String.format(Locale.US, "% 10d (0x%08x)", i, i);
   }
 
   private static final class Scenario {

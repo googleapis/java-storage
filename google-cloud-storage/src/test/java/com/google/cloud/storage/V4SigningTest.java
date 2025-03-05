@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -152,12 +153,14 @@ public class V4SigningTest {
 
     InputStream credentialsStream = cl.getResourceAsStream(SERVICE_ACCOUNT_JSON_RESOURCE);
     assertNotNull(
-        String.format("Unable to load service account json: %s", SERVICE_ACCOUNT_JSON_RESOURCE),
+        String.format(
+            Locale.US, "Unable to load service account json: %s", SERVICE_ACCOUNT_JSON_RESOURCE),
         credentialsStream);
 
     InputStream dataJson = cl.getResourceAsStream(TEST_DATA_JSON_RESOURCE);
     assertNotNull(
-        String.format("Unable to load test definition: %s", TEST_DATA_JSON_RESOURCE), dataJson);
+        String.format(Locale.US, "Unable to load test definition: %s", TEST_DATA_JSON_RESOURCE),
+        dataJson);
 
     ServiceAccountCredentials serviceAccountCredentials =
         ServiceAccountCredentials.fromStream(credentialsStream);

@@ -53,6 +53,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Random;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -195,7 +196,7 @@ public final class ITBlobReadChannelV2RetryTest {
           () -> assertThat(requests.get(0).getHeaders().get("range")).isNull(),
           () ->
               assertThat(requests.get(1).getHeaders().get("range"))
-                  .isEqualTo(ImmutableList.of(String.format("bytes=%d-", 256 * 1024))));
+                  .isEqualTo(ImmutableList.of(String.format(Locale.US, "bytes=%d-", 256 * 1024))));
     }
   }
 
@@ -248,7 +249,7 @@ public final class ITBlobReadChannelV2RetryTest {
           () -> assertThat(requests.get(0).getHeaders().get("range")).isNull(),
           () ->
               assertThat(requests.get(1).getHeaders().get("range"))
-                  .isEqualTo(ImmutableList.of(String.format("bytes=%d-", 256 * 1024))));
+                  .isEqualTo(ImmutableList.of(String.format(Locale.US, "bytes=%d-", 256 * 1024))));
     }
   }
 }

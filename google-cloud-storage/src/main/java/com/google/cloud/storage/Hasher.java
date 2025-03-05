@@ -21,6 +21,7 @@ import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -98,8 +99,10 @@ interface Hasher {
       if (!actual.eqValue(expected)) {
         throw new IOException(
             String.format(
+                Locale.US,
                 "Mismatch checksum value. Expected %s actual %s",
-                expected.debugString(), actual.debugString()));
+                expected.debugString(),
+                actual.debugString()));
       }
     }
 
@@ -109,8 +112,10 @@ interface Hasher {
       if (!actual.eqValue(expected)) {
         throw new IOException(
             String.format(
+                Locale.US,
                 "Mismatch checksum value. Expected %s actual %s",
-                expected.debugString(), actual.debugString()));
+                expected.debugString(),
+                actual.debugString()));
       }
     }
 

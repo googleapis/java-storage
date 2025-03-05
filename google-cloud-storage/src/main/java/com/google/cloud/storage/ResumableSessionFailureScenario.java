@@ -35,6 +35,7 @@ import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -145,7 +146,10 @@ enum ResumableSessionFailureScenario {
         ResumableSessionFailureScenario.toStorageException(
             cause.getStatusCode(),
             String.format(
-                "%d %s", cause.getStatusCode(), statusMessage == null ? "" : statusMessage),
+                Locale.US,
+                "%d %s",
+                cause.getStatusCode(),
+                statusMessage == null ? "" : statusMessage),
             "",
             uploadId,
             response,
@@ -368,8 +372,10 @@ enum ResumableSessionFailureScenario {
       sb.append("\n").append(prefix).append(t2);
       sb.append(
           String.format(
+              Locale.US,
               "checksummed_data: {range: [%d:%d]",
-              writeOffset, writeOffset + checksummedData.getContent().size()));
+              writeOffset,
+              writeOffset + checksummedData.getContent().size()));
       if (checksummedData.hasCrc32C()) {
         sb.append(", crc32c: ").append(checksummedData.getCrc32C());
       }
@@ -402,8 +408,10 @@ enum ResumableSessionFailureScenario {
       sb.append("\n").append(prefix).append(t2);
       sb.append(
           String.format(
+              Locale.US,
               "checksummed_data: {range: [%d:%d]",
-              writeOffset, writeOffset + checksummedData.getContent().size()));
+              writeOffset,
+              writeOffset + checksummedData.getContent().size()));
       if (checksummedData.hasCrc32C()) {
         sb.append(", crc32c: ").append(checksummedData.getCrc32C());
       }

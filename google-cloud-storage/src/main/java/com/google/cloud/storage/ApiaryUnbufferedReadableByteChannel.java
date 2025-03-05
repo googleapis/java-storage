@@ -52,6 +52,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -318,7 +319,10 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     } else {
       throw new IllegalStateException(
           String.format(
-              "Unexpected header type '%s' for header %s", o.getClass().getName(), headerName));
+              Locale.US,
+              "Unexpected header type '%s' for header %s",
+              o.getClass().getName(),
+              headerName));
     }
   }
 

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import java.util.Locale;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,8 +47,11 @@ public final class Generator implements ManagedLifecycle {
     }
     AtomicInteger counter = counters.computeIfAbsent(currentTest, (d) -> new AtomicInteger(1));
     return String.format(
+        Locale.US,
         "%s.%s-%04d",
-        currentTest.getClassName(), currentTest.getMethodName(), counter.getAndIncrement());
+        currentTest.getClassName(),
+        currentTest.getMethodName(),
+        counter.getAndIncrement());
   }
 
   @Override

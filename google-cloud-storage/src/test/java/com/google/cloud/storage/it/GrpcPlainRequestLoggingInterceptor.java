@@ -33,6 +33,7 @@ import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -77,7 +78,10 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
                     Level.CONFIG,
                     () ->
                         String.format(
-                            "<<< %s{%n%s}", message.getClass().getSimpleName(), fmtProto(message)));
+                            Locale.US,
+                            "<<< %s{%n%s}",
+                            message.getClass().getSimpleName(),
+                            fmtProto(message)));
                 super.onMessage(message);
               }
 
@@ -87,8 +91,10 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
                     Level.CONFIG,
                     () ->
                         String.format(
+                            Locale.US,
                             "<<< status = %s, trailers = %s",
-                            status.toString(), trailers.toString()));
+                            status.toString(),
+                            trailers.toString()));
                 super.onClose(status, trailers);
               }
             };
@@ -101,7 +107,10 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
             Level.CONFIG,
             () ->
                 String.format(
-                    ">>> %s{%n%s}", message.getClass().getSimpleName(), fmtProto(message)));
+                    Locale.US,
+                    ">>> %s{%n%s}",
+                    message.getClass().getSimpleName(),
+                    fmtProto(message)));
         super.sendMessage(message);
       }
     };
@@ -133,7 +142,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         WriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString snip = ByteString.copyFromUtf8(String.format("<snip (%d)>", content.size()));
+        ByteString snip =
+            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
         ByteString trim = content.substring(0, 20).concat(snip);
         b.getChecksummedDataBuilder().setContent(trim);
 
@@ -149,7 +159,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         BidiWriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString snip = ByteString.copyFromUtf8(String.format("<snip (%d)>", content.size()));
+        ByteString snip =
+            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
         ByteString trim = content.substring(0, 20).concat(snip);
         b.getChecksummedDataBuilder().setContent(trim);
 
@@ -165,7 +176,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         ReadObjectResponse.Builder b = msg.toBuilder();
-        ByteString snip = ByteString.copyFromUtf8(String.format("<snip (%d)>", content.size()));
+        ByteString snip =
+            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
         ByteString trim = content.substring(0, 20).concat(snip);
         b.getChecksummedDataBuilder().setContent(trim);
 

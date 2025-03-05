@@ -28,6 +28,7 @@ import com.google.cloud.storage.it.runner.registry.TestBench;
 import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Logger;
 import org.junit.AssumptionViolatedException;
 import org.junit.rules.TestRule;
@@ -192,6 +193,9 @@ final class RetryTestFixture extends TestWatcher {
 
   private String fmtUserAgent(String testDescriptor) {
     return String.format(
-        "%s/ (%s) java-conformance-tests/", testDescriptor, testRetryConformance.getTestName());
+        Locale.US,
+        "%s/ (%s) java-conformance-tests/",
+        testDescriptor,
+        testRetryConformance.getTestName());
   }
 }

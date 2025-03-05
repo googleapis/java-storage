@@ -24,6 +24,7 @@ import io.grpc.Server;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 final class FakeServer implements AutoCloseable {
@@ -53,7 +54,7 @@ final class FakeServer implements AutoCloseable {
     InetSocketAddress address = new InetSocketAddress("localhost", 0);
     Server server = NettyServerBuilder.forAddress(address).addService(service).build();
     server.start();
-    String endpoint = String.format("%s:%d", address.getHostString(), server.getPort());
+    String endpoint = String.format(Locale.US, "%s:%d", address.getHostString(), server.getPort());
     GrpcStorageOptions grpcStorageOptions =
         StorageOptions.grpc()
             .setHost("http://" + endpoint)

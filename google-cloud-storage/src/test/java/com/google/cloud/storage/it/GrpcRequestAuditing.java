@@ -32,6 +32,7 @@ import io.grpc.MethodDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -81,7 +82,7 @@ public final class GrpcRequestAuditing implements ClientInterceptor, AssertReque
       Metadata.Key<T> key, Function<Stream<T>, Stream<T>> f) {
     Stream<T> stream = requestHeaders.stream().map(m -> m.get(key)).filter(Objects::nonNull);
     ImmutableList<Object> actual = f.apply(stream).collect(ImmutableList.toImmutableList());
-    return assertWithMessage(String.format("Headers %s", key.name())).that(actual);
+    return assertWithMessage(String.format(Locale.US, "Headers %s", key.name())).that(actual);
   }
 
   private final class Factory extends ClientStreamTracer.Factory {

@@ -23,6 +23,7 @@ import com.google.iam.v1.Policy;
 import com.google.protobuf.ByteString;
 import com.google.type.Expr;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.jqwik.api.Arbitraries;
@@ -83,10 +84,10 @@ public final class IamPolicyArbitraryProvider implements ArbitraryProvider {
     return Arbitraries.oneOf(
         Arbitraries.of("allUsers"),
         Arbitraries.of("allAuthenticatedUsers"),
-        Web.emails().map(e -> String.format("user:%s", e)),
-        Web.emails().map(e -> String.format("serviceAccount:%s", e)),
-        Web.emails().map(e -> String.format("group:%s", e)),
-        Web.webDomains().map(d -> String.format("domain:%s", d)));
+        Web.emails().map(e -> String.format(Locale.US, "user:%s", e)),
+        Web.emails().map(e -> String.format(Locale.US, "serviceAccount:%s", e)),
+        Web.emails().map(e -> String.format(Locale.US, "group:%s", e)),
+        Web.webDomains().map(d -> String.format(Locale.US, "domain:%s", d)));
   }
 
   static Arbitrary<Expr> condition() {

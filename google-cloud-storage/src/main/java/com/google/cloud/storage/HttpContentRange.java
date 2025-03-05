@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.MoreObjects;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
@@ -91,7 +92,8 @@ abstract class HttpContentRange {
 
     @Override
     public String getHeaderValue() {
-      return String.format("bytes %d-%d/*", spec.beginOffset(), spec.endOffsetInclusive());
+      return String.format(
+          Locale.US, "bytes %d-%d/*", spec.beginOffset(), spec.endOffsetInclusive());
     }
 
     @Override
@@ -145,7 +147,8 @@ abstract class HttpContentRange {
 
     @Override
     public String getHeaderValue() {
-      return String.format("bytes %d-%d/%d", spec.beginOffset(), spec.endOffsetInclusive(), size);
+      return String.format(
+          Locale.US, "bytes %d-%d/%d", spec.beginOffset(), spec.endOffsetInclusive(), size);
     }
 
     @Override
@@ -202,7 +205,7 @@ abstract class HttpContentRange {
 
     @Override
     public String getHeaderValue() {
-      return String.format("bytes */%d", size);
+      return String.format(Locale.US, "bytes */%d", size);
     }
 
     @Override

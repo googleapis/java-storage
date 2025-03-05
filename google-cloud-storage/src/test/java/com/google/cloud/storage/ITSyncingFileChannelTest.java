@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import net.jqwik.api.Arbitraries;
@@ -150,7 +151,10 @@ public final class ITSyncingFileChannelTest {
           .add(
               "\nwrites",
               Arrays.stream(writes)
-                  .map(b -> String.format("%s \n %s", b.toString(), xxd(false, b.duplicate())))
+                  .map(
+                      b ->
+                          String.format(
+                              Locale.US, "%s \n %s", b.toString(), xxd(false, b.duplicate())))
                   .collect(DEBUG_JOINER))
           .add(
               "\nexpectedCumulativeContents",

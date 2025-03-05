@@ -25,6 +25,7 @@ import com.google.common.base.MoreObjects;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
@@ -76,7 +77,7 @@ public final class LazyReadChannelTest {
   }
 
   private TestSession newTestSession() {
-    return new TestSession(String.format("test-%02d", counter.getAndIncrement()));
+    return new TestSession(String.format(Locale.US, "test-%02d", counter.getAndIncrement()));
   }
 
   private static final class TestSession implements BufferedReadableByteChannelSession<String> {
