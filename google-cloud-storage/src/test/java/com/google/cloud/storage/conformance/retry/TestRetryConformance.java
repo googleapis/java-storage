@@ -42,6 +42,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -136,24 +137,49 @@ final class TestRetryConformance {
     char transportTag = transport.name().toLowerCase().charAt(0);
     this.bucketName =
         String.format(
+            Locale.US,
             "%s_s%03d-%s-m%03d_bkt1_%s",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+            BASE_ID,
+            scenarioId,
+            instructionsString.toLowerCase(),
+            mappingId,
+            transportTag);
     this.bucketName2 =
         String.format(
+            Locale.US,
             "%s_s%03d-%s-m%03d_bkt2_%s",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+            BASE_ID,
+            scenarioId,
+            instructionsString.toLowerCase(),
+            mappingId,
+            transportTag);
     this.userProject =
         String.format(
+            Locale.US,
             "%s_s%03d-%s-m%03d_prj1_%s",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+            BASE_ID,
+            scenarioId,
+            instructionsString.toLowerCase(),
+            mappingId,
+            transportTag);
     this.objectName =
         String.format(
+            Locale.US,
             "%s_s%03d-%s-m%03d_obj1_%s",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+            BASE_ID,
+            scenarioId,
+            instructionsString.toLowerCase(),
+            mappingId,
+            transportTag);
     this.topicName =
         String.format(
+            Locale.US,
             "%s_s%03d-%s-m%03d_top1_%s",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+            BASE_ID,
+            scenarioId,
+            instructionsString.toLowerCase(),
+            mappingId,
+            transportTag);
     // define a lazy supplier for bytes.
     this.lazyHelloWorldUtf8Bytes =
         () -> genBytes(this.method, this.instruction.getInstructionsList());
@@ -225,8 +251,13 @@ final class TestRetryConformance {
   public String getTestName() {
     String instructionsDesc = Joiner.on("_").join(instruction.getInstructionsList());
     return String.format(
+        Locale.US,
         "TestRetryConformance/%s-%d-[%s]-%s-%d",
-        transport.name().toLowerCase(), scenarioId, instructionsDesc, method.getName(), mappingId);
+        transport.name().toLowerCase(),
+        scenarioId,
+        instructionsDesc,
+        method.getName(),
+        mappingId);
   }
 
   public Transport getTransport() {

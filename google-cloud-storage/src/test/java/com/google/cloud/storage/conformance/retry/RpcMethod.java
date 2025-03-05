@@ -17,6 +17,7 @@
 package com.google.cloud.storage.conformance.retry;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ interface RpcMethod {
    */
   final class storage {
     private static String getFullQualifiedMethodName(Enum<?> e) {
-      return String.format("storage.%s.%s", e.getClass().getSimpleName(), e.name());
+      return String.format(Locale.US, "storage.%s.%s", e.getClass().getSimpleName(), e.name());
     }
 
     enum bucket_acl implements RpcMethod {

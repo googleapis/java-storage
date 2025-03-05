@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Locale;
 import java.util.stream.IntStream;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -144,11 +145,11 @@ public final class DefaultBufferedReadableByteChannelTest {
 
       if (fullReadCount > 0 && remainingRead > 0) {
         dbgExpectedReadSizes =
-            String.format("[%s * %d, %s]", readSize, fullReadCount, remainingRead);
+            String.format(Locale.US, "[%s * %d, %s]", readSize, fullReadCount, remainingRead);
       } else if (remainingRead > 0) {
-        dbgExpectedReadSizes = String.format("[%s]", remainingRead);
+        dbgExpectedReadSizes = String.format(Locale.US, "[%s]", remainingRead);
       } else {
-        dbgExpectedReadSizes = String.format("[%s * %d]", readSize, fullReadCount);
+        dbgExpectedReadSizes = String.format(Locale.US, "[%s * %d]", readSize, fullReadCount);
       }
     }
 

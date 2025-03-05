@@ -61,6 +61,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -128,7 +129,8 @@ public final class ITBlobWriteChannelTest {
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     String nowString = formatter.format(now);
     BucketInfo bucketInfo = BucketInfo.of(generator.randomBucketName());
-    String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), nowString);
+    String blobPath =
+        String.format(Locale.US, "%s/%s/blob", generator.randomObjectName(), nowString);
     BlobId blobId = BlobId.of(bucketInfo.getName(), blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     storage.create(bucketInfo);
@@ -189,7 +191,8 @@ public final class ITBlobWriteChannelTest {
   }
 
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
-    String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), NOW_STRING);
+    String blobPath =
+        String.format(Locale.US, "%s/%s/blob", generator.randomObjectName(), NOW_STRING);
 
     BucketInfo bucketInfo = BucketInfo.of(generator.randomBucketName());
     BlobInfo blobInfoGen0 = BlobInfo.newBuilder(bucketInfo, blobPath, 0L).build();
@@ -199,7 +202,8 @@ public final class ITBlobWriteChannelTest {
             Method.newBuilder().setName("storage.objects.insert").build(),
             InstructionList.newBuilder()
                 .addInstructions(
-                    String.format("return-broken-stream-final-chunk-after-%dB", cappedByteCount))
+                    String.format(
+                        Locale.US, "return-broken-stream-final-chunk-after-%dB", cappedByteCount))
                 .build(),
             Transport.HTTP.name());
     RetryTestResource retryTest = testBench.createRetryTest(retryTestResource);

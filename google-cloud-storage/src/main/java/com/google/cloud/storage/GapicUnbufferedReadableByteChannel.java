@@ -42,6 +42,7 @@ import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -166,8 +167,10 @@ final class GapicUnbufferedReadableByteChannel
         } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
           throw closeWithError(
               String.format(
+                  Locale.US,
                   "Mismatch Generation between subsequent reads. Expected %d but received %d",
-                  metadata.getGeneration(), respMetadata.getGeneration()));
+                  metadata.getGeneration(),
+                  respMetadata.getGeneration()));
         }
       }
       ChecksummedData checksummedData = resp.getChecksummedData();

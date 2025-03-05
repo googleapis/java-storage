@@ -40,6 +40,7 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
@@ -168,8 +169,10 @@ public final class DefaultRetryHandlingBehaviorTest {
    */
   private static String token(ThrowableCategory t, HandlerCategory h) {
     return String.format(
+        Locale.US,
         "new Case(ThrowableCategory.%s, HandlerCategory.%s, /*TODO*/ null, /*TODO*/ null)",
-        t.name(), h.name());
+        t.name(),
+        h.name());
   }
 
   /**
@@ -1093,7 +1096,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     private final boolean isRetryable;
 
     private RetryableException(boolean isRetryable) {
-      super(String.format("RetryableException{isRetryable=%s}", isRetryable));
+      super(String.format(Locale.US, "RetryableException{isRetryable=%s}", isRetryable));
       this.isRetryable = isRetryable;
     }
 

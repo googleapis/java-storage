@@ -24,6 +24,7 @@ import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -163,6 +164,7 @@ interface ThroughputSink {
       LOGGER.info(
           () ->
               String.format(
+                  Locale.US,
                   "{%s} (%01.03f MiB/s) %s",
                   prefix,
                   ((r.numBytes * MiB)

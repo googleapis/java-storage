@@ -99,6 +99,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.OptionalInt;
@@ -231,6 +232,7 @@ final class RpcMethodMappings {
                   RpcMethod rpcMethod = e.getKey();
                   Collection<RpcMethodMapping> mappings = e.getValue();
                   return String.format(
+                      Locale.US,
                       "\t%s.%s: %d",
                       rpcMethod
                           .getClass()
@@ -246,7 +248,7 @@ final class RpcMethodMappings {
     OptionalInt max =
         funcMap.values().stream().map(RpcMethodMapping::getMappingId).mapToInt(i -> i).max();
     if (max.isPresent()) {
-      LOGGER.info(String.format("Current max mapping index is: %d%n", max.getAsInt()));
+      LOGGER.info(String.format(Locale.US, "Current max mapping index is: %d%n", max.getAsInt()));
     } else {
       throw new IllegalStateException("No mappings defined");
     }

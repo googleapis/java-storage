@@ -43,6 +43,7 @@ import io.grpc.stub.CallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -880,6 +881,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
       Collector<CharSequence, ?, String> oneLine = Collectors.joining(",", "[", "]");
       String msg =
           String.format(
+              Locale.US,
               "Unexpected Request Chain.%nexpected one of: %s%n        but was: %s",
               writes.stream()
                   .map(l -> l.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine))

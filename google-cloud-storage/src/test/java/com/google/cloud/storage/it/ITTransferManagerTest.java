@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,15 +99,21 @@ public class ITTransferManagerTest {
     baseDir = tmpDir.getRoot().toPath();
     BlobInfo blobInfo1 =
         BlobInfo.newBuilder(
-                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+                BlobId.of(
+                    bucket.getName(),
+                    String.format(Locale.US, "%s/src", generator.randomObjectName())))
             .build();
     BlobInfo blobInfo2 =
         BlobInfo.newBuilder(
-                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+                BlobId.of(
+                    bucket.getName(),
+                    String.format(Locale.US, "%s/src", generator.randomObjectName())))
             .build();
     BlobInfo blobInfoChunking =
         BlobInfo.newBuilder(
-                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+                BlobId.of(
+                    bucket.getName(),
+                    String.format(Locale.US, "%s/src", generator.randomObjectName())))
             .build();
     Collections.addAll(blobs, blobInfo1, blobInfo2);
     ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
@@ -510,7 +517,8 @@ public class ITTransferManagerTest {
       BlobInfo nonexistentBlob =
           BlobInfo.newBuilder(
                   BlobId.of(
-                      bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+                      bucket.getName(),
+                      String.format(Locale.US, "%s/src", generator.randomObjectName())))
               .build();
       downloadBlobs.add(nonexistentBlob);
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import java.util.Locale;
 import java.util.Objects;
 
 abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
@@ -64,7 +65,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
   }
 
   static String fmtCrc32cValue(int value1) {
-    return String.format("crc32c{0x%08x}", value1);
+    return String.format(Locale.US, "crc32c{0x%08x}", value1);
   }
 
   static final class Crc32cLengthUnknown extends Crc32cValue<Crc32cLengthUnknown> {
@@ -142,7 +143,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public String toString() {
-      return String.format("crc32c{0x%08x (length = %d)}", value, length);
+      return String.format(Locale.US, "crc32c{0x%08x (length = %d)}", value, length);
     }
 
     @Override

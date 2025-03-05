@@ -40,6 +40,7 @@ import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -1441,7 +1442,7 @@ public class BlobInfo implements Serializable {
     byte[] decodedMd5 = BaseEncoding.base64().decode(md5);
     StringBuilder stringBuilder = new StringBuilder();
     for (byte b : decodedMd5) {
-      stringBuilder.append(String.format("%02x", b & 0xff));
+      stringBuilder.append(String.format(Locale.US, "%02x", b & 0xff));
     }
     return stringBuilder.toString();
   }
@@ -1473,7 +1474,7 @@ public class BlobInfo implements Serializable {
     byte[] decodeCrc32c = BaseEncoding.base64().decode(crc32c);
     StringBuilder stringBuilder = new StringBuilder();
     for (byte b : decodeCrc32c) {
-      stringBuilder.append(String.format("%02x", b & 0xff));
+      stringBuilder.append(String.format(Locale.US, "%02x", b & 0xff));
     }
     return stringBuilder.toString();
   }

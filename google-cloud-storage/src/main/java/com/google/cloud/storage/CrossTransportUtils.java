@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 final class CrossTransportUtils {
@@ -49,12 +50,20 @@ final class CrossTransportUtils {
         break;
       default:
         throw new IllegalStateException(
-            String.format("Broken Java Enum: %s received value: '%s'", Transport.class, transport));
+            String.format(
+                Locale.US,
+                "Broken Java Enum: %s received value: '%s'",
+                Transport.class,
+                transport));
     }
     String message =
         String.format(
+            Locale.US,
             "%s#%s is only supported for %s transport. Please use %s to construct a compatible instance.",
-            clazz.getName(), methodName, transport, builder);
+            clazz.getName(),
+            methodName,
+            transport,
+            builder);
     throw new UnsupportedOperationException(message);
   }
 

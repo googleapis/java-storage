@@ -23,13 +23,14 @@ import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import io.opencensus.trace.EndSpanOptions;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class JsonResumableSession {
 
   static final String SPAN_NAME_WRITE =
-      String.format("Sent.%s.write", HttpStorageRpc.class.getName());
+      String.format(Locale.US, "Sent.%s.write", HttpStorageRpc.class.getName());
   static final EndSpanOptions END_SPAN_OPTIONS =
       EndSpanOptions.builder().setSampleToLocalSpanStore(true).build();
 

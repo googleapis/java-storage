@@ -30,6 +30,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
@@ -194,7 +195,8 @@ public final class UnifiedOptsTest {
                 m -> {
                   try {
                     String msg =
-                        String.format("Method %s did not throw expected NullPointerException", m);
+                        String.format(
+                            Locale.US, "Method %s did not throw expected NullPointerException", m);
                     try {
                       m.invoke(null, new Object[] {null});
                       return new AssertionError(msg);

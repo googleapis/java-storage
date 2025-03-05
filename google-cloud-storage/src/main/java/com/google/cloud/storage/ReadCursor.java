@@ -17,6 +17,8 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Locale;
+
 /**
  * Shrink wraps a beginning, offset and limit for tracking state of an individual invocation of
  * {@link #read}
@@ -47,6 +49,7 @@ final class ReadCursor {
 
   @Override
   public String toString() {
-    return String.format("ReadCursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
+    return String.format(
+        Locale.US, "ReadCursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
   }
 }

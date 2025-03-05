@@ -41,6 +41,7 @@ import com.google.storage.control.v2.StorageControlSettings;
 import com.google.storage.control.v2.stub.StorageControlStubSettings;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 import java.util.UUID;
 
 /** The set of resources which are defined for a single backend. */
@@ -147,7 +148,7 @@ final class BackendResources implements ManagedLifecycle {
                 case TEST_BENCH:
                   String baseUri = Registry.getInstance().testBench().getBaseUri();
                   URI uri = URI.create(baseUri);
-                  String endpoint = String.format("%s:%d", uri.getHost(), uri.getPort());
+                  String endpoint = String.format(Locale.US, "%s:%d", uri.getHost(), uri.getPort());
                   builder =
                       StorageControlSettings.newBuilder()
                           .setCredentialsProvider(NoCredentialsProvider.create())
@@ -181,7 +182,8 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "fixture/BUCKET/[" + backend.name() + "]",
             () -> {
-              String bucketName = String.format("java-storage-grpc-%s", UUID.randomUUID());
+              String bucketName =
+                  String.format(Locale.US, "java-storage-grpc-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
                   BucketInfo.newBuilder(bucketName)
@@ -194,7 +196,8 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "fixture/BUCKET/[" + backend.name() + "]/REQUESTER_PAYS",
             () -> {
-              String bucketName = String.format("java-storage-grpc-rp-%s", UUID.randomUUID());
+              String bucketName =
+                  String.format(Locale.US, "java-storage-grpc-rp-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
                   BucketInfo.newBuilder(bucketName)
@@ -208,7 +211,8 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "fixture/BUCKET/[" + backend.name() + "]/VERSIONED",
             () -> {
-              String bucketName = String.format("java-storage-grpc-v-%s", UUID.randomUUID());
+              String bucketName =
+                  String.format(Locale.US, "java-storage-grpc-v-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
                   BucketInfo.newBuilder(bucketName)
@@ -222,7 +226,8 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "fixture/BUCKET/[" + backend.name() + "]/HNS",
             () -> {
-              String bucketName = String.format("java-storage-grpc-hns-%s", UUID.randomUUID());
+              String bucketName =
+                  String.format(Locale.US, "java-storage-grpc-hns-%s", UUID.randomUUID());
               protectedBucketNames.add(bucketName);
               return new BucketInfoShim(
                   BucketInfo.newBuilder(bucketName)

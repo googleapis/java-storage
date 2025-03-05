@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -245,8 +246,10 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
                         buildParallelCompositeUploadException(
                             ApiExceptionFactory.createException(
                                 String.format(
+                                    Locale.US,
                                     "CRC32C Checksum mismatch. expected: [%s] but was: [%s]",
-                                    expectedCrc32c, crc32c),
+                                    expectedCrc32c,
+                                    crc32c),
                                 null,
                                 GrpcStatusCode.of(Code.DATA_LOSS),
                                 false),
@@ -477,6 +480,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
 
                   String message =
                       String.format(
+                          Locale.US,
                           "Incomplete parallel composite upload cleanup after previous error. Unknown object ids: %s",
                           failedGsUris);
                   StorageException storageException = new StorageException(0, message, null);

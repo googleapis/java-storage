@@ -32,6 +32,7 @@ import com.google.cloud.storage.spi.StorageRpcFactory;
 import io.opentelemetry.api.OpenTelemetry;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -46,7 +47,10 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     try {
       String resourcePath =
           String.format(
-              "/META-INF/maven/%s/%s/pom.properties", "com.google.cloud", "google-cloud-storage");
+              Locale.US,
+              "/META-INF/maven/%s/%s/pom.properties",
+              "com.google.cloud",
+              "google-cloud-storage");
       InputStream resourceAsStream = StorageOptions.class.getResourceAsStream(resourcePath);
       if (resourceAsStream == null) {
         // some classloaders don't like a leading slash

@@ -55,6 +55,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -128,7 +129,8 @@ public final class TestBench implements ManagedLifecycle {
                   request.getHeaders().setAccept("application/json");
                   request
                       .getHeaders()
-                      .setUserAgent(String.format("%s/ test-bench/", this.containerName));
+                      .setUserAgent(
+                          String.format(Locale.US, "%s/ test-bench/", this.containerName));
                 });
   }
 
@@ -206,7 +208,7 @@ public final class TestBench implements ManagedLifecycle {
       File errFile = errPath.toFile();
       LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
       LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
-      String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
+      String dockerImage = String.format(Locale.US, "%s:%s", dockerImageName, dockerImageTag);
       // First try and pull the docker image, this validates docker is available and running
       // on the host, as well as gives time for the image to be downloaded independently of
       // trying to start the container. (Below, when we first start the container we then attempt
@@ -223,12 +225,15 @@ public final class TestBench implements ManagedLifecycle {
           dumpServerLogs(outPath, errPath);
           throw new IllegalStateException(
               String.format(
-                  "Non-zero status while attempting to pull docker image '%s'", dockerImage));
+                  Locale.US,
+                  "Non-zero status while attempting to pull docker image '%s'",
+                  dockerImage));
         }
       } catch (InterruptedException | IllegalThreadStateException e) {
         dumpServerLogs(outPath, errPath);
         throw new IllegalStateException(
-            String.format("Timeout while attempting to pull docker image '%s'", dockerImage));
+            String.format(
+                Locale.US, "Timeout while attempting to pull docker image '%s'", dockerImage));
       }
 
       int port = URI.create(baseUri).getPort();
@@ -243,7 +248,7 @@ public final class TestBench implements ManagedLifecycle {
               port + ":9000",
               "--publish",
               gRPCPort + ":9090",
-              String.format("--name=%s", containerName),
+              String.format(Locale.US, "--name=%s", containerName),
               dockerImage);
       process =
           new ProcessBuilder()
@@ -533,7 +538,7 @@ public final class TestBench implements ManagedLifecycle {
           gRPCBaseUri,
           requireNonNull(dockerImageName, "dockerImageName must be non null"),
           requireNonNull(dockerImageTag, "dockerImageTag must be non null"),
-          String.format("storage-testbench_%s", containerName));
+          String.format(Locale.US, "storage-testbench_%s", containerName));
     }
   }
 

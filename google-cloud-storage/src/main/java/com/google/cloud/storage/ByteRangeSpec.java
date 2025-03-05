@@ -24,6 +24,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.storage.v2.ReadObjectRequest;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import javax.annotation.concurrent.Immutable;
@@ -239,12 +240,12 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
-      return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive());
+      return String.format(Locale.US, "bytes=%d-%d", beginOffset, endOffsetInclusive());
     }
 
     @Override
     protected ToStringHelper append(ToStringHelper tsh) {
-      return tsh.addValue(String.format("%d + %d", beginOffset, length));
+      return tsh.addValue(String.format(Locale.US, "%d + %d", beginOffset, length));
     }
   }
 
@@ -324,12 +325,12 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
-      return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive());
+      return String.format(Locale.US, "bytes=%d-%d", beginOffset, endOffsetInclusive());
     }
 
     @Override
     protected ToStringHelper append(ToStringHelper tsh) {
-      return tsh.addValue(String.format("[%d, %d)", beginOffset, endOffsetExclusive));
+      return tsh.addValue(String.format(Locale.US, "[%d, %d)", beginOffset, endOffsetExclusive));
     }
   }
 
@@ -409,12 +410,12 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
-      return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive);
+      return String.format(Locale.US, "bytes=%d-%d", beginOffset, endOffsetInclusive);
     }
 
     @Override
     protected ToStringHelper append(ToStringHelper tsh) {
-      return tsh.addValue(String.format("[%d, %d]", beginOffset, endOffsetInclusive));
+      return tsh.addValue(String.format(Locale.US, "[%d, %d]", beginOffset, endOffsetInclusive));
     }
   }
 
@@ -488,9 +489,9 @@ abstract class ByteRangeSpec implements Serializable {
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
       if (beginOffset > 0) {
-        return String.format("bytes=%d-", beginOffset);
+        return String.format(Locale.US, "bytes=%d-", beginOffset);
       } else if (beginOffset < 0) {
-        return String.format("bytes=%d", beginOffset);
+        return String.format(Locale.US, "bytes=%d", beginOffset);
       } else {
         return null;
       }
@@ -498,7 +499,7 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected ToStringHelper append(ToStringHelper tsh) {
-      return tsh.addValue(String.format("[%d, +INF)", beginOffset));
+      return tsh.addValue(String.format(Locale.US, "[%d, +INF)", beginOffset));
     }
   }
 

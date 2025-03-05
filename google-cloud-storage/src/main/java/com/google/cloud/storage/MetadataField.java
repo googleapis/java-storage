@@ -21,6 +21,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -102,7 +103,7 @@ final class MetadataField<T> {
     }
 
     String encode() {
-      return String.format("%04d-%04d", begin, end);
+      return String.format(Locale.US, "%04d-%04d", begin, end);
     }
 
     static PartRange decode(String s) {

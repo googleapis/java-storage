@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -163,7 +164,7 @@ public class V4PostPolicyTest {
     for (int i = 0; i < expectedPolicyArray.length; i++) {
       char c = expectedPolicyArray[i];
       if (c >= 128) {
-        escapedPolicy.append(String.format("\\u%04x", (int) c));
+        escapedPolicy.append(String.format(Locale.US, "\\u%04x", (int) c));
       } else {
         switch (c) {
           case '\\':
@@ -218,12 +219,14 @@ public class V4PostPolicyTest {
 
     InputStream credentialsStream = cl.getResourceAsStream(SERVICE_ACCOUNT_JSON_RESOURCE);
     assertNotNull(
-        String.format("Unable to load service account json: %s", SERVICE_ACCOUNT_JSON_RESOURCE),
+        String.format(
+            Locale.US, "Unable to load service account json: %s", SERVICE_ACCOUNT_JSON_RESOURCE),
         credentialsStream);
 
     InputStream dataJson = cl.getResourceAsStream(TEST_DATA_JSON_RESOURCE);
     assertNotNull(
-        String.format("Unable to load test definition: %s", TEST_DATA_JSON_RESOURCE), dataJson);
+        String.format(Locale.US, "Unable to load test definition: %s", TEST_DATA_JSON_RESOURCE),
+        dataJson);
 
     ServiceAccountCredentials serviceAccountCredentials =
         ServiceAccountCredentials.fromStream(credentialsStream);

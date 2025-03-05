@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -416,7 +417,7 @@ public final class PostPolicyV4 {
       for (int i = 0; i < jsonArray.length; i++) {
         char c = jsonArray[i];
         if (c >= 128) { // is a unicode character
-          escapedJson.append(String.format("\\u%04x", (int) c));
+          escapedJson.append(String.format(Locale.US, "\\u%04x", (int) c));
         } else {
           switch (c) {
             case '\\':

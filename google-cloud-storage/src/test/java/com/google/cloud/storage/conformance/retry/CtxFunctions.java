@@ -42,6 +42,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.pubsub.v1.TopicName;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -230,7 +231,8 @@ final class CtxFunctions {
 
           if (!resources.isEmpty()) {
             throw new IllegalStateException(
-                String.format("Unhandled Method Resource [%s]", Joiner.on(", ").join(resources)));
+                String.format(
+                    Locale.US, "Unhandled Method Resource [%s]", Joiner.on(", ").join(resources)));
           }
 
           return f.apply(ctx, c);

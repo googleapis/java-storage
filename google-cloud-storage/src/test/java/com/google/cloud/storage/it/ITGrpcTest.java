@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public final class ITGrpcTest {
     String prefix = generator.randomObjectName();
     List<Blob> blobs =
         IntStream.rangeClosed(1, 10)
-            .mapToObj(i -> String.format("%s/%02d", prefix, i))
+            .mapToObj(i -> String.format(Locale.US, "%s/%02d", prefix, i))
             .map(n -> BlobInfo.newBuilder(bucketInfo, n).build())
             .map(info -> storage.create(info, content, BlobTargetOption.doesNotExist()))
             .collect(ImmutableList.toImmutableList());

@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -74,11 +75,14 @@ final class StorageITLeafRunner extends BlockJUnit4ClassRunner {
                   } else {
                     return new Exception(
                         String.format(
+                            Locale.US,
                             "@Inject field '%s' must have a type compatible with one of [%s]",
-                            f, registry.injectableTypesString()));
+                            f,
+                            registry.injectableTypesString()));
                   }
                 } else {
-                  return new Exception(String.format("The @Inject field '%s' must be public", f));
+                  return new Exception(
+                      String.format(Locale.US, "The @Inject field '%s' must be public", f));
                 }
               })
           .filter(Objects::nonNull)

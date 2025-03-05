@@ -44,6 +44,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Locale;
 import java.util.Map;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -549,11 +550,12 @@ public final class StorageArbitraries {
                 } else {
                   //noinspection ConstantConditions
                   if (maxAge != null) {
-                    return String.format("%s, max-age=%d", visibility, maxAge);
+                    return String.format(Locale.US, "%s, max-age=%d", visibility, maxAge);
                   } else if (transform != null) {
-                    return String.format("%s, %s", visibility, transform);
+                    return String.format(Locale.US, "%s, %s", visibility, transform);
                   } else {
-                    return String.format("%s, max-age=%d, %s", visibility, maxAge, transform);
+                    return String.format(
+                        Locale.US, "%s, max-age=%d, %s", visibility, maxAge, transform);
                   }
                 }
               });
@@ -642,7 +644,7 @@ public final class StorageArbitraries {
       }
 
       static EntityWithoutId user(String email) {
-        return new EntityWithoutId(String.format("user-%s", email));
+        return new EntityWithoutId(String.format(Locale.US, "user-%s", email));
       }
 
       static EntityWithId groupId(String id) {
@@ -650,16 +652,17 @@ public final class StorageArbitraries {
       }
 
       static EntityWithoutId group(String email) {
-        return new EntityWithoutId(String.format("group-%s", email));
+        return new EntityWithoutId(String.format(Locale.US, "group-%s", email));
       }
 
       static EntityWithoutId domain(String email) {
-        return new EntityWithoutId(String.format("domain-%s", email));
+        return new EntityWithoutId(String.format(Locale.US, "domain-%s", email));
       }
 
       static EntityWithoutId project(ProjectTeam projectTeam) {
         return new EntityWithoutId(
-            String.format("project-%s-%s", projectTeam.getTeam(), projectTeam.getProjectNumber()));
+            String.format(
+                Locale.US, "project-%s-%s", projectTeam.getTeam(), projectTeam.getProjectNumber()));
       }
     }
 

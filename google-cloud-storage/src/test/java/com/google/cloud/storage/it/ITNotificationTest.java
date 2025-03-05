@@ -37,6 +37,7 @@ import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,7 +72,7 @@ public class ITNotificationTest {
     // square brackets are not acceptable characters for topic names, replace them with dash
     // https://cloud.google.com/pubsub/docs/admin#resource_names
     String name = generator.randomObjectName().replaceAll("[\\[\\]]", "-");
-    topic = String.format("projects/%s/topics/%s", projectId, name).trim();
+    topic = String.format(Locale.US, "projects/%s/topics/%s", projectId, name).trim();
     notificationInfo =
         NotificationInfo.newBuilder(topic)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)

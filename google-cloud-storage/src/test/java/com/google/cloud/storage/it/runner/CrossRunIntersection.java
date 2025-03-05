@@ -23,6 +23,7 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.util.Locale;
 import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -118,7 +119,7 @@ public final class CrossRunIntersection {
   public String fmtSuiteName() {
     String t = transport != null ? transport.toString() : "NULL_TRANSPORT";
     String b = backend != null ? backend.toString() : "NULL_BACKEND";
-    return String.format("[%s][%s]", t, b);
+    return String.format(Locale.US, "[%s][%s]", t, b);
   }
 
   @Override

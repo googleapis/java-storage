@@ -28,6 +28,7 @@ import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableMap;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /** Globally scoped objects correlated with a specific backend and bucket */
 public final class ObjectsFixture implements ManagedLifecycle {
@@ -137,7 +138,7 @@ public final class ObjectsFixture implements ManagedLifecycle {
   public void stop() {}
 
   private static String objName(String name) {
-    return String.format("%s/%s", ObjectsFixture.class.getSimpleName(), name);
+    return String.format(Locale.US, "%s/%s", ObjectsFixture.class.getSimpleName(), name);
   }
 
   public static final class ObjectAndContent {

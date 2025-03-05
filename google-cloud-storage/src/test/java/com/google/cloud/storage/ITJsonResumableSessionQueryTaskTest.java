@@ -41,6 +41,7 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.UUID;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
@@ -82,7 +83,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -105,7 +107,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -132,7 +135,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -148,7 +152,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
         req -> new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -165,7 +170,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -191,7 +197,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
@@ -219,7 +226,8 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));

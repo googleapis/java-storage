@@ -37,6 +37,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -174,7 +175,8 @@ public final class Registry extends RunListener {
     Span span =
         tracer
             .spanBuilder(
-                String.format("%s/%s", description.getClassName(), description.getMethodName()))
+                String.format(
+                    Locale.US, "%s/%s", description.getClassName(), description.getMethodName()))
             .setAttribute("service.name", "test")
             .startSpan();
     Scope scope = span.makeCurrent();
@@ -234,7 +236,8 @@ public final class Registry extends RunListener {
       }
     } else {
       throw new IllegalArgumentException(
-          String.format("Invalid: ff: %s, crossRunIntersection: %s", ff, crossRunIntersection));
+          String.format(
+              Locale.US, "Invalid: ff: %s, crossRunIntersection: %s", ff, crossRunIntersection));
     }
   }
 

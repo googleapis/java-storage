@@ -278,7 +278,7 @@ final class OtelStorageDecorator implements Storage {
     Span span =
         tracer
             .spanBuilder("get")
-            .setAttribute("gsutil.uri", String.format("gs://%s/%s", bucket, blob))
+            .setAttribute("gsutil.uri", String.format(Locale.US, "gs://%s/%s", bucket, blob))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.get(bucket, blob, options);
@@ -1477,7 +1477,7 @@ final class OtelStorageDecorator implements Storage {
   }
 
   private static @NonNull String fmtBucket(String bucket) {
-    return String.format("gs://%s/", bucket);
+    return String.format(Locale.US, "gs://%s/", bucket);
   }
 
   private static final class TracerDecorator implements Tracer {

@@ -35,6 +35,7 @@ import com.google.common.truth.IterableSubject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -220,6 +221,6 @@ public final class RequestAuditing extends HttpTransportOptions implements Asser
             .filter(Objects::nonNull);
     List<Object> actual = filter.apply(stream).collect(Collectors.toList());
 
-    return assertWithMessage(String.format("Headers %s", headerName)).that(actual);
+    return assertWithMessage(String.format(Locale.US, "Headers %s", headerName)).that(actual);
   }
 }

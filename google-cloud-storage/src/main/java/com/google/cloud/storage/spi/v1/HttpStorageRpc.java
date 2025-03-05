@@ -322,7 +322,7 @@ public class HttpStorageRpc implements StorageRpc {
           // Here we only add a annotation to at least know how much time each batch takes.
           span.addAnnotation("Execute batch request");
           batch.setBatchUrl(
-              new GenericUrl(String.format("%s/batch/storage/v1", options.getHost())));
+              new GenericUrl(String.format(Locale.US, "%s/batch/storage/v1", options.getHost())));
           batch.execute();
         }
       } catch (IOException ex) {
@@ -901,7 +901,7 @@ public class HttpStorageRpc implements StorageRpc {
       }
 
       if (position > 0) {
-        req.getRequestHeaders().setRange(String.format("bytes=%d-", position));
+        req.getRequestHeaders().setRange(String.format(Locale.US, "bytes=%d-", position));
       }
       MediaHttpDownloader mediaHttpDownloader = req.getMediaHttpDownloader();
       mediaHttpDownloader.setDirectDownloadEnabled(true);
@@ -1021,7 +1021,7 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       GenericUrl url = new GenericUrl(uploadId);
       HttpRequest req = storage.getRequestFactory().buildPutRequest(url, new EmptyContent());
-      req.getHeaders().setContentRange(String.format("bytes */%s", totalBytes));
+      req.getHeaders().setContentRange(String.format(Locale.US, "bytes */%s", totalBytes));
       req.setParser(storage.getObjectParser());
       HttpResponse response = req.execute();
       // If the response is 200

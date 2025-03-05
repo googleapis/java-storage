@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.Locale;
 
 final class GrpcUtils {
 
@@ -28,7 +29,8 @@ final class GrpcUtils {
     if (bucketName != null && !bucketName.isEmpty()) {
       return baseContext.withExtraHeaders(
           ImmutableMap.of(
-              "x-goog-request-params", ImmutableList.of(String.format("bucket=%s", bucketName))));
+              "x-goog-request-params",
+              ImmutableList.of(String.format(Locale.US, "bucket=%s", bucketName))));
     }
     return baseContext;
   }

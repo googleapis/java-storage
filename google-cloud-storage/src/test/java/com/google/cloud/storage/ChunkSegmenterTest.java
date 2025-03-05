@@ -28,6 +28,7 @@ import com.google.protobuf.ByteString;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -253,11 +254,11 @@ final class ChunkSegmenterTest {
     }
 
     static String fmt(int i) {
-      return String.format("0x%08x", i);
+      return String.format(Locale.US, "0x%08x", i);
     }
 
     static String fmt(long i) {
-      return String.format("0x%016x", i);
+      return String.format(Locale.US, "0x%016x", i);
     }
   }
 }

@@ -28,6 +28,7 @@ import com.google.cloud.storage.it.runner.registry.Registry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
@@ -202,7 +203,7 @@ public final class StorageITRunner extends Suite {
   }
 
   private static String fmtParam(Object param) {
-    return String.format("[%s]", param.toString());
+    return String.format(Locale.US, "[%s]", param.toString());
   }
 
   private static String fmtParam(CrossRunIntersection c, Object param) {
@@ -224,13 +225,17 @@ public final class StorageITRunner extends Suite {
     if (crossRun != null && singleBackend != null) {
       throw new InitializationError(
           String.format(
+              Locale.US,
               "Class annotated with both @%s and @%s. Pick only one.",
-              CrossRun.class.getSimpleName(), SingleBackend.class.getSimpleName()));
+              CrossRun.class.getSimpleName(),
+              SingleBackend.class.getSimpleName()));
     } else if (crossRun == null && singleBackend == null) {
       throw new InitializationError(
           String.format(
+              Locale.US,
               "Missing either of @%s and @%s.",
-              CrossRun.class.getSimpleName(), SingleBackend.class.getSimpleName()));
+              CrossRun.class.getSimpleName(),
+              SingleBackend.class.getSimpleName()));
     }
   }
 
