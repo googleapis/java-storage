@@ -147,6 +147,9 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
   }
 
   public void finalizeWrite() throws IOException {
+    if (stream == null) {
+      restart();
+    }
     BidiWriteObjectRequest message = finishMessage();
     lastWrittenRequest = message;
     begin = writeCtx.getConfirmedBytes().get();

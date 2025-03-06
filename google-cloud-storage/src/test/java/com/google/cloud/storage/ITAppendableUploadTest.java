@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.storage.Storage.BlobField;
+import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -118,5 +120,37 @@ public final class ITAppendableUploadTest {
         assertThat(bi.getSize()).isEqualTo(100 * 1024 * 1024);
       }
     }
+  }
+
+  @Test
+  public void finalizeAfterCloseWorks() throws Exception {
+    BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
+
+    AppendableBlobUpload appendable =
+        storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 1024);
+    appendable.write(DataGenerator.base64Characters().genByteBuffer(3587));
+
+    appendable.close();
+    BlobInfo bi = appendable.finalizeUpload();
+    assertThat(bi.getSize()).isEqualTo(3587);
+  }
+
+  @Test
+  public void takeoverJustToFinalizeWorks() throws Exception {
+    BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
+
+    AppendableBlobUpload upload = storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 5);
+
+    upload.write(DataGenerator.base64Characters().genByteBuffer(20));
+    upload.close();
+
+    Blob blob =
+        storage.get(
+            bid, BlobGetOption.fields(BlobField.BUCKET, BlobField.NAME, BlobField.GENERATION));
+
+    AppendableBlobUpload takeOver =
+        storage.appendableBlobUpload(BlobInfo.newBuilder(blob.getBlobId()).build(), 5);
+    BlobInfo i = takeOver.finalizeUpload();
+    assertThat(i.getSize()).isEqualTo(20);
   }
 }
