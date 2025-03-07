@@ -113,6 +113,7 @@ final class JsonResumableSessionQueryTask
       } else {
         HttpResponseException cause = new HttpResponseException(response);
         String contentType = response.getHeaders().getContentType();
+        Long contentLength = response.getHeaders().getContentLength();
         // If the content-range header value has run ahead of the backend, it will respond with
         // a 503 with plain text content
         // Attempt to detect this very loosely as to minimize impact of modified error message
@@ -120,7 +121,9 @@ final class JsonResumableSessionQueryTask
         if ((!ResumableSessionFailureScenario.isOk(code)
                 && !ResumableSessionFailureScenario.isContinue(code))
             && contentType != null
-            && contentType.startsWith("text/plain")) {
+            && contentType.startsWith("text/plain")
+            && contentLength != null
+            && contentLength > 0) {
           String errorMessage = cause.getContent().toLowerCase(Locale.US);
           if (errorMessage.contains("content-range")) {
             throw ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
