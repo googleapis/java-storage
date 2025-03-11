@@ -16,6 +16,7 @@
 
 package com.google.storage.control.v2.stub;
 
+import static com.google.storage.control.v2.StorageControlClient.ListAnywhereCachesPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
@@ -25,22 +26,33 @@ import com.google.api.gax.rpc.UnaryCallable;
 import com.google.longrunning.Operation;
 import com.google.longrunning.stub.OperationsStub;
 import com.google.protobuf.Empty;
+import com.google.storage.control.v2.AnywhereCache;
+import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
+import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
+import com.google.storage.control.v2.DisableAnywhereCacheRequest;
 import com.google.storage.control.v2.Folder;
+import com.google.storage.control.v2.GetAnywhereCacheRequest;
 import com.google.storage.control.v2.GetFolderRequest;
 import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
+import com.google.storage.control.v2.ListAnywhereCachesRequest;
+import com.google.storage.control.v2.ListAnywhereCachesResponse;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
 import com.google.storage.control.v2.ListManagedFoldersRequest;
 import com.google.storage.control.v2.ListManagedFoldersResponse;
 import com.google.storage.control.v2.ManagedFolder;
+import com.google.storage.control.v2.PauseAnywhereCacheRequest;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
+import com.google.storage.control.v2.ResumeAnywhereCacheRequest;
 import com.google.storage.control.v2.StorageLayout;
+import com.google.storage.control.v2.UpdateAnywhereCacheMetadata;
+import com.google.storage.control.v2.UpdateAnywhereCacheRequest;
 import javax.annotation.Generated;
 
 // AUTO-GENERATED DOCUMENTATION AND CLASS.
@@ -109,6 +121,52 @@ public abstract class StorageControlStub implements BackgroundResource {
   public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersResponse>
       listManagedFoldersCallable() {
     throw new UnsupportedOperationException("Not implemented: listManagedFoldersCallable()");
+  }
+
+  public OperationCallable<CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: createAnywhereCacheOperationCallable()");
+  }
+
+  public UnaryCallable<CreateAnywhereCacheRequest, Operation> createAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: createAnywhereCacheCallable()");
+  }
+
+  public OperationCallable<UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: updateAnywhereCacheOperationCallable()");
+  }
+
+  public UnaryCallable<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: updateAnywhereCacheCallable()");
+  }
+
+  public UnaryCallable<DisableAnywhereCacheRequest, AnywhereCache> disableAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: disableAnywhereCacheCallable()");
+  }
+
+  public UnaryCallable<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: pauseAnywhereCacheCallable()");
+  }
+
+  public UnaryCallable<ResumeAnywhereCacheRequest, AnywhereCache> resumeAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: resumeAnywhereCacheCallable()");
+  }
+
+  public UnaryCallable<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheCallable() {
+    throw new UnsupportedOperationException("Not implemented: getAnywhereCacheCallable()");
+  }
+
+  public UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesPagedCallable() {
+    throw new UnsupportedOperationException("Not implemented: listAnywhereCachesPagedCallable()");
+  }
+
+  public UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+      listAnywhereCachesCallable() {
+    throw new UnsupportedOperationException("Not implemented: listAnywhereCachesCallable()");
   }
 
   @Override

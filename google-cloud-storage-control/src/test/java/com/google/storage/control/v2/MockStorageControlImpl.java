@@ -267,4 +267,152 @@ public class MockStorageControlImpl extends StorageControlImplBase {
                   Exception.class.getName())));
     }
   }
+
+  @Override
+  public void createAnywhereCache(
+      CreateAnywhereCacheRequest request, StreamObserver<Operation> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof Operation) {
+      requests.add(request);
+      responseObserver.onNext(((Operation) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method CreateAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  Operation.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void updateAnywhereCache(
+      UpdateAnywhereCacheRequest request, StreamObserver<Operation> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof Operation) {
+      requests.add(request);
+      responseObserver.onNext(((Operation) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method UpdateAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  Operation.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void disableAnywhereCache(
+      DisableAnywhereCacheRequest request, StreamObserver<AnywhereCache> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof AnywhereCache) {
+      requests.add(request);
+      responseObserver.onNext(((AnywhereCache) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method DisableAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  AnywhereCache.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void pauseAnywhereCache(
+      PauseAnywhereCacheRequest request, StreamObserver<AnywhereCache> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof AnywhereCache) {
+      requests.add(request);
+      responseObserver.onNext(((AnywhereCache) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method PauseAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  AnywhereCache.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void resumeAnywhereCache(
+      ResumeAnywhereCacheRequest request, StreamObserver<AnywhereCache> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof AnywhereCache) {
+      requests.add(request);
+      responseObserver.onNext(((AnywhereCache) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method ResumeAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  AnywhereCache.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void getAnywhereCache(
+      GetAnywhereCacheRequest request, StreamObserver<AnywhereCache> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof AnywhereCache) {
+      requests.add(request);
+      responseObserver.onNext(((AnywhereCache) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method GetAnywhereCache, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  AnywhereCache.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
+  public void listAnywhereCaches(
+      ListAnywhereCachesRequest request,
+      StreamObserver<ListAnywhereCachesResponse> responseObserver) {
+    Object response = responses.poll();
+    if (response instanceof ListAnywhereCachesResponse) {
+      requests.add(request);
+      responseObserver.onNext(((ListAnywhereCachesResponse) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method ListAnywhereCaches, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  ListAnywhereCachesResponse.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
 }

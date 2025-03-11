@@ -16,6 +16,7 @@
 
 package com.google.storage.control.v2.stub;
 
+import static com.google.storage.control.v2.StorageControlClient.ListAnywhereCachesPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
@@ -51,22 +52,33 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Empty;
+import com.google.storage.control.v2.AnywhereCache;
+import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
+import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
+import com.google.storage.control.v2.DisableAnywhereCacheRequest;
 import com.google.storage.control.v2.Folder;
+import com.google.storage.control.v2.GetAnywhereCacheRequest;
 import com.google.storage.control.v2.GetFolderRequest;
 import com.google.storage.control.v2.GetManagedFolderRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
+import com.google.storage.control.v2.ListAnywhereCachesRequest;
+import com.google.storage.control.v2.ListAnywhereCachesResponse;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
 import com.google.storage.control.v2.ListManagedFoldersRequest;
 import com.google.storage.control.v2.ListManagedFoldersResponse;
 import com.google.storage.control.v2.ManagedFolder;
+import com.google.storage.control.v2.PauseAnywhereCacheRequest;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
+import com.google.storage.control.v2.ResumeAnywhereCacheRequest;
 import com.google.storage.control.v2.StorageLayout;
+import com.google.storage.control.v2.UpdateAnywhereCacheMetadata;
+import com.google.storage.control.v2.UpdateAnywhereCacheRequest;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
@@ -176,6 +188,26 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
   private final PagedCallSettings<
           ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
       listManagedFoldersSettings;
+  private final UnaryCallSettings<CreateAnywhereCacheRequest, Operation>
+      createAnywhereCacheSettings;
+  private final OperationCallSettings<
+          CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationSettings;
+  private final UnaryCallSettings<UpdateAnywhereCacheRequest, Operation>
+      updateAnywhereCacheSettings;
+  private final OperationCallSettings<
+          UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationSettings;
+  private final UnaryCallSettings<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheSettings;
+  private final UnaryCallSettings<PauseAnywhereCacheRequest, AnywhereCache>
+      pauseAnywhereCacheSettings;
+  private final UnaryCallSettings<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheSettings;
+  private final UnaryCallSettings<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheSettings;
+  private final PagedCallSettings<
+          ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesSettings;
 
   private static final PagedListDescriptor<ListFoldersRequest, ListFoldersResponse, Folder>
       LIST_FOLDERS_PAGE_STR_DESC =
@@ -249,6 +281,44 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
             }
           };
 
+  private static final PagedListDescriptor<
+          ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache>
+      LIST_ANYWHERE_CACHES_PAGE_STR_DESC =
+          new PagedListDescriptor<
+              ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache>() {
+            @Override
+            public String emptyToken() {
+              return "";
+            }
+
+            @Override
+            public ListAnywhereCachesRequest injectToken(
+                ListAnywhereCachesRequest payload, String token) {
+              return ListAnywhereCachesRequest.newBuilder(payload).setPageToken(token).build();
+            }
+
+            @Override
+            public ListAnywhereCachesRequest injectPageSize(
+                ListAnywhereCachesRequest payload, int pageSize) {
+              return ListAnywhereCachesRequest.newBuilder(payload).setPageSize(pageSize).build();
+            }
+
+            @Override
+            public Integer extractPageSize(ListAnywhereCachesRequest payload) {
+              return payload.getPageSize();
+            }
+
+            @Override
+            public String extractNextToken(ListAnywhereCachesResponse payload) {
+              return payload.getNextPageToken();
+            }
+
+            @Override
+            public Iterable<AnywhereCache> extractResources(ListAnywhereCachesResponse payload) {
+              return payload.getAnywhereCachesList();
+            }
+          };
+
   private static final PagedListResponseFactory<
           ListFoldersRequest, ListFoldersResponse, ListFoldersPagedResponse>
       LIST_FOLDERS_PAGE_STR_FACT =
@@ -284,6 +354,27 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
                       PageContext.create(
                           callable, LIST_MANAGED_FOLDERS_PAGE_STR_DESC, request, context);
               return ListManagedFoldersPagedResponse.createAsync(pageContext, futureResponse);
+            }
+          };
+
+  private static final PagedListResponseFactory<
+          ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+      LIST_ANYWHERE_CACHES_PAGE_STR_FACT =
+          new PagedListResponseFactory<
+              ListAnywhereCachesRequest,
+              ListAnywhereCachesResponse,
+              ListAnywhereCachesPagedResponse>() {
+            @Override
+            public ApiFuture<ListAnywhereCachesPagedResponse> getFuturePagedResponse(
+                UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesResponse> callable,
+                ListAnywhereCachesRequest request,
+                ApiCallContext context,
+                ApiFuture<ListAnywhereCachesResponse> futureResponse) {
+              PageContext<ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache>
+                  pageContext =
+                      PageContext.create(
+                          callable, LIST_ANYWHERE_CACHES_PAGE_STR_DESC, request, context);
+              return ListAnywhereCachesPagedResponse.createAsync(pageContext, futureResponse);
             }
           };
 
@@ -345,6 +436,59 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
           ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
       listManagedFoldersSettings() {
     return listManagedFoldersSettings;
+  }
+
+  /** Returns the object with the settings used for calls to createAnywhereCache. */
+  public UnaryCallSettings<CreateAnywhereCacheRequest, Operation> createAnywhereCacheSettings() {
+    return createAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to createAnywhereCache. */
+  public OperationCallSettings<
+          CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationSettings() {
+    return createAnywhereCacheOperationSettings;
+  }
+
+  /** Returns the object with the settings used for calls to updateAnywhereCache. */
+  public UnaryCallSettings<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheSettings() {
+    return updateAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to updateAnywhereCache. */
+  public OperationCallSettings<
+          UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationSettings() {
+    return updateAnywhereCacheOperationSettings;
+  }
+
+  /** Returns the object with the settings used for calls to disableAnywhereCache. */
+  public UnaryCallSettings<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheSettings() {
+    return disableAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to pauseAnywhereCache. */
+  public UnaryCallSettings<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheSettings() {
+    return pauseAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to resumeAnywhereCache. */
+  public UnaryCallSettings<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheSettings() {
+    return resumeAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to getAnywhereCache. */
+  public UnaryCallSettings<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheSettings() {
+    return getAnywhereCacheSettings;
+  }
+
+  /** Returns the object with the settings used for calls to listAnywhereCaches. */
+  public PagedCallSettings<
+          ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesSettings() {
+    return listAnywhereCachesSettings;
   }
 
   public StorageControlStub createStub() throws IOException {
@@ -439,6 +583,17 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     deleteManagedFolderSettings = settingsBuilder.deleteManagedFolderSettings().build();
     getManagedFolderSettings = settingsBuilder.getManagedFolderSettings().build();
     listManagedFoldersSettings = settingsBuilder.listManagedFoldersSettings().build();
+    createAnywhereCacheSettings = settingsBuilder.createAnywhereCacheSettings().build();
+    createAnywhereCacheOperationSettings =
+        settingsBuilder.createAnywhereCacheOperationSettings().build();
+    updateAnywhereCacheSettings = settingsBuilder.updateAnywhereCacheSettings().build();
+    updateAnywhereCacheOperationSettings =
+        settingsBuilder.updateAnywhereCacheOperationSettings().build();
+    disableAnywhereCacheSettings = settingsBuilder.disableAnywhereCacheSettings().build();
+    pauseAnywhereCacheSettings = settingsBuilder.pauseAnywhereCacheSettings().build();
+    resumeAnywhereCacheSettings = settingsBuilder.resumeAnywhereCacheSettings().build();
+    getAnywhereCacheSettings = settingsBuilder.getAnywhereCacheSettings().build();
+    listAnywhereCachesSettings = settingsBuilder.listAnywhereCachesSettings().build();
   }
 
   /** Builder for StorageControlStubSettings. */
@@ -464,6 +619,27 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     private final PagedCallSettings.Builder<
             ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
         listManagedFoldersSettings;
+    private final UnaryCallSettings.Builder<CreateAnywhereCacheRequest, Operation>
+        createAnywhereCacheSettings;
+    private final OperationCallSettings.Builder<
+            CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+        createAnywhereCacheOperationSettings;
+    private final UnaryCallSettings.Builder<UpdateAnywhereCacheRequest, Operation>
+        updateAnywhereCacheSettings;
+    private final OperationCallSettings.Builder<
+            UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+        updateAnywhereCacheOperationSettings;
+    private final UnaryCallSettings.Builder<DisableAnywhereCacheRequest, AnywhereCache>
+        disableAnywhereCacheSettings;
+    private final UnaryCallSettings.Builder<PauseAnywhereCacheRequest, AnywhereCache>
+        pauseAnywhereCacheSettings;
+    private final UnaryCallSettings.Builder<ResumeAnywhereCacheRequest, AnywhereCache>
+        resumeAnywhereCacheSettings;
+    private final UnaryCallSettings.Builder<GetAnywhereCacheRequest, AnywhereCache>
+        getAnywhereCacheSettings;
+    private final PagedCallSettings.Builder<
+            ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+        listAnywhereCachesSettings;
     private static final ImmutableMap<String, ImmutableSet<StatusCode.Code>>
         RETRYABLE_CODE_DEFINITIONS;
 
@@ -529,6 +705,15 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       deleteManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       getManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       listManagedFoldersSettings = PagedCallSettings.newBuilder(LIST_MANAGED_FOLDERS_PAGE_STR_FACT);
+      createAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      createAnywhereCacheOperationSettings = OperationCallSettings.newBuilder();
+      updateAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      updateAnywhereCacheOperationSettings = OperationCallSettings.newBuilder();
+      disableAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      pauseAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      resumeAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      getAnywhereCacheSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      listAnywhereCachesSettings = PagedCallSettings.newBuilder(LIST_ANYWHERE_CACHES_PAGE_STR_FACT);
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -541,7 +726,14 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               createManagedFolderSettings,
               deleteManagedFolderSettings,
               getManagedFolderSettings,
-              listManagedFoldersSettings);
+              listManagedFoldersSettings,
+              createAnywhereCacheSettings,
+              updateAnywhereCacheSettings,
+              disableAnywhereCacheSettings,
+              pauseAnywhereCacheSettings,
+              resumeAnywhereCacheSettings,
+              getAnywhereCacheSettings,
+              listAnywhereCachesSettings);
       initDefaults(this);
     }
 
@@ -559,6 +751,17 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       deleteManagedFolderSettings = settings.deleteManagedFolderSettings.toBuilder();
       getManagedFolderSettings = settings.getManagedFolderSettings.toBuilder();
       listManagedFoldersSettings = settings.listManagedFoldersSettings.toBuilder();
+      createAnywhereCacheSettings = settings.createAnywhereCacheSettings.toBuilder();
+      createAnywhereCacheOperationSettings =
+          settings.createAnywhereCacheOperationSettings.toBuilder();
+      updateAnywhereCacheSettings = settings.updateAnywhereCacheSettings.toBuilder();
+      updateAnywhereCacheOperationSettings =
+          settings.updateAnywhereCacheOperationSettings.toBuilder();
+      disableAnywhereCacheSettings = settings.disableAnywhereCacheSettings.toBuilder();
+      pauseAnywhereCacheSettings = settings.pauseAnywhereCacheSettings.toBuilder();
+      resumeAnywhereCacheSettings = settings.resumeAnywhereCacheSettings.toBuilder();
+      getAnywhereCacheSettings = settings.getAnywhereCacheSettings.toBuilder();
+      listAnywhereCachesSettings = settings.listAnywhereCachesSettings.toBuilder();
 
       unaryMethodSettingsBuilders =
           ImmutableList.<UnaryCallSettings.Builder<?, ?>>of(
@@ -571,7 +774,14 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               createManagedFolderSettings,
               deleteManagedFolderSettings,
               getManagedFolderSettings,
-              listManagedFoldersSettings);
+              listManagedFoldersSettings,
+              createAnywhereCacheSettings,
+              updateAnywhereCacheSettings,
+              disableAnywhereCacheSettings,
+              pauseAnywhereCacheSettings,
+              resumeAnywhereCacheSettings,
+              getAnywhereCacheSettings,
+              listAnywhereCachesSettings);
     }
 
     private static Builder createDefault() {
@@ -638,6 +848,41 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
       builder
+          .createAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .updateAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .disableAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .pauseAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .resumeAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .getAnywhereCacheSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
+          .listAnywhereCachesSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"));
+
+      builder
           .renameFolderOperationSettings()
           .setInitialCallSettings(
               UnaryCallSettings
@@ -649,6 +894,56 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               ProtoOperationTransformers.ResponseTransformer.create(Folder.class))
           .setMetadataTransformer(
               ProtoOperationTransformers.MetadataTransformer.create(RenameFolderMetadata.class))
+          .setPollingAlgorithm(
+              OperationTimedPollAlgorithm.create(
+                  RetrySettings.newBuilder()
+                      .setInitialRetryDelayDuration(Duration.ofMillis(5000L))
+                      .setRetryDelayMultiplier(1.5)
+                      .setMaxRetryDelayDuration(Duration.ofMillis(45000L))
+                      .setInitialRpcTimeoutDuration(Duration.ZERO)
+                      .setRpcTimeoutMultiplier(1.0)
+                      .setMaxRpcTimeoutDuration(Duration.ZERO)
+                      .setTotalTimeoutDuration(Duration.ofMillis(300000L))
+                      .build()));
+
+      builder
+          .createAnywhereCacheOperationSettings()
+          .setInitialCallSettings(
+              UnaryCallSettings
+                  .<CreateAnywhereCacheRequest, OperationSnapshot>newUnaryCallSettingsBuilder()
+                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"))
+                  .build())
+          .setResponseTransformer(
+              ProtoOperationTransformers.ResponseTransformer.create(AnywhereCache.class))
+          .setMetadataTransformer(
+              ProtoOperationTransformers.MetadataTransformer.create(
+                  CreateAnywhereCacheMetadata.class))
+          .setPollingAlgorithm(
+              OperationTimedPollAlgorithm.create(
+                  RetrySettings.newBuilder()
+                      .setInitialRetryDelayDuration(Duration.ofMillis(5000L))
+                      .setRetryDelayMultiplier(1.5)
+                      .setMaxRetryDelayDuration(Duration.ofMillis(45000L))
+                      .setInitialRpcTimeoutDuration(Duration.ZERO)
+                      .setRpcTimeoutMultiplier(1.0)
+                      .setMaxRpcTimeoutDuration(Duration.ZERO)
+                      .setTotalTimeoutDuration(Duration.ofMillis(300000L))
+                      .build()));
+
+      builder
+          .updateAnywhereCacheOperationSettings()
+          .setInitialCallSettings(
+              UnaryCallSettings
+                  .<UpdateAnywhereCacheRequest, OperationSnapshot>newUnaryCallSettingsBuilder()
+                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("no_retry_1_codes"))
+                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("no_retry_1_params"))
+                  .build())
+          .setResponseTransformer(
+              ProtoOperationTransformers.ResponseTransformer.create(AnywhereCache.class))
+          .setMetadataTransformer(
+              ProtoOperationTransformers.MetadataTransformer.create(
+                  UpdateAnywhereCacheMetadata.class))
           .setPollingAlgorithm(
               OperationTimedPollAlgorithm.create(
                   RetrySettings.newBuilder()
@@ -741,6 +1036,63 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
             ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
         listManagedFoldersSettings() {
       return listManagedFoldersSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to createAnywhereCache. */
+    public UnaryCallSettings.Builder<CreateAnywhereCacheRequest, Operation>
+        createAnywhereCacheSettings() {
+      return createAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to createAnywhereCache. */
+    public OperationCallSettings.Builder<
+            CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+        createAnywhereCacheOperationSettings() {
+      return createAnywhereCacheOperationSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to updateAnywhereCache. */
+    public UnaryCallSettings.Builder<UpdateAnywhereCacheRequest, Operation>
+        updateAnywhereCacheSettings() {
+      return updateAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to updateAnywhereCache. */
+    public OperationCallSettings.Builder<
+            UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+        updateAnywhereCacheOperationSettings() {
+      return updateAnywhereCacheOperationSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to disableAnywhereCache. */
+    public UnaryCallSettings.Builder<DisableAnywhereCacheRequest, AnywhereCache>
+        disableAnywhereCacheSettings() {
+      return disableAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to pauseAnywhereCache. */
+    public UnaryCallSettings.Builder<PauseAnywhereCacheRequest, AnywhereCache>
+        pauseAnywhereCacheSettings() {
+      return pauseAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to resumeAnywhereCache. */
+    public UnaryCallSettings.Builder<ResumeAnywhereCacheRequest, AnywhereCache>
+        resumeAnywhereCacheSettings() {
+      return resumeAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to getAnywhereCache. */
+    public UnaryCallSettings.Builder<GetAnywhereCacheRequest, AnywhereCache>
+        getAnywhereCacheSettings() {
+      return getAnywhereCacheSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to listAnywhereCaches. */
+    public PagedCallSettings.Builder<
+            ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+        listAnywhereCachesSettings() {
+      return listAnywhereCachesSettings;
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package com.google.storage.control.v2;
 
+import static com.google.storage.control.v2.StorageControlClient.ListAnywhereCachesPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
@@ -176,6 +177,59 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     return ((StorageControlStubSettings) getStubSettings()).listManagedFoldersSettings();
   }
 
+  /** Returns the object with the settings used for calls to createAnywhereCache. */
+  public UnaryCallSettings<CreateAnywhereCacheRequest, Operation> createAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).createAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to createAnywhereCache. */
+  public OperationCallSettings<
+          CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).createAnywhereCacheOperationSettings();
+  }
+
+  /** Returns the object with the settings used for calls to updateAnywhereCache. */
+  public UnaryCallSettings<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).updateAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to updateAnywhereCache. */
+  public OperationCallSettings<
+          UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).updateAnywhereCacheOperationSettings();
+  }
+
+  /** Returns the object with the settings used for calls to disableAnywhereCache. */
+  public UnaryCallSettings<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).disableAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to pauseAnywhereCache. */
+  public UnaryCallSettings<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).pauseAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to resumeAnywhereCache. */
+  public UnaryCallSettings<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).resumeAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to getAnywhereCache. */
+  public UnaryCallSettings<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).getAnywhereCacheSettings();
+  }
+
+  /** Returns the object with the settings used for calls to listAnywhereCaches. */
+  public PagedCallSettings<
+          ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).listAnywhereCachesSettings();
+  }
+
   public static final StorageControlSettings create(StorageControlStubSettings stub)
       throws IOException {
     return new StorageControlSettings.Builder(stub.toBuilder()).build();
@@ -334,6 +388,63 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
             ListManagedFoldersRequest, ListManagedFoldersResponse, ListManagedFoldersPagedResponse>
         listManagedFoldersSettings() {
       return getStubSettingsBuilder().listManagedFoldersSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to createAnywhereCache. */
+    public UnaryCallSettings.Builder<CreateAnywhereCacheRequest, Operation>
+        createAnywhereCacheSettings() {
+      return getStubSettingsBuilder().createAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to createAnywhereCache. */
+    public OperationCallSettings.Builder<
+            CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+        createAnywhereCacheOperationSettings() {
+      return getStubSettingsBuilder().createAnywhereCacheOperationSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to updateAnywhereCache. */
+    public UnaryCallSettings.Builder<UpdateAnywhereCacheRequest, Operation>
+        updateAnywhereCacheSettings() {
+      return getStubSettingsBuilder().updateAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to updateAnywhereCache. */
+    public OperationCallSettings.Builder<
+            UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+        updateAnywhereCacheOperationSettings() {
+      return getStubSettingsBuilder().updateAnywhereCacheOperationSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to disableAnywhereCache. */
+    public UnaryCallSettings.Builder<DisableAnywhereCacheRequest, AnywhereCache>
+        disableAnywhereCacheSettings() {
+      return getStubSettingsBuilder().disableAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to pauseAnywhereCache. */
+    public UnaryCallSettings.Builder<PauseAnywhereCacheRequest, AnywhereCache>
+        pauseAnywhereCacheSettings() {
+      return getStubSettingsBuilder().pauseAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to resumeAnywhereCache. */
+    public UnaryCallSettings.Builder<ResumeAnywhereCacheRequest, AnywhereCache>
+        resumeAnywhereCacheSettings() {
+      return getStubSettingsBuilder().resumeAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to getAnywhereCache. */
+    public UnaryCallSettings.Builder<GetAnywhereCacheRequest, AnywhereCache>
+        getAnywhereCacheSettings() {
+      return getStubSettingsBuilder().getAnywhereCacheSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to listAnywhereCaches. */
+    public PagedCallSettings.Builder<
+            ListAnywhereCachesRequest, ListAnywhereCachesResponse, ListAnywhereCachesPagedResponse>
+        listAnywhereCachesSettings() {
+      return getStubSettingsBuilder().listAnywhereCachesSettings();
     }
 
     @Override

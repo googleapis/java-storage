@@ -485,6 +485,340 @@ public final class StorageControlGrpc {
     return getListManagedFoldersMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getCreateAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateAnywhereCache",
+      requestType = com.google.storage.control.v2.CreateAnywhereCacheRequest.class,
+      responseType = com.google.longrunning.Operation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getCreateAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.CreateAnywhereCacheRequest,
+            com.google.longrunning.Operation>
+        getCreateAnywhereCacheMethod;
+    if ((getCreateAnywhereCacheMethod = StorageControlGrpc.getCreateAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getCreateAnywhereCacheMethod = StorageControlGrpc.getCreateAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getCreateAnywhereCacheMethod =
+              getCreateAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.CreateAnywhereCacheRequest,
+                          com.google.longrunning.Operation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "CreateAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.CreateAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.longrunning.Operation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("CreateAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getCreateAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getUpdateAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateAnywhereCache",
+      requestType = com.google.storage.control.v2.UpdateAnywhereCacheRequest.class,
+      responseType = com.google.longrunning.Operation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getUpdateAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+            com.google.longrunning.Operation>
+        getUpdateAnywhereCacheMethod;
+    if ((getUpdateAnywhereCacheMethod = StorageControlGrpc.getUpdateAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getUpdateAnywhereCacheMethod = StorageControlGrpc.getUpdateAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getUpdateAnywhereCacheMethod =
+              getUpdateAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+                          com.google.longrunning.Operation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UpdateAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.UpdateAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.longrunning.Operation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("UpdateAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DisableAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getDisableAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DisableAnywhereCache",
+      requestType = com.google.storage.control.v2.DisableAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DisableAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getDisableAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.DisableAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getDisableAnywhereCacheMethod;
+    if ((getDisableAnywhereCacheMethod = StorageControlGrpc.getDisableAnywhereCacheMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getDisableAnywhereCacheMethod = StorageControlGrpc.getDisableAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getDisableAnywhereCacheMethod =
+              getDisableAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.DisableAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DisableAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.DisableAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("DisableAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getDisableAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.PauseAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getPauseAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "PauseAnywhereCache",
+      requestType = com.google.storage.control.v2.PauseAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.PauseAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getPauseAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.PauseAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getPauseAnywhereCacheMethod;
+    if ((getPauseAnywhereCacheMethod = StorageControlGrpc.getPauseAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getPauseAnywhereCacheMethod = StorageControlGrpc.getPauseAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getPauseAnywhereCacheMethod =
+              getPauseAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.PauseAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "PauseAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.PauseAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("PauseAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getPauseAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getResumeAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ResumeAnywhereCache",
+      requestType = com.google.storage.control.v2.ResumeAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getResumeAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getResumeAnywhereCacheMethod;
+    if ((getResumeAnywhereCacheMethod = StorageControlGrpc.getResumeAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getResumeAnywhereCacheMethod = StorageControlGrpc.getResumeAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getResumeAnywhereCacheMethod =
+              getResumeAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "ResumeAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ResumeAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("ResumeAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getResumeAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getGetAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAnywhereCache",
+      requestType = com.google.storage.control.v2.GetAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getGetAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getGetAnywhereCacheMethod;
+    if ((getGetAnywhereCacheMethod = StorageControlGrpc.getGetAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetAnywhereCacheMethod = StorageControlGrpc.getGetAnywhereCacheMethod) == null) {
+          StorageControlGrpc.getGetAnywhereCacheMethod =
+              getGetAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("GetAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getGetAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListAnywhereCachesRequest,
+          com.google.storage.control.v2.ListAnywhereCachesResponse>
+      getListAnywhereCachesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListAnywhereCaches",
+      requestType = com.google.storage.control.v2.ListAnywhereCachesRequest.class,
+      responseType = com.google.storage.control.v2.ListAnywhereCachesResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListAnywhereCachesRequest,
+          com.google.storage.control.v2.ListAnywhereCachesResponse>
+      getListAnywhereCachesMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.ListAnywhereCachesRequest,
+            com.google.storage.control.v2.ListAnywhereCachesResponse>
+        getListAnywhereCachesMethod;
+    if ((getListAnywhereCachesMethod = StorageControlGrpc.getListAnywhereCachesMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getListAnywhereCachesMethod = StorageControlGrpc.getListAnywhereCachesMethod)
+            == null) {
+          StorageControlGrpc.getListAnywhereCachesMethod =
+              getListAnywhereCachesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.ListAnywhereCachesRequest,
+                          com.google.storage.control.v2.ListAnywhereCachesResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAnywhereCaches"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListAnywhereCachesRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListAnywhereCachesResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("ListAnywhereCaches"))
+                      .build();
+        }
+      }
+    }
+    return getListAnywhereCachesMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static StorageControlStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<StorageControlStub> factory =
@@ -681,6 +1015,109 @@ public final class StorageControlGrpc {
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getListManagedFoldersMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    default void createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCreateAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    default void updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    default void disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDisableAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    default void pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getPauseAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    default void resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getResumeAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    default void getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    default void listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListAnywhereCachesResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getListAnywhereCachesMethod(), responseObserver);
     }
   }
 
@@ -884,6 +1321,123 @@ public final class StorageControlGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public void createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public void updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public void disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDisableAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public void pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getPauseAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public void resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getResumeAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public void getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public void listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListAnywhereCachesResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListAnywhereCachesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /**
@@ -1040,6 +1594,101 @@ public final class StorageControlGrpc {
         com.google.storage.control.v2.ListManagedFoldersRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.longrunning.Operation createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public com.google.longrunning.Operation updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDisableAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPauseAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getResumeAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListAnywhereCachesResponse listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListAnywhereCachesMethod(), getCallOptions(), request);
     }
   }
 
@@ -1203,6 +1852,106 @@ public final class StorageControlGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListManagedFoldersMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>
+        createAnywhereCache(com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>
+        updateAnywhereCache(com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        disableAnywhereCache(com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDisableAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        pauseAnywhereCache(com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getPauseAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        resumeAnywhereCache(com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getResumeAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        getAnywhereCache(com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.ListAnywhereCachesResponse>
+        listAnywhereCaches(com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListAnywhereCachesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_FOLDER = 0;
@@ -1215,6 +1964,13 @@ public final class StorageControlGrpc {
   private static final int METHODID_DELETE_MANAGED_FOLDER = 7;
   private static final int METHODID_GET_MANAGED_FOLDER = 8;
   private static final int METHODID_LIST_MANAGED_FOLDERS = 9;
+  private static final int METHODID_CREATE_ANYWHERE_CACHE = 10;
+  private static final int METHODID_UPDATE_ANYWHERE_CACHE = 11;
+  private static final int METHODID_DISABLE_ANYWHERE_CACHE = 12;
+  private static final int METHODID_PAUSE_ANYWHERE_CACHE = 13;
+  private static final int METHODID_RESUME_ANYWHERE_CACHE = 14;
+  private static final int METHODID_GET_ANYWHERE_CACHE = 15;
+  private static final int METHODID_LIST_ANYWHERE_CACHES = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1287,6 +2043,47 @@ public final class StorageControlGrpc {
               (com.google.storage.control.v2.ListManagedFoldersRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.google.storage.control.v2.ListManagedFoldersResponse>)
+                  responseObserver);
+          break;
+        case METHODID_CREATE_ANYWHERE_CACHE:
+          serviceImpl.createAnywhereCache(
+              (com.google.storage.control.v2.CreateAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
+          break;
+        case METHODID_UPDATE_ANYWHERE_CACHE:
+          serviceImpl.updateAnywhereCache(
+              (com.google.storage.control.v2.UpdateAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
+          break;
+        case METHODID_DISABLE_ANYWHERE_CACHE:
+          serviceImpl.disableAnywhereCache(
+              (com.google.storage.control.v2.DisableAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_PAUSE_ANYWHERE_CACHE:
+          serviceImpl.pauseAnywhereCache(
+              (com.google.storage.control.v2.PauseAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_RESUME_ANYWHERE_CACHE:
+          serviceImpl.resumeAnywhereCache(
+              (com.google.storage.control.v2.ResumeAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ANYWHERE_CACHE:
+          serviceImpl.getAnywhereCache(
+              (com.google.storage.control.v2.GetAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_LIST_ANYWHERE_CACHES:
+          serviceImpl.listAnywhereCaches(
+              (com.google.storage.control.v2.ListAnywhereCachesRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.google.storage.control.v2.ListAnywhereCachesResponse>)
                   responseObserver);
           break;
         default:
@@ -1372,6 +2169,53 @@ public final class StorageControlGrpc {
                     com.google.storage.control.v2.ListManagedFoldersRequest,
                     com.google.storage.control.v2.ListManagedFoldersResponse>(
                     service, METHODID_LIST_MANAGED_FOLDERS)))
+        .addMethod(
+            getCreateAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.CreateAnywhereCacheRequest,
+                    com.google.longrunning.Operation>(service, METHODID_CREATE_ANYWHERE_CACHE)))
+        .addMethod(
+            getUpdateAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+                    com.google.longrunning.Operation>(service, METHODID_UPDATE_ANYWHERE_CACHE)))
+        .addMethod(
+            getDisableAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.DisableAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_DISABLE_ANYWHERE_CACHE)))
+        .addMethod(
+            getPauseAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.PauseAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_PAUSE_ANYWHERE_CACHE)))
+        .addMethod(
+            getResumeAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_RESUME_ANYWHERE_CACHE)))
+        .addMethod(
+            getGetAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_GET_ANYWHERE_CACHE)))
+        .addMethod(
+            getListAnywhereCachesMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.ListAnywhereCachesRequest,
+                    com.google.storage.control.v2.ListAnywhereCachesResponse>(
+                    service, METHODID_LIST_ANYWHERE_CACHES)))
         .build();
   }
 
@@ -1433,6 +2277,13 @@ public final class StorageControlGrpc {
                       .addMethod(getDeleteManagedFolderMethod())
                       .addMethod(getGetManagedFolderMethod())
                       .addMethod(getListManagedFoldersMethod())
+                      .addMethod(getCreateAnywhereCacheMethod())
+                      .addMethod(getUpdateAnywhereCacheMethod())
+                      .addMethod(getDisableAnywhereCacheMethod())
+                      .addMethod(getPauseAnywhereCacheMethod())
+                      .addMethod(getResumeAnywhereCacheMethod())
+                      .addMethod(getGetAnywhereCacheMethod())
+                      .addMethod(getListAnywhereCachesMethod())
                       .build();
         }
       }
