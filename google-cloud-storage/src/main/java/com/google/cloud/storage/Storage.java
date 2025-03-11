@@ -5847,6 +5847,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   default AppendableBlobUpload appendableBlobUpload(
       BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
     return throwGrpcOnly(
-        fmtMethodName("createAppendableBlobUpload", BlobId.class, BlobWriteOption.class));
+        fmtMethodName("appendableBlobUpload", BlobId.class, BlobWriteOption.class));
   }
 }
