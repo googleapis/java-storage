@@ -281,7 +281,7 @@ final class ObjectReadSessionStream
           ObjectRangeData d = rangeData.get(i);
           ReadRange readRange = d.getReadRange();
           long id = readRange.getReadId();
-          ObjectReadSessionStreamRead read = state.getOutstandingRead(id);
+          ObjectReadSessionStreamRead<?> read = state.getOutstandingRead(id);
           if (read == null || !read.acceptingBytes()) {
             continue;
           }
@@ -391,7 +391,7 @@ final class ObjectReadSessionStream
         for (ReadRangeError rangeError : rangeErrors) {
           Status status = rangeError.getStatus();
           long id = rangeError.getReadId();
-          ObjectReadSessionStreamRead read = state.getOutstandingRead(id);
+          ObjectReadSessionStreamRead<?> read = state.getOutstandingRead(id);
           if (read == null) {
             continue;
           }
@@ -414,7 +414,7 @@ final class ObjectReadSessionStream
     private OnSuccess restartReadFromCurrentOffset(long id) {
       return () -> {
         //noinspection resource
-        ObjectReadSessionStreamRead readWithNewId = state.assignNewReadId(id);
+        ObjectReadSessionStreamRead<?> readWithNewId = state.assignNewReadId(id);
         BidiReadObjectRequest requestWithNewReadId =
             BidiReadObjectRequest.newBuilder().addReadRanges(readWithNewId.makeReadRange()).build();
         ObjectReadSessionStream.this.send(requestWithNewReadId);
