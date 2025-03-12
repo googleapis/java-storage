@@ -54,16 +54,16 @@ final class StorageDataClient implements IOAutoCloseable {
         "ranges included in the initial request are not supported");
     ObjectReadSessionState state = new ObjectReadSessionState(ctx, req);
 
+    ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        getCallable();
     ObjectReadSessionStream stream =
-        ObjectReadSessionStream.create(
-            executor, bidiReadObject, state, retryContextProvider.create());
+        ObjectReadSessionStream.create(executor, callable, state, retryContextProvider.create());
 
     ApiFuture<ObjectReadSession> objectReadSessionFuture =
         ApiFutures.transform(
             stream,
             nowOpen ->
-                new ObjectReadSessionImpl(
-                    executor, bidiReadObject, stream, state, retryContextProvider),
+                new ObjectReadSessionImpl(executor, callable, stream, state, retryContextProvider),
             executor);
     stream.send(req);
     return objectReadSessionFuture;
@@ -79,9 +79,10 @@ final class StorageDataClient implements IOAutoCloseable {
         "ranges included in the initial request are not supported");
     ObjectReadSessionState state = new ObjectReadSessionState(ctx, openRequest);
 
+    ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =
+        getCallable();
     ObjectReadSessionStream stream =
-        ObjectReadSessionStream.create(
-            executor, bidiReadObject, state, retryContextProvider.create());
+        ObjectReadSessionStream.create(executor, callable, state, retryContextProvider.create());
 
     long readId = state.newReadId();
     ObjectReadSessionStreamRead<Projection> read =
@@ -94,7 +95,7 @@ final class StorageDataClient implements IOAutoCloseable {
             nowOpen ->
                 new FastOpenObjectReadSession<>(
                     new ObjectReadSessionImpl(
-                        executor, bidiReadObject, stream, state, retryContextProvider),
+                        executor, callable, stream, state, retryContextProvider),
                     read,
                     stream),
             executor);
@@ -111,6 +112,11 @@ final class StorageDataClient implements IOAutoCloseable {
     try (IOAutoCloseable ignore = onClose) {
       // intentional
     }
+  }
+
+  private ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
+      getCallable() {
+    return bidiReadObject.withDefaultCallContext(Retrying.newCallContext());
   }
 
   static StorageDataClient create(

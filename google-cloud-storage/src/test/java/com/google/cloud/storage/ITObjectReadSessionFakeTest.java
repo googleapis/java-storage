@@ -55,6 +55,7 @@ import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import com.google.common.truth.Correspondence;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat;
@@ -132,8 +133,12 @@ public final class ITObjectReadSessionFakeTest {
   private static final byte[] ALL_OBJECT_BYTES = DataGenerator.base64Characters().genBytes(64);
   private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+  private static final Metadata.Key<String> X_GOOG_GCS_IDEMPOTENCY_TOKEN =
+      Metadata.Key.of("x-goog-gcs-idempotency-token", Metadata.ASCII_STRING_MARSHALLER);
   private static final Metadata.Key<String> X_GOOG_USER_PROJECT =
       Metadata.Key.of("x-goog-user-project", Metadata.ASCII_STRING_MARSHALLER);
+  private static final Correspondence<String, UUID> IS_UUID =
+      Correspondence.transforming(UUID::fromString, "is a UUID");
 
   /**
    *
@@ -796,7 +801,7 @@ public final class ITObjectReadSessionFakeTest {
             .hasCauseThat()
             .isInstanceOf(UncheckedChecksumMismatchException.class);
 
-        ObjectReadSessionStreamRead outstandingRead = orsi.state.getOutstandingRead(1L);
+        ObjectReadSessionStreamRead<?> outstandingRead = orsi.state.getOutstandingRead(1L);
         assertThat(outstandingRead).isNull();
       }
     }
@@ -862,6 +867,14 @@ public final class ITObjectReadSessionFakeTest {
                 requestAuditing
                     .assertRequestHeader(X_GOOG_REQUEST_PARAMS)
                     .contains("bucket=" + METADATA.getBucket()),
+            () -> requestAuditing.assertRequestHeader(X_GOOG_GCS_IDEMPOTENCY_TOKEN).hasSize(1),
+            () -> {
+              // make sure we get a UUID in our header
+              requestAuditing
+                  .assertRequestHeader(X_GOOG_GCS_IDEMPOTENCY_TOKEN)
+                  .comparingElementsUsing(IS_UUID)
+                  .doesNotContain(UUID.randomUUID());
+            },
             () ->
                 requestAuditing
                     .assertRequestHeader(X_GOOG_USER_PROJECT)
