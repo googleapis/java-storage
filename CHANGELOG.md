@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.50.0](https://github.com/googleapis/java-storage/compare/v2.49.0...v2.50.0) (2025-03-14)
+
+
+### Features
+
+* Next release from main branch is 2.50.0 ([#2968](https://github.com/googleapis/java-storage/issues/2968)) ([4a69fcc](https://github.com/googleapis/java-storage/commit/4a69fcc16787904675e5ba15f42bcab67553a7aa))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.54.0 ([22e7e3d](https://github.com/googleapis/java-storage/commit/22e7e3d4e8c56184f9c91b1e0bf52d5c4aa4cf9f))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.55.1 ([81c8c61](https://github.com/googleapis/java-storage/commit/81c8c611ab51a706d63670dff86db5bfd04ef544))
+* Improve 503 handling for json resumable uploads ([#2987](https://github.com/googleapis/java-storage/issues/2987)) ([9bc2b14](https://github.com/googleapis/java-storage/commit/9bc2b14a0058cded0321e5afa3ea3fc59bf3421b))
+* Update usages of String.format to explicitly pass Locale.US ([#2974](https://github.com/googleapis/java-storage/issues/2974)) ([8bcb2de](https://github.com/googleapis/java-storage/commit/8bcb2de22ea39cfc0b4dda07daba78ea192b5e98)), closes [#2972](https://github.com/googleapis/java-storage/issues/2972)
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250224-2.0.0 ([#2969](https://github.com/googleapis/java-storage/issues/2969)) ([80a40c4](https://github.com/googleapis/java-storage/commit/80a40c41527a5fb83a41ac4754d5be22f5cd5c2b))
+* Update googleapis/sdk-platform-java action to v2.55.1 ([#2985](https://github.com/googleapis/java-storage/issues/2985)) ([e22a2de](https://github.com/googleapis/java-storage/commit/e22a2de0fe1dc66e6e5b6d311f4812c290177203))
+* Update sdk-platform-java dependencies ([#2983](https://github.com/googleapis/java-storage/issues/2983)) ([9eeb82a](https://github.com/googleapis/java-storage/commit/9eeb82af81ad8095c21542808a8eaa5098dee074))
+* Update sdk-platform-java dependencies ([#2986](https://github.com/googleapis/java-storage/issues/2986)) ([10b922a](https://github.com/googleapis/java-storage/commit/10b922a8ae831fcd0107abf54091566442ae5fde))
+
 ## [2.49.0](https://github.com/googleapis/java-storage/compare/v2.48.2...v2.49.0) (2025-02-26)
 
 
