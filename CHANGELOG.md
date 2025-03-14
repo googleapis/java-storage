@@ -5,8 +5,6 @@
 
 ### Features
 
-* Add Anywhere cache control APIs ([81c8c61](https://github.com/googleapis/java-storage/commit/81c8c611ab51a706d63670dff86db5bfd04ef544))
-* Add Anywhere cache control APIs ([81c8c61](https://github.com/googleapis/java-storage/commit/81c8c611ab51a706d63670dff86db5bfd04ef544))
 * Next release from main branch is 2.50.0 ([#2968](https://github.com/googleapis/java-storage/issues/2968)) ([4a69fcc](https://github.com/googleapis/java-storage/commit/4a69fcc16787904675e5ba15f42bcab67553a7aa))
 
 
