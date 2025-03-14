@@ -237,4 +237,27 @@ public final class ITJsonResumableSessionQueryTaskTest {
       assertThat(se.getReason()).isEqualTo("dataLoss");
     }
   }
+
+  @Test
+  public void _503_emptyBody() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), APPEND_GREATER_THAN_CURRENT_SIZE);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      String uploadUrl =
+          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+
+      JsonResumableSessionQueryTask task =
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+
+      StorageException se = assertThrows(StorageException.class, task::call);
+      assertThat(se.getCode()).isEqualTo(503);
+    }
+  }
 }
