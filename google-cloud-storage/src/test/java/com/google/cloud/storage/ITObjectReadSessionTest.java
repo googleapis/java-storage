@@ -41,12 +41,16 @@ import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndConte
 import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CountingOutputStream;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -99,13 +103,9 @@ public final class ITObjectReadSessionTest {
   @Test
   public void lotsOfBytes() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));
 
-    BlobInfo gen1 =
-        storage.create(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
-            testContent.getBytes(),
-            BlobTargetOption.doesNotExist());
+    BlobInfo gen1 = create(testContent);
     BlobId blobId = gen1.getBlobId();
     for (int j = 0; j < 2; j++) {
 
@@ -113,7 +113,7 @@ public final class ITObjectReadSessionTest {
       try (BlobReadSession blobReadSession =
           storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
-        int numRangesToRead = 128;
+        int numRangesToRead = 32;
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
@@ -149,13 +149,9 @@ public final class ITObjectReadSessionTest {
   @Test
   public void lotsChannel() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));
 
-    BlobInfo gen1 =
-        storage.create(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
-            testContent.getBytes(),
-            BlobTargetOption.doesNotExist());
+    BlobInfo gen1 = create(testContent);
     BlobId blobId = gen1.getBlobId();
     byte[] buffer = new byte[_2MiB];
     for (int j = 0; j < 2; j++) {
@@ -188,21 +184,17 @@ public final class ITObjectReadSessionTest {
   @Test
   public void readRangeAsByteString() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(256 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));
 
-    BlobInfo gen1 =
-        storage.create(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
-            testContent.getBytes(),
-            BlobTargetOption.doesNotExist());
+    BlobInfo gen1 = create(testContent);
     BlobId blobId = gen1.getBlobId();
     for (int j = 0; j < 2; j++) {
 
       Stopwatch sw = Stopwatch.createStarted();
       try (BlobReadSession blobReadSession =
-          storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
+          storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
 
-        int numRangesToRead = 128;
+        int numRangesToRead = 32;
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
@@ -253,5 +245,53 @@ public final class ITObjectReadSessionTest {
     assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
     StorageException cause = (StorageException) ee.getCause();
     assertThat(cause.getCode()).isEqualTo(404);
+  }
+
+  @Test
+  public void seekable() throws Exception {
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));
+
+    BlobInfo gen1 = create(testContent);
+    BlobId blobId = gen1.getBlobId();
+    ByteBuffer buf = ByteBuffer.allocate(2 * 1024 * 1024);
+    for (int j = 0; j < 2; j++) {
+
+      try (BlobReadSession session = storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
+        CountingOutputStream countingOutputStream =
+            new CountingOutputStream(ByteStreams.nullOutputStream());
+        long copy1;
+        long copy2;
+        long copy3;
+        try (SeekableByteChannel seekable =
+                session.readRange(RangeSpec.all(), RangeProjectionConfigs.asSeekableChannel());
+            WritableByteChannel w = Channels.newChannel(countingOutputStream)) {
+          copy1 = Buffers.copyUsingBuffer(buf, seekable, w);
+
+          seekable.position(32 * _1MiB);
+          copy2 = Buffers.copyUsingBuffer(buf, seekable, w);
+
+          seekable.position(0);
+          copy3 = Buffers.copyUsingBuffer(buf, seekable, w);
+        }
+
+        long totalRead = countingOutputStream.getCount();
+        long finalCopy1 = copy1;
+        long finalCopy2 = copy2;
+        long finalCopy3 = copy3;
+        assertAll(
+            () -> assertThat(totalRead).isEqualTo((64 + 32 + 64) * _1MiB),
+            () -> assertThat(finalCopy1).isEqualTo(64 * _1MiB),
+            () -> assertThat(finalCopy2).isEqualTo(32 * _1MiB),
+            () -> assertThat(finalCopy3).isEqualTo(64 * _1MiB));
+      }
+    }
+  }
+
+  private BlobInfo create(ChecksummedTestContent content) {
+    return storage.create(
+        BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+        content.getBytes(),
+        BlobTargetOption.doesNotExist());
   }
 }

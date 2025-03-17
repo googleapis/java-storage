@@ -16,11 +16,16 @@
 
 package com.google.cloud.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
+import com.google.common.base.MoreObjects;
 import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.util.Objects;
 
 public final class RangeProjectionConfigs {
 
@@ -51,6 +56,68 @@ public final class RangeProjectionConfigs {
 
   static RangeAsFutureByteString asFutureByteString() {
     return RangeAsFutureByteString.INSTANCE;
+  }
+
+  public static SeekableChannelConfig asSeekableChannel() {
+    return SeekableChannelConfig.INSTANCE;
+  }
+
+  public static final class SeekableChannelConfig
+      extends RangeProjectionConfig<SeekableByteChannel> {
+
+    private static final SeekableChannelConfig INSTANCE =
+        new SeekableChannelConfig(LinearExponentialRangeSpecFunction.INSTANCE);
+
+    private final RangeSpecFunction rangeSpecFunction;
+
+    private SeekableChannelConfig(RangeSpecFunction rangeSpecFunction) {
+      this.rangeSpecFunction = rangeSpecFunction;
+    }
+
+    public RangeSpecFunction getRangeSpecFunction() {
+      return rangeSpecFunction;
+    }
+
+    public SeekableChannelConfig withRangeSpecFunction(RangeSpecFunction rangeSpecFunction) {
+      requireNonNull(rangeSpecFunction, "rangeSpecFunction must be non null");
+      return new SeekableChannelConfig(rangeSpecFunction);
+    }
+
+    @Override
+    SeekableByteChannel project(
+        RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+      return StorageByteChannels.seekable(
+          new ObjectReadSessionSeekableByteChannel(session, this, closeAlongWith));
+    }
+
+    @Override
+    ProjectionType getType() {
+      return ProjectionType.SESSION_USER;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof SeekableChannelConfig)) {
+        return false;
+      }
+      SeekableChannelConfig that = (SeekableChannelConfig) o;
+      return Objects.equals(rangeSpecFunction, that.rangeSpecFunction);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(rangeSpecFunction);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("rangeSpecFunction", rangeSpecFunction)
+          .toString();
+    }
   }
 
   public static final class RangeAsChannel
