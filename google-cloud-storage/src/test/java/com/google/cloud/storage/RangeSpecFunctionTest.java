@@ -1,0 +1,59 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.cloud.storage;
+
+import static com.google.common.truth.Truth.assertThat;
+
+import net.jqwik.api.Example;
+
+public final class RangeSpecFunctionTest {
+  private static final long KiB = 1024;
+  private static final long MiB = 1024 * KiB;
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
+  @Example
+  public void linearExponential_withMaxLimit() {
+    RangeSpecFunction e =
+        RangeSpecFunction.linearExponential()
+            .withMinRangeSize(KiB)
+            .withRangeSizeScalar(4.0)
+            .andThen(RangeSpecFunction.maxLimit(64 * MiB));
+
+    RangeSpec apply = null;
+
+    apply = e.apply(0, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(0, KiB));
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(16 * KiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(64 * KiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(256 * KiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(MiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * MiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(16 * MiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(64 * MiB);
+    apply = e.apply(apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(64 * MiB);
+  }
+}

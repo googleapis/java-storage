@@ -79,6 +79,9 @@ public abstract class RangeSpec {
   public static RangeSpec of(long begin, long limit) {
     checkArgument(begin >= 0, "range being must be >= 0 (range begin = %s)", begin);
     checkArgument(limit >= 0, "range limit must be >= 0 (range limit = %s)", limit);
+    if (limit == 0) {
+      return new RangeSpecWithoutLimit(begin);
+    }
     return new RangeSpecWithLimit(begin, limit);
   }
 
