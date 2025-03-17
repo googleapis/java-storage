@@ -23,6 +23,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
+import com.google.cloud.storage.RangeProjectionConfig.ProjectionType;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
@@ -77,6 +78,10 @@ final class StorageDataClient implements IOAutoCloseable {
     checkArgument(
         openRequest.getReadRangesList().isEmpty(),
         "ranges included in the initial request are not supported");
+    checkArgument(
+        config.getType() == ProjectionType.STREAM_READ,
+        "unsupported RangeProjectionConfig: %s",
+        config.getClass().getName());
     ObjectReadSessionState state = new ObjectReadSessionState(ctx, openRequest);
 
     ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> callable =

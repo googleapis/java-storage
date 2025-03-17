@@ -17,10 +17,30 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
+import java.util.Locale;
 
 public abstract class RangeProjectionConfig<Projection> {
 
   RangeProjectionConfig() {}
 
-  abstract BaseConfig<Projection, ?> cast();
+  BaseConfig<Projection, ?> cast() {
+    throw new UnsupportedOperationException(String.format("%s#cast()", this.getClass().getName()));
+  }
+
+  abstract ProjectionType getType();
+
+  Projection project(RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+    throw new UnsupportedOperationException(
+        String.format(Locale.US, "%s#project()", this.getClass().getName()));
+  }
+
+  enum ProjectionType {
+    /** Those projections which translate to a direct read registered in the state of the stream */
+    STREAM_READ,
+    /**
+     * Those projections which use an ObjectReadSession rather than directly registering a read in
+     * the stream state.
+     */
+    SESSION_USER
+  }
 }

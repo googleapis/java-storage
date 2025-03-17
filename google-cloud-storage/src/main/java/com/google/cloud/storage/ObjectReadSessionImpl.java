@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
+import com.google.cloud.storage.RangeProjectionConfig.ProjectionType;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.storage.v2.BidiReadObjectRequest;
@@ -31,6 +32,7 @@ import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -83,11 +85,23 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     lock.lock();
     try {
       checkState(open, "stream already closed");
-      long readId = state.newReadId();
-      ObjectReadSessionStreamRead<Projection> read =
-          config.cast().newRead(readId, range, retryContextProvider.create());
-      registerReadInState(readId, read);
-      return read.project();
+      switch (config.getType()) {
+        case STREAM_READ:
+          long readId = state.newReadId();
+          ObjectReadSessionStreamRead<Projection> read =
+              config.cast().newRead(readId, range, retryContextProvider.create());
+          registerReadInState(readId, read);
+          return read.project();
+        case SESSION_USER:
+          return config.project(range, this, IOAutoCloseable.noOp());
+        default:
+          throw new IllegalStateException(
+              String.format(
+                  Locale.US,
+                  "Broken java enum %s value=%s",
+                  ProjectionType.class.getName(),
+                  config.getType().name()));
+      }
     } finally {
       lock.unlock();
     }

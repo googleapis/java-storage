@@ -27,6 +27,11 @@ public final class RangeProjectionConfigs {
   abstract static class BaseConfig<Projection, Read extends ObjectReadSessionStreamRead<Projection>>
       extends RangeProjectionConfig<Projection> {
     abstract Read newRead(long readId, RangeSpec range, RetryContext retryContext);
+
+    @Override
+    ProjectionType getType() {
+      return ProjectionType.STREAM_READ;
+    }
   }
 
   /**

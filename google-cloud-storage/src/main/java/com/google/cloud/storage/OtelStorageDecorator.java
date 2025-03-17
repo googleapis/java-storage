@@ -1816,21 +1816,43 @@ final class OtelStorageDecorator implements Storage {
 
   private static final class OtelRangeProjectionConfig<Projection>
       extends RangeProjectionConfig<Projection> {
-    private final BaseConfig<Projection, ?> delegate;
+    private final RangeProjectionConfig<Projection> delegate;
     private final Span parentSpan;
 
     private OtelRangeProjectionConfig(RangeProjectionConfig<Projection> delegate, Span parentSpan) {
-      this.delegate = delegate.cast();
+      this.delegate = delegate;
       this.parentSpan = parentSpan;
     }
 
     @Override
     BaseConfig<Projection, ?> cast() {
-      return new OtelBaseConfigDecorator();
+      return new OtelBaseConfigDecorator(delegate.cast());
+    }
+
+    @Override
+    public ProjectionType getType() {
+      return delegate.getType();
+    }
+
+    @Override
+    Projection project(RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+      try {
+        return delegate.project(range, session, closeAlongWith.andThen(parentSpan::end));
+      } catch (Throwable t) {
+        parentSpan.recordException(t);
+        parentSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        parentSpan.end();
+        throw t;
+      }
     }
 
     private class OtelBaseConfigDecorator
         extends BaseConfig<Projection, ObjectReadSessionStreamRead<Projection>> {
+      private final BaseConfig<Projection, ?> delegate;
+
+      private OtelBaseConfigDecorator(BaseConfig<Projection, ?> delegate) {
+        this.delegate = delegate;
+      }
 
       @Override
       ObjectReadSessionStreamRead<Projection> newRead(
