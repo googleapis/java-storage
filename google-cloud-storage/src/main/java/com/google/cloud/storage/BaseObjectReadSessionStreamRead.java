@@ -50,7 +50,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 abstract class BaseObjectReadSessionStreamRead<Projection>
     implements ObjectReadSessionStreamRead<Projection> {
 
-  protected final long readId;
   protected final RangeSpec rangeSpec;
   protected final RetryContext retryContext;
   protected final AtomicLong readOffset;
@@ -59,22 +58,16 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
   protected IOAutoCloseable onCloseCallback;
 
   BaseObjectReadSessionStreamRead(
-      long readId,
-      RangeSpec rangeSpec,
-      RetryContext retryContext,
-      IOAutoCloseable onCloseCallback) {
-    this(
-        readId, rangeSpec, new AtomicLong(rangeSpec.begin()), retryContext, onCloseCallback, false);
+      RangeSpec rangeSpec, RetryContext retryContext, IOAutoCloseable onCloseCallback) {
+    this(rangeSpec, new AtomicLong(rangeSpec.begin()), retryContext, onCloseCallback, false);
   }
 
   BaseObjectReadSessionStreamRead(
-      long readId,
       RangeSpec rangeSpec,
       AtomicLong readOffset,
       RetryContext retryContext,
       IOAutoCloseable onCloseCallback,
       boolean closed) {
-    this.readId = readId;
     this.rangeSpec = rangeSpec;
     this.retryContext = retryContext;
     this.readOffset = readOffset;
@@ -82,6 +75,8 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     this.tombstoned = false;
     this.onCloseCallback = onCloseCallback;
   }
+
+  abstract long readId();
 
   @Override
   public long readOffset() {
@@ -96,7 +91,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
   @Override
   public final ReadRange makeReadRange() {
     long currentOffset = readOffset.get();
-    ReadRange.Builder b = ReadRange.newBuilder().setReadId(readId).setReadOffset(currentOffset);
+    ReadRange.Builder b = ReadRange.newBuilder().setReadId(readId()).setReadOffset(currentOffset);
     rangeSpec
         .limit()
         .ifPresent(
@@ -141,13 +136,15 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       extends BaseObjectReadSessionStreamRead<ApiFuture<Result>> implements ApiFuture<Result> {
     protected final List<ChildRef> childRefs;
     protected final SettableApiFuture<Result> complete;
+    protected final long readId;
 
     private AccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
         RetryContext retryContext,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, retryContext, onCloseCallback);
+      super(rangeSpec, retryContext, onCloseCallback);
+      this.readId = readId;
       this.complete = SettableApiFuture.create();
       this.childRefs = Collections.synchronizedList(new ArrayList<>());
     }
@@ -161,9 +158,15 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         boolean closed,
         SettableApiFuture<Result> complete,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, readOffset, retryContext, onCloseCallback, closed);
+      super(rangeSpec, readOffset, retryContext, onCloseCallback, closed);
+      this.readId = readId;
       this.childRefs = childRefs;
       this.complete = complete;
+    }
+
+    @Override
+    long readId() {
+      return readId;
     }
 
     @Override
@@ -247,9 +250,11 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
    */
   static class StreamingRead extends BaseObjectReadSessionStreamRead<ScatteringByteChannel>
       implements UnbufferedReadableByteChannel {
+
     private final SettableApiFuture<Void> failFuture;
     private final BlockingQueue<Closeable> queue;
 
+    private AtomicLong readId;
     private boolean complete;
     @Nullable private ChildRefHelper leftovers;
 
@@ -257,37 +262,19 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         long readId,
         RangeSpec rangeSpec,
         RetryContext retryContext,
-        boolean closed,
         IOAutoCloseable onCloseCallback) {
-      this(
-          readId,
-          rangeSpec,
-          new AtomicLong(rangeSpec.begin()),
-          retryContext,
-          closed,
-          SettableApiFuture.create(),
-          new ArrayBlockingQueue<>(2),
-          false,
-          null,
-          onCloseCallback);
+      super(rangeSpec, retryContext, onCloseCallback);
+      this.readId = new AtomicLong(readId);
+      this.closed = false;
+      this.failFuture = SettableApiFuture.create();
+      this.queue = new ArrayBlockingQueue<>(2);
+      this.complete = false;
+      this.leftovers = null;
     }
 
-    private StreamingRead(
-        long newReadId,
-        RangeSpec rangeSpec,
-        AtomicLong readOffset,
-        RetryContext retryContext,
-        boolean closed,
-        SettableApiFuture<Void> failFuture,
-        BlockingQueue<Closeable> queue,
-        boolean complete,
-        @Nullable ChildRefHelper leftovers,
-        IOAutoCloseable onCloseCallback) {
-      super(newReadId, rangeSpec, readOffset, retryContext, onCloseCallback, closed);
-      this.failFuture = failFuture;
-      this.queue = queue;
-      this.complete = complete;
-      this.leftovers = leftovers;
+    @Override
+    long readId() {
+      return readId.get();
     }
 
     @Override
@@ -323,18 +310,8 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
 
     @Override
     public StreamingRead withNewReadId(long newReadId) {
-      tombstoned = true;
-      return new StreamingRead(
-          newReadId,
-          rangeSpec,
-          readOffset,
-          retryContext,
-          closed,
-          failFuture,
-          queue,
-          complete,
-          leftovers,
-          onCloseCallback);
+      readId.set(newReadId);
+      return this;
     }
 
     @Override

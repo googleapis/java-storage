@@ -69,6 +69,6 @@ interface ObjectReadSessionStreamRead<Projection> extends IOAutoCloseable {
   }
 
   static StreamingRead streamingRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
-    return new StreamingRead(readId, rangeSpec, retryContext, false, IOAutoCloseable.noOp());
+    return new StreamingRead(readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
   }
 }

@@ -81,6 +81,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Collections;
@@ -1449,6 +1450,87 @@ public final class ITObjectReadSessionFakeTest {
                 throw new Exception("exception during test", finalCaught);
               }
             });
+      }
+    }
+  }
+
+  @Test
+  public void expectRetryForRangeWithFailedChecksumValidation_channel() throws Exception {
+    ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
+
+    ChecksummedTestContent content2_1 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
+    ChecksummedTestContent content2_2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 20, 10);
+    BidiReadObjectRequest req2 = read(1, 10, 20);
+    BidiReadObjectResponse res2_1 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_1.asChecksummedData())
+                    .setReadRange(getReadRange(1, 10, 10))
+                    .build())
+            .build();
+    BidiReadObjectResponse res2_2 =
+        BidiReadObjectResponse.newBuilder()
+            .setMetadata(METADATA)
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_2.asChecksummedData().toBuilder().setCrc32C(1))
+                    .setReadRange(getReadRange(1, 20, 10))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    BidiReadObjectRequest req3 =
+        BidiReadObjectRequest.newBuilder().addReadRanges(getReadRange(2, 20, 10)).build();
+    BidiReadObjectResponse res3 =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(content2_2.asChecksummedData())
+                    .setReadRange(getReadRange(2, 20, 10))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                REQ_OPEN,
+                respond -> respond.onNext(RES_OPEN),
+                req2,
+                respond -> {
+                  respond.onNext(res2_1);
+                  respond.onNext(res2_2);
+                },
+                req3,
+                respond -> respond.onNext(res3)));
+
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+      ApiFuture<BlobReadSession> futureObjectDescriptor = storage.blobReadSession(id);
+
+      try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ScatteringByteChannel r =
+                bd.readRange(RangeSpec.of(10, 20), RangeProjectionConfigs.asChannel());
+            WritableByteChannel w = Channels.newChannel(baos)) {
+          ByteStreams.copy(r, w);
+        }
+
+        byte[] actual = baos.toByteArray();
+        Crc32cLengthKnown actualCrc32c = Hasher.enabled().hash(ByteBuffer.wrap(actual));
+
+        byte[] expectedBytes = expected.getBytes();
+        Crc32cLengthKnown expectedCrc32c =
+            Crc32cValue.of(expected.getCrc32c(), expectedBytes.length);
+
+        assertAll(
+            () -> assertThat(actual).hasLength(expectedBytes.length),
+            () -> assertThat(xxd(actual)).isEqualTo(xxd(expectedBytes)),
+            () -> assertThat(actualCrc32c).isEqualTo(expectedCrc32c));
       }
     }
   }

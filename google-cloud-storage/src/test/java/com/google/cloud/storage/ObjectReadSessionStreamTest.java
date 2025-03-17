@@ -327,17 +327,23 @@ public final class ObjectReadSessionStreamTest {
       extends BaseObjectReadSessionStreamRead<java.lang.Object> {
 
     private static final AtomicLong readIdSeq = new AtomicLong(1);
+    protected final long readId;
     private boolean readyToSend = false;
     private final SettableApiFuture<Throwable> fail = SettableApiFuture.create();
 
     TestObjectReadSessionStreamRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
       super(
-          readId,
           rangeSpec,
           new AtomicLong(rangeSpec.begin()),
           retryContext,
           IOAutoCloseable.noOp(),
           false);
+      this.readId = readId;
+    }
+
+    @Override
+    long readId() {
+      return readId;
     }
 
     @Override

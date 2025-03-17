@@ -435,10 +435,9 @@ public final class ObjectReadSessionStreamReadTest {
       assertThat(read1.read(slice2)).isEqualTo(16);
       buf.position(buf.position() + 16);
 
-      // switch read is (like would happen during a retry)
+      // update read id (like would happen during a retry)
       StreamingRead read2 = read1.withNewReadId(2);
-      assertThat(read1.acceptingBytes()).isFalse(); // make sure read1 is no longer accepting bytes
-      assertThat(read2.acceptingBytes()).isTrue();
+      assertThat(read2).isSameInstanceAs(read1);
 
       // make sure we can read from both read1 and read 2
       ByteBuffer slice3 = (ByteBuffer) buf.slice().limit(16);
