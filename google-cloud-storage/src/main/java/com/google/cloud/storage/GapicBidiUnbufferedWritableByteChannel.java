@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
+import static com.google.cloud.storage.Utils.nullSafeList;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -32,7 +33,6 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
@@ -297,7 +297,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         } else {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), value, context, null));
+                  nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else if (finalizing && value.hasResource()) {
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
@@ -308,16 +308,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         } else if (finalSize < totalSentBytes) {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), value, context, null));
+                  nullSafeList(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), value, context, null));
+                  nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else if (!finalizing && value.hasResource()) {
         clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
-                ImmutableList.of(lastWrittenRequest), value, context, null));
+                nullSafeList(lastWrittenRequest), value, context, null));
       } else if (finalizing && value.hasPersistedSize()) {
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
         long persistedSize = value.getPersistedSize();
@@ -329,16 +329,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         } else if (persistedSize < totalSentBytes) {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), value, context, null));
+                  nullSafeList(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), value, context, null));
+                  nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else {
         clientDetectedError(
             ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
-                ImmutableList.of(lastWrittenRequest), value, context, null));
+                nullSafeList(lastWrittenRequest), value, context, null));
       }
     }
 
@@ -352,7 +352,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
             && ed.getErrorInfo().getReason().equals("GRPC_MISMATCHED_UPLOAD_SIZE"))) {
           clientDetectedError(
               ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
-                  ImmutableList.of(lastWrittenRequest), null, context, oore));
+                  nullSafeList(lastWrittenRequest), null, context, oore));
           return;
         }
       }
@@ -367,9 +367,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),
-                lastWrittenRequest != null
-                    ? ImmutableList.of(lastWrittenRequest)
-                    : ImmutableList.of(),
+                nullSafeList(lastWrittenRequest),
                 null,
                 context,
                 t);
@@ -422,7 +420,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
       clientDetectedError = null;
       previousError = null;
       if ((e != null || err != null) && stream != null) {
-        if (lastWrittenRequest.getFinishWrite()) {
+        if (lastWrittenRequest != null && lastWrittenRequest.getFinishWrite()) {
           stream.onCompleted();
         } else {
           stream.onError(Status.CANCELLED.asRuntimeException());
