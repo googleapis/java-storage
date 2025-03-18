@@ -66,13 +66,14 @@ javadoc)
     ;;
 integration)
     mvn -B ${INTEGRATION_TEST_ARGS} \
+      -Dprotobuf.version=4.30.1 \
       -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
       -Dclirr.skip=true \
       -Denforcer.skip=true \
       -fae \
-      verify
+      dependency:tree verify
     RETURN_CODE=$?
     ;;
 graalvm)
