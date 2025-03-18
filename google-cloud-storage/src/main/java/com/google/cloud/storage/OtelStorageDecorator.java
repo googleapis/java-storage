@@ -1472,13 +1472,16 @@ final class OtelStorageDecorator implements Storage {
             .startSpan();
     try (Scope ignore1 = blobReadSessionSpan.makeCurrent()) {
       Context blobReadSessionContext = Context.current();
+      Span ready = tracer.spanBuilder("blobReadSession/ready").startSpan();
       ApiFuture<BlobReadSession> blobReadSessionApiFuture = delegate.blobReadSession(id, options);
       ApiFuture<BlobReadSession> futureDecorated =
           ApiFutures.transform(
               blobReadSessionApiFuture,
-              delegate ->
-                  new OtelDecoratingBlobReadSession(
-                      delegate, id, blobReadSessionContext, blobReadSessionSpan),
+              delegate -> {
+                ready.end();
+                return new OtelDecoratingBlobReadSession(
+                    delegate, id, blobReadSessionContext, blobReadSessionSpan);
+              },
               MoreExecutors.directExecutor());
       ApiFutures.addCallback(
           futureDecorated,
@@ -1487,6 +1490,9 @@ final class OtelStorageDecorator implements Storage {
                 blobReadSessionSpan.recordException(t);
                 blobReadSessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
                 blobReadSessionSpan.end();
+                ready.recordException(t);
+                ready.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+                ready.end();
               },
           MoreExecutors.directExecutor());
       return futureDecorated;
@@ -1496,6 +1502,14 @@ final class OtelStorageDecorator implements Storage {
       blobReadSessionSpan.end();
       throw t;
     }
+  }
+
+  @Override
+  @TransportCompatibility({Transport.GRPC})
+  @BetaApi
+  public AppendableBlobUpload appendableBlobUpload(
+      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+    return delegate.appendableBlobUpload(blob, bufferSize, options);
   }
 
   @Override
