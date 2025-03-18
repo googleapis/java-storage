@@ -66,7 +66,7 @@ javadoc)
     ;;
 integration)
     mvn -B ${INTEGRATION_TEST_ARGS} \
-      -Dprotobuf.version=4.30.1 \
+      -Dprotobuf.version=4.29.3 \
       -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
