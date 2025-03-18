@@ -97,6 +97,7 @@ import io.grpc.KnownLength;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import java.io.Closeable;
@@ -1214,10 +1215,7 @@ public final class GrpcStorageOptions extends StorageOptions
           cis.setSizeLimit(Integer.MAX_VALUE);
         }
       } catch (IOException e) {
-        throw Status.INTERNAL
-            .withDescription("Error parsing input stream for ReadObject")
-            .withCause(e)
-            .asRuntimeException();
+        throw createStatusRuntimeException(e);
       }
       if (cis != null) {
         // fast path (no memory copy)
@@ -1225,10 +1223,7 @@ public final class GrpcStorageOptions extends StorageOptions
         try {
           message = parseFrom(cis);
         } catch (InvalidProtocolBufferException ipbe) {
-          throw Status.INTERNAL
-              .withDescription("Invalid protobuf byte sequence for ReadObject")
-              .withCause(ipbe)
-              .asRuntimeException();
+          throw createStatusRuntimeException(ipbe);
         }
         unclosedStreams.put(message, stream);
         return message;
@@ -1236,6 +1231,18 @@ public final class GrpcStorageOptions extends StorageOptions
         // slow path
         return baseMarshaller.parse(stream);
       }
+    }
+
+    private StatusRuntimeException createStatusRuntimeException(IOException e) {
+      String description = "";
+      Response messagePrototype = baseMarshaller.getMessagePrototype();
+      if (messagePrototype != null) {
+        description = "for " + messagePrototype.getClass().getSimpleName();
+      }
+      return Status.INTERNAL
+          .withDescription("Error parsing input stream" + description)
+          .withCause(e)
+          .asRuntimeException();
     }
 
     private Response parseFrom(CodedInputStream stream) throws InvalidProtocolBufferException {
