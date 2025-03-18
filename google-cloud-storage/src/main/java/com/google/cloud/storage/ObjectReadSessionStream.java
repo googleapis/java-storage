@@ -294,7 +294,7 @@ final class ObjectReadSessionStream
             // java11+ calculating the crc32c of a 2MiB segment is ~70us
             // java8 the same calculation is ~1600us
             // not something to worry about offloading to another thread at this time.
-            Hasher.enabled().validateUnchecked(Crc32cValue.of(crc32C), content);
+            read.hasher().validateUnchecked(Crc32cValue.of(crc32C), content);
           } catch (UncheckedChecksumMismatchException e) {
             read.recordError(
                 e,

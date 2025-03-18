@@ -51,6 +51,8 @@ interface ObjectReadSessionStreamRead<Projection> extends IOAutoCloseable {
 
   boolean readyToSend();
 
+  Hasher hasher();
+
   boolean canShareStreamWith(ObjectReadSessionStreamRead<?> other);
 
   void setOnCloseCallback(IOAutoCloseable onCloseCallback);
@@ -58,17 +60,19 @@ interface ObjectReadSessionStreamRead<Projection> extends IOAutoCloseable {
   void internalClose() throws IOException;
 
   static AccumulatingRead<byte[]> createByteArrayAccumulatingRead(
-      long readId, RangeSpec rangeSpec, RetryContext retryContext) {
-    return new ByteArrayAccumulatingRead(readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
+      long readId, RangeSpec rangeSpec, Hasher hasher, RetryContext retryContext) {
+    return new ByteArrayAccumulatingRead(
+        readId, rangeSpec, hasher, retryContext, IOAutoCloseable.noOp());
   }
 
   static ZeroCopyByteStringAccumulatingRead createZeroCopyByteStringAccumulatingRead(
-      long readId, RangeSpec rangeSpec, RetryContext retryContext) {
+      long readId, RangeSpec rangeSpec, Hasher hasher, RetryContext retryContext) {
     return new ZeroCopyByteStringAccumulatingRead(
-        readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
+        readId, rangeSpec, hasher, retryContext, IOAutoCloseable.noOp());
   }
 
-  static StreamingRead streamingRead(long readId, RangeSpec rangeSpec, RetryContext retryContext) {
-    return new StreamingRead(readId, rangeSpec, retryContext, IOAutoCloseable.noOp());
+  static StreamingRead streamingRead(
+      long readId, RangeSpec rangeSpec, Hasher hasher, RetryContext retryContext) {
+    return new StreamingRead(readId, rangeSpec, hasher, retryContext, IOAutoCloseable.noOp());
   }
 }

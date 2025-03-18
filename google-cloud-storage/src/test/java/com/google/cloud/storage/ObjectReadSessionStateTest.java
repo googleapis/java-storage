@@ -80,10 +80,10 @@ public final class ObjectReadSessionStateTest {
 
     AccumulatingRead<byte[]> r1 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(3, 4), neverRetry);
+            1, RangeSpec.of(3, 4), Hasher.enabled(), neverRetry);
     AccumulatingRead<byte[]> r2 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            2, RangeSpec.of(19, 14), neverRetry);
+            2, RangeSpec.of(19, 14), Hasher.enabled(), neverRetry);
 
     state.putOutstandingRead(1, r1);
     state.putOutstandingRead(2, r2);
@@ -219,14 +219,15 @@ public final class ObjectReadSessionStateTest {
     state1.putOutstandingRead(1, TestObjectReadSessionStreamRead.of());
     state2.putOutstandingRead(
         3,
-        ObjectReadSessionStreamRead.streamingRead(3, RangeSpec.all(), RetryContext.neverRetry()));
+        ObjectReadSessionStreamRead.streamingRead(
+            3, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry()));
 
     try (AccumulatingRead<byte[]> bytes =
             ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                2, RangeSpec.all(), RetryContext.neverRetry());
+                2, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
         StreamingRead streaming2 =
             ObjectReadSessionStreamRead.streamingRead(
-                4, RangeSpec.all(), RetryContext.neverRetry())) {
+                4, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry())) {
       assertAll(
           () -> assertThat(state1.canHandleNewRead(TestObjectReadSessionStreamRead.of())).isTrue(),
           () -> assertThat(state1.canHandleNewRead(bytes)).isFalse(),

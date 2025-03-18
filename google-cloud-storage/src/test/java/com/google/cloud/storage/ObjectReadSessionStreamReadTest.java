@@ -67,7 +67,7 @@ public final class ObjectReadSessionStreamReadTest {
 
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry());
 
     byteArrayAccumulatingRead.accept(childRef);
     byteArrayAccumulatingRead.eof();
@@ -96,7 +96,7 @@ public final class ObjectReadSessionStreamReadTest {
 
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry());
 
     IOException ioException =
         assertThrows(
@@ -114,7 +114,7 @@ public final class ObjectReadSessionStreamReadTest {
     int readId = 1;
     try (AccumulatingRead<byte[]> read =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            readId, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
 
       ReadRange readRange1 = read.makeReadRange();
       ReadRange expectedReadRange1 =
@@ -164,7 +164,7 @@ public final class ObjectReadSessionStreamReadTest {
     ExecutorService exec = Executors.newSingleThreadExecutor();
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            readId, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       ByteBuffer buffer = ByteBuffer.allocate(512);
 
       Future<Integer> f =
@@ -223,7 +223,7 @@ public final class ObjectReadSessionStreamReadTest {
 
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            readId, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            readId, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
 
       Future<Void> f =
           exec.submit(
@@ -296,7 +296,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_fail() throws IOException {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       read.fail(new Kaboom());
 
       IOException ioe = assertThrows(IOException.class, () -> read.read(ByteBuffer.allocate(1)));
@@ -310,7 +310,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_closedChannelException() throws IOException {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       read.close();
       assertThat(read.isOpen()).isFalse();
 
@@ -322,7 +322,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_leftoversAreOnlyClearedWhenFullyConsumed() throws Exception {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
@@ -357,7 +357,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_eofShouldBeReturnedIfNoOtherBytesRead() throws Exception {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       read.eof();
       assertThat(read.read(ByteBuffer.allocate(1))).isEqualTo(-1);
 
@@ -371,7 +371,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_closedOnceEofIsRead() throws Exception {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes1)) {
         read.accept(handle.borrow(Function.identity()));
@@ -392,7 +392,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_leftoversAreClosedIfNonNullAndStreamClosed() throws Exception {
     try (StreamingRead read =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
@@ -415,7 +415,7 @@ public final class ObjectReadSessionStreamReadTest {
   public void streamingRead_withNewReadIdDoesNotOrphanAnyData() throws Exception {
     try (StreamingRead read1 =
         ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry())) {
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
@@ -457,13 +457,13 @@ public final class ObjectReadSessionStreamReadTest {
   public void canShareStreamWith() throws Exception {
     try (AccumulatingRead<byte[]> bytes =
             ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                1, RangeSpec.all(), RetryContext.neverRetry());
+                1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
         ZeroCopyByteStringAccumulatingRead byteString =
             ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-                2, RangeSpec.all(), RetryContext.neverRetry());
+                2, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
         StreamingRead streamingRead =
             ObjectReadSessionStreamRead.streamingRead(
-                3, RangeSpec.all(), RetryContext.neverRetry())) {
+                3, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry())) {
       assertAll(
           () -> assertThat(bytes.canShareStreamWith(byteString)).isTrue(),
           () -> assertThat(byteString.canShareStreamWith(bytes)).isTrue(),
@@ -480,17 +480,17 @@ public final class ObjectReadSessionStreamReadTest {
     try (OtelDecoratingObjectReadSessionStreamRead<ApiFuture<byte[]>> bytes =
             new OtelDecoratingObjectReadSessionStreamRead<>(
                 ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                    1, RangeSpec.all(), RetryContext.neverRetry()),
+                    1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry()),
                 Span.getInvalid());
         OtelDecoratingObjectReadSessionStreamRead<ApiFuture<DisposableByteString>> byteString =
             new OtelDecoratingObjectReadSessionStreamRead<>(
                 ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-                    2, RangeSpec.all(), RetryContext.neverRetry()),
+                    2, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry()),
                 Span.getInvalid());
         OtelDecoratingObjectReadSessionStreamRead<ScatteringByteChannel> streamingRead =
             new OtelDecoratingObjectReadSessionStreamRead<>(
                 ObjectReadSessionStreamRead.streamingRead(
-                    3, RangeSpec.all(), RetryContext.neverRetry()),
+                    3, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry()),
                 Span.getInvalid())) {
       assertAll(
           () -> assertThat(bytes.canShareStreamWith(byteString)).isTrue(),
@@ -549,7 +549,7 @@ public final class ObjectReadSessionStreamReadTest {
 
     AccumulatingRead<byte[]> byteArrayAccumulatingRead =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.of(0, 137), RetryContext.neverRetry());
+            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry());
 
     byteArrayAccumulatingRead.accept(childRef);
 
@@ -564,21 +564,21 @@ public final class ObjectReadSessionStreamReadTest {
         () -> {
           AccumulatingRead<byte[]> read =
               ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-                  1, RangeSpec.all(), RetryContext.neverRetry());
+                  1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
           ApiFuture<byte[]> projected = read.project();
           assertThat(projected).isSameInstanceAs(read);
         },
         () -> {
           StreamingRead read =
               ObjectReadSessionStreamRead.streamingRead(
-                  1, RangeSpec.all(), RetryContext.neverRetry());
+                  1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
           UnbufferedReadableByteChannel projected = read.project();
           assertThat(projected).isSameInstanceAs(read);
         },
         () -> {
           AccumulatingRead<ZeroCopySupport.DisposableByteString> read =
               ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
-                  1, RangeSpec.all(), RetryContext.neverRetry());
+                  1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry());
           ApiFuture<ZeroCopySupport.DisposableByteString> projected = read.project();
           assertThat(projected).isSameInstanceAs(read);
         });

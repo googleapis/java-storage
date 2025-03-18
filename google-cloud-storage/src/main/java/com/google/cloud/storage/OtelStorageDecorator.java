@@ -2021,6 +2021,11 @@ final class OtelStorageDecorator implements Storage {
     }
 
     @Override
+    public Hasher hasher() {
+      return delegate.hasher();
+    }
+
+    @Override
     public ObjectReadSessionStreamRead<Projection> withNewReadId(long newReadId) {
       return new OtelDecoratingObjectReadSessionStreamRead<>(
           delegate.withNewReadId(newReadId), parentSpan);

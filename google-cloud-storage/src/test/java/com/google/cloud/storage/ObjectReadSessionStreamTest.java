@@ -238,7 +238,8 @@ public final class ObjectReadSessionStreamTest {
   @Test
   public void streamingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
     try (StreamingRead read1 =
-        ObjectReadSessionStreamRead.streamingRead(1, RangeSpec.all(), RetryContext.neverRetry())) {
+        ObjectReadSessionStreamRead.streamingRead(
+            1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry())) {
       state.putOutstandingRead(1, read1);
       ObjectReadSessionStream stream =
           ObjectReadSessionStream.create(exec, callable, state, RetryContext.neverRetry());
@@ -284,7 +285,7 @@ public final class ObjectReadSessionStreamTest {
   public void accumulatingRead_mustCloseQueuedResponsesWhenFailed() throws Exception {
     try (AccumulatingRead<byte[]> read1 =
         ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
-            1, RangeSpec.all(), RetryContext.neverRetry())) {
+            1, RangeSpec.all(), Hasher.enabled(), RetryContext.neverRetry())) {
       state.putOutstandingRead(1, read1);
       ObjectReadSessionStream stream =
           ObjectReadSessionStream.create(exec, callable, state, RetryContext.neverRetry());
@@ -366,6 +367,11 @@ public final class ObjectReadSessionStreamTest {
     public ApiFuture<Throwable> fail(Throwable t) {
       fail.set(t);
       return fail;
+    }
+
+    @Override
+    public Hasher hasher() {
+      return Hasher.enabled();
     }
 
     @Override

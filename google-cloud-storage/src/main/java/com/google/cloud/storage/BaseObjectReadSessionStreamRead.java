@@ -137,14 +137,17 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     protected final List<ChildRef> childRefs;
     protected final SettableApiFuture<Result> complete;
     protected final long readId;
+    protected final Hasher hasher;
 
     private AccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         RetryContext retryContext,
         IOAutoCloseable onCloseCallback) {
       super(rangeSpec, retryContext, onCloseCallback);
       this.readId = readId;
+      this.hasher = hasher;
       this.complete = SettableApiFuture.create();
       this.childRefs = Collections.synchronizedList(new ArrayList<>());
     }
@@ -152,6 +155,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     private AccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         List<ChildRef> childRefs,
         AtomicLong readOffset,
         RetryContext retryContext,
@@ -162,6 +166,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       this.readId = readId;
       this.childRefs = childRefs;
       this.complete = complete;
+      this.hasher = hasher;
     }
 
     @Override
@@ -193,6 +198,11 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         complete.setException(t);
       }
       return complete;
+    }
+
+    @Override
+    public Hasher hasher() {
+      return hasher;
     }
 
     @Override
@@ -251,6 +261,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
   static class StreamingRead extends BaseObjectReadSessionStreamRead<ScatteringByteChannel>
       implements UnbufferedReadableByteChannel {
 
+    private final Hasher hasher;
     private final SettableApiFuture<Void> failFuture;
     private final BlockingQueue<Closeable> queue;
 
@@ -261,10 +272,12 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     StreamingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         RetryContext retryContext,
         IOAutoCloseable onCloseCallback) {
       super(rangeSpec, retryContext, onCloseCallback);
       this.readId = new AtomicLong(readId);
+      this.hasher = hasher;
       this.closed = false;
       this.failFuture = SettableApiFuture.create();
       this.queue = new ArrayBlockingQueue<>(2);
@@ -275,6 +288,11 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     @Override
     long readId() {
       return readId.get();
+    }
+
+    @Override
+    public Hasher hasher() {
+      return hasher;
     }
 
     @Override
@@ -477,14 +495,16 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     ByteArrayAccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         RetryContext retryContext,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, retryContext, onCloseCallback);
+      super(readId, rangeSpec, hasher, retryContext, onCloseCallback);
     }
 
     private ByteArrayAccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         List<ChildRef> childRefs,
         RetryContext retryContext,
         AtomicLong readOffset,
@@ -494,6 +514,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       super(
           readId,
           rangeSpec,
+          hasher,
           childRefs,
           readOffset,
           retryContext,
@@ -527,6 +548,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       return new ByteArrayAccumulatingRead(
           newReadId,
           rangeSpec,
+          hasher,
           childRefs,
           retryContext,
           readOffset,
@@ -544,14 +566,16 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     ZeroCopyByteStringAccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         RetryContext retryContext,
         IOAutoCloseable onCloseCallback) {
-      super(readId, rangeSpec, retryContext, onCloseCallback);
+      super(readId, rangeSpec, hasher, retryContext, onCloseCallback);
     }
 
     public ZeroCopyByteStringAccumulatingRead(
         long readId,
         RangeSpec rangeSpec,
+        Hasher hasher,
         List<ChildRef> childRefs,
         AtomicLong readOffset,
         RetryContext retryContext,
@@ -562,6 +586,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       super(
           readId,
           rangeSpec,
+          hasher,
           childRefs,
           readOffset,
           retryContext,
@@ -598,6 +623,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       return new ZeroCopyByteStringAccumulatingRead(
           newReadId,
           rangeSpec,
+          hasher,
           childRefs,
           readOffset,
           retryContext,
