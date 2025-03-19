@@ -31,60 +31,60 @@ import javax.annotation.concurrent.Immutable;
 public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction {
 
   static final LinearExponentialRangeSpecFunction INSTANCE =
-      new LinearExponentialRangeSpecFunction(ByteSizeConstants._1KiB, 4.0d);
-  private final long initialRangeSize;
-  private final double rangeSizeScalar;
+      new LinearExponentialRangeSpecFunction(ByteSizeConstants._2MiB, 4.0d);
+  private final long initialMaxLength;
+  private final double maxLengthScalar;
 
-  private LinearExponentialRangeSpecFunction(long initialRangeSize, double rangeSizeScalar) {
-    this.initialRangeSize = initialRangeSize;
-    this.rangeSizeScalar = rangeSizeScalar;
+  private LinearExponentialRangeSpecFunction(long initialMaxLength, double maxLengthScalar) {
+    this.initialMaxLength = initialMaxLength;
+    this.maxLengthScalar = maxLengthScalar;
   }
 
-  public long getInitialRangeSize() {
-    return initialRangeSize;
+  public long getInitialMaxLength() {
+    return initialMaxLength;
   }
 
-  public LinearExponentialRangeSpecFunction withMinRangeSize(long initialRangeSize) {
-    checkArgument(initialRangeSize > 0, "initialRangeSize > 0 (%s > 0)", initialRangeSize);
-    return new LinearExponentialRangeSpecFunction(initialRangeSize, rangeSizeScalar);
+  public LinearExponentialRangeSpecFunction withInitialMaxLength(long initialMaxLength) {
+    checkArgument(initialMaxLength > 0, "initialMaxLength > 0 (%s > 0)", initialMaxLength);
+    return new LinearExponentialRangeSpecFunction(initialMaxLength, maxLengthScalar);
   }
 
-  public double getRangeSizeScalar() {
-    return rangeSizeScalar;
+  public double getMaxLengthScalar() {
+    return maxLengthScalar;
   }
 
-  public LinearExponentialRangeSpecFunction withRangeSizeScalar(double rangeSizeScalar) {
-    checkArgument(rangeSizeScalar >= 1.0, "rangeSizeScalar >= 1.0 (%s >= 1.0)", rangeSizeScalar);
-    return new LinearExponentialRangeSpecFunction(initialRangeSize, rangeSizeScalar);
+  public LinearExponentialRangeSpecFunction withMaxLengthScalar(double maxLengthScalar) {
+    checkArgument(maxLengthScalar >= 1.0, "maxLengthScalar >= 1.0 (%s >= 1.0)", maxLengthScalar);
+    return new LinearExponentialRangeSpecFunction(initialMaxLength, maxLengthScalar);
   }
 
   @Override
   public RangeSpec apply(long offset, RangeSpec prev) {
     if (prev == null) {
-      return RangeSpec.of(offset, initialRangeSize);
+      return RangeSpec.of(offset, initialMaxLength);
     }
 
-    OptionalLong maybeLimit = prev.limit();
-    long limit;
-    if (maybeLimit.isPresent()) {
-      limit = maybeLimit.getAsLong();
+    OptionalLong maybeMaxLength = prev.maxLength();
+    long maxLength;
+    if (maybeMaxLength.isPresent()) {
+      maxLength = maybeMaxLength.getAsLong();
 
-      long expectedOffset = prev.begin() + limit;
+      long expectedOffset = prev.begin() + maxLength;
       if (offset != expectedOffset) {
-        return RangeSpec.of(offset, initialRangeSize);
+        return RangeSpec.of(offset, initialMaxLength);
       }
 
     } else {
-      limit = Long.MAX_VALUE;
+      maxLength = Long.MAX_VALUE;
     }
 
-    long scaleReadSize = scaleReadSize(limit, rangeSizeScalar);
+    long scaleReadSize = scaleMaxLength(maxLength, maxLengthScalar);
 
     return RangeSpec.of(offset, scaleReadSize);
   }
 
-  private static long scaleReadSize(long lastReadSize, double rangeSizeScalar) {
-    double scaled = lastReadSize * rangeSizeScalar;
+  private static long scaleMaxLength(long lastReadSize, double rangeMaxLengthScalar) {
+    double scaled = lastReadSize * rangeMaxLengthScalar;
     if (Double.isInfinite(scaled)) {
       return Long.MAX_VALUE;
     }
@@ -100,20 +100,20 @@ public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction 
       return false;
     }
     LinearExponentialRangeSpecFunction that = (LinearExponentialRangeSpecFunction) o;
-    return initialRangeSize == that.initialRangeSize
-        && Double.compare(rangeSizeScalar, that.rangeSizeScalar) == 0;
+    return initialMaxLength == that.initialMaxLength
+        && Double.compare(maxLengthScalar, that.maxLengthScalar) == 0;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(initialRangeSize, rangeSizeScalar);
+    return Objects.hash(initialMaxLength, maxLengthScalar);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("minRangeSize", initialRangeSize)
-        .add("rangeSizeScalar", rangeSizeScalar)
+        .add("initialMaxLength", initialMaxLength)
+        .add("rangeMaxLengthScalar", maxLengthScalar)
         .toString();
   }
 }

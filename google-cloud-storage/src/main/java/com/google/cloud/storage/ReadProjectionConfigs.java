@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-
 import com.google.api.core.BetaApi;
 
 @BetaApi

@@ -25,7 +25,7 @@ import java.util.OptionalLong;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/** Defines a range with begin offset and limit. */
+/** Defines a range with a begin offset and optional maximum length. */
 @BetaApi
 @Immutable
 public abstract class RangeSpec {
@@ -37,20 +37,20 @@ public abstract class RangeSpec {
   public abstract long begin();
 
   /**
-   * A limit of the range if defined.
+   * The max length of the range if defined.
    *
-   * @see RangeSpecWithLimit
+   * @see RangeSpecWithMaxLength
    */
   @BetaApi
-  public abstract OptionalLong limit();
+  public abstract OptionalLong maxLength();
 
   /**
-   * Create a new instance of {@link RangeSpec} keeping {@code this.begin()} and with {@code limit}
-   * as its new limit.
+   * Create a new instance of {@link RangeSpec} keeping {@code this.begin()} and with {@code
+   * maxLength} as its new maxLength.
    */
   @NonNull
   @BetaApi
-  public abstract RangeSpec withLimit(long limit);
+  public abstract RangeSpec withMaxLength(long maxLength);
 
   /** {@inheritDoc} */
   @Override
@@ -77,19 +77,19 @@ public abstract class RangeSpec {
   }
 
   /**
-   * Create a new RangeSpec with the provided {@code begin} and {@code limit}.
+   * Create a new RangeSpec with the provided {@code begin} and {@code maxLength}.
    *
-   * @throws IllegalArgumentException if begin is &lt; 0, or if limit is &lt; 0
+   * @throws IllegalArgumentException if begin is &lt; 0, or if maxLength is &lt; 0
    */
   @NonNull
   @BetaApi
-  public static RangeSpec of(long begin, long limit) {
+  public static RangeSpec of(long begin, long maxLength) {
     checkArgument(begin >= 0, "range being must be >= 0 (range begin = %s)", begin);
-    checkArgument(limit >= 0, "range limit must be >= 0 (range limit = %s)", limit);
-    if (limit == 0) {
+    checkArgument(maxLength >= 0, "range maxLength must be >= 0 (range maxLength = %s)", maxLength);
+    if (maxLength == 0) {
       return new RangeSpecWithoutLimit(begin);
     }
-    return new RangeSpecWithLimit(begin, limit);
+    return new RangeSpecWithMaxLength(begin, maxLength);
   }
 
   /** A RangeSpec that represents to read from {@code 0} to {@code EOF} */
@@ -113,15 +113,15 @@ public abstract class RangeSpec {
     }
 
     @Override
-    public OptionalLong limit() {
+    public OptionalLong maxLength() {
       return OptionalLong.empty();
     }
 
     @Override
     @NonNull
-    public RangeSpec withLimit(long limit) {
-      checkArgument(limit >= 0, "range limit must be >= 0 (range limit = %s)", limit);
-      return new RangeSpecWithLimit(begin, limit);
+    public RangeSpec withMaxLength(long maxLength) {
+      checkArgument(maxLength >= 0, "range maxLength must be >= 0 (range limit = %s)", maxLength);
+      return new RangeSpecWithMaxLength(begin, maxLength);
     }
 
     @Override
@@ -147,13 +147,13 @@ public abstract class RangeSpec {
     }
   }
 
-  static final class RangeSpecWithLimit extends RangeSpec {
+  static final class RangeSpecWithMaxLength extends RangeSpec {
     private final long begin;
-    private final long limit;
+    private final long maxLength;
 
-    private RangeSpecWithLimit(long begin, long limit) {
+    private RangeSpecWithMaxLength(long begin, long maxLength) {
       this.begin = begin;
-      this.limit = limit;
+      this.maxLength = maxLength;
     }
 
     @Override
@@ -162,15 +162,15 @@ public abstract class RangeSpec {
     }
 
     @Override
-    public OptionalLong limit() {
-      return OptionalLong.of(limit);
+    public OptionalLong maxLength() {
+      return OptionalLong.of(maxLength);
     }
 
     @Override
     @NonNull
-    public RangeSpec withLimit(long limit) {
-      checkArgument(limit >= 0, "range limit must be >= 0 (range limit = %s)", limit);
-      return new RangeSpecWithLimit(begin, limit);
+    public RangeSpec withMaxLength(long maxLength) {
+      checkArgument(maxLength >= 0, "range maxLength must be >= 0 (range limit = %s)", maxLength);
+      return new RangeSpecWithMaxLength(begin, maxLength);
     }
 
     @Override
@@ -178,23 +178,23 @@ public abstract class RangeSpec {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof RangeSpecWithLimit)) {
+      if (!(o instanceof RangeSpecWithMaxLength)) {
         return false;
       }
-      RangeSpecWithLimit that = (RangeSpecWithLimit) o;
-      return begin == that.begin && limit == that.limit;
+      RangeSpecWithMaxLength that = (RangeSpecWithMaxLength) o;
+      return begin == that.begin && maxLength == that.maxLength;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(begin, limit);
+      return Objects.hash(begin, maxLength);
     }
 
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(RangeSpec.class)
           .add("begin", begin)
-          .add("limit", limit)
+          .add("maxLength", maxLength)
           .toString();
     }
   }

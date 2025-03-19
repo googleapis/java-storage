@@ -97,7 +97,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     long currentOffset = readOffset.get();
     ReadRange.Builder b = ReadRange.newBuilder().setReadId(readId()).setReadOffset(currentOffset);
     rangeSpec
-        .limit()
+        .maxLength()
         .ifPresent(
             length -> {
               long readSoFar = currentOffset - rangeSpec.begin();

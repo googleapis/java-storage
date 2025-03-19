@@ -24,30 +24,30 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
-public final class MaxLimitRangeSpecFunction extends RangeSpecFunction {
-  static final MaxLimitRangeSpecFunction INSTANCE = new MaxLimitRangeSpecFunction(0);
-  private final long maxLimit;
+public final class MaxLengthRangeSpecFunction extends RangeSpecFunction {
+  static final MaxLengthRangeSpecFunction INSTANCE = new MaxLengthRangeSpecFunction(0);
+  private final long maxLength;
 
-  MaxLimitRangeSpecFunction(long maxLimit) {
-    this.maxLimit = maxLimit;
+  MaxLengthRangeSpecFunction(long maxLength) {
+    this.maxLength = maxLength;
   }
 
-  public long getMaxLimit() {
-    return maxLimit;
+  public long getMaxLength() {
+    return maxLength;
   }
 
-  public MaxLimitRangeSpecFunction withMaxLimit(long maxLimit) {
-    checkArgument(maxLimit >= 0, "maxLimit >= 0 (%s >= 0)", maxLimit);
-    return new MaxLimitRangeSpecFunction(maxLimit);
+  public MaxLengthRangeSpecFunction withMaxLength(long maxLength) {
+    checkArgument(maxLength >= 0, "maxLength >= 0 (%s >= 0)", maxLength);
+    return new MaxLengthRangeSpecFunction(maxLength);
   }
 
   @Override
   public RangeSpec apply(long offset, @Nullable RangeSpec prev) {
-    if (prev == null || !prev.limit().isPresent()) {
-      return RangeSpec.of(offset, maxLimit);
+    if (prev == null || !prev.maxLength().isPresent()) {
+      return RangeSpec.of(offset, maxLength);
     }
-    long limit = prev.limit().getAsLong();
-    return RangeSpec.of(offset, Math.min(limit, maxLimit));
+    long limit = prev.maxLength().getAsLong();
+    return RangeSpec.of(offset, Math.min(limit, maxLength));
   }
 
   @Override
@@ -55,20 +55,20 @@ public final class MaxLimitRangeSpecFunction extends RangeSpecFunction {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof MaxLimitRangeSpecFunction)) {
+    if (!(o instanceof MaxLengthRangeSpecFunction)) {
       return false;
     }
-    MaxLimitRangeSpecFunction that = (MaxLimitRangeSpecFunction) o;
-    return maxLimit == that.maxLimit;
+    MaxLengthRangeSpecFunction that = (MaxLengthRangeSpecFunction) o;
+    return maxLength == that.maxLength;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(maxLimit);
+    return Objects.hashCode(maxLength);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("maxLimit", maxLimit).toString();
+    return MoreObjects.toStringHelper(this).add("maxLength", maxLength).toString();
   }
 }

@@ -26,7 +26,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -263,8 +262,8 @@ public final class ITObjectReadSessionTest {
         ReadProjectionConfigs.asSeekableChannel()
             .withRangeSpecFunction(
                 RangeSpecFunction.linearExponential()
-                    .withMinRangeSize(_1MiB)
-                    .withRangeSizeScalar(4.0));
+                    .withInitialMaxLength(_1MiB)
+                    .withMaxLengthScalar(4.0));
 
     BlobInfo gen1 = create(testContent);
     BlobId blobId = gen1.getBlobId();

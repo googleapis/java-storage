@@ -53,7 +53,7 @@ public abstract class RangeSpecFunction {
   }
 
   @BetaApi
-  public static MaxLimitRangeSpecFunction maxLimit(long maxLimit) {
-    return MaxLimitRangeSpecFunction.INSTANCE.withMaxLimit(maxLimit);
+  public static MaxLengthRangeSpecFunction maxLength(long maxLength) {
+    return MaxLengthRangeSpecFunction.INSTANCE.withMaxLength(maxLength);
   }
 }
