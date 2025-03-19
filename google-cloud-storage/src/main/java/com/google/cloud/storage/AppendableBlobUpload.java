@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -24,6 +25,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
+@BetaApi
 public final class AppendableBlobUpload implements AutoCloseable, WritableByteChannel {
   private final AppendableObjectBufferedWritableByteChannel channel;
   private final ApiFuture<BlobInfo> result;
@@ -51,6 +53,7 @@ public final class AppendableBlobUpload implements AutoCloseable, WritableByteCh
     channel.startTakeoverStream();
   }
 
+  @BetaApi
   public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
     channel.finalizeWrite();
     close();

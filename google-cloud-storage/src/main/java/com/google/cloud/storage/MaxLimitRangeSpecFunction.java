@@ -18,11 +18,13 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class MaxLimitRangeSpecFunction implements RangeSpecFunction {
+@BetaApi
+public final class MaxLimitRangeSpecFunction extends RangeSpecFunction {
   static final MaxLimitRangeSpecFunction INSTANCE = new MaxLimitRangeSpecFunction(0);
   private final long maxLimit;
 

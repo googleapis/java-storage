@@ -17,6 +17,8 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
@@ -47,6 +49,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+@InternalApi
+@InternalExtensionOnly
 abstract class BaseObjectReadSessionStreamRead<Projection>
     implements ObjectReadSessionStreamRead<Projection> {
 

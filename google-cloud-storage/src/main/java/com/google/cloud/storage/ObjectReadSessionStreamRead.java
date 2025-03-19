@@ -17,6 +17,8 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.ByteArrayAccumulatingRead;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
@@ -27,6 +29,8 @@ import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.storage.v2.ReadRange;
 import java.io.IOException;
 
+@InternalApi
+@InternalExtensionOnly
 interface ObjectReadSessionStreamRead<Projection> extends IOAutoCloseable {
 
   Projection project();

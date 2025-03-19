@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import java.util.OptionalLong;
@@ -25,12 +26,14 @@ import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /** Defines a range with begin offset and limit. */
+@BetaApi
 @Immutable
 public abstract class RangeSpec {
   // seal this class to extension
   private RangeSpec() {}
 
   /** The beginning of the range. */
+  @BetaApi
   public abstract long begin();
 
   /**
@@ -38,6 +41,7 @@ public abstract class RangeSpec {
    *
    * @see RangeSpecWithLimit
    */
+  @BetaApi
   public abstract OptionalLong limit();
 
   /**
@@ -45,6 +49,7 @@ public abstract class RangeSpec {
    * as its new limit.
    */
   @NonNull
+  @BetaApi
   public abstract RangeSpec withLimit(long limit);
 
   /** {@inheritDoc} */
@@ -65,6 +70,7 @@ public abstract class RangeSpec {
    * @throws IllegalArgumentException if begin is &lt; 0
    */
   @NonNull
+  @BetaApi
   public static RangeSpec beginAt(long begin) {
     checkArgument(begin >= 0, "range being must be >= 0 (range begin = %s)", begin);
     return new RangeSpecWithoutLimit(begin);
@@ -76,6 +82,7 @@ public abstract class RangeSpec {
    * @throws IllegalArgumentException if begin is &lt; 0, or if limit is &lt; 0
    */
   @NonNull
+  @BetaApi
   public static RangeSpec of(long begin, long limit) {
     checkArgument(begin >= 0, "range being must be >= 0 (range begin = %s)", begin);
     checkArgument(limit >= 0, "range limit must be >= 0 (range limit = %s)", limit);
@@ -87,6 +94,7 @@ public abstract class RangeSpec {
 
   /** A RangeSpec that represents to read from {@code 0} to {@code EOF} */
   @NonNull
+  @BetaApi
   public static RangeSpec all() {
     return RangeSpecWithoutLimit.ALL;
   }

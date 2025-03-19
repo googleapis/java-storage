@@ -20,7 +20,7 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class AndThenRangeSpecFunction implements RangeSpecFunction {
+final class AndThenRangeSpecFunction extends RangeSpecFunction {
 
   private final RangeSpecFunction first;
   private final RangeSpecFunction second;
@@ -40,11 +40,10 @@ final class AndThenRangeSpecFunction implements RangeSpecFunction {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof com.google.cloud.storage.AndThenRangeSpecFunction)) {
+    if (!(o instanceof AndThenRangeSpecFunction)) {
       return false;
     }
-    com.google.cloud.storage.AndThenRangeSpecFunction that =
-        (com.google.cloud.storage.AndThenRangeSpecFunction) o;
+    AndThenRangeSpecFunction that = (AndThenRangeSpecFunction) o;
     return Objects.equals(first, that.first) && Objects.equals(second, that.second);
   }
 

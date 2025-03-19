@@ -18,13 +18,17 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import com.google.common.math.DoubleMath;
 import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.OptionalLong;
+import javax.annotation.concurrent.Immutable;
 
-public final class LinearExponentialRangeSpecFunction implements RangeSpecFunction {
+@BetaApi
+@Immutable
+public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction {
 
   static final LinearExponentialRangeSpecFunction INSTANCE =
       new LinearExponentialRangeSpecFunction(ByteSizeConstants._1KiB, 4.0d);

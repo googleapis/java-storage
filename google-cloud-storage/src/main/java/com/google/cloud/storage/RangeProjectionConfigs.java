@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.AccumulatingRead;
 import com.google.cloud.storage.BaseObjectReadSessionStreamRead.StreamingRead;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -26,7 +27,9 @@ import com.google.common.base.MoreObjects;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Objects;
+import javax.annotation.concurrent.Immutable;
 
+@BetaApi
 public final class RangeProjectionConfigs {
 
   abstract static class BaseConfig<Projection, Read extends ObjectReadSessionStreamRead<Projection>>
@@ -46,22 +49,28 @@ public final class RangeProjectionConfigs {
    * asynchronously been delivered from gcs the method will return rather than waiting for the bytes
    * to arrive.
    */
+  @BetaApi
   public static RangeAsChannel asChannel() {
     return RangeAsChannel.INSTANCE;
   }
 
+  @BetaApi
   static RangeAsFutureBytes asFutureBytes() {
     return RangeAsFutureBytes.INSTANCE;
   }
 
+  @BetaApi
   static RangeAsFutureByteString asFutureByteString() {
     return RangeAsFutureByteString.INSTANCE;
   }
 
+  @BetaApi
   public static SeekableChannelConfig asSeekableChannel() {
     return SeekableChannelConfig.INSTANCE;
   }
 
+  @BetaApi
+  @Immutable
   public static final class SeekableChannelConfig
       extends RangeProjectionConfig<SeekableByteChannel> {
 
@@ -76,19 +85,23 @@ public final class RangeProjectionConfigs {
       this.rangeSpecFunction = rangeSpecFunction;
     }
 
+    @BetaApi
     public RangeSpecFunction getRangeSpecFunction() {
       return rangeSpecFunction;
     }
 
+    @BetaApi
     public SeekableChannelConfig withRangeSpecFunction(RangeSpecFunction rangeSpecFunction) {
       requireNonNull(rangeSpecFunction, "rangeSpecFunction must be non null");
       return new SeekableChannelConfig(hasher, rangeSpecFunction);
     }
 
+    @BetaApi
     boolean getCrc32cValidationEnabled() {
       return Hasher.enabled().equals(hasher);
     }
 
+    @BetaApi
     SeekableChannelConfig withCrc32cValidationEnabled(boolean enabled) {
       if (enabled && Hasher.enabled().equals(hasher)) {
         return this;
@@ -135,6 +148,8 @@ public final class RangeProjectionConfigs {
     }
   }
 
+  @BetaApi
+  @Immutable
   public static final class RangeAsChannel
       extends BaseConfig<ScatteringByteChannel, StreamingRead> {
     private static final RangeAsChannel INSTANCE =
@@ -149,10 +164,12 @@ public final class RangeProjectionConfigs {
       this.hasher = hasher;
     }
 
+    @BetaApi
     public RangeSpec getRange() {
       return range;
     }
 
+    @BetaApi
     public RangeAsChannel withRangeSpec(RangeSpec range) {
       requireNonNull(range, "range must be non null");
       if (this.range.equals(range)) {
@@ -165,6 +182,7 @@ public final class RangeProjectionConfigs {
       return Hasher.enabled().equals(hasher);
     }
 
+    @BetaApi
     RangeAsChannel withCrc32cValidationEnabled(boolean enabled) {
       if (enabled && Hasher.enabled().equals(hasher)) {
         return this;
@@ -210,7 +228,9 @@ public final class RangeProjectionConfigs {
     }
   }
 
-  public static final class RangeAsFutureBytes
+  @BetaApi
+  @Immutable
+  static final class RangeAsFutureBytes
       extends BaseConfig<ApiFuture<byte[]>, AccumulatingRead<byte[]>> {
     private static final RangeAsFutureBytes INSTANCE =
         new RangeAsFutureBytes(RangeSpec.all(), Hasher.enabled());
@@ -224,10 +244,12 @@ public final class RangeProjectionConfigs {
       this.hasher = hasher;
     }
 
+    @BetaApi
     public RangeSpec getRange() {
       return range;
     }
 
+    @BetaApi
     public RangeAsFutureBytes withRangeSpec(RangeSpec range) {
       requireNonNull(range, "range must be non null");
       if (this.range.equals(range)) {
@@ -236,10 +258,12 @@ public final class RangeProjectionConfigs {
       return new RangeAsFutureBytes(range, hasher);
     }
 
+    @BetaApi
     boolean getCrc32cValidationEnabled() {
       return Hasher.enabled().equals(hasher);
     }
 
+    @BetaApi
     RangeAsFutureBytes withCrc32cValidationEnabled(boolean enabled) {
       if (enabled && Hasher.enabled().equals(hasher)) {
         return this;
@@ -286,6 +310,7 @@ public final class RangeProjectionConfigs {
     }
   }
 
+  @Immutable
   static final class RangeAsFutureByteString
       extends BaseConfig<ApiFuture<DisposableByteString>, AccumulatingRead<DisposableByteString>> {
     private static final RangeAsFutureByteString INSTANCE =
@@ -300,10 +325,12 @@ public final class RangeProjectionConfigs {
       this.hasher = hasher;
     }
 
+    @BetaApi
     public RangeSpec getRange() {
       return range;
     }
 
+    @BetaApi
     public RangeAsFutureByteString withRangeSpec(RangeSpec range) {
       requireNonNull(range, "range must be non null");
       if (this.range.equals(range)) {
@@ -312,10 +339,12 @@ public final class RangeProjectionConfigs {
       return new RangeAsFutureByteString(range, hasher);
     }
 
+    @BetaApi
     boolean getCrc32cValidationEnabled() {
       return Hasher.enabled().equals(hasher);
     }
 
+    @BetaApi
     RangeAsFutureByteString withCrc32cValidationEnabled(boolean enabled) {
       if (enabled && Hasher.enabled().equals(hasher)) {
         return this;

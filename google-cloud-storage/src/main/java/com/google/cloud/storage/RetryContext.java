@@ -20,6 +20,8 @@ import com.google.api.client.util.Sleeper;
 import com.google.api.core.ApiClock;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.cloud.storage.Backoff.BackoffResult;
@@ -39,6 +41,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+@InternalApi
+@InternalExtensionOnly
 interface RetryContext {
 
   boolean inBackoff();

@@ -16,12 +16,18 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.protobuf.ByteString;
 import java.io.Closeable;
 import java.io.IOException;
 
+@InternalApi
+@InternalExtensionOnly
 interface ZeroCopySupport {
 
+  @InternalApi
+  @InternalExtensionOnly
   interface DisposableByteString extends AutoCloseable, Closeable {
 
     ByteString byteString();

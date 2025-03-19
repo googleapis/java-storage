@@ -16,30 +16,44 @@
 
 package com.google.cloud.storage;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.api.core.BetaApi;
+import com.google.api.core.InternalExtensionOnly;
+import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A specialized BiFunction to produce a RangeSpec given an offset and a possible previous
- * RangeSpec.
+ * A specialized BiFunction to produce a {@link RangeSpec} given an offset and a possible previous
+ * {@code RangeSpec}.
  */
-@FunctionalInterface
-interface RangeSpecFunction {
+@BetaApi
+@Immutable
+@InternalExtensionOnly
+public abstract class RangeSpecFunction {
+
+  RangeSpecFunction() {}
 
   /**
    * Given an offset to read from, and the previously read {@link RangeSpec} return a new {@code
    * RangeSpec} representing the range to read next.
    */
-  RangeSpec apply(long offset, @Nullable RangeSpec prev);
+  @BetaApi
+  abstract RangeSpec apply(long offset, @Nullable RangeSpec prev);
 
-  default RangeSpecFunction andThen(RangeSpecFunction then) {
+  @BetaApi
+  public RangeSpecFunction andThen(RangeSpecFunction then) {
+    requireNonNull(then, "then must be non null");
     return new AndThenRangeSpecFunction(this, then);
   }
 
-  static LinearExponentialRangeSpecFunction linearExponential() {
+  @BetaApi
+  public static LinearExponentialRangeSpecFunction linearExponential() {
     return LinearExponentialRangeSpecFunction.INSTANCE;
   }
 
-  static MaxLimitRangeSpecFunction maxLimit(long maxLimit) {
+  @BetaApi
+  public static MaxLimitRangeSpecFunction maxLimit(long maxLimit) {
     return MaxLimitRangeSpecFunction.INSTANCE.withMaxLimit(maxLimit);
   }
 }

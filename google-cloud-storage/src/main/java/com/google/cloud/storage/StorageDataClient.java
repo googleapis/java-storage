@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.ObjectReadSessionState.OpenArguments;
@@ -30,6 +31,7 @@ import com.google.storage.v2.BidiReadObjectResponse;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
+@InternalApi
 final class StorageDataClient implements IOAutoCloseable {
 
   private final ScheduledExecutorService executor;

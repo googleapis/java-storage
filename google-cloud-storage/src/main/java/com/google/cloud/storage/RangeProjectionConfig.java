@@ -16,9 +16,13 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.BetaApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
 import java.util.Locale;
 
+@BetaApi
+@InternalExtensionOnly
 public abstract class RangeProjectionConfig<Projection> {
 
   RangeProjectionConfig() {}

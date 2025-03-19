@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.cloud.storage.RangeProjectionConfigs.RangeAsChannel;
 import com.google.cloud.storage.RangeProjectionConfigs.SeekableChannelConfig;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
@@ -32,6 +33,7 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
   private final ObjectReadSession session;
   private final SeekableChannelConfig config;
   private final long size;
+  private final RangeAsChannel channelConfig;
   private final IOAutoCloseable closeAlongWithThis;
 
   private ReadableByteChannel rbc;
@@ -48,6 +50,9 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
     this.closeAlongWithThis = closeAlongWithThis;
     this.size = session.getResource().getSize();
     this.position = 0;
+    this.channelConfig =
+        RangeProjectionConfigs.asChannel()
+            .withCrc32cValidationEnabled(config.getCrc32cValidationEnabled());
   }
 
   @Override
@@ -67,7 +72,7 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
           "RangeSpec does not begin at provided position. expected = %s, actual = %s",
           position,
           apply.begin());
-      rbc = session.readAs(RangeProjectionConfigs.asChannel().withRangeSpec(apply));
+      rbc = session.readAs(channelConfig.withRangeSpec(apply));
       lastRangeSpec = apply;
     }
 

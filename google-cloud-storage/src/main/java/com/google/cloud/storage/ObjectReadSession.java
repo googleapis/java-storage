@@ -16,9 +16,13 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.storage.v2.Object;
 
-public interface ObjectReadSession extends IOAutoCloseable {
+@InternalApi
+@InternalExtensionOnly
+interface ObjectReadSession extends IOAutoCloseable {
 
   Object getResource();
 

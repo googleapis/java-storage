@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.InternalApi;
+import com.google.api.core.InternalExtensionOnly;
 import com.google.common.base.MoreObjects;
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,11 +27,14 @@ import java.io.IOException;
  * {@link IOException}. Also implements {@link Closeable} for ease of cross usage.
  */
 @FunctionalInterface
+@InternalApi
+@InternalExtensionOnly
 interface IOAutoCloseable extends AutoCloseable, Closeable {
 
   @Override
   void close() throws IOException;
 
+  @InternalApi
   default IOAutoCloseable andThen(IOAutoCloseable then) {
     if (NoOpIOAutoCloseable.INSTANCE.equals(this)) {
       return then;
@@ -40,6 +45,7 @@ interface IOAutoCloseable extends AutoCloseable, Closeable {
     }
   }
 
+  @InternalApi
   static IOAutoCloseable noOp() {
     return NoOpIOAutoCloseable.INSTANCE;
   }

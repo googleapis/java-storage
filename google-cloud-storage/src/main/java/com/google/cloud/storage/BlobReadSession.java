@@ -17,10 +17,15 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
+import com.google.api.core.InternalExtensionOnly;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import java.io.Closeable;
 import java.io.IOException;
 
 @BetaApi
-public interface BlobReadSession extends IOAutoCloseable {
+@InternalExtensionOnly
+@TransportCompatibility({Transport.GRPC})
+public interface BlobReadSession extends AutoCloseable, Closeable {
 
   @BetaApi
   BlobInfo getBlobInfo();
