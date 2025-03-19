@@ -34,7 +34,7 @@ public class QuickstartStorageControlSample {
               .setName(StorageLayoutName.format("_", bucketName))
               .build();
       StorageLayout response = storageControlClient.getStorageLayout(request);
-      System.out.printf("Performed getStorageLayout request for %s", response.getName());
+      System.out.printf("Performed getStorageLayout request for %s%n", response.getName());
     }
   }
 }

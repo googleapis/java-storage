@@ -16,37 +16,46 @@
 
 package com.example.storage.object;
 
-// [START storage_print_file_acl_for_user]
+// [START storage_remove_file_owner]
 
-import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class PrintFileAclForUser {
+public class RemoveBlobOwner {
 
-  public static void printFileAclForUser(String bucketName, String blobName, String userEmail) {
+  public static void removeBlobOwner(
+      String projectId, String bucketName, String userEmail, String blobName) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-    // The ID to give your GCS bucket
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // The name of the blob/file that you wish to view Acls of
-    // String blobName = "your-blob-name";
-
-    // The email of the user whose acl is being retrieved.
+    // Email of the user you wish to remove as a file owner
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
+    // The name of the blob/file that you wish to modify permissions on
+    // String blobName = "your-blob-name";
+
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
-    Acl blobAcl = blob.getAcl(new User(userEmail));
-    if (blobAcl != null) {
-      String userRole = blobAcl.getRole().name();
-      System.out.println("User " + userEmail + " has role " + userRole);
+    User ownerToRemove = new User(userEmail);
+
+    boolean success = blob.deleteAcl(ownerToRemove);
+    if (success) {
+      System.out.println(
+          "Removed user "
+              + userEmail
+              + " as an owner on file "
+              + blobName
+              + " in bucket "
+              + bucketName);
     } else {
-      System.out.println("User " + userEmail + " not found");
+      System.out.println("User " + userEmail + " was not found");
     }
   }
 }
-// [END storage_print_file_acl_for_user]
+// [END storage_remove_file_owner]

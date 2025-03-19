@@ -16,17 +16,19 @@
 
 package com.example.storage.object;
 
-// [START storage_remove_file_owner]
+// [START storage_add_file_owner]
 
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class RemoveFileOwner {
+public class AddBlobOwner {
 
-  public static void removeFileOwner(
+  public static void addBlobOwner(
       String projectId, String bucketName, String userEmail, String blobName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
@@ -34,7 +36,7 @@ public class RemoveFileOwner {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // Email of the user you wish to remove as a file owner
+    // Email of the user you wish to add as a file owner
     // String userEmail = "someuser@domain.com"
 
     // The name of the blob/file that you wish to modify permissions on
@@ -42,20 +44,16 @@ public class RemoveFileOwner {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
-    User ownerToRemove = new User(userEmail);
+    Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
 
-    boolean success = blob.deleteAcl(ownerToRemove);
-    if (success) {
-      System.out.println(
-          "Removed user "
-              + userEmail
-              + " as an owner on file "
-              + blobName
-              + " in bucket "
-              + bucketName);
-    } else {
-      System.out.println("User " + userEmail + " was not found");
-    }
+    blob.createAcl(newOwner);
+    System.out.println(
+        "Added user "
+            + userEmail
+            + " as an owner on blob "
+            + blobName
+            + " in bucket "
+            + bucketName);
   }
 }
-// [END storage_remove_file_owner]
+// [END storage_add_file_owner]
