@@ -18,8 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.cloud.storage.RangeProjectionConfigs.RangeAsChannel;
-import com.google.cloud.storage.RangeProjectionConfigs.SeekableChannelConfig;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsChannel;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,9 +31,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel, IOAutoCloseable {
 
   private final ObjectReadSession session;
-  private final SeekableChannelConfig config;
+  private final ReadAsSeekableChannel config;
   private final long size;
-  private final RangeAsChannel channelConfig;
+  private final ReadAsChannel channelConfig;
   private final IOAutoCloseable closeAlongWithThis;
 
   private ReadableByteChannel rbc;
@@ -44,14 +44,14 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
   @Nullable private RangeSpec lastRangeSpec;
 
   ObjectReadSessionSeekableByteChannel(
-      ObjectReadSession session, SeekableChannelConfig config, IOAutoCloseable closeAlongWithThis) {
+      ObjectReadSession session, ReadAsSeekableChannel config, IOAutoCloseable closeAlongWithThis) {
     this.session = session;
     this.config = config;
     this.closeAlongWithThis = closeAlongWithThis;
     this.size = session.getResource().getSize();
     this.position = 0;
     this.channelConfig =
-        RangeProjectionConfigs.asChannel()
+        ReadProjectionConfigs.asChannel()
             .withCrc32cValidationEnabled(config.getCrc32cValidationEnabled());
   }
 

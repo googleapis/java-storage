@@ -32,7 +32,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
-import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
+import com.google.cloud.storage.ReadProjectionConfigs.BaseConfig;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
@@ -1828,12 +1828,12 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  private static final class OtelRangeProjectionConfig<Projection>
-      extends RangeProjectionConfig<Projection> {
-    private final RangeProjectionConfig<Projection> delegate;
+  private static final class OtelReadProjectionConfig<Projection>
+      extends ReadProjectionConfig<Projection> {
+    private final ReadProjectionConfig<Projection> delegate;
     private final Span parentSpan;
 
-    private OtelRangeProjectionConfig(RangeProjectionConfig<Projection> delegate, Span parentSpan) {
+    private OtelReadProjectionConfig(ReadProjectionConfig<Projection> delegate, Span parentSpan) {
       this.delegate = delegate;
       this.parentSpan = parentSpan;
     }
@@ -1945,7 +1945,7 @@ final class OtelStorageDecorator implements Storage {
     }
 
     @Override
-    public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
+    public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
       Span readRangeSpan =
           tracer
               .spanBuilder("readAs")
@@ -1953,8 +1953,8 @@ final class OtelStorageDecorator implements Storage {
               .setParent(blobReadSessionContext)
               .startSpan();
       try (Scope ignore2 = readRangeSpan.makeCurrent()) {
-        OtelRangeProjectionConfig<Projection> c =
-            new OtelRangeProjectionConfig<>(config, readRangeSpan);
+        OtelReadProjectionConfig<Projection> c =
+            new OtelReadProjectionConfig<>(config, readRangeSpan);
         return delegate.readAs(c);
       } catch (Throwable t) {
         readRangeSpan.recordException(t);

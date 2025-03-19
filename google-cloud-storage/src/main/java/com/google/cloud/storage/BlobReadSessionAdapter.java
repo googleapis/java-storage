@@ -39,7 +39,7 @@ final class BlobReadSessionAdapter implements BlobReadSession {
   // the return type.
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
-  public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
+  public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
     Projection projection = session.readAs(config);
     if (projection instanceof ApiFuture) {
       ApiFuture apiFuture = (ApiFuture) projection;

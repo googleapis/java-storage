@@ -26,5 +26,5 @@ interface ObjectReadSession extends IOAutoCloseable {
 
   Object getResource();
 
-  <Projection> Projection readAs(RangeProjectionConfig<Projection> config);
+  <Projection> Projection readAs(ReadProjectionConfig<Projection> config);
 }

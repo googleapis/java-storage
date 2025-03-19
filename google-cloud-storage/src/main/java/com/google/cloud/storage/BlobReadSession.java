@@ -31,7 +31,7 @@ public interface BlobReadSession extends AutoCloseable, Closeable {
   BlobInfo getBlobInfo();
 
   @BetaApi
-  <Projection> Projection readAs(RangeProjectionConfig<Projection> config);
+  <Projection> Projection readAs(ReadProjectionConfig<Projection> config);
 
   @Override
   @BetaApi

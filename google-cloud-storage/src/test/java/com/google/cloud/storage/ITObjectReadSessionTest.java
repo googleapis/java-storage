@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.RangeProjectionConfigs.SeekableChannelConfig;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -92,7 +92,7 @@ public final class ITObjectReadSessionTest {
 
       ApiFuture<byte[]> futureRead1Bytes =
           blobReadSession.readAs(
-              RangeProjectionConfigs.asFutureBytes()
+              ReadProjectionConfigs.asFutureBytes()
                   .withRangeSpec(RangeSpec.of(_512KiB - 13L, 13L)));
 
       byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
@@ -122,7 +122,7 @@ public final class ITObjectReadSessionTest {
                 .map(
                     r ->
                         blobReadSession.readAs(
-                            RangeProjectionConfigs.asFutureBytes().withRangeSpec(r)))
+                            ReadProjectionConfigs.asFutureBytes().withRangeSpec(r)))
                 .collect(Collectors.toList());
 
         ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
@@ -166,7 +166,7 @@ public final class ITObjectReadSessionTest {
           storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ScatteringByteChannel r = blobReadSession.readAs(RangeProjectionConfigs.asChannel())) {
+        try (ScatteringByteChannel r = blobReadSession.readAs(ReadProjectionConfigs.asChannel())) {
           ByteBuffer buf = ByteBuffer.wrap(buffer);
           Buffers.copyUsingBuffer(buf, r, Channels.newChannel(baos));
         }
@@ -205,7 +205,7 @@ public final class ITObjectReadSessionTest {
                 .map(
                     r ->
                         blobReadSession.readAs(
-                            RangeProjectionConfigs.asFutureByteString().withRangeSpec(r)))
+                            ReadProjectionConfigs.asFutureByteString().withRangeSpec(r)))
                 .collect(Collectors.toList());
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
@@ -259,8 +259,8 @@ public final class ITObjectReadSessionTest {
     ChecksummedTestContent testContent =
         ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(16 * _1MiB));
 
-    SeekableChannelConfig config =
-        RangeProjectionConfigs.asSeekableChannel()
+    ReadAsSeekableChannel config =
+        ReadProjectionConfigs.asSeekableChannel()
             .withRangeSpecFunction(
                 RangeSpecFunction.linearExponential()
                     .withMinRangeSize(_1MiB)

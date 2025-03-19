@@ -18,125 +18,125 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.storage.RangeProjectionConfigs.RangeAsChannel;
-import com.google.cloud.storage.RangeProjectionConfigs.RangeAsFutureByteString;
-import com.google.cloud.storage.RangeProjectionConfigs.RangeAsFutureBytes;
-import com.google.cloud.storage.RangeProjectionConfigs.SeekableChannelConfig;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsChannel;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsFutureByteString;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsFutureBytes;
+import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import org.junit.Test;
 
-public final class RangeProjectionConfigsTest {
+public final class ReadProjectionConfigsTest {
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_seekable_hasher_true() {
-    SeekableChannelConfig config1 = RangeProjectionConfigs.asSeekableChannel();
+    ReadAsSeekableChannel config1 = ReadProjectionConfigs.asSeekableChannel();
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(true);
 
-    SeekableChannelConfig config2 = config1.withCrc32cValidationEnabled(true);
+    ReadAsSeekableChannel config2 = config1.withCrc32cValidationEnabled(true);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_seekable_hasher_false() {
-    SeekableChannelConfig config1 =
-        RangeProjectionConfigs.asSeekableChannel().withCrc32cValidationEnabled(false);
+    ReadAsSeekableChannel config1 =
+        ReadProjectionConfigs.asSeekableChannel().withCrc32cValidationEnabled(false);
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(false);
 
-    SeekableChannelConfig config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsSeekableChannel config2 = config1.withCrc32cValidationEnabled(false);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void differentInstanceWhenChanged_seekable_hasher() {
-    SeekableChannelConfig config1 = RangeProjectionConfigs.asSeekableChannel();
-    SeekableChannelConfig config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsSeekableChannel config1 = ReadProjectionConfigs.asSeekableChannel();
+    ReadAsSeekableChannel config2 = config1.withCrc32cValidationEnabled(false);
 
     assertThat(config2).isNotSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_bytes_hasher_true() {
-    RangeAsFutureBytes config1 = RangeProjectionConfigs.asFutureBytes();
+    ReadAsFutureBytes config1 = ReadProjectionConfigs.asFutureBytes();
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(true);
 
-    RangeAsFutureBytes config2 = config1.withCrc32cValidationEnabled(true);
+    ReadAsFutureBytes config2 = config1.withCrc32cValidationEnabled(true);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_bytes_hasher_false() {
-    RangeAsFutureBytes config1 =
-        RangeProjectionConfigs.asFutureBytes().withCrc32cValidationEnabled(false);
+    ReadAsFutureBytes config1 =
+        ReadProjectionConfigs.asFutureBytes().withCrc32cValidationEnabled(false);
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(false);
 
-    RangeAsFutureBytes config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsFutureBytes config2 = config1.withCrc32cValidationEnabled(false);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void differentInstanceWhenChanged_bytes_hasher() {
-    RangeAsFutureBytes config1 = RangeProjectionConfigs.asFutureBytes();
-    RangeAsFutureBytes config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsFutureBytes config1 = ReadProjectionConfigs.asFutureBytes();
+    ReadAsFutureBytes config2 = config1.withCrc32cValidationEnabled(false);
 
     assertThat(config2).isNotSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_byteString_hasher_true() {
-    RangeAsFutureByteString config1 = RangeProjectionConfigs.asFutureByteString();
+    ReadAsFutureByteString config1 = ReadProjectionConfigs.asFutureByteString();
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(true);
 
-    RangeAsFutureByteString config2 = config1.withCrc32cValidationEnabled(true);
+    ReadAsFutureByteString config2 = config1.withCrc32cValidationEnabled(true);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_byteString_hasher_false() {
-    RangeAsFutureByteString config1 =
-        RangeProjectionConfigs.asFutureByteString().withCrc32cValidationEnabled(false);
+    ReadAsFutureByteString config1 =
+        ReadProjectionConfigs.asFutureByteString().withCrc32cValidationEnabled(false);
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(false);
 
-    RangeAsFutureByteString config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsFutureByteString config2 = config1.withCrc32cValidationEnabled(false);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void differentInstanceWhenChanged_byteString_hasher() {
-    RangeAsFutureByteString config1 = RangeProjectionConfigs.asFutureByteString();
-    RangeAsFutureByteString config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsFutureByteString config1 = ReadProjectionConfigs.asFutureByteString();
+    ReadAsFutureByteString config2 = config1.withCrc32cValidationEnabled(false);
 
     assertThat(config2).isNotSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_channel_hasher_true() {
-    RangeAsChannel config1 = RangeProjectionConfigs.asChannel();
+    ReadAsChannel config1 = ReadProjectionConfigs.asChannel();
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(true);
 
-    RangeAsChannel config2 = config1.withCrc32cValidationEnabled(true);
+    ReadAsChannel config2 = config1.withCrc32cValidationEnabled(true);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void sameInstanceMustBeReturnedIfNoChange_channel_hasher_false() {
-    RangeAsChannel config1 = RangeProjectionConfigs.asChannel().withCrc32cValidationEnabled(false);
+    ReadAsChannel config1 = ReadProjectionConfigs.asChannel().withCrc32cValidationEnabled(false);
 
     assertThat(config1.getCrc32cValidationEnabled()).isEqualTo(false);
 
-    RangeAsChannel config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsChannel config2 = config1.withCrc32cValidationEnabled(false);
     assertThat(config2).isSameInstanceAs(config1);
   }
 
   @Test
   public void differentInstanceWhenChanged_channel_hasher() {
-    RangeAsChannel config1 = RangeProjectionConfigs.asChannel();
-    RangeAsChannel config2 = config1.withCrc32cValidationEnabled(false);
+    ReadAsChannel config1 = ReadProjectionConfigs.asChannel();
+    ReadAsChannel config2 = config1.withCrc32cValidationEnabled(false);
 
     assertThat(config2).isNotSameInstanceAs(config1);
   }

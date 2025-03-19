@@ -54,14 +54,14 @@ public final class ITStorageDataClientFakeTest {
   @Test
   public void fastOpen_futureBytes() throws Exception {
     doTest(
-        RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10, 20)),
+        ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10, 20)),
         f -> f.get(10, TimeUnit.MILLISECONDS));
   }
 
   @Test
   public void fastOpen_channel() throws Exception {
     doTest(
-        RangeProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10, 20)),
+        ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10, 20)),
         c -> {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
           ByteStreams.copy(c, Channels.newChannel(baos));
@@ -72,7 +72,7 @@ public final class ITStorageDataClientFakeTest {
   @Test
   public void fastOpen_futureByteString() throws Exception {
     doTest(
-        RangeProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(10, 20)),
+        ReadProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(10, 20)),
         f -> {
           try (DisposableByteString disposableByteString = f.get(10, TimeUnit.MILLISECONDS)) {
             ByteString byteString = disposableByteString.byteString();
@@ -81,7 +81,7 @@ public final class ITStorageDataClientFakeTest {
         });
   }
 
-  private <P> void doTest(RangeProjectionConfig<P> config, ThrowableFunction<P, byte[]> func)
+  private <P> void doTest(ReadProjectionConfig<P> config, ThrowableFunction<P, byte[]> func)
       throws Exception {
     ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
     ChecksummedTestContent content1 = ChecksummedTestContent.of(content.getBytes(), 0, 10);

@@ -217,7 +217,7 @@ public final class ITObjectReadSessionFakeTest {
 
       try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         byte[] actual =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 10L)))
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 10L)))
                 .get(1, TimeUnit.SECONDS);
 
         assertThat(xxd(actual)).isEqualTo(xxd(content.getBytes()));
@@ -454,7 +454,7 @@ public final class ITObjectReadSessionFakeTest {
                   try {
                     ApiFuture<byte[]> future =
                         bd.readAs(
-                            RangeProjectionConfigs.asFutureBytes()
+                            ReadProjectionConfigs.asFutureBytes()
                                 .withRangeSpec(RangeSpec.of(10L, 10L)));
                     future.get(5, TimeUnit.SECONDS);
                   } catch (ExecutionException e) {
@@ -463,7 +463,7 @@ public final class ITObjectReadSessionFakeTest {
                 });
         assertThat(se).hasCauseThat().isInstanceOf(AbortedException.class);
         byte[] actual =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(15L, 5L)))
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(15L, 5L)))
                 .get(2, TimeUnit.SECONDS);
         assertThat(actual).hasLength(5);
         assertThat(xxd(actual)).isEqualTo(xxd(content3.getBytes()));
@@ -659,7 +659,7 @@ public final class ITObjectReadSessionFakeTest {
       ApiFuture<BlobReadSession> futureBlobDescriptor = storage.blobReadSession(id);
       try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 10L)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 10L)));
 
         StorageException se =
             assertThrows(
@@ -733,7 +733,7 @@ public final class ITObjectReadSessionFakeTest {
 
       try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
 
         StorageException se =
             assertThrows(
@@ -788,7 +788,7 @@ public final class ITObjectReadSessionFakeTest {
         ObjectReadSessionImpl orsi = getObjectReadSessionImpl(bd);
 
         ApiFuture<byte[]> future =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
         ExecutionException ee =
             assertThrows(ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
 
@@ -919,11 +919,11 @@ public final class ITObjectReadSessionFakeTest {
 
       try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> f1 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(1, 1)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(1, 1)));
         ApiFuture<byte[]> f2 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(2, 2)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(2, 2)));
         ApiFuture<byte[]> f3 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(3, 3)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(3, 3)));
 
         List<byte[]> successful =
             ApiFutures.successfulAsList(ImmutableList.of(f1, f2, f3)).get(5, TimeUnit.SECONDS);
@@ -1001,11 +1001,11 @@ public final class ITObjectReadSessionFakeTest {
       try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         // issue three different range reads
         ApiFuture<byte[]> f1 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(1, 1)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(1, 1)));
         ApiFuture<byte[]> f2 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(2, 2)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(2, 2)));
         ApiFuture<byte[]> f3 =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(3, 3)));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(3, 3)));
 
         // make sure the first read succeeded
         byte[] actual = TestUtils.await(f1, 5, TimeUnit.SECONDS);
@@ -1094,7 +1094,7 @@ public final class ITObjectReadSessionFakeTest {
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try (BlobReadSession bd = futureBlobDescriptor.get(5, TimeUnit.SECONDS);
-          ScatteringByteChannel c = bd.readAs(RangeProjectionConfigs.asChannel())) {
+          ScatteringByteChannel c = bd.readAs(ReadProjectionConfigs.asChannel())) {
         ByteStreams.copy(c, Channels.newChannel(baos));
       }
 
@@ -1291,13 +1291,13 @@ public final class ITObjectReadSessionFakeTest {
       Exception caught = null;
       try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         try (ScatteringByteChannel c =
-            bd.readAs(RangeProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10L, 20L)))) {
+            bd.readAs(ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10L, 20L)))) {
           buf.limit(5);
           Buffers.fillFrom(buf, c);
           buf.limit(buf.capacity());
           ApiFuture<byte[]> future =
               bd.readAs(
-                  RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
+                  ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10L, 20L)));
           bytes = future.get(3, TimeUnit.SECONDS);
           Buffers.fillFrom(buf, c);
         }
@@ -1411,7 +1411,7 @@ public final class ITObjectReadSessionFakeTest {
           dataClient.fastOpenReadSession(
               req,
               GrpcCallContext.createDefault(),
-              RangeProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(10, 10)));
+              ReadProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(10, 10)));
 
       ByteString bytes = ByteString.empty();
       Exception caught = null;
@@ -1426,14 +1426,14 @@ public final class ITObjectReadSessionFakeTest {
 
         ApiFuture<DisposableByteString> futureBytes2 =
             session.readAs(
-                RangeProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(20L, 10L)));
+                ReadProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(20L, 10L)));
         try (DisposableByteString disposableByteString = futureBytes2.get()) {
           bytes = bytes.concat(disposableByteString.byteString());
         }
 
         ApiFuture<DisposableByteString> futureBytes3 =
             session.readAs(
-                RangeProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(30L, 10L)));
+                ReadProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(30L, 10L)));
         try (DisposableByteString disposableByteString = futureBytes3.get()) {
           bytes = bytes.concat(disposableByteString.byteString());
         }
@@ -1517,8 +1517,7 @@ public final class ITObjectReadSessionFakeTest {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ScatteringByteChannel r =
-                bd.readAs(
-                    RangeProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10L, 20L)));
+                bd.readAs(ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10L, 20L)));
             WritableByteChannel w = Channels.newChannel(baos)) {
           ByteStreams.copy(r, w);
         }
@@ -1549,7 +1548,7 @@ public final class ITObjectReadSessionFakeTest {
 
       try (BlobReadSession bd = futureObjectDescriptor.get(5, TimeUnit.SECONDS)) {
         ApiFuture<byte[]> future =
-            bd.readAs(RangeProjectionConfigs.asFutureBytes().withRangeSpec(range));
+            bd.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(range));
 
         byte[] actual = future.get(5, TimeUnit.SECONDS);
         Crc32cLengthKnown actualCrc32c = Hasher.enabled().hash(ByteBuffer.wrap(actual));

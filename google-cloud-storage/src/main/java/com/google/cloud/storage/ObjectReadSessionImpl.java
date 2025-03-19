@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
-import com.google.cloud.storage.RangeProjectionConfig.ProjectionType;
+import com.google.cloud.storage.ReadProjectionConfig.ProjectionType;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.storage.v2.BidiReadObjectRequest;
@@ -80,7 +80,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   }
 
   @Override
-  public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
+  public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
     lock.lock();
     try {
       checkState(open, "stream already closed");

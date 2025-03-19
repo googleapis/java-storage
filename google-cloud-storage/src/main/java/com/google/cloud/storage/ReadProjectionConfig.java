@@ -18,14 +18,14 @@ package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
-import com.google.cloud.storage.RangeProjectionConfigs.BaseConfig;
+import com.google.cloud.storage.ReadProjectionConfigs.BaseConfig;
 import java.util.Locale;
 
 @BetaApi
 @InternalExtensionOnly
-public abstract class RangeProjectionConfig<Projection> {
+public abstract class ReadProjectionConfig<Projection> {
 
-  RangeProjectionConfig() {}
+  ReadProjectionConfig() {}
 
   BaseConfig<Projection, ?> cast() {
     throw new UnsupportedOperationException(String.format("%s#cast()", this.getClass().getName()));
