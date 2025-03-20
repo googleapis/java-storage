@@ -564,7 +564,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     } else {
       StorageObject tmp = codecs.blobInfo().encode(updated);
       StorageObject pb = new StorageObject();
-      Stream.concat(modifiedFields.stream(), BlobField.REQUIRED_FIELDS.stream())
+      Stream.of(
+              modifiedFields.stream(),
+              BlobField.REQUIRED_FIELDS.stream(),
+              Stream.of(BlobField.GENERATION))
+          .flatMap(s -> s) // .flatten()
           .map(
               f -> {
                 if (f instanceof NestedNamedField) {
