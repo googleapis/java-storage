@@ -26,6 +26,23 @@ import java.nio.channels.ScatteringByteChannel;
 import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * Read a range of {@code byte}s as a non-blocking {@link ScatteringByteChannel}
+ *
+ * <p>The returned channel will be non-blocking for all read calls. If bytes have not yet
+ * asynchronously been delivered from Google Cloud Storage the method will return rather than
+ * waiting for the bytes to arrive.
+ *
+ * <p>The resulting {@link ScatteringByteChannel} MUST be {@link ScatteringByteChannel#close()
+ * close()}ed to avoid leaking memory
+ *
+ * <p>Instances of this class are immutable and thread safe.
+ *
+ * @see ReadProjectionConfigs#asChannel()
+ * @see BlobReadSession#readAs(ReadProjectionConfig)
+ * @see ScatteringByteChannel
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 @Immutable
 public final class ReadAsChannel extends BaseConfig<ScatteringByteChannel, StreamingRead> {
@@ -40,11 +57,28 @@ public final class ReadAsChannel extends BaseConfig<ScatteringByteChannel, Strea
     this.hasher = hasher;
   }
 
+  /**
+   * The {@link RangeSpec} to be used for any read using this instance.
+   *
+   * <p><i>Default:</i> {@link RangeSpec#all()}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public RangeSpec getRange() {
     return range;
   }
 
+  /**
+   * Return an instance with the {@link RangeSpec} set to the specified value.
+   *
+   * <p><i>Default:</i> {@link RangeSpec#all()}
+   *
+   * @param range The {@link RangeSpec} to be used for any read using the returned instance. Must be
+   *     non-null.
+   * @see #getRange()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public ReadAsChannel withRangeSpec(RangeSpec range) {
     requireNonNull(range, "range must be non null");
@@ -54,10 +88,27 @@ public final class ReadAsChannel extends BaseConfig<ScatteringByteChannel, Strea
     return new ReadAsChannel(range, hasher);
   }
 
+  /**
+   * Whether crc32c validation will be performed for bytes returned by Google Cloud Storage
+   *
+   * <p><i>Default:</i> {@code true}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   boolean getCrc32cValidationEnabled() {
     return Hasher.enabled().equals(hasher);
   }
 
+  /**
+   * Return an instance with crc32c validation enabled based on {@code enabled}.
+   *
+   * <p><i>Default:</i> {@code true}
+   *
+   * @param enabled Whether crc32c validation will be performed for bytes returned by Google Cloud
+   *     Storage
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   ReadAsChannel withCrc32cValidationEnabled(boolean enabled) {
     if (enabled && Hasher.enabled().equals(hasher)) {

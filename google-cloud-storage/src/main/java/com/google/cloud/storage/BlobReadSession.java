@@ -18,22 +18,57 @@ package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import java.io.Closeable;
 import java.io.IOException;
 
+/**
+ * A session for reading bytes from a Blob
+ *
+ * @see Storage#blobReadSession(BlobId, BlobSourceOption...)
+ * @see ReadProjectionConfigs
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 @InternalExtensionOnly
 @TransportCompatibility({Transport.GRPC})
 public interface BlobReadSession extends AutoCloseable, Closeable {
 
+  /**
+   * The resolved metadata for the object being read
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   BlobInfo getBlobInfo();
 
+  /**
+   * Read from this session as a specific {@code Projection} as dictated by the provided {@code
+   * config}
+   *
+   * @see ReadProjectionConfig
+   * @see ReadProjectionConfigs
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   <Projection> Projection readAs(ReadProjectionConfig<Projection> config);
 
+  /**
+   * Close this session and any {@code Projection}s produced by {@link
+   * #readAs(ReadProjectionConfig)}.
+   *
+   * <p>If a projection is not fully consumed/resolved it will be transitioned to a failed state.
+   *
+   * <p>This method MUST be closed to ensure cleanup of any inflight buffers, and to avoid a memory
+   * leak.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @Override
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   void close() throws IOException;
 }

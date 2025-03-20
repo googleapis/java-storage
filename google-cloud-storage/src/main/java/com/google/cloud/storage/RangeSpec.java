@@ -25,14 +25,22 @@ import java.util.OptionalLong;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/** Defines a range with a begin offset and optional maximum length. */
+/**
+ * Defines a range with a begin offset and optional maximum length.
+ *
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 @Immutable
 public abstract class RangeSpec {
   // seal this class to extension
   private RangeSpec() {}
 
-  /** The beginning of the range. */
+  /**
+   * The beginning of the range.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public abstract long begin();
 
@@ -40,6 +48,7 @@ public abstract class RangeSpec {
    * The max length of the range if defined.
    *
    * @see RangeSpecWithMaxLength
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public abstract OptionalLong maxLength();
@@ -47,27 +56,43 @@ public abstract class RangeSpec {
   /**
    * Create a new instance of {@link RangeSpec} keeping {@code this.begin()} and with {@code
    * maxLength} as its new maxLength.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @NonNull
   @BetaApi
   public abstract RangeSpec withMaxLength(long maxLength);
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @Override
   public abstract boolean equals(Object o);
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @Override
   public abstract int hashCode();
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @Override
   public abstract String toString();
 
   /**
    * Create a new RangeSpec with the provided {@code begin}.
    *
+   * @param begin The beginning of the range, must be >= 0
    * @throws IllegalArgumentException if begin is &lt; 0
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @NonNull
   @BetaApi
@@ -79,7 +104,10 @@ public abstract class RangeSpec {
   /**
    * Create a new RangeSpec with the provided {@code begin} and {@code maxLength}.
    *
+   * @param begin The beginning of the range, must be >= 0
+   * @param maxLength The max length of the range, must be >= 0. 0 means no limit.
    * @throws IllegalArgumentException if begin is &lt; 0, or if maxLength is &lt; 0
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @NonNull
   @BetaApi
@@ -92,7 +120,11 @@ public abstract class RangeSpec {
     return new RangeSpecWithMaxLength(begin, maxLength);
   }
 
-  /** A RangeSpec that represents to read from {@code 0} to {@code EOF} */
+  /**
+   * A RangeSpec that represents to read from {@code 0} to {@code EOF}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @NonNull
   @BetaApi
   public static RangeSpec all() {

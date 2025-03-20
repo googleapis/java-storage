@@ -26,6 +26,14 @@ import java.util.Objects;
 import java.util.OptionalLong;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * Produce a new {@link RangeSpec} relative to the provided {@code offset} and {@code prev}. Scaling
+ * up the maxLength if a sequential match.
+ *
+ * <p>Instances of this class are immutable and thread safe.
+ *
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 @Immutable
 public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction {
@@ -40,24 +48,75 @@ public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction 
     this.maxLengthScalar = maxLengthScalar;
   }
 
+  /**
+   * Initial maxLength a {@link RangeSpec}s maxLength should be set to if no previous maxLength is
+   * specified, or if the provided offset is not a sequential match.
+   *
+   * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+   *
+   * @see #withInitialMaxLength(long)
+   * @see RangeSpec#maxLength()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   public long getInitialMaxLength() {
     return initialMaxLength;
   }
 
+  /**
+   * Return an instance with the {@code initialMaxLength} set to the specified value.
+   *
+   * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+   *
+   * @param initialMaxLength The number of bytes a {@link RangeSpec}s maxLength should be set to if
+   *     no previous maxLength is specified, or if the provided offset is not a sequential match.
+   *     Must be &gt; {@code 0}.
+   * @see #getInitialMaxLength()
+   * @see RangeSpec#maxLength()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   public LinearExponentialRangeSpecFunction withInitialMaxLength(long initialMaxLength) {
     checkArgument(initialMaxLength > 0, "initialMaxLength > 0 (%s > 0)", initialMaxLength);
     return new LinearExponentialRangeSpecFunction(initialMaxLength, maxLengthScalar);
   }
 
+  /**
+   * The scalar value used to scale the max length of a {@link RangeSpec} when the provided offset
+   * is a sequential match.
+   *
+   * <p><i>Default:</i> {@code 4.0}
+   *
+   * @see #withMaxLengthScalar(double)
+   * @see RangeSpec#maxLength()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   public double getMaxLengthScalar() {
     return maxLengthScalar;
   }
 
+  /**
+   * Return an instance with the {@code maxLengthScalar} set to the specified value.
+   *
+   * <p><i>Default:</i> {@code 4.0}
+   *
+   * @param maxLengthScalar The scalar to apply to the max length of a previous {@link RangeSpec}
+   *     when the provided offset is a sequential match. Must be $gt;= {@code 1.0}.
+   * @see #getMaxLengthScalar()
+   * @see RangeSpec#maxLength()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   public LinearExponentialRangeSpecFunction withMaxLengthScalar(double maxLengthScalar) {
     checkArgument(maxLengthScalar >= 1.0, "maxLengthScalar >= 1.0 (%s >= 1.0)", maxLengthScalar);
     return new LinearExponentialRangeSpecFunction(initialMaxLength, maxLengthScalar);
   }
 
+  /**
+   * Produce a new {@link RangeSpec} relative to the provided {@code offset} and {@code prev}.
+   *
+   * <p>If {@code prev} is null, a {@code RangeSpec} beginning at {@code offset} and maxLength set
+   * to {@link #getInitialMaxLength()}. If {@code offset == (prev.begin + prev.maxLength)} create a
+   * new {@code RangeSpec} beginning at {@code offset} and maxLength set to {@code prev.maxLength *
+   * maxLengthScalar}
+   */
   @Override
   public RangeSpec apply(long offset, RangeSpec prev) {
     if (prev == null) {

@@ -27,9 +27,24 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * Read a range of {@code byte}s as an {@link ApiFuture}{@code <}{@link DisposableByteString}{@code
+ * >}
+ *
+ * <p>The resulting {@link DisposableByteString} MUST be {@link DisposableByteString#close()
+ * close()}ed to avoid leaking memory
+ *
+ * <p>Instances of this class are immutable and thread safe.
+ *
+ * @see ReadProjectionConfigs#asFutureBytes()
+ * @see BlobReadSession#readAs(ReadProjectionConfig)
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
 @Immutable
 final class ReadAsFutureByteString
     extends BaseConfig<ApiFuture<DisposableByteString>, AccumulatingRead<DisposableByteString>> {
+
   static final ReadAsFutureByteString INSTANCE =
       new ReadAsFutureByteString(RangeSpec.all(), Hasher.enabled());
 
@@ -42,11 +57,28 @@ final class ReadAsFutureByteString
     this.hasher = hasher;
   }
 
+  /**
+   * The {@link RangeSpec} to be used for any read using this instance.
+   *
+   * <p><i>Default:</i> {@link RangeSpec#all()}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public RangeSpec getRange() {
     return range;
   }
 
+  /**
+   * Return an instance with the {@link RangeSpec} set to the specified value.
+   *
+   * <p><i>Default:</i> {@link RangeSpec#all()}
+   *
+   * @param range The {@link RangeSpec} to be used for any read using the returned instance. Must be
+   *     non-null.
+   * @see #getRange()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public ReadAsFutureByteString withRangeSpec(RangeSpec range) {
     requireNonNull(range, "range must be non null");
@@ -56,11 +88,27 @@ final class ReadAsFutureByteString
     return new ReadAsFutureByteString(range, hasher);
   }
 
+  /**
+   * Whether crc32c validation will be performed for bytes returned by Google Cloud Storage
+   *
+   * <p><i>Default:</i> {@code true}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   boolean getCrc32cValidationEnabled() {
     return Hasher.enabled().equals(hasher);
   }
 
+  /**
+   * Return an instance with crc32c validation enabled based on {@code enabled}.
+   *
+   * <p><i>Default:</i> {@code true}
+   *
+   * @param enabled Whether crc32c validation will be performed for bytes returned by Google Cloud
+   *     Storage
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   ReadAsFutureByteString withCrc32cValidationEnabled(boolean enabled) {
     if (enabled && Hasher.enabled().equals(hasher)) {

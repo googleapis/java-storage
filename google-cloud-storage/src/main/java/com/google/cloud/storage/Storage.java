@@ -5836,12 +5836,55 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob moveBlob(MoveBlobRequest request);
 
+  /**
+   * Asynchronously set up a new {@link BlobReadSession} for the specified {@link BlobId} and {@code
+   * options}.
+   *
+   * <p>The resulting {@code BlobReadSession} can be used to read multiple times from a single
+   * object generation. A new session must be created for each object generation.
+   *
+   * <h4>Example of using {@code BlobReadSession} to read up to 20 bytes from the object:</h4>
+   *
+   * <pre>{@code
+   * ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+   *
+   * try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
+   *
+   *   ByteBuffer buf = ByteBuffer.allocate(30);
+   *   RangeSpec rangeSpec = RangeSpec.of(
+   *     10, // begin
+   *     20  // maxLength
+   *   );
+   *   ReadAsChannel readAsChannelConfig = ReadProjectionConfigs.asChannel()
+   *       .withRangeSpec(rangeSpec);
+   *   try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
+   *     channel.read(buf);
+   *   }
+   *
+   *   buf.flip();
+   *   System.out.printf(
+   *       Locale.US,
+   *       "Read %d bytes from range %s of object %s%n",
+   *       buf.remaining(),
+   *       rangeSpec,
+   *       blobReadSession.getBlobInfo().getBlobId().toGsUtilUriWithGeneration()
+   *   );
+   * }
+   * }</pre>
+   *
+   * @param id the blob to read from
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
   default ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
     return throwGrpcOnly(fmtMethodName("blobReadSession", BlobId.class, BlobSourceOption.class));
   }
 
+  /**
+   * @throws IOException
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
   default AppendableBlobUpload appendableBlobUpload(
