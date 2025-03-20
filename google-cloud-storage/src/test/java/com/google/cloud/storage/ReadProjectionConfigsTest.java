@@ -18,10 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsChannel;
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsFutureByteString;
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsFutureBytes;
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import org.junit.Test;
 
 public final class ReadProjectionConfigsTest {

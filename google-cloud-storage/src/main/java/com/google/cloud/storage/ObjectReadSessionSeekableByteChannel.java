@@ -18,8 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsChannel;
-import com.google.cloud.storage.ReadProjectionConfigs.ReadAsSeekableChannel;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.ByteBuffer;
