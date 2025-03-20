@@ -555,6 +555,12 @@ public class ITBucketTest {
   }
 
   @Test
+  public void nonExistentBucketReturnsNull() {
+    Bucket bucket = storage.get(generator.randomBucketName());
+    assertThat(bucket).isNull();
+  }
+
+  @Test
   public void testSoftDeletePolicy() {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =

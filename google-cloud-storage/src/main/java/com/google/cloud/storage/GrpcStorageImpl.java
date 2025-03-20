@@ -1980,7 +1980,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, merge),
+        () -> {
+          try {
+            return storageClient.getBucketCallable().call(req, merge);
+          } catch (NotFoundException e) {
+            return null;
+          }
+        },
         syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
   }
 }
