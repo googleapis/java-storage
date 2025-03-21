@@ -252,16 +252,12 @@ public final class ObjectReadSessionStreamTest {
 
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes1,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes1Close.compareAndSet(false, true))) {
+              bytes1, () -> bytes1Close.compareAndSet(false, true))) {
         read1.accept(handle.borrow(Function.identity()));
       }
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes2,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes2Close.compareAndSet(false, true))) {
+              bytes2, () -> bytes2Close.compareAndSet(false, true))) {
         read1.accept(handle.borrow(Function.identity()));
       }
 
@@ -298,16 +294,12 @@ public final class ObjectReadSessionStreamTest {
 
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes1,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes1Close.compareAndSet(false, true))) {
+              bytes1, () -> bytes1Close.compareAndSet(false, true))) {
         read1.accept(handle.borrow(Function.identity()));
       }
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes2,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes2Close.compareAndSet(false, true))) {
+              bytes2, () -> bytes2Close.compareAndSet(false, true))) {
         read1.accept(handle.borrow(Function.identity()));
       }
 

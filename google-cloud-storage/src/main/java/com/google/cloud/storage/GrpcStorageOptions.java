@@ -119,7 +119,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -1089,14 +1088,10 @@ public final class GrpcStorageOptions extends StorageOptions
       super(settings, clientContext, callableFactory);
 
       this.readObjectResponseMarshaller =
-          new ZeroCopyResponseMarshaller<>(
-              ReadObjectResponse.getDefaultInstance(),
-              StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
+          new ZeroCopyResponseMarshaller<>(ReadObjectResponse.getDefaultInstance());
 
       this.bidiReadObjectResponseMarshaller =
-          new ZeroCopyResponseMarshaller<>(
-              BidiReadObjectResponse.getDefaultInstance(),
-              StorageV2ProtoUtils.BIDI_READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
+          new ZeroCopyResponseMarshaller<>(BidiReadObjectResponse.getDefaultInstance());
 
       /** @see GrpcStorageStub#readObjectMethodDescriptor */
       MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
@@ -1164,14 +1159,11 @@ public final class GrpcStorageOptions extends StorageOptions
     private final Map<Response, InputStream> unclosedStreams;
     private final Parser<Response> parser;
     private final MethodDescriptor.PrototypeMarshaller<Response> baseMarshaller;
-    private final Function<Response, List<ByteBuffer>> toByteBuffersFunction;
 
-    ZeroCopyResponseMarshaller(
-        Response defaultInstance, Function<Response, List<ByteBuffer>> toByteBuffersFunction) {
+    ZeroCopyResponseMarshaller(Response defaultInstance) {
       parser = (Parser<Response>) defaultInstance.getParserForType();
       baseMarshaller =
           (MethodDescriptor.PrototypeMarshaller<Response>) ProtoUtils.marshaller(defaultInstance);
-      this.toByteBuffersFunction = toByteBuffersFunction;
       unclosedStreams = Collections.synchronizedMap(new IdentityHashMap<>());
     }
 
@@ -1258,8 +1250,14 @@ public final class GrpcStorageOptions extends StorageOptions
 
     @Override
     public ResponseContentLifecycleHandle<Response> get(Response response) {
-      InputStream stream = unclosedStreams.remove(response);
-      return ResponseContentLifecycleHandle.create(response, toByteBuffersFunction, stream);
+      return ResponseContentLifecycleHandle.create(
+          response,
+          () -> {
+            InputStream stream = unclosedStreams.remove(response);
+            if (stream != null) {
+              stream.close();
+            }
+          });
     }
 
     @Override

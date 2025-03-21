@@ -17,16 +17,12 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Suppliers;
 import com.google.protobuf.ByteString;
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class ResponseContentLifecycleHandle<Response> implements Closeable {
@@ -34,26 +30,19 @@ final class ResponseContentLifecycleHandle<Response> implements Closeable {
   private final Response response;
   @Nullable private final Closeable dispose;
 
-  private final Supplier<List<ByteBuffer>> lazyBuffers;
   private final AtomicBoolean open;
   private final AtomicInteger refs;
 
-  private ResponseContentLifecycleHandle(
-      Response response,
-      Function<Response, List<ByteBuffer>> toBuffersFunction,
-      @Nullable Closeable dispose) {
+  private ResponseContentLifecycleHandle(Response response, @Nullable Closeable dispose) {
     this.response = response;
     this.dispose = dispose;
-    this.lazyBuffers = Suppliers.memoize(() -> toBuffersFunction.apply(response));
     this.open = new AtomicBoolean(true);
     this.refs = new AtomicInteger(1);
   }
 
   static <Response> ResponseContentLifecycleHandle<Response> create(
-      Response response,
-      Function<Response, List<ByteBuffer>> toBuffersFunction,
-      @Nullable Closeable dispose) {
-    return new ResponseContentLifecycleHandle<>(response, toBuffersFunction, dispose);
+      Response response, @Nullable Closeable dispose) {
+    return new ResponseContentLifecycleHandle<>(response, dispose);
   }
 
   ChildRef borrow(Function<Response, ByteString> toByteStringFunction) {
@@ -62,23 +51,6 @@ final class ResponseContentLifecycleHandle<Response> implements Closeable {
     ChildRef childRef = new ChildRef(toByteStringFunction);
     refs.incrementAndGet();
     return childRef;
-  }
-
-  void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
-    List<ByteBuffer> buffers = lazyBuffers.get();
-    for (ByteBuffer b : buffers) {
-      long copiedBytes = Buffers.copy(b, dsts, offset, length);
-      c.advance(copiedBytes);
-      if (b.hasRemaining()) break;
-    }
-  }
-
-  boolean hasRemaining() {
-    List<ByteBuffer> buffers = lazyBuffers.get();
-    for (ByteBuffer b : buffers) {
-      if (b.hasRemaining()) return true;
-    }
-    return false;
   }
 
   @Override

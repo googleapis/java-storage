@@ -59,8 +59,7 @@ public final class ObjectReadSessionStreamReadTest {
     AtomicBoolean closed = new AtomicBoolean(false);
     Closeable close = () -> closed.set(true);
     ResponseContentLifecycleHandle<ByteString> handle =
-        ResponseContentLifecycleHandle.create(
-            byteString, ByteString::asReadOnlyByteBufferList, close);
+        ResponseContentLifecycleHandle.create(byteString, close);
     ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
         handle.borrow(Function.identity());
     handle.close();
@@ -88,8 +87,7 @@ public final class ObjectReadSessionStreamReadTest {
           throw new IOException(new Kaboom());
         };
     ResponseContentLifecycleHandle<ByteString> handle =
-        ResponseContentLifecycleHandle.create(
-            byteString, ByteString::asReadOnlyByteBufferList, throwOnClose);
+        ResponseContentLifecycleHandle.create(byteString, throwOnClose);
     ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
         handle.borrow(Function.identity());
     handle.close();
@@ -327,9 +325,7 @@ public final class ObjectReadSessionStreamReadTest {
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes1,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes1Close.compareAndSet(false, true))) {
+              bytes1, () -> bytes1Close.compareAndSet(false, true))) {
         read.accept(handle.borrow(Function.identity()));
       }
 
@@ -397,9 +393,7 @@ public final class ObjectReadSessionStreamReadTest {
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes1,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes1Close.compareAndSet(false, true))) {
+              bytes1, () -> bytes1Close.compareAndSet(false, true))) {
         read.accept(handle.borrow(Function.identity()));
       }
 
@@ -420,9 +414,7 @@ public final class ObjectReadSessionStreamReadTest {
       AtomicBoolean bytes1Close = new AtomicBoolean(false);
       try (ResponseContentLifecycleHandle<ByteString> handle =
           ResponseContentLifecycleHandle.create(
-              bytes1,
-              ByteString::asReadOnlyByteBufferList,
-              () -> bytes1Close.compareAndSet(false, true))) {
+              bytes1, () -> bytes1Close.compareAndSet(false, true))) {
         read1.accept(handle.borrow(Function.identity()));
       }
 
@@ -541,8 +533,7 @@ public final class ObjectReadSessionStreamReadTest {
     AtomicBoolean closed = new AtomicBoolean(false);
     Closeable close = () -> closed.set(true);
     ResponseContentLifecycleHandle<ByteString> handle =
-        ResponseContentLifecycleHandle.create(
-            byteString, ByteString::asReadOnlyByteBufferList, close);
+        ResponseContentLifecycleHandle.create(byteString, close);
     ResponseContentLifecycleHandle<ByteString>.ChildRef childRef =
         handle.borrow(Function.identity());
     handle.close();
@@ -586,8 +577,7 @@ public final class ObjectReadSessionStreamReadTest {
 
   private static ResponseContentLifecycleHandle<ByteString> noopContentHandle(
       ByteString byteString) {
-    return ResponseContentLifecycleHandle.create(
-        byteString, ByteString::asReadOnlyByteBufferList, () -> {});
+    return ResponseContentLifecycleHandle.create(byteString, () -> {});
   }
 
   private static final class Kaboom extends RuntimeException {

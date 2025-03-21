@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.junit.Test;
 
+@SuppressWarnings({"rawtypes", "resource", "unchecked"})
 public class ZeroCopyMarshallerTest {
   private final byte[] bytes = DataGenerator.base64Characters().genBytes(40);
   private final ByteString data = ByteString.copyFrom(bytes, 0, 10);
@@ -70,9 +71,7 @@ public class ZeroCopyMarshallerTest {
           .build();
 
   private ZeroCopyResponseMarshaller<ReadObjectResponse> createMarshaller() {
-    return new ZeroCopyResponseMarshaller<>(
-        ReadObjectResponse.getDefaultInstance(),
-        StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION);
+    return new ZeroCopyResponseMarshaller<>(ReadObjectResponse.getDefaultInstance());
   }
 
   private byte[] dropLastOneByte(byte[] bytes) {
@@ -139,17 +138,13 @@ public class ZeroCopyMarshallerTest {
     Closeable verifyClosed = () -> wasClosedCalled.set(true);
 
     ResponseContentLifecycleHandle handle =
-        ResponseContentLifecycleHandle.create(
-            response,
-            StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION,
-            verifyClosed);
+        ResponseContentLifecycleHandle.create(response, verifyClosed);
     handle.close();
 
     assertTrue(wasClosedCalled.get());
 
     ResponseContentLifecycleHandle nullHandle =
-        ResponseContentLifecycleHandle.create(
-            response, StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION, null);
+        ResponseContentLifecycleHandle.create(response, null);
     nullHandle.close();
     // No NullPointerException means test passes
   }
@@ -216,9 +211,7 @@ public class ZeroCopyMarshallerTest {
   public void refCounting_closingLastBorrowedChildRefShouldCloseHandleWhenHandlePreviouslyClosed()
       throws IOException {
     try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
-        new ZeroCopyResponseMarshaller<>(
-            ChecksummedData.getDefaultInstance(),
-            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+        new ZeroCopyResponseMarshaller<>(ChecksummedData.getDefaultInstance())) {
 
       ChecksummedTestContent testContent =
           ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(17));
@@ -255,9 +248,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void refCounting_mustBeOpenToBorrow() throws IOException {
     try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
-        new ZeroCopyResponseMarshaller<>(
-            ChecksummedData.getDefaultInstance(),
-            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+        new ZeroCopyResponseMarshaller<>(ChecksummedData.getDefaultInstance())) {
 
       ChecksummedTestContent testContent =
           ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(17));
@@ -285,9 +276,7 @@ public class ZeroCopyMarshallerTest {
   @Test
   public void refCounting_handleCloseOnlyHappensIfOpen() throws IOException {
     try (ZeroCopyResponseMarshaller<ChecksummedData> marshaller =
-        new ZeroCopyResponseMarshaller<>(
-            ChecksummedData.getDefaultInstance(),
-            cd -> cd.getContent().asReadOnlyByteBufferList())) {
+        new ZeroCopyResponseMarshaller<>(ChecksummedData.getDefaultInstance())) {
 
       AtomicInteger closeCount = new AtomicInteger(0);
       ChecksummedTestContent testContent =

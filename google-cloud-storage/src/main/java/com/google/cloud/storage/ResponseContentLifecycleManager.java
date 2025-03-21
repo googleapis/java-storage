@@ -30,7 +30,6 @@ interface ResponseContentLifecycleManager<Response> extends Closeable {
     return response ->
         ResponseContentLifecycleHandle.create(
             response,
-            StorageV2ProtoUtils.READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION,
             () -> {
               // no-op
             });
@@ -40,7 +39,6 @@ interface ResponseContentLifecycleManager<Response> extends Closeable {
     return response ->
         ResponseContentLifecycleHandle.create(
             response,
-            StorageV2ProtoUtils.BIDI_READ_OBJECT_RESPONSE_TO_BYTE_BUFFERS_FUNCTION,
             () -> {
               // no-op
             });
