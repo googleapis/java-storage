@@ -18,14 +18,14 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import net.jqwik.api.Example;
+import org.junit.Test;
 
 public final class RangeSpecFunctionTest {
   private static final long KiB = 1024;
   private static final long MiB = 1024 * KiB;
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
-  @Example
+  @Test
   public void linearExponential_withMaxLimit() {
     RangeSpecFunction e =
         RangeSpecFunction.linearExponential()
@@ -37,23 +37,85 @@ public final class RangeSpecFunctionTest {
 
     apply = e.apply(0, apply);
     assertThat(apply).isEqualTo(RangeSpec.of(0, KiB));
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(16 * KiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(64 * KiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(256 * KiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(MiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(4 * MiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(16 * MiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(64 * MiB);
-    apply = e.apply(apply.limit().getAsLong(), apply);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
     assertThat(apply.limit().getAsLong()).isEqualTo(64 * MiB);
+  }
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
+  @Test
+  public void linearExponential_resetsIfNotSequential_forward() {
+    RangeSpecFunction e =
+        RangeSpecFunction.linearExponential().withMinRangeSize(KiB).withRangeSizeScalar(4.0);
+
+    RangeSpec apply = null;
+
+    apply = e.apply(0, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(0, KiB));
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(16 * KiB);
+
+    apply = e.apply(apply.begin() + apply.limit().getAsLong() + 1, apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(KiB);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
+  }
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
+  @Test
+  public void linearExponential_resetsIfNotSequential_backward() {
+    RangeSpecFunction e =
+        RangeSpecFunction.linearExponential().withMinRangeSize(KiB).withRangeSizeScalar(4.0);
+
+    RangeSpec apply = null;
+
+    apply = e.apply(0, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(0, KiB));
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(16 * KiB);
+
+    apply = e.apply(apply.begin() + apply.limit().getAsLong() - 1, apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(KiB);
+    apply = e.apply(apply.begin() + apply.limit().getAsLong(), apply);
+    assertThat(apply.limit().getAsLong()).isEqualTo(4 * KiB);
+  }
+
+  @Test
+  public void linearExponential_resetsIfNotSequential() {
+    RangeSpecFunction e =
+        RangeSpecFunction.linearExponential().withMinRangeSize(1).withRangeSizeScalar(4.0);
+
+    RangeSpec apply = null;
+
+    apply = e.apply(0, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(0, 1));
+    apply = e.apply(1, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(1, 4));
+    apply = e.apply(5, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(5, 16));
+
+    apply = e.apply(4, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(4, 1));
+    apply = e.apply(5, apply);
+    assertThat(apply).isEqualTo(RangeSpec.of(5, 4));
   }
 }

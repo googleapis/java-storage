@@ -64,6 +64,12 @@ public final class LinearExponentialRangeSpecFunction implements RangeSpecFuncti
     long limit;
     if (maybeLimit.isPresent()) {
       limit = maybeLimit.getAsLong();
+
+      long expectedOffset = prev.begin() + limit;
+      if (offset != expectedOffset) {
+        return RangeSpec.of(offset, initialRangeSize);
+      }
+
     } else {
       limit = Long.MAX_VALUE;
     }

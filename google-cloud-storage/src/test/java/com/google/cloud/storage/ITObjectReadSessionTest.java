@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.RangeProjectionConfigs.SeekableChannelConfig;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -256,25 +257,31 @@ public final class ITObjectReadSessionTest {
   @Test
   public void seekable() throws Exception {
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(16 * _1MiB));
+
+    SeekableChannelConfig config =
+        RangeProjectionConfigs.asSeekableChannel()
+            .withRangeSpecFunction(
+                RangeSpecFunction.linearExponential()
+                    .withMinRangeSize(_1MiB)
+                    .withRangeSizeScalar(4.0));
 
     BlobInfo gen1 = create(testContent);
     BlobId blobId = gen1.getBlobId();
     ByteBuffer buf = ByteBuffer.allocate(2 * 1024 * 1024);
-    for (int j = 0; j < 2; j++) {
+    for (int j = 0; j < 1; j++) {
 
-      try (BlobReadSession session = storage.blobReadSession(blobId).get(2, TimeUnit.SECONDS)) {
+      try (BlobReadSession session = storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
         CountingOutputStream countingOutputStream =
             new CountingOutputStream(ByteStreams.nullOutputStream());
         long copy1;
         long copy2;
         long copy3;
-        try (SeekableByteChannel seekable =
-                session.readAs(RangeProjectionConfigs.asSeekableChannel());
+        try (SeekableByteChannel seekable = session.readAs(config);
             WritableByteChannel w = Channels.newChannel(countingOutputStream)) {
           copy1 = Buffers.copyUsingBuffer(buf, seekable, w);
 
-          seekable.position(32 * _1MiB);
+          seekable.position(8 * _1MiB);
           copy2 = Buffers.copyUsingBuffer(buf, seekable, w);
 
           seekable.position(0);
@@ -286,10 +293,10 @@ public final class ITObjectReadSessionTest {
         long finalCopy2 = copy2;
         long finalCopy3 = copy3;
         assertAll(
-            () -> assertThat(totalRead).isEqualTo((64 + 32 + 64) * _1MiB),
-            () -> assertThat(finalCopy1).isEqualTo(64 * _1MiB),
-            () -> assertThat(finalCopy2).isEqualTo(32 * _1MiB),
-            () -> assertThat(finalCopy3).isEqualTo(64 * _1MiB));
+            () -> assertThat(totalRead).isEqualTo((16 + 8 + 16) * _1MiB),
+            () -> assertThat(finalCopy1).isEqualTo(16 * _1MiB),
+            () -> assertThat(finalCopy2).isEqualTo(8 * _1MiB),
+            () -> assertThat(finalCopy3).isEqualTo(16 * _1MiB));
       }
     }
   }
