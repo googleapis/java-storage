@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.50.1](https://github.com/googleapis/java-storage/compare/v2.50.0...v2.50.1) (2025-03-21)
+
+
+### Bug Fixes
+
+* Ensure object generation is sent for Storage#update(BlobInfo) using HTTP Transport ([#3006](https://github.com/googleapis/java-storage/issues/3006)) ([2a3e0e7](https://github.com/googleapis/java-storage/commit/2a3e0e7453c5e3e45bc06eec1ba6d2bc193143e6)), closes [#2980](https://github.com/googleapis/java-storage/issues/2980)
+* Update gRPC Bidi resumable upload to have more robust error message generation ([#2998](https://github.com/googleapis/java-storage/issues/2998)) ([79b5d85](https://github.com/googleapis/java-storage/commit/79b5d8559b2e655178db2ba75116ddba5a581a7b))
+* Update gRPC implementation for storage.buckets.get to translate NOT_FOUND to null ([#3005](https://github.com/googleapis/java-storage/issues/3005)) ([704af65](https://github.com/googleapis/java-storage/commit/704af65b25fe38d146b960775a69644cd80f2e78))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250312-2.0.0 ([#3000](https://github.com/googleapis/java-storage/issues/3000)) ([78fc076](https://github.com/googleapis/java-storage/commit/78fc0763c89fb0e603d75b20c9c67eabc2b9f729))
+
 ## [2.50.0](https://github.com/googleapis/java-storage/compare/v2.49.0...v2.50.0) (2025-03-14)
 
 
