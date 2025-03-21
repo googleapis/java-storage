@@ -98,6 +98,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.crypto.spec.SecretKeySpec;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -1581,5 +1582,29 @@ public class ITObjectTest {
     gen1 = storage.get(gen1.getBlobId());
     Blob gen2 = storage.update(gen1);
     assertThat(gen2).isEqualTo(gen1);
+  }
+
+  @Test
+  public void blob_update() throws Exception {
+    ImmutableMap<@NonNull String, @NonNull String> meta1 = ImmutableMap.of("k1", "v1");
+    ImmutableMap<@NonNull String, @NonNull String> meta2 = ImmutableMap.of("k1", "v2");
+    ImmutableMap<@NonNull String, @NonNull String> meta3 = ImmutableMap.of("k1", "v1", "k2", "n1");
+
+    String randomObjectName = generator.randomObjectName();
+    BlobInfo info1 =
+        BlobInfo.newBuilder(versionedBucket, randomObjectName).setMetadata(meta1).build();
+    BlobInfo info2 =
+        BlobInfo.newBuilder(versionedBucket, randomObjectName).setMetadata(meta2).build();
+
+    BlobInfo gen1 = storage.create(info1);
+    BlobInfo gen2 = storage.create(info2);
+
+    BlobInfo update1 = gen1.toBuilder().setMetadata(meta3).build();
+
+    BlobInfo gen1_2 = storage.update(update1);
+
+    assertAll(
+        () -> assertThat(gen1_2.getMetadata()).isEqualTo(meta3),
+        () -> assertThat(gen1_2.getGeneration()).isEqualTo(gen1.getGeneration()));
   }
 }
