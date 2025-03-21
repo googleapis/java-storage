@@ -31,7 +31,7 @@ public final class RangeProjectionConfigs {
 
   abstract static class BaseConfig<Projection, Read extends ObjectReadSessionStreamRead<Projection>>
       extends RangeProjectionConfig<Projection> {
-    abstract Read newRead(long readId, RangeSpec range, RetryContext retryContext);
+    abstract Read newRead(long readId, RetryContext retryContext);
 
     @Override
     ProjectionType getType() {
@@ -100,8 +100,7 @@ public final class RangeProjectionConfigs {
     }
 
     @Override
-    SeekableByteChannel project(
-        RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+    SeekableByteChannel project(ObjectReadSession session, IOAutoCloseable closeAlongWith) {
       return StorageByteChannels.seekable(
           new ObjectReadSessionSeekableByteChannel(session, this, closeAlongWith));
     }
@@ -138,13 +137,28 @@ public final class RangeProjectionConfigs {
 
   public static final class RangeAsChannel
       extends BaseConfig<ScatteringByteChannel, StreamingRead> {
-    private static final RangeAsChannel INSTANCE = new RangeAsChannel(Hasher.enabled());
+    private static final RangeAsChannel INSTANCE =
+        new RangeAsChannel(RangeSpec.all(), Hasher.enabled());
 
+    private final RangeSpec range;
     private final Hasher hasher;
 
-    private RangeAsChannel(Hasher hasher) {
+    private RangeAsChannel(RangeSpec range, Hasher hasher) {
       super();
+      this.range = range;
       this.hasher = hasher;
+    }
+
+    public RangeSpec getRange() {
+      return range;
+    }
+
+    public RangeAsChannel withRangeSpec(RangeSpec range) {
+      requireNonNull(range, "range must be non null");
+      if (this.range.equals(range)) {
+        return this;
+      }
+      return new RangeAsChannel(range, hasher);
     }
 
     boolean getCrc32cValidationEnabled() {
@@ -157,7 +171,7 @@ public final class RangeProjectionConfigs {
       } else if (!enabled && Hasher.noop().equals(hasher)) {
         return this;
       }
-      return new RangeAsChannel(enabled ? Hasher.enabled() : Hasher.noop());
+      return new RangeAsChannel(range, enabled ? Hasher.enabled() : Hasher.noop());
     }
 
     @Override
@@ -166,20 +180,60 @@ public final class RangeProjectionConfigs {
     }
 
     @Override
-    StreamingRead newRead(long readId, RangeSpec range, RetryContext retryContext) {
+    StreamingRead newRead(long readId, RetryContext retryContext) {
       return ObjectReadSessionStreamRead.streamingRead(readId, range, hasher, retryContext);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RangeAsChannel)) {
+        return false;
+      }
+      RangeAsChannel that = (RangeAsChannel) o;
+      return Objects.equals(range, that.range) && Objects.equals(hasher, that.hasher);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(range, hasher);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("range", range)
+          .add("crc32cValidationEnabled", getCrc32cValidationEnabled())
+          .toString();
     }
   }
 
   public static final class RangeAsFutureBytes
       extends BaseConfig<ApiFuture<byte[]>, AccumulatingRead<byte[]>> {
-    private static final RangeAsFutureBytes INSTANCE = new RangeAsFutureBytes(Hasher.enabled());
+    private static final RangeAsFutureBytes INSTANCE =
+        new RangeAsFutureBytes(RangeSpec.all(), Hasher.enabled());
 
+    private final RangeSpec range;
     private final Hasher hasher;
 
-    private RangeAsFutureBytes(Hasher hasher) {
+    private RangeAsFutureBytes(RangeSpec range, Hasher hasher) {
       super();
+      this.range = range;
       this.hasher = hasher;
+    }
+
+    public RangeSpec getRange() {
+      return range;
+    }
+
+    public RangeAsFutureBytes withRangeSpec(RangeSpec range) {
+      requireNonNull(range, "range must be non null");
+      if (this.range.equals(range)) {
+        return this;
+      }
+      return new RangeAsFutureBytes(range, hasher);
     }
 
     boolean getCrc32cValidationEnabled() {
@@ -192,7 +246,7 @@ public final class RangeProjectionConfigs {
       } else if (!enabled && Hasher.noop().equals(hasher)) {
         return this;
       }
-      return new RangeAsFutureBytes(enabled ? Hasher.enabled() : Hasher.noop());
+      return new RangeAsFutureBytes(range, enabled ? Hasher.enabled() : Hasher.noop());
     }
 
     @Override
@@ -201,22 +255,61 @@ public final class RangeProjectionConfigs {
     }
 
     @Override
-    AccumulatingRead<byte[]> newRead(long readId, RangeSpec range, RetryContext retryContext) {
+    AccumulatingRead<byte[]> newRead(long readId, RetryContext retryContext) {
       return ObjectReadSessionStreamRead.createByteArrayAccumulatingRead(
           readId, range, hasher, retryContext);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RangeAsFutureBytes)) {
+        return false;
+      }
+      RangeAsFutureBytes that = (RangeAsFutureBytes) o;
+      return Objects.equals(range, that.range) && Objects.equals(hasher, that.hasher);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(range, hasher);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("range", range)
+          .add("crc32cValidationEnabled", getCrc32cValidationEnabled())
+          .toString();
     }
   }
 
   static final class RangeAsFutureByteString
       extends BaseConfig<ApiFuture<DisposableByteString>, AccumulatingRead<DisposableByteString>> {
     private static final RangeAsFutureByteString INSTANCE =
-        new RangeAsFutureByteString(Hasher.enabled());
+        new RangeAsFutureByteString(RangeSpec.all(), Hasher.enabled());
 
+    private final RangeSpec range;
     private final Hasher hasher;
 
-    private RangeAsFutureByteString(Hasher hasher) {
+    private RangeAsFutureByteString(RangeSpec range, Hasher hasher) {
       super();
+      this.range = range;
       this.hasher = hasher;
+    }
+
+    public RangeSpec getRange() {
+      return range;
+    }
+
+    public RangeAsFutureByteString withRangeSpec(RangeSpec range) {
+      requireNonNull(range, "range must be non null");
+      if (this.range.equals(range)) {
+        return this;
+      }
+      return new RangeAsFutureByteString(range, hasher);
     }
 
     boolean getCrc32cValidationEnabled() {
@@ -229,7 +322,7 @@ public final class RangeProjectionConfigs {
       } else if (!enabled && Hasher.noop().equals(hasher)) {
         return this;
       }
-      return new RangeAsFutureByteString(enabled ? Hasher.enabled() : Hasher.noop());
+      return new RangeAsFutureByteString(range, enabled ? Hasher.enabled() : Hasher.noop());
     }
 
     @Override
@@ -238,10 +331,34 @@ public final class RangeProjectionConfigs {
     }
 
     @Override
-    AccumulatingRead<DisposableByteString> newRead(
-        long readId, RangeSpec range, RetryContext retryContext) {
+    AccumulatingRead<DisposableByteString> newRead(long readId, RetryContext retryContext) {
       return ObjectReadSessionStreamRead.createZeroCopyByteStringAccumulatingRead(
           readId, range, hasher, retryContext);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RangeAsFutureByteString)) {
+        return false;
+      }
+      RangeAsFutureByteString that = (RangeAsFutureByteString) o;
+      return Objects.equals(range, that.range) && Objects.equals(hasher, that.hasher);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(range, hasher);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("range", range)
+          .add("crc32cValidationEnabled", getCrc32cValidationEnabled())
+          .toString();
     }
   }
 }

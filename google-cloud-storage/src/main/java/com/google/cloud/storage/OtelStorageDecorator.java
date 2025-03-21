@@ -1849,9 +1849,9 @@ final class OtelStorageDecorator implements Storage {
     }
 
     @Override
-    Projection project(RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+    Projection project(ObjectReadSession session, IOAutoCloseable closeAlongWith) {
       try {
-        return delegate.project(range, session, closeAlongWith.andThen(parentSpan::end));
+        return delegate.project(session, closeAlongWith.andThen(parentSpan::end));
       } catch (Throwable t) {
         parentSpan.recordException(t);
         parentSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
@@ -1869,12 +1869,10 @@ final class OtelStorageDecorator implements Storage {
       }
 
       @Override
-      ObjectReadSessionStreamRead<Projection> newRead(
-          long readId, RangeSpec range, RetryContext retryContext) {
+      ObjectReadSessionStreamRead<Projection> newRead(long readId, RetryContext retryContext) {
         OtelRetryContextDecorator otelRetryContext =
             new OtelRetryContextDecorator(retryContext, parentSpan);
-        ObjectReadSessionStreamRead<Projection> read =
-            delegate.newRead(readId, range, otelRetryContext);
+        ObjectReadSessionStreamRead<Projection> read = delegate.newRead(readId, otelRetryContext);
         read.setOnCloseCallback(parentSpan::end);
         return new OtelDecoratingObjectReadSessionStreamRead<>(read, parentSpan);
       }
@@ -1947,18 +1945,17 @@ final class OtelStorageDecorator implements Storage {
     }
 
     @Override
-    public <Projection> Projection readRange(
-        RangeSpec range, RangeProjectionConfig<Projection> config) {
+    public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
       Span readRangeSpan =
           tracer
-              .spanBuilder("readRange")
+              .spanBuilder("readAs")
               .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
               .setParent(blobReadSessionContext)
               .startSpan();
       try (Scope ignore2 = readRangeSpan.makeCurrent()) {
         OtelRangeProjectionConfig<Projection> c =
             new OtelRangeProjectionConfig<>(config, readRangeSpan);
-        return delegate.readRange(range, c);
+        return delegate.readAs(c);
       } catch (Throwable t) {
         readRangeSpan.recordException(t);
         readRangeSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());

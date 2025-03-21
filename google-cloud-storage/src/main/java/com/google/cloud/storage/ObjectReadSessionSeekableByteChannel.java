@@ -67,7 +67,7 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
           "RangeSpec does not begin at provided position. expected = %s, actual = %s",
           position,
           apply.begin());
-      rbc = session.readRange(apply, RangeProjectionConfigs.asChannel());
+      rbc = session.readAs(RangeProjectionConfigs.asChannel().withRangeSpec(apply));
       lastRangeSpec = apply;
     }
 

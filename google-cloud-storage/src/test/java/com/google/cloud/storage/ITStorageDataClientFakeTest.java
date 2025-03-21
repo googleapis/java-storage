@@ -53,13 +53,15 @@ public final class ITStorageDataClientFakeTest {
 
   @Test
   public void fastOpen_futureBytes() throws Exception {
-    doTest(RangeProjectionConfigs.asFutureBytes(), f -> f.get(10, TimeUnit.MILLISECONDS));
+    doTest(
+        RangeProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10, 20)),
+        f -> f.get(10, TimeUnit.MILLISECONDS));
   }
 
   @Test
   public void fastOpen_channel() throws Exception {
     doTest(
-        RangeProjectionConfigs.asChannel(),
+        RangeProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10, 20)),
         c -> {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
           ByteStreams.copy(c, Channels.newChannel(baos));
@@ -70,7 +72,7 @@ public final class ITStorageDataClientFakeTest {
   @Test
   public void fastOpen_futureByteString() throws Exception {
     doTest(
-        RangeProjectionConfigs.asFutureByteString(),
+        RangeProjectionConfigs.asFutureByteString().withRangeSpec(RangeSpec.of(10, 20)),
         f -> {
           try (DisposableByteString disposableByteString = f.get(10, TimeUnit.MILLISECONDS)) {
             ByteString byteString = disposableByteString.byteString();
@@ -136,8 +138,7 @@ public final class ITStorageDataClientFakeTest {
               .build();
 
       ApiFuture<FastOpenObjectReadSession<P>> f =
-          dataClient.fastOpenReadSession(
-              req, GrpcCallContext.createDefault(), RangeSpec.of(10, 20), config);
+          dataClient.fastOpenReadSession(req, GrpcCallContext.createDefault(), config);
       try (FastOpenObjectReadSession<P> fastOpen = f.get(3, TimeUnit.SECONDS)) {
         byte[] apply = func.apply(fastOpen.getProjection());
         assertThat(xxd(apply)).isEqualTo(xxd(content.getBytes()));

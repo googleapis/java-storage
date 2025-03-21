@@ -80,8 +80,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   }
 
   @Override
-  public <Projection> Projection readRange(
-      RangeSpec range, RangeProjectionConfig<Projection> config) {
+  public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
     lock.lock();
     try {
       checkState(open, "stream already closed");
@@ -89,11 +88,11 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
         case STREAM_READ:
           long readId = state.newReadId();
           ObjectReadSessionStreamRead<Projection> read =
-              config.cast().newRead(readId, range, retryContextProvider.create());
+              config.cast().newRead(readId, retryContextProvider.create());
           registerReadInState(readId, read);
           return read.project();
         case SESSION_USER:
-          return config.project(range, this, IOAutoCloseable.noOp());
+          return config.project(this, IOAutoCloseable.noOp());
         default:
           throw new IllegalStateException(
               String.format(

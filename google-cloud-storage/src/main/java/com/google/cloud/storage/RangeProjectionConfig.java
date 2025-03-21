@@ -29,7 +29,7 @@ public abstract class RangeProjectionConfig<Projection> {
 
   abstract ProjectionType getType();
 
-  Projection project(RangeSpec range, ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+  Projection project(ObjectReadSession session, IOAutoCloseable closeAlongWith) {
     throw new UnsupportedOperationException(
         String.format(Locale.US, "%s#project()", this.getClass().getName()));
   }

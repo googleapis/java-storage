@@ -90,8 +90,9 @@ public final class ITObjectReadSessionTest {
       assertThat(info1).isNotNull();
 
       ApiFuture<byte[]> futureRead1Bytes =
-          blobReadSession.readRange(
-              RangeSpec.of(_512KiB - 13L, 13L), RangeProjectionConfigs.asFutureBytes());
+          blobReadSession.readAs(
+              RangeProjectionConfigs.asFutureBytes()
+                  .withRangeSpec(RangeSpec.of(_512KiB - 13L, 13L)));
 
       byte[] read1Bytes = futureRead1Bytes.get(30, TimeUnit.SECONDS);
       assertThat(read1Bytes.length).isEqualTo(13);
@@ -117,7 +118,10 @@ public final class ITObjectReadSessionTest {
         List<ApiFuture<byte[]>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
-                .map(r -> blobReadSession.readRange(r, RangeProjectionConfigs.asFutureBytes()))
+                .map(
+                    r ->
+                        blobReadSession.readAs(
+                            RangeProjectionConfigs.asFutureBytes().withRangeSpec(r)))
                 .collect(Collectors.toList());
 
         ApiFuture<List<byte[]>> listApiFuture = ApiFutures.allAsList(futures);
@@ -161,8 +165,7 @@ public final class ITObjectReadSessionTest {
           storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ScatteringByteChannel r =
-            blobReadSession.readRange(RangeSpec.all(), RangeProjectionConfigs.asChannel())) {
+        try (ScatteringByteChannel r = blobReadSession.readAs(RangeProjectionConfigs.asChannel())) {
           ByteBuffer buf = ByteBuffer.wrap(buffer);
           Buffers.copyUsingBuffer(buf, r, Channels.newChannel(baos));
         }
@@ -198,7 +201,10 @@ public final class ITObjectReadSessionTest {
         List<ApiFuture<DisposableByteString>> futures =
             LongStream.range(0, numRangesToRead)
                 .mapToObj(i -> RangeSpec.of(i * _2MiB, _2MiB))
-                .map(r -> blobReadSession.readRange(r, RangeProjectionConfigs.asFutureByteString()))
+                .map(
+                    r ->
+                        blobReadSession.readAs(
+                            RangeProjectionConfigs.asFutureByteString().withRangeSpec(r)))
                 .collect(Collectors.toList());
 
         ApiFuture<List<DisposableByteString>> listApiFuture = ApiFutures.allAsList(futures);
@@ -264,7 +270,7 @@ public final class ITObjectReadSessionTest {
         long copy2;
         long copy3;
         try (SeekableByteChannel seekable =
-                session.readRange(RangeSpec.all(), RangeProjectionConfigs.asSeekableChannel());
+                session.readAs(RangeProjectionConfigs.asSeekableChannel());
             WritableByteChannel w = Channels.newChannel(countingOutputStream)) {
           copy1 = Buffers.copyUsingBuffer(buf, seekable, w);
 

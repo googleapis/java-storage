@@ -39,9 +39,8 @@ final class BlobReadSessionAdapter implements BlobReadSession {
   // the return type.
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
-  public <Projection> Projection readRange(
-      RangeSpec range, RangeProjectionConfig<Projection> config) {
-    Projection projection = session.readRange(range, config);
+  public <Projection> Projection readAs(RangeProjectionConfig<Projection> config) {
+    Projection projection = session.readAs(config);
     if (projection instanceof ApiFuture) {
       ApiFuture apiFuture = (ApiFuture) projection;
       return (Projection) StorageException.coalesceAsync(apiFuture);

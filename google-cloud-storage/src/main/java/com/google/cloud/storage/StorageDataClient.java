@@ -73,7 +73,6 @@ final class StorageDataClient implements IOAutoCloseable {
   <Projection> ApiFuture<FastOpenObjectReadSession<Projection>> fastOpenReadSession(
       BidiReadObjectRequest openRequest,
       GrpcCallContext ctx,
-      RangeSpec range,
       RangeProjectionConfig<Projection> config) {
     checkArgument(
         openRequest.getReadRangesList().isEmpty(),
@@ -91,7 +90,7 @@ final class StorageDataClient implements IOAutoCloseable {
 
     long readId = state.newReadId();
     ObjectReadSessionStreamRead<Projection> read =
-        config.cast().newRead(readId, range, retryContextProvider.create());
+        config.cast().newRead(readId, retryContextProvider.create());
     state.putOutstandingRead(readId, read);
 
     ApiFuture<FastOpenObjectReadSession<Projection>> objectReadSessionFuture =
