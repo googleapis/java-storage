@@ -1480,8 +1480,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                 build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
     BlobWriteSession session = BlobWriteSessions.of(dec);
     return takeOver
-        ? AppendableBlobUpload.resumeAppendableUpload(blob, session)
-        : AppendableBlobUpload.createNewAppendableBlob(blob, session);
+        ? AppendableBlobUploadImpl.resumeAppendableUpload(blob, session)
+        : AppendableBlobUploadImpl.createNewAppendableBlob(blob, session);
   }
 
   @Override

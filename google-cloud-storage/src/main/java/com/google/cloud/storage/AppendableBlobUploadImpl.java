@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,15 @@ import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 @BetaApi
-public final class AppendableBlobUpload implements AutoCloseable, WritableByteChannel {
+final class AppendableBlobUploadImpl implements AppendableBlobUpload {
   private final AppendableObjectBufferedWritableByteChannel channel;
   private final ApiFuture<BlobInfo> result;
 
-  private AppendableBlobUpload(BlobInfo blob, BlobWriteSession session, boolean takeover)
+  private AppendableBlobUploadImpl(BlobInfo blob, BlobWriteSession session, boolean takeover)
       throws IOException {
     channel = (AppendableObjectBufferedWritableByteChannel) (session.open());
     result = session.getResult();
@@ -41,12 +40,12 @@ public final class AppendableBlobUpload implements AutoCloseable, WritableByteCh
 
   static AppendableBlobUpload createNewAppendableBlob(BlobInfo blob, BlobWriteSession session)
       throws IOException {
-    return new AppendableBlobUpload(blob, session, false);
+    return new AppendableBlobUploadImpl(blob, session, false);
   }
 
   static AppendableBlobUpload resumeAppendableUpload(BlobInfo blob, BlobWriteSession session)
       throws IOException {
-    return new AppendableBlobUpload(blob, session, true);
+    return new AppendableBlobUploadImpl(blob, session, true);
   }
 
   void startTakeoverStream() {
