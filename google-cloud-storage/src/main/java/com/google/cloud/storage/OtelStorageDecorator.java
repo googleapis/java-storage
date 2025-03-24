@@ -58,6 +58,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -1505,12 +1506,21 @@ final class OtelStorageDecorator implements Storage {
   }
 
   @Override
-  @TransportCompatibility({Transport.GRPC})
-  @BetaApi
   public AppendableBlobUpload appendableBlobUpload(
       BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
       throws IOException {
-    return delegate.appendableBlobUpload(blob, uploadConfig, options);
+    Span span = tracer.spanBuilder("appendableBlobUpload").startSpan();
+    try (Scope ignore = span.makeCurrent()) {
+
+      return new OtelDecoratingAppendableBlobUpload(
+          delegate.appendableBlobUpload(blob, uploadConfig, options), span, Context.current());
+
+    } catch (Throwable t) {
+      span.recordException(t);
+      span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      span.end();
+      throw t;
+    }
   }
 
   @Override
@@ -2090,6 +2100,62 @@ final class OtelStorageDecorator implements Storage {
           .add("delegate", delegate)
           // .add("parentSpan", parentSpan)
           .toString();
+    }
+  }
+
+  final class OtelDecoratingAppendableBlobUpload implements AppendableBlobUpload {
+    private final AppendableBlobUpload delegate;
+    private final Span openSpan;
+    private final Context openContext;
+
+    private OtelDecoratingAppendableBlobUpload(
+        AppendableBlobUpload delegate, Span openSpan, Context openContext) {
+      this.delegate = delegate;
+      this.openSpan = openSpan;
+      this.openContext = openContext;
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      return delegate.write(src);
+    }
+
+    @Override
+    public void close() throws IOException {
+      try {
+        delegate.close();
+      } catch (Throwable t) {
+        openSpan.recordException(t);
+        openSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        throw t;
+      } finally {
+        openSpan.end();
+      }
+    }
+
+    @Override
+    @BetaApi
+    public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
+      Span span =
+          tracer
+              .spanBuilder("appendableBlobUpload/finalizeUpload")
+              .setParent(openContext)
+              .startSpan();
+      try (Scope ignore = span.makeCurrent()) {
+        return delegate.finalizeUpload();
+      } catch (Throwable t) {
+        span.recordException(t);
+        span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        throw t;
+      } finally {
+        span.end();
+        openSpan.end();
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      return delegate.isOpen();
     }
   }
 }
