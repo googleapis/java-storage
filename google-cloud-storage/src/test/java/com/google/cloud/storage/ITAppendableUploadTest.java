@@ -135,6 +135,7 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  @Ignore("Pending work in testbench, manually verified internally on 2025-03-25")
   public void finalizeAfterCloseWorks() throws Exception {
     AppendableBlobUploadConfig uploadConfig =
         AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(1024));
@@ -150,6 +151,7 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  @Ignore("Pending work in testbench, manually verified internally on 2025-03-25")
   public void takeoverJustToFinalizeWorks() throws Exception {
     AppendableBlobUploadConfig uploadConfig =
         AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
