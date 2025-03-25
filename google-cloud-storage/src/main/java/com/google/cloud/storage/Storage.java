@@ -5888,7 +5888,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
   default AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
+      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
+      throws IOException {
     return throwGrpcOnly(
         fmtMethodName("appendableBlobUpload", BlobId.class, BlobWriteOption.class));
   }

@@ -51,6 +51,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -1424,14 +1425,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @BetaApi
   @Override
   public AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
-    boolean takeOver = blob.getGeneration() != null;
-    return getAppendableBlobUpload(blob, bufferSize, takeOver, options);
-  }
-
-  private AppendableBlobUpload getAppendableBlobUpload(
-      BlobInfo blob, int bufferSize, boolean takeOver, BlobWriteOption... options)
+      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
       throws IOException {
+    boolean takeOver = blob.getGeneration() != null;
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     BidiWriteObjectRequest req =
         takeOver
@@ -1439,7 +1435,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             : getBidiWriteObjectRequest(blob, opts);
     BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
     ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
-    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
+    AppendableUploadBuilder appendableUploadBuilder =
         ResumableMedia.gapic()
             .write()
             .bidiByteChannel(storageClient.bidiWriteObjectCallable())
@@ -1469,8 +1465,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                             .idempotent()
                             .shouldRetry(previousThrowable, null);
                       }
-                    }))
-            .buffered(BufferHandle.allocate(bufferSize))
+                    }));
+    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
+        uploadConfig
+            .getFlushPolicy()
+            .apply(appendableUploadBuilder)
             .setStartAsync(startAppendableWrite)
             .setGetCallable(storageClient.getObjectCallable())
             .build();

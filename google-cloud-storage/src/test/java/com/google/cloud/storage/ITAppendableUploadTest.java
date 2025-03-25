@@ -54,9 +54,11 @@ public final class ITAppendableUploadTest {
   @Test
   public void testAppendableBlobUpload()
       throws IOException, ExecutionException, InterruptedException {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(2000));
     AppendableBlobUpload upload =
         storage.appendableBlobUpload(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(), 2000);
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(), uploadConfig);
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
     byte[] a1 = Arrays.copyOfRange(bytes, 0, bytes.length / 2);
@@ -71,9 +73,11 @@ public final class ITAppendableUploadTest {
 
   @Test
   public void appendableBlobUploadWithoutFinalizing() throws IOException {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(256 * 1024));
     AppendableBlobUpload upload =
         storage.appendableBlobUpload(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(), 256 * 1024);
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(), uploadConfig);
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
     byte[] a1 = Arrays.copyOfRange(bytes, 0, bytes.length / 2);
@@ -88,8 +92,11 @@ public final class ITAppendableUploadTest {
   @Test
   @Ignore("Pending work in testbench, manually verified internally on 2025-03-03")
   public void appendableBlobUploadTakeover() throws Exception {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
-    AppendableBlobUpload upload = storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 5);
+    AppendableBlobUpload upload =
+        storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), uploadConfig);
 
     byte[] bytes = "ABCDEFGHIJ".getBytes();
 
@@ -100,7 +107,7 @@ public final class ITAppendableUploadTest {
 
     byte[] bytes2 = "KLMNOPQRST".getBytes();
     AppendableBlobUpload takeOver =
-        storage.appendableBlobUpload(BlobInfo.newBuilder(blob.getBlobId()).build(), 5);
+        storage.appendableBlobUpload(BlobInfo.newBuilder(blob.getBlobId()).build(), uploadConfig);
     takeOver.write(ByteBuffer.wrap(bytes2));
     BlobInfo i = takeOver.finalizeUpload();
     assertThat(i.getSize()).isEqualTo(20);
@@ -108,12 +115,15 @@ public final class ITAppendableUploadTest {
 
   @Test
   public void testUploadFileUsingAppendable() throws Exception {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(_2MiB));
+
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
     try (TmpFile tmpFile =
         DataGenerator.base64Characters()
             .tempFile(Paths.get(System.getProperty("java.io.tmpdir")), 100 * 1024 * 1024)) {
       try (AppendableBlobUpload appendable =
-              storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), _2MiB);
+              storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), uploadConfig);
           SeekableByteChannel r =
               Files.newByteChannel(tmpFile.getPath(), StandardOpenOption.READ)) {
 
@@ -126,10 +136,12 @@ public final class ITAppendableUploadTest {
 
   @Test
   public void finalizeAfterCloseWorks() throws Exception {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(1024));
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
 
     AppendableBlobUpload appendable =
-        storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 1024);
+        storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), uploadConfig);
     appendable.write(DataGenerator.base64Characters().genByteBuffer(3587));
 
     appendable.close();
@@ -139,9 +151,12 @@ public final class ITAppendableUploadTest {
 
   @Test
   public void takeoverJustToFinalizeWorks() throws Exception {
+    AppendableBlobUploadConfig uploadConfig =
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
 
-    AppendableBlobUpload upload = storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), 5);
+    AppendableBlobUpload upload =
+        storage.appendableBlobUpload(BlobInfo.newBuilder(bid).build(), uploadConfig);
 
     upload.write(DataGenerator.base64Characters().genByteBuffer(20));
     upload.close();
@@ -151,7 +166,7 @@ public final class ITAppendableUploadTest {
             bid, BlobGetOption.fields(BlobField.BUCKET, BlobField.NAME, BlobField.GENERATION));
 
     AppendableBlobUpload takeOver =
-        storage.appendableBlobUpload(BlobInfo.newBuilder(blob.getBlobId()).build(), 5);
+        storage.appendableBlobUpload(BlobInfo.newBuilder(blob.getBlobId()).build(), uploadConfig);
     BlobInfo i = takeOver.finalizeUpload();
     assertThat(i.getSize()).isEqualTo(20);
   }

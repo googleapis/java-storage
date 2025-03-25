@@ -85,6 +85,9 @@ public class ITAppendableUploadFakeTest {
               ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABCDE")).build())
           .build();
 
+  private static final AppendableBlobUploadConfig UPLOAD_CONFIG =
+      AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
+
   /**
    *
    *
@@ -196,7 +199,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
       assertThat(bi.getSize()).isEqualTo(10);
@@ -259,7 +263,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       StorageException e =
           assertThrows(
               StorageException.class,
@@ -372,7 +377,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -484,7 +490,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -1418,7 +1425,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o", METADATA.getGeneration());
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -1470,7 +1478,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b = storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), 5);
+      AppendableBlobUpload b =
+          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 5);
       b.write(ByteBuffer.wrap(content.getBytes()));
       BlobInfo bi = b.finalizeUpload();
@@ -1514,8 +1523,7 @@ public class ITAppendableUploadFakeTest {
       retryMap.put(req, attempts);
       if (attempts == 1) {
         respond.onError(Status.INTERNAL.asRuntimeException());
-      }
-      if (attempts > maxAttempts) {
+      } else if (attempts > maxAttempts) {
         respond.onError(
             Status.ABORTED
                 .withDescription("retryableErrorOnce method exceeded max retries in fake")
@@ -1560,8 +1568,7 @@ public class ITAppendableUploadFakeTest {
 
     private FakeStorage(
         Map<BidiWriteObjectRequest, Consumer<StreamObserver<BidiWriteObjectResponse>>> db) {
-      this.db = db;
-      getdb = null;
+      this(db, ImmutableMap.of());
     }
 
     private FakeStorage(

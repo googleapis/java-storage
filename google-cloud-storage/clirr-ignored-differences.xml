@@ -130,7 +130,7 @@
   <difference>
     <differenceType>7012</differenceType>
     <className>com/google/cloud/storage/Storage</className>
-    <method>com.google.cloud.storage.AppendableBlobUpload appendableBlobUpload(com.google.cloud.storage.BlobInfo, int, com.google.cloud.storage.Storage$BlobWriteOption[])</method>
+    <method>com.google.cloud.storage.AppendableBlobUpload appendableBlobUpload(com.google.cloud.storage.BlobInfo, com.google.cloud.storage.AppendableBlobUploadConfig, com.google.cloud.storage.Storage$BlobWriteOption[])</method>
   </difference>
   <difference>
     <differenceType>7005</differenceType>

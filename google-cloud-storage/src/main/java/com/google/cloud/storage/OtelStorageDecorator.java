@@ -1508,8 +1508,9 @@ final class OtelStorageDecorator implements Storage {
   @TransportCompatibility({Transport.GRPC})
   @BetaApi
   public AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, int bufferSize, BlobWriteOption... options) throws IOException {
-    return delegate.appendableBlobUpload(blob, bufferSize, options);
+      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
+      throws IOException {
+    return delegate.appendableBlobUpload(blob, uploadConfig, options);
   }
 
   @Override
