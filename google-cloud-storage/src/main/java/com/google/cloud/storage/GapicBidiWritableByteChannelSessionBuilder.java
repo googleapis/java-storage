@@ -178,29 +178,17 @@ final class GapicBidiWritableByteChannelSessionBuilder {
       return this;
     }
 
-    /**
-     * Buffer using {@code byteBuffer} worth of space before attempting to flush.
-     *
-     * <p>The provided {@link ByteBuffer} <i>should</i> be aligned with GCSs block size of <a
-     * target="_blank"
-     * href="https://cloud.google.com/storage/docs/performing-resumable-uploads#chunked-upload">256
-     * KiB</a>.
-     */
-    BufferedAppendableUploadBuilder buffered(ByteBuffer byteBuffer) {
-      return buffered(BufferHandle.handleOf(byteBuffer));
-    }
-
-    BufferedAppendableUploadBuilder buffered(BufferHandle bufferHandle) {
-      return new BufferedAppendableUploadBuilder(bufferHandle);
+    BufferedAppendableUploadBuilder buffered(FlushPolicy flushPolicy) {
+      return new BufferedAppendableUploadBuilder(flushPolicy);
     }
 
     final class BufferedAppendableUploadBuilder {
-      private final BufferHandle bufferHandle;
+      private final FlushPolicy flushPolicy;
       private ApiFuture<BidiAppendableWrite> start;
       private UnaryCallable<GetObjectRequest, Object> get;
 
-      BufferedAppendableUploadBuilder(BufferHandle bufferHandle) {
-        this.bufferHandle = bufferHandle;
+      BufferedAppendableUploadBuilder(FlushPolicy flushPolicy) {
+        this.flushPolicy = flushPolicy;
       }
 
       /**
@@ -249,7 +237,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                 .andThen(
                     c ->
                         new AppendableBlobUploadImpl.AppendableObjectBufferedWritableByteChannel(
-                            new DefaultBufferedWritableByteChannel(bufferHandle, c), c)));
+                            flushPolicy.createBufferedChannel(c), c)));
       }
     }
   }

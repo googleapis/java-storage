@@ -61,6 +61,18 @@ final class Buffers {
     return b.position();
   }
 
+  static int remaining(Buffer b) {
+    return b.remaining();
+  }
+
+  static boolean hasRemaining(Buffer b) {
+    return b.hasRemaining();
+  }
+
+  static void compact(ByteBuffer b) {
+    b.compact();
+  }
+
   /** attempt to drain all of {@code content} into {@code dst} */
   static long copy(ByteBuffer content, ByteBuffer dst) {
     return copy(content, new ByteBuffer[] {dst}, 0, 1);

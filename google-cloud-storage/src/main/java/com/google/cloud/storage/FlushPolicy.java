@@ -20,8 +20,8 @@ import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
-import com.google.cloud.storage.GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder;
-import com.google.cloud.storage.GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder.BufferedAppendableUploadBuilder;
+import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
@@ -63,7 +63,29 @@ public abstract class FlushPolicy {
     return maxFlushSize().withMaxFlushSize(maxFlushSize);
   }
 
-  abstract BufferedAppendableUploadBuilder apply(AppendableUploadBuilder builder);
+  /**
+   * Default instance factory method for {@link MinFlushSizeFlushPolicy}.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static MinFlushSizeFlushPolicy minFlushSize() {
+    return MinFlushSizeFlushPolicy.INSTANCE;
+  }
+
+  /**
+   * Alias for {@link FlushPolicy#minFlushSize() FlushPolicy.minFlushSize()}{@code .}{@link
+   * MinFlushSizeFlushPolicy#withMinFlushSize(int) withMinFlushSize(int)}
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static MinFlushSizeFlushPolicy minFlushSize(int minFlushSize) {
+    return minFlushSize().withMinFlushSize(minFlushSize);
+  }
+
+  abstract BufferedWritableByteChannel createBufferedChannel(
+      UnbufferedWritableByteChannel unbuffered);
 
   @Override
   public abstract boolean equals(Object obj);
@@ -127,8 +149,9 @@ public abstract class FlushPolicy {
     }
 
     @Override
-    BufferedAppendableUploadBuilder apply(AppendableUploadBuilder builder) {
-      return builder.buffered(BufferHandle.allocate(maxFlushSize));
+    BufferedWritableByteChannel createBufferedChannel(UnbufferedWritableByteChannel unbuffered) {
+      return new DefaultBufferedWritableByteChannel(
+          BufferHandle.allocate(maxFlushSize), unbuffered);
     }
 
     @Override
@@ -151,6 +174,87 @@ public abstract class FlushPolicy {
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(this).add("maxFlushSize", maxFlushSize).toString();
+    }
+  }
+
+  /**
+   * Define a {@link FlushPolicy} where a min number of bytes will be required before a flush GCS
+   * happens.
+   *
+   * <p>If there are not enough bytes to trigger a flush, they will be held in memory until there
+   * are enough bytes, or an explicit flush is performed by closing the channel.
+   *
+   * <p>Instances of this class are immutable and thread safe.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @Immutable
+  @BetaApi
+  public static final class MinFlushSizeFlushPolicy extends FlushPolicy {
+    private static final MinFlushSizeFlushPolicy INSTANCE = new MinFlushSizeFlushPolicy(_2MiB);
+
+    private final int minFlushSize;
+
+    public MinFlushSizeFlushPolicy(int minFlushSize) {
+      this.minFlushSize = minFlushSize;
+    }
+
+    /**
+     * The minimum number of bytes to include in each automatic flush
+     *
+     * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+     *
+     * @see #withMinFlushSize(int)
+     */
+    @BetaApi
+    public int getMinFlushSize() {
+      return minFlushSize;
+    }
+
+    /**
+     * Return an instance with the {@code minFlushSize} set to the specified value.
+     *
+     * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+     *
+     * @param minFlushSize The number of bytes to buffer before flushing.
+     * @return The new instance
+     * @see #getMinFlushSize()
+     */
+    @BetaApi
+    public MinFlushSizeFlushPolicy withMinFlushSize(int minFlushSize) {
+      Preconditions.checkArgument(minFlushSize >= 0, "minFlushSize >= 0 (%s >= 0)", minFlushSize);
+      if (this.minFlushSize == minFlushSize) {
+        return this;
+      }
+      return new MinFlushSizeFlushPolicy(minFlushSize);
+    }
+
+    @Override
+    BufferedWritableByteChannel createBufferedChannel(UnbufferedWritableByteChannel unbuffered) {
+      return new MinFlushBufferedWritableByteChannel(
+          BufferHandle.allocate(minFlushSize), unbuffered);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof MinFlushSizeFlushPolicy)) {
+        return false;
+      }
+      MinFlushSizeFlushPolicy that = (MinFlushSizeFlushPolicy) o;
+      return minFlushSize == that.minFlushSize;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(minFlushSize);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("minFlushSize", minFlushSize).toString();
     }
   }
 }

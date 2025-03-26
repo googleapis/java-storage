@@ -24,6 +24,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.AuditingBufferHandle;
+import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.CountingWritableByteChannelAdapter;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +41,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -50,7 +53,7 @@ import net.jqwik.api.Provide;
 import net.jqwik.api.providers.TypeUsage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class DefaultBufferedWritableByteChannelTest {
+public final class MinFlushBufferedWritableByteChannelTest {
 
   @Example
   void edgeCases() {
@@ -64,7 +67,7 @@ public final class DefaultBufferedWritableByteChannelTest {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
+        BufferedWritableByteChannel c = new MinFlushBufferedWritableByteChannel(handle, adapter)) {
 
       List<Integer> actualWriteSizes = new ArrayList<>();
 
@@ -142,14 +145,14 @@ public final class DefaultBufferedWritableByteChannelTest {
    * data:    |--------------------------|
    *               5       14 17        27
    * writes:  |----|--------|--|---------|
-   *                   10
-   * flush 1: |---------|
-   *            2        12
-   * flush 2:   |---------|
-   *                     12        22
-   * flush 3:             |---------|
-   *                              19    27
-   * flush 4:                     |------|
+   *                       14
+   * flush 1: |-------------|
+   *            2          14
+   * flush 2:   |-----------|
+   *                        15     21
+   * flush 3:                |------|
+   *                                21    27
+   * flush 4:                       |------|
    * </pre>
    */
   @Example
@@ -170,33 +173,31 @@ public final class DefaultBufferedWritableByteChannelTest {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
+        BufferedWritableByteChannel c = new MinFlushBufferedWritableByteChannel(handle, adapter)) {
 
       c.write(data1); // write 5 bytes, which should enqueue in full
       // before the next write, limit the number of bytes the underlying channel will consume to 2.
       adapter.nextWriteMaxConsumptionLimit = 2L;
       // write 9 bytes, which should trigger a flush - limited to 2 bytes, leaving 3 bytes in the
       // buffer and not consuming any of the 9 bytes. Since 3 + 9 is still larger than our buffer
-      // attempt another flush of 10 bytes which will all be consumed. Enqueue the remaining 2
-      // bytes from data2.
+      // attempt another flush of 12 bytes which will all be consumed.
       c.write(data2);
 
-      // write 3 bytes, which should enqueue in full, leaving the buffer with 5 bytes enqueued
+      // write 3 bytes, which should enqueue in full
       c.write(data3);
       // before the next write, limit the number of bytes the underlying channel will consume to 7.
       adapter.nextWriteMaxConsumptionLimit = 7L;
-      // write 10 bytes, which should trigger a flush - limited to 7 bytes, consuming all of the
-      // buffer, but only consuming 2 bytes written data. The remaining 8 bytes should be
-      // enqueued in full.
+      // write 10 bytes, which should trigger a flush, consuming all the buffer, but only consuming
+      // 4 bytes written data. The remaining 6 bytes should be enqueued in full.
       c.write(data4);
 
-      // close the channel, causing a flush of the 8 outstanding bytes in buffer.
+      // close the channel, causing a flush of the 6 outstanding bytes in buffer.
       c.close();
       assertThrows(ClosedChannelException.class, () -> c.write(null));
 
       assertWithMessage("Unexpected total flushed length")
           .that(adapter.writeEndPoints)
-          .isEqualTo(ImmutableList.of(2L, 12L, 19L, 27L));
+          .isEqualTo(ImmutableList.of(2L, 14L, 21L, 27L));
       assertThat(baos.toByteArray()).isEqualTo(allData);
     }
   }
@@ -237,7 +238,7 @@ public final class DefaultBufferedWritableByteChannelTest {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
+        BufferedWritableByteChannel c = new MinFlushBufferedWritableByteChannel(handle, adapter)) {
 
       c.write(data1); // write 3 bytes, which should enqueue in full
       c.flush(); // flush all enqueued bytes
@@ -249,15 +250,14 @@ public final class DefaultBufferedWritableByteChannelTest {
       c.flush(); // attempt to flush all enqueued bytes, however only 2 of the 3 will be consumed
       c.write(data3); // write 3 bytes, which should enqueue in full
       // after this write, our buffer should contain 4 bytes of its 5 byte capacity
-      // on the next write, 5 bytes should be flushed. 4 from the buffer, 1 from the written data
-      c.write(data4); // 1 of the 3 bytes will be flushed, leaving 2 bytes in the buffer
+      c.write(data4); // all bytes from buffer and data4 should be flushed
 
-      c.close(); // close the channel, which should flush the 2 outstanding buffered bytes
+      c.close(); // close the channel, nothing should be enqueued so we do not expect another flush
       assertThrows(ClosedChannelException.class, () -> c.write(null));
 
       assertWithMessage("Unexpected total flushed length")
           .that(adapter.writeEndPoints)
-          .isEqualTo(ImmutableList.of(3L, 5L, 10L, 12L));
+          .isEqualTo(ImmutableList.of(3L, 5L, 12L));
       assertThat(baos.toByteArray()).isEqualTo(allData);
     }
   }
@@ -279,8 +279,8 @@ public final class DefaultBufferedWritableByteChannelTest {
    * data:    |--------------------------------------------------------------------------------------------------------|
    *                 7     14     21     28     35     42     49     56     63     70     77     84     91     98    105
    * writes:  |------|------|------|------|------|------|------|------|------|------|------|------|------|------|------|
-   *                        15             30             45             60             75             90            105
-   * flushes: |--------------|--------------|--------------|--------------|--------------|--------------|--------------|
+   *                              21                   42                   63                   84                  105
+   * flushes: |--------------------|--------------------|--------------------|--------------------|--------------------|
    * </pre>
    */
   @Example
@@ -307,7 +307,7 @@ public final class DefaultBufferedWritableByteChannelTest {
             ByteBuffer.wrap(bytes, 84, writeSize),
             ByteBuffer.wrap(bytes, 91, writeSize),
             ByteBuffer.wrap(bytes, 98, writeSize));
-    ImmutableList<Long> flushes = ImmutableList.of(15L, 30L, 45L, 60L, 75L, 90L, 105L);
+    ImmutableList<Long> flushes = ImmutableList.of(21L, 42L, 63L, 84L, 105L);
     String z = "[0x00000007 * 0x0000000f]";
     WriteOps expected = new WriteOps(bytes, bufferSize, writeSize, writes, flushes, z);
     assertThat(WriteOps.of(dataSize, bufferSize, writeSize)).isEqualTo(expected);
@@ -321,8 +321,8 @@ public final class DefaultBufferedWritableByteChannelTest {
    * data:    |------------------------------------------------------------|
    *                         16         (16) 32         (16) 48      (13) 61
    * writes:  |---------------|---------------|---------------|------------|
-   *             3  6  9 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60
-   * flushes: |--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--||
+   *                         16              32              48           61
+   * flushes: |---------------|---------------|---------------|------------|
    * </pre>
    */
   @Example
@@ -337,10 +337,7 @@ public final class DefaultBufferedWritableByteChannelTest {
             ByteBuffer.wrap(bytes, 16, writeSize),
             ByteBuffer.wrap(bytes, 32, writeSize),
             ByteBuffer.wrap(bytes, 48, 13));
-    ImmutableList<Long> flushes =
-        ImmutableList.of(
-            3L, 6L, 9L, 12L, 15L, 18L, 21L, 24L, 27L, 30L, 33L, 36L, 39L, 42L, 45L, 48L, 51L, 54L,
-            57L, 60L, 61L);
+    ImmutableList<Long> flushes = ImmutableList.of(16L, 32L, 48L, 61L);
     String z = "[0x00000010 * 0x00000003, 0x0000000d]";
     WriteOps expected = new WriteOps(bytes, bufferSize, writeSize, writes, flushes, z);
     WriteOps actual = WriteOps.of(dataSize, bufferSize, writeSize);
@@ -383,8 +380,8 @@ public final class DefaultBufferedWritableByteChannelTest {
             fail("unexpected close() call");
           }
         };
-    DefaultBufferedWritableByteChannel test =
-        new DefaultBufferedWritableByteChannel(BufferHandle.allocate(20), delegate);
+    BufferedWritableByteChannel test =
+        new MinFlushBufferedWritableByteChannel(BufferHandle.allocate(20), delegate);
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(10);
     String expected = xxd(bytes);
@@ -409,7 +406,7 @@ public final class DefaultBufferedWritableByteChannelTest {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
+        BufferedWritableByteChannel c = new MinFlushBufferedWritableByteChannel(handle, adapter)) {
 
       for (ByteBuffer buf : writeOps.writes) {
         c.write(buf);
@@ -514,8 +511,8 @@ public final class DefaultBufferedWritableByteChannelTest {
     }
 
     @NonNull
-    static WriteOps of(int byteSize, int bufferSize, int writeSize) {
-      byte[] bytes = DataGenerator.base64Characters().genBytes(byteSize);
+    static WriteOps of(int numBytes, int bufferSize, int writeSize) {
+      byte[] bytes = DataGenerator.base64Characters().genBytes(numBytes);
 
       List<ByteBuffer> writes = new ArrayList<>();
       Deque<Long> expectedFlushes = new ArrayDeque<>();
@@ -526,15 +523,15 @@ public final class DefaultBufferedWritableByteChannelTest {
       int remainingWrite = 0;
       int prevWriteEndOffset = 0;
       for (int i = 1; i <= length; i++) {
-        boolean flushBoundary = (i % bufferSize == 0) || bufferSize == 1;
         boolean writeBoundary = (i % writeSize == 0) || writeSize == 1;
         boolean eof = i == length;
 
-        if (flushBoundary) {
-          expectedFlushes.addLast((long) i);
-        }
-
         if (writeBoundary) {
+          long lastFlush = Optional.ofNullable(expectedFlushes.peekLast()).orElse(0L);
+          long sinceLastFlush = i - lastFlush;
+          if (sinceLastFlush >= bufferSize) {
+            expectedFlushes.addLast((long) i);
+          }
           writes.add(ByteBuffer.wrap(bytes, prevWriteEndOffset, writeSize));
           fullWriteCount++;
           prevWriteEndOffset += writeSize;
@@ -581,120 +578,6 @@ public final class DefaultBufferedWritableByteChannelTest {
           ImmutableList.copyOf(writes),
           ImmutableList.copyOf(expectedFlushes),
           dbgExpectedWriteSizes);
-    }
-  }
-
-  /**
-   * Adapter to make any {@link WritableByteChannel} into an {@link UnbufferedWritableByteChannel}
-   */
-  static final class CountingWritableByteChannelAdapter implements UnbufferedWritableByteChannel {
-
-    private final WritableByteChannel c;
-
-    final List<Long> writeEndPoints;
-    long totalBytesWritten;
-
-    long nextWriteMaxConsumptionLimit = Long.MAX_VALUE;
-
-    CountingWritableByteChannelAdapter(WritableByteChannel c) {
-      this.c = c;
-      writeEndPoints = new ArrayList<>();
-    }
-
-    @Override
-    public int write(ByteBuffer src) throws IOException {
-      return Math.toIntExact(write(new ByteBuffer[] {src}, 0, 1));
-    }
-
-    @Override
-    public long write(ByteBuffer[] srcs) throws IOException {
-      return write(srcs, 0, srcs.length);
-    }
-
-    @Override
-    public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
-      if (!c.isOpen()) {
-        return -1;
-      }
-
-      long budgetRemaining = nextWriteMaxConsumptionLimit;
-      nextWriteMaxConsumptionLimit = Long.MAX_VALUE;
-
-      long bytesWriten = 0;
-      for (int i = offset; i < length && budgetRemaining > 0; i++) {
-        ByteBuffer src = srcs[i];
-        if (src.hasRemaining()) {
-          ByteBuffer slice = src.slice();
-          int remaining = src.remaining();
-          int newLimit = Math.toIntExact(Math.min(budgetRemaining, remaining));
-          slice.limit(newLimit);
-          int write = c.write(slice);
-          if (write == -1) {
-            if (bytesWriten == 0) {
-              c.close();
-              return -1;
-            } else {
-              break;
-            }
-          } else if (write == 0) {
-            break;
-          } else {
-            src.position(src.position() + write);
-          }
-          budgetRemaining -= write;
-          bytesWriten += write;
-        }
-      }
-      incr(bytesWriten);
-      return bytesWriten;
-    }
-
-    @Override
-    public boolean isOpen() {
-      return c.isOpen();
-    }
-
-    @Override
-    public void close() throws IOException {
-      c.close();
-    }
-
-    private void incr(long bytesWritten) {
-      if (bytesWritten > 0) {
-        totalBytesWritten += bytesWritten;
-        writeEndPoints.add(totalBytesWritten);
-      }
-    }
-  }
-
-  static final class AuditingBufferHandle extends BufferHandle {
-    private final BufferHandle delegate;
-
-    int getCallCount = 0;
-
-    AuditingBufferHandle(BufferHandle delegate) {
-      this.delegate = delegate;
-    }
-
-    @Override
-    public int remaining() {
-      return delegate.remaining();
-    }
-
-    @Override
-    public int capacity() {
-      return delegate.capacity();
-    }
-
-    @Override
-    public int position() {
-      return delegate.position();
-    }
-
-    @Override
-    public ByteBuffer get() {
-      getCallCount++;
-      return delegate.get();
     }
   }
 }

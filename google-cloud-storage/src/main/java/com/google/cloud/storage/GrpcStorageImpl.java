@@ -51,7 +51,6 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
-import com.google.cloud.storage.GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -1435,7 +1434,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             : getBidiWriteObjectRequest(blob, opts);
     BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
     ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
-    AppendableUploadBuilder appendableUploadBuilder =
+    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
         ResumableMedia.gapic()
             .write()
             .bidiByteChannel(storageClient.bidiWriteObjectCallable())
@@ -1465,11 +1464,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                             .idempotent()
                             .shouldRetry(previousThrowable, null);
                       }
-                    }));
-    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
-        uploadConfig
-            .getFlushPolicy()
-            .apply(appendableUploadBuilder)
+                    }))
+            .buffered(uploadConfig.getFlushPolicy())
             .setStartAsync(startAppendableWrite)
             .setGetCallable(storageClient.getObjectCallable())
             .build();

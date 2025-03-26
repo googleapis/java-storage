@@ -116,7 +116,7 @@ public final class ITAppendableUploadTest {
   @Test
   public void testUploadFileUsingAppendable() throws Exception {
     AppendableBlobUploadConfig uploadConfig =
-        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(_2MiB));
+        AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.minFlushSize(_2MiB));
 
     BlobId bid = BlobId.of(bucket.getName(), generator.randomObjectName());
     try (TmpFile tmpFile =

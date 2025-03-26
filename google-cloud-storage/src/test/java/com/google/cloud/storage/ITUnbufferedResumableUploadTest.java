@@ -72,7 +72,7 @@ public final class ITUnbufferedResumableUploadTest {
 
     @Override
     public ImmutableList<Integer> parameters() {
-      return ImmutableList.of(256 * 1024, 2 * 1024 * 1024);
+      return ImmutableList.of(256 * 1024, 2 * 1024 * 1024, 8 * 1024 * 1024);
     }
   }
 
@@ -80,33 +80,7 @@ public final class ITUnbufferedResumableUploadTest {
   @Exclude(transports = Transport.GRPC)
   public void json()
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
-    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    Opts<ObjectTargetOpt> opts = Opts.empty();
-    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
-    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
-
-    StorageObject encode = Conversions.json().blobInfo().encode(updated);
-    HttpStorageOptions options = (HttpStorageOptions) storage.getOptions();
-    Retrier retrier = TestUtils.retrierFromStorageOptions(options);
-    Supplier<String> uploadIdSupplier =
-        ResumableMedia.startUploadForBlobInfo(
-            options,
-            updated,
-            optionsMap,
-            retrier.withAlg(
-                StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler()));
-    JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
-
-    UnbufferedWritableByteChannelSession<StorageObject> session =
-        ResumableMedia.http()
-            .write()
-            .byteChannel(HttpClientContext.from(options.getStorageRpcV1()))
-            .resumable()
-            .unbuffered()
-            .setStartAsync(ApiFutures.immediateFuture(jsonResumableWrite))
-            .build();
+    UnbufferedWritableByteChannelSession<StorageObject> session = jsonSession();
 
     int additional = 13;
     long size = objectSize + additional;
@@ -133,6 +107,108 @@ public final class ITUnbufferedResumableUploadTest {
   @Test
   @Exclude(transports = Transport.HTTP)
   public void grpc() throws Exception {
+    UnbufferedWritableByteChannelSession<WriteObjectResponse> session = grpcSession();
+
+    int additional = 13;
+    long size = objectSize + additional;
+    ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
+
+    UnbufferedWritableByteChannel open = session.open();
+    int written1 = open.write(b);
+    assertThat(written1).isEqualTo(objectSize);
+    assertThat(b.remaining()).isEqualTo(additional);
+
+    // no bytes should be consumed if less than 256KiB
+    int written2 = open.write(b);
+    assertThat(written2).isEqualTo(0);
+    assertThat(b.remaining()).isEqualTo(additional);
+
+    int writtenAndClose = open.writeAndClose(b);
+    assertThat(writtenAndClose).isEqualTo(additional);
+    open.close();
+    WriteObjectResponse resp = session.getResult().get(2, TimeUnit.SECONDS);
+    assertThat(resp.getResource().getSize()).isEqualTo(size);
+  }
+
+  @Test
+  @Exclude(transports = Transport.GRPC)
+  public void json_minFlush()
+      throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    UnbufferedWritableByteChannelSession<StorageObject> session = jsonSession();
+
+    int additional = 13;
+    long size = objectSize + additional;
+    ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
+
+    UnbufferedWritableByteChannel open = session.open();
+    BufferHandle bufferHandle = BufferHandle.allocate(256 * 1024);
+    MinFlushBufferedWritableByteChannel channel =
+        new MinFlushBufferedWritableByteChannel(bufferHandle, open);
+    int written1 = channel.write(b);
+    assertThat(written1).isEqualTo(size);
+    assertThat(bufferHandle.position()).isEqualTo(additional);
+
+    channel.close();
+    assertThat(bufferHandle.remaining()).isEqualTo(bufferHandle.capacity());
+
+    StorageObject storageObject = session.getResult().get(2, TimeUnit.SECONDS);
+    assertThat(storageObject.getSize()).isEqualTo(BigInteger.valueOf(size));
+  }
+
+  @Test
+  @Exclude(transports = Transport.HTTP)
+  public void grpc_minFlush() throws Exception {
+    UnbufferedWritableByteChannelSession<WriteObjectResponse> session = grpcSession();
+
+    int additional = 13;
+    long size = objectSize + additional;
+    ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
+
+    UnbufferedWritableByteChannel open = session.open();
+    BufferHandle bufferHandle = BufferHandle.allocate(256 * 1024);
+    MinFlushBufferedWritableByteChannel channel =
+        new MinFlushBufferedWritableByteChannel(bufferHandle, open);
+    int written1 = channel.write(b);
+    assertThat(written1).isEqualTo(size);
+    assertThat(bufferHandle.position()).isEqualTo(additional);
+
+    channel.close();
+    assertThat(bufferHandle.remaining()).isEqualTo(bufferHandle.capacity());
+
+    WriteObjectResponse resp = session.getResult().get(2, TimeUnit.SECONDS);
+    assertThat(resp.getResource().getSize()).isEqualTo(size);
+  }
+
+  private UnbufferedWritableByteChannelSession<StorageObject> jsonSession() {
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    Opts<ObjectTargetOpt> opts = Opts.empty();
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+
+    StorageObject encode = Conversions.json().blobInfo().encode(updated);
+    HttpStorageOptions options = (HttpStorageOptions) storage.getOptions();
+    Retrier retrier = TestUtils.retrierFromStorageOptions(options);
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForBlobInfo(
+            options,
+            updated,
+            optionsMap,
+            retrier.withAlg(
+                StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler()));
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+
+    return ResumableMedia.http()
+        .write()
+        .byteChannel(HttpClientContext.from(options.getStorageRpcV1()))
+        .resumable()
+        .unbuffered()
+        .setStartAsync(ApiFutures.immediateFuture(jsonResumableWrite))
+        .build();
+  }
+
+  private UnbufferedWritableByteChannelSession<WriteObjectResponse> grpcSession() {
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     Opts<ObjectTargetOpt> opts = Opts.empty();
     BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
@@ -168,33 +244,12 @@ public final class ITUnbufferedResumableUploadTest {
                 request,
                 opts);
 
-    UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
-        ResumableMedia.gapic()
-            .write()
-            .byteChannel(storageClient.writeObjectCallable())
-            .resumable()
-            .unbuffered()
-            .setStartAsync(start)
-            .build();
-
-    int additional = 13;
-    long size = objectSize + additional;
-    ByteBuffer b = DataGenerator.base64Characters().genByteBuffer(size);
-
-    UnbufferedWritableByteChannel open = session.open();
-    int written1 = open.write(b);
-    assertThat(written1).isEqualTo(objectSize);
-    assertThat(b.remaining()).isEqualTo(additional);
-
-    // no bytes should be consumed if less than 256KiB
-    int written2 = open.write(b);
-    assertThat(written2).isEqualTo(0);
-    assertThat(b.remaining()).isEqualTo(additional);
-
-    int writtenAndClose = open.writeAndClose(b);
-    assertThat(writtenAndClose).isEqualTo(additional);
-    open.close();
-    WriteObjectResponse resp = session.getResult().get(2, TimeUnit.SECONDS);
-    assertThat(resp.getResource().getSize()).isEqualTo(size);
+    return ResumableMedia.gapic()
+        .write()
+        .byteChannel(storageClient.writeObjectCallable())
+        .resumable()
+        .unbuffered()
+        .setStartAsync(start)
+        .build();
   }
 }
