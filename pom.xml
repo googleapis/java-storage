@@ -73,51 +73,10 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!--
-      Each of the following dependencies declares a dependency on opentelemtry-semconv,
-      but they differ in what version. Explicitly declare the version here to break the tie.
-      * com.google.cloud.opentelemetry:exporter-metrics
-      * com.google.cloud.opentelemetry:detector-resources
-      * io.opentelemetry.instrumentation:opentelemetry-resources
-      * io.opentelemetry.contrib:opentelemetry-gcp-resources
-      -->
-      <dependency>
-        <groupId>io.opentelemetry.semconv</groupId>
-        <artifactId>opentelemetry-semconv</artifactId>
-        <version>1.27.0-alpha</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.cloud.opentelemetry</groupId>
-        <artifactId>detector-resources</artifactId>
-        <version>0.27.0-alpha</version>
-        <exclusions>
-          <exclusion>
-            <groupId>io.opentelemetry.semconv</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>io.opentelemetry.instrumentation</groupId>
-        <artifactId>opentelemetry-resources</artifactId>
-        <version>2.6.0-alpha</version>
-        <exclusions>
-          <exclusion>
-            <groupId>io.opentelemetry.semconv</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
       <dependency>
         <groupId>io.opentelemetry.contrib</groupId>
         <artifactId>opentelemetry-gcp-resources</artifactId>
         <version>1.37.0-alpha</version>
-        <exclusions>
-          <exclusion>
-            <groupId>io.opentelemetry.semconv</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
