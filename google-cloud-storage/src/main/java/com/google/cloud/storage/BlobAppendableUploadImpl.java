@@ -21,15 +21,14 @@ import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 @BetaApi
-final class AppendableBlobUploadImpl implements AppendableBlobUpload {
+final class BlobAppendableUploadImpl implements BlobAppendableUpload {
   private final AppendableObjectBufferedWritableByteChannel channel;
   private final ApiFuture<BlobInfo> result;
 
-  private AppendableBlobUploadImpl(BlobInfo blob, BlobWriteSession session, boolean takeover)
+  private BlobAppendableUploadImpl(BlobInfo blob, BlobWriteSession session, boolean takeover)
       throws IOException {
     channel = (AppendableObjectBufferedWritableByteChannel) (session.open());
     result = session.getResult();
@@ -38,14 +37,14 @@ final class AppendableBlobUploadImpl implements AppendableBlobUpload {
     }
   }
 
-  static AppendableBlobUpload createNewAppendableBlob(BlobInfo blob, BlobWriteSession session)
+  static BlobAppendableUpload createNewAppendableBlob(BlobInfo blob, BlobWriteSession session)
       throws IOException {
-    return new AppendableBlobUploadImpl(blob, session, false);
+    return new BlobAppendableUploadImpl(blob, session, false);
   }
 
-  static AppendableBlobUpload resumeAppendableUpload(BlobInfo blob, BlobWriteSession session)
+  static BlobAppendableUpload resumeAppendableUpload(BlobInfo blob, BlobWriteSession session)
       throws IOException {
-    return new AppendableBlobUploadImpl(blob, session, true);
+    return new BlobAppendableUploadImpl(blob, session, true);
   }
 
   void startTakeoverStream() {
@@ -53,10 +52,10 @@ final class AppendableBlobUploadImpl implements AppendableBlobUpload {
   }
 
   @BetaApi
-  public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
+  public ApiFuture<BlobInfo> finalizeUpload() throws IOException {
     channel.finalizeWrite();
     close();
-    return result.get();
+    return result;
   }
 
   @Override

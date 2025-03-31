@@ -29,20 +29,20 @@ import javax.annotation.concurrent.Immutable;
  *
  * <p>Instances of this class are immutable and thread safe.
  *
- * @see Storage#appendableBlobUpload(BlobInfo, AppendableBlobUploadConfig, BlobWriteOption...)
+ * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
  * @since 2.51.0 This new api is in preview and is subject to breaking changes.
  */
 @Immutable
 @BetaApi
 @TransportCompatibility({Transport.GRPC})
-public final class AppendableBlobUploadConfig {
+public final class BlobAppendableUploadConfig {
 
-  private static final AppendableBlobUploadConfig INSTANCE =
-      new AppendableBlobUploadConfig(FlushPolicy.minFlushSize(_256KiB));
+  private static final BlobAppendableUploadConfig INSTANCE =
+      new BlobAppendableUploadConfig(FlushPolicy.minFlushSize(_256KiB));
 
   private final FlushPolicy flushPolicy;
 
-  private AppendableBlobUploadConfig(FlushPolicy flushPolicy) {
+  private BlobAppendableUploadConfig(FlushPolicy flushPolicy) {
     this.flushPolicy = flushPolicy;
   }
 
@@ -69,12 +69,12 @@ public final class AppendableBlobUploadConfig {
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public AppendableBlobUploadConfig withFlushPolicy(FlushPolicy flushPolicy) {
+  public BlobAppendableUploadConfig withFlushPolicy(FlushPolicy flushPolicy) {
     requireNonNull(flushPolicy, "flushPolicy must be non null");
     if (this.flushPolicy.equals(flushPolicy)) {
       return this;
     }
-    return new AppendableBlobUploadConfig(flushPolicy);
+    return new BlobAppendableUploadConfig(flushPolicy);
   }
 
   /**
@@ -83,7 +83,7 @@ public final class AppendableBlobUploadConfig {
    * <p>The {@link FlushPolicy} of this instance is equivalent to the following:
    *
    * <pre>{@code
-   * AppendableBlobUploadConfig.of()
+   * BlobAppendableUploadConfig.of()
    *   .withFlushPolicy(FlushPolicy.minFlushSize(256 * 1024))
    * }</pre>
    *
@@ -91,7 +91,7 @@ public final class AppendableBlobUploadConfig {
    * @see FlushPolicy#minFlushSize(int)
    */
   @BetaApi
-  public static AppendableBlobUploadConfig of() {
+  public static BlobAppendableUploadConfig of() {
     return INSTANCE;
   }
 }

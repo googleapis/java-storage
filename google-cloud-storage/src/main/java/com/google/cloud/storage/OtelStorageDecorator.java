@@ -58,7 +58,6 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -1506,14 +1505,14 @@ final class OtelStorageDecorator implements Storage {
   }
 
   @Override
-  public AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
+  public BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
       throws IOException {
     Span span = tracer.spanBuilder("appendableBlobUpload").startSpan();
     try (Scope ignore = span.makeCurrent()) {
 
-      return new OtelDecoratingAppendableBlobUpload(
-          delegate.appendableBlobUpload(blob, uploadConfig, options), span, Context.current());
+      return new OtelDecoratingBlobAppendableUpload(
+          delegate.blobAppendableUpload(blobInfo, uploadConfig, options), span, Context.current());
 
     } catch (Throwable t) {
       span.recordException(t);
@@ -2103,13 +2102,13 @@ final class OtelStorageDecorator implements Storage {
     }
   }
 
-  final class OtelDecoratingAppendableBlobUpload implements AppendableBlobUpload {
-    private final AppendableBlobUpload delegate;
+  final class OtelDecoratingBlobAppendableUpload implements BlobAppendableUpload {
+    private final BlobAppendableUpload delegate;
     private final Span openSpan;
     private final Context openContext;
 
-    private OtelDecoratingAppendableBlobUpload(
-        AppendableBlobUpload delegate, Span openSpan, Context openContext) {
+    private OtelDecoratingBlobAppendableUpload(
+        BlobAppendableUpload delegate, Span openSpan, Context openContext) {
       this.delegate = delegate;
       this.openSpan = openSpan;
       this.openContext = openContext;
@@ -2135,7 +2134,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     @BetaApi
-    public BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException {
+    public ApiFuture<BlobInfo> finalizeUpload() throws IOException {
       Span span =
           tracer
               .spanBuilder("appendableBlobUpload/finalizeUpload")

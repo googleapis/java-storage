@@ -1423,15 +1423,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @BetaApi
   @Override
-  public AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
+  public BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
       throws IOException {
-    boolean takeOver = blob.getGeneration() != null;
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    boolean takeOver = blobInfo.getGeneration() != null;
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     BidiWriteObjectRequest req =
         takeOver
-            ? getBidiWriteObjectRequestForTakeover(blob, opts)
-            : getBidiWriteObjectRequest(blob, opts);
+            ? getBidiWriteObjectRequestForTakeover(blobInfo, opts)
+            : getBidiWriteObjectRequest(blobInfo, opts);
     BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
     ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
     WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
@@ -1476,8 +1476,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                 build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
     BlobWriteSession session = BlobWriteSessions.of(dec);
     return takeOver
-        ? AppendableBlobUploadImpl.resumeAppendableUpload(blob, session)
-        : AppendableBlobUploadImpl.createNewAppendableBlob(blob, session);
+        ? BlobAppendableUploadImpl.resumeAppendableUpload(blobInfo, session)
+        : BlobAppendableUploadImpl.createNewAppendableBlob(blobInfo, session);
   }
 
   @Override

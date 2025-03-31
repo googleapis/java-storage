@@ -16,33 +16,33 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Interface representing those methods which can be used to write to and interact with an
  * appendable upload.
  *
- * @see Storage#appendableBlobUpload(BlobInfo, AppendableBlobUploadConfig, BlobWriteOption...)
+ * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
  */
 @BetaApi
 @InternalExtensionOnly
-public interface AppendableBlobUpload extends AutoCloseable, WritableByteChannel {
+public interface BlobAppendableUpload extends AutoCloseable, WritableByteChannel {
 
   /**
    * Write some bytes to the appendable session. Whether a flush happens will depend on how many
    * bytes have been written prior, how many bytes are being written now and what {@link
-   * AppendableBlobUploadConfig} was provided when creating the {@link AppendableBlobUpload}.
+   * BlobAppendableUploadConfig} was provided when creating the {@link BlobAppendableUpload}.
    *
    * <p>This method can block the invoking thread in order to ensure written bytes are acknowledged
    * by Google Cloud Storage.
    *
-   * @see Storage#appendableBlobUpload(BlobInfo, AppendableBlobUploadConfig, BlobWriteOption...)
+   * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
    */
   @Override
   int write(ByteBuffer src) throws IOException;
@@ -61,8 +61,8 @@ public interface AppendableBlobUpload extends AutoCloseable, WritableByteChannel
    * Finalize the appendable upload, close any underlying stream and release any releasable
    * resources once out of scope.
    *
-   * <p>Once this method is called, and returns no more write to the object will be allowed by GCS.
+   * <p>Once this method is called, and returns no more writes to the object will be allowed by GCS.
    */
   @BetaApi
-  BlobInfo finalizeUpload() throws IOException, ExecutionException, InterruptedException;
+  ApiFuture<BlobInfo> finalizeUpload() throws IOException;
 }

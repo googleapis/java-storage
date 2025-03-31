@@ -236,7 +236,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                             Retrying::newCallContext))
                 .andThen(
                     c ->
-                        new AppendableBlobUploadImpl.AppendableObjectBufferedWritableByteChannel(
+                        new BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel(
                             flushPolicy.createBufferedChannel(c), c)));
       }
     }

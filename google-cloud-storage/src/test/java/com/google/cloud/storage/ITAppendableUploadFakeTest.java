@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import org.junit.Test;
@@ -85,8 +86,8 @@ public class ITAppendableUploadFakeTest {
               ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABCDE")).build())
           .build();
 
-  private static final AppendableBlobUploadConfig UPLOAD_CONFIG =
-      AppendableBlobUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
+  private static final BlobAppendableUploadConfig UPLOAD_CONFIG =
+      BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
 
   /**
    *
@@ -199,10 +200,10 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload();
+      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -263,8 +264,8 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       StorageException e =
           assertThrows(
               StorageException.class,
@@ -377,11 +378,11 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload();
+      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -490,11 +491,11 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload();
+      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -1425,11 +1426,11 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o", METADATA.getGeneration());
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
       b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload();
+      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(20);
     }
   }
@@ -1478,11 +1479,11 @@ public class ITAppendableUploadFakeTest {
         Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
 
       BlobId id = BlobId.of("b", "o");
-      AppendableBlobUpload b =
-          storage.appendableBlobUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      BlobAppendableUpload b =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 5);
       b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload();
+      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(5);
 
       assertThat(map.get(req1)).isEqualTo(2);

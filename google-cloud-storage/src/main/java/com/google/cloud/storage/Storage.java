@@ -5882,13 +5882,52 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   /**
-   * @throws IOException
+   * Create a new {@link BlobAppendableUpload} for the specified {@code blobInfo} and {@code
+   * options}.
+   *
+   * <p>The returned {@code BlobWriteSession} can be used to write an individual version, a new
+   * session must be created each time you want to create a new version.
+   *
+   * <p>If your object exists, but is still in an appendable state ensure you provide the generation
+   * of the object in the provided {@code blobInfo} ({@link BlobInfo#getBlobId()
+   * blobInfo.getBlobId()}{@link BlobId#getGeneration() .getGeneration()}) to enable takeover.
+   *
+   * <h4>Example of creating an object using {@code BlobAppendableUpload}:</h4>
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blobInfo-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+   * ReadableByteChannel readableByteChannel = ...;
+   *
+   * try (
+   *   BlobAppendableUpload blobAppendableUpload = storage.blobAppendableUpload(
+   *     blobInfo,
+   *     BlobAppendableUploadConfig.of()
+   *   )
+   * ) {
+   * // copy all bytes
+   * ByteStreams.copy(readableByteChannel, blobAppendableUpload);
+   * // get the resulting object metadata
+   * ApiFuture<BlobInfo> resultFuture = blobAppendableUpload.finalizeUpload();
+   * BlobInfo gen1 = resultFuture.get();
+   *
+   * } catch (IOException e) {
+   * // handle IOException
+   * }
+   * }</pre>
+   *
+   * @param blobInfo blobInfo to create
+   * @param uploadConfig the configuration parameters for the channel
+   * @param options blobInfo write options
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   * @see StorageOptions#grpc()
    */
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
-  default AppendableBlobUpload appendableBlobUpload(
-      BlobInfo blob, AppendableBlobUploadConfig uploadConfig, BlobWriteOption... options)
+  default BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
       throws IOException {
     return throwGrpcOnly(
         fmtMethodName("appendableBlobUpload", BlobId.class, BlobWriteOption.class));
