@@ -27,7 +27,6 @@ import com.google.api.core.InternalApi;
 import com.google.api.core.ObsoleteApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
@@ -821,14 +820,7 @@ public final class GrpcStorageOptions extends StorageOptions
           Opts<UserProject> defaultOpts = t.y();
 
           ScheduledExecutorService executor =
-              Utils.firstNonNull(
-                      storageSettings::getBackgroundExecutorProvider,
-                      () -> {
-                        // TODO: if we make it to here, ensure we track the need to shutdown the
-                        //   executor separate from StorageClient
-                        return InstantiatingExecutorProvider.newBuilder().build();
-                      })
-                  .getExecutor();
+              storageSettings.getBackgroundExecutorProvider().getExecutor();
           RetryContextProvider retryContextProvider =
               RetryContext.providerFrom(
                   executor,
