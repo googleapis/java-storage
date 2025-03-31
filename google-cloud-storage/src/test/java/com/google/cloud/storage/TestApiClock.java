@@ -17,9 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiClock;
+import com.google.common.base.MoreObjects;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.LongUnaryOperator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** "Test" {@link ApiClock} that allows control of time advancement and by how much. */
@@ -64,13 +66,31 @@ final class TestApiClock implements ApiClock {
     advance(d.toNanos());
   }
 
+  public void advance(LongUnaryOperator op) {
+    if (next == null) {
+      next = op;
+    } else {
+      next = next.andThen(op);
+    }
+  }
+
   public void reset() {
     prevNs = beginNs;
     next = null;
   }
 
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("beginNs", Duration.ofNanos(beginNs))
+        .add("prevNs", Duration.ofNanos(prevNs))
+        .add("tick", tick)
+        .add("next", next)
+        .toString();
+  }
+
   public static TestApiClock tickBy(long begin, Duration d) {
-    return of(begin, addExact(d.toNanos()));
+    return of(begin, addExact(d));
   }
 
   public static TestApiClock of() {
@@ -82,7 +102,58 @@ final class TestApiClock implements ApiClock {
     return new TestApiClock(beginNs, tick);
   }
 
-  private static LongUnaryOperator addExact(long amountToAdd) {
-    return l -> Math.addExact(l, amountToAdd);
+  static LongUnaryOperator addExact(Duration amountToAdd) {
+    return new AddExact(amountToAdd.toNanos());
+  }
+
+  static LongUnaryOperator addExact(long amountToAdd) {
+    return new AddExact(amountToAdd);
+  }
+
+  private static final class AddExact implements LongUnaryOperator {
+    private final long amountToAdd;
+
+    private AddExact(long amountToAdd) {
+      this.amountToAdd = amountToAdd;
+    }
+
+    @Override
+    public long applyAsLong(long operand) {
+      return Math.addExact(operand, amountToAdd);
+    }
+
+    @Override
+    @NonNull
+    public LongUnaryOperator andThen(@NonNull LongUnaryOperator after) {
+      return new AndThen(after);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("amountToAdd", Duration.ofNanos(amountToAdd))
+          .toString();
+    }
+
+    private final class AndThen implements LongUnaryOperator {
+      private final LongUnaryOperator then;
+
+      private AndThen(LongUnaryOperator then) {
+        this.then = then;
+      }
+
+      @Override
+      public long applyAsLong(long operand) {
+        return then.applyAsLong(AddExact.this.applyAsLong(operand));
+      }
+
+      @Override
+      public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("before", AddExact.this)
+            .add("then", then)
+            .toString();
+      }
+    }
   }
 }

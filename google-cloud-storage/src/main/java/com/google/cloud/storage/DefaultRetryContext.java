@@ -26,6 +26,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,7 @@ final class DefaultRetryContext implements RetryContext {
   private final ReentrantLock lock;
 
   private List<Throwable> failures;
+  private long lastReset;
   private long lastRecordedErrorNs;
   @Nullable private BackoffResult lastBackoffResult;
   @Nullable private ScheduledFuture<?> pendingBackoff;
@@ -57,7 +59,8 @@ final class DefaultRetryContext implements RetryContext {
         Backoff.from(retryingDependencies.getRetrySettings()).setJitterer(jitterer).build();
     this.lock = new ReentrantLock();
     this.failures = new LinkedList<>();
-    this.lastRecordedErrorNs = retryingDependencies.getClock().nanoTime();
+    this.lastReset = retryingDependencies.getClock().nanoTime();
+    this.lastRecordedErrorNs = this.lastReset;
     this.lastBackoffResult = null;
     this.pendingBackoff = null;
   }
@@ -80,7 +83,9 @@ final class DefaultRetryContext implements RetryContext {
       if (failures.size() > 0) {
         failures = new LinkedList<>();
       }
-      lastRecordedErrorNs = retryingDependencies.getClock().nanoTime();
+      long now = retryingDependencies.getClock().nanoTime();
+      lastReset = now;
+      lastRecordedErrorNs = now;
       clearPendingBackoff();
       backoff.reset();
     } finally {
@@ -100,13 +105,13 @@ final class DefaultRetryContext implements RetryContext {
     lock.lock();
     try {
       long now = retryingDependencies.getClock().nanoTime();
-      Duration elapsed = Duration.ofNanos(now - lastRecordedErrorNs);
+      Duration elapsed = Duration.ofNanos(now - lastReset);
+      Duration elapsedSinceLastRecordError = Duration.ofNanos(now - lastRecordedErrorNs);
       if (pendingBackoff != null && pendingBackoff.isDone()) {
         pendingBackoff = null;
         lastBackoffResult = null;
       } else if (pendingBackoff != null) {
         pendingBackoff.cancel(true);
-        backoff.backoffInterrupted(elapsed);
         String message =
             String.format(
                 "Previous backoff interrupted by this error (previousBackoff: %s, elapsed: %s)",
@@ -119,8 +124,7 @@ final class DefaultRetryContext implements RetryContext {
         maxAttempts = Integer.MAX_VALUE;
       }
       boolean shouldRetry = algorithm.shouldRetry(t, null);
-      Duration cumulativeBackoff = backoff.getCumulativeBackoff();
-      BackoffResult nextBackoff = backoff.nextBackoff(elapsed);
+      BackoffResult nextBackoff = backoff.nextBackoff(elapsedSinceLastRecordError);
       String msgPrefix = null;
       if (shouldRetry && failureCount >= maxAttempts) {
         msgPrefix = "Operation failed to complete within attempt budget";
@@ -130,6 +134,7 @@ final class DefaultRetryContext implements RetryContext {
         msgPrefix = "Unretryable error";
       }
 
+      lastRecordedErrorNs = now;
       if (msgPrefix == null) {
         t.addSuppressed(BackoffComment.fromResult(nextBackoff));
         failures.add(t);
@@ -151,13 +156,14 @@ final class DefaultRetryContext implements RetryContext {
       } else {
         String msg =
             String.format(
+                Locale.US,
                 "%s (attempts: %d%s, elapsed: %s, nextBackoff: %s%s)%s",
                 msgPrefix,
                 failureCount,
                 maxAttempts == Integer.MAX_VALUE
                     ? ""
                     : String.format(", maxAttempts: %d", maxAttempts),
-                cumulativeBackoff,
+                elapsed,
                 nextBackoff.errorString(),
                 Durations.eq(backoff.getTimeout(), Durations.EFFECTIVE_INFINITY)
                     ? ""

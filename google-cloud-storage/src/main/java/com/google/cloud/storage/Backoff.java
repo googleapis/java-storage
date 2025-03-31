@@ -87,31 +87,21 @@ final class Backoff {
     checkArgument(
         Durations.gtEq(elapsed, ZERO), "elapsed must be >= PT0S (%s >= %s)", elapsed, ZERO);
     Duration cumulativeAndElapsed = cumulativeBackoff.plus(elapsed);
+    cumulativeBackoff = cumulativeAndElapsed;
     if (Durations.gtEq(cumulativeAndElapsed, timeout)) {
-      cumulativeBackoff = cumulativeAndElapsed;
       return BackoffResults.EXHAUSTED;
     }
-
     Duration nextDelay =
         Duration.ofNanos(Math.round(previousBackoff.toNanos() * retryDelayMultiplier));
     if (Durations.eq(nextDelay, ZERO)) {
       nextDelay = initialBackoff;
     }
     Duration nextBackoffWithJitter = jitterer.jitter(nextDelay);
-    Duration cappedBackoff = Durations.min(nextBackoffWithJitter, maxBackoff);
-    cumulativeBackoff = cumulativeAndElapsed.plus(cappedBackoff);
+    Duration remainingUtilTimeout = timeout.minus(cumulativeAndElapsed);
+    Duration cappedBackoff = Durations.min(nextBackoffWithJitter, maxBackoff, remainingUtilTimeout);
     previousBackoff = cappedBackoff;
 
     return BackoffDuration.of(cappedBackoff);
-  }
-
-  /**
-   * If a backoff is interrupted (usually because of another error from a higher level), record how
-   * much of the backoff actually happened.
-   */
-  void backoffInterrupted(Duration consumedBackoff) {
-    Duration unconsumedBackoff = previousBackoff.minus(consumedBackoff);
-    cumulativeBackoff = cumulativeBackoff.minus(unconsumedBackoff);
   }
 
   /**
@@ -158,12 +148,13 @@ final class Backoff {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("previousBackoff", previousBackoff)
+        .add("cumulativeBackoff", cumulativeBackoff)
         .add("initialBackoff", initialBackoff)
         .add("maxBackoff", maxBackoff)
         .add("timeout", timeout)
         .add("retryDelayMultiplier", retryDelayMultiplier)
         .add("jitterer", jitterer)
-        .add("cumulativeBackoff", cumulativeBackoff)
         .toString();
   }
 

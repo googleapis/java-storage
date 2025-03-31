@@ -26,6 +26,7 @@ import org.junit.Test;
 public final class DurationsTest {
 
   private static final Duration ONE_SECOND = Duration.ofSeconds(1);
+  private static final Duration TWO_SECONDS = Duration.ofSeconds(2);
 
   @Test
   public void eq() throws Exception {
@@ -69,6 +70,7 @@ public final class DurationsTest {
         () -> assertThat(Durations.min(ZERO, ZERO)).isEqualTo(ZERO),
         () -> assertThat(Durations.min(ONE_SECOND, ONE_SECOND)).isEqualTo(ONE_SECOND),
         () -> assertThat(Durations.min(ZERO, ONE_SECOND)).isEqualTo(ZERO),
-        () -> assertThat(Durations.min(ONE_SECOND, ZERO)).isEqualTo(ZERO));
+        () -> assertThat(Durations.min(ONE_SECOND, ZERO)).isEqualTo(ZERO),
+        () -> assertThat(Durations.min(ONE_SECOND, TWO_SECONDS, ZERO)).isEqualTo(ZERO));
   }
 }

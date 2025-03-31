@@ -79,7 +79,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0.001S, nextBackoff: PT3S)");
         });
   }
 
@@ -116,7 +116,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3, elapsed: PT9.002S, nextBackoff: PT3S) previous failures follow in order of occurrence",
+                  "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3, elapsed: PT6.001S, nextBackoff: PT3S) previous failures follow in order of occurrence",
                   "{unavailable}",
                   "{internal}");
         });
@@ -139,7 +139,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 1, maxAttempts: 3, elapsed: PT0S, nextBackoff: PT3S)");
+                  "Unretryable error (attempts: 1, maxAttempts: 3, elapsed: PT0.001S, nextBackoff: PT3S)");
         });
   }
 
@@ -173,7 +173,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 3, maxAttempts: 6, elapsed: PT9.002S, nextBackoff: PT3S) previous failures follow in order of occurrence",
+                  "Unretryable error (attempts: 3, maxAttempts: 6, elapsed: PT6.001S, nextBackoff: PT3S) previous failures follow in order of occurrence",
                   "{unavailable}",
                   "{internal}");
         });
@@ -210,7 +210,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT0S, nextBackoff: PT3S)");
+                  "Unretryable error (attempts: 1, maxAttempts: 6, elapsed: PT0.001S, nextBackoff: PT3S)");
         });
   }
 
@@ -243,11 +243,13 @@ public final class RetryContextTest {
             Retrying.alwaysRetry(),
             Jitterer.noJitter());
 
-    testClock.advance(Duration.ofSeconds(3));
+    testClock.advance(Duration.ofSeconds(7));
+
     ctx.recordError(t1, NOOP, failOnFailure());
-    testClock.advance(Duration.ofSeconds(3));
+    testClock.advance(TestApiClock.addExact(Duration.ofSeconds(7)));
+
     ctx.recordError(t2, NOOP, failOnFailure());
-    testClock.advance(Duration.ofSeconds(3));
+    testClock.advance(TestApiClock.addExact(Duration.ofSeconds(7)));
     ctx.recordError(
         t3,
         failOnSuccess(),
@@ -258,7 +260,7 @@ public final class RetryContextTest {
               Arrays.stream(suppressed).map(Throwable::getMessage).collect(Collectors.toList());
           assertThat(suppressedMessages)
               .containsExactly(
-                  "Operation failed to complete within backoff budget (attempts: 3, elapsed: PT15S, nextBackoff: EXHAUSTED, timeout: PT24S) previous failures follow in order of occurrence",
+                  "Operation failed to complete within backoff budget (attempts: 3, elapsed: PT27S, nextBackoff: EXHAUSTED, timeout: PT24S) previous failures follow in order of occurrence",
                   "{unavailable 1}",
                   "{unavailable 2}");
         });
@@ -400,13 +402,13 @@ public final class RetryContextTest {
           String messages = TestUtils.messagesToText(err1.get());
           assertThat(messages)
               .contains(
-                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0.001S, nextBackoff: PT3S)");
         },
         () -> {
           String messages = TestUtils.messagesToText(err2.get());
           assertThat(messages)
               .contains(
-                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0S, nextBackoff: PT3S)");
+                  "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1, elapsed: PT0.001S, nextBackoff: PT3S)");
         });
   }
 

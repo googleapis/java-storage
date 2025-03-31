@@ -48,23 +48,20 @@ public final class BackoffTest {
     // start backoff of 2s
     assertThat(r1).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
     // higher level failures happens only 300ms into our 2s
-    backoff.backoffInterrupted(Duration.ofMillis(300));
-
-    // record higher level failure
     BackoffResult r2 = backoff.nextBackoff(Duration.ofMillis(300));
     // backoff 4s (previous was 2s w/ 2.0 multiplier = 4s)
     // even though the previous backoff duration wasn't fully consumed, still use it as the basis
     // for the next backoff
     assertThat(r2).isEqualTo(BackoffDuration.of(Duration.ofSeconds(4)));
     // another failure 3s after the 4s backoff finished
-    BackoffResult r3 = backoff.nextBackoff(Duration.ofSeconds(3));
+    BackoffResult r3 = backoff.nextBackoff(Duration.ofSeconds(7));
     assertThat(r3).isEqualTo(BackoffDuration.of(Duration.ofSeconds(8)));
     // another failure 5s after the 8s backoff finished
-    BackoffResult r4 = backoff.nextBackoff(Duration.ofSeconds(5));
+    BackoffResult r4 = backoff.nextBackoff(Duration.ofSeconds(13));
     // 11s backoff because 11s is maxBackoff
     assertThat(r4).isEqualTo(BackoffDuration.of(Duration.ofSeconds(11)));
     // another failure 7s after the 11s backoff finished
-    BackoffResult r5 = backoff.nextBackoff(Duration.ofSeconds(7));
+    BackoffResult r5 = backoff.nextBackoff(Duration.ofSeconds(18));
     // at this point it has been ~39s, which is more than our timeout of 34s
     assertThat(r5).isEqualTo(BackoffResults.EXHAUSTED);
   }
@@ -73,19 +70,32 @@ public final class BackoffTest {
   public void simple() {
     Backoff backoff = defaultBackoff();
 
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(4)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(8)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(16)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(32)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
+    final BackoffResult r01 = backoff.nextBackoff(Duration.ofSeconds(2));
+    assertThat(r01).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
+    BackoffResult r02 = backoff.nextBackoff(((BackoffDuration) r01).getDuration());
+    assertThat(r02).isEqualTo(BackoffDuration.of(Duration.ofSeconds(4)));
+    BackoffResult r03 = backoff.nextBackoff(((BackoffDuration) r02).getDuration());
+    assertThat(r03).isEqualTo(BackoffDuration.of(Duration.ofSeconds(8)));
+    BackoffResult r04 = backoff.nextBackoff(((BackoffDuration) r03).getDuration());
+    assertThat(r04).isEqualTo(BackoffDuration.of(Duration.ofSeconds(16)));
+    BackoffResult r05 = backoff.nextBackoff(((BackoffDuration) r04).getDuration());
+    assertThat(r05).isEqualTo(BackoffDuration.of(Duration.ofSeconds(32)));
+    BackoffResult r06 = backoff.nextBackoff(((BackoffDuration) r05).getDuration());
+    assertThat(r06).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r07 = backoff.nextBackoff(((BackoffDuration) r06).getDuration());
+    assertThat(r07).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r08 = backoff.nextBackoff(((BackoffDuration) r07).getDuration());
+    assertThat(r08).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r09 = backoff.nextBackoff(((BackoffDuration) r08).getDuration());
+    assertThat(r09).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r10 = backoff.nextBackoff(((BackoffDuration) r09).getDuration());
+    assertThat(r10).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r11 = backoff.nextBackoff(((BackoffDuration) r10).getDuration());
+    assertThat(r11).isEqualTo(BackoffDuration.of(Duration.ofSeconds(57)));
+    BackoffResult r12 = backoff.nextBackoff(((BackoffDuration) r11).getDuration());
+    assertThat(r12).isEqualTo(BackoffDuration.of(Duration.ofSeconds(14)));
+    BackoffResult r13 = backoff.nextBackoff(((BackoffDuration) r12).getDuration());
+    assertThat(r13).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test
@@ -94,7 +104,7 @@ public final class BackoffTest {
 
     Duration elapsed = Duration.ofMinutes(6).plusSeconds(58);
     assertThat(backoff.nextBackoff(elapsed)).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
+    assertThat(backoff.nextBackoff(Duration.ofSeconds(2))).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test
@@ -121,7 +131,7 @@ public final class BackoffTest {
 
     assertThat(backoff.nextBackoff(Duration.ofSeconds(4)))
         .isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
+    assertThat(backoff.nextBackoff(Duration.ofSeconds(2))).isEqualTo(BackoffResults.EXHAUSTED);
     backoff.reset();
     assertThat(backoff.nextBackoff(Duration.ofSeconds(10))).isEqualTo(BackoffResults.EXHAUSTED);
   }
@@ -150,7 +160,7 @@ public final class BackoffTest {
    * <p>This is primarily here to preserve behavior of {@link com.google.cloud.RetryHelper}.
    */
   @Test
-  public void ifANextBackoffWouldExceedTheTimeoutTheBackoffDurationShouldBeTruncated() {
+  public void ifANextBackoffWouldExceedTheTimeoutTheBackoffDurationShouldBeTruncated_single() {
     Backoff backoff =
         Backoff.newBuilder()
             .setInitialBackoff(Duration.ofSeconds(2))
@@ -162,7 +172,37 @@ public final class BackoffTest {
 
     assertThat(backoff.nextBackoff(Duration.ofSeconds(22)))
         .isEqualTo(BackoffDuration.of(ofSeconds(2)));
-    assertThat(backoff.nextBackoff(ZERO)).isEqualTo(BackoffResults.EXHAUSTED);
+    assertThat(backoff.nextBackoff(Duration.ofSeconds(2))).isEqualTo(BackoffResults.EXHAUSTED);
+  }
+
+  /**
+   * If a next computed backoff would exceed the timeout, truncate the backoff to the amount of time
+   * remaining until timeout.
+   *
+   * <p>This is primarily here to preserve behavior of {@link com.google.cloud.RetryHelper}.
+   */
+  @Test
+  public void ifANextBackoffWouldExceedTheTimeoutTheBackoffDurationShouldBeTruncated_multiple() {
+    Duration timeout = ofSeconds(24);
+    Backoff backoff =
+        Backoff.newBuilder()
+            .setInitialBackoff(Duration.ofSeconds(2))
+            .setMaxBackoff(Duration.ofSeconds(6))
+            .setTimeout(timeout)
+            .setJitterer(Jitterer.noJitter())
+            .setRetryDelayMultiplier(2.0)
+            .build();
+
+    assertThat(backoff.getCumulativeBackoff()).isEqualTo(Duration.ZERO);
+    BackoffResult r1 = backoff.nextBackoff(Duration.ofSeconds(21));
+    assertThat(backoff.getCumulativeBackoff()).isEqualTo(Duration.ofSeconds(21));
+    assertThat(r1).isEqualTo(BackoffDuration.of(Duration.ofSeconds(2)));
+    BackoffResult r2 = backoff.nextBackoff(((BackoffDuration) r1).getDuration());
+    assertThat(backoff.getCumulativeBackoff()).isEqualTo(Duration.ofSeconds(23));
+    assertThat(r2).isEqualTo(BackoffDuration.of(Duration.ofSeconds(1)));
+    BackoffResult r3 = backoff.nextBackoff(((BackoffDuration) r2).getDuration());
+    assertThat(backoff.getCumulativeBackoff()).isEqualTo(Duration.ofSeconds(24));
+    assertThat(r3).isEqualTo(BackoffResults.EXHAUSTED);
   }
 
   @Test

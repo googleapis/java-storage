@@ -48,4 +48,8 @@ final class Durations {
       return d2;
     }
   }
+
+  static Duration min(Duration d1, Duration d2, Duration d3) {
+    return min(min(d1, d2), d3);
+  }
 }
