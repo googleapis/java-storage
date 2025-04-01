@@ -1438,7 +1438,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         ResumableMedia.gapic()
             .write()
             .bidiByteChannel(storageClient.bidiWriteObjectCallable())
-            .setHasher(Hasher.noop())
+            .setHasher(uploadConfig.getHasher())
             .setByteStringStrategy(ByteStringStrategy.copy())
             .appendable()
             .withRetryConfig(

@@ -39,6 +39,7 @@ import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageGrpc;
 import com.google.storage.v2.WriteObjectSpec;
@@ -87,7 +88,9 @@ public class ITAppendableUploadFakeTest {
           .build();
 
   private static final BlobAppendableUploadConfig UPLOAD_CONFIG =
-      BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
+      BlobAppendableUploadConfig.of()
+          .withFlushPolicy(FlushPolicy.maxFlushSize(5))
+          .withCrc32cValidationEnabled(false);
 
   /**
    *
@@ -1488,6 +1491,97 @@ public class ITAppendableUploadFakeTest {
 
       assertThat(map.get(req1)).isEqualTo(2);
       assertThat(map.get(req2)).isEqualTo(1);
+    }
+  }
+
+  @Test
+  public void crc32cWorks() throws Exception {
+    byte[] b = new byte[25];
+    DataGenerator.base64Characters().fill(b, 0, 20);
+    DataGenerator.base64Characters().fill(b, 20, 5);
+    ChecksummedTestContent abcde = ChecksummedTestContent.of(b, 0, 5);
+    ChecksummedTestContent fghij = ChecksummedTestContent.of(b, 5, 5);
+    ChecksummedTestContent klmno = ChecksummedTestContent.of(b, 10, 5);
+    ChecksummedTestContent pqrst = ChecksummedTestContent.of(b, 15, 5);
+    ChecksummedTestContent all = ChecksummedTestContent.of(b);
+
+    BidiWriteObjectRequest req1 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(0)
+            .setWriteObjectSpec(REQ_OPEN.getWriteObjectSpec())
+            .setChecksummedData(abcde.asChecksummedData())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+    BidiWriteObjectResponse res1 = incrementalResponse(5);
+
+    BidiWriteObjectRequest req2 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(5)
+            .setChecksummedData(fghij.asChecksummedData())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+    BidiWriteObjectResponse res2 = incrementalResponse(10);
+    BidiWriteObjectRequest req3 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(10)
+            .setChecksummedData(klmno.asChecksummedData())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+    BidiWriteObjectResponse res3 = incrementalResponse(15);
+    BidiWriteObjectRequest req4 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(15)
+            .setChecksummedData(pqrst.asChecksummedData())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+    BidiWriteObjectResponse res4 = incrementalResponse(20);
+    BidiWriteObjectRequest req5 =
+        BidiWriteObjectRequest.newBuilder()
+            .setWriteOffset(20)
+            .setChecksummedData(abcde.asChecksummedData())
+            .setFlush(true)
+            .setStateLookup(true)
+            .build();
+    BidiWriteObjectResponse res5 = incrementalResponse(25);
+    BidiWriteObjectRequest req6 =
+        BidiWriteObjectRequest.newBuilder().setWriteOffset(25).setFinishWrite(true).build();
+    BidiWriteObjectResponse res6 =
+        BidiWriteObjectResponse.newBuilder()
+            .setResource(
+                Object.newBuilder()
+                    .setName(METADATA.getName())
+                    .setBucket(METADATA.getBucket())
+                    .setGeneration(METADATA.getGeneration())
+                    .setSize(25)
+                    .setChecksums(ObjectChecksums.newBuilder().setCrc32C(all.getCrc32c()).build())
+                    // real object would have some extra fields like metageneration and storage
+                    // class
+                    .build())
+            .build();
+
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                req1, respond -> respond.onNext(res1),
+                req2, respond -> respond.onNext(res2),
+                req3, respond -> respond.onNext(res3),
+                req4, respond -> respond.onNext(res4),
+                req5, respond -> respond.onNext(res5),
+                req6, respond -> respond.onNext(res6)));
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
+      BlobId id = BlobId.of("b", "o");
+
+      BlobAppendableUploadConfig uploadConfig = UPLOAD_CONFIG.withCrc32cValidationEnabled(true);
+      try (BlobAppendableUpload upload =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), uploadConfig)) {
+        upload.write(ByteBuffer.wrap(b));
+        upload.finalizeUpload().get(5, TimeUnit.SECONDS);
+      }
     }
   }
 

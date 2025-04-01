@@ -44,7 +44,6 @@ import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.Object;
-import com.google.storage.v2.ObjectChecksums;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -222,10 +221,6 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
       ByteString b = datum.getB();
       int contentSize = b.size();
       long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
-      Crc32cLengthKnown cumulative =
-          writeCtx
-              .getCumulativeCrc32c()
-              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
       ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
       if (crc32c != null) {
         checksummedData.setCrc32C(crc32c.getValue());
@@ -240,13 +235,6 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
         first = false;
       }
       builder.setWriteOffset(offset).setChecksummedData(checksummedData.build());
-
-      if (!datum.isOnlyFullBlocks()) {
-        if (cumulative != null) {
-          builder.setObjectChecksums(
-              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
-        }
-      }
 
       if (i == data.length - 1) {
         builder.setFlush(true).setStateLookup(true);
@@ -274,16 +262,12 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
   @NonNull
   private BidiWriteObjectRequest finishMessage() {
     long offset = writeCtx.getTotalSentBytes().get();
-    Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
     BidiWriteObjectRequest.Builder b = writeCtx.newRequestBuilder();
 
     b.clearUploadId().clearObjectChecksums().clearWriteObjectSpec().clearAppendObjectSpec();
 
     b.setFinishWrite(true).setWriteOffset(offset);
-    if (crc32cValue != null) {
-      b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
-    }
     BidiWriteObjectRequest message = b.build();
     return message;
   }
