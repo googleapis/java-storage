@@ -46,6 +46,7 @@ import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
 import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -525,6 +526,36 @@ public final class ITBlobReadChannelTest {
       assertThat(reader.isOpen()).isTrue();
       int read2 = reader.read(buf);
       assertThat(read2).isEqualTo(-1);
+    }
+  }
+
+  @Test
+  public void responseWith416AttemptingToReadStartingPastTheEndOfTheObjectIsTerminallyEOF()
+      throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 =
+        BlobInfo.newBuilder(bucket, generator.randomObjectName())
+            .setMetadata(ImmutableMap.of("gen", "1"))
+            .build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      reader.seek(length + 1);
+      ByteBuffer buf = ByteBuffer.allocate(1);
+      assertThat(reader.read(buf)).isEqualTo(-1);
+      assertThat(reader.read(buf)).isEqualTo(-1);
+
+      BlobInfo update = gen1.toBuilder().setMetadata(ImmutableMap.of("gen", "2")).build();
+      BlobInfo gen2 =
+          storage.create(
+              update,
+              DataGenerator.base64Characters().genBytes(length + 2),
+              BlobTargetOption.generationMatch());
+
+      assertThat(reader.read(buf)).isEqualTo(-1);
+      assertThat(reader.read(buf)).isEqualTo(-1);
     }
   }
 

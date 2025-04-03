@@ -222,6 +222,8 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
         if (statusCode == 404) {
           throw new StorageException(404, "Failure while trying to resume download", e);
         }
+      } else if (e.getStatusCode() == 416) {
+        returnEOF = true;
       }
       throw StorageException.translate(e);
     } catch (IOException e) {
