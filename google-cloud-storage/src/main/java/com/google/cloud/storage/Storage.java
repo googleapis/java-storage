@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.InternalExtensionOnly;
@@ -5834,4 +5835,101 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob moveBlob(MoveBlobRequest request);
+
+  /**
+   * Asynchronously set up a new {@link BlobReadSession} for the specified {@link BlobId} and {@code
+   * options}.
+   *
+   * <p>The resulting {@code BlobReadSession} can be used to read multiple times from a single
+   * object generation. A new session must be created for each object generation.
+   *
+   * <h4>Example of using {@code BlobReadSession} to read up to 20 bytes from the object:</h4>
+   *
+   * <pre>{@code
+   * ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+   *
+   * try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
+   *
+   *   ByteBuffer buf = ByteBuffer.allocate(30);
+   *   RangeSpec rangeSpec = RangeSpec.of(
+   *     10, // begin
+   *     20  // maxLength
+   *   );
+   *   ReadAsChannel readAsChannelConfig = ReadProjectionConfigs.asChannel()
+   *       .withRangeSpec(rangeSpec);
+   *   try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
+   *     channel.read(buf);
+   *   }
+   *
+   *   buf.flip();
+   *   System.out.printf(
+   *       Locale.US,
+   *       "Read %d bytes from range %s of object %s%n",
+   *       buf.remaining(),
+   *       rangeSpec,
+   *       blobReadSession.getBlobInfo().getBlobId().toGsUtilUriWithGeneration()
+   *   );
+   * }
+   * }</pre>
+   *
+   * @param id the blob to read from
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  default ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
+    return throwGrpcOnly(fmtMethodName("blobReadSession", BlobId.class, BlobSourceOption.class));
+  }
+
+  /**
+   * Create a new {@link BlobAppendableUpload} for the specified {@code blobInfo} and {@code
+   * options}.
+   *
+   * <p>The returned {@code BlobWriteSession} can be used to write an individual version, a new
+   * session must be created each time you want to create a new version.
+   *
+   * <p>If your object exists, but is still in an appendable state ensure you provide the generation
+   * of the object in the provided {@code blobInfo} ({@link BlobInfo#getBlobId()
+   * blobInfo.getBlobId()}{@link BlobId#getGeneration() .getGeneration()}) to enable takeover.
+   *
+   * <h4>Example of creating an object using {@code BlobAppendableUpload}:</h4>
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blobInfo-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+   * ReadableByteChannel readableByteChannel = ...;
+   *
+   * try (
+   *   BlobAppendableUpload blobAppendableUpload = storage.blobAppendableUpload(
+   *     blobInfo,
+   *     BlobAppendableUploadConfig.of()
+   *   )
+   * ) {
+   * // copy all bytes
+   * ByteStreams.copy(readableByteChannel, blobAppendableUpload);
+   * // get the resulting object metadata
+   * ApiFuture<BlobInfo> resultFuture = blobAppendableUpload.finalizeUpload();
+   * BlobInfo gen1 = resultFuture.get();
+   *
+   * } catch (IOException e) {
+   * // handle IOException
+   * }
+   * }</pre>
+   *
+   * @param blobInfo blobInfo to create
+   * @param uploadConfig the configuration parameters for the channel
+   * @param options blobInfo write options
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   * @see StorageOptions#grpc()
+   */
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  default BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
+      throws IOException {
+    return throwGrpcOnly(
+        fmtMethodName("appendableBlobUpload", BlobId.class, BlobWriteOption.class));
+  }
 }

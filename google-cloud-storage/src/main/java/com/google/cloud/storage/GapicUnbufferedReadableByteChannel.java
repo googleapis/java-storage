@@ -22,26 +22,30 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.api.gax.rpc.WatchdogTimeoutException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.base.Suppliers;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import io.grpc.Status.Code;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -49,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -57,11 +62,10 @@ final class GapicUnbufferedReadableByteChannel
   private static final java.lang.Object EOF_MARKER = new java.lang.Object();
 
   private final SettableApiFuture<Object> result;
-  private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
   private final ReadObjectRequest req;
   private final Hasher hasher;
-  private final ResponseContentLifecycleManager rclm;
-  private final RetryingDependencies retryingDeps;
+  private final Retrier retrier;
   private final ResultRetryAlgorithm<?> alg;
   private final SimpleBlockingQueue<java.lang.Object> queue;
 
@@ -72,24 +76,23 @@ final class GapicUnbufferedReadableByteChannel
 
   private long blobOffset;
   private Object metadata;
-  private ResponseContentLifecycleHandle leftovers;
+
+  private ReadObjectResponseChildRef leftovers;
 
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
-      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ZeroCopyServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest req,
       Hasher hasher,
-      RetryingDependencies retryingDependencies,
-      ResultRetryAlgorithm<?> alg,
-      ResponseContentLifecycleManager rclm) {
+      Retrier retrier,
+      ResultRetryAlgorithm<?> alg) {
     this.result = result;
     this.read = read;
     this.req = req;
     this.hasher = hasher;
     this.fetchOffset = new AtomicLong(req.getReadOffset());
     this.blobOffset = req.getReadOffset();
-    this.rclm = rclm;
-    this.retryingDeps = retryingDependencies;
+    this.retrier = retrier;
     this.alg =
         new BasicResultRetryAlgorithm<java.lang.Object>() {
           @Override
@@ -159,7 +162,9 @@ final class GapicUnbufferedReadableByteChannel
       readObjectObserver.request();
 
       ReadObjectResponse resp = (ReadObjectResponse) take;
-      ResponseContentLifecycleHandle handle = rclm.get(resp);
+      ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+          read.getResponseContentLifecycleManager().get(resp);
+      ReadObjectResponseChildRef ref = ReadObjectResponseChildRef.from(handle);
       if (resp.hasMetadata()) {
         Object respMetadata = resp.getMetadata();
         if (metadata == null) {
@@ -181,17 +186,17 @@ final class GapicUnbufferedReadableByteChannel
       if (checksummedData.hasCrc32C()) {
         Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
         try {
-          hasher.validate(expected, content.asReadOnlyByteBufferList());
+          hasher.validate(expected, content);
         } catch (IOException e) {
           close();
           throw e;
         }
       }
-      handle.copy(c, dsts, offset, length);
-      if (handle.hasRemaining()) {
-        leftovers = handle;
+      ref.copy(c, dsts, offset, length);
+      if (ref.hasRemaining()) {
+        leftovers = ref;
       } else {
-        handle.close();
+        ref.close();
       }
     }
     long read = c.read();
@@ -251,7 +256,8 @@ final class GapicUnbufferedReadableByteChannel
           java.lang.Object queueValue = queue.poll();
           if (queueValue instanceof ReadObjectResponse) {
             ReadObjectResponse resp = (ReadObjectResponse) queueValue;
-            ResponseContentLifecycleHandle handle = rclm.get(resp);
+            ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+                read.getResponseContentLifecycleManager().get(resp);
             handle.close();
           } else if (queueValue == EOF_MARKER || queueValue instanceof Throwable) {
             break;
@@ -293,8 +299,7 @@ final class GapicUnbufferedReadableByteChannel
         return;
       }
       readObjectObserver =
-          Retrying.run(
-              retryingDeps,
+          retrier.run(
               alg,
               () -> {
                 ReadObjectObserver tmp = new ReadObjectObserver();
@@ -414,6 +419,43 @@ final class GapicUnbufferedReadableByteChannel
 
     public void offer(@NonNull T element) throws InterruptedException {
       queue.put(element);
+    }
+  }
+
+  private static final class ReadObjectResponseChildRef implements Closeable {
+    private final ChildRef ref;
+    private final Supplier<List<ByteBuffer>> lazyBuffers;
+
+    ReadObjectResponseChildRef(ChildRef ref) {
+      this.ref = ref;
+      this.lazyBuffers = Suppliers.memoize(() -> ref.byteString().asReadOnlyByteBufferList());
+    }
+
+    static ReadObjectResponseChildRef from(
+        ResponseContentLifecycleHandle<ReadObjectResponse> handle) {
+      return new ReadObjectResponseChildRef(
+          handle.borrow(response -> response.getChecksummedData().getContent()));
+    }
+
+    void copy(ReadCursor c, ByteBuffer[] dsts, int offset, int length) {
+      List<ByteBuffer> buffers = lazyBuffers.get();
+      for (ByteBuffer b : buffers) {
+        long copiedBytes = Buffers.copy(b, dsts, offset, length);
+        c.advance(copiedBytes);
+        if (b.hasRemaining()) break;
+      }
+    }
+
+    boolean hasRemaining() {
+      List<ByteBuffer> buffers = lazyBuffers.get();
+      for (ByteBuffer b : buffers) {
+        if (b.hasRemaining()) return true;
+      }
+      return false;
+    }
+
+    public void close() throws IOException {
+      ref.close();
     }
   }
 }

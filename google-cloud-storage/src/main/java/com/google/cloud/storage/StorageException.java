@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
@@ -28,6 +29,7 @@ import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.TextFormat;
 import io.grpc.StatusException;
 import io.grpc.StatusRuntimeException;
@@ -102,7 +104,8 @@ public final class StorageException extends BaseHttpServiceException {
   private static StorageException getStorageException(Throwable t) {
     // unwrap a RetryHelperException if that is what is being translated
     if (t instanceof RetryHelperException) {
-      return new StorageException(UNKNOWN_CODE, t.getMessage(), t.getCause());
+      Throwable cause = t.getCause();
+      return new StorageException(UNKNOWN_CODE, cause != null ? cause.getMessage() : "", cause);
     }
     return new StorageException(UNKNOWN_CODE, t.getMessage(), t);
   }
@@ -126,6 +129,14 @@ public final class StorageException extends BaseHttpServiceException {
       return asStorageException((ApiException) t.getCause());
     }
     return getStorageException(t);
+  }
+
+  static <T> ApiFuture<T> coalesceAsync(ApiFuture<T> originalFuture) {
+    return ApiFutures.catchingAsync(
+        originalFuture,
+        Throwable.class,
+        throwable -> ApiFutures.immediateFailedFuture(coalesce(throwable)),
+        MoreExecutors.directExecutor());
   }
 
   static StorageException asStorageException(ApiException apiEx) {
@@ -251,6 +262,16 @@ public final class StorageException extends BaseHttpServiceException {
   @FunctionalInterface
   interface IOExceptionRunnable {
     void run() throws IOException;
+  }
+
+  static Runnable liftToRunnable(IOExceptionRunnable ioer) {
+    return () -> {
+      try {
+        ioer.run();
+      } catch (IOException e) {
+        throw StorageException.coalesce(e);
+      }
+    };
   }
 
   private static final class ApiExceptionErrorDetailsComment extends Throwable {

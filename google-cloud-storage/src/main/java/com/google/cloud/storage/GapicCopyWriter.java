@@ -17,10 +17,10 @@
 package com.google.cloud.storage;
 
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 
@@ -28,9 +28,8 @@ final class GapicCopyWriter extends CopyWriter {
 
   // needed for #getResult
   private final transient GrpcStorageImpl storage;
-  private final GrpcStorageOptions options;
   private final UnaryCallable<RewriteObjectRequest, RewriteResponse> callable;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final RewriteObjectRequest originalRequest;
   private final RewriteResponse initialResponse;
 
@@ -39,13 +38,12 @@ final class GapicCopyWriter extends CopyWriter {
   GapicCopyWriter(
       GrpcStorageImpl storage,
       UnaryCallable<RewriteObjectRequest, RewriteResponse> callable,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       RewriteObjectRequest originalRequest,
       RewriteResponse initialResponse) {
     this.storage = storage;
-    this.options = storage.getOptions();
     this.callable = callable;
-    this.alg = alg;
+    this.retrier = retrier;
     this.initialResponse = initialResponse;
     this.mostRecentResponse = initialResponse;
     this.originalRequest = originalRequest;
@@ -81,8 +79,7 @@ final class GapicCopyWriter extends CopyWriter {
       RewriteObjectRequest req =
           originalRequest.toBuilder().setRewriteToken(mostRecentResponse.getRewriteToken()).build();
       GrpcCallContext retryContext = Retrying.newCallContext();
-      mostRecentResponse =
-          Retrying.run(options, alg, () -> callable.call(req, retryContext), Decoder.identity());
+      mostRecentResponse = retrier.run(() -> callable.call(req, retryContext), Decoder.identity());
     }
   }
 

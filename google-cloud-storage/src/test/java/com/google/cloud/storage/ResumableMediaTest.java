@@ -21,8 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.cloud.BaseService;
-import com.google.cloud.ExceptionHandler;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.net.URL;
 import java.util.function.Supplier;
@@ -35,15 +34,13 @@ public final class ResumableMediaTest {
   private static final String SIGNED_URL_VALID =
       "http://localhost/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
 
-  private final ExceptionHandler createResultExceptionHandler = BaseService.EXCEPTION_HANDLER;
-
   @Test
   public void startUploadForSignedUrl_expectStorageException_whenUrlInvalid() throws Exception {
     try {
       ResumableMedia.startUploadForSignedUrl(
               HttpStorageOptions.newBuilder().build(),
               new URL(SIGNED_URL_INVALID),
-              createResultExceptionHandler)
+              RetrierWithAlg.attemptOnce())
           .get();
       Assert.fail();
     } catch (StorageException ex) {
@@ -61,7 +58,7 @@ public final class ResumableMediaTest {
     when(rpc.open(url.toString())).thenReturn("upload-id");
 
     Supplier<String> uploadIdSupplier =
-        ResumableMedia.startUploadForSignedUrl(options, url, createResultExceptionHandler);
+        ResumableMedia.startUploadForSignedUrl(options, url, RetrierWithAlg.attemptOnce());
     assertThat(uploadIdSupplier.get()).isEqualTo("upload-id");
   }
 }

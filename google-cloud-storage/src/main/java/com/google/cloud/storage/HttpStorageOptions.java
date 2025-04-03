@@ -24,12 +24,16 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.HeaderProvider;
+import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.auth.Credentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -271,6 +275,18 @@ public class HttpStorageOptions extends StorageOptions {
     }
 
     @Override
+    public HttpStorageOptions.Builder setUniverseDomain(String universeDomain) {
+      super.setUniverseDomain(universeDomain);
+      return this;
+    }
+
+    @Override
+    public HttpStorageOptions.Builder setApiTracerFactory(ApiTracerFactory apiTracerFactory) {
+      super.setApiTracerFactory(apiTracerFactory);
+      return this;
+    }
+
+    @Override
     public HttpStorageOptions build() {
       HttpStorageOptions options = new HttpStorageOptions(this, defaults());
 
@@ -376,12 +392,22 @@ public class HttpStorageOptions extends StorageOptions {
         HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
         Clock clock = Clock.systemUTC();
         try {
+          OpenTelemetry otel = httpStorageOptions.getOpenTelemetry();
+          BlobWriteSessionConfig blobWriteSessionConfig = httpStorageOptions.blobWriteSessionConfig;
+          if (blobWriteSessionConfig == null) {
+            blobWriteSessionConfig = HttpStorageOptions.defaults().getDefaultStorageWriterConfig();
+          }
+          WriterFactory factory = blobWriteSessionConfig.createFactory(clock);
           StorageImpl storage =
               new StorageImpl(
                   httpStorageOptions,
-                  httpStorageOptions.blobWriteSessionConfig.createFactory(clock));
-          return OtelStorageDecorator.decorate(
-              storage, httpStorageOptions.getOpenTelemetry(), Transport.HTTP);
+                  factory,
+                  new HttpRetrier(
+                      new DefaultRetrier(
+                          OtelStorageDecorator.retryContextDecorator(otel),
+                          RetryingDependencies.simple(
+                              options.getClock(), options.getRetrySettings()))));
+          return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate HTTP com.google.cloud.storage.Storage client.", e);

@@ -167,7 +167,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()
                           .withRetryConfig(
-                              grpc.getOptions(), grpc.retryAlgorithmManager.idempotent())
+                              grpc.retrier.withAlg(grpc.retryAlgorithmManager.idempotent()))
                           .buffered(BufferHandle.allocate(chunkSize))
                           .setStartAsync(startResumableWrite)
                           .build();
@@ -190,8 +190,9 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                               json.getOptions(),
                               updated,
                               optionsMap,
-                              json.retryAlgorithmManager.getForResumableUploadSessionCreate(
-                                  optionsMap));
+                              json.retrier.withAlg(
+                                  json.retryAlgorithmManager.getForResumableUploadSessionCreate(
+                                      optionsMap)));
                       ApiFuture<JsonResumableWrite> startAsync =
                           ApiFutures.immediateFuture(
                               JsonResumableWrite.of(

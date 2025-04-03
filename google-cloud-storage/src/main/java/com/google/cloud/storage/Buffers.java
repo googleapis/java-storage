@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.function.Consumer;
 
 /**
@@ -58,6 +59,18 @@ final class Buffers {
 
   static int position(Buffer b) {
     return b.position();
+  }
+
+  static int remaining(Buffer b) {
+    return b.remaining();
+  }
+
+  static boolean hasRemaining(Buffer b) {
+    return b.hasRemaining();
+  }
+
+  static void compact(ByteBuffer b) {
+    b.compact();
   }
 
   /** attempt to drain all of {@code content} into {@code dst} */
@@ -167,5 +180,18 @@ final class Buffers {
       totalRemaning += buffer.remaining();
     }
     return totalRemaning;
+  }
+
+  static long copyUsingBuffer(ByteBuffer buf, ReadableByteChannel r, WritableByteChannel w)
+      throws IOException {
+    long total = 0;
+    while (r.read(buf) != -1) {
+      buf.flip();
+      while (buf.hasRemaining()) {
+        total += w.write(buf);
+      }
+      buf.clear();
+    }
+    return total;
   }
 }

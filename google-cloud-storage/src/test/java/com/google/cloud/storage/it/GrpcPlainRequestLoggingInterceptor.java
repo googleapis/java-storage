@@ -20,7 +20,9 @@ import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageOrBuilder;
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.ObjectRangeData;
 import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.CallOptions;
@@ -32,6 +34,7 @@ import io.grpc.ForwardingClientCallListener.SimpleForwardingClientCallListener;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -53,6 +56,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
   private static final GrpcPlainRequestLoggingInterceptor INSTANCE =
       new GrpcPlainRequestLoggingInterceptor();
 
+  private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
+      Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+
   private GrpcPlainRequestLoggingInterceptor() {}
 
   public static GrpcPlainRequestLoggingInterceptor getInstance() {
@@ -70,6 +76,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
     return new SimpleForwardingClientCall<ReqT, RespT>(call) {
       @Override
       public void start(Listener<RespT> responseListener, Metadata headers) {
+        if (headers.containsKey(X_GOOG_REQUEST_PARAMS)) {
+          LOGGER.log(Level.CONFIG, () -> String.format(">>> headers = %s", headers));
+        }
         SimpleForwardingClientCallListener<RespT> listener =
             new SimpleForwardingClientCallListener<RespT>(responseListener) {
               @Override
@@ -124,6 +133,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       return fmtProto((BidiWriteObjectRequest) obj);
     } else if (obj instanceof ReadObjectResponse) {
       return fmtProto((ReadObjectResponse) obj);
+    } else if (obj instanceof BidiReadObjectResponse) {
+      return fmtProto((BidiReadObjectResponse) obj);
     } else if (obj instanceof MessageOrBuilder) {
       return fmtProto((MessageOrBuilder) obj);
     } else {
@@ -142,9 +153,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         WriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString snip =
-            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
-        ByteString trim = content.substring(0, 20).concat(snip);
+        ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
         return b.build().toString();
@@ -159,9 +168,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         BidiWriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString snip =
-            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
-        ByteString trim = content.substring(0, 20).concat(snip);
+        ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
         return b.build().toString();
@@ -176,15 +183,44 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       ByteString content = msg.getChecksummedData().getContent();
       if (content.size() > 20) {
         ReadObjectResponse.Builder b = msg.toBuilder();
-        ByteString snip =
-            ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
-        ByteString trim = content.substring(0, 20).concat(snip);
+        ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
         return b.build().toString();
       }
     }
     return msg.toString();
+  }
+
+  @NonNull
+  public static String fmtProto(@NonNull BidiReadObjectResponse msg) {
+    List<ObjectRangeData> rangeData = msg.getObjectDataRangesList();
+    if (!rangeData.isEmpty()) {
+      List<ObjectRangeData> snips = new ArrayList<>();
+      for (ObjectRangeData rd : rangeData) {
+        if (rd.hasChecksummedData()) {
+          ByteString content = rd.getChecksummedData().getContent();
+          if (content.size() > 20) {
+            ObjectRangeData.Builder b = rd.toBuilder();
+            ByteString trim = snipBytes(content);
+            b.getChecksummedDataBuilder().setContent(trim);
+            snips.add(b.build());
+          } else {
+            snips.add(rd);
+          }
+        }
+      }
+      BidiReadObjectResponse snipped =
+          msg.toBuilder().clearObjectDataRanges().addAllObjectDataRanges(snips).build();
+      return snipped.toString();
+    }
+    return msg.toString();
+  }
+
+  private static ByteString snipBytes(ByteString content) {
+    ByteString snip =
+        ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
+    return content.substring(0, 20).concat(snip);
   }
 
   private static final class InterceptorProvider implements GrpcInterceptorProvider {

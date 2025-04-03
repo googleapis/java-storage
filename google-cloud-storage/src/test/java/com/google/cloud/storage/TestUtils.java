@@ -18,11 +18,10 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.api.core.ApiClock;
+import com.google.api.core.ApiFuture;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
-import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
@@ -30,10 +29,14 @@ import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
@@ -58,7 +61,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -132,17 +140,12 @@ public final class TestUtils {
   }
 
   static RetryingDependencies defaultRetryingDeps() {
-    return new RetryingDependencies() {
-      @Override
-      public RetrySettings getRetrySettings() {
-        return StorageOptions.getDefaultRetrySettings();
-      }
+    return RetryingDependencies.simple(
+        NanoClock.getDefaultClock(), StorageOptions.getDefaultRetrySettings());
+  }
 
-      @Override
-      public ApiClock getClock() {
-        return NanoClock.getDefaultClock();
-      }
-    };
+  static Retrier defaultRetrier() {
+    return new DefaultRetrier(UnaryOperator.identity(), defaultRetryingDeps());
   }
 
   /**
@@ -317,5 +320,58 @@ public final class TestUtils {
     } else {
       return Optional.of(l.get(l.size() - 1));
     }
+  }
+
+  static String messagesToText(Throwable t) {
+    StringBuilder tmp = new StringBuilder();
+    tmp.append(messagesToText(t, ""));
+    Throwable curr = t;
+    while ((curr = curr.getCause()) != null) {
+      tmp.append("\n").append(messagesToText(curr, ""));
+    }
+    return tmp.toString();
+  }
+
+  static <T> T await(ApiFuture<T> future, long timeout, TimeUnit unit) throws TimeoutException {
+    try {
+      return future.get(timeout, unit);
+    } catch (ExecutionException exception) {
+      if (exception.getCause() instanceof RuntimeException) {
+        RuntimeException cause = (RuntimeException) exception.getCause();
+        cause.addSuppressed(new AsyncStorageTaskException());
+        throw cause;
+      }
+      throw new UncheckedExecutionException(exception);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
+  }
+
+  static Retrier retrierFromStorageOptions(StorageOptions options) {
+    if (options instanceof HttpStorageOptions) {
+      HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
+      DefaultRetrier retrier =
+          new DefaultRetrier(UnaryOperator.identity(), httpStorageOptions.asRetryDependencies());
+      return new HttpRetrier(retrier);
+    } else if (options instanceof GrpcStorageOptions) {
+      GrpcStorageOptions grpcStorageOptions = (GrpcStorageOptions) options;
+
+      return new DefaultRetrier(UnaryOperator.identity(), grpcStorageOptions);
+    } else {
+      return Retrier.attemptOnce();
+    }
+  }
+
+  private static String messagesToText(Throwable t, String indent) {
+    if (t == null) {
+      return "";
+    }
+    String nextIndent = indent + "  ";
+    return Stream.of(
+            Stream.of(indent + t.getMessage()),
+            Arrays.stream(t.getSuppressed()).map(tt -> messagesToText(tt, nextIndent)))
+        .flatMap(s -> s)
+        .collect(Collectors.joining("\n"));
   }
 }

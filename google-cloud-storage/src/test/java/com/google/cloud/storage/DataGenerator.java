@@ -211,12 +211,13 @@ public abstract class DataGenerator {
     @Override
     public void fill(byte[] b, int offset, int length) {
       int curr = offset;
-      int rem;
-      while ((rem = length - curr) > 0) {
+      int rem = length;
+      do {
         int min = Math.min(rem, base64Characters.length);
         System.arraycopy(base64Characters, 0, b, curr, min);
         curr += min;
-      }
+        rem -= min;
+      } while (rem > 0);
     }
   }
 
@@ -240,13 +241,13 @@ public abstract class DataGenerator {
 
     @Override
     public void fill(byte[] b, int offset, int length) {
-      int i = offset;
+      int i = 0;
       while (i < length) {
         byte b1 = (byte) rand.nextInt(Byte.MAX_VALUE);
         if (b1 == 0x00) { // exclude nul sequence
           continue;
         }
-        b[i] = b1;
+        b[offset + i] = b1;
         i++;
       }
     }

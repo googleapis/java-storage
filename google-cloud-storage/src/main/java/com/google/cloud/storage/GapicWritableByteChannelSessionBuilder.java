@@ -27,7 +27,8 @@ import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.storage.v2.QueryWriteStatusRequest;
@@ -222,19 +223,16 @@ final class GapicWritableByteChannelSessionBuilder {
 
   final class ResumableUploadBuilder {
 
-    private RetryingDependencies deps;
-    private ResultRetryAlgorithm<?> alg;
+    private RetrierWithAlg retrier;
     private boolean fsyncEvery;
 
     ResumableUploadBuilder() {
-      this.deps = RetryingDependencies.attemptOnce();
-      this.alg = Retrying.neverRetry();
+      this.retrier = RetrierWithAlg.attemptOnce();
       this.fsyncEvery = true;
     }
 
-    ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
-      this.deps = requireNonNull(deps, "deps must be non null");
-      this.alg = requireNonNull(alg, "alg must be non null");
+    ResumableUploadBuilder withRetryConfig(RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "deps must be non null");
       return this;
     }
 
@@ -291,6 +289,7 @@ final class GapicWritableByteChannelSessionBuilder {
       }
 
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        RetrierWithAlg boundRetrier = retrier;
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
@@ -300,8 +299,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         getChunkSegmenter(),
                         write,
                         new WriteCtx<>(start),
-                        deps,
-                        alg,
+                        boundRetrier,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
@@ -341,8 +339,7 @@ final class GapicWritableByteChannelSessionBuilder {
                         getChunkSegmenter(),
                         write,
                         new WriteCtx<>(start),
-                        deps,
-                        alg,
+                        retrier,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
@@ -357,7 +354,7 @@ final class GapicWritableByteChannelSessionBuilder {
 
   final class JournalingResumableUploadBuilder {
 
-    private RetryingDependencies deps;
+    private Retrier retrier;
     private ResultRetryAlgorithm<?> alg;
     private BufferHandle bufferHandle;
     private BufferHandle recoveryBuffer;
@@ -365,15 +362,15 @@ final class GapicWritableByteChannelSessionBuilder {
     private UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query;
 
     JournalingResumableUploadBuilder() {
-      this.deps = RetryingDependencies.attemptOnce();
+      this.retrier = Retrier.attemptOnce();
       this.alg = Retrying.neverRetry();
     }
 
     JournalingResumableUploadBuilder withRetryConfig(
-        RetryingDependencies deps,
+        Retrier retrier,
         ResultRetryAlgorithm<?> alg,
         UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query) {
-      this.deps = requireNonNull(deps, "deps must be non null");
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
       this.alg = requireNonNull(alg, "alg must be non null");
       this.query = requireNonNull(query, "query must be non null");
       return this;
@@ -430,7 +427,7 @@ final class GapicWritableByteChannelSessionBuilder {
         // To ensure we are using the specified values at the point in time they are bound to the
         // function read them into local variables which will be closed over rather than the class
         // fields.
-        RetryingDependencies deps = JournalingResumableUploadBuilder.this.deps;
+        Retrier boundRetrier = JournalingResumableUploadBuilder.this.retrier;
         ResultRetryAlgorithm<?> alg = JournalingResumableUploadBuilder.this.alg;
         BufferHandle recoveryBuffer = JournalingResumableUploadBuilder.this.recoveryBuffer;
         RecoveryFile recoveryFile = JournalingResumableUploadBuilder.this.recoveryFile;
@@ -444,7 +441,7 @@ final class GapicWritableByteChannelSessionBuilder {
                 query,
                 resultFuture,
                 new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-                deps,
+                boundRetrier,
                 alg,
                 writeCtx,
                 recoveryFile,

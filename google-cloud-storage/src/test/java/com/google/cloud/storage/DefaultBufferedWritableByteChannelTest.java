@@ -587,17 +587,16 @@ public final class DefaultBufferedWritableByteChannelTest {
   /**
    * Adapter to make any {@link WritableByteChannel} into an {@link UnbufferedWritableByteChannel}
    */
-  private static final class CountingWritableByteChannelAdapter
-      implements UnbufferedWritableByteChannel {
+  static final class CountingWritableByteChannelAdapter implements UnbufferedWritableByteChannel {
 
     private final WritableByteChannel c;
 
-    private final List<Long> writeEndPoints;
-    private long totalBytesWritten;
+    final List<Long> writeEndPoints;
+    long totalBytesWritten;
 
-    private long nextWriteMaxConsumptionLimit = Long.MAX_VALUE;
+    long nextWriteMaxConsumptionLimit = Long.MAX_VALUE;
 
-    private CountingWritableByteChannelAdapter(WritableByteChannel c) {
+    CountingWritableByteChannelAdapter(WritableByteChannel c) {
       this.c = c;
       writeEndPoints = new ArrayList<>();
     }
@@ -668,10 +667,10 @@ public final class DefaultBufferedWritableByteChannelTest {
     }
   }
 
-  private static final class AuditingBufferHandle extends BufferHandle {
+  static final class AuditingBufferHandle extends BufferHandle {
     private final BufferHandle delegate;
 
-    private int getCallCount = 0;
+    int getCallCount = 0;
 
     AuditingBufferHandle(BufferHandle delegate) {
       this.delegate = delegate;

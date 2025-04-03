@@ -21,10 +21,8 @@ import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
-import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.PermissionDeniedException;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.WriteCtx.SimpleWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.common.collect.ImmutableList;
@@ -188,8 +186,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               segmenter,
               sc.writeObjectCallable(),
               new WriteCtx<>(reqFactory),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               Retrying::newCallContext);
       ArrayList<String> debugMessages = new ArrayList<>();
       try {
@@ -271,13 +268,8 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               segmenter,
               sc.writeObjectCallable(),
               new WriteCtx<>(reqFactory),
-              TestUtils.defaultRetryingDeps(),
-              new BasicResultRetryAlgorithm<Object>() {
-                @Override
-                public boolean shouldRetry(Throwable t, Object ignore) {
-                  return TestUtils.findThrowable(DataLossException.class, t) != null;
-                }
-              },
+              TestUtils.retrierFromStorageOptions(fake.getGrpcStorageOptions())
+                  .withAlg(Retrying.alwaysRetry()),
               Retrying::newCallContext)) {
         writeCtx = c.getWriteCtx();
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
@@ -328,8 +320,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               segmenter,
               sc.writeObjectCallable(),
               new WriteCtx<>(reqFactory),
-              RetryingDependencies.attemptOnce(),
-              Retrying.neverRetry(),
+              RetrierWithAlg.attemptOnce(),
               Retrying::newCallContext);
       try {
         int written = c.writeAndClose(ByteBuffer.wrap(bytes));

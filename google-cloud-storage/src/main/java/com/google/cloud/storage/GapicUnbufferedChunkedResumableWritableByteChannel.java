@@ -20,7 +20,6 @@ import static com.google.cloud.storage.GrpcUtils.contextWithBucketName;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -29,7 +28,7 @@ import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -57,8 +56,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
 
   private final String bucketName;
   private final WriteCtx<ResumableWrite> writeCtx;
-  private final RetryingDependencies deps;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final Supplier<GrpcCallContext> baseContextSupplier;
 
   private volatile boolean open = true;
@@ -69,16 +67,14 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
       @NonNull ChunkSegmenter chunkSegmenter,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
       WriteCtx<ResumableWrite> writeCtx,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       Supplier<GrpcCallContext> baseContextSupplier) {
     this.resultFuture = resultFuture;
     this.chunkSegmenter = chunkSegmenter;
     this.write = write;
     this.bucketName = writeCtx.getRequestFactory().bucketName();
     this.writeCtx = writeCtx;
-    this.deps = deps;
-    this.alg = alg;
+    this.retrier = retrier;
     this.baseContextSupplier = baseContextSupplier;
   }
 
@@ -209,9 +205,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
     ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> callable =
         write.withDefaultCallContext(internalContext);
 
-    Retrying.run(
-        deps,
-        alg,
+    retrier.run(
         () -> {
           Observer observer = new Observer(content, finalizing, segments, internalContext);
           ApiStreamObserver<WriteObjectRequest> write = callable.clientStreamingCall(observer);

@@ -29,6 +29,8 @@ import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
@@ -55,7 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -65,8 +66,8 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   private final ApiaryReadRequest apiaryReadRequest;
   private final Storage storage;
   private final SettableApiFuture<StorageObject> result;
-  private final HttpStorageOptions options;
   private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
+  private final Retrier retrier;
 
   private long position;
   private ScatteringByteChannel sbc;
@@ -80,12 +81,12 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       ApiaryReadRequest apiaryReadRequest,
       Storage storage,
       SettableApiFuture<StorageObject> result,
-      HttpStorageOptions options,
+      Retrier retrier,
       ResultRetryAlgorithm<?> resultRetryAlgorithm) {
     this.apiaryReadRequest = apiaryReadRequest;
     this.storage = storage;
     this.result = result;
-    this.options = options;
+    this.retrier = retrier;
     this.resultRetryAlgorithm =
         new BasicResultRetryAlgorithm<Object>() {
           @Override
@@ -113,7 +114,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     long totalRead = 0;
     do {
       if (sbc == null) {
-        sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
+        sbc = retrier.run(resultRetryAlgorithm, this::open, Decoder.identity());
       }
 
       long totalRemaining = Buffers.totalRemaining(dsts, offset, length);

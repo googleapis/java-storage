@@ -16,11 +16,16 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.UnsafeByteOperations;
+import com.google.storage.v2.ChecksummedData;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -40,6 +45,16 @@ public final class ChecksummedTestContent {
 
   public byte[] getBytes() {
     return bytes;
+  }
+
+  public byte[] getBytes(int beginIndex) {
+    return UnsafeByteOperations.unsafeWrap(bytes).substring(beginIndex).toByteArray();
+  }
+
+  public byte[] getBytes(int beginIndex, int length) {
+    return UnsafeByteOperations.unsafeWrap(bytes)
+        .substring(beginIndex, beginIndex + length)
+        .toByteArray();
   }
 
   public int getCrc32c() {
@@ -74,6 +89,13 @@ public final class ChecksummedTestContent {
     return new ByteArrayInputStream(bytes);
   }
 
+  public ChecksummedData asChecksummedData() {
+    return ChecksummedData.newBuilder()
+        .setContent(ByteString.copyFrom(bytes))
+        .setCrc32C(crc32c)
+        .build();
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -92,5 +114,11 @@ public final class ChecksummedTestContent {
     int crc32c = Hashing.crc32c().hashBytes(bytes).asInt();
     String md5Base64 = Base64.getEncoder().encodeToString(Hashing.md5().hashBytes(bytes).asBytes());
     return new ChecksummedTestContent(bytes, crc32c, md5Base64);
+  }
+
+  public static ChecksummedTestContent of(byte[] bytes, int from, int length) {
+    checkArgument(length >= 0, "length >= 0 (%s >= 0)", length);
+    checkPositionIndexes(from, from + length, bytes.length);
+    return of(Arrays.copyOfRange(bytes, from, from + length));
   }
 }

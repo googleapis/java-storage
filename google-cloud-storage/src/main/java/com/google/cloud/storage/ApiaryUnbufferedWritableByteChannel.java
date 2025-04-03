@@ -17,9 +17,8 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,12 +41,11 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
 
   ApiaryUnbufferedWritableByteChannel(
       HttpClientContext httpClientContext,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       JsonResumableWrite resumableWrite,
       SettableApiFuture<StorageObject> result,
       LongConsumer committedBytesCallback) {
-    this.session = ResumableSession.json(httpClientContext, deps, alg, resumableWrite);
+    this.session = ResumableSession.json(httpClientContext, retrier, resumableWrite);
     this.result = result;
     this.committedBytesCallback = committedBytesCallback;
     this.open = true;

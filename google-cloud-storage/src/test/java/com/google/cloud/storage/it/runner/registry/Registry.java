@@ -81,7 +81,7 @@ public final class Registry extends RunListener {
 
   private final TestRunScopedInstance<Zone.ZoneShim> zone =
       TestRunScopedInstance.of("fixture/ZONE", Zone.ZoneShim::new);
-  final TestRunScopedInstance<OtelSdkShim> otelSdk =
+  public final TestRunScopedInstance<OtelSdkShim> otelSdk =
       TestRunScopedInstance.of(
           "fixture/OTEL_SDK",
           () -> {

@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
@@ -26,12 +27,20 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.ApiFutureUtils.OnFailureApiFutureCallback;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.ReadProjectionConfigs.BaseConfig;
+import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
+import com.google.cloud.storage.RetryContext.OnFailure;
+import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.ReadRange;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
@@ -50,6 +59,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -1454,6 +1464,65 @@ final class OtelStorageDecorator implements Storage {
   }
 
   @Override
+  public ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
+    Span blobReadSessionSpan =
+        tracer
+            .spanBuilder("blobReadSession")
+            .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
+            .startSpan();
+    try (Scope ignore1 = blobReadSessionSpan.makeCurrent()) {
+      Context blobReadSessionContext = Context.current();
+      Span ready = tracer.spanBuilder("blobReadSession/ready").startSpan();
+      ApiFuture<BlobReadSession> blobReadSessionApiFuture = delegate.blobReadSession(id, options);
+      ApiFuture<BlobReadSession> futureDecorated =
+          ApiFutures.transform(
+              blobReadSessionApiFuture,
+              delegate -> {
+                ready.end();
+                return new OtelDecoratingBlobReadSession(
+                    delegate, id, blobReadSessionContext, blobReadSessionSpan);
+              },
+              MoreExecutors.directExecutor());
+      ApiFutures.addCallback(
+          futureDecorated,
+          (OnFailureApiFutureCallback<BlobReadSession>)
+              t -> {
+                blobReadSessionSpan.recordException(t);
+                blobReadSessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+                blobReadSessionSpan.end();
+                ready.recordException(t);
+                ready.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+                ready.end();
+              },
+          MoreExecutors.directExecutor());
+      return futureDecorated;
+    } catch (Throwable t) {
+      blobReadSessionSpan.recordException(t);
+      blobReadSessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      blobReadSessionSpan.end();
+      throw t;
+    }
+  }
+
+  @Override
+  public BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
+      throws IOException {
+    Span span = tracer.spanBuilder("appendableBlobUpload").startSpan();
+    try (Scope ignore = span.makeCurrent()) {
+
+      return new OtelDecoratingBlobAppendableUpload(
+          delegate.blobAppendableUpload(blobInfo, uploadConfig, options), span, Context.current());
+
+    } catch (Throwable t) {
+      span.recordException(t);
+      span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      span.end();
+      throw t;
+    }
+  }
+
+  @Override
   public StorageOptions getOptions() {
     return delegate.getOptions();
   }
@@ -1474,6 +1543,14 @@ final class OtelStorageDecorator implements Storage {
             .put("service.name", "storage.googleapis.com")
             .build();
     return new OtelStorageDecorator(delegate, otel, baseAttributes);
+  }
+
+  static UnaryOperator<RetryContext> retryContextDecorator(OpenTelemetry otel) {
+    requireNonNull(otel, "otel must be non null");
+    if (otel == OpenTelemetry.noop()) {
+      return UnaryOperator.identity();
+    }
+    return ctx -> new OtelRetryContextDecorator(ctx, Span.current());
   }
 
   private static @NonNull String fmtBucket(String bucket) {
@@ -1758,6 +1835,326 @@ final class OtelStorageDecorator implements Storage {
       } finally {
         copyChunkSpan.end();
       }
+    }
+  }
+
+  private static final class OtelReadProjectionConfig<Projection>
+      extends ReadProjectionConfig<Projection> {
+    private final ReadProjectionConfig<Projection> delegate;
+    private final Span parentSpan;
+
+    private OtelReadProjectionConfig(ReadProjectionConfig<Projection> delegate, Span parentSpan) {
+      this.delegate = delegate;
+      this.parentSpan = parentSpan;
+    }
+
+    @Override
+    BaseConfig<Projection, ?> cast() {
+      return new OtelBaseConfigDecorator(delegate.cast());
+    }
+
+    @Override
+    public ProjectionType getType() {
+      return delegate.getType();
+    }
+
+    @Override
+    Projection project(ObjectReadSession session, IOAutoCloseable closeAlongWith) {
+      try {
+        return delegate.project(session, closeAlongWith.andThen(parentSpan::end));
+      } catch (Throwable t) {
+        parentSpan.recordException(t);
+        parentSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        parentSpan.end();
+        throw t;
+      }
+    }
+
+    private class OtelBaseConfigDecorator
+        extends BaseConfig<Projection, ObjectReadSessionStreamRead<Projection>> {
+      private final BaseConfig<Projection, ?> delegate;
+
+      private OtelBaseConfigDecorator(BaseConfig<Projection, ?> delegate) {
+        this.delegate = delegate;
+      }
+
+      @Override
+      ObjectReadSessionStreamRead<Projection> newRead(long readId, RetryContext retryContext) {
+        OtelRetryContextDecorator otelRetryContext =
+            new OtelRetryContextDecorator(retryContext, parentSpan);
+        ObjectReadSessionStreamRead<Projection> read = delegate.newRead(readId, otelRetryContext);
+        read.setOnCloseCallback(parentSpan::end);
+        return new OtelDecoratingObjectReadSessionStreamRead<>(read, parentSpan);
+      }
+
+      @Override
+      BaseConfig<Projection, ?> cast() {
+        return this;
+      }
+    }
+  }
+
+  private static final class OtelRetryContextDecorator implements RetryContext {
+    private final RetryContext delegate;
+    private final Span span;
+
+    private OtelRetryContextDecorator(RetryContext delegate, Span span) {
+      this.delegate = delegate;
+      this.span = span;
+    }
+
+    @Override
+    public boolean inBackoff() {
+      return delegate.inBackoff();
+    }
+
+    @Override
+    public void reset() {
+      delegate.reset();
+    }
+
+    @Override
+    public <T extends Throwable> void recordError(
+        T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+      span.recordException(t);
+      delegate.recordError(
+          t,
+          () -> {
+            span.addEvent("retrying");
+            onSuccess.onSuccess();
+          },
+          (tt) -> {
+            span.addEvent("terminal_failure");
+            onFailure.onFailure(tt);
+          });
+    }
+  }
+
+  @VisibleForTesting
+  class OtelDecoratingBlobReadSession implements BlobReadSession {
+
+    @VisibleForTesting final BlobReadSession delegate;
+    private final BlobId id;
+    private final Context blobReadSessionContext;
+    private final Span blobReadSessionSpan;
+
+    private OtelDecoratingBlobReadSession(
+        BlobReadSession delegate,
+        BlobId id,
+        Context blobReadSessionContext,
+        Span blobReadSessionSpan) {
+      this.delegate = delegate;
+      this.id = id;
+      this.blobReadSessionContext = blobReadSessionContext;
+      this.blobReadSessionSpan = blobReadSessionSpan;
+    }
+
+    @Override
+    public BlobInfo getBlobInfo() {
+      return delegate.getBlobInfo();
+    }
+
+    @Override
+    public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
+      Span readRangeSpan =
+          tracer
+              .spanBuilder("readAs")
+              .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
+              .setParent(blobReadSessionContext)
+              .startSpan();
+      try (Scope ignore2 = readRangeSpan.makeCurrent()) {
+        OtelReadProjectionConfig<Projection> c =
+            new OtelReadProjectionConfig<>(config, readRangeSpan);
+        return delegate.readAs(c);
+      } catch (Throwable t) {
+        readRangeSpan.recordException(t);
+        readRangeSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        readRangeSpan.end();
+        throw t;
+      }
+    }
+
+    @Override
+    public void close() throws IOException {
+      try {
+        delegate.close();
+      } finally {
+        blobReadSessionSpan.end();
+      }
+    }
+  }
+
+  @VisibleForTesting
+  static final class OtelDecoratingObjectReadSessionStreamRead<Projection>
+      implements ObjectReadSessionStreamRead<Projection> {
+    private final ObjectReadSessionStreamRead<Projection> delegate;
+    private final Span parentSpan;
+
+    @VisibleForTesting
+    OtelDecoratingObjectReadSessionStreamRead(
+        ObjectReadSessionStreamRead<Projection> delegate, Span parentSpan) {
+      this.delegate = delegate;
+      this.parentSpan = parentSpan;
+    }
+
+    @Override
+    public Projection project() {
+      return delegate.project();
+    }
+
+    @Override
+    public long readOffset() {
+      return delegate.readOffset();
+    }
+
+    @Override
+    public boolean acceptingBytes() {
+      return delegate.acceptingBytes();
+    }
+
+    @Override
+    public void accept(ChildRef childRef) throws IOException {
+      delegate.accept(childRef);
+    }
+
+    @Override
+    public void eof() throws IOException {
+      delegate.eof();
+    }
+
+    @Override
+    public void preFail() {
+      delegate.preFail();
+    }
+
+    @Override
+    public ApiFuture<?> fail(Throwable t) {
+      ApiFuture<?> fail = delegate.fail(t);
+      ApiFutures.addCallback(
+          fail,
+          (OnFailureApiFutureCallback<Object>)
+              t1 -> {
+                parentSpan.recordException(t1);
+                parentSpan.setStatus(StatusCode.ERROR, t1.getClass().getSimpleName());
+              },
+          MoreExecutors.directExecutor());
+      return fail;
+    }
+
+    @Override
+    public Hasher hasher() {
+      return delegate.hasher();
+    }
+
+    @Override
+    public ObjectReadSessionStreamRead<Projection> withNewReadId(long newReadId) {
+      return new OtelDecoratingObjectReadSessionStreamRead<>(
+          delegate.withNewReadId(newReadId), parentSpan);
+    }
+
+    @Override
+    public ReadRange makeReadRange() {
+      return delegate.makeReadRange();
+    }
+
+    @Override
+    public <T extends Throwable> void recordError(
+        T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+      delegate.recordError(t, onSuccess, onFailure);
+    }
+
+    @Override
+    public boolean readyToSend() {
+      return delegate.readyToSend();
+    }
+
+    @Override
+    public boolean canShareStreamWith(ObjectReadSessionStreamRead<?> other) {
+      if (other instanceof OtelDecoratingObjectReadSessionStreamRead<?>) {
+        OtelDecoratingObjectReadSessionStreamRead<?> dec =
+            (OtelDecoratingObjectReadSessionStreamRead<?>) other;
+        return delegate.canShareStreamWith(dec.delegate);
+      }
+      return delegate.canShareStreamWith(other);
+    }
+
+    @Override
+    public void setOnCloseCallback(IOAutoCloseable onCloseCallback) {
+      delegate.setOnCloseCallback(onCloseCallback);
+    }
+
+    @Override
+    public void internalClose() throws IOException {
+      delegate.internalClose();
+    }
+
+    @Override
+    public void close() throws IOException {
+      delegate.close();
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("delegate", delegate)
+          // .add("parentSpan", parentSpan)
+          .toString();
+    }
+  }
+
+  final class OtelDecoratingBlobAppendableUpload implements BlobAppendableUpload {
+    private final BlobAppendableUpload delegate;
+    private final Span openSpan;
+    private final Context openContext;
+
+    private OtelDecoratingBlobAppendableUpload(
+        BlobAppendableUpload delegate, Span openSpan, Context openContext) {
+      this.delegate = delegate;
+      this.openSpan = openSpan;
+      this.openContext = openContext;
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      return delegate.write(src);
+    }
+
+    @Override
+    public void close() throws IOException {
+      try {
+        delegate.close();
+      } catch (Throwable t) {
+        openSpan.recordException(t);
+        openSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        throw t;
+      } finally {
+        openSpan.end();
+      }
+    }
+
+    @Override
+    @BetaApi
+    public ApiFuture<BlobInfo> finalizeUpload() throws IOException {
+      Span span =
+          tracer
+              .spanBuilder("appendableBlobUpload/finalizeUpload")
+              .setParent(openContext)
+              .startSpan();
+      try (Scope ignore = span.makeCurrent()) {
+        return delegate.finalizeUpload();
+      } catch (Throwable t) {
+        span.recordException(t);
+        span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+        throw t;
+      } finally {
+        span.end();
+        openSpan.end();
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      return delegate.isOpen();
     }
   }
 }

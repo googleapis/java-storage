@@ -17,11 +17,10 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.util.function.Supplier;
@@ -29,21 +28,18 @@ import java.util.function.Supplier;
 final class GrpcBlobWriteChannel extends BaseStorageWriteChannel<WriteObjectResponse> {
 
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
-  private final RetryingDependencies deps;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final Supplier<ApiFuture<ResumableWrite>> start;
   private final Hasher hasher;
 
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       Supplier<ApiFuture<ResumableWrite>> start,
       Hasher hasher) {
     super(Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource));
     this.write = write;
-    this.deps = deps;
-    this.alg = alg;
+    this.retrier = retrier;
     this.start = start;
     this.hasher = hasher;
   }
@@ -63,7 +59,7 @@ final class GrpcBlobWriteChannel extends BaseStorageWriteChannel<WriteObjectResp
                 .setHasher(hasher)
                 .setByteStringStrategy(ByteStringStrategy.copy())
                 .resumable()
-                .withRetryConfig(deps, alg)
+                .withRetryConfig(retrier)
                 .buffered(getBufferHandle())
                 .setStartAsync(start.get())
                 .build());

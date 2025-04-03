@@ -1040,7 +1040,7 @@ public class StorageImplMockitoTest {
       storage.list();
       fail();
     } catch (StorageException e) {
-      assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
+      assertEquals(STORAGE_FAILURE.getMessage(), e.getMessage());
     }
   }
 
@@ -1191,7 +1191,7 @@ public class StorageImplMockitoTest {
       storage.list(BUCKET_NAME1);
       fail();
     } catch (StorageException e) {
-      assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
+      assertEquals(STORAGE_FAILURE.getMessage(), e.getMessage());
     }
   }
 

@@ -18,6 +18,7 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertWithMessage;
 
+import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.truth.IterableSubject;
 import io.grpc.Attributes;
@@ -38,7 +39,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class GrpcRequestAuditing implements ClientInterceptor, AssertRequestHeaders {
+public final class GrpcRequestAuditing
+    implements ClientInterceptor, AssertRequestHeaders, GrpcInterceptorProvider {
 
   private final List<Metadata> requestHeaders;
 
@@ -83,6 +85,11 @@ public final class GrpcRequestAuditing implements ClientInterceptor, AssertReque
     Stream<T> stream = requestHeaders.stream().map(m -> m.get(key)).filter(Objects::nonNull);
     ImmutableList<Object> actual = f.apply(stream).collect(ImmutableList.toImmutableList());
     return assertWithMessage(String.format(Locale.US, "Headers %s", key.name())).that(actual);
+  }
+
+  @Override
+  public List<ClientInterceptor> getInterceptors() {
+    return ImmutableList.of(this);
   }
 
   private final class Factory extends ClientStreamTracer.Factory {

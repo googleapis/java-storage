@@ -88,8 +88,8 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
   }
 
   @InternalApi
-  private static final class Factory implements WriterFactory {
-    private static final Conversions.Decoder<BidiWriteObjectResponse, BlobInfo>
+  static final class Factory implements WriterFactory {
+    static final Conversions.Decoder<BidiWriteObjectResponse, BlobInfo>
         WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER =
             Conversions.grpc().blobInfo().compose(BidiWriteObjectResponse::getResource);
 
@@ -122,7 +122,7 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()
                           .withRetryConfig(
-                              grpc.getOptions(), grpc.retryAlgorithmManager.idempotent())
+                              grpc.retrier.withAlg(grpc.retryAlgorithmManager.idempotent()))
                           .buffered(BufferHandle.allocate(bufferSize))
                           .setStartAsync(startResumableWrite)
                           .build();

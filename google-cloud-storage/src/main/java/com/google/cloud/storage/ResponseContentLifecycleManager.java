@@ -15,19 +15,29 @@
  */
 package com.google.cloud.storage;
 
+import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
 import java.io.IOException;
 
-interface ResponseContentLifecycleManager extends Closeable {
-  ResponseContentLifecycleHandle get(ReadObjectResponse response);
+interface ResponseContentLifecycleManager<Response> extends Closeable {
+  ResponseContentLifecycleHandle<Response> get(Response response);
 
   @Override
   default void close() throws IOException {}
 
-  static ResponseContentLifecycleManager noop() {
+  static ResponseContentLifecycleManager<ReadObjectResponse> noop() {
     return response ->
-        new ResponseContentLifecycleHandle(
+        ResponseContentLifecycleHandle.create(
+            response,
+            () -> {
+              // no-op
+            });
+  }
+
+  static ResponseContentLifecycleManager<BidiReadObjectResponse> noopBidiReadObjectResponse() {
+    return response ->
+        ResponseContentLifecycleHandle.create(
             response,
             () -> {
               // no-op

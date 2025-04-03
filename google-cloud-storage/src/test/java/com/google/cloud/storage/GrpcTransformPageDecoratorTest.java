@@ -81,7 +81,7 @@ public class GrpcTransformPageDecoratorTest {
         new TransformingPageDecorator<>(
             page,
             String::toUpperCase,
-            TestUtils.defaultRetryingDeps(),
+            TestUtils.defaultRetrier(),
             StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler());
 
     assertThat(ImmutableList.copyOf(decorator.getValues().iterator()))
@@ -102,8 +102,7 @@ public class GrpcTransformPageDecoratorTest {
         PageContext.create(callable, descriptor, req1, apiCallContext);
     ReqRespPage page = new ReqRespPage(context, resp1);
     TransformingPageDecorator<Req, Resp, String, ReqRespPage, String> decorator =
-        new TransformingPageDecorator<>(
-            page, String::toUpperCase, TestUtils.defaultRetryingDeps(), alg);
+        new TransformingPageDecorator<>(page, String::toUpperCase, TestUtils.defaultRetrier(), alg);
 
     ImmutableList<String> actual = ImmutableList.copyOf(decorator.iterateAll().iterator());
     assertThat(actual).containsExactlyElementsIn(expectedValues);

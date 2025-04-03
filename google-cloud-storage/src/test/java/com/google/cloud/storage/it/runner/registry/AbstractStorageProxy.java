@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
@@ -23,8 +24,11 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobAppendableUpload;
+import com.google.cloud.storage.BlobAppendableUploadConfig;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BlobReadSession;
 import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -487,6 +491,18 @@ abstract class AbstractStorageProxy implements Storage {
   @Override
   public BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
     return delegate.blobWriteSession(blobInfo, options);
+  }
+
+  @Override
+  public ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
+    return delegate.blobReadSession(id, options);
+  }
+
+  @Override
+  public BlobAppendableUpload blobAppendableUpload(
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
+      throws IOException {
+    return delegate.blobAppendableUpload(blobInfo, uploadConfig, options);
   }
 
   @Override

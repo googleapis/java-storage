@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class StorageByteChannels {
@@ -35,6 +36,10 @@ final class StorageByteChannels {
 
   static Writable writable() {
     return Writable.INSTANCE;
+  }
+
+  public static SeekableByteChannel seekable(SeekableByteChannel delegate) {
+    return new SynchronizedSeekableByteChannel(delegate);
   }
 
   static final class Readable {
@@ -374,6 +379,96 @@ final class StorageByteChannels {
     @Override
     public void close() throws IOException {
       c.close();
+    }
+  }
+
+  private static final class SynchronizedSeekableByteChannel implements SeekableByteChannel {
+    private final SeekableByteChannel delegate;
+    private final ReentrantLock lock;
+
+    private SynchronizedSeekableByteChannel(SeekableByteChannel delegate) {
+      this.delegate = delegate;
+      this.lock = new ReentrantLock();
+    }
+
+    @Override
+    public int read(ByteBuffer dst) throws IOException {
+      lock.lock();
+      try {
+        return delegate.read(dst);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      lock.lock();
+      try {
+        return delegate.write(src);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public long position() throws IOException {
+      lock.lock();
+      try {
+        return delegate.position();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public SeekableByteChannel position(long newPosition) throws IOException {
+      lock.lock();
+      try {
+        return delegate.position(newPosition);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public long size() throws IOException {
+      lock.lock();
+      try {
+        return delegate.size();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public SeekableByteChannel truncate(long size) throws IOException {
+      lock.lock();
+      try {
+        return delegate.truncate(size);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      lock.lock();
+      try {
+        return delegate.isOpen();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public void close() throws IOException {
+      lock.lock();
+      try {
+        delegate.close();
+      } finally {
+        lock.unlock();
+      }
     }
   }
 }

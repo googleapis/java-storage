@@ -17,6 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.RestorableState;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
+import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteResponse;
@@ -24,18 +29,21 @@ import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class HttpCopyWriter extends CopyWriter {
 
   private final HttpStorageOptions serviceOptions;
   private final StorageRpc storageRpc;
   private RewriteResponse rewriteResponse;
+  private final Retrier retrier;
 
-  HttpCopyWriter(HttpStorageOptions serviceOptions, RewriteResponse rewriteResponse) {
+  HttpCopyWriter(
+      HttpStorageOptions serviceOptions, RewriteResponse rewriteResponse, Retrier retrier) {
     this.serviceOptions = serviceOptions;
     this.rewriteResponse = rewriteResponse;
     this.storageRpc = serviceOptions.getStorageRpcV1();
+    this.retrier = retrier;
   }
 
   @Override
@@ -67,11 +75,10 @@ public class HttpCopyWriter extends CopyWriter {
     if (!isDone()) {
       RewriteRequest rewriteRequest = rewriteResponse.rewriteRequest;
       this.rewriteResponse =
-          Retrying.run(
-              serviceOptions,
+          retrier.run(
               serviceOptions.getRetryAlgorithmManager().getForObjectsRewrite(rewriteRequest),
               () -> storageRpc.continueRewrite(rewriteResponse),
-              Function.identity());
+              Decoder.identity());
     }
   }
 
@@ -221,7 +228,13 @@ public class HttpCopyWriter extends CopyWriter {
               isDone,
               rewriteToken,
               totalBytesCopied);
-      return new HttpCopyWriter(serviceOptions, rewriteResponse);
+      HttpRetrier httpRetrier =
+          new HttpRetrier(
+              new DefaultRetrier(
+                  UnaryOperator.identity(),
+                  RetryingDependencies.simple(
+                      serviceOptions.getClock(), serviceOptions.getRetrySettings())));
+      return new HttpCopyWriter(serviceOptions, rewriteResponse, httpRetrier);
     }
 
     @Override

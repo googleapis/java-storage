@@ -76,7 +76,9 @@ enum ResumableSessionFailureScenario {
   SCENARIO_7(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Client side data loss detected. Bytes acked is more than client sent.");
+      "Client side data loss detected. Bytes acked is more than client sent."),
+
+  SCENARIO_9(503, "backendNotConnected", "Ack less than bytes sent");
 
   private static final String PREFIX_I = "\t|< ";
   private static final String PREFIX_O = "\t|> ";

@@ -76,8 +76,9 @@ final class BlobWriteChannelV2 extends BaseStorageWriteChannel<StorageObject> {
                 .resumable()
                 .setCommittedBytesCallback(this::setCommittedPosition)
                 .withRetryConfig(
-                    blobChannelContext.getStorageOptions().asRetryDependencies(),
-                    blobChannelContext.getRetryAlgorithmManager().idempotent())
+                    blobChannelContext
+                        .getRetrier()
+                        .withAlg(blobChannelContext.getRetryAlgorithmManager().idempotent()))
                 .buffered(getBufferHandle())
                 .setStartAsync(ApiFutures.immediateFuture(start))
                 .build());

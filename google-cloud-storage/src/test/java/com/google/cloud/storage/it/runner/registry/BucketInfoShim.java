@@ -52,6 +52,6 @@ final class BucketInfoShim implements ManagedLifecycle {
 
   @Override
   public void stop() {
-    BucketCleaner.doCleanup(bucketInfo.getName(), s, ctrl);
+    BucketCleaner.doCleanup(bucketInfo.getName(), s /*, ctrl*/);
   }
 }

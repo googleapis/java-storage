@@ -20,36 +20,52 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Locale;
 
 /**
- * Shrink wraps a beginning, offset and limit for tracking state of an individual invocation of
+ * Shrink wraps a beginning, offset and ending for tracking state of an individual invocation of
  * {@link #read}
  */
 final class ReadCursor {
-  private final long beginning;
-  private long offset;
-  private final long limit;
+  private final long begin;
+  private long position;
+  private final long end;
 
-  ReadCursor(long beginning, long limit) {
-    this.limit = limit;
-    this.beginning = beginning;
-    this.offset = beginning;
+  ReadCursor(long begin, long end) {
+    this.end = end;
+    this.begin = begin;
+    this.position = begin;
   }
 
   public boolean hasRemaining() {
-    return limit - offset > 0;
+    return remaining() > 0;
+  }
+
+  public long remaining() {
+    return end - position;
   }
 
   public void advance(long incr) {
     checkArgument(incr >= 0);
-    offset += incr;
+    position += incr;
   }
 
   public long read() {
-    return offset - beginning;
+    return position - begin;
+  }
+
+  public long begin() {
+    return begin;
+  }
+
+  public long position() {
+    return position;
+  }
+
+  public long end() {
+    return end;
   }
 
   @Override
   public String toString() {
     return String.format(
-        Locale.US, "ReadCursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
+        Locale.US, "ReadCursor{begin=%d, position=%d, end=%d}", begin, position, end);
   }
 }

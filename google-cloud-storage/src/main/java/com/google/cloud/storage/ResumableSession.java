@@ -16,10 +16,9 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.WriteObjectRequest;
@@ -30,21 +29,17 @@ final class ResumableSession {
   private ResumableSession() {}
 
   static JsonResumableSession json(
-      HttpClientContext context,
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
-      JsonResumableWrite resumableWrite) {
-    return new JsonResumableSession(context, deps, alg, resumableWrite);
+      HttpClientContext context, RetrierWithAlg retrier, JsonResumableWrite resumableWrite) {
+    return new JsonResumableSession(context, retrier, resumableWrite);
   }
 
   static GrpcResumableSession grpc(
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> writeCallable,
       UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> queryWriteStatusCallable,
       ResumableWrite resumableWrite,
       Hasher hasher) {
     return new GrpcResumableSession(
-        deps, alg, writeCallable, queryWriteStatusCallable, resumableWrite, hasher);
+        retrier, writeCallable, queryWriteStatusCallable, resumableWrite, hasher);
   }
 }

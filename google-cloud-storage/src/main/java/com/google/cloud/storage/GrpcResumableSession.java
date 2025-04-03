@@ -18,12 +18,11 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -34,8 +33,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcResumableSession {
 
-  private final RetryingDependencies deps;
-  private final ResultRetryAlgorithm<?> alg;
+  private final RetrierWithAlg retrier;
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> writeCallable;
   private final UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse>
       queryWriteStatusCallable;
@@ -43,14 +41,12 @@ final class GrpcResumableSession {
   private final Hasher hasher;
 
   GrpcResumableSession(
-      RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg,
+      RetrierWithAlg retrier,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> writeCallable,
       UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> queryWriteStatusCallable,
       ResumableWrite resumableWrite,
       Hasher hasher) {
-    this.deps = deps;
-    this.alg = alg;
+    this.retrier = retrier;
     this.writeCallable = writeCallable;
     this.queryWriteStatusCallable = queryWriteStatusCallable;
     this.resumableWrite = resumableWrite;
@@ -82,9 +78,7 @@ final class GrpcResumableSession {
     GrpcCallContext retryingCallContext = Retrying.newCallContext();
     BufferHandle handle = BufferHandle.allocate(ByteSizeConstants._2MiB);
 
-    return Retrying.run(
-        deps,
-        alg,
+    return retrier.run(
         () -> {
           if (dirty.getAndSet(true)) {
             ResumableOperationResult<@Nullable Object> query = query();

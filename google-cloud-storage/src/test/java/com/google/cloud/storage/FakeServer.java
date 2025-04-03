@@ -16,14 +16,17 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
+import com.google.cloud.storage.it.runner.registry.Registry;
 import com.google.storage.v2.StorageGrpc;
 import com.google.storage.v2.StorageSettings;
 import io.grpc.Server;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +66,19 @@ final class FakeServer implements AutoCloseable {
             .setGrpcInterceptorProvider(GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
             .setEnableGrpcClientMetrics(false)
             .setAttemptDirectPath(false)
+            .setOpenTelemetry(Registry.getInstance().otelSdk.get().get())
+            // cut most retry settings by half. we're hitting an in process server.
+            .setRetrySettings(
+                RetrySettings.newBuilder()
+                    .setTotalTimeoutDuration(Duration.ofSeconds(25))
+                    .setInitialRetryDelayDuration(Duration.ofMillis(250))
+                    .setRetryDelayMultiplier(1.2)
+                    .setMaxRetryDelayDuration(Duration.ofSeconds(16))
+                    .setMaxAttempts(6)
+                    .setInitialRpcTimeoutDuration(Duration.ofSeconds(25))
+                    .setRpcTimeoutMultiplier(1.0)
+                    .setMaxRpcTimeoutDuration(Duration.ofSeconds(25))
+                    .build())
             .build();
     return new FakeServer(server, grpcStorageOptions);
   }

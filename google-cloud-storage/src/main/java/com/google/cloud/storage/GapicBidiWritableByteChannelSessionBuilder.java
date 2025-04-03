@@ -20,13 +20,15 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
+import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.Object;
 import com.google.storage.v2.ServiceConstants.Values;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
@@ -81,19 +83,20 @@ final class GapicBidiWritableByteChannelSessionBuilder {
     return new GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder();
   }
 
+  GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder appendable() {
+    return new GapicBidiWritableByteChannelSessionBuilder.AppendableUploadBuilder();
+  }
+
   final class ResumableUploadBuilder {
 
-    private RetryingDependencies deps;
-    private ResultRetryAlgorithm<?> alg;
+    private RetrierWithAlg retrier;
 
     ResumableUploadBuilder() {
-      this.deps = RetryingDependencies.attemptOnce();
-      this.alg = Retrying.neverRetry();
+      this.retrier = RetrierWithAlg.attemptOnce();
     }
 
-    ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
-      this.deps = requireNonNull(deps, "deps must be non null");
-      this.alg = requireNonNull(alg, "alg must be non null");
+    ResumableUploadBuilder withRetryConfig(RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
       return this;
     }
 
@@ -141,6 +144,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         // fields.
         ByteStringStrategy boundStrategy = byteStringStrategy;
         Hasher boundHasher = hasher;
+        RetrierWithAlg boundRetrier = retrier;
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             ((BiFunction<
@@ -150,8 +154,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                     (start, resultFuture) ->
                         new GapicBidiUnbufferedWritableByteChannel(
                             write,
-                            deps,
-                            alg,
+                            boundRetrier,
                             resultFuture,
                             new ChunkSegmenter(
                                 boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
@@ -159,6 +162,82 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                             Retrying::newCallContext))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
+    }
+  }
+
+  final class AppendableUploadBuilder {
+    private RetrierWithAlg retrier;
+
+    AppendableUploadBuilder() {
+      this.retrier = RetrierWithAlg.attemptOnce();
+    }
+
+    AppendableUploadBuilder withRetryConfig(RetrierWithAlg retrier) {
+      this.retrier = requireNonNull(retrier, "retrier must be non null");
+      return this;
+    }
+
+    BufferedAppendableUploadBuilder buffered(FlushPolicy flushPolicy) {
+      return new BufferedAppendableUploadBuilder(flushPolicy);
+    }
+
+    final class BufferedAppendableUploadBuilder {
+      private final FlushPolicy flushPolicy;
+      private ApiFuture<BidiAppendableWrite> start;
+      private UnaryCallable<GetObjectRequest, Object> get;
+
+      BufferedAppendableUploadBuilder(FlushPolicy flushPolicy) {
+        this.flushPolicy = flushPolicy;
+      }
+
+      /**
+       * Set the Future which will contain the AppendableWrite information necessary to open the
+       * Write stream.
+       */
+      BufferedAppendableUploadBuilder setStartAsync(ApiFuture<BidiAppendableWrite> start) {
+        this.start = requireNonNull(start, "start must be non null");
+        return this;
+      }
+
+      public BufferedAppendableUploadBuilder setGetCallable(
+          UnaryCallable<GetObjectRequest, Object> get) {
+        this.get = get;
+        return this;
+      }
+
+      BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
+        // it is theoretically possible that the setter methods for the following variables could
+        // be called again between when this method is invoked and the resulting function is
+        // invoked.
+        // To ensure we are using the specified values at the point in time they are bound to the
+        // function read them into local variables which will be closed over rather than the class
+        // fields.
+        ByteStringStrategy boundStrategy = byteStringStrategy;
+        Hasher boundHasher = hasher;
+        RetrierWithAlg boundRetrier = retrier;
+        UnaryCallable<GetObjectRequest, Object> boundGet =
+            requireNonNull(get, "get must be non null");
+        return new BufferedWriteSession<>(
+            requireNonNull(start, "start must be non null"),
+            ((BiFunction<
+                        BidiAppendableWrite,
+                        SettableApiFuture<BidiWriteObjectResponse>,
+                        GapicBidiUnbufferedAppendableWritableByteChannel>)
+                    (start, resultFuture) ->
+                        new GapicBidiUnbufferedAppendableWritableByteChannel(
+                            write,
+                            boundGet,
+                            boundRetrier,
+                            resultFuture,
+                            new ChunkSegmenter(
+                                boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+                            new BidiWriteCtx<>(start),
+                            Retrying::newCallContext))
+                .andThen(
+                    c ->
+                        new BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel(
+                            flushPolicy.createBufferedChannel(c), c)));
       }
     }
   }
