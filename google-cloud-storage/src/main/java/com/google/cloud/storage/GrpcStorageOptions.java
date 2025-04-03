@@ -36,6 +36,7 @@ import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
@@ -1309,11 +1310,12 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     @Override
-    public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+    public boolean shouldRetry(Throwable t, Object previousResponse) {
       // this is only retryable with read object range, not other requests
-      return previousThrowable instanceof UncheckedChecksumMismatchException
-          || previousThrowable instanceof OutOfRangeException
-          || delegate.shouldRetry(StorageException.coalesce(previousThrowable), null);
+      return t instanceof UncheckedChecksumMismatchException
+          || (t instanceof OutOfRangeException && ((OutOfRangeException) t).isRetryable())
+          || (t instanceof AbortedException && ((AbortedException) t).isRetryable())
+          || delegate.shouldRetry(StorageException.coalesce(t), null);
     }
   }
 }
