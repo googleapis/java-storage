@@ -402,6 +402,7 @@ final class JsonConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
+    ifNonNull(from.getProjectNumber(), to::setProjectNumber);
     ifNonNull(
         from.getOwner(),
         lift(this::entityEncode).andThen(o -> new Bucket.Owner().setEntity(o)),
@@ -489,6 +490,7 @@ final class JsonConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
+    ifNonNull(from.getProjectNumber(), to::setProjectNumber);
     ifNonNull(
         from.getOwner(), lift(Bucket.Owner::getEntity).andThen(this::entityDecode), to::setOwner);
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);

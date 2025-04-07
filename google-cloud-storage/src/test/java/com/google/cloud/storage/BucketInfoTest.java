@@ -48,6 +48,7 @@ import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -110,6 +111,7 @@ public class BucketInfoTest {
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
   private static final String LOCATION_TYPE = "multi-region";
+  private static final BigInteger PROJECT_NUMBER = BigInteger.valueOf(42);
 
   @SuppressWarnings({"unchecked", "deprecation"})
   private static final BucketInfo BUCKET_INFO =
@@ -118,6 +120,7 @@ public class BucketInfoTest {
           .setEtag(ETAG)
           .setGeneratedId(GENERATED_ID)
           .setMetageneration(META_GENERATION)
+          .setProjectNumber(PROJECT_NUMBER)
           .setOwner(OWNER)
           .setSelfLink(SELF_LINK)
           .setCors(CORS)
@@ -150,6 +153,7 @@ public class BucketInfoTest {
           .setEtag(ETAG)
           .setGeneratedId(GENERATED_ID)
           .setMetageneration(META_GENERATION)
+          .setProjectNumber(PROJECT_NUMBER)
           .setOwner(OWNER)
           .setSelfLink(SELF_LINK)
           .setCors(CORS)
@@ -209,6 +213,7 @@ public class BucketInfoTest {
         () -> assertEquals(ETAG, BUCKET_INFO.getEtag()),
         () -> assertEquals(GENERATED_ID, BUCKET_INFO.getGeneratedId()),
         () -> assertEquals(META_GENERATION, BUCKET_INFO.getMetageneration()),
+        () -> assertEquals(PROJECT_NUMBER, BUCKET_INFO.getProjectNumber()),
         () -> assertEquals(OWNER, BUCKET_INFO.getOwner()),
         () -> assertEquals(SELF_LINK, BUCKET_INFO.getSelfLink()),
         () -> assertEquals(CREATE_TIME, BUCKET_INFO.getCreateTime()),
@@ -290,6 +295,7 @@ public class BucketInfoTest {
             assertEquals(expected.getRetentionPeriodDuration(), value.getRetentionPeriodDuration()),
         () -> assertEquals(expected.retentionPolicyIsLocked(), value.retentionPolicyIsLocked()),
         () -> assertEquals(expected.getLogging(), value.getLogging()),
+        () -> assertEquals(expected.getProjectNumber(), value.getProjectNumber()),
         () -> assertEquals(expected, value));
   }
 

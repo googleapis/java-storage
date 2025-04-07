@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.Key;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -632,6 +633,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    Builder setProjectNumber(BigInteger projectNumber) {
+      infoBuilder.setProjectNumber(projectNumber);
+      return this;
+    }
+
+    @Override
     public Builder setCors(Iterable<Cors> cors) {
       infoBuilder.setCors(cors);
       return this;
@@ -854,6 +861,12 @@ public class Bucket extends BucketInfo {
     @Override
     Builder clearMetageneration() {
       infoBuilder.clearMetageneration();
+      return this;
+    }
+
+    @Override
+    Builder clearProjectNumber() {
+      infoBuilder.clearProjectNumber();
       return this;
     }
 
