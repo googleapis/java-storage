@@ -83,7 +83,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
     lock.lock();
     try {
-      checkState(open, "stream already closed");
+      checkState(open, "Session already closed");
       switch (config.getType()) {
         case STREAM_READ:
           long readId = state.newReadId();

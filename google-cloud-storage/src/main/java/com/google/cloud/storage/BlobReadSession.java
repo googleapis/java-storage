@@ -62,7 +62,7 @@ public interface BlobReadSession extends AutoCloseable, Closeable {
    *
    * <p>If a projection is not fully consumed/resolved it will be transitioned to a failed state.
    *
-   * <p>This method MUST be closed to ensure cleanup of any inflight buffers, and to avoid a memory
+   * <p>This method MUST be called to ensure cleanup of any inflight buffers, and to avoid a memory
    * leak.
    *
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.

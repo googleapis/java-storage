@@ -47,7 +47,6 @@ import com.google.storage.v2.ReadRangeError;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
-import java.nio.channels.AsynchronousCloseException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -124,7 +123,7 @@ final class ObjectReadSessionStream
     }
     int updatedLeaseCount = openLeases.decrementAndGet();
     if (updatedLeaseCount == 0) {
-      AsynchronousCloseException cause = new AsynchronousCloseException();
+      AsyncSessionClosedException cause = new AsyncSessionClosedException("Session already closed");
       ApiFuture<?> f = failAll(() -> new StorageException(0, "Parent stream shutdown", cause));
       return ApiFutures.transformAsync(f, ignore -> ApiFutures.immediateFuture(null), executor);
     } else {

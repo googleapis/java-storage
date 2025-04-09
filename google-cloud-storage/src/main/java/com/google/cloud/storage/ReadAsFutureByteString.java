@@ -42,7 +42,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @BetaApi
 @Immutable
-final class ReadAsFutureByteString
+public final class ReadAsFutureByteString
     extends BaseConfig<ApiFuture<DisposableByteString>, AccumulatingRead<DisposableByteString>> {
 
   static final ReadAsFutureByteString INSTANCE =

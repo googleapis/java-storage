@@ -83,7 +83,7 @@ public final class ReadProjectionConfigs {
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  static ReadAsFutureBytes asFutureBytes() {
+  public static ReadAsFutureBytes asFutureBytes() {
     return ReadAsFutureBytes.INSTANCE;
   }
 
@@ -104,7 +104,7 @@ public final class ReadProjectionConfigs {
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  static ReadAsFutureByteString asFutureByteString() {
+  public static ReadAsFutureByteString asFutureByteString() {
     return ReadAsFutureByteString.INSTANCE;
   }
 
