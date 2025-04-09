@@ -22,6 +22,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.StateCheckingResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.api.gax.rpc.WatchdogTimeoutException;
@@ -365,6 +366,15 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     protected void onErrorImpl(Throwable t) {
+      if (t instanceof OutOfRangeException) {
+        try {
+          queue.offer(EOF_MARKER);
+          open.set(null);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
+        }
+      }
       if (t instanceof CancellationException) {
         cancellation.set(t);
       }
