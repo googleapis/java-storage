@@ -226,7 +226,7 @@ public final class StorageExceptionGrpcCompatibilityTest {
             errorDetails);
 
     // apply a coalesce to the exception -- similar to what a retry algorithm might do to determine
-    // retryability. This is not idea, as it unpure but it is the way things are today with the
+    // retryability. This is not ideal, as it is unpure but it is the way things are today with the
     // structure of storage exception and ApiException.
     BaseServiceException ignore1 = StorageException.coalesce(ex);
     BaseServiceException se = StorageException.coalesce(ex);
