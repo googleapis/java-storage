@@ -177,8 +177,8 @@ public final class StorageException extends BaseHttpServiceException {
   }
 
   private static void attachErrorDetails(ApiException ae) {
-    if (ae != null && ae.getErrorDetails() != null) {
-      final StringBuilder sb = new StringBuilder();
+    if (ae != null && ae.getErrorDetails() != null && !errorDetailsAttached(ae)) {
+      StringBuilder sb = new StringBuilder();
       ErrorDetails ed = ae.getErrorDetails();
       sb.append("ErrorDetails {\n");
       Stream.of(
@@ -200,6 +200,16 @@ public final class StorageException extends BaseHttpServiceException {
 
       ae.addSuppressed(new ApiExceptionErrorDetailsComment(sb.toString()));
     }
+  }
+
+  private static boolean errorDetailsAttached(ApiException ae) {
+    Throwable[] suppressed = ae.getSuppressed();
+    for (Throwable throwable : suppressed) {
+      if (throwable instanceof ApiExceptionErrorDetailsComment) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

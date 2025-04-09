@@ -207,6 +207,45 @@ public final class StorageExceptionGrpcCompatibilityTest {
         () -> assertThat(message).contains("\t}"));
   }
 
+  @SuppressWarnings("ThrowableNotThrown")
+  @Test
+  public void apiExceptionErrorDetails_onlyAttachedOnce() throws Exception {
+    Help help =
+        Help.newBuilder()
+            .addLinks(
+                Link.newBuilder().setDescription("link1").setUrl("https://google.com").build())
+            .build();
+    List<Any> errors = ImmutableList.of(Any.pack(help));
+    ErrorDetails errorDetails = ErrorDetails.builder().setRawErrorMessages(errors).build();
+
+    ApiException ex =
+        ApiExceptionFactory.createException(
+            Code.OUT_OF_RANGE.toStatus().asRuntimeException(),
+            GrpcStatusCode.of(Code.OUT_OF_RANGE),
+            false,
+            errorDetails);
+
+    // apply a coalesce to the exception -- similar to what a retry algorithm might do to determine
+    // retryability. This is not ideal, as it is unpure but it is the way things are today with the
+    // structure of storage exception and ApiException.
+    BaseServiceException ignore1 = StorageException.coalesce(ex);
+    BaseServiceException se = StorageException.coalesce(ex);
+
+    String message = TestUtils.messagesToText(se);
+    Printer printer = TextFormat.printer();
+    assertAll(
+        () -> assertThat(message).contains("ErrorDetails {"),
+        () -> assertThat(message).contains(printer.shortDebugString(help)),
+        () -> assertThat(message).contains("\t}"),
+        () -> {
+          // make sure the error details are only attached to the exception once
+          String str = "ErrorDetails {";
+          int indexOf1 = message.indexOf(str);
+          int indexOf2 = message.indexOf(str, indexOf1 + str.length());
+          assertThat(indexOf2).isEqualTo(-1);
+        });
+  }
+
   private void doTestCoalesce(int expectedCode, Code code) {
     Status status = code.toStatus();
     GrpcStatusCode statusCode = GrpcStatusCode.of(code);
