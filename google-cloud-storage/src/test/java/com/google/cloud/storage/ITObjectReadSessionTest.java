@@ -102,6 +102,23 @@ public final class ITObjectReadSessionTest {
   }
 
   @Test
+  public void attemptingToGetFutureOutSizeSessionFails() throws Throwable {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    BlobId blobId = obj512KiB.getInfo().getBlobId();
+
+    ApiFuture<byte[]> future;
+    try (BlobReadSession session = storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
+      future = session.readAs(ReadProjectionConfigs.asFutureBytes());
+    }
+
+    ExecutionException ee =
+        assertThrows(ExecutionException.class, () -> future.get(1, TimeUnit.SECONDS));
+
+    assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
+    assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(AsyncSessionClosedException.class);
+  }
+
+  @Test
   public void lotsOfBytes() throws Exception {
     ChecksummedTestContent testContent =
         ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(64 * _1MiB));

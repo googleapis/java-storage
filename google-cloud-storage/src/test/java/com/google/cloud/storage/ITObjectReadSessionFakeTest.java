@@ -78,7 +78,6 @@ import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.channels.WritableByteChannel;
@@ -1045,11 +1044,13 @@ public final class ITObjectReadSessionFakeTest {
               assertAll(
                   () -> assertThat(se2).isNotSameInstanceAs(se3),
                   () ->
-                      assertThat(se2).hasCauseThat().isInstanceOf(AsynchronousCloseException.class),
+                      assertThat(se2)
+                          .hasCauseThat()
+                          .isInstanceOf(AsyncSessionClosedException.class),
                   () ->
                       assertThat(se3)
                           .hasCauseThat()
-                          .isInstanceOf(AsynchronousCloseException.class));
+                          .isInstanceOf(AsyncSessionClosedException.class));
             });
       }
     }

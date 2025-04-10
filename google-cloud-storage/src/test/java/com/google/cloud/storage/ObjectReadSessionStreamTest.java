@@ -49,7 +49,6 @@ import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousCloseException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -219,19 +218,19 @@ public final class ObjectReadSessionStreamTest {
           Throwable t1 = read1.fail.get(2, TimeUnit.SECONDS);
           // t1.printStackTrace(System.out);
           assertThat(t1).isInstanceOf(StorageException.class);
-          assertThat(t1).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+          assertThat(t1).hasCauseThat().isInstanceOf(AsyncSessionClosedException.class);
         },
         () -> {
           Throwable t2 = read2.fail.get(2, TimeUnit.SECONDS);
           // t2.printStackTrace(System.err);
           assertThat(t2).isInstanceOf(StorageException.class);
-          assertThat(t2).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+          assertThat(t2).hasCauseThat().isInstanceOf(AsyncSessionClosedException.class);
         },
         () -> {
           Throwable t3 = read3.fail.get(2, TimeUnit.SECONDS);
           // t3.printStackTrace(System.out);
           assertThat(t3).isInstanceOf(StorageException.class);
-          assertThat(t3).hasCauseThat().isInstanceOf(AsynchronousCloseException.class);
+          assertThat(t3).hasCauseThat().isInstanceOf(AsyncSessionClosedException.class);
         });
   }
 
@@ -312,7 +311,7 @@ public final class ObjectReadSessionStreamTest {
           () -> assertThat(bytes2Close.get()).isTrue(),
           () -> assertThat(read1.acceptingBytes()).isFalse(),
           () -> assertThat(se).hasMessageThat().contains("Parent stream shutdown"),
-          () -> assertThat(se).hasCauseThat().isInstanceOf(AsynchronousCloseException.class));
+          () -> assertThat(se).hasCauseThat().isInstanceOf(AsyncSessionClosedException.class));
     }
   }
 

@@ -16,22 +16,45 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.core.InternalApi;
+import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.protobuf.ByteString;
 import java.io.Closeable;
 import java.io.IOException;
 
-@InternalApi
-@InternalExtensionOnly
-interface ZeroCopySupport {
+/**
+ * Public components which exist to support zero-copy data access
+ *
+ * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
+public abstract class ZeroCopySupport {
 
-  @InternalApi
+  private ZeroCopySupport() {}
+
+  /**
+   * Represents an object that can be accessed as a {@link ByteString}, but has a lifecycle that
+   * requires being explicitly closed in order to free up resources.
+   *
+   * <p>Instances of this class should be used in a try-with-resources to ensure they are released.
+   *
+   * <pre>{@code
+   * try (DisposableByteString disposableByteString = ...) {
+   *   System.out.println(disposableByteString.byteString().size());
+   * }
+   * }</pre>
+   *
+   * @see ReadProjectionConfigs#asFutureByteString()
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   @InternalExtensionOnly
-  interface DisposableByteString extends AutoCloseable, Closeable {
+  public interface DisposableByteString extends AutoCloseable, Closeable {
 
+    /** Get the ByteString representation of the underlying resources */
     ByteString byteString();
 
+    /** Signal the underlying resources that they can be released. */
     @Override
     void close() throws IOException;
   }

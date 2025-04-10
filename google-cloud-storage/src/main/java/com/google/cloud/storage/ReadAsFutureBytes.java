@@ -37,7 +37,8 @@ import javax.annotation.concurrent.Immutable;
  */
 @BetaApi
 @Immutable
-final class ReadAsFutureBytes extends BaseConfig<ApiFuture<byte[]>, AccumulatingRead<byte[]>> {
+public final class ReadAsFutureBytes
+    extends BaseConfig<ApiFuture<byte[]>, AccumulatingRead<byte[]>> {
 
   static final ReadAsFutureBytes INSTANCE =
       new ReadAsFutureBytes(RangeSpec.all(), Hasher.enabled());
