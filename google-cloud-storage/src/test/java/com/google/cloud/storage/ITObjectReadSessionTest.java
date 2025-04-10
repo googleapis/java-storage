@@ -25,8 +25,10 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
@@ -314,6 +316,37 @@ public final class ITObjectReadSessionTest {
             () -> assertThat(finalCopy2).isEqualTo(8 * _1MiB),
             () -> assertThat(finalCopy3).isEqualTo(16 * _1MiB));
       }
+    }
+  }
+
+  @Test
+  public void outOfRange()
+      throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    BlobId blobId;
+    BlobWriteSession session =
+        storage.blobWriteSession(
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+            BlobWriteOption.doesNotExist());
+    try (WritableByteChannel upload = session.open()) {
+      upload.write(DataGenerator.base64Characters().genByteBuffer(4));
+    }
+    blobId = session.getResult().get(5, TimeUnit.SECONDS).getBlobId();
+    try (BlobReadSession blobReadSession =
+        storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
+
+      BlobInfo info1 = blobReadSession.getBlobInfo();
+      assertThat(info1).isNotNull();
+
+      ReadAsFutureBytes cfg = ReadProjectionConfigs.asFutureBytes();
+
+      ApiFuture<byte[]> f2 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.beginAt(5)));
+      ExecutionException ee =
+          assertThrows(ExecutionException.class, () -> f2.get(30, TimeUnit.SECONDS));
+      assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(OutOfRangeException.class);
+
+      ApiFuture<byte[]> f1 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.all()));
+      byte[] bytes1 = f1.get(30, TimeUnit.SECONDS);
+      assertThat(bytes1.length).isEqualTo(4);
     }
   }
 

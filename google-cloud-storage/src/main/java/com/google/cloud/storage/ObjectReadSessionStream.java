@@ -377,37 +377,52 @@ final class ObjectReadSessionStream
     @Override
     public void onError(Throwable t) {
       requestStream = null;
-      try {
-        BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
-        if (error == null) {
-          return;
-        }
-
-        List<ReadRangeError> rangeErrors = error.getReadRangeErrorsList();
-        if (rangeErrors.isEmpty()) {
-          return;
-        }
-        for (ReadRangeError rangeError : rangeErrors) {
-          Status status = rangeError.getStatus();
-          long id = rangeError.getReadId();
-          ObjectReadSessionStreamRead<?> read = state.getOutstandingRead(id);
-          if (read == null) {
-            continue;
-          }
-          // mark read as failed, but don't resolve its future now. Schedule the delivery of the
-          // failure in executor to ensure any downstream future doesn't block this IO thread.
-          read.preFail();
-          executor.execute(
-              StorageException.liftToRunnable(
-                  () ->
-                      state
-                          .removeOutstandingReadOnFailure(id, read::fail)
-                          .onFailure(GrpcUtils.statusToApiException(status))));
-        }
-      } finally {
+      BidiReadObjectError error = GrpcUtils.getBidiReadObjectError(t);
+      if (error == null) {
+        // if there isn't a BidiReadObjectError that may contain more narrow failures, propagate
+        // the failure as is to the stream.
         streamRetryContext.recordError(
             t, ObjectReadSessionStream.this::restart, ObjectReadSessionStream.this::failAll);
+        return;
       }
+
+      List<ReadRangeError> rangeErrors = error.getReadRangeErrorsList();
+      if (rangeErrors.isEmpty()) {
+        // if there aren't any specific read id's that contain errors, propagate the error as is to
+        // the stream.
+        streamRetryContext.recordError(
+            t, ObjectReadSessionStream.this::restart, ObjectReadSessionStream.this::failAll);
+        return;
+      }
+      for (ReadRangeError rangeError : rangeErrors) {
+        Status status = rangeError.getStatus();
+        long id = rangeError.getReadId();
+        ObjectReadSessionStreamRead<?> read = state.getOutstandingRead(id);
+        if (read == null) {
+          continue;
+        }
+        // mark read as failed, but don't resolve its future now. Schedule the delivery of the
+        // failure in executor to ensure any downstream future doesn't block this IO thread.
+        read.preFail();
+        executor.execute(
+            StorageException.liftToRunnable(
+                () ->
+                    state
+                        .removeOutstandingReadOnFailure(id, read::fail)
+                        .onFailure(GrpcUtils.statusToApiException(status))));
+      }
+      // now that we've failed specific reads, raise a retryable ABORTED error to the stream to
+      // cause it to retry and pending remaining reads.
+      ApiException apiException =
+          ApiExceptionFactory.createException(
+              "Stream error, reclassifying as ABORTED for reads not specified in BidiReadObjectError",
+              t,
+              GrpcStatusCode.of(Code.ABORTED),
+              true);
+      streamRetryContext.recordError(
+          apiException,
+          ObjectReadSessionStream.this::restart,
+          ObjectReadSessionStream.this::failAll);
     }
 
     private OnSuccess restartReadFromCurrentOffset(long id) {

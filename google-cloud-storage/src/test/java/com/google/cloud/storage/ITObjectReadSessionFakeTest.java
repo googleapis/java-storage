@@ -53,9 +53,11 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import com.google.common.truth.Correspondence;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat;
+import com.google.rpc.DebugInfo;
 import com.google.storage.v2.BidiReadHandle;
 import com.google.storage.v2.BidiReadObjectError;
 import com.google.storage.v2.BidiReadObjectRedirectedError;
@@ -77,6 +79,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
@@ -86,13 +89,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1376,9 +1386,6 @@ public final class ITObjectReadSessionFakeTest {
                     .build())
             .build();
 
-    System.out.println("req1 = " + TextFormat.printer().shortDebugString(req1));
-    System.out.println("req2 = " + TextFormat.printer().shortDebugString(req2));
-    System.out.println("req3 = " + TextFormat.printer().shortDebugString(req3));
     ImmutableMap<BidiReadObjectRequest, BidiReadObjectResponse> db =
         ImmutableMap.<BidiReadObjectRequest, BidiReadObjectResponse>builder()
             .put(req1, res1)
@@ -1534,6 +1541,196 @@ public final class ITObjectReadSessionFakeTest {
             () -> assertThat(actual).hasLength(expectedBytes.length),
             () -> assertThat(xxd(actual)).isEqualTo(xxd(expectedBytes)),
             () -> assertThat(actualCrc32c).isEqualTo(expectedCrc32c));
+      }
+    }
+  }
+
+  /**
+   * Define a test where multiple reads for the same session will be performed, and some of those
+   * reads cause OUT_OF_RANGE errors.
+   *
+   * <p>An OUT_OF_RANGE error is delivered as a stream level status, which means any reads which
+   * share a stream must be restarted while the read that caused the OUT_OF_RANGE should be failed.
+   *
+   * <p>Verify this behavior for both channel based and future byte[] based.
+   */
+  @Test
+  public void serverOutOfRangeIsNotRetried() throws Exception {
+    ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
+    Semaphore sem = new Semaphore(1);
+
+    BidiReadObjectResponse dataResp =
+        BidiReadObjectResponse.newBuilder()
+            .addObjectDataRanges(
+                ObjectRangeData.newBuilder()
+                    .setChecksummedData(expected.asChecksummedData())
+                    .setReadRange(getReadRange(0, 10, 20))
+                    .setRangeEnd(true)
+                    .build())
+            .build();
+
+    AtomicInteger bidiReadObjectCount = new AtomicInteger();
+    ExecutorService exec =
+        Executors.newCachedThreadPool(
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("test-server-%d").build());
+
+    StorageImplBase fakeStorage =
+        new StorageImplBase() {
+          @Override
+          public StreamObserver<BidiReadObjectRequest> bidiReadObject(
+              StreamObserver<BidiReadObjectResponse> respond) {
+            bidiReadObjectCount.getAndIncrement();
+            return new StreamObserver<BidiReadObjectRequest>() {
+              @Override
+              public void onNext(BidiReadObjectRequest request) {
+                if (request.equals(REQ_OPEN)) {
+                  respond.onNext(RES_OPEN);
+                } else if (request.getReadRangesList().get(0).getReadOffset() == 10) {
+                  exec.submit(
+                      () -> {
+                        try {
+                          sem.acquire();
+                          BidiReadObjectResponse.Builder b = dataResp.toBuilder();
+                          ReadRange readRange = request.getReadRangesList().get(0);
+                          ObjectRangeData.Builder bb = dataResp.getObjectDataRanges(0).toBuilder();
+                          bb.getReadRangeBuilder().setReadId(readRange.getReadId());
+                          b.setObjectDataRanges(0, bb.build());
+                          respond.onNext(b.build());
+                        } catch (InterruptedException e) {
+                          respond.onError(
+                              TestUtils.apiException(Code.UNIMPLEMENTED, e.getMessage()));
+                        }
+                      });
+                } else if (bidiReadObjectCount.getAndIncrement() >= 1) {
+                  Optional<ReadRange> readRange = request.getReadRangesList().stream().findFirst();
+                  String message =
+                      String.format(
+                          Locale.US,
+                          "OUT_OF_RANGE read_offset = %d",
+                          readRange.map(ReadRange::getReadOffset).orElse(0L));
+                  long readId = readRange.map(ReadRange::getReadId).orElse(0L);
+
+                  BidiReadObjectError err2 =
+                      BidiReadObjectError.newBuilder()
+                          .addReadRangeErrors(
+                              ReadRangeError.newBuilder()
+                                  .setReadId(readId)
+                                  .setStatus(
+                                      com.google.rpc.Status.newBuilder()
+                                          .setCode(com.google.rpc.Code.OUT_OF_RANGE_VALUE)
+                                          .build())
+                                  .build())
+                          .build();
+
+                  com.google.rpc.Status grpcStatusDetails =
+                      com.google.rpc.Status.newBuilder()
+                          .setCode(com.google.rpc.Code.UNAVAILABLE_VALUE)
+                          .setMessage("fail read_id: " + readId)
+                          .addDetails(Any.pack(err2))
+                          .addDetails(
+                              Any.pack(
+                                  DebugInfo.newBuilder()
+                                      .setDetail(message)
+                                      .addStackEntries(
+                                          TextFormat.printer().shortDebugString(request))
+                                      .build()))
+                          .build();
+
+                  Metadata trailers = new Metadata();
+                  trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                  StatusRuntimeException statusRuntimeException =
+                      Status.OUT_OF_RANGE.withDescription(message).asRuntimeException(trailers);
+                  respond.onError(statusRuntimeException);
+                } else {
+                  respond.onError(
+                      apiException(
+                          Code.UNIMPLEMENTED,
+                          "Unexpected request { "
+                              + TextFormat.printer().shortDebugString(request)
+                              + " }"));
+                }
+              }
+
+              @Override
+              public void onError(Throwable t) {
+                respond.onError(t);
+              }
+
+              @Override
+              public void onCompleted() {
+                respond.onCompleted();
+              }
+            };
+          }
+        };
+    try (FakeServer fakeServer = FakeServer.of(fakeStorage);
+        Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
+
+      BlobId id = BlobId.of("b", "o");
+
+      try (BlobReadSession session = storage.blobReadSession(id).get(5, TimeUnit.SECONDS)) {
+
+        ApiFuture<byte[]> shouldSucceedFuture =
+            session.readAs(
+                ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10, 20)));
+
+        ApiFuture<byte[]> shouldFailFuture =
+            session.readAs(
+                ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.beginAt(37)));
+        ExecutionException exceptionFromFuture =
+            assertThrows(
+                ExecutionException.class, () -> shouldFailFuture.get(30, TimeUnit.SECONDS));
+        sem.release();
+
+        Exception exceptionFromChannel;
+        byte[] bytesFromFuture = shouldSucceedFuture.get(30, TimeUnit.SECONDS);
+
+        AtomicReference<byte[]> bytesFromChannel = new AtomicReference<>();
+        Future<Long> asyncShouldSucceedChannel =
+            exec.submit(
+                () -> {
+                  try (ScatteringByteChannel succeed =
+                      session.readAs(
+                          ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10, 20)))) {
+                    sem.acquire();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    long copy = ByteStreams.copy(succeed, Channels.newChannel(baos));
+                    bytesFromChannel.set(baos.toByteArray());
+                    return copy;
+                  } catch (IOException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+        try (ScatteringByteChannel fail =
+            session.readAs(
+                ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.beginAt(39)))) {
+          exceptionFromChannel =
+              assertThrows(
+                  IOException.class,
+                  () -> {
+                    int read = 0;
+                    do {
+                      read = fail.read(ByteBuffer.allocate(1));
+                    } while (read == 0);
+                  });
+          sem.release();
+        }
+        asyncShouldSucceedChannel.get(30, TimeUnit.SECONDS);
+        Exception finalExceptionFromChannel = exceptionFromChannel;
+        assertAll(
+            () ->
+                assertThat(exceptionFromFuture)
+                    .hasCauseThat()
+                    .hasCauseThat()
+                    .isInstanceOf(OutOfRangeException.class),
+            () ->
+                assertThat(finalExceptionFromChannel)
+                    .hasCauseThat()
+                    .hasCauseThat()
+                    .isInstanceOf(OutOfRangeException.class),
+            () -> assertThat(xxd(bytesFromFuture)).isEqualTo(xxd(expected.getBytes())),
+            () -> assertThat(xxd(bytesFromChannel.get())).isEqualTo(xxd(expected.getBytes())));
       }
     }
   }
