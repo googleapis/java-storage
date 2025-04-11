@@ -78,12 +78,11 @@ public final class MaxLengthRangeSpecFunction extends RangeSpecFunction {
    * this.maxLength}.
    */
   @Override
-  public RangeSpec apply(long offset, @Nullable RangeSpec prev) {
+  RangeSpec apply(long offset, @Nullable RangeSpec prev) {
     if (prev == null || !prev.maxLength().isPresent()) {
       return RangeSpec.of(offset, maxLength);
     }
     long limit = prev.maxLength().getAsLong();
-    // TODO: add special handling for 0
     return RangeSpec.of(offset, Math.min(limit, maxLength));
   }
 

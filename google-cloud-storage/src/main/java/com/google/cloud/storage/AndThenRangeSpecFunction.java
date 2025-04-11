@@ -31,7 +31,7 @@ final class AndThenRangeSpecFunction extends RangeSpecFunction {
   }
 
   @Override
-  public RangeSpec apply(long offset, @Nullable RangeSpec prev) {
+  RangeSpec apply(long offset, @Nullable RangeSpec prev) {
     return second.apply(offset, first.apply(offset, prev));
   }
 

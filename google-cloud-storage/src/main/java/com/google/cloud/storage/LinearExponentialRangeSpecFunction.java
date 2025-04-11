@@ -118,7 +118,7 @@ public final class LinearExponentialRangeSpecFunction extends RangeSpecFunction 
    * maxLengthScalar}
    */
   @Override
-  public RangeSpec apply(long offset, RangeSpec prev) {
+  RangeSpec apply(long offset, RangeSpec prev) {
     if (prev == null) {
       return RangeSpec.of(offset, initialMaxLength);
     }
