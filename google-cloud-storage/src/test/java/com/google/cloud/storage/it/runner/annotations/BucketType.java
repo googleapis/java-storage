@@ -25,5 +25,7 @@ public enum BucketType {
   /** A bucket created with Hierarchical Namespace enabled */
   HNS,
   /** A bucket created using all GCS default except that object versioning is enabled */
-  VERSIONED
+  VERSIONED,
+  /** A Rapid bucket */
+  RAPID
 }

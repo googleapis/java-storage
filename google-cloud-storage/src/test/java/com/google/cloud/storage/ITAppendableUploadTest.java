@@ -22,6 +22,8 @@ import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
+import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
@@ -37,12 +39,11 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.TEST_BENCH)
+@SingleBackend(Backend.PROD)
 public final class ITAppendableUploadTest {
 
   @Inject public Generator generator;
@@ -51,7 +52,9 @@ public final class ITAppendableUploadTest {
   @StorageFixture(TransportCompatibility.Transport.GRPC)
   public Storage storage;
 
-  @Inject public BucketInfo bucket;
+  @Inject
+  @BucketFixture(BucketType.RAPID)
+  public BucketInfo bucket;
 
   @Test
   public void testAppendableBlobUpload()
@@ -92,7 +95,6 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
-  @Ignore("Pending work in testbench, manually verified internally on 2025-03-03")
   public void appendableBlobUploadTakeover() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
@@ -137,7 +139,6 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
-  @Ignore("Pending work in testbench, manually verified internally on 2025-03-25")
   public void finalizeAfterCloseWorks() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(1024));
@@ -153,7 +154,6 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
-  @Ignore("Pending work in testbench, manually verified internally on 2025-03-25")
   public void takeoverJustToFinalizeWorks() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));

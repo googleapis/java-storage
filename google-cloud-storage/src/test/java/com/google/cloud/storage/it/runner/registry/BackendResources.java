@@ -24,11 +24,13 @@ import static com.google.cloud.storage.it.runner.registry.RegistryApplicabilityP
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.HierarchicalNamespace;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.GrpcPlainRequestLoggingInterceptor;
@@ -242,6 +244,31 @@ final class BackendResources implements ManagedLifecycle {
                   storageJson.get().getStorage(),
                   ctrl.get().getCtrl());
             });
+    TestRunScopedInstance<BucketInfoShim> bucketRapid =
+        TestRunScopedInstance.of(
+            "fixture/BUCKET/[" + backend.name() + "]/RAPID",
+            () -> {
+              String bucketName =
+                  String.format(Locale.US, "java-storage-grpc-rapid-%s", UUID.randomUUID());
+              protectedBucketNames.add(bucketName);
+              return new BucketInfoShim(
+                  BucketInfo.newBuilder(bucketName)
+                      .setLocation(zone.get().get().getRegion())
+                      .setCustomPlacementConfig(
+                          CustomPlacementConfig.newBuilder()
+                              .setDataLocations(ImmutableList.of(zone.get().get().getZone()))
+                              .build())
+                      .setStorageClass(StorageClass.valueOf("RAPID"))
+                      .setHierarchicalNamespace(
+                          HierarchicalNamespace.newBuilder().setEnabled(true).build())
+                      .setIamConfiguration(
+                          IamConfiguration.newBuilder()
+                              .setIsUniformBucketLevelAccessEnabled(true)
+                              .build())
+                      .build(),
+                  storageJson.get().getStorage(),
+                  ctrl.get().getCtrl());
+            });
     TestRunScopedInstance<ObjectsFixture> objectsFixture =
         TestRunScopedInstance.of(
             "fixture/OBJECTS/[" + backend.name() + "]",
@@ -286,6 +313,11 @@ final class BackendResources implements ManagedLifecycle {
                 BucketInfo.class,
                 bucketVersioned,
                 backendIs(backend).and(bucketTypeIs(BucketType.VERSIONED))),
+            RegistryEntry.of(
+                63,
+                BucketInfo.class,
+                bucketRapid,
+                backendIs(backend).and(bucketTypeIs(BucketType.RAPID))),
             RegistryEntry.of(
                 70, BucketInfo.class, bucket, backendIs(backend).and(isDefaultBucket())),
             RegistryEntry.of(

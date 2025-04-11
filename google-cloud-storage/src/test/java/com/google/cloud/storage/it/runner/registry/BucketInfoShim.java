@@ -16,8 +16,11 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import static org.junit.Assume.assumeTrue;
+
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.it.BucketCleaner;
 import com.google.storage.control.v2.StorageControlClient;
 
@@ -47,7 +50,16 @@ final class BucketInfoShim implements ManagedLifecycle {
 
   @Override
   public void start() {
-    createdBucket = s.create(bucketInfo).asBucketInfo();
+    try {
+      createdBucket = s.create(bucketInfo).asBucketInfo();
+    } catch (StorageException se) {
+      String msg = se.getMessage();
+      if (se.getCode() == 400 && msg.contains("not a valid zone in location")) {
+        assumeTrue(
+            "Skipping test due to bucket setup unavailable in current zone. (" + msg + ")", false);
+      }
+      throw se;
+    }
   }
 
   @Override
