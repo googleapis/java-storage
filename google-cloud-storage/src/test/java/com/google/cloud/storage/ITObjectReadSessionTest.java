@@ -27,19 +27,18 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
+import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
-import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
-import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
 import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
@@ -63,7 +62,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.TEST_BENCH)
+@SingleBackend(Backend.PROD)
 public final class ITObjectReadSessionTest {
 
   private static final int _512KiB = 512 * 1024;
@@ -72,18 +71,20 @@ public final class ITObjectReadSessionTest {
   @StorageFixture(Transport.GRPC)
   public Storage storage;
 
-  @Inject public BucketInfo bucket;
+  @Inject
+  @BucketFixture(BucketType.RAPID)
+  public BucketInfo bucket;
 
   @Inject public Generator generator;
-
-  @Inject public ObjectsFixture objectsFixture;
 
   @Test
   public void bytes()
       throws ExecutionException, InterruptedException, TimeoutException, IOException {
-    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
-    byte[] expected = obj512KiB.getContent().getBytes(_512KiB - 13);
-    BlobId blobId = obj512KiB.getInfo().getBlobId();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * 1024));
+    BlobInfo obj512KiB = create(testContent);
+    byte[] expected = testContent.getBytes(_512KiB - 13);
+    BlobId blobId = obj512KiB.getBlobId();
 
     try (BlobReadSession blobReadSession =
         storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
@@ -105,8 +106,10 @@ public final class ITObjectReadSessionTest {
 
   @Test
   public void attemptingToGetFutureOutSizeSessionFails() throws Throwable {
-    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
-    BlobId blobId = obj512KiB.getInfo().getBlobId();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(512 * 1024));
+    BlobInfo obj512KiB = create(testContent);
+    BlobId blobId = obj512KiB.getBlobId();
 
     ApiFuture<byte[]> future;
     try (BlobReadSession session = storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
@@ -322,15 +325,11 @@ public final class ITObjectReadSessionTest {
   @Test
   public void outOfRange()
       throws ExecutionException, InterruptedException, TimeoutException, IOException {
-    BlobId blobId;
-    BlobWriteSession session =
-        storage.blobWriteSession(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
-            BlobWriteOption.doesNotExist());
-    try (WritableByteChannel upload = session.open()) {
-      upload.write(DataGenerator.base64Characters().genByteBuffer(4));
-    }
-    blobId = session.getResult().get(5, TimeUnit.SECONDS).getBlobId();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(4));
+    BlobInfo obj512KiB = create(testContent);
+    BlobId blobId = obj512KiB.getBlobId();
+
     try (BlobReadSession blobReadSession =
         storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
 
@@ -350,10 +349,14 @@ public final class ITObjectReadSessionTest {
     }
   }
 
-  private BlobInfo create(ChecksummedTestContent content) {
-    return storage.create(
-        BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
-        content.getBytes(),
-        BlobTargetOption.doesNotExist());
+  private BlobInfo create(ChecksummedTestContent content)
+      throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    try (BlobAppendableUpload upload =
+        storage.blobAppendableUpload(
+            info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist())) {
+      upload.write(ByteBuffer.wrap(content.getBytes()));
+      return upload.finalizeUpload().get(30, TimeUnit.SECONDS);
+    }
   }
 }
