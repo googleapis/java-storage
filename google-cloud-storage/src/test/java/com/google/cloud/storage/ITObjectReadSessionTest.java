@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.OutOfRangeException;
+import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -351,11 +352,14 @@ public final class ITObjectReadSessionTest {
   private BlobInfo create(ChecksummedTestContent content)
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    try (BlobAppendableUpload upload =
+
+    BlobAppendableUpload upload =
         storage.blobAppendableUpload(
-            info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist())) {
-      upload.write(ByteBuffer.wrap(content.getBytes()));
-      return upload.finalizeUpload().get(30, TimeUnit.SECONDS);
+            info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist());
+    try (AppendableUploadWriteableByteChannel channel = upload.open(); ) {
+      channel.write(ByteBuffer.wrap(content.getBytes()));
+      channel.finalizeAndClose();
     }
+    return upload.getResult().get(5, TimeUnit.SECONDS);
   }
 }

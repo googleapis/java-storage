@@ -22,6 +22,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -184,11 +185,17 @@ final class GapicBidiWritableByteChannelSessionBuilder {
 
     final class BufferedAppendableUploadBuilder {
       private final FlushPolicy flushPolicy;
+      private boolean finalizeOnClose;
       private ApiFuture<BidiAppendableWrite> start;
       private UnaryCallable<GetObjectRequest, Object> get;
 
       BufferedAppendableUploadBuilder(FlushPolicy flushPolicy) {
         this.flushPolicy = flushPolicy;
+      }
+
+      BufferedAppendableUploadBuilder setFinalizeOnClose(boolean finalizeOnClose) {
+        this.finalizeOnClose = finalizeOnClose;
+        return this;
       }
 
       /**
@@ -206,7 +213,9 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         return this;
       }
 
-      BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
+      WritableByteChannelSession<
+              AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse>
+          build() {
         // it is theoretically possible that the setter methods for the following variables could
         // be called again between when this method is invoked and the resulting function is
         // invoked.
@@ -218,7 +227,8 @@ final class GapicBidiWritableByteChannelSessionBuilder {
         RetrierWithAlg boundRetrier = retrier;
         UnaryCallable<GetObjectRequest, Object> boundGet =
             requireNonNull(get, "get must be non null");
-        return new BufferedWriteSession<>(
+        boolean boundFinalizeOnClose = finalizeOnClose;
+        return new AppendableSession(
             requireNonNull(start, "start must be non null"),
             ((BiFunction<
                         BidiAppendableWrite,
@@ -235,10 +245,32 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                             new BidiWriteCtx<>(start),
                             Retrying::newCallContext))
                 .andThen(
-                    c ->
-                        new BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel(
-                            flushPolicy.createBufferedChannel(c), c)));
+                    c -> {
+                      boolean takeOver =
+                          c.getWriteCtx().getRequestFactory().getReq().hasAppendObjectSpec();
+                      if (takeOver) {
+                        c.startAppendableTakeoverStream();
+                      }
+                      return new AppendableObjectBufferedWritableByteChannel(
+                          flushPolicy.createBufferedChannel(c), c, boundFinalizeOnClose);
+                    }));
       }
+    }
+  }
+
+  private static final class AppendableSession
+      extends ChannelSession<
+          BidiAppendableWrite, BidiWriteObjectResponse, AppendableObjectBufferedWritableByteChannel>
+      implements WritableByteChannelSession<
+          AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse> {
+    private AppendableSession(
+        ApiFuture<BidiAppendableWrite> startFuture,
+        BiFunction<
+                BidiAppendableWrite,
+                SettableApiFuture<BidiWriteObjectResponse>,
+                AppendableObjectBufferedWritableByteChannel>
+            f) {
+      super(startFuture, f);
     }
   }
 }

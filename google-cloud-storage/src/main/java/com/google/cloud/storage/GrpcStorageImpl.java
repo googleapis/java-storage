@@ -35,9 +35,7 @@ import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
-import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -87,7 +85,6 @@ import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectSpec;
 import com.google.storage.v2.BidiWriteObjectRequest;
-import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
@@ -1424,60 +1421,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @BetaApi
   @Override
   public BlobAppendableUpload blobAppendableUpload(
-      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
-      throws IOException {
-    boolean takeOver = blobInfo.getGeneration() != null;
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    BidiWriteObjectRequest req =
-        takeOver
-            ? getBidiWriteObjectRequestForTakeover(blobInfo, opts)
-            : getBidiWriteObjectRequest(blobInfo, opts);
-    BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
-    ApiFuture<BidiAppendableWrite> startAppendableWrite = ApiFutures.immediateFuture(baw);
-    WritableByteChannelSession<BufferedWritableByteChannel, BidiWriteObjectResponse> build =
-        ResumableMedia.gapic()
-            .write()
-            .bidiByteChannel(storageClient.bidiWriteObjectCallable())
-            .setHasher(uploadConfig.getHasher())
-            .setByteStringStrategy(ByteStringStrategy.copy())
-            .appendable()
-            .withRetryConfig(
-                retrier.withAlg(
-                    new BasicResultRetryAlgorithm<Object>() {
-                      @Override
-                      public boolean shouldRetry(
-                          Throwable previousThrowable, Object previousResponse) {
-                        // TODO: remove this later once the redirects are not handled by the retry
-                        // loop
-                        ApiException apiEx = null;
-                        if (previousThrowable instanceof StorageException) {
-                          StorageException se = (StorageException) previousThrowable;
-                          Throwable cause = se.getCause();
-                          if (cause instanceof ApiException) {
-                            apiEx = (ApiException) cause;
-                          }
-                        }
-                        if (apiEx instanceof AbortedException) {
-                          return true;
-                        }
-                        return retryAlgorithmManager
-                            .idempotent()
-                            .shouldRetry(previousThrowable, null);
-                      }
-                    }))
-            .buffered(uploadConfig.getFlushPolicy())
-            .setStartAsync(startAppendableWrite)
-            .setGetCallable(storageClient.getObjectCallable())
-            .build();
-    DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<
-            BufferedWritableByteChannel, BidiWriteObjectResponse>
-        dec =
-            new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
-                build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
-    BlobWriteSession session = BlobWriteSessions.of(dec);
-    return takeOver
-        ? BlobAppendableUploadImpl.resumeAppendableUpload(blobInfo, session)
-        : BlobAppendableUploadImpl.createNewAppendableBlob(blobInfo, session);
+    return uploadConfig.create(this, blobInfo, opts);
   }
 
   @Override

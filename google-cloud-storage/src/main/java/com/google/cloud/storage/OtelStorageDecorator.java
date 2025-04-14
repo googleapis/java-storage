@@ -1506,19 +1506,25 @@ final class OtelStorageDecorator implements Storage {
 
   @Override
   public BlobAppendableUpload blobAppendableUpload(
-      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
-      throws IOException {
-    Span span = tracer.spanBuilder("appendableBlobUpload").startSpan();
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options) {
+
+    Span span =
+        tracer
+            .spanBuilder("appendableBlobUpload")
+            .setAttribute("gsutil.uri", blobInfo.getBlobId().toGsUtilUriWithGeneration())
+            .startSpan();
     try (Scope ignore = span.makeCurrent()) {
 
       return new OtelDecoratingBlobAppendableUpload(
-          delegate.blobAppendableUpload(blobInfo, uploadConfig, options), span, Context.current());
+          delegate.blobAppendableUpload(blobInfo, uploadConfig, options));
 
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
       span.end();
       throw t;
+    } finally {
+      span.end();
     }
   }
 
@@ -2104,57 +2110,98 @@ final class OtelStorageDecorator implements Storage {
 
   final class OtelDecoratingBlobAppendableUpload implements BlobAppendableUpload {
     private final BlobAppendableUpload delegate;
-    private final Span openSpan;
-    private final Context openContext;
+    private final Tracer tracer;
 
-    private OtelDecoratingBlobAppendableUpload(
-        BlobAppendableUpload delegate, Span openSpan, Context openContext) {
+    private OtelDecoratingBlobAppendableUpload(BlobAppendableUpload delegate) {
       this.delegate = delegate;
-      this.openSpan = openSpan;
-      this.openContext = openContext;
+      this.tracer =
+          TracerDecorator.decorate(
+              Context.current(),
+              otel,
+              OtelStorageDecorator.this.baseAttributes,
+              BlobAppendableUpload.class.getName() + "/");
     }
 
     @Override
-    public int write(ByteBuffer src) throws IOException {
-      return delegate.write(src);
-    }
-
-    @Override
-    public void close() throws IOException {
-      try {
-        delegate.close();
+    public AppendableUploadWriteableByteChannel open() throws IOException {
+      Span openSpan = tracer.spanBuilder("open").startSpan();
+      try (Scope ignore = openSpan.makeCurrent()) {
+        AppendableUploadWriteableByteChannel delegate = this.delegate.open();
+        return new OtelDecoratingAppendableUploadWriteableByteChannel(delegate, openSpan);
       } catch (Throwable t) {
         openSpan.recordException(t);
         openSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
         throw t;
-      } finally {
-        openSpan.end();
       }
     }
 
     @Override
-    @BetaApi
-    public ApiFuture<BlobInfo> finalizeUpload() throws IOException {
-      Span span =
-          tracer
-              .spanBuilder("appendableBlobUpload/finalizeUpload")
-              .setParent(openContext)
-              .startSpan();
-      try (Scope ignore = span.makeCurrent()) {
-        return delegate.finalizeUpload();
-      } catch (Throwable t) {
-        span.recordException(t);
-        span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
-        throw t;
-      } finally {
-        span.end();
-        openSpan.end();
-      }
+    public ApiFuture<BlobInfo> getResult() {
+      return delegate.getResult();
     }
 
-    @Override
-    public boolean isOpen() {
-      return delegate.isOpen();
+    private final class OtelDecoratingAppendableUploadWriteableByteChannel
+        implements AppendableUploadWriteableByteChannel {
+      private final AppendableUploadWriteableByteChannel delegate;
+      private final Span openSpan;
+
+      private OtelDecoratingAppendableUploadWriteableByteChannel(
+          AppendableUploadWriteableByteChannel delegate, Span openSpan) {
+        this.delegate = delegate;
+        this.openSpan = openSpan;
+      }
+
+      @Override
+      @BetaApi
+      public void finalizeAndClose() throws IOException {
+        try {
+          delegate.finalizeAndClose();
+        } catch (IOException | RuntimeException e) {
+          openSpan.recordException(e);
+          openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          throw e;
+        } finally {
+          openSpan.end();
+        }
+      }
+
+      @Override
+      @BetaApi
+      public void closeWithoutFinalizing() throws IOException {
+        try {
+          delegate.closeWithoutFinalizing();
+        } catch (IOException | RuntimeException e) {
+          openSpan.recordException(e);
+          openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          throw e;
+        } finally {
+          openSpan.end();
+        }
+      }
+
+      @Override
+      @BetaApi
+      public void close() throws IOException {
+        try {
+          delegate.close();
+        } catch (IOException | RuntimeException e) {
+          openSpan.recordException(e);
+          openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          throw e;
+        } finally {
+          openSpan.end();
+        }
+      }
+
+      @Override
+      public int write(ByteBuffer src) throws IOException {
+        return delegate.write(src);
+      }
+
+      @Override
+      public boolean isOpen() {
+        return delegate.isOpen();
+      }
     }
   }
 }

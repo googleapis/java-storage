@@ -19,60 +19,35 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.ReentrantLock;
 
 @BetaApi
 final class BlobAppendableUploadImpl implements BlobAppendableUpload {
-  private final AppendableObjectBufferedWritableByteChannel channel;
-  private final ApiFuture<BlobInfo> result;
+  private final WritableByteChannelSession<AppendableObjectBufferedWritableByteChannel, BlobInfo>
+      delegate;
+  private boolean open;
 
-  private BlobAppendableUploadImpl(BlobInfo blob, BlobWriteSession session, boolean takeover)
-      throws IOException {
-    channel = (AppendableObjectBufferedWritableByteChannel) (session.open());
-    result = session.getResult();
-    if (takeover) {
-      channel.startTakeoverStream();
+  BlobAppendableUploadImpl(
+      WritableByteChannelSession<AppendableObjectBufferedWritableByteChannel, BlobInfo> delegate) {
+    this.delegate = delegate;
+    this.open = false;
+  }
+
+  @Override
+  public AppendableUploadWriteableByteChannel open() throws IOException {
+    synchronized (this) {
+      Preconditions.checkState(!open, "already open");
+      open = true;
+      return delegate.open();
     }
   }
 
-  static BlobAppendableUpload createNewAppendableBlob(BlobInfo blob, BlobWriteSession session)
-      throws IOException {
-    return new BlobAppendableUploadImpl(blob, session, false);
-  }
-
-  static BlobAppendableUpload resumeAppendableUpload(BlobInfo blob, BlobWriteSession session)
-      throws IOException {
-    return new BlobAppendableUploadImpl(blob, session, true);
-  }
-
-  void startTakeoverStream() {
-    channel.startTakeoverStream();
-  }
-
-  @BetaApi
-  public ApiFuture<BlobInfo> finalizeUpload() throws IOException {
-    channel.finalizeWrite();
-    close();
-    return result;
-  }
-
   @Override
-  public int write(ByteBuffer buffer) throws IOException {
-    return channel.write(buffer);
-  }
-
-  @Override
-  public boolean isOpen() {
-    return channel.isOpen();
-  }
-
-  @Override
-  public void close() throws IOException {
-    if (channel.isOpen()) {
-      channel.close();
-    }
+  public ApiFuture<BlobInfo> getResult() {
+    return delegate.getResult();
   }
 
   /**
@@ -85,16 +60,20 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
    * wrap it over this one.
    */
   static final class AppendableObjectBufferedWritableByteChannel
-      implements BufferedWritableByteChannel {
+      implements BufferedWritableByteChannel,
+          BlobAppendableUpload.AppendableUploadWriteableByteChannel {
     private final BufferedWritableByteChannel buffered;
     private final GapicBidiUnbufferedAppendableWritableByteChannel unbuffered;
+    private final boolean finalizeOnClose;
     private final ReentrantLock lock;
 
     AppendableObjectBufferedWritableByteChannel(
         BufferedWritableByteChannel buffered,
-        GapicBidiUnbufferedAppendableWritableByteChannel unbuffered) {
+        GapicBidiUnbufferedAppendableWritableByteChannel unbuffered,
+        boolean finalizeOnClose) {
       this.buffered = buffered;
       this.unbuffered = unbuffered;
+      this.finalizeOnClose = finalizeOnClose;
       lock = new ReentrantLock();
     }
 
@@ -129,27 +108,38 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
     }
 
     @Override
+    public void finalizeAndClose() throws IOException {
+      lock.lock();
+      try {
+        if (buffered.isOpen()) {
+          buffered.flush();
+          unbuffered.finalizeWrite();
+          buffered.close();
+        }
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
+    public void closeWithoutFinalizing() throws IOException {
+      lock.lock();
+      try {
+        if (buffered.isOpen()) {
+          buffered.close();
+        }
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override
     public void close() throws IOException {
-      lock.lock();
-      try {
-        buffered.close();
-      } finally {
-        lock.unlock();
+      if (finalizeOnClose) {
+        finalizeAndClose();
+      } else {
+        closeWithoutFinalizing();
       }
-    }
-
-    public void finalizeWrite() throws IOException {
-      lock.lock();
-      try {
-        buffered.flush();
-        unbuffered.finalizeWrite();
-      } finally {
-        lock.unlock();
-      }
-    }
-
-    void startTakeoverStream() {
-      unbuffered.startAppendableTakeoverStream();
     }
   }
 }
