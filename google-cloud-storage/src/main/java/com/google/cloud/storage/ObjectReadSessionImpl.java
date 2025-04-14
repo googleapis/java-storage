@@ -32,12 +32,13 @@ import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
-import org.checkerframework.checker.lock.qual.GuardedBy;
+import java.util.function.BiFunction;
 
 final class ObjectReadSessionImpl implements ObjectReadSession {
 
@@ -49,12 +50,8 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   private final Object resource;
   private final RetryContextProvider retryContextProvider;
 
-  @GuardedBy("this.lock")
-  private final IdentityHashMap<ObjectReadSessionStream, ObjectReadSessionState> children;
+  private final ConcurrentIdentityMap<ObjectReadSessionStream, ObjectReadSessionState> children;
 
-  private final ReentrantLock lock;
-
-  @GuardedBy("this.lock")
   private volatile boolean open;
 
   ObjectReadSessionImpl(
@@ -69,8 +66,7 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     this.state = state;
     this.resource = state.getMetadata();
     this.retryContextProvider = retryContextProvider;
-    this.children = new IdentityHashMap<>();
-    this.lock = new ReentrantLock();
+    this.children = new ConcurrentIdentityMap<>();
     this.open = true;
   }
 
@@ -81,45 +77,35 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
 
   @Override
   public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
-    lock.lock();
-    try {
-      checkState(open, "Session already closed");
-      switch (config.getType()) {
-        case STREAM_READ:
-          long readId = state.newReadId();
-          ObjectReadSessionStreamRead<Projection> read =
-              config.cast().newRead(readId, retryContextProvider.create());
-          registerReadInState(readId, read);
-          return read.project();
-        case SESSION_USER:
-          return config.project(this, IOAutoCloseable.noOp());
-        default:
-          throw new IllegalStateException(
-              String.format(
-                  Locale.US,
-                  "Broken java enum %s value=%s",
-                  ProjectionType.class.getName(),
-                  config.getType().name()));
-      }
-    } finally {
-      lock.unlock();
+    checkState(open, "Session already closed");
+    switch (config.getType()) {
+      case STREAM_READ:
+        long readId = state.newReadId();
+        ObjectReadSessionStreamRead<Projection> read =
+            config.cast().newRead(readId, retryContextProvider.create());
+        registerReadInState(readId, read);
+        return read.project();
+      case SESSION_USER:
+        return config.project(this, IOAutoCloseable.noOp());
+      default:
+        throw new IllegalStateException(
+            String.format(
+                Locale.US,
+                "Broken java enum %s value=%s",
+                ProjectionType.class.getName(),
+                config.getType().name()));
     }
   }
 
   @Override
   public void close() throws IOException {
-    open = false;
-    lock.lock();
     try {
-      Iterator<Entry<ObjectReadSessionStream, ObjectReadSessionState>> it =
-          children.entrySet().iterator();
-      ArrayList<ApiFuture<Void>> closing = new ArrayList<>(children.size());
-      while (it.hasNext()) {
-        Entry<ObjectReadSessionStream, ObjectReadSessionState> next = it.next();
-        ObjectReadSessionStream subStream = next.getKey();
-        it.remove();
-        closing.add(subStream.closeAsync());
+      if (!open) {
+        return;
       }
+      open = false;
+      List<ApiFuture<Void>> closing =
+          children.drainEntries((subStream, subStreamState) -> subStream.closeAsync());
       stream.close();
       ApiFutures.allAsList(closing).get();
     } catch (ExecutionException e) {
@@ -127,8 +113,6 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new InterruptedIOException();
-    } finally {
-      lock.unlock();
     }
   }
 
@@ -150,6 +134,55 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
           });
       child.putOutstandingRead(readId, read);
       newStream.send(request);
+    }
+  }
+
+  @VisibleForTesting
+  static final class ConcurrentIdentityMap<K, V> {
+    private final ReentrantLock lock;
+    private final IdentityHashMap<K, V> children;
+
+    @VisibleForTesting
+    ConcurrentIdentityMap() {
+      lock = new ReentrantLock();
+      children = new IdentityHashMap<>();
+    }
+
+    public void put(K key, V value) {
+      lock.lock();
+      try {
+        children.put(key, value);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    public void remove(K key) {
+      lock.lock();
+      try {
+        children.remove(key);
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    public <R> ArrayList<R> drainEntries(BiFunction<K, V, R> f) {
+      lock.lock();
+      try {
+        Iterator<Entry<K, V>> it = children.entrySet().iterator();
+        ArrayList<R> results = new ArrayList<>(children.size());
+        while (it.hasNext()) {
+          Entry<K, V> entry = it.next();
+          K key = entry.getKey();
+          V value = entry.getValue();
+          it.remove();
+          R r = f.apply(key, value);
+          results.add(r);
+        }
+        return results;
+      } finally {
+        lock.unlock();
+      }
     }
   }
 }
