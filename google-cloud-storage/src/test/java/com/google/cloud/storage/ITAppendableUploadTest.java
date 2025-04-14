@@ -20,13 +20,13 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobGetOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.annotations.SingleBackend;
-import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
@@ -43,14 +43,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.PROD)
+@CrossRun(
+    backends = {Backend.PROD, Backend.TEST_BENCH},
+    transports = Transport.GRPC)
 public final class ITAppendableUploadTest {
 
   @Inject public Generator generator;
 
-  @Inject
-  @StorageFixture(TransportCompatibility.Transport.GRPC)
-  public Storage storage;
+  @Inject public Storage storage;
 
   @Inject
   @BucketFixture(BucketType.RAPID)
@@ -95,6 +95,8 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  // Pending work in testbench, manually verified internally on 2025-03-25
+  @CrossRun.Ignore(backends = {Backend.TEST_BENCH})
   public void appendableBlobUploadTakeover() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));
@@ -139,6 +141,8 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  // Pending work in testbench, manually verified internally on 2025-03-25
+  @CrossRun.Ignore(backends = {Backend.TEST_BENCH})
   public void finalizeAfterCloseWorks() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(1024));
@@ -154,6 +158,8 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  // Pending work in testbench, manually verified internally on 2025-03-25
+  @CrossRun.Ignore(backends = {Backend.TEST_BENCH})
   public void takeoverJustToFinalizeWorks() throws Exception {
     BlobAppendableUploadConfig uploadConfig =
         BlobAppendableUploadConfig.of().withFlushPolicy(FlushPolicy.maxFlushSize(5));

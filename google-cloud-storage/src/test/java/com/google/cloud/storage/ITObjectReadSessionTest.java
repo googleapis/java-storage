@@ -35,9 +35,8 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.annotations.SingleBackend;
-import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hasher;
@@ -62,14 +61,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.PROD)
+@CrossRun(
+    backends = {Backend.PROD, Backend.TEST_BENCH},
+    transports = Transport.GRPC)
 public final class ITObjectReadSessionTest {
 
   private static final int _512KiB = 512 * 1024;
 
-  @Inject
-  @StorageFixture(Transport.GRPC)
-  public Storage storage;
+  @Inject public Storage storage;
 
   @Inject
   @BucketFixture(BucketType.RAPID)
