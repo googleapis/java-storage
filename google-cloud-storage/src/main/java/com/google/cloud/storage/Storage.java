@@ -2678,6 +2678,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option which will cause blobs that end in exactly one instance of `delimiter` will
+     * have their metadata included rather than being synthetic objects.
+     *
+     * @since 2.52.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption includeTrailingDelimiter() {
+      return new BlobListOption(UnifiedOpts.includeTrailingDelimiter());
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *

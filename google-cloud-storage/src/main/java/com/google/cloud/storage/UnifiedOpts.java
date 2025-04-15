@@ -381,6 +381,10 @@ final class UnifiedOpts {
     return new IncludeFoldersAsPrefixes(includeFoldersAsPrefixes);
   }
 
+  static IncludeTrailingDelimiter includeTrailingDelimiter() {
+    return new IncludeTrailingDelimiter(true);
+  }
+
   @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;
@@ -703,6 +707,20 @@ final class UnifiedOpts {
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
       return b -> b.setIncludeFoldersAsPrefixes(val);
+    }
+  }
+
+  static final class IncludeTrailingDelimiter extends RpcOptVal<Boolean> implements ObjectListOpt {
+
+    private static final long serialVersionUID = 321916692864878282L;
+
+    private IncludeTrailingDelimiter(boolean val) {
+      super(StorageRpc.Option.INCLUDE_TRAILING_DELIMITER, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setIncludeTrailingDelimiter(val);
     }
   }
 
