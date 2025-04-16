@@ -376,7 +376,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
   private class BidiObserver implements ApiStreamObserver<BidiWriteObjectResponse> {
 
     private final Semaphore sem;
-    private volatile BidiWriteObjectResponse last;
+    private volatile BidiWriteObjectResponse lastResponseWithResource;
     private volatile StorageException clientDetectedError;
     private volatile RuntimeException previousError;
 
@@ -504,14 +504,18 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
 
     @Override
     public void onCompleted() {
-      if (last != null) {
-        resultFuture.set(last);
+      if (lastResponseWithResource != null) {
+        BidiWriteObjectResponse.Builder withSize = lastResponseWithResource.toBuilder();
+        withSize.getResourceBuilder().setSize(writeCtx.getConfirmedBytes().longValue());
+        resultFuture.set(withSize.build());
       }
       sem.release();
     }
 
     private void ok(BidiWriteObjectResponse value) {
-      last = value;
+      if (value.hasResource()) {
+        lastResponseWithResource = value;
+      }
       first = false;
       sem.release();
     }
@@ -558,7 +562,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
 
     public void reset() {
       sem.drainPermits();
-      last = null;
+      lastResponseWithResource = null;
       clientDetectedError = null;
       previousError = null;
     }

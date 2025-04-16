@@ -19,10 +19,12 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
+import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Interface representing those methods which can be used to write to and interact with an
@@ -32,37 +34,120 @@ import java.nio.channels.WritableByteChannel;
  */
 @BetaApi
 @InternalExtensionOnly
-public interface BlobAppendableUpload extends AutoCloseable, WritableByteChannel {
+public interface BlobAppendableUpload extends BlobWriteSession {
 
   /**
-   * Write some bytes to the appendable session. Whether a flush happens will depend on how many
-   * bytes have been written prior, how many bytes are being written now and what {@link
-   * BlobAppendableUploadConfig} was provided when creating the {@link BlobAppendableUpload}.
+   * Open the {@link AppendableUploadWriteableByteChannel AppendableUploadWriteableByteChannel} for
+   * this session.
    *
-   * <p>This method can block the invoking thread in order to ensure written bytes are acknowledged
-   * by Google Cloud Storage.
+   * <p>A session may only be {@code open}ed once. If multiple calls to open are made, an illegal
+   * state exception will be thrown
    *
-   * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
+   * <p>The returned {@code AppendableUploadWriteableByteChannel} can throw IOExceptions from any of
+   * its usual methods. Any {@link IOException} thrown can have a cause of a {@link
+   * StorageException}. However, not all {@code IOExceptions} will have {@code StorageException}s.
+   *
+   * @throws IOException When creating the {@link AppendableUploadWriteableByteChannel} if an
+   *     unrecoverable underlying IOException occurs it can be rethrown
+   * @throws IllegalStateException if open is called more than once
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @Override
-  int write(ByteBuffer src) throws IOException;
+  AppendableUploadWriteableByteChannel open() throws IOException;
 
   /**
-   * Close this instance to further {@link #write(ByteBuffer)}ing. This will close any underlying
-   * stream and release any releasable resources once out of scope.
+   * Return an {@link ApiFuture}{@code <BlobInfo>} which will represent the state of the object in
+   * Google Cloud Storage.
    *
-   * <p>{@link #finalizeUpload()} can be called after this method, but it will not carry any bytes
-   * with it.
+   * <p>This future will not resolve until:
+   *
+   * <ol>
+   *   <li>The object is successfully finalized in Google Cloud Storage by calling {@link
+   *       AppendableUploadWriteableByteChannel#finalizeAndClose()
+   *       AppendableUploadWriteableByteChannel#finalizeAndClose()}
+   *   <li>This session is detached from the upload without finalizing by calling {@link
+   *       AppendableUploadWriteableByteChannel#closeWithoutFinalizing()
+   *       AppendableUploadWriteableByteChannel#closeWithoutFinalizing()}
+   *   <li>The session is closed by calling {@link AppendableUploadWriteableByteChannel#close()
+   *       AppendableUploadWriteableByteChannel#close()}
+   *   <li>A terminal failure occurs, the terminal failure will become the exception result
+   * </ol>
+   *
+   * <p><i>NOTICE:</i> Some fields may not be populated unless finalization has completed.
+   *
+   * <p>If a terminal failure is encountered, calling either {@link ApiFuture#get()} or {@link
+   * ApiFuture#get(long, TimeUnit)} will result in an {@link
+   * java.util.concurrent.ExecutionException} with the cause.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @Override
-  void close() throws IOException;
+  ApiFuture<BlobInfo> getResult();
 
   /**
-   * Finalize the appendable upload, close any underlying stream and release any releasable
-   * resources once out of scope.
+   * The {@link WritableByteChannel} returned from {@link BlobAppendableUpload#open()}.
    *
-   * <p>Once this method is called, and returns no more writes to the object will be allowed by GCS.
+   * <p>This interface allows writing bytes to an Appendable Upload, and provides methods to close
+   * this channel -- optionally finalizing the upload.
+   *
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  ApiFuture<BlobInfo> finalizeUpload() throws IOException;
+  @InternalExtensionOnly
+  interface AppendableUploadWriteableByteChannel extends WritableByteChannel {
+
+    /**
+     * Finalize the upload and close this instance to further {@link #write(ByteBuffer)}ing. This
+     * will close any underlying stream and release any releasable resources once out of scope.
+     *
+     * <p>Once this method is called, and returns no more writes to the object will be allowed by
+     * GCS.
+     *
+     * <p>This method and {@link #close()} are mutually exclusive. If one of the other methods are
+     * called before this method, this method will be a no-op.
+     *
+     * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
+     * @see BlobAppendableUploadConfig.CloseAction#FINALIZE_WHEN_CLOSING
+     * @see BlobAppendableUploadConfig#getCloseAction()
+     * @see BlobAppendableUploadConfig#withCloseAction(CloseAction)
+     * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    void finalizeAndClose() throws IOException;
+
+    /**
+     * Close this instance to further {@link #write(ByteBuffer)}ing without finalizing the upload.
+     * This will close any underlying stream and release any releasable resources once out of scope.
+     *
+     * <p>This method, {@link AppendableUploadWriteableByteChannel#finalizeAndClose()} and {@link
+     * AppendableUploadWriteableByteChannel#close()} are mutually exclusive. If one of the other
+     * methods are called before this method, this method will be a no-op.
+     *
+     * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
+     * @see BlobAppendableUploadConfig.CloseAction#CLOSE_WITHOUT_FINALIZING
+     * @see BlobAppendableUploadConfig#getCloseAction()
+     * @see BlobAppendableUploadConfig#withCloseAction(CloseAction)
+     * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    void closeWithoutFinalizing() throws IOException;
+
+    /**
+     * Close this instance to further {@link #write(ByteBuffer)}ing.
+     *
+     * <p>Whether the upload is finalized during this depends on the {@link
+     * BlobAppendableUploadConfig#getCloseAction()} provided to create the {@link
+     * BlobAppendableUpload}. If {@link BlobAppendableUploadConfig#getCloseAction()}{@code ==
+     * }{@link CloseAction#FINALIZE_WHEN_CLOSING}, {@link #finalizeAndClose()} will be called. If
+     * {@link BlobAppendableUploadConfig#getCloseAction()}{@code == }{@link
+     * CloseAction#CLOSE_WITHOUT_FINALIZING}, {@link #closeWithoutFinalizing()} will be called.
+     *
+     * @see Storage#blobAppendableUpload(BlobInfo, BlobAppendableUploadConfig, BlobWriteOption...)
+     * @see BlobAppendableUploadConfig#getCloseAction()
+     * @see BlobAppendableUploadConfig#withCloseAction(CloseAction)
+     * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    void close() throws IOException;
+  }
 }

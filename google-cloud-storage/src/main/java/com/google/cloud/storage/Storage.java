@@ -5901,21 +5901,21 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
    * ReadableByteChannel readableByteChannel = ...;
    *
-   * try (
-   *   BlobAppendableUpload blobAppendableUpload = storage.blobAppendableUpload(
+   * BlobAppendableUpload uploadSession = storage.blobAppendableUpload(
    *     blobInfo,
    *     BlobAppendableUploadConfig.of()
-   *   )
-   * ) {
-   * // copy all bytes
-   * ByteStreams.copy(readableByteChannel, blobAppendableUpload);
-   * // get the resulting object metadata
-   * ApiFuture<BlobInfo> resultFuture = blobAppendableUpload.finalizeUpload();
-   * BlobInfo gen1 = resultFuture.get();
-   *
-   * } catch (IOException e) {
-   * // handle IOException
+   * );
+   * try (AppendableUploadWriteableByteChannel channel = uploadSession.open()) {
+   *   // copy all bytes
+   *   ByteStreams.copy(readableByteChannel, channel);
+   *   channel.finalizeAndClose();
+   * } catch (IOException ex) {
+   *   // handle IOException
    * }
+   *
+   * // get the resulting object metadata
+   * ApiFuture<BlobInfo> resultFuture = uploadSession.getResult();
+   * BlobInfo gen1 = resultFuture.get();
    * }</pre>
    *
    * @param blobInfo blobInfo to create
@@ -5927,8 +5927,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @BetaApi
   @TransportCompatibility({Transport.GRPC})
   default BlobAppendableUpload blobAppendableUpload(
-      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options)
-      throws IOException {
+      BlobInfo blobInfo, BlobAppendableUploadConfig uploadConfig, BlobWriteOption... options) {
     return throwGrpcOnly(
         fmtMethodName("appendableBlobUpload", BlobId.class, BlobWriteOption.class));
   }

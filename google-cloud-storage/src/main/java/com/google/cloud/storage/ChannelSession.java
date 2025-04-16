@@ -37,7 +37,7 @@ class ChannelSession<StartT, ResultT, ChannelT> {
 
   private volatile ApiFuture<ChannelT> channelFuture;
 
-  private ChannelSession(
+  ChannelSession(
       ApiFuture<StartT> startFuture, BiFunction<StartT, SettableApiFuture<ResultT>, ChannelT> f) {
     this.startFuture = startFuture;
     this.resultFuture = SettableApiFuture.create();

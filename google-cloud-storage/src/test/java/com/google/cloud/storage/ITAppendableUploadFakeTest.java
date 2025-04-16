@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.AbortedException;
+import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
+import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -49,6 +51,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -90,7 +93,8 @@ public class ITAppendableUploadFakeTest {
   private static final BlobAppendableUploadConfig UPLOAD_CONFIG =
       BlobAppendableUploadConfig.of()
           .withFlushPolicy(FlushPolicy.maxFlushSize(5))
-          .withCrc32cValidationEnabled(false);
+          .withCrc32cValidationEnabled(false)
+          .withCloseAction(CloseAction.FINALIZE_WHEN_CLOSING);
 
   /**
    *
@@ -205,8 +209,10 @@ public class ITAppendableUploadFakeTest {
       BlobId id = BlobId.of("b", "o");
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
-      b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
+      try (AppendableUploadWriteableByteChannel channel = b.open()) {
+        channel.write(ByteBuffer.wrap(content.getBytes()));
+      }
+      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -264,18 +270,36 @@ public class ITAppendableUploadFakeTest {
                 respond -> respond.onError(statusRuntimeException)));
 
     try (FakeServer fakeServer = FakeServer.of(fake);
-        Storage storage = fakeServer.getGrpcStorageOptions().toBuilder().build().getService()) {
+        Storage storage =
+            fakeServer
+                .getGrpcStorageOptions()
+                .toBuilder()
+                .setRetrySettings(
+                    fakeServer
+                        .getGrpcStorageOptions()
+                        .getRetrySettings()
+                        .toBuilder()
+                        .setRetryDelayMultiplier(1.0)
+                        .setInitialRetryDelayDuration(Duration.ofMillis(10))
+                        .build())
+                .build()
+                .getService()) {
 
       BlobId id = BlobId.of("b", "o");
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
-      StorageException e =
-          assertThrows(
-              StorageException.class,
-              () -> {
-                b.write(ByteBuffer.wrap("ABCDE".getBytes()));
-              });
-      assertThat(e).hasCauseThat().isInstanceOf(AbortedException.class);
+      AppendableUploadWriteableByteChannel channel = b.open();
+      try {
+        StorageException e =
+            assertThrows(
+                StorageException.class,
+                () -> {
+                  channel.write(ByteBuffer.wrap("ABCDE".getBytes()));
+                });
+        assertThat(e).hasCauseThat().isInstanceOf(AbortedException.class);
+      } finally {
+        channel.close();
+      }
     }
   }
 
@@ -384,8 +408,10 @@ public class ITAppendableUploadFakeTest {
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
-      b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
+      try (AppendableUploadWriteableByteChannel channel = b.open()) {
+        channel.write(ByteBuffer.wrap(content.getBytes()));
+      }
+      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -497,8 +523,10 @@ public class ITAppendableUploadFakeTest {
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
-      b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
+      try (AppendableUploadWriteableByteChannel channel = b.open()) {
+        channel.write(ByteBuffer.wrap(content.getBytes()));
+      }
+      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(10);
     }
   }
@@ -1432,8 +1460,10 @@ public class ITAppendableUploadFakeTest {
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
-      b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
+      try (AppendableUploadWriteableByteChannel channel = b.open()) {
+        channel.write(ByteBuffer.wrap(content.getBytes()));
+      }
+      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(20);
     }
   }
@@ -1485,8 +1515,10 @@ public class ITAppendableUploadFakeTest {
       BlobAppendableUpload b =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 5);
-      b.write(ByteBuffer.wrap(content.getBytes()));
-      BlobInfo bi = b.finalizeUpload().get(5, TimeUnit.SECONDS);
+      try (AppendableUploadWriteableByteChannel channel = b.open()) {
+        channel.write(ByteBuffer.wrap(content.getBytes()));
+      }
+      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
       assertThat(bi.getSize()).isEqualTo(5);
 
       assertThat(map.get(req1)).isEqualTo(2);
@@ -1577,11 +1609,12 @@ public class ITAppendableUploadFakeTest {
       BlobId id = BlobId.of("b", "o");
 
       BlobAppendableUploadConfig uploadConfig = UPLOAD_CONFIG.withCrc32cValidationEnabled(true);
-      try (BlobAppendableUpload upload =
-          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), uploadConfig)) {
-        upload.write(ByteBuffer.wrap(b));
-        upload.finalizeUpload().get(5, TimeUnit.SECONDS);
+      BlobAppendableUpload upload =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), uploadConfig);
+      try (AppendableUploadWriteableByteChannel channel = upload.open()) {
+        channel.write(ByteBuffer.wrap(b));
       }
+      upload.getResult().get(5, TimeUnit.SECONDS);
     }
   }
 
