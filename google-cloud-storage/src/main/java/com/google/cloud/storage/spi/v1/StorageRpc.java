@@ -78,6 +78,7 @@ public interface StorageRpc extends ServiceRpc {
     COPY_SOURCE_ACL("copySourceAcl"),
     GENERATION("generation"),
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes"),
+    INCLUDE_TRAILING_DELIMITER("includeTrailingDelimiter"),
     X_UPLOAD_CONTENT_LENGTH("x-upload-content-length"),
     /**
      * An {@link com.google.common.collect.ImmutableMap ImmutableMap&lt;String, String>} of values
