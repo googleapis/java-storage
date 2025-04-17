@@ -17,9 +17,17 @@
 package com.google.cloud.storage.it;
 
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.UnsafeByteOperations;
+import com.google.rpc.DebugInfo;
+import com.google.rpc.ErrorInfo;
 import com.google.storage.v2.BidiReadObjectResponse;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ObjectRangeData;
@@ -34,19 +42,27 @@ import io.grpc.ForwardingClientCallListener.SimpleForwardingClientCallListener;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Client side interceptor which will log gRPC request, response and status messages in plain text,
- * rather than the byte encoded text io.grpc.netty.shaded.io.grpc.netty.NettyClientHandler does.
+ * Client side interceptor which will log gRPC request, headers, response, status and trailers in
+ * plain text, rather than the byte encoded text
+ * io.grpc.netty.shaded.io.grpc.netty.NettyClientHandler does.
  *
  * <p>This interceptor does not include the other useful information that NettyClientHandler
- * provides such as headers, method names, peers etc.
+ * provides such as method names, peers etc.
  */
 public final class GrpcPlainRequestLoggingInterceptor implements ClientInterceptor {
 
@@ -58,6 +74,19 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
   private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+
+  private static final Map<String, Message> anyParsers =
+      Stream.of(
+              com.google.rpc.ErrorInfo.getDefaultInstance(),
+              com.google.rpc.DebugInfo.getDefaultInstance(),
+              com.google.rpc.QuotaFailure.getDefaultInstance(),
+              com.google.rpc.PreconditionFailure.getDefaultInstance(),
+              com.google.rpc.BadRequest.getDefaultInstance(),
+              com.google.rpc.Help.getDefaultInstance(),
+              com.google.storage.v2.BidiReadObjectError.getDefaultInstance(),
+              com.google.storage.v2.BidiReadObjectRedirectedError.getDefaultInstance(),
+              com.google.storage.v2.BidiWriteObjectRedirectedError.getDefaultInstance())
+          .collect(Collectors.toMap(m -> Any.pack(m).getTypeUrl(), Function.identity()));
 
   private GrpcPlainRequestLoggingInterceptor() {}
 
@@ -96,14 +125,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
               @Override
               public void onClose(Status status, Metadata trailers) {
-                LOGGER.log(
-                    Level.CONFIG,
-                    () ->
-                        String.format(
-                            Locale.US,
-                            "<<< status = %s, trailers = %s",
-                            status.toString(),
-                            trailers.toString()));
+                LOGGER.log(Level.CONFIG, lazyOnCloseLogString(status, trailers));
                 super.onClose(status, trailers);
               }
             };
@@ -144,7 +166,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
   @NonNull
   static String fmtProto(@NonNull final MessageOrBuilder msg) {
-    return msg.toString();
+    return TextFormat.printer().printToString(msg);
   }
 
   @NonNull
@@ -221,6 +243,118 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
     ByteString snip =
         ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
     return content.substring(0, 20).concat(snip);
+  }
+
+  // while trailers.get can return null, we're always getting values based on the keys it told us
+  // it had.
+  @SuppressWarnings("DataFlowIssue")
+  @VisibleForTesting
+  public static @NonNull Supplier<String> lazyOnCloseLogString(Status status, Metadata trailers) {
+    return () -> {
+      final StringBuilder sb = new StringBuilder();
+      String description = status.getDescription();
+      sb.append("<<< status = {").append("\n  code[4]=").append(status.getCode());
+      if (description != null) {
+        sb.append(",\n  description[")
+            .append(description.getBytes(StandardCharsets.US_ASCII).length)
+            .append("]='")
+            .append(description)
+            .append("'");
+      }
+      sb.append("\n}, \ntrailers = {");
+      Set<String> keys = trailers.keys();
+      for (String key : keys) {
+        sb.append("\n  ").append(key);
+        if (key.endsWith("-bin")) {
+          byte[] bytes = trailers.get(Metadata.Key.of(key, Metadata.BINARY_BYTE_MARSHALLER));
+          sb.append("[").append(bytes.length).append("]").append(": ");
+          if (key.equals("grpc-status-details-bin")) {
+            com.google.rpc.Status s;
+            try {
+              s = com.google.rpc.Status.parseFrom(bytes);
+            } catch (InvalidProtocolBufferException e) {
+              sb.append(TextFormat.escapeBytes(UnsafeByteOperations.unsafeWrap(bytes)));
+              continue;
+            }
+            sb.append(com.google.rpc.Status.getDescriptor().getFullName()).append("{");
+            s.getDetailsList()
+                .forEach(
+                    a -> {
+                      Message maybeParseAs = anyParsers.get(a.getTypeUrl());
+                      Message m = maybeParseAs == null ? a : unpack(a, maybeParseAs);
+                      // base indentation, single uppercase variable name to make easier to read in
+                      // the following code block
+                      String I = "    ";
+                      sb.append("\n");
+                      sb.append(I).append("details {\n");
+                      sb.append(I).append("  type_url: ").append(a.getTypeUrl()).append("\n");
+                      sb.append(I).append("  value: {\n  ");
+                      sb.append(I).append("  ").append(fmtDetails(m, I)).append("\n");
+                      sb.append(I).append("  }\n");
+                      sb.append(I).append("}");
+                    });
+            if (!s.getDetailsList().isEmpty()) {
+              sb.append("\n");
+            }
+            sb.append("  }");
+          } else if (key.contains("debuginfo")) {
+            sb.append("{")
+                .append(parseBytesAsMessage(DebugInfo.getDefaultInstance(), bytes))
+                .append("}");
+          } else if (key.contains("errorinfo")) {
+            sb.append("{")
+                .append(parseBytesAsMessage(ErrorInfo.getDefaultInstance(), bytes))
+                .append("}");
+          } else {
+            sb.append("{").append(parseBytesAsMessage(Any.getDefaultInstance(), bytes)).append("}");
+          }
+        } else {
+          String asciiStr = trailers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER));
+          sb.append("[")
+              .append(asciiStr.getBytes(StandardCharsets.US_ASCII).length)
+              .append("]")
+              .append(": ");
+          sb.append(asciiStr);
+        }
+      }
+      if (!keys.isEmpty()) {
+        sb.append("\n");
+      }
+      sb.append("}");
+      return sb.toString();
+    };
+  }
+
+  private static String fmtDetails(Message m, String baseIndentation) {
+    String fmt = fmtProto(m);
+    return fmt.substring(0, fmt.length() - 1).replace("\n", "\n" + baseIndentation + "    ");
+  }
+
+  private static <M extends Message> String parseBytesAsMessage(M m, byte[] bytes) {
+    boolean targetAny = m instanceof Any;
+    try {
+      Message parsed = m.getParserForType().parseFrom(bytes);
+      return fmtProto(parsed);
+    } catch (InvalidProtocolBufferException e) {
+      if (!targetAny) {
+        return parseBytesAsMessage(Any.getDefaultInstance(), bytes);
+      } else {
+        return TextFormat.escapeBytes(UnsafeByteOperations.unsafeWrap(bytes));
+      }
+    }
+  }
+
+  /**
+   * Helper method to unpack an Any. This is unsafe based on the contract of Any.unpack, however the
+   * Any we are unpacking here is limited to a set of known types which we have already checked, and
+   * the Any is already packed in a Status message, so we know it is already deserializable.
+   */
+  private static <M extends Message> M unpack(Any any, M m) {
+    try {
+      return any.unpackSameTypeAs(m);
+    } catch (InvalidProtocolBufferException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static final class InterceptorProvider implements GrpcInterceptorProvider {
