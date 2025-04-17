@@ -53,7 +53,9 @@ set +e
 case ${JOB_TYPE} in
 test)
     echo "SUREFIRE_JVM_OPT: ${SUREFIRE_JVM_OPT}"
-    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
+    mvn test -B \
+      -Dprotobuf.version=4.29.4 \
+      -ntp -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
     RETURN_CODE=$?
     ;;
 lint)
@@ -66,13 +68,14 @@ javadoc)
     ;;
 integration)
     mvn -B ${INTEGRATION_TEST_ARGS} \
+      -Dprotobuf.version=4.29.4 \
       -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
       -Dclirr.skip=true \
       -Denforcer.skip=true \
       -fae \
-      verify
+      dependency:tree verify
     RETURN_CODE=$?
     ;;
 graalvm)
