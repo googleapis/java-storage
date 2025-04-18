@@ -79,7 +79,6 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ScatteringByteChannel;
@@ -99,18 +98,28 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ITObjectReadSessionFakeTest {
+  static {
+    org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
+    org.slf4j.bridge.SLF4JBridgeHandler.install();
+  }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ITObjectReadSessionFakeTest.class);
+
+  static {
+    LOGGER.info("hi");
+  }
 
   private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
       Metadata.Key.of(
@@ -1557,7 +1566,6 @@ public final class ITObjectReadSessionFakeTest {
   @Test
   public void serverOutOfRangeIsNotRetried() throws Exception {
     ChecksummedTestContent expected = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 20);
-    Semaphore sem = new Semaphore(1);
 
     BidiReadObjectResponse dataResp =
         BidiReadObjectResponse.newBuilder()
@@ -1572,13 +1580,17 @@ public final class ITObjectReadSessionFakeTest {
     AtomicInteger bidiReadObjectCount = new AtomicInteger();
     ExecutorService exec =
         Executors.newCachedThreadPool(
-            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("test-server-%d").build());
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("exec-%d").build());
+
+    CountDownLatch serverWaitCdl = new CountDownLatch(4);
+    CountDownLatch testWaitCdl = new CountDownLatch(4);
 
     StorageImplBase fakeStorage =
         new StorageImplBase() {
           @Override
           public StreamObserver<BidiReadObjectRequest> bidiReadObject(
               StreamObserver<BidiReadObjectResponse> respond) {
+            LOGGER.info("new bidiReadObject stream");
             bidiReadObjectCount.getAndIncrement();
             return new StreamObserver<BidiReadObjectRequest>() {
               @Override
@@ -1589,13 +1601,16 @@ public final class ITObjectReadSessionFakeTest {
                   exec.submit(
                       () -> {
                         try {
-                          sem.acquire();
+                          // when receiving a request on the stream for the valid range
+                          // send it to a background thread that will wait for all reads to be setup
+                          serverWaitCdl.await();
                           BidiReadObjectResponse.Builder b = dataResp.toBuilder();
                           ReadRange readRange = request.getReadRangesList().get(0);
                           ObjectRangeData.Builder bb = dataResp.getObjectDataRanges(0).toBuilder();
                           bb.getReadRangeBuilder().setReadId(readRange.getReadId());
                           b.setObjectDataRanges(0, bb.build());
                           respond.onNext(b.build());
+                          testWaitCdl.countDown();
                         } catch (InterruptedException e) {
                           respond.onError(
                               TestUtils.apiException(Code.UNIMPLEMENTED, e.getMessage()));
@@ -1641,6 +1656,7 @@ public final class ITObjectReadSessionFakeTest {
                   StatusRuntimeException statusRuntimeException =
                       Status.OUT_OF_RANGE.withDescription(message).asRuntimeException(trailers);
                   respond.onError(statusRuntimeException);
+                  testWaitCdl.countDown();
                 } else {
                   respond.onError(
                       apiException(
@@ -1670,67 +1686,69 @@ public final class ITObjectReadSessionFakeTest {
 
       try (BlobReadSession session = storage.blobReadSession(id).get(5, TimeUnit.SECONDS)) {
 
-        ApiFuture<byte[]> shouldSucceedFuture =
+        ApiFuture<byte[]> expectSuccessFuture =
             session.readAs(
                 ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.of(10, 20)));
+        serverWaitCdl.countDown();
 
-        ApiFuture<byte[]> shouldFailFuture =
+        ApiFuture<byte[]> expectFailureFuture =
             session.readAs(
                 ReadProjectionConfigs.asFutureBytes().withRangeSpec(RangeSpec.beginAt(37)));
-        ExecutionException exceptionFromFuture =
-            assertThrows(
-                ExecutionException.class, () -> shouldFailFuture.get(30, TimeUnit.SECONDS));
-        sem.release();
+        serverWaitCdl.countDown();
 
-        Exception exceptionFromChannel;
-        byte[] bytesFromFuture = shouldSucceedFuture.get(30, TimeUnit.SECONDS);
-
-        AtomicReference<byte[]> bytesFromChannel = new AtomicReference<>();
-        Future<Long> asyncShouldSucceedChannel =
+        ReadAsChannel readAsChannel = ReadProjectionConfigs.asChannel();
+        Future<byte[]> expectSuccessChannel =
             exec.submit(
                 () -> {
+                  LOGGER.info("exec.submit().call()");
                   try (ScatteringByteChannel succeed =
-                      session.readAs(
-                          ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.of(10, 20)))) {
-                    sem.acquire();
+                      session.readAs(readAsChannel.withRangeSpec(RangeSpec.of(10, 20)))) {
+                    serverWaitCdl.countDown();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    long copy = ByteStreams.copy(succeed, Channels.newChannel(baos));
-                    bytesFromChannel.set(baos.toByteArray());
-                    return copy;
-                  } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    ByteStreams.copy(succeed, Channels.newChannel(baos));
+                    return baos.toByteArray();
                   }
                 });
 
-        try (ScatteringByteChannel fail =
-            session.readAs(
-                ReadProjectionConfigs.asChannel().withRangeSpec(RangeSpec.beginAt(39)))) {
-          exceptionFromChannel =
-              assertThrows(
-                  IOException.class,
-                  () -> {
-                    int read = 0;
+        Future<Integer> expectFailureChannel =
+            exec.submit(
+                () -> {
+                  try (ScatteringByteChannel fail =
+                      session.readAs(readAsChannel.withRangeSpec(RangeSpec.beginAt(39)))) {
+                    serverWaitCdl.countDown();
+                    int read;
                     do {
                       read = fail.read(ByteBuffer.allocate(1));
                     } while (read == 0);
-                  });
-          sem.release();
-        }
-        asyncShouldSucceedChannel.get(30, TimeUnit.SECONDS);
-        Exception finalExceptionFromChannel = exceptionFromChannel;
+                    return read;
+                  }
+                });
+
+        boolean await = testWaitCdl.await(5, TimeUnit.SECONDS);
+        assertThat(await).isTrue();
+        ExecutionException exceptionFromFuture =
+            assertThrows(
+                ExecutionException.class, () -> expectFailureFuture.get(5, TimeUnit.SECONDS));
+        byte[] bytesFromFuture = expectSuccessFuture.get(5, TimeUnit.SECONDS);
+        ExecutionException finalExceptionFromChannel =
+            assertThrows(
+                ExecutionException.class, () -> expectFailureChannel.get(5, TimeUnit.SECONDS));
+        byte[] bytesFromChannel = expectSuccessChannel.get(5, TimeUnit.SECONDS);
+
         assertAll(
             () ->
-                assertThat(exceptionFromFuture)
-                    .hasCauseThat()
+                assertThat(exceptionFromFuture) // ExecutionException
+                    .hasCauseThat() // StorageException
                     .hasCauseThat()
                     .isInstanceOf(OutOfRangeException.class),
             () ->
-                assertThat(finalExceptionFromChannel)
-                    .hasCauseThat()
+                assertThat(finalExceptionFromChannel) // ExecutionException
+                    .hasCauseThat() // IOException
+                    .hasCauseThat() // StorageException
                     .hasCauseThat()
                     .isInstanceOf(OutOfRangeException.class),
             () -> assertThat(xxd(bytesFromFuture)).isEqualTo(xxd(expected.getBytes())),
-            () -> assertThat(xxd(bytesFromChannel.get())).isEqualTo(xxd(expected.getBytes())));
+            () -> assertThat(xxd(bytesFromChannel)).isEqualTo(xxd(expected.getBytes())));
       }
     }
   }
