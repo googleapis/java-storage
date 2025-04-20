@@ -33,6 +33,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     // @@protoc_insertion_point(message_implements:google.storage.v2.QueryWriteStatusResponse)
     QueryWriteStatusResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use QueryWriteStatusResponse.newBuilder() to construct.
   private QueryWriteStatusResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -78,6 +79,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     private WriteStatusCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -111,6 +113,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
   }
 
   public static final int PERSISTED_SIZE_FIELD_NUMBER = 1;
+
   /**
    *
    *
@@ -129,6 +132,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
   public boolean hasPersistedSize() {
     return writeStatusCase_ == 1;
   }
+
   /**
    *
    *
@@ -152,6 +156,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
   }
 
   public static final int RESOURCE_FIELD_NUMBER = 2;
+
   /**
    *
    *
@@ -168,6 +173,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
   public boolean hasResource() {
     return writeStatusCase_ == 2;
   }
+
   /**
    *
    *
@@ -187,6 +193,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     }
     return com.google.storage.v2.Object.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -394,6 +401,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -634,6 +642,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     public boolean hasPersistedSize() {
       return writeStatusCase_ == 1;
     }
+
     /**
      *
      *
@@ -654,6 +663,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       }
       return 0L;
     }
+
     /**
      *
      *
@@ -676,6 +686,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -704,6 +715,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         resourceBuilder_;
+
     /**
      *
      *
@@ -720,6 +732,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     public boolean hasResource() {
       return writeStatusCase_ == 2;
     }
+
     /**
      *
      *
@@ -746,6 +759,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -769,6 +783,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -789,6 +804,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -821,6 +837,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -847,6 +864,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       }
       return this;
     }
+
     /**
      *
      *
@@ -860,6 +878,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     public com.google.storage.v2.Object.Builder getResourceBuilder() {
       return getResourceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -881,6 +900,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *

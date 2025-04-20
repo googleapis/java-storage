@@ -360,8 +360,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
             continue;
           }
           message =
-              message
-                  .toBuilder()
+              message.toBuilder()
                   .setChecksummedData(ChecksummedData.newBuilder().setContent(after).build())
                   .setWriteOffset(confirmed)
                   .build();

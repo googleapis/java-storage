@@ -1055,6 +1055,19 @@ public final class StorageGrpc {
     return StorageStub.newStub(factory, channel);
   }
 
+  /** Creates a new blocking-style stub that supports all types of calls on the service */
+  public static StorageBlockingV2Stub newBlockingV2Stub(io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<StorageBlockingV2Stub> factory =
+        new io.grpc.stub.AbstractStub.StubFactory<StorageBlockingV2Stub>() {
+          @java.lang.Override
+          public StorageBlockingV2Stub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new StorageBlockingV2Stub(channel, callOptions);
+          }
+        };
+    return StorageBlockingV2Stub.newStub(factory, channel);
+  }
+
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
@@ -2197,6 +2210,514 @@ public final class StorageGrpc {
 
   /**
    * A stub to allow clients to do synchronous rpc calls to service Storage.
+   *
+   * <pre>
+   * ## API Overview and Naming Syntax
+   * The Cloud Storage gRPC API allows applications to read and write data through
+   * the abstractions of buckets and objects. For a description of these
+   * abstractions please see https://cloud.google.com/storage/docs.
+   * Resources are named as follows:
+   *   - Projects are referred to as they are defined by the Resource Manager API,
+   *     using strings like `projects/123456` or `projects/my-string-id`.
+   *   - Buckets are named using string names of the form:
+   *     `projects/{project}/buckets/{bucket}`
+   *     For globally unique buckets, `_` may be substituted for the project.
+   *   - Objects are uniquely identified by their name along with the name of the
+   *     bucket they belong to, as separate strings in this API. For example:
+   *       ReadObjectRequest {
+   *         bucket: 'projects/_/buckets/my-bucket'
+   *         object: 'my-object'
+   *       }
+   *     Note that object names can contain `/` characters, which are treated as
+   *     any other character (no special directory semantics).
+   * </pre>
+   */
+  public static final class StorageBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<StorageBlockingV2Stub> {
+    private StorageBlockingV2Stub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected StorageBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new StorageBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty bucket.
+     * </pre>
+     */
+    public com.google.protobuf.Empty deleteBucket(
+        com.google.storage.v2.DeleteBucketRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteBucketMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetBucketMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Bucket createBucket(
+        com.google.storage.v2.CreateBucketRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateBucketMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of buckets for a given project.
+     * </pre>
+     */
+    public com.google.storage.v2.ListBucketsResponse listBuckets(
+        com.google.storage.v2.ListBucketsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListBucketsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Locks retention policy on a bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Bucket lockBucketRetentionPolicy(
+        com.google.storage.v2.LockBucketRetentionPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getLockBucketRetentionPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}`.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}`.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
+        com.google.iam.v1.TestIamPermissionsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * </pre>
+     */
+    public com.google.storage.v2.Bucket updateBucket(
+        com.google.storage.v2.UpdateBucketRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateBucketMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Concatenates a list of existing objects into a new object in the same
+     * bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Object composeObject(
+        com.google.storage.v2.ComposeObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getComposeObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Deletes an object and its metadata. Deletions are permanent if versioning
+     * is not enabled for the bucket, or if the generation parameter is used, or
+     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * enabled for the bucket.
+     * When this API is used to delete an object from a bucket that has soft
+     * delete policy enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+     * This API cannot be used to permanently delete soft-deleted objects.
+     * Soft-deleted objects are permanently deleted according to their
+     * `hardDeleteTime`.
+     * You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject]
+     * API to restore soft-deleted objects until the soft delete retention period
+     * has passed.
+     * **IAM Permissions**:
+     * Requires `storage.objects.delete`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * </pre>
+     */
+    public com.google.protobuf.Empty deleteObject(
+        com.google.storage.v2.DeleteObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Restores a soft-deleted object.
+     * </pre>
+     */
+    public com.google.storage.v2.Object restoreObject(
+        com.google.storage.v2.RestoreObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRestoreObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Cancels an in-progress resumable upload.
+     * Any attempts to write to the resumable upload after cancelling the upload
+     * will fail.
+     * The behavior for currently in progress write operations is not guaranteed -
+     * they could either complete before the cancellation or fail if the
+     * cancellation completes first.
+     * </pre>
+     */
+    public com.google.storage.v2.CancelResumableWriteResponse cancelResumableWrite(
+        com.google.storage.v2.CancelResumableWriteRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCancelResumableWriteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves object metadata.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket. To return object ACLs, the authenticated user must also have
+     * the `storage.objects.getIamPolicy` permission.
+     * </pre>
+     */
+    public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves object data.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * </pre>
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<?, com.google.storage.v2.ReadObjectResponse> readObject(
+        com.google.storage.v2.ReadObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingV2ServerStreamingCall(
+          getChannel(), getReadObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Reads an object's data.
+     * This is a bi-directional API with the added support for reading multiple
+     * ranges within one stream both within and across multiple messages.
+     * If the server encountered an error for any of the inputs, the stream will
+     * be closed with the relevant error code.
+     * Because the API allows for multiple outstanding requests, when the stream
+     * is closed the error response will contain a BidiReadObjectRangesError proto
+     * in the error extension describing the error for each outstanding read_id.
+     * **IAM Permissions**:
+     * Requires `storage.objects.get`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * This API is currently in preview and is not yet available for general
+     * use.
+     * </pre>
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<
+            com.google.storage.v2.BidiReadObjectRequest,
+            com.google.storage.v2.BidiReadObjectResponse>
+        bidiReadObject() {
+      return io.grpc.stub.ClientCalls.blockingBidiStreamingCall(
+          getChannel(), getBidiReadObjectMethod(), getCallOptions());
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an object's metadata.
+     * Equivalent to JSON API's storage.objects.patch.
+     * </pre>
+     */
+    public com.google.storage.v2.Object updateObject(
+        com.google.storage.v2.UpdateObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Stores a new object and metadata.
+     * An object can be written either in a single message stream or in a
+     * resumable sequence of message streams. To write using a single stream,
+     * the client should include in the first message of the stream an
+     * `WriteObjectSpec` describing the destination bucket, object, and any
+     * preconditions. Additionally, the final message must set 'finish_write' to
+     * true, or else it is an error.
+     * For a resumable write, the client should instead call
+     * `StartResumableWrite()`, populating a `WriteObjectSpec` into that request.
+     * They should then attach the returned `upload_id` to the first message of
+     * each following call to `WriteObject`. If the stream is closed before
+     * finishing the upload (either explicitly by the client or due to a network
+     * error or an error response from the server), the client should do as
+     * follows:
+     *   - Check the result Status of the stream, to determine if writing can be
+     *     resumed on this stream or must be restarted from scratch (by calling
+     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
+     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
+     *     exponential backoff before retrying.  Additionally, writes can be
+     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
+     *     appropriate measures, which may include reducing aggregate send rate
+     *     across clients and/or requesting a quota increase for your project.
+     *   - If the call to `WriteObject` returns `ABORTED`, that indicates
+     *     concurrent attempts to update the resumable write, caused either by
+     *     multiple racing clients or by a single client where the previous
+     *     request was timed out on the client side but nonetheless reached the
+     *     server. In this case the client should take steps to prevent further
+     *     concurrent writes (e.g., increase the timeouts, stop using more than
+     *     one process to perform the upload, etc.), and then should follow the
+     *     steps below for resuming the upload.
+     *   - For resumable errors, the client should call `QueryWriteStatus()` and
+     *     then continue writing from the returned `persisted_size`. This may be
+     *     less than the amount of data the client previously sent. Note also that
+     *     it is acceptable to send data starting at an offset earlier than the
+     *     returned `persisted_size`; in this case, the service will skip data at
+     *     offsets that were already persisted (without checking that it matches
+     *     the previously written data), and write only the data starting from the
+     *     persisted offset. Even though the data isn't written, it may still
+     *     incur a performance cost over resuming at the correct write offset.
+     *     This behavior can make client-side handling simpler in some cases.
+     *   - Clients must only send data that is a multiple of 256 KiB per message,
+     *     unless the object is being finished with `finish_write` set to `true`.
+     * The service will not view the object as complete until the client has
+     * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
+     * requests on a stream after sending a request with `finish_write` set to
+     * `true` will cause an error. The client **should** check the response it
+     * receives to determine how much data the service was able to commit and
+     * whether the service views the object as complete.
+     * Attempting to resume an already finalized object will result in an OK
+     * status, with a `WriteObjectResponse` containing the finalized object's
+     * metadata.
+     * Alternatively, the BidiWriteObject operation may be used to write an
+     * object with controls over flushing and the ability to fetch the ability to
+     * determine the current persisted size.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * </pre>
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<
+            com.google.storage.v2.WriteObjectRequest, com.google.storage.v2.WriteObjectResponse>
+        writeObject() {
+      return io.grpc.stub.ClientCalls.blockingClientStreamingCall(
+          getChannel(), getWriteObjectMethod(), getCallOptions());
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Stores a new object and metadata.
+     * This is similar to the WriteObject call with the added support for
+     * manual flushing of persisted state, and the ability to determine current
+     * persisted size without closing the stream.
+     * The client may specify one or both of the `state_lookup` and `flush` fields
+     * in each BidiWriteObjectRequest. If `flush` is specified, the data written
+     * so far will be persisted to storage. If `state_lookup` is specified, the
+     * service will respond with a BidiWriteObjectResponse that contains the
+     * persisted size. If both `flush` and `state_lookup` are specified, the flush
+     * will always occur before a `state_lookup`, so that both may be set in the
+     * same request and the returned state will be the state of the object
+     * post-flush. When the stream is closed, a BidiWriteObjectResponse will
+     * always be sent to the client, regardless of the value of `state_lookup`.
+     * </pre>
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<
+            com.google.storage.v2.BidiWriteObjectRequest,
+            com.google.storage.v2.BidiWriteObjectResponse>
+        bidiWriteObject() {
+      return io.grpc.stub.ClientCalls.blockingBidiStreamingCall(
+          getChannel(), getBidiWriteObjectMethod(), getCallOptions());
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of objects matching the criteria.
+     * **IAM Permissions**:
+     * The authenticated user requires `storage.objects.list`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
+     * to use this method. To return object ACLs, the authenticated user must also
+     * have the `storage.objects.getIamPolicy` permission.
+     * </pre>
+     */
+    public com.google.storage.v2.ListObjectsResponse listObjects(
+        com.google.storage.v2.ListObjectsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListObjectsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Rewrites a source object to a destination object. Optionally overrides
+     * metadata.
+     * </pre>
+     */
+    public com.google.storage.v2.RewriteResponse rewriteObject(
+        com.google.storage.v2.RewriteObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRewriteObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Starts a resumable write operation. This
+     * method is part of the [Resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * This allows you to upload large objects in multiple chunks, which is more
+     * resilient to network interruptions than a single upload. The validity
+     * duration of the write operation, and the consequences of it becoming
+     * invalid, are service-dependent.
+     * **IAM Permissions**:
+     * Requires `storage.objects.create`
+     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * the bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.StartResumableWriteResponse startResumableWrite(
+        com.google.storage.v2.StartResumableWriteRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getStartResumableWriteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Determines the `persisted_size` of an object that is being written. This
+     * method is part of the [resumable
+     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * The returned value is the size of the object that has been persisted so
+     * far. The value can be used as the `write_offset` for the next `Write()`
+     * call.
+     * If the object does not exist, meaning if it was deleted, or the
+     * first `Write()` has not yet reached the service, this method returns the
+     * error `NOT_FOUND`.
+     * This method is useful for clients that buffer data and need to know which
+     * data can be safely evicted. The client can call `QueryWriteStatus()` at any
+     * time to determine how much data has been logged for this object.
+     * For any sequence of `QueryWriteStatus()` calls for a given
+     * object name, the sequence of returned `persisted_size` values are
+     * non-decreasing.
+     * </pre>
+     */
+    public com.google.storage.v2.QueryWriteStatusResponse queryWriteStatus(
+        com.google.storage.v2.QueryWriteStatusRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getQueryWriteStatusMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Moves the source object to the destination object in the same bucket.
+     * </pre>
+     */
+    public com.google.storage.v2.Object moveObject(
+        com.google.storage.v2.MoveObjectRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getMoveObjectMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Storage.
    *
    * <pre>
    * ## API Overview and Naming Syntax

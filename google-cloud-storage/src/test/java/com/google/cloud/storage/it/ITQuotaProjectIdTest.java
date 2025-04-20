@@ -84,8 +84,7 @@ public final class ITQuotaProjectIdTest {
   @Test
   public void fromCredentials() throws Exception {
     StorageOptions build =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setCredentials(credentialsWithQuotaProjectId(credentials, projectId))
             .build();
 
@@ -98,8 +97,7 @@ public final class ITQuotaProjectIdTest {
   @Test
   public void methodOptionOverCredentials() throws Exception {
     StorageOptions build =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setCredentials(credentialsWithQuotaProjectId(credentials, BAD_PROJECT_ID))
             .build();
 
@@ -122,8 +120,7 @@ public final class ITQuotaProjectIdTest {
   @Test
   public void serviceOptionParameterOverCredentials() throws Exception {
     StorageOptions build =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setCredentials(credentialsWithQuotaProjectId(credentials, BAD_PROJECT_ID))
             .setQuotaProjectId(projectId)
             .build();

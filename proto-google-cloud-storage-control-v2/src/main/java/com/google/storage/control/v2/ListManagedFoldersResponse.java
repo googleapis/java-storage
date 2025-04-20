@@ -33,6 +33,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.ListManagedFoldersResponse)
     ListManagedFoldersResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ListManagedFoldersResponse.newBuilder() to construct.
   private ListManagedFoldersResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.control.v2.ManagedFolder> managedFolders_;
+
   /**
    *
    *
@@ -81,6 +83,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
   public java.util.List<com.google.storage.control.v2.ManagedFolder> getManagedFoldersList() {
     return managedFolders_;
   }
+
   /**
    *
    *
@@ -95,6 +98,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       getManagedFoldersOrBuilderList() {
     return managedFolders_;
   }
+
   /**
    *
    *
@@ -108,6 +112,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
   public int getManagedFoldersCount() {
     return managedFolders_.size();
   }
+
   /**
    *
    *
@@ -121,6 +126,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
   public com.google.storage.control.v2.ManagedFolder getManagedFolders(int index) {
     return managedFolders_.get(index);
   }
+
   /**
    *
    *
@@ -140,6 +146,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object nextPageToken_ = "";
+
   /**
    *
    *
@@ -164,6 +171,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       return s;
     }
   }
+
   /**
    *
    *
@@ -360,6 +368,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -637,6 +646,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return managedFoldersBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -653,6 +663,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return managedFoldersBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -669,6 +680,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return managedFoldersBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -691,6 +703,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -711,6 +724,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -733,6 +747,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -755,6 +770,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -775,6 +791,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -795,6 +812,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -815,6 +833,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -834,6 +853,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -853,6 +873,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -865,6 +886,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
     public com.google.storage.control.v2.ManagedFolder.Builder getManagedFoldersBuilder(int index) {
       return getManagedFoldersFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -882,6 +904,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return managedFoldersBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -899,6 +922,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return java.util.Collections.unmodifiableList(managedFolders_);
       }
     }
+
     /**
      *
      *
@@ -912,6 +936,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       return getManagedFoldersFieldBuilder()
           .addBuilder(com.google.storage.control.v2.ManagedFolder.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -925,6 +950,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       return getManagedFoldersFieldBuilder()
           .addBuilder(index, com.google.storage.control.v2.ManagedFolder.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -960,6 +986,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
     }
 
     private java.lang.Object nextPageToken_ = "";
+
     /**
      *
      *
@@ -983,6 +1010,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1006,6 +1034,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1028,6 +1057,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1046,6 +1076,7 @@ public final class ListManagedFoldersResponse extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *

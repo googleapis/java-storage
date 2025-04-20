@@ -295,9 +295,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setGrpcInterceptorProvider(
                     GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                 .build()
@@ -657,9 +655,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
                 .build()
                 .getService()) {
@@ -684,11 +680,13 @@ public final class ITObjectReadSessionFakeTest {
             () ->
                 assertThat(suppressedMessages)
                     .contains(
-                        "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}"),
+                        "Mismatch checksum value. Expected crc32c{0x00000001} actual"
+                            + " crc32c{0xe16dcdee}"),
             () ->
                 assertThat(suppressedMessages)
                     .contains(
-                        "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}"),
+                        "Mismatch checksum value. Expected crc32c{0x00000002} actual"
+                            + " crc32c{0xe16dcdee}"),
             () -> assertThat(suppressedMessages).contains("Asynchronous task failed"));
       }
     }
@@ -730,9 +728,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(FakeStorage.from(db));
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(2).build())
                 .build()
                 .getService()) {
@@ -783,9 +779,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .build()
                 .getService()) {
@@ -842,9 +836,7 @@ public final class ITObjectReadSessionFakeTest {
     GrpcRequestAuditing requestAuditing = new GrpcRequestAuditing();
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .setGrpcInterceptorProvider(
                     () ->
@@ -916,9 +908,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fakeStorage);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .build()
                 .getService()) {
@@ -997,9 +987,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fakeStorage);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .build()
                 .getService()) {
@@ -1092,9 +1080,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setGrpcInterceptorProvider(
                     GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
                 .build()
@@ -1134,9 +1120,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
                 .build()
                 .getService()) {
@@ -1158,9 +1142,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(3).build())
                 .build()
                 .getService()) {
@@ -1217,8 +1199,7 @@ public final class ITObjectReadSessionFakeTest {
             .build();
 
     BidiReadObjectRequest req3 =
-        read(2, 10, 20)
-            .toBuilder()
+        read(2, 10, 20).toBuilder()
             .setReadObjectSpec(
                 BidiReadObjectSpec.newBuilder()
                     .setBucket(METADATA.getBucket())
@@ -1287,9 +1268,7 @@ public final class ITObjectReadSessionFakeTest {
         };
     try (FakeServer fakeServer = FakeServer.of(fakeStorage);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .build()
                 .getService()) {
@@ -1397,9 +1376,7 @@ public final class ITObjectReadSessionFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fakeStorage);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
                 .build()
                 .getService()) {

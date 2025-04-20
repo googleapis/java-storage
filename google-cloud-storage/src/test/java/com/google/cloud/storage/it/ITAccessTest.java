@@ -374,13 +374,11 @@ public class ITAccessTest {
       assertThat(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled()).isFalse();
 
       storage.update(
-          bucket
-              .toBuilder()
+          bucket.toBuilder()
               .setAcl(null)
               .setDefaultAcl(null)
               .setIamConfiguration(
-                  ublaDisabledIamConfiguration
-                      .toBuilder()
+                  ublaDisabledIamConfiguration.toBuilder()
                       .setIsUniformBucketLevelAccessEnabled(true)
                       .build())
               .build(),
@@ -524,9 +522,7 @@ public class ITAccessTest {
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
       IamConfiguration iamConfiguration1 =
-          bucket
-              .getIamConfiguration()
-              .toBuilder()
+          bucket.getIamConfiguration().toBuilder()
               .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
               .build();
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
@@ -566,16 +562,13 @@ public class ITAccessTest {
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
       IamConfiguration iamConfiguration1 =
-          bucket
-              .getIamConfiguration()
-              .toBuilder()
+          bucket.getIamConfiguration().toBuilder()
               .setIsUniformBucketLevelAccessEnabled(true)
               .build();
       // Updating UBLA should not affect PAP setting.
       Bucket bucket2 =
           storage.update(
-              bucket
-                  .toBuilder()
+              bucket.toBuilder()
                   .setIamConfiguration(iamConfiguration1)
                   // clear out ACL related config in conjunction with enabling UBLA
                   .setAcl(Collections.emptyList())
@@ -644,8 +637,7 @@ public class ITAccessTest {
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
           BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
       storage.update(
-          bucket
-              .toBuilder()
+          bucket.toBuilder()
               .setAcl(null)
               .setDefaultAcl(null)
               .setIamConfiguration(bpoEnabledIamConfiguration)
@@ -657,8 +649,7 @@ public class ITAccessTest {
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
 
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setIamConfiguration(
               bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
           .build()

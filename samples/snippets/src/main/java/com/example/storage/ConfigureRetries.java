@@ -35,8 +35,7 @@ public final class ConfigureRetries {
   static void deleteBlob(String bucketName, String blobName) {
     // Customize retry behavior
     RetrySettings retrySettings =
-        StorageOptions.getDefaultRetrySettings()
-            .toBuilder()
+        StorageOptions.getDefaultRetrySettings().toBuilder()
             // Set the max number of attempts to 10 (initial attempt plus 9 retries)
             .setMaxAttempts(10)
             // Set the backoff multiplier to 3.0

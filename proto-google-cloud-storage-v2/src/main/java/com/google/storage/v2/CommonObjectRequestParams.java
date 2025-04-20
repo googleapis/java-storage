@@ -33,6 +33,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     // @@protoc_insertion_point(message_implements:google.storage.v2.CommonObjectRequestParams)
     CommonObjectRequestParamsOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use CommonObjectRequestParams.newBuilder() to construct.
   private CommonObjectRequestParams(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object encryptionAlgorithm_ = "";
+
   /**
    *
    *
@@ -93,6 +95,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       return s;
     }
   }
+
   /**
    *
    *
@@ -120,6 +123,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
 
   public static final int ENCRYPTION_KEY_BYTES_FIELD_NUMBER = 4;
   private com.google.protobuf.ByteString encryptionKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -140,6 +144,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
   public static final int ENCRYPTION_KEY_SHA256_BYTES_FIELD_NUMBER = 5;
   private com.google.protobuf.ByteString encryptionKeySha256Bytes_ =
       com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -334,6 +339,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -544,6 +550,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     private int bitField0_;
 
     private java.lang.Object encryptionAlgorithm_ = "";
+
     /**
      *
      *
@@ -567,6 +574,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -590,6 +598,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -612,6 +621,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -630,6 +640,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -656,6 +667,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
 
     private com.google.protobuf.ByteString encryptionKeyBytes_ =
         com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -672,6 +684,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     public com.google.protobuf.ByteString getEncryptionKeyBytes() {
       return encryptionKeyBytes_;
     }
+
     /**
      *
      *
@@ -694,6 +707,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -715,6 +729,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
 
     private com.google.protobuf.ByteString encryptionKeySha256Bytes_ =
         com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -731,6 +746,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     public com.google.protobuf.ByteString getEncryptionKeySha256Bytes() {
       return encryptionKeySha256Bytes_;
     }
+
     /**
      *
      *
@@ -753,6 +769,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       onChanged();
       return this;
     }
+
     /**
      *
      *

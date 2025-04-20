@@ -55,7 +55,9 @@ final class ApiFutureUtils {
     return ApiFutures.immediateFuture(value);
   }
 
-  /** @see SmugglingException */
+  /**
+   * @see SmugglingException
+   */
   static <T> ApiFuture<List<T>> quietAllAsList(List<ApiFuture<T>> futures) {
     List<ApiFuture<T>> pending =
         futures.stream().map(ApiFutureUtils::smuggleThrowable).collect(Collectors.toList());

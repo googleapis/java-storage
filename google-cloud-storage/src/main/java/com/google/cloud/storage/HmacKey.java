@@ -284,7 +284,9 @@ public class HmacKey implements Serializable {
         return this;
       }
 
-      /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+      /**
+       * @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)}
+       */
       @Deprecated
       public Builder setCreateTime(long createTime) {
         return setCreateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(createTime));
@@ -305,7 +307,9 @@ public class HmacKey implements Serializable {
         return new HmacKeyMetadata(this);
       }
 
-      /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+      /**
+       * @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)}
+       */
       @Deprecated
       public Builder setUpdateTime(long updateTime) {
         return setUpdateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(updateTime));

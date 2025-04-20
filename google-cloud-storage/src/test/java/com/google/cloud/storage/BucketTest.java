@@ -735,8 +735,7 @@ public class BucketTest {
   public void testLockRetention() throws Exception {
     initializeExpectedBucket();
     Bucket expectedRetentionLockedBucket =
-        expectedBucket
-            .toBuilder()
+        expectedBucket.toBuilder()
             .setRetentionPeriod(RETENTION_PERIOD)
             .setRetentionPolicyIsLocked(true)
             .build();

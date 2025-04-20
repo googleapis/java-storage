@@ -768,10 +768,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
       QueryWriteStatusResponse.Builder b = QueryWriteStatusResponse.newBuilder();
       if (ctx.finishWrite()) {
         b.setResource(
-            ctx.getReq()
-                .getWriteObjectSpec()
-                .getResource()
-                .toBuilder()
+            ctx.getReq().getWriteObjectSpec().getResource().toBuilder()
                 .setSize(ctx.getLength())
                 .setGeneration(1)
                 .setMetageneration(1)
@@ -836,10 +833,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
       WriteObjectResponse resp =
           WriteObjectResponse.newBuilder()
               .setResource(
-                  ctx.getReq()
-                      .getWriteObjectSpec()
-                      .getResource()
-                      .toBuilder()
+                  ctx.getReq().getWriteObjectSpec().getResource().toBuilder()
                       .setSize(ctx.getLength())
                       .setGeneration(1)
                       .setMetageneration(1)

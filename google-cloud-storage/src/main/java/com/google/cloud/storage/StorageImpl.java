@@ -153,8 +153,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   @Override
   public Blob create(BlobInfo blobInfo, BlobTargetOption... options) {
     BlobInfo updatedInfo =
-        blobInfo
-            .toBuilder()
+        blobInfo.toBuilder()
             .setMd5(EMPTY_BYTE_ARRAY_MD5)
             .setCrc32c(EMPTY_BYTE_ARRAY_CRC32C)
             .build();
@@ -166,8 +165,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
   public Blob create(BlobInfo blobInfo, byte[] content, BlobTargetOption... options) {
     content = firstNonNull(content, EMPTY_BYTE_ARRAY);
     BlobInfo updatedInfo =
-        blobInfo
-            .toBuilder()
+        blobInfo.toBuilder()
             .setMd5(BaseEncoding.base64().encode(Hashing.md5().hashBytes(content).asBytes()))
             .setCrc32c(
                 BaseEncoding.base64()
@@ -182,8 +180,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     content = firstNonNull(content, EMPTY_BYTE_ARRAY);
     BlobInfo updatedInfo =
-        blobInfo
-            .toBuilder()
+        blobInfo.toBuilder()
             .setMd5(
                 BaseEncoding.base64()
                     .encode(Hashing.md5().hashBytes(content, offset, length).asBytes()))
@@ -839,8 +836,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
         !(optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
             && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)
             && optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)),
-        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can be"
-            + " specified.");
+        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can"
+            + " be specified.");
 
     String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
     String escapedBlobName = "";
@@ -939,8 +936,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
         !(optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
             && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)
             && optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)),
-        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can be"
-            + " specified.");
+        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can"
+            + " be specified.");
 
     String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
 

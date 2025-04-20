@@ -33,6 +33,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     // @@protoc_insertion_point(message_implements:google.storage.v2.AppendObjectSpec)
     AppendObjectSpecOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use AppendObjectSpec.newBuilder() to construct.
   private AppendObjectSpec(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -70,6 +71,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -95,6 +97,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       return s;
     }
   }
+
   /**
    *
    *
@@ -125,6 +128,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object object_ = "";
+
   /**
    *
    *
@@ -148,6 +152,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       return s;
     }
   }
+
   /**
    *
    *
@@ -174,6 +179,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   public static final int GENERATION_FIELD_NUMBER = 3;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -192,6 +198,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -208,6 +215,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -227,6 +235,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 5;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -243,6 +252,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -264,6 +274,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object routingToken_ = "";
+
   /**
    *
    *
@@ -280,6 +291,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
   public boolean hasRoutingToken() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -304,6 +316,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       return s;
     }
   }
+
   /**
    *
    *
@@ -331,6 +344,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
 
   public static final int WRITE_HANDLE_FIELD_NUMBER = 7;
   private com.google.storage.v2.BidiWriteHandle writeHandle_;
+
   /**
    *
    *
@@ -347,6 +361,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
   public boolean hasWriteHandle() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -365,6 +380,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
         : writeHandle_;
   }
+
   /**
    *
    *
@@ -614,6 +630,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -899,6 +916,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -923,6 +941,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -947,6 +966,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -970,6 +990,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -989,6 +1010,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1015,6 +1037,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     }
 
     private java.lang.Object object_ = "";
+
     /**
      *
      *
@@ -1037,6 +1060,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1059,6 +1083,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1080,6 +1105,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1097,6 +1123,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1121,6 +1148,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -1136,6 +1164,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1155,6 +1184,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1174,6 +1204,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1190,6 +1221,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1206,6 +1238,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1226,6 +1259,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1246,6 +1280,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1262,6 +1297,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1278,6 +1314,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1298,6 +1335,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1318,6 +1356,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     }
 
     private java.lang.Object routingToken_ = "";
+
     /**
      *
      *
@@ -1333,6 +1372,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public boolean hasRoutingToken() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1356,6 +1396,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1379,6 +1420,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1401,6 +1443,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1419,6 +1462,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1449,6 +1493,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
             com.google.storage.v2.BidiWriteHandle.Builder,
             com.google.storage.v2.BidiWriteHandleOrBuilder>
         writeHandleBuilder_;
+
     /**
      *
      *
@@ -1464,6 +1509,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
     public boolean hasWriteHandle() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1485,6 +1531,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
         return writeHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1508,6 +1555,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1528,6 +1576,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1556,6 +1605,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       }
       return this;
     }
+
     /**
      *
      *
@@ -1576,6 +1626,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1591,6 +1642,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
       onChanged();
       return getWriteHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1610,6 +1662,7 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
             : writeHandle_;
       }
     }
+
     /**
      *
      *

@@ -122,7 +122,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/** @since 2.14.0 */
+/**
+ * @since 2.14.0
+ */
 @TransportCompatibility(Transport.GRPC)
 public final class GrpcStorageOptions extends StorageOptions
     implements Retrying.RetryingDependencies {
@@ -341,8 +343,7 @@ public final class GrpcStorageOptions extends StorageOptions
     builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
-        baseRetrySettings
-            .toBuilder()
+        baseRetrySettings.toBuilder()
             // when performing a read via ReadObject, the ServerStream will have a default relative
             // deadline set of `requestStartTime() + totalTimeout`, meaning if the specified
             // RetrySettings have a totalTimeout of 10 seconds -- which should be plenty for
@@ -382,14 +383,18 @@ public final class GrpcStorageOptions extends StorageOptions
     return Tuple.of(builder.build(), defaultOpts);
   }
 
-  /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+  /**
+   * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   @Override
   public OpenTelemetry getOpenTelemetry() {
     return openTelemetry;
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   @Override
   public GrpcStorageOptions.Builder toBuilder() {
     return new GrpcStorageOptions.Builder(this);
@@ -427,17 +432,23 @@ public final class GrpcStorageOptions extends StorageOptions
         && this.baseEquals(that);
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   public static GrpcStorageOptions.Builder newBuilder() {
     return new GrpcStorageOptions.Builder().setHost(DEFAULT_HOST);
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   public static GrpcStorageOptions getDefaultInstance() {
     return newBuilder().build();
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   public static GrpcStorageOptions.GrpcStorageDefaults defaults() {
     return GrpcStorageOptions.GrpcStorageDefaults.INSTANCE;
   }
@@ -453,7 +464,9 @@ public final class GrpcStorageOptions extends StorageOptions
     return super.shouldRefreshService(cachedService);
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   public static final class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
@@ -520,6 +533,7 @@ public final class GrpcStorageOptions extends StorageOptions
       this.attemptDirectPath = attemptDirectPath;
       return this;
     }
+
     /**
      * Option for whether this client should emit internal gRPC client internal metrics to Cloud
      * Monitoring. To disable metric reporting, set this to false. True by default. Emitting metrics
@@ -535,7 +549,9 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setTransportOptions(TransportOptions transportOptions) {
       if (!(transportOptions instanceof GrpcTransportOptions)) {
@@ -565,7 +581,9 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setServiceFactory(
         ServiceFactory<Storage, StorageOptions> serviceFactory) {
@@ -573,42 +591,54 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setClock(ApiClock clock) {
       super.setClock(clock);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setProjectId(String projectId) {
       super.setProjectId(projectId);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setHost(String host) {
       super.setHost(host);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setCredentials(Credentials credentials) {
       super.setCredentials(credentials);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setRetrySettings(RetrySettings retrySettings) {
       super.setRetrySettings(retrySettings);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setServiceRpcFactory(
         ServiceRpcFactory<StorageOptions> serviceRpcFactory) {
@@ -616,28 +646,36 @@ public final class GrpcStorageOptions extends StorageOptions
           "GrpcStorageOptions does not support setting a custom instance of ServiceRpcFactory");
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setHeaderProvider(HeaderProvider headerProvider) {
       super.setHeaderProvider(headerProvider);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setClientLibToken(String clientLibToken) {
       super.setClientLibToken(clientLibToken);
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions.Builder setQuotaProjectId(String quotaProjectId) {
       super.setQuotaProjectId(quotaProjectId);
       return this;
     }
 
-    /** @since 2.22.3 */
+    /**
+     * @since 2.22.3
+     */
     public GrpcStorageOptions.Builder setGrpcInterceptorProvider(
         @NonNull GrpcInterceptorProvider grpcInterceptorProvider) {
       requireNonNull(grpcInterceptorProvider, "grpcInterceptorProvider must be non null");
@@ -690,7 +728,9 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcStorageOptions build() {
       GrpcStorageOptions options = new GrpcStorageOptions(this, defaults());
@@ -703,7 +743,9 @@ public final class GrpcStorageOptions extends StorageOptions
     }
   }
 
-  /** @since 2.14.0 */
+  /**
+   * @since 2.14.0
+   */
   public static final class GrpcStorageDefaults extends StorageDefaults {
     static final GrpcStorageDefaults INSTANCE = new GrpcStorageOptions.GrpcStorageDefaults();
     static final StorageFactory STORAGE_FACTORY = new GrpcStorageFactory();
@@ -713,25 +755,33 @@ public final class GrpcStorageOptions extends StorageOptions
 
     private GrpcStorageDefaults() {}
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public StorageFactory getDefaultServiceFactory() {
       return STORAGE_FACTORY;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public StorageRpcFactory getDefaultRpcFactory() {
       return STORAGE_RPC_FACTORY;
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     @Override
     public GrpcTransportOptions getDefaultTransportOptions() {
       return GrpcTransportOptions.newBuilder().build();
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
@@ -742,32 +792,44 @@ public final class GrpcStorageOptions extends StorageOptions
       return toThreetenDuration(getTerminationAwaitDurationJavaTime());
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     public java.time.Duration getTerminationAwaitDurationJavaTime() {
       return java.time.Duration.ofMinutes(1);
     }
 
-    /** @since 2.14.0 */
+    /**
+     * @since 2.14.0
+     */
     public boolean isAttemptDirectPath() {
       return true;
     }
 
-    /** @since 2.41.0 */
+    /**
+     * @since 2.41.0
+     */
     public boolean isEnableGrpcClientMetrics() {
       return true;
     }
 
-    /** @since 2.22.3 */
+    /**
+     * @since 2.22.3
+     */
     public GrpcInterceptorProvider grpcInterceptorProvider() {
       return INTERCEPTOR_PROVIDER;
     }
 
-    /** @since 2.26.0 This new api is in preview and is subject to breaking changes. */
+    /**
+     * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+     */
     public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
       return BlobWriteSessionConfigs.getDefault();
     }
 
-    /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+    /**
+     * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
     public OpenTelemetry getDefaultOpenTelemetry() {
       return OpenTelemetry.noop();
@@ -1061,7 +1123,9 @@ public final class GrpcStorageOptions extends StorageOptions
     private static final RequestParamsExtractor<BidiReadObjectRequest>
         EMPTY_REQUEST_PARAMS_EXTRACTOR = request -> ImmutableMap.of();
 
-    /** @see GrpcStorageStub#READ_OBJECT_0_PATH_TEMPLATE */
+    /**
+     * @see GrpcStorageStub#READ_OBJECT_0_PATH_TEMPLATE
+     */
     private static final PathTemplate READ_OBJECT_0_PATH_TEMPLATE =
         PathTemplate.create("{bucket=**}");
 
@@ -1086,7 +1150,9 @@ public final class GrpcStorageOptions extends StorageOptions
       this.bidiReadObjectResponseMarshaller =
           new ZeroCopyResponseMarshaller<>(BidiReadObjectResponse.getDefaultInstance());
 
-      /** @see GrpcStorageStub#readObjectMethodDescriptor */
+      /**
+       * @see GrpcStorageStub#readObjectMethodDescriptor
+       */
       MethodDescriptor<ReadObjectRequest, ReadObjectResponse> readObjectMethodDescriptor =
           MethodDescriptor.<ReadObjectRequest, ReadObjectResponse>newBuilder()
               .setType(MethodDescriptor.MethodType.SERVER_STREAMING)
@@ -1094,7 +1160,9 @@ public final class GrpcStorageOptions extends StorageOptions
               .setRequestMarshaller(ProtoUtils.marshaller(ReadObjectRequest.getDefaultInstance()))
               .setResponseMarshaller(readObjectResponseMarshaller)
               .build();
-      /** @see GrpcStorageStub#bidiReadObjectMethodDescriptor */
+      /**
+       * @see GrpcStorageStub#bidiReadObjectMethodDescriptor
+       */
       MethodDescriptor<BidiReadObjectRequest, BidiReadObjectResponse>
           bidiReadObjectMethodDescriptor =
               MethodDescriptor.<BidiReadObjectRequest, BidiReadObjectResponse>newBuilder()

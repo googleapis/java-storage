@@ -59,7 +59,8 @@ final class CrossTransportUtils {
     String message =
         String.format(
             Locale.US,
-            "%s#%s is only supported for %s transport. Please use %s to construct a compatible instance.",
+            "%s#%s is only supported for %s transport. Please use %s to construct a compatible"
+                + " instance.",
             clazz.getName(),
             methodName,
             transport,

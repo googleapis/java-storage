@@ -38,6 +38,7 @@ public interface GetObjectRequestOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface GetObjectRequestOrBuilder
    * @return The object.
    */
   java.lang.String getObject();
+
   /**
    *
    *
@@ -104,6 +106,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the softDeleted field is set.
    */
   boolean hasSoftDeleted();
+
   /**
    *
    *
@@ -131,6 +134,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -161,6 +165,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -190,6 +195,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -217,6 +223,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -243,6 +250,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -255,6 +263,7 @@ public interface GetObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -281,6 +290,7 @@ public interface GetObjectRequestOrBuilder
    * @return Whether the readMask field is set.
    */
   boolean hasReadMask();
+
   /**
    *
    *
@@ -296,6 +306,7 @@ public interface GetObjectRequestOrBuilder
    * @return The readMask.
    */
   com.google.protobuf.FieldMask getReadMask();
+
   /**
    *
    *
@@ -326,6 +337,7 @@ public interface GetObjectRequestOrBuilder
    * @return The restoreToken.
    */
   java.lang.String getRestoreToken();
+
   /**
    *
    *

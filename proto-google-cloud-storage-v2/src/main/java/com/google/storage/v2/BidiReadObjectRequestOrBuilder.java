@@ -37,6 +37,7 @@ public interface BidiReadObjectRequestOrBuilder
    * @return Whether the readObjectSpec field is set.
    */
   boolean hasReadObjectSpec();
+
   /**
    *
    *
@@ -50,6 +51,7 @@ public interface BidiReadObjectRequestOrBuilder
    * @return The readObjectSpec.
    */
   com.google.storage.v2.BidiReadObjectSpec getReadObjectSpec();
+
   /**
    *
    *
@@ -77,6 +79,7 @@ public interface BidiReadObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
    */
   java.util.List<com.google.storage.v2.ReadRange> getReadRangesList();
+
   /**
    *
    *
@@ -92,6 +95,7 @@ public interface BidiReadObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
    */
   com.google.storage.v2.ReadRange getReadRanges(int index);
+
   /**
    *
    *
@@ -107,6 +111,7 @@ public interface BidiReadObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
    */
   int getReadRangesCount();
+
   /**
    *
    *
@@ -122,6 +127,7 @@ public interface BidiReadObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
    */
   java.util.List<? extends com.google.storage.v2.ReadRangeOrBuilder> getReadRangesOrBuilderList();
+
   /**
    *
    *

@@ -62,15 +62,15 @@ public class HttpRpcContextTest {
             .setContent(
                 "{\n"
                     + "  \"kind\": \"storage#serviceAccount\",\n"
-                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
+                    + "  \"email_address\":"
+                    + " \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
                     + "}\n")
             .setStatusCode(200);
     AuditingHttpTransport transport = new AuditingHttpTransport(response);
     TransportOptions transportOptions =
         HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
     Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
+        StorageOptions.getDefaultInstance().toBuilder()
             .setProjectId("test-project")
             .setCredentials(NoCredentials.getInstance())
             .setTransportOptions(transportOptions)
@@ -112,8 +112,7 @@ public class HttpRpcContextTest {
     TransportOptions transportOptions =
         HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
     Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
+        StorageOptions.getDefaultInstance().toBuilder()
             .setTransportOptions(transportOptions)
             .build()
             .getService();

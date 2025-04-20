@@ -167,7 +167,9 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Use {@link #setExpires(String)}. */
+      /**
+       * @deprecated Use {@link #setExpires(String)}.
+       */
       @Deprecated
       public Builder Expires(String expires) {
         return setExpires(expires);
@@ -188,7 +190,9 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Use {@link #setCustomMetadataField(String, String)}. */
+      /**
+       * @deprecated Use {@link #setCustomMetadataField(String, String)}.
+       */
       @Deprecated
       public Builder AddCustomMetadataField(String field, String value) {
         return setCustomMetadataField(field, value);
@@ -297,13 +301,17 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Use {@link #addExpiresCondition(long)} */
+      /**
+       * @deprecated Use {@link #addExpiresCondition(long)}
+       */
       @Deprecated
       public Builder addExpiresCondition(ConditionV4Type type, long expires) {
         return addExpiresCondition(expires);
       }
 
-      /** @deprecated Use {@link #addExpiresCondition(String)} */
+      /**
+       * @deprecated Use {@link #addExpiresCondition(String)}
+       */
       @Deprecated
       public Builder addExpiresCondition(ConditionV4Type type, String expires) {
         return addExpiresCondition(expires);
@@ -331,7 +339,9 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Use {@link #addSuccessActionStatusCondition(int)} */
+      /**
+       * @deprecated Use {@link #addSuccessActionStatusCondition(int)}
+       */
       @Deprecated
       public Builder addSuccessActionStatusCondition(ConditionV4Type type, int status) {
         return addSuccessActionStatusCondition(status);

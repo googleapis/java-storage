@@ -34,6 +34,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.CreateFolderRequest)
     CreateFolderRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use CreateFolderRequest.newBuilder() to construct.
   private CreateFolderRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -71,6 +72,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object parent_ = "";
+
   /**
    *
    *
@@ -97,6 +99,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -126,6 +129,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
 
   public static final int FOLDER_FIELD_NUMBER = 2;
   private com.google.storage.control.v2.Folder folder_;
+
   /**
    *
    *
@@ -145,6 +149,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
   public boolean hasFolder() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -164,6 +169,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
   public com.google.storage.control.v2.Folder getFolder() {
     return folder_ == null ? com.google.storage.control.v2.Folder.getDefaultInstance() : folder_;
   }
+
   /**
    *
    *
@@ -186,6 +192,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object folderId_ = "";
+
   /**
    *
    *
@@ -213,6 +220,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -243,6 +251,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
 
   public static final int RECURSIVE_FIELD_NUMBER = 4;
   private boolean recursive_ = false;
+
   /**
    *
    *
@@ -264,6 +273,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object requestId_ = "";
+
   /**
    *
    *
@@ -290,6 +300,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -517,6 +528,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -774,6 +786,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     private int bitField0_;
 
     private java.lang.Object parent_ = "";
+
     /**
      *
      *
@@ -799,6 +812,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -824,6 +838,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -848,6 +863,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -868,6 +884,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -900,6 +917,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
             com.google.storage.control.v2.Folder.Builder,
             com.google.storage.control.v2.FolderOrBuilder>
         folderBuilder_;
+
     /**
      *
      *
@@ -918,6 +936,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     public boolean hasFolder() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -942,6 +961,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return folderBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -968,6 +988,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -991,6 +1012,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1022,6 +1044,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -1045,6 +1068,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1063,6 +1087,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return getFolderFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1085,6 +1110,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
             : folder_;
       }
     }
+
     /**
      *
      *
@@ -1116,6 +1142,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object folderId_ = "";
+
     /**
      *
      *
@@ -1142,6 +1169,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1168,6 +1196,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1193,6 +1222,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1214,6 +1244,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1242,6 +1273,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     }
 
     private boolean recursive_;
+
     /**
      *
      *
@@ -1258,6 +1290,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     public boolean getRecursive() {
       return recursive_;
     }
+
     /**
      *
      *
@@ -1278,6 +1311,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1298,6 +1332,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object requestId_ = "";
+
     /**
      *
      *
@@ -1323,6 +1358,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1348,6 +1384,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1372,6 +1409,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1392,6 +1430,7 @@ public final class CreateFolderRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *

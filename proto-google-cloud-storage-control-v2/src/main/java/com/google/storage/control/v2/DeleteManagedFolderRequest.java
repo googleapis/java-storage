@@ -33,6 +33,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.DeleteManagedFolderRequest)
     DeleteManagedFolderRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use DeleteManagedFolderRequest.newBuilder() to construct.
   private DeleteManagedFolderRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object name_ = "";
+
   /**
    *
    *
@@ -96,6 +98,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       return s;
     }
   }
+
   /**
    *
    *
@@ -126,6 +129,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 3;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -142,6 +146,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -161,6 +166,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 4;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -177,6 +183,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -196,6 +203,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
 
   public static final int ALLOW_NON_EMPTY_FIELD_NUMBER = 5;
   private boolean allowNonEmpty_ = false;
+
   /**
    *
    *
@@ -219,6 +227,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object requestId_ = "";
+
   /**
    *
    *
@@ -245,6 +254,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       return s;
     }
   }
+
   /**
    *
    *
@@ -478,6 +488,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -720,6 +731,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     private int bitField0_;
 
     private java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -746,6 +758,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -772,6 +785,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -797,6 +811,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -818,6 +833,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -846,6 +862,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -862,6 +879,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -878,6 +896,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -898,6 +917,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -918,6 +938,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -934,6 +955,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -950,6 +972,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -970,6 +993,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -990,6 +1014,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     }
 
     private boolean allowNonEmpty_;
+
     /**
      *
      *
@@ -1008,6 +1033,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     public boolean getAllowNonEmpty() {
       return allowNonEmpty_;
     }
+
     /**
      *
      *
@@ -1030,6 +1056,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1052,6 +1079,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
     }
 
     private java.lang.Object requestId_ = "";
+
     /**
      *
      *
@@ -1077,6 +1105,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1102,6 +1131,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1126,6 +1156,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1146,6 +1177,7 @@ public final class DeleteManagedFolderRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *

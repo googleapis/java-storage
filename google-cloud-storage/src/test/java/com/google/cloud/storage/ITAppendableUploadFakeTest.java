@@ -271,14 +271,9 @@ public class ITAppendableUploadFakeTest {
 
     try (FakeServer fakeServer = FakeServer.of(fake);
         Storage storage =
-            fakeServer
-                .getGrpcStorageOptions()
-                .toBuilder()
+            fakeServer.getGrpcStorageOptions().toBuilder()
                 .setRetrySettings(
-                    fakeServer
-                        .getGrpcStorageOptions()
-                        .getRetrySettings()
-                        .toBuilder()
+                    fakeServer.getGrpcStorageOptions().getRetrySettings().toBuilder()
                         .setRetryDelayMultiplier(1.0)
                         .setInitialRetryDelayDuration(Duration.ofMillis(10))
                         .build())
@@ -546,8 +541,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();
@@ -648,8 +642,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();
@@ -786,8 +779,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();
@@ -931,8 +923,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();
@@ -1081,8 +1072,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();
@@ -1227,8 +1217,7 @@ public class ITAppendableUploadFakeTest {
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 3, 3);
 
     BidiWriteObjectRequest req1 =
-        REQ_OPEN
-            .toBuilder()
+        REQ_OPEN.toBuilder()
             .setChecksummedData(
                 ChecksummedData.newBuilder().setContent(ByteString.copyFromUtf8("ABC")))
             .build();

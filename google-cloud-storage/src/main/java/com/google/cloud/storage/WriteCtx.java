@@ -82,8 +82,7 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
   interface WriteObjectRequestBuilderFactory {
     WriteObjectRequest.Builder newBuilder();
 
-    @Nullable
-    String bucketName();
+    @Nullable String bucketName();
 
     static SimpleWriteObjectRequestBuilderFactory simple(WriteObjectRequest req) {
       return new SimpleWriteObjectRequestBuilderFactory(req);

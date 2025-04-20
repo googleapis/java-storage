@@ -415,6 +415,7 @@ public class SerializationTest extends BaseSerializationTest {
     assertThat(invalidClassException)
         .hasMessageThat()
         .isEqualTo(
-            "com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig$ExecutorSupplier$SuppliedExecutorSupplier; Not serializable");
+            "com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig$ExecutorSupplier$SuppliedExecutorSupplier;"
+                + " Not serializable");
   }
 }

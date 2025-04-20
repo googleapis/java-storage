@@ -91,12 +91,12 @@ public final class ITExtraHeadersOptionTest {
         storage =
             ((HttpStorageOptions) baseStorage.getOptions())
                 .toBuilder()
-                .setTransportOptions(requestAuditing)
-                // we're counting requests, disable retries so that if a request fails it won't
-                // show up as a bad assertion of the test itself
-                .setRetrySettings(ServiceOptions.getNoRetrySettings())
-                .build()
-                .getService();
+                    .setTransportOptions(requestAuditing)
+                    // we're counting requests, disable retries so that if a request fails it won't
+                    // show up as a bad assertion of the test itself
+                    .setRetrySettings(ServiceOptions.getNoRetrySettings())
+                    .build()
+                    .getService();
         break;
       case GRPC:
         GrpcRequestAuditing grpcRequestAuditing = new GrpcRequestAuditing();
@@ -105,8 +105,7 @@ public final class ITExtraHeadersOptionTest {
         GrpcInterceptorProvider grpcInterceptorProvider =
             grpcStorageOptions.getGrpcInterceptorProvider();
         storage =
-            grpcStorageOptions
-                .toBuilder()
+            grpcStorageOptions.toBuilder()
                 // we're counting requests, disable retries so that if a request fails it won't
                 // show up as a bad assertion of the test itself
                 .setRetrySettings(ServiceOptions.getNoRetrySettings())

@@ -39,6 +39,7 @@ public interface GetStorageLayoutRequestOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -68,6 +69,7 @@ public interface GetStorageLayoutRequestOrBuilder
    * @return The prefix.
    */
   java.lang.String getPrefix();
+
   /**
    *
    *
@@ -97,6 +99,7 @@ public interface GetStorageLayoutRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

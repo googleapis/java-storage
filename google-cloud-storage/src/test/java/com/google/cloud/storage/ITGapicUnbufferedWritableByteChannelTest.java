@@ -128,8 +128,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(40);
     WriteObjectRequest req1 =
-        ITGapicUnbufferedWritableByteChannelTest.req1
-            .toBuilder()
+        ITGapicUnbufferedWritableByteChannelTest.req1.toBuilder()
             .clearUploadId()
             .setWriteObjectSpec(spec)
             .build();

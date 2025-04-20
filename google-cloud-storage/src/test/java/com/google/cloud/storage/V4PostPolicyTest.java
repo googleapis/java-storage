@@ -97,9 +97,7 @@ public class V4PostPolicyTest {
   @Test
   public void test() {
     Storage storage =
-        RemoteStorageHelper.create()
-            .getOptions()
-            .toBuilder()
+        RemoteStorageHelper.create().getOptions().toBuilder()
             .setCredentials(serviceAccountCredentials)
             .setClock(new FakeClock(testData.getPolicyInput().getTimestamp()))
             .build()

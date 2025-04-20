@@ -216,8 +216,7 @@ public final class ITUnbufferedResumableUploadTest {
 
     Object object = Conversions.grpc().blobInfo().encode(updated);
     Object.Builder objectBuilder =
-        object
-            .toBuilder()
+        object.toBuilder()
             // required if the data is changing
             .clearChecksums()
             // trimmed to shave payload size

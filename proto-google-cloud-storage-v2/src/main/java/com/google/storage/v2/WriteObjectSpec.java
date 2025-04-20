@@ -33,6 +33,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     // @@protoc_insertion_point(message_implements:google.storage.v2.WriteObjectSpec)
     WriteObjectSpecOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use WriteObjectSpec.newBuilder() to construct.
   private WriteObjectSpec(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -66,6 +67,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   private int bitField0_;
   public static final int RESOURCE_FIELD_NUMBER = 1;
   private com.google.storage.v2.Object resource_;
+
   /**
    *
    *
@@ -81,6 +83,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasResource() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -96,6 +99,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public com.google.storage.v2.Object getResource() {
     return resource_ == null ? com.google.storage.v2.Object.getDefaultInstance() : resource_;
   }
+
   /**
    *
    *
@@ -114,6 +118,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object predefinedAcl_ = "";
+
   /**
    *
    *
@@ -139,6 +144,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       return s;
     }
   }
+
   /**
    *
    *
@@ -167,6 +173,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 3;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -184,6 +191,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -204,6 +212,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 4;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -222,6 +231,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -243,6 +253,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 5;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -259,6 +270,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -278,6 +290,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 6;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -294,6 +307,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -313,6 +327,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int OBJECT_SIZE_FIELD_NUMBER = 8;
   private long objectSize_ = 0L;
+
   /**
    *
    *
@@ -334,6 +349,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasObjectSize() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -358,6 +374,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
 
   public static final int APPENDABLE_FIELD_NUMBER = 9;
   private boolean appendable_ = false;
+
   /**
    *
    *
@@ -374,6 +391,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   public boolean hasAppendable() {
     return ((bitField0_ & 0x00000040) != 0);
   }
+
   /**
    *
    *
@@ -646,6 +664,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -947,6 +966,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         resourceBuilder_;
+
     /**
      *
      *
@@ -962,6 +982,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasResource() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -981,6 +1002,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
         return resourceBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1004,6 +1026,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1024,6 +1047,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1052,6 +1076,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       }
       return this;
     }
+
     /**
      *
      *
@@ -1072,6 +1097,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1087,6 +1113,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return getResourceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1104,6 +1131,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
         return resource_ == null ? com.google.storage.v2.Object.getDefaultInstance() : resource_;
       }
     }
+
     /**
      *
      *
@@ -1132,6 +1160,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private java.lang.Object predefinedAcl_ = "";
+
     /**
      *
      *
@@ -1156,6 +1185,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1180,6 +1210,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1203,6 +1234,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1222,6 +1254,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1248,6 +1281,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1265,6 +1299,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1282,6 +1317,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1303,6 +1339,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1324,6 +1361,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1342,6 +1380,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1360,6 +1399,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1382,6 +1422,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1404,6 +1445,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1420,6 +1462,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1436,6 +1479,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1456,6 +1500,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1476,6 +1521,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1492,6 +1538,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1508,6 +1555,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1528,6 +1576,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1548,6 +1597,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private long objectSize_;
+
     /**
      *
      *
@@ -1569,6 +1619,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasObjectSize() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1590,6 +1641,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public long getObjectSize() {
       return objectSize_;
     }
+
     /**
      *
      *
@@ -1615,6 +1667,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1640,6 +1693,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
 
     private boolean appendable_;
+
     /**
      *
      *
@@ -1656,6 +1710,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean hasAppendable() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1672,6 +1727,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public boolean getAppendable() {
       return appendable_;
     }
+
     /**
      *
      *
@@ -1692,6 +1748,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *

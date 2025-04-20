@@ -33,6 +33,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.ListBucketsResponse)
     ListBucketsResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ListBucketsResponse.newBuilder() to construct.
   private ListBucketsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.Bucket> buckets_;
+
   /**
    *
    *
@@ -81,6 +83,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   public java.util.List<com.google.storage.v2.Bucket> getBucketsList() {
     return buckets_;
   }
+
   /**
    *
    *
@@ -94,6 +97,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   public java.util.List<? extends com.google.storage.v2.BucketOrBuilder> getBucketsOrBuilderList() {
     return buckets_;
   }
+
   /**
    *
    *
@@ -107,6 +111,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   public int getBucketsCount() {
     return buckets_.size();
   }
+
   /**
    *
    *
@@ -120,6 +125,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   public com.google.storage.v2.Bucket getBuckets(int index) {
     return buckets_.get(index);
   }
+
   /**
    *
    *
@@ -138,6 +144,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object nextPageToken_ = "";
+
   /**
    *
    *
@@ -162,6 +169,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -357,6 +365,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -630,6 +639,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return bucketsBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -646,6 +656,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return bucketsBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -662,6 +673,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return bucketsBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -684,6 +696,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -703,6 +716,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -725,6 +739,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -747,6 +762,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -766,6 +782,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -785,6 +802,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -805,6 +823,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -824,6 +843,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -843,6 +863,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -855,6 +876,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.Bucket.Builder getBucketsBuilder(int index) {
       return getBucketsFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -871,6 +893,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return bucketsBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -888,6 +911,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return java.util.Collections.unmodifiableList(buckets_);
       }
     }
+
     /**
      *
      *
@@ -900,6 +924,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.Bucket.Builder addBucketsBuilder() {
       return getBucketsFieldBuilder().addBuilder(com.google.storage.v2.Bucket.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -913,6 +938,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       return getBucketsFieldBuilder()
           .addBuilder(index, com.google.storage.v2.Bucket.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -944,6 +970,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object nextPageToken_ = "";
+
     /**
      *
      *
@@ -967,6 +994,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -990,6 +1018,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1012,6 +1041,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1030,6 +1060,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *

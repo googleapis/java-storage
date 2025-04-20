@@ -33,6 +33,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
     // @@protoc_insertion_point(message_implements:google.storage.v2.ServiceConstants)
     ServiceConstantsOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ServiceConstants.newBuilder() to construct.
   private ServiceConstants(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -253,6 +254,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_WRITE_CHUNK_BYTES = 2097152;</code>
      */
     public static final Values MAX_WRITE_CHUNK_BYTES = MAX_READ_CHUNK_BYTES;
+
     /**
      *
      *
@@ -264,6 +266,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_LIFECYCLE_RULES_PER_BUCKET = 100;</code>
      */
     public static final Values MAX_LIFECYCLE_RULES_PER_BUCKET = MAX_NOTIFICATION_CONFIGS_PER_BUCKET;
+
     /**
      *
      *
@@ -276,6 +279,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      */
     public static final Values MAX_NOTIFICATION_CUSTOM_ATTRIBUTE_VALUE_LENGTH =
         MAX_CUSTOM_METADATA_FIELD_NAME_BYTES;
+
     /**
      *
      *
@@ -286,6 +290,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>VALUES_UNSPECIFIED = 0;</code>
      */
     public static final int VALUES_UNSPECIFIED_VALUE = 0;
+
     /**
      *
      *
@@ -298,6 +303,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_READ_CHUNK_BYTES = 2097152;</code>
      */
     public static final int MAX_READ_CHUNK_BYTES_VALUE = 2097152;
+
     /**
      *
      *
@@ -309,6 +315,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_WRITE_CHUNK_BYTES = 2097152;</code>
      */
     public static final int MAX_WRITE_CHUNK_BYTES_VALUE = 2097152;
+
     /**
      *
      *
@@ -321,6 +328,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_OBJECT_SIZE_MB = 5242880;</code>
      */
     public static final int MAX_OBJECT_SIZE_MB_VALUE = 5242880;
+
     /**
      *
      *
@@ -333,6 +341,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_CUSTOM_METADATA_FIELD_NAME_BYTES = 1024;</code>
      */
     public static final int MAX_CUSTOM_METADATA_FIELD_NAME_BYTES_VALUE = 1024;
+
     /**
      *
      *
@@ -345,6 +354,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_CUSTOM_METADATA_FIELD_VALUE_BYTES = 4096;</code>
      */
     public static final int MAX_CUSTOM_METADATA_FIELD_VALUE_BYTES_VALUE = 4096;
+
     /**
      *
      *
@@ -357,6 +367,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_CUSTOM_METADATA_TOTAL_SIZE_BYTES = 8192;</code>
      */
     public static final int MAX_CUSTOM_METADATA_TOTAL_SIZE_BYTES_VALUE = 8192;
+
     /**
      *
      *
@@ -369,6 +380,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_BUCKET_METADATA_TOTAL_SIZE_BYTES = 20480;</code>
      */
     public static final int MAX_BUCKET_METADATA_TOTAL_SIZE_BYTES_VALUE = 20480;
+
     /**
      *
      *
@@ -380,6 +392,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_NOTIFICATION_CONFIGS_PER_BUCKET = 100;</code>
      */
     public static final int MAX_NOTIFICATION_CONFIGS_PER_BUCKET_VALUE = 100;
+
     /**
      *
      *
@@ -391,6 +404,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_LIFECYCLE_RULES_PER_BUCKET = 100;</code>
      */
     public static final int MAX_LIFECYCLE_RULES_PER_BUCKET_VALUE = 100;
+
     /**
      *
      *
@@ -401,6 +415,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_NOTIFICATION_CUSTOM_ATTRIBUTES = 5;</code>
      */
     public static final int MAX_NOTIFICATION_CUSTOM_ATTRIBUTES_VALUE = 5;
+
     /**
      *
      *
@@ -412,6 +427,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_NOTIFICATION_CUSTOM_ATTRIBUTE_KEY_LENGTH = 256;</code>
      */
     public static final int MAX_NOTIFICATION_CUSTOM_ATTRIBUTE_KEY_LENGTH_VALUE = 256;
+
     /**
      *
      *
@@ -423,6 +439,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_NOTIFICATION_CUSTOM_ATTRIBUTE_VALUE_LENGTH = 1024;</code>
      */
     public static final int MAX_NOTIFICATION_CUSTOM_ATTRIBUTE_VALUE_LENGTH_VALUE = 1024;
+
     /**
      *
      *
@@ -433,6 +450,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_LABELS_ENTRIES_COUNT = 64;</code>
      */
     public static final int MAX_LABELS_ENTRIES_COUNT_VALUE = 64;
+
     /**
      *
      *
@@ -444,6 +462,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_LABELS_KEY_VALUE_LENGTH = 63;</code>
      */
     public static final int MAX_LABELS_KEY_VALUE_LENGTH_VALUE = 63;
+
     /**
      *
      *
@@ -455,6 +474,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_LABELS_KEY_VALUE_BYTES = 128;</code>
      */
     public static final int MAX_LABELS_KEY_VALUE_BYTES_VALUE = 128;
+
     /**
      *
      *
@@ -466,6 +486,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      * <code>MAX_OBJECT_IDS_PER_DELETE_OBJECTS_REQUEST = 1000;</code>
      */
     public static final int MAX_OBJECT_IDS_PER_DELETE_OBJECTS_REQUEST_VALUE = 1000;
+
     /**
      *
      *
@@ -759,6 +780,7 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *

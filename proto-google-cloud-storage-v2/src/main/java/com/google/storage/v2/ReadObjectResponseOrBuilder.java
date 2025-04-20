@@ -39,6 +39,7 @@ public interface ReadObjectResponseOrBuilder
    * @return Whether the checksummedData field is set.
    */
   boolean hasChecksummedData();
+
   /**
    *
    *
@@ -54,6 +55,7 @@ public interface ReadObjectResponseOrBuilder
    * @return The checksummedData.
    */
   com.google.storage.v2.ChecksummedData getChecksummedData();
+
   /**
    *
    *
@@ -82,6 +84,7 @@ public interface ReadObjectResponseOrBuilder
    * @return Whether the objectChecksums field is set.
    */
   boolean hasObjectChecksums();
+
   /**
    *
    *
@@ -96,6 +99,7 @@ public interface ReadObjectResponseOrBuilder
    * @return The objectChecksums.
    */
   com.google.storage.v2.ObjectChecksums getObjectChecksums();
+
   /**
    *
    *
@@ -123,6 +127,7 @@ public interface ReadObjectResponseOrBuilder
    * @return Whether the contentRange field is set.
    */
   boolean hasContentRange();
+
   /**
    *
    *
@@ -137,6 +142,7 @@ public interface ReadObjectResponseOrBuilder
    * @return The contentRange.
    */
   com.google.storage.v2.ContentRange getContentRange();
+
   /**
    *
    *
@@ -163,6 +169,7 @@ public interface ReadObjectResponseOrBuilder
    * @return Whether the metadata field is set.
    */
   boolean hasMetadata();
+
   /**
    *
    *
@@ -176,6 +183,7 @@ public interface ReadObjectResponseOrBuilder
    * @return The metadata.
    */
   com.google.storage.v2.Object getMetadata();
+
   /**
    *
    *

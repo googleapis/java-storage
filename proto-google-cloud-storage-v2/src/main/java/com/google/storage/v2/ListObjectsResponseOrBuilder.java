@@ -34,6 +34,7 @@ public interface ListObjectsResponseOrBuilder
    * <code>repeated .google.storage.v2.Object objects = 1;</code>
    */
   java.util.List<com.google.storage.v2.Object> getObjectsList();
+
   /**
    *
    *
@@ -44,6 +45,7 @@ public interface ListObjectsResponseOrBuilder
    * <code>repeated .google.storage.v2.Object objects = 1;</code>
    */
   com.google.storage.v2.Object getObjects(int index);
+
   /**
    *
    *
@@ -54,6 +56,7 @@ public interface ListObjectsResponseOrBuilder
    * <code>repeated .google.storage.v2.Object objects = 1;</code>
    */
   int getObjectsCount();
+
   /**
    *
    *
@@ -64,6 +67,7 @@ public interface ListObjectsResponseOrBuilder
    * <code>repeated .google.storage.v2.Object objects = 1;</code>
    */
   java.util.List<? extends com.google.storage.v2.ObjectOrBuilder> getObjectsOrBuilderList();
+
   /**
    *
    *
@@ -88,6 +92,7 @@ public interface ListObjectsResponseOrBuilder
    * @return A list containing the prefixes.
    */
   java.util.List<java.lang.String> getPrefixesList();
+
   /**
    *
    *
@@ -101,6 +106,7 @@ public interface ListObjectsResponseOrBuilder
    * @return The count of prefixes.
    */
   int getPrefixesCount();
+
   /**
    *
    *
@@ -115,6 +121,7 @@ public interface ListObjectsResponseOrBuilder
    * @return The prefixes at the given index.
    */
   java.lang.String getPrefixes(int index);
+
   /**
    *
    *
@@ -143,6 +150,7 @@ public interface ListObjectsResponseOrBuilder
    * @return The nextPageToken.
    */
   java.lang.String getNextPageToken();
+
   /**
    *
    *

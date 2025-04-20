@@ -35,6 +35,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.CommonLongRunningOperationMetadata)
     CommonLongRunningOperationMetadataOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use CommonLongRunningOperationMetadata.newBuilder() to construct.
   private CommonLongRunningOperationMetadata(
       com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
@@ -69,6 +70,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   private int bitField0_;
   public static final int CREATE_TIME_FIELD_NUMBER = 1;
   private com.google.protobuf.Timestamp createTime_;
+
   /**
    *
    *
@@ -85,6 +87,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public boolean hasCreateTime() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -101,6 +104,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public com.google.protobuf.Timestamp getCreateTime() {
     return createTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : createTime_;
   }
+
   /**
    *
    *
@@ -118,6 +122,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
 
   public static final int END_TIME_FIELD_NUMBER = 2;
   private com.google.protobuf.Timestamp endTime_;
+
   /**
    *
    *
@@ -134,6 +139,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public boolean hasEndTime() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -150,6 +156,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public com.google.protobuf.Timestamp getEndTime() {
     return endTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : endTime_;
   }
+
   /**
    *
    *
@@ -167,6 +174,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
 
   public static final int UPDATE_TIME_FIELD_NUMBER = 3;
   private com.google.protobuf.Timestamp updateTime_;
+
   /**
    *
    *
@@ -183,6 +191,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public boolean hasUpdateTime() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -199,6 +208,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
   public com.google.protobuf.Timestamp getUpdateTime() {
     return updateTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : updateTime_;
   }
+
   /**
    *
    *
@@ -218,6 +228,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object type_ = "";
+
   /**
    *
    *
@@ -241,6 +252,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       return s;
     }
   }
+
   /**
    *
    *
@@ -267,6 +279,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
 
   public static final int REQUESTED_CANCELLATION_FIELD_NUMBER = 5;
   private boolean requestedCancellation_ = false;
+
   /**
    *
    *
@@ -285,6 +298,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
 
   public static final int PROGRESS_PERCENT_FIELD_NUMBER = 6;
   private int progressPercent_ = 0;
+
   /**
    *
    *
@@ -522,6 +536,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -810,6 +825,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
             com.google.protobuf.Timestamp.Builder,
             com.google.protobuf.TimestampOrBuilder>
         createTimeBuilder_;
+
     /**
      *
      *
@@ -826,6 +842,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     public boolean hasCreateTime() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -848,6 +865,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return createTimeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -872,6 +890,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -893,6 +912,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -922,6 +942,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       }
       return this;
     }
+
     /**
      *
      *
@@ -943,6 +964,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -959,6 +981,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return getCreateTimeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -979,6 +1002,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
             : createTime_;
       }
     }
+
     /**
      *
      *
@@ -1013,6 +1037,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
             com.google.protobuf.Timestamp.Builder,
             com.google.protobuf.TimestampOrBuilder>
         endTimeBuilder_;
+
     /**
      *
      *
@@ -1028,6 +1053,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     public boolean hasEndTime() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -1047,6 +1073,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return endTimeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1070,6 +1097,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1090,6 +1118,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1118,6 +1147,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       }
       return this;
     }
+
     /**
      *
      *
@@ -1138,6 +1168,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1153,6 +1184,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return getEndTimeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1170,6 +1202,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return endTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : endTime_;
       }
     }
+
     /**
      *
      *
@@ -1203,6 +1236,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
             com.google.protobuf.Timestamp.Builder,
             com.google.protobuf.TimestampOrBuilder>
         updateTimeBuilder_;
+
     /**
      *
      *
@@ -1219,6 +1253,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     public boolean hasUpdateTime() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1241,6 +1276,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return updateTimeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1265,6 +1301,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1286,6 +1323,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1315,6 +1353,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       }
       return this;
     }
+
     /**
      *
      *
@@ -1336,6 +1375,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1352,6 +1392,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return getUpdateTimeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1372,6 +1413,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
             : updateTime_;
       }
     }
+
     /**
      *
      *
@@ -1401,6 +1443,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     }
 
     private java.lang.Object type_ = "";
+
     /**
      *
      *
@@ -1423,6 +1466,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1445,6 +1489,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1466,6 +1511,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1483,6 +1529,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1507,6 +1554,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     }
 
     private boolean requestedCancellation_;
+
     /**
      *
      *
@@ -1522,6 +1570,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     public boolean getRequestedCancellation() {
       return requestedCancellation_;
     }
+
     /**
      *
      *
@@ -1541,6 +1590,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1560,6 +1610,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     }
 
     private int progressPercent_;
+
     /**
      *
      *
@@ -1576,6 +1627,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
     public int getProgressPercent() {
       return progressPercent_;
     }
+
     /**
      *
      *
@@ -1596,6 +1648,7 @@ public final class CommonLongRunningOperationMetadata extends com.google.protobu
       onChanged();
       return this;
     }
+
     /**
      *
      *

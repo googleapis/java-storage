@@ -68,9 +68,7 @@ public final class ITBlobWriteSessionTest {
   public void bufferToTempDirThenUpload() throws Exception {
     Path path = temporaryFolder.newFolder().toPath();
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToDiskThenUpload(path))
             .build();
     try (Storage s = options.getService()) {
@@ -99,9 +97,9 @@ public final class ITBlobWriteSessionTest {
     StorageOptions options =
         (storage.getOptions())
             .toBuilder()
-            .setBlobWriteSessionConfig(
-                BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
-            .build();
+                .setBlobWriteSessionConfig(
+                    BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
+                .build();
 
     try (Storage s = options.getService()) {
       doTest(s);
@@ -113,9 +111,7 @@ public final class ITBlobWriteSessionTest {
   public void bidiTest() throws Exception {
     StorageOptions options =
         (storage.getOptions())
-            .toBuilder()
-            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
-            .build();
+            .toBuilder().setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite()).build();
     try (Storage s = options.getService()) {
       doTest(s);
     }

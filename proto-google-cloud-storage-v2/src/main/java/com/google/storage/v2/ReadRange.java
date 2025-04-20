@@ -33,6 +33,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     // @@protoc_insertion_point(message_implements:google.storage.v2.ReadRange)
     ReadRangeOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ReadRange.newBuilder() to construct.
   private ReadRange(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -62,6 +63,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
 
   public static final int READ_OFFSET_FIELD_NUMBER = 1;
   private long readOffset_ = 0L;
+
   /**
    *
    *
@@ -89,6 +91,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
 
   public static final int READ_LENGTH_FIELD_NUMBER = 2;
   private long readLength_ = 0L;
+
   /**
    *
    *
@@ -112,6 +115,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
 
   public static final int READ_ID_FIELD_NUMBER = 3;
   private long readId_ = 0L;
+
   /**
    *
    *
@@ -307,6 +311,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -512,6 +517,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
 
     private long readOffset_;
+
     /**
      *
      *
@@ -536,6 +542,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     public long getReadOffset() {
       return readOffset_;
     }
+
     /**
      *
      *
@@ -564,6 +571,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -592,6 +600,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     }
 
     private long readLength_;
+
     /**
      *
      *
@@ -612,6 +621,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     public long getReadLength() {
       return readLength_;
     }
+
     /**
      *
      *
@@ -636,6 +646,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -660,6 +671,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     }
 
     private long readId_;
+
     /**
      *
      *
@@ -679,6 +691,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
     public long getReadId() {
       return readId_;
     }
+
     /**
      *
      *
@@ -702,6 +715,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *

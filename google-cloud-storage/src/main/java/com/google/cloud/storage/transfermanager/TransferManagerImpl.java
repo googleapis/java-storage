@@ -71,8 +71,7 @@ final class TransferManagerImpl implements TransferManager {
     String userAgent = storageOptions.getUserAgent();
     if (userAgent == null || !userAgent.contains(USER_AGENT_ENTRY)) {
       storageOptions =
-          storageOptions
-              .toBuilder()
+          storageOptions.toBuilder()
               .setHeaderProvider(
                   FixedHeaderProvider.create(
                       ImmutableMap.of("User-Agent", USER_AGENT_ENTRY + LIBRARY_VERSION)))

@@ -33,6 +33,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     // @@protoc_insertion_point(message_implements:google.storage.v2.ListObjectsRequest)
     ListObjectsRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ListObjectsRequest.newBuilder() to construct.
   private ListObjectsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -74,6 +75,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object parent_ = "";
+
   /**
    *
    *
@@ -99,6 +101,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -127,6 +130,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int PAGE_SIZE_FIELD_NUMBER = 2;
   private int pageSize_ = 0;
+
   /**
    *
    *
@@ -150,6 +154,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object pageToken_ = "";
+
   /**
    *
    *
@@ -174,6 +179,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -203,6 +209,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object delimiter_ = "";
+
   /**
    *
    *
@@ -231,6 +238,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -262,6 +270,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int INCLUDE_TRAILING_DELIMITER_FIELD_NUMBER = 5;
   private boolean includeTrailingDelimiter_ = false;
+
   /**
    *
    *
@@ -284,6 +293,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object prefix_ = "";
+
   /**
    *
    *
@@ -307,6 +317,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -333,6 +344,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int VERSIONS_FIELD_NUMBER = 7;
   private boolean versions_ = false;
+
   /**
    *
    *
@@ -354,6 +366,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int READ_MASK_FIELD_NUMBER = 8;
   private com.google.protobuf.FieldMask readMask_;
+
   /**
    *
    *
@@ -372,6 +385,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasReadMask() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -390,6 +404,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
   public com.google.protobuf.FieldMask getReadMask() {
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
   }
+
   /**
    *
    *
@@ -411,6 +426,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object lexicographicStart_ = "";
+
   /**
    *
    *
@@ -437,6 +453,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -468,6 +485,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object lexicographicEnd_ = "";
+
   /**
    *
    *
@@ -494,6 +512,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -523,6 +542,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int SOFT_DELETED_FIELD_NUMBER = 12;
   private boolean softDeleted_ = false;
+
   /**
    *
    *
@@ -542,6 +562,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int INCLUDE_FOLDERS_AS_PREFIXES_FIELD_NUMBER = 13;
   private boolean includeFoldersAsPrefixes_ = false;
+
   /**
    *
    *
@@ -563,6 +584,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object matchGlob_ = "";
+
   /**
    *
    *
@@ -589,6 +611,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -887,6 +910,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1254,6 +1278,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     private int bitField0_;
 
     private java.lang.Object parent_ = "";
+
     /**
      *
      *
@@ -1278,6 +1303,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1302,6 +1328,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1325,6 +1352,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1344,6 +1372,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1370,6 +1399,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private int pageSize_;
+
     /**
      *
      *
@@ -1388,6 +1418,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public int getPageSize() {
       return pageSize_;
     }
+
     /**
      *
      *
@@ -1410,6 +1441,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1432,6 +1464,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object pageToken_ = "";
+
     /**
      *
      *
@@ -1455,6 +1488,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1478,6 +1512,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1500,6 +1535,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1518,6 +1554,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1543,6 +1580,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object delimiter_ = "";
+
     /**
      *
      *
@@ -1570,6 +1608,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1597,6 +1636,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1623,6 +1663,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1645,6 +1686,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1674,6 +1716,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private boolean includeTrailingDelimiter_;
+
     /**
      *
      *
@@ -1691,6 +1734,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public boolean getIncludeTrailingDelimiter() {
       return includeTrailingDelimiter_;
     }
+
     /**
      *
      *
@@ -1712,6 +1756,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1733,6 +1778,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object prefix_ = "";
+
     /**
      *
      *
@@ -1755,6 +1801,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1777,6 +1824,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1798,6 +1846,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1815,6 +1864,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1839,6 +1889,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private boolean versions_;
+
     /**
      *
      *
@@ -1857,6 +1908,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public boolean getVersions() {
       return versions_;
     }
+
     /**
      *
      *
@@ -1879,6 +1931,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1906,6 +1959,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
             com.google.protobuf.FieldMask.Builder,
             com.google.protobuf.FieldMaskOrBuilder>
         readMaskBuilder_;
+
     /**
      *
      *
@@ -1923,6 +1977,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasReadMask() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1944,6 +1999,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return readMaskBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1969,6 +2025,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1991,6 +2048,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2021,6 +2079,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -2043,6 +2102,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2060,6 +2120,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2079,6 +2140,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
       }
     }
+
     /**
      *
      *
@@ -2109,6 +2171,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object lexicographicStart_ = "";
+
     /**
      *
      *
@@ -2134,6 +2197,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2159,6 +2223,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2183,6 +2248,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2203,6 +2269,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2230,6 +2297,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object lexicographicEnd_ = "";
+
     /**
      *
      *
@@ -2255,6 +2323,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2280,6 +2349,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2304,6 +2374,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2324,6 +2395,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2351,6 +2423,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private boolean softDeleted_;
+
     /**
      *
      *
@@ -2367,6 +2440,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public boolean getSoftDeleted() {
       return softDeleted_;
     }
+
     /**
      *
      *
@@ -2387,6 +2461,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2407,6 +2482,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private boolean includeFoldersAsPrefixes_;
+
     /**
      *
      *
@@ -2423,6 +2499,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     public boolean getIncludeFoldersAsPrefixes() {
       return includeFoldersAsPrefixes_;
     }
+
     /**
      *
      *
@@ -2443,6 +2520,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2463,6 +2541,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object matchGlob_ = "";
+
     /**
      *
      *
@@ -2488,6 +2567,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2513,6 +2593,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2537,6 +2618,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2557,6 +2639,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *

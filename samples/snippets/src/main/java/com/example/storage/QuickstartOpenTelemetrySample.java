@@ -36,7 +36,7 @@ public class QuickstartOpenTelemetrySample {
     TextMapPropagator propagators =
         TextMapPropagator.composite(
             W3CTraceContextPropagator.getInstance(),
-            new XCloudTraceContextPropagator(/*oneway=*/ true));
+            new XCloudTraceContextPropagator(/* oneway= */ true));
 
     OpenTelemetrySdk openTelemetry =
         OpenTelemetrySdk.builder()

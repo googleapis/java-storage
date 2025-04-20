@@ -36,6 +36,7 @@ public interface ProjectTeamOrBuilder
    * @return The projectNumber.
    */
   java.lang.String getProjectNumber();
+
   /**
    *
    *
@@ -61,6 +62,7 @@ public interface ProjectTeamOrBuilder
    * @return The team.
    */
   java.lang.String getTeam();
+
   /**
    *
    *

@@ -44,6 +44,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The destinationName.
    */
   java.lang.String getDestinationName();
+
   /**
    *
    *
@@ -80,6 +81,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The destinationBucket.
    */
   java.lang.String getDestinationBucket();
+
   /**
    *
    *
@@ -112,6 +114,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The destinationKmsKey.
    */
   java.lang.String getDestinationKmsKey();
+
   /**
    *
    *
@@ -147,6 +150,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the destination field is set.
    */
   boolean hasDestination();
+
   /**
    *
    *
@@ -165,6 +169,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The destination.
    */
   com.google.storage.v2.Object getDestination();
+
   /**
    *
    *
@@ -196,6 +201,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The sourceBucket.
    */
   java.lang.String getSourceBucket();
+
   /**
    *
    *
@@ -223,6 +229,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The sourceObject.
    */
   java.lang.String getSourceObject();
+
   /**
    *
    *
@@ -266,6 +273,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The rewriteToken.
    */
   java.lang.String getRewriteToken();
+
   /**
    *
    *
@@ -297,6 +305,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The destinationPredefinedAcl.
    */
   java.lang.String getDestinationPredefinedAcl();
+
   /**
    *
    *
@@ -326,6 +335,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -356,6 +366,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -385,6 +396,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -412,6 +424,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -439,6 +452,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifSourceGenerationMatch field is set.
    */
   boolean hasIfSourceGenerationMatch();
+
   /**
    *
    *
@@ -466,6 +480,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifSourceGenerationNotMatch field is set.
    */
   boolean hasIfSourceGenerationNotMatch();
+
   /**
    *
    *
@@ -493,6 +508,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifSourceMetagenerationMatch field is set.
    */
   boolean hasIfSourceMetagenerationMatch();
+
   /**
    *
    *
@@ -520,6 +536,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the ifSourceMetagenerationNotMatch field is set.
    */
   boolean hasIfSourceMetagenerationNotMatch();
+
   /**
    *
    *
@@ -567,6 +584,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The copySourceEncryptionAlgorithm.
    */
   java.lang.String getCopySourceEncryptionAlgorithm();
+
   /**
    *
    *
@@ -623,6 +641,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -635,6 +654,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -659,6 +679,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return Whether the objectChecksums field is set.
    */
   boolean hasObjectChecksums();
+
   /**
    *
    *
@@ -672,6 +693,7 @@ public interface RewriteObjectRequestOrBuilder
    * @return The objectChecksums.
    */
   com.google.storage.v2.ObjectChecksums getObjectChecksums();
+
   /**
    *
    *

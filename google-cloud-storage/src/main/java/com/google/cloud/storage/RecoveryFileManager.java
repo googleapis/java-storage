@@ -37,6 +37,7 @@ import java.util.UUID;
 final class RecoveryFileManager {
 
   private final ImmutableList<RecoveryVolume> volumes;
+
   /** Keep track of active info and file */
   private final Map<BlobInfo, RecoveryFile> files;
 
