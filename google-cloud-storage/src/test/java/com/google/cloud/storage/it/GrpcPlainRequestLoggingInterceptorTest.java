@@ -107,6 +107,6 @@ public final class GrpcPlainRequestLoggingInterceptorTest {
         GrpcPlainRequestLoggingInterceptorTest.class.getClassLoader().getResource(resourcePath);
     assertThat(url).isNotNull();
 
-    return Resources.toString(url, StandardCharsets.UTF_8);
+    return Resources.toString(url, StandardCharsets.UTF_8).replace(System.lineSeparator(), "\n");
   }
 }
