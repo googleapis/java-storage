@@ -106,21 +106,8 @@ import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ITObjectReadSessionFakeTest {
-  static {
-    org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
-    org.slf4j.bridge.SLF4JBridgeHandler.install();
-  }
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ITObjectReadSessionFakeTest.class);
-
-  static {
-    LOGGER.info("hi");
-  }
-
   private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
       Metadata.Key.of(
           "grpc-status-details-bin",
@@ -1582,7 +1569,11 @@ public final class ITObjectReadSessionFakeTest {
         Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setDaemon(true).setNameFormat("exec-%d").build());
 
+    // The test will submit 4 different reads to the server, we want to wait until all 4 are
+    // received by the server before sending any responses.
     CountDownLatch serverWaitCdl = new CountDownLatch(4);
+    // Then, we want the test to wait for all read responses to be returned from the server before
+    // beginning assertions.
     CountDownLatch testWaitCdl = new CountDownLatch(4);
 
     StorageImplBase fakeStorage =
@@ -1590,7 +1581,6 @@ public final class ITObjectReadSessionFakeTest {
           @Override
           public StreamObserver<BidiReadObjectRequest> bidiReadObject(
               StreamObserver<BidiReadObjectResponse> respond) {
-            LOGGER.info("new bidiReadObject stream");
             bidiReadObjectCount.getAndIncrement();
             return new StreamObserver<BidiReadObjectRequest>() {
               @Override
@@ -1684,7 +1674,12 @@ public final class ITObjectReadSessionFakeTest {
 
       BlobId id = BlobId.of("b", "o");
 
-      try (BlobReadSession session = storage.blobReadSession(id).get(5, TimeUnit.SECONDS)) {
+      // define the number of seconds our futures are willing to wait before timeout.
+      // In general everything should resolve in a small number of millis, this is more of a
+      // safeguard to prevent the whole suite hanging if there is an issue.
+      int timeoutSeconds = 5;
+      try (BlobReadSession session =
+          storage.blobReadSession(id).get(timeoutSeconds, TimeUnit.SECONDS)) {
 
         ApiFuture<byte[]> expectSuccessFuture =
             session.readAs(
@@ -1700,7 +1695,6 @@ public final class ITObjectReadSessionFakeTest {
         Future<byte[]> expectSuccessChannel =
             exec.submit(
                 () -> {
-                  LOGGER.info("exec.submit().call()");
                   try (ScatteringByteChannel succeed =
                       session.readAs(readAsChannel.withRangeSpec(RangeSpec.of(10, 20)))) {
                     serverWaitCdl.countDown();
@@ -1724,16 +1718,18 @@ public final class ITObjectReadSessionFakeTest {
                   }
                 });
 
-        boolean await = testWaitCdl.await(5, TimeUnit.SECONDS);
+        boolean await = testWaitCdl.await(timeoutSeconds, TimeUnit.SECONDS);
         assertThat(await).isTrue();
         ExecutionException exceptionFromFuture =
             assertThrows(
-                ExecutionException.class, () -> expectFailureFuture.get(5, TimeUnit.SECONDS));
-        byte[] bytesFromFuture = expectSuccessFuture.get(5, TimeUnit.SECONDS);
+                ExecutionException.class,
+                () -> expectFailureFuture.get(timeoutSeconds, TimeUnit.SECONDS));
+        byte[] bytesFromFuture = expectSuccessFuture.get(timeoutSeconds, TimeUnit.SECONDS);
         ExecutionException finalExceptionFromChannel =
             assertThrows(
-                ExecutionException.class, () -> expectFailureChannel.get(5, TimeUnit.SECONDS));
-        byte[] bytesFromChannel = expectSuccessChannel.get(5, TimeUnit.SECONDS);
+                ExecutionException.class,
+                () -> expectFailureChannel.get(timeoutSeconds, TimeUnit.SECONDS));
+        byte[] bytesFromChannel = expectSuccessChannel.get(timeoutSeconds, TimeUnit.SECONDS);
 
         assertAll(
             () ->

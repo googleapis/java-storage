@@ -75,6 +75,11 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
   private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
 
+  /**
+   * Define a map of message types we want to try to unpack from an {@link Any}.
+   *
+   * <p>The keys are the {@code type_url}, and the values are the default instances of each message.
+   */
   private static final Map<String, Message> anyParsers =
       Stream.of(
               com.google.rpc.ErrorInfo.getDefaultInstance(),
@@ -86,7 +91,13 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
               com.google.storage.v2.BidiReadObjectError.getDefaultInstance(),
               com.google.storage.v2.BidiReadObjectRedirectedError.getDefaultInstance(),
               com.google.storage.v2.BidiWriteObjectRedirectedError.getDefaultInstance())
-          .collect(Collectors.toMap(m -> Any.pack(m).getTypeUrl(), Function.identity()));
+          // take the stream of Message default instances and collect them to map entries
+          .collect(
+              Collectors.toMap(
+                  // resolve the type_url of the message
+                  m -> Any.pack(m).getTypeUrl(),
+                  // return the message default instance as is for the value
+                  Function.identity()));
 
   private GrpcPlainRequestLoggingInterceptor() {}
 
@@ -245,8 +256,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
     return content.substring(0, 20).concat(snip);
   }
 
-  // while trailers.get can return null, we're always getting values based on the keys it told us
-  // it had.
+  // Suppress DataFlowIssue warnings for this method.
+  // While the declared return type of trailers.get is @Nullable T, we're always calling get with a
+  // key we know to be present because we found the key name by calling trailers.keys().
   @SuppressWarnings("DataFlowIssue")
   @VisibleForTesting
   public static @NonNull Supplier<String> lazyOnCloseLogString(Status status, Metadata trailers) {
@@ -261,7 +273,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
             .append(description)
             .append("'");
       }
-      sb.append("\n}, \ntrailers = {");
+      sb.append("\n},\ntrailers = {");
       Set<String> keys = trailers.keys();
       for (String key : keys) {
         sb.append("\n  ").append(key);
