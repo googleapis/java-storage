@@ -74,9 +74,7 @@ public final class ITJournalingBlobWriteSessionConfigTest {
     JournalingBlobWriteSessionConfig journaling =
         BlobWriteSessionConfigs.journaling(ImmutableList.of(tempDir));
     journalingStorage =
-        this.storage
-            .getOptions()
-            .toBuilder()
+        this.storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(journaling)
             .build()
             .getService();

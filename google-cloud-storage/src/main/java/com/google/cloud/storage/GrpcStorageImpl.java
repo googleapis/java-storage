@@ -1723,8 +1723,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   WriteObjectRequest getWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
-        object
-            .toBuilder()
+        object.toBuilder()
             // required if the data is changing
             .clearChecksums()
             // trimmed to shave payload size
@@ -1744,8 +1743,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   BidiWriteObjectRequest getBidiWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
-        object
-            .toBuilder()
+        object.toBuilder()
             // required if the data is changing
             .clearChecksums()
             // trimmed to shave payload size

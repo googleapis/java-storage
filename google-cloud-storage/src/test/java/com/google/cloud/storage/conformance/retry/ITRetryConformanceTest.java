@@ -344,8 +344,7 @@ public class ITRetryConformanceTest {
                       // a synthetic mapping which  will report as an ignored test. This is done for
                       // the sake of completeness.
                       RpcMethodMapping build =
-                          mapping
-                              .toBuilder()
+                          mapping.toBuilder()
                               .withSetup(CtxFunction.identity())
                               .withTest(
                                   (s, c) -> {

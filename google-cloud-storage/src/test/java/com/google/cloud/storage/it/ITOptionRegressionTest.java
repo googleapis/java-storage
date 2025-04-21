@@ -95,9 +95,7 @@ public final class ITOptionRegressionTest {
   public void setUp() throws Exception {
     requestAuditing = new RequestAuditing();
     s =
-        storageFixture
-            .getOptions()
-            .toBuilder()
+        storageFixture.getOptions().toBuilder()
             .setTransportOptions(requestAuditing)
             .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
             .build()
@@ -485,8 +483,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_generationNotMatch_() {
     Blob blob1 = s.create(BlobInfo.newBuilder(b, objectName()).build());
     Blob updated =
-        blob1
-            .toBuilder()
+        blob1.toBuilder()
             .setMetadata(ImmutableMap.of("foo", "bar"))
             .setMd5(null)
             .setCrc32c(null)
@@ -515,8 +512,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_metagenerationNotMatch_() {
     Blob blob1 = s.create(BlobInfo.newBuilder(b, objectName()).build());
     Blob updated =
-        blob1
-            .toBuilder()
+        blob1.toBuilder()
             .setMetadata(ImmutableMap.of("foo", "bar"))
             .setMd5(null)
             .setCrc32c(null)

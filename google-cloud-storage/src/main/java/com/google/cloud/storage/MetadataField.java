@@ -54,8 +54,7 @@ final class MetadataField<T> {
     b.put(key, codec.encode(t));
   }
 
-  @Nullable
-  T readFrom(BlobInfo info) {
+  @Nullable T readFrom(BlobInfo info) {
     Map<String, String> map = info.getMetadata();
     if (map != null) {
       return readFrom(map);
@@ -64,8 +63,7 @@ final class MetadataField<T> {
   }
 
   @VisibleForTesting
-  @Nullable
-  T readFrom(Map<String, String> m) {
+  @Nullable T readFrom(Map<String, String> m) {
     return codec.decode(m.get(key));
   }
 

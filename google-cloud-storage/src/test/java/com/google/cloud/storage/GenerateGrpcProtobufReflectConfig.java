@@ -58,7 +58,8 @@ public final class GenerateGrpcProtobufReflectConfig {
                   Stream.of(
                           scanResult.getSubclasses(Message.class).stream(),
                           scanResult.getSubclasses(AbstractMessage.Builder.class).stream(),
-                          scanResult.getAllEnums()
+                          scanResult
+                              .getAllEnums()
                               .filter(ci -> ci.implementsInterface(ProtocolMessageEnum.class))
                               .stream())
                       .flatMap(s -> s)

@@ -412,8 +412,7 @@ public class ITBucketTest {
       OffsetDateTime time = remoteBucket.getAutoclass().getToggleTime();
       assertNotNull(time);
 
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setAutoclass(Autoclass.newBuilder().setEnabled(false).build())
           .build()
           .update();
@@ -459,8 +458,7 @@ public class ITBucketTest {
       assertEquals(BlobInfo.Retention.Mode.UNLOCKED, remoteBlob.getRetention().getMode());
 
       // Reduce the retainUntilTime of an object's retention policy
-      remoteBlob
-          .toBuilder()
+      remoteBlob.toBuilder()
           .setRetention(
               BlobInfo.Retention.newBuilder()
                   .setMode(BlobInfo.Retention.Mode.UNLOCKED)
@@ -479,8 +477,7 @@ public class ITBucketTest {
               .truncatedTo(ChronoUnit.SECONDS));
 
       // Remove an unlocked retention policy
-      remoteBlob
-          .toBuilder()
+      remoteBlob.toBuilder()
           .setRetention(null)
           .build()
           .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
@@ -522,8 +519,7 @@ public class ITBucketTest {
           .isEqualTo(StorageClass.ARCHIVE);
 
       BucketInfo disabled =
-          remoteBucket
-              .toBuilder()
+          remoteBucket.toBuilder()
               .setAutoclass(Autoclass.newBuilder().setEnabled(false).build())
               .build();
       Bucket updated = storage.update(disabled, BucketTargetOption.metagenerationMatch());
@@ -604,8 +600,7 @@ public class ITBucketTest {
 
       assertNotNull(storage.restore(softDeletedBlob.getBlobId()));
 
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setSoftDeletePolicy(
               BucketInfo.SoftDeletePolicy.newBuilder()
                   .setRetentionDuration(Duration.ofDays(20))
@@ -702,8 +697,7 @@ public class ITBucketTest {
             Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
     if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setRequesterPays(false)
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));

@@ -647,8 +647,7 @@ public class StorageImplMockitoTest {
                 Conversions.json()
                     .blobInfo()
                     .encode(
-                        BLOB_INFO1
-                            .toBuilder()
+                        BLOB_INFO1.toBuilder()
                             .setMd5(SUB_CONTENT_MD5)
                             .setCrc32c(SUB_CONTENT_CRC32C)
                             .build())),
@@ -683,8 +682,7 @@ public class StorageImplMockitoTest {
             Mockito.eq(BLOB_INFO1_RPC_OPTIONS_WITH_GENERATION));
 
     storage =
-        options
-            .toBuilder()
+        options.toBuilder()
             .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
             .build()
             .getService();
@@ -715,8 +713,7 @@ public class StorageImplMockitoTest {
                 Conversions.json()
                     .blobInfo()
                     .encode(
-                        BLOB_INFO1
-                            .toBuilder()
+                        BLOB_INFO1.toBuilder()
                             .setMd5("1B2M2Y8AsgTpgAmY7PhCfg==")
                             .setCrc32c("AAAAAA==")
                             .build())),
@@ -916,8 +913,7 @@ public class StorageImplMockitoTest {
             EMPTY_RPC_OPTIONS);
 
     storage =
-        options
-            .toBuilder()
+        options.toBuilder()
             .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
             .build()
             .getService();

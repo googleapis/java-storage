@@ -111,9 +111,7 @@ public final class ITGapicReadTimeoutTest {
 
     try (FakeServer server = FakeServer.of(fakeStorage)) {
       StorageSettings settings =
-          server
-              .getGrpcStorageOptions()
-              .toBuilder()
+          server.getGrpcStorageOptions().toBuilder()
               .setRetrySettings(
                   RetrySettings.newBuilder()
                       .setMaxAttempts(3)
@@ -190,9 +188,7 @@ public final class ITGapicReadTimeoutTest {
 
     try (FakeServer server = FakeServer.of(fakeStorage)) {
       StorageSettings settings =
-          server
-              .getGrpcStorageOptions()
-              .toBuilder()
+          server.getGrpcStorageOptions().toBuilder()
               .setRetrySettings(
                   RetrySettings.newBuilder()
                       .setMaxAttempts(3)

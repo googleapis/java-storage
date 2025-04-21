@@ -73,9 +73,7 @@ public final class ITResumableUploadTest {
   @CrossRun.Exclude(transports = Transport.HTTP)
   public void expectedUploadSize_bidi_doesMatch() throws Exception {
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
             .build();
     try (Storage storage = options.getService()) {
@@ -87,9 +85,7 @@ public final class ITResumableUploadTest {
   @CrossRun.Exclude(transports = Transport.HTTP)
   public void expectedUploadSize_bidi_doesNotMatch() throws Exception {
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
             .build();
     try (Storage storage = options.getService()) {
@@ -100,9 +96,7 @@ public final class ITResumableUploadTest {
   @Test
   public void expectedUploadSize_ignored_pcu() throws Exception {
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.parallelCompositeUpload())
             .build();
     try (Storage storage = options.getService()) {
@@ -123,9 +117,7 @@ public final class ITResumableUploadTest {
   @Test
   public void expectedUploadSize_createFrom_inputStream_doesMatch() throws Exception {
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.parallelCompositeUpload())
             .build();
     try (Storage storage = options.getService()) {
@@ -144,9 +136,7 @@ public final class ITResumableUploadTest {
   @Test
   public void expectedUploadSize_createFrom_inputStream_doesNotMatch() throws Exception {
     StorageOptions options =
-        storage
-            .getOptions()
-            .toBuilder()
+        storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.parallelCompositeUpload())
             .build();
     try (Storage storage = options.getService()) {
