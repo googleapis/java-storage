@@ -130,6 +130,9 @@ final class ObjectReadSessionSeekableByteChannel implements SeekableByteChannel,
 
   @Override
   public void close() throws IOException {
+    if (!open) {
+      return;
+    }
     try (IOAutoCloseable ignore1 = closeAlongWithThis;
         ReadableByteChannel ignore2 = rbc) {
       open = false;
