@@ -67,9 +67,7 @@ public class ITGrpcInterceptorTest {
     Interceptor interceptor = new Interceptor(factory);
     StorageOptions options =
         ((GrpcStorageOptions) storage.getOptions())
-            .toBuilder()
-            .setGrpcInterceptorProvider(() -> ImmutableList.of(interceptor))
-            .build();
+            .toBuilder().setGrpcInterceptorProvider(() -> ImmutableList.of(interceptor)).build();
 
     try (Storage storage = options.getService()) {
       Page<Bucket> page = storage.list(BucketListOption.prefix(bucket.getName()));

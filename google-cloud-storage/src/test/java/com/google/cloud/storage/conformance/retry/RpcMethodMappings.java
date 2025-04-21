@@ -564,9 +564,7 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .update(
-                                            state
-                                                .getBucket()
-                                                .toBuilder()
+                                            state.getBucket().toBuilder()
                                                 .setLabels(MODIFY)
                                                 .build()))))
                 .build());
@@ -591,9 +589,7 @@ final class RpcMethodMappings {
                         ctx.map(
                             state ->
                                 state.with(
-                                    state
-                                        .getBucket()
-                                        .toBuilder()
+                                    state.getBucket().toBuilder()
                                         .setLabels(MODIFY)
                                         .build()
                                         .update(BucketTargetOption.metagenerationMatch()))))
@@ -606,9 +602,7 @@ final class RpcMethodMappings {
                         ctx.map(
                             state ->
                                 state.with(
-                                    state
-                                        .getBucket()
-                                        .toBuilder()
+                                    state.getBucket().toBuilder()
                                         .setLabels(MODIFY)
                                         .build()
                                         .update())))
@@ -1940,9 +1934,7 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .update(
-                                            ctx.getState()
-                                                .getBlob()
-                                                .toBuilder()
+                                            ctx.getState().getBlob().toBuilder()
                                                 .setMetadata(MODIFY)
                                                 .build()))))
                 .build());
@@ -1956,9 +1948,7 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .update(
-                                            ctx.getState()
-                                                .getBlob()
-                                                .toBuilder()
+                                            ctx.getState().getBlob().toBuilder()
                                                 .setMetadata(MODIFY)
                                                 .build(),
                                             BlobTargetOption.metagenerationMatch()))))
@@ -1980,9 +1970,7 @@ final class RpcMethodMappings {
                         ctx.map(
                             state ->
                                 state.with(
-                                    state
-                                        .getBlob()
-                                        .toBuilder()
+                                    state.getBlob().toBuilder()
                                         .setMetadata(MODIFY)
                                         .build()
                                         .update(BlobTargetOption.metagenerationMatch()))))

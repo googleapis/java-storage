@@ -341,8 +341,7 @@ public final class GrpcStorageOptions extends StorageOptions
     builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
-        baseRetrySettings
-            .toBuilder()
+        baseRetrySettings.toBuilder()
             // when performing a read via ReadObject, the ServerStream will have a default relative
             // deadline set of `requestStartTime() + totalTimeout`, meaning if the specified
             // RetrySettings have a totalTimeout of 10 seconds -- which should be plenty for

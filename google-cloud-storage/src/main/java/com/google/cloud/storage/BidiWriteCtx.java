@@ -80,7 +80,6 @@ final class BidiWriteCtx<RequestFactoryT extends BidiWriteObjectRequestBuilderFa
   interface BidiWriteObjectRequestBuilderFactory {
     BidiWriteObjectRequest.Builder newBuilder();
 
-    @Nullable
-    String bucketName();
+    @Nullable String bucketName();
   }
 }

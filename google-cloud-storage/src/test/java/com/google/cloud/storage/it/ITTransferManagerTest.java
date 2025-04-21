@@ -158,8 +158,7 @@ public class ITTransferManagerTest {
   @Test
   public void uploadFilesPartNaming() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowParallelCompositeUpload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .setParallelCompositeUploadPartNamingStrategy(PartNamingStrategy.prefix("not-root"))
@@ -339,8 +338,7 @@ public class ITTransferManagerTest {
   @Test
   public void downloadBlobsAllowChunked() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
@@ -382,8 +380,7 @@ public class ITTransferManagerTest {
   @Test
   public void uploadFilesAllowPCU() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowParallelCompositeUpload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
@@ -403,8 +400,7 @@ public class ITTransferManagerTest {
   @Test
   public void uploadFilesAllowMultiplePCUAndSmallerFiles() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowParallelCompositeUpload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
@@ -453,8 +449,7 @@ public class ITTransferManagerTest {
   @Test
   public void downloadBlobsChunkedFail() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();
@@ -479,8 +474,7 @@ public class ITTransferManagerTest {
   @Test
   public void downloadBlobsPreconditionFailure() throws Exception {
     TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
-            .toBuilder()
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
             .setAllowDivideAndConquerDownload(true)
             .setPerWorkerBufferSize(128 * 1024)
             .build();

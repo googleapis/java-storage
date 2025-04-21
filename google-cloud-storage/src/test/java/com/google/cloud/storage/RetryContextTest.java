@@ -327,8 +327,7 @@ public final class RetryContextTest {
   @Test
   public void similarToRetryingHelper() {
     RetrySettings retrySettings =
-        StorageOptions.getDefaultRetrySettings()
-            .toBuilder()
+        StorageOptions.getDefaultRetrySettings().toBuilder()
             .setTotalTimeoutDuration(Duration.ofMillis(3_125))
             .setInitialRetryDelayDuration(Duration.ofNanos(12_500_000))
             .setRetryDelayMultiplier(2.0)

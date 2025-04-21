@@ -166,8 +166,7 @@ final class ObjectReadSessionState {
     return readIdSeq.getAndIncrement();
   }
 
-  @Nullable
-  ObjectReadSessionStreamRead<?> getOutstandingRead(long key) {
+  @Nullable ObjectReadSessionStreamRead<?> getOutstandingRead(long key) {
     lock.lock();
     try {
       return outstandingReads.get(key);

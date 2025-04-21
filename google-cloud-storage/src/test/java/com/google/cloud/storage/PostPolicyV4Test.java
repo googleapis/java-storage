@@ -162,8 +162,7 @@ public class PostPolicyV4Test {
     }
 
     PostPolicyV4.PostConditionsV4 postConditionsV4Extended =
-        postConditionsV4
-            .toBuilder()
+        postConditionsV4.toBuilder()
             .addCustomCondition(PostPolicyV4.ConditionV4Type.STARTS_WITH, "key", "")
             .build();
     assertEquals(4, postConditionsV4Extended.getConditions().size());

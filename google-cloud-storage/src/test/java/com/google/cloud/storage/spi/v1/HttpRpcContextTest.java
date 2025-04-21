@@ -69,8 +69,7 @@ public class HttpRpcContextTest {
     TransportOptions transportOptions =
         HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
     Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
+        StorageOptions.getDefaultInstance().toBuilder()
             .setProjectId("test-project")
             .setCredentials(NoCredentials.getInstance())
             .setTransportOptions(transportOptions)
@@ -112,8 +111,7 @@ public class HttpRpcContextTest {
     TransportOptions transportOptions =
         HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
     Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
+        StorageOptions.getDefaultInstance().toBuilder()
             .setTransportOptions(transportOptions)
             .build()
             .getService();

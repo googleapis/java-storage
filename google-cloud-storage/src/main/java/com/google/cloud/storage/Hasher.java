@@ -38,11 +38,9 @@ interface Hasher {
     return hash(b.get());
   }
 
-  @Nullable
-  Crc32cLengthKnown hash(ByteBuffer b);
+  @Nullable Crc32cLengthKnown hash(ByteBuffer b);
 
-  @Nullable
-  Crc32cLengthKnown hash(ByteString byteString);
+  @Nullable Crc32cLengthKnown hash(ByteString byteString);
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws ChecksumMismatchException;
 
@@ -51,8 +49,7 @@ interface Hasher {
   void validateUnchecked(Crc32cValue<?> expected, ByteString byteString)
       throws UncheckedChecksumMismatchException;
 
-  @Nullable
-  Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
+  @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
 
   static Hasher noop() {
     return NoOpHasher.INSTANCE;

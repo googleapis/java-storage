@@ -100,8 +100,7 @@ public final class ITBlobReadChannelV2RetryTest {
 
     RequestAuditing requestAuditing = new RequestAuditing();
     StorageOptions testStorageOptions =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setTransportOptions(requestAuditing)
             .setHeaderProvider(FixedHeaderProvider.create(headers))
             .build();
@@ -173,8 +172,7 @@ public final class ITBlobReadChannelV2RetryTest {
 
     RequestAuditing requestAuditing = new RequestAuditing();
     StorageOptions testStorageOptions =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setTransportOptions(requestAuditing)
             .setHeaderProvider(FixedHeaderProvider.create(headers))
             .build();
@@ -228,8 +226,7 @@ public final class ITBlobReadChannelV2RetryTest {
 
     RequestAuditing requestAuditing = new RequestAuditing();
     StorageOptions testStorageOptions =
-        baseOptions
-            .toBuilder()
+        baseOptions.toBuilder()
             .setTransportOptions(requestAuditing)
             .setHeaderProvider(FixedHeaderProvider.create(headers))
             .build();

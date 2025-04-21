@@ -301,9 +301,7 @@ public final class ITObjectChecksumSupportTest {
     byte[] bytes = content.getBytes();
 
     StorageOptions optionsWithBidi =
-        this.storage
-            .getOptions()
-            .toBuilder()
+        this.storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
             .build();
 
@@ -332,9 +330,7 @@ public final class ITObjectChecksumSupportTest {
     byte[] bytes = content.concat('x');
 
     StorageOptions optionsWithBidi =
-        this.storage
-            .getOptions()
-            .toBuilder()
+        this.storage.getOptions().toBuilder()
             .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
             .build();
 
