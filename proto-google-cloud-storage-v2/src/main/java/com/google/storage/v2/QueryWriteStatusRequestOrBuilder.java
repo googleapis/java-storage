@@ -37,6 +37,7 @@ public interface QueryWriteStatusRequestOrBuilder
    * @return The uploadId.
    */
   java.lang.String getUploadId();
+
   /**
    *
    *
@@ -63,6 +64,7 @@ public interface QueryWriteStatusRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -75,6 +77,7 @@ public interface QueryWriteStatusRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *

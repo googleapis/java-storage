@@ -33,6 +33,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.UpdateBucketRequest)
     UpdateBucketRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use UpdateBucketRequest.newBuilder() to construct.
   private UpdateBucketRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -67,6 +68,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   private int bitField0_;
   public static final int BUCKET_FIELD_NUMBER = 1;
   private com.google.storage.v2.Bucket bucket_;
+
   /**
    *
    *
@@ -83,6 +85,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public boolean hasBucket() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -99,6 +102,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public com.google.storage.v2.Bucket getBucket() {
     return bucket_ == null ? com.google.storage.v2.Bucket.getDefaultInstance() : bucket_;
   }
+
   /**
    *
    *
@@ -116,6 +120,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -132,6 +137,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -151,6 +157,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 3;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -167,6 +174,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -188,6 +196,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object predefinedAcl_ = "";
+
   /**
    *
    *
@@ -213,6 +222,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -243,6 +253,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object predefinedDefaultObjectAcl_ = "";
+
   /**
    *
    *
@@ -268,6 +279,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -296,6 +308,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
 
   public static final int UPDATE_MASK_FIELD_NUMBER = 6;
   private com.google.protobuf.FieldMask updateMask_;
+
   /**
    *
    *
@@ -319,6 +332,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public boolean hasUpdateMask() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -342,6 +356,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
   public com.google.protobuf.FieldMask getUpdateMask() {
     return updateMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : updateMask_;
   }
+
   /**
    *
    *
@@ -590,6 +605,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -869,6 +885,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
             com.google.storage.v2.Bucket.Builder,
             com.google.storage.v2.BucketOrBuilder>
         bucketBuilder_;
+
     /**
      *
      *
@@ -884,6 +901,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public boolean hasBucket() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -903,6 +921,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return bucketBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -926,6 +945,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -946,6 +966,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -974,6 +995,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -994,6 +1016,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1009,6 +1032,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return getBucketFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1026,6 +1050,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return bucket_ == null ? com.google.storage.v2.Bucket.getDefaultInstance() : bucket_;
       }
     }
+
     /**
      *
      *
@@ -1054,6 +1079,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1070,6 +1096,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -1086,6 +1113,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1106,6 +1134,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1126,6 +1155,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1142,6 +1172,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1158,6 +1189,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1178,6 +1210,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1198,6 +1231,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object predefinedAcl_ = "";
+
     /**
      *
      *
@@ -1222,6 +1256,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1246,6 +1281,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1269,6 +1305,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1288,6 +1325,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1314,6 +1352,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object predefinedDefaultObjectAcl_ = "";
+
     /**
      *
      *
@@ -1338,6 +1377,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1362,6 +1402,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1385,6 +1426,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1404,6 +1446,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1435,6 +1478,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
             com.google.protobuf.FieldMask.Builder,
             com.google.protobuf.FieldMaskOrBuilder>
         updateMaskBuilder_;
+
     /**
      *
      *
@@ -1457,6 +1501,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
     public boolean hasUpdateMask() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1485,6 +1530,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
         return updateMaskBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1515,6 +1561,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1542,6 +1589,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1577,6 +1625,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -1604,6 +1653,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1626,6 +1676,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return getUpdateMaskFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1652,6 +1703,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
             : updateMask_;
       }
     }
+
     /**
      *
      *

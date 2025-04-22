@@ -37,6 +37,7 @@ public interface StorageLayoutOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -63,6 +64,7 @@ public interface StorageLayoutOrBuilder
    * @return The location.
    */
   java.lang.String getLocation();
+
   /**
    *
    *
@@ -89,6 +91,7 @@ public interface StorageLayoutOrBuilder
    * @return The locationType.
    */
   java.lang.String getLocationType();
+
   /**
    *
    *
@@ -118,6 +121,7 @@ public interface StorageLayoutOrBuilder
    * @return Whether the customPlacementConfig field is set.
    */
   boolean hasCustomPlacementConfig();
+
   /**
    *
    *
@@ -133,6 +137,7 @@ public interface StorageLayoutOrBuilder
    * @return The customPlacementConfig.
    */
   com.google.storage.control.v2.StorageLayout.CustomPlacementConfig getCustomPlacementConfig();
+
   /**
    *
    *
@@ -163,6 +168,7 @@ public interface StorageLayoutOrBuilder
    * @return Whether the hierarchicalNamespace field is set.
    */
   boolean hasHierarchicalNamespace();
+
   /**
    *
    *
@@ -178,6 +184,7 @@ public interface StorageLayoutOrBuilder
    * @return The hierarchicalNamespace.
    */
   com.google.storage.control.v2.StorageLayout.HierarchicalNamespace getHierarchicalNamespace();
+
   /**
    *
    *

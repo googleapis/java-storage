@@ -34,6 +34,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiReadObjectError)
     BidiReadObjectErrorOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiReadObjectError.newBuilder() to construct.
   private BidiReadObjectError(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.ReadRangeError> readRangeErrors_;
+
   /**
    *
    *
@@ -81,6 +83,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
   public java.util.List<com.google.storage.v2.ReadRangeError> getReadRangeErrorsList() {
     return readRangeErrors_;
   }
+
   /**
    *
    *
@@ -95,6 +98,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       getReadRangeErrorsOrBuilderList() {
     return readRangeErrors_;
   }
+
   /**
    *
    *
@@ -108,6 +112,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
   public int getReadRangeErrorsCount() {
     return readRangeErrors_.size();
   }
+
   /**
    *
    *
@@ -121,6 +126,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
   public com.google.storage.v2.ReadRangeError getReadRangeErrors(int index) {
     return readRangeErrors_.get(index);
   }
+
   /**
    *
    *
@@ -296,6 +302,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -557,6 +564,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
         return readRangeErrorsBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -573,6 +581,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
         return readRangeErrorsBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -589,6 +598,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
         return readRangeErrorsBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -611,6 +621,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -631,6 +642,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -653,6 +665,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -675,6 +688,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -695,6 +709,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -715,6 +730,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -735,6 +751,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -754,6 +771,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -773,6 +791,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -785,6 +804,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.ReadRangeError.Builder getReadRangeErrorsBuilder(int index) {
       return getReadRangeErrorsFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -801,6 +821,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
         return readRangeErrorsBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -818,6 +839,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
         return java.util.Collections.unmodifiableList(readRangeErrors_);
       }
     }
+
     /**
      *
      *
@@ -831,6 +853,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       return getReadRangeErrorsFieldBuilder()
           .addBuilder(com.google.storage.v2.ReadRangeError.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -844,6 +867,7 @@ public final class BidiReadObjectError extends com.google.protobuf.GeneratedMess
       return getReadRangeErrorsFieldBuilder()
           .addBuilder(index, com.google.storage.v2.ReadRangeError.getDefaultInstance());
     }
+
     /**
      *
      *

@@ -36,6 +36,7 @@ public interface ObjectRangeDataOrBuilder
    * @return Whether the checksummedData field is set.
    */
   boolean hasChecksummedData();
+
   /**
    *
    *
@@ -48,6 +49,7 @@ public interface ObjectRangeDataOrBuilder
    * @return The checksummedData.
    */
   com.google.storage.v2.ChecksummedData getChecksummedData();
+
   /**
    *
    *
@@ -75,6 +77,7 @@ public interface ObjectRangeDataOrBuilder
    * @return Whether the readRange field is set.
    */
   boolean hasReadRange();
+
   /**
    *
    *
@@ -91,6 +94,7 @@ public interface ObjectRangeDataOrBuilder
    * @return The readRange.
    */
   com.google.storage.v2.ReadRange getReadRange();
+
   /**
    *
    *

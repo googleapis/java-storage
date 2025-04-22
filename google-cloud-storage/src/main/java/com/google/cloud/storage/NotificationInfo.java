@@ -278,6 +278,7 @@ public class NotificationInfo implements Serializable {
     checkTopicFormat(topic);
     return newBuilder(topic).build();
   }
+
   /**
    * Creates a {@code NotificationInfo} object for the provided topic.
    *

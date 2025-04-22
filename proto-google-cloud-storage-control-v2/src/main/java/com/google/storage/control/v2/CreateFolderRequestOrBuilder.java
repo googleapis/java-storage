@@ -39,6 +39,7 @@ public interface CreateFolderRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -71,6 +72,7 @@ public interface CreateFolderRequestOrBuilder
    * @return Whether the folder field is set.
    */
   boolean hasFolder();
+
   /**
    *
    *
@@ -87,6 +89,7 @@ public interface CreateFolderRequestOrBuilder
    * @return The folder.
    */
   com.google.storage.control.v2.Folder getFolder();
+
   /**
    *
    *
@@ -118,6 +121,7 @@ public interface CreateFolderRequestOrBuilder
    * @return The folderId.
    */
   java.lang.String getFolderId();
+
   /**
    *
    *
@@ -164,6 +168,7 @@ public interface CreateFolderRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

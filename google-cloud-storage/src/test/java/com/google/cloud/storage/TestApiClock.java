@@ -97,7 +97,9 @@ final class TestApiClock implements ApiClock {
     return of(0L, addExact(1L));
   }
 
-  /** @param tick Given the previous nanoseconds of the clock generate the new nanoseconds */
+  /**
+   * @param tick Given the previous nanoseconds of the clock generate the new nanoseconds
+   */
   public static TestApiClock of(long beginNs, LongUnaryOperator tick) {
     return new TestApiClock(beginNs, tick);
   }

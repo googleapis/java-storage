@@ -33,6 +33,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     // @@protoc_insertion_point(message_implements:google.storage.v2.StartResumableWriteRequest)
     StartResumableWriteRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use StartResumableWriteRequest.newBuilder() to construct.
   private StartResumableWriteRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -64,6 +65,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
   private int bitField0_;
   public static final int WRITE_OBJECT_SPEC_FIELD_NUMBER = 1;
   private com.google.storage.v2.WriteObjectSpec writeObjectSpec_;
+
   /**
    *
    *
@@ -81,6 +83,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
   public boolean hasWriteObjectSpec() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -100,6 +103,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         ? com.google.storage.v2.WriteObjectSpec.getDefaultInstance()
         : writeObjectSpec_;
   }
+
   /**
    *
    *
@@ -120,6 +124,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 3;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -135,6 +140,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -152,6 +158,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -171,6 +178,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 5;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -190,6 +198,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -211,6 +220,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -426,6 +436,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -673,6 +684,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             com.google.storage.v2.WriteObjectSpec.Builder,
             com.google.storage.v2.WriteObjectSpecOrBuilder>
         writeObjectSpecBuilder_;
+
     /**
      *
      *
@@ -689,6 +701,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     public boolean hasWriteObjectSpec() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -711,6 +724,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         return writeObjectSpecBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -735,6 +749,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -757,6 +772,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -786,6 +802,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -807,6 +824,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -823,6 +841,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return getWriteObjectSpecFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -843,6 +862,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             : writeObjectSpec_;
       }
     }
+
     /**
      *
      *
@@ -877,6 +897,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -891,6 +912,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -911,6 +933,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -934,6 +957,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -954,6 +978,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -983,6 +1008,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -1002,6 +1028,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1017,6 +1044,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1036,6 +1064,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *
@@ -1068,6 +1097,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -1086,6 +1116,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1110,6 +1141,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1136,6 +1168,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1160,6 +1193,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1191,6 +1225,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       }
       return this;
     }
+
     /**
      *
      *
@@ -1214,6 +1249,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1232,6 +1268,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1254,6 +1291,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             : objectChecksums_;
       }
     }
+
     /**
      *
      *

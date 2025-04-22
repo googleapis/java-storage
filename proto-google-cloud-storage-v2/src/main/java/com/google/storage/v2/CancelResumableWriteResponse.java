@@ -34,6 +34,7 @@ public final class CancelResumableWriteResponse extends com.google.protobuf.Gene
     // @@protoc_insertion_point(message_implements:google.storage.v2.CancelResumableWriteResponse)
     CancelResumableWriteResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use CancelResumableWriteResponse.newBuilder() to construct.
   private CancelResumableWriteResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -212,6 +213,7 @@ public final class CancelResumableWriteResponse extends com.google.protobuf.Gene
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *

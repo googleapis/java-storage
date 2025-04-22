@@ -38,6 +38,7 @@ public interface ListBucketsRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -82,6 +83,7 @@ public interface ListBucketsRequestOrBuilder
    * @return The pageToken.
    */
   java.lang.String getPageToken();
+
   /**
    *
    *
@@ -108,6 +110,7 @@ public interface ListBucketsRequestOrBuilder
    * @return The prefix.
    */
   java.lang.String getPrefix();
+
   /**
    *
    *
@@ -136,6 +139,7 @@ public interface ListBucketsRequestOrBuilder
    * @return Whether the readMask field is set.
    */
   boolean hasReadMask();
+
   /**
    *
    *
@@ -151,6 +155,7 @@ public interface ListBucketsRequestOrBuilder
    * @return The readMask.
    */
   com.google.protobuf.FieldMask getReadMask();
+
   /**
    *
    *

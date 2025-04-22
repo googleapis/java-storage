@@ -34,6 +34,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.DeleteObjectRequest)
     DeleteObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use DeleteObjectRequest.newBuilder() to construct.
   private DeleteObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -70,6 +71,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -95,6 +97,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -125,6 +128,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object object_ = "";
+
   /**
    *
    *
@@ -150,6 +154,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -178,6 +183,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int GENERATION_FIELD_NUMBER = 4;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -197,6 +203,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 5;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -214,6 +221,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -234,6 +242,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 6;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -252,6 +261,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -273,6 +283,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 7;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -289,6 +300,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -308,6 +320,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 8;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -324,6 +337,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -343,6 +357,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 10;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -358,6 +373,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -375,6 +391,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -642,6 +659,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -943,6 +961,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -967,6 +986,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -991,6 +1011,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1014,6 +1035,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1033,6 +1055,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1059,6 +1082,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object object_ = "";
+
     /**
      *
      *
@@ -1083,6 +1107,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1107,6 +1132,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1130,6 +1156,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1149,6 +1176,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1175,6 +1203,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -1191,6 +1220,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1211,6 +1241,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1231,6 +1262,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1248,6 +1280,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1265,6 +1298,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1286,6 +1320,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1307,6 +1342,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1325,6 +1361,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1343,6 +1380,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1365,6 +1403,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1387,6 +1426,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1403,6 +1443,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1419,6 +1460,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1439,6 +1481,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1459,6 +1502,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1475,6 +1519,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1491,6 +1536,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1511,6 +1557,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1536,6 +1583,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -1550,6 +1598,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1570,6 +1619,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1593,6 +1643,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1613,6 +1664,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1642,6 +1694,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -1661,6 +1714,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1676,6 +1730,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1695,6 +1750,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *

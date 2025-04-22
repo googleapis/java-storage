@@ -597,7 +597,9 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setCreateTime(Long createTime) {
@@ -611,7 +613,9 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setUpdateTime(Long updateTime) {
@@ -667,7 +671,9 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
-    /** @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setRetentionEffectiveTime(Long retentionEffectiveTime) {
@@ -688,7 +694,9 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setRetentionPeriodDuration(Duration)} */
+    /**
+     * @deprecated Use {@link #setRetentionPeriodDuration(Duration)}
+     */
     @Override
     @Deprecated
     public Builder setRetentionPeriod(Long retentionPeriod) {

@@ -55,8 +55,7 @@ public interface TransferManager extends AutoCloseable {
    *
    * @return an {@link UploadJob}
    */
-  @NonNull
-  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config) throws IOException;
+  @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config) throws IOException;
 
   /**
    * Downloads a list of blobs in parallel. This operation will not block the invoking thread,
@@ -86,6 +85,5 @@ public interface TransferManager extends AutoCloseable {
    *
    * @return a {@link DownloadJob}
    */
-  @NonNull
-  DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config);
+  @NonNull DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config);
 }

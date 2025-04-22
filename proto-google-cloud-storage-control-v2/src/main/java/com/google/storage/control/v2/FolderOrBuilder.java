@@ -37,6 +37,7 @@ public interface FolderOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -78,6 +79,7 @@ public interface FolderOrBuilder
    * @return Whether the createTime field is set.
    */
   boolean hasCreateTime();
+
   /**
    *
    *
@@ -91,6 +93,7 @@ public interface FolderOrBuilder
    * @return The createTime.
    */
   com.google.protobuf.Timestamp getCreateTime();
+
   /**
    *
    *
@@ -116,6 +119,7 @@ public interface FolderOrBuilder
    * @return Whether the updateTime field is set.
    */
   boolean hasUpdateTime();
+
   /**
    *
    *
@@ -129,6 +133,7 @@ public interface FolderOrBuilder
    * @return The updateTime.
    */
   com.google.protobuf.Timestamp getUpdateTime();
+
   /**
    *
    *
@@ -159,6 +164,7 @@ public interface FolderOrBuilder
    * @return Whether the pendingRenameInfo field is set.
    */
   boolean hasPendingRenameInfo();
+
   /**
    *
    *
@@ -177,6 +183,7 @@ public interface FolderOrBuilder
    * @return The pendingRenameInfo.
    */
   com.google.storage.control.v2.PendingRenameInfo getPendingRenameInfo();
+
   /**
    *
    *

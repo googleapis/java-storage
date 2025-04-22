@@ -32,6 +32,7 @@ final class RegistryEntry<T extends ManagedLifecycle> implements Comparable<Regi
       Comparator.<RegistryEntry<?>>comparingInt(RegistryEntry::getShutdownPriority).reversed();
 
   private final Class<?> type;
+
   /** Higher will be shutdown earlier */
   private final int shutdownPriority;
 

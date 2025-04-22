@@ -36,6 +36,7 @@ public interface CustomerEncryptionOrBuilder
    * @return The encryptionAlgorithm.
    */
   java.lang.String getEncryptionAlgorithm();
+
   /**
    *
    *

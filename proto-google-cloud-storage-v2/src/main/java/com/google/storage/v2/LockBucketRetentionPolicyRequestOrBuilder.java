@@ -38,6 +38,7 @@ public interface LockBucketRetentionPolicyRequestOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *

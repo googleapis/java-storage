@@ -33,6 +33,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     // @@protoc_insertion_point(message_implements:google.storage.v2.ReadObjectRequest)
     ReadObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ReadObjectRequest.newBuilder() to construct.
   private ReadObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -94,6 +96,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       return s;
     }
   }
+
   /**
    *
    *
@@ -124,6 +127,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object object_ = "";
+
   /**
    *
    *
@@ -147,6 +151,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       return s;
     }
   }
+
   /**
    *
    *
@@ -173,6 +178,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int GENERATION_FIELD_NUMBER = 3;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -192,6 +198,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int READ_OFFSET_FIELD_NUMBER = 4;
   private long readOffset_ = 0L;
+
   /**
    *
    *
@@ -218,6 +225,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int READ_LIMIT_FIELD_NUMBER = 5;
   private long readLimit_ = 0L;
+
   /**
    *
    *
@@ -242,6 +250,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 6;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -259,6 +268,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -279,6 +289,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 7;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -297,6 +308,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -318,6 +330,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 8;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -334,6 +347,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -353,6 +367,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 9;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -369,6 +384,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -388,6 +404,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 10;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -403,6 +420,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -420,6 +438,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -439,6 +458,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int READ_MASK_FIELD_NUMBER = 12;
   private com.google.protobuf.FieldMask readMask_;
+
   /**
    *
    *
@@ -458,6 +478,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasReadMask() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -477,6 +498,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
   public com.google.protobuf.FieldMask getReadMask() {
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
   }
+
   /**
    *
    *
@@ -776,6 +798,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1121,6 +1144,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -1145,6 +1169,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1169,6 +1194,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1192,6 +1218,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1211,6 +1238,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1237,6 +1265,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private java.lang.Object object_ = "";
+
     /**
      *
      *
@@ -1259,6 +1288,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1281,6 +1311,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1302,6 +1333,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1319,6 +1351,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1343,6 +1376,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -1359,6 +1393,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1379,6 +1414,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1399,6 +1435,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long readOffset_;
+
     /**
      *
      *
@@ -1422,6 +1459,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getReadOffset() {
       return readOffset_;
     }
+
     /**
      *
      *
@@ -1449,6 +1487,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1476,6 +1515,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long readLimit_;
+
     /**
      *
      *
@@ -1497,6 +1537,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getReadLimit() {
       return readLimit_;
     }
+
     /**
      *
      *
@@ -1522,6 +1563,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1547,6 +1589,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1564,6 +1607,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1581,6 +1625,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1602,6 +1647,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1623,6 +1669,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1641,6 +1688,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1659,6 +1707,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1681,6 +1730,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1703,6 +1753,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1719,6 +1770,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1735,6 +1787,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1755,6 +1808,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1775,6 +1829,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1791,6 +1846,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000100) != 0);
     }
+
     /**
      *
      *
@@ -1807,6 +1863,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1827,6 +1884,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1852,6 +1910,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -1866,6 +1925,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -1886,6 +1946,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1909,6 +1970,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1929,6 +1991,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1958,6 +2021,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       }
       return this;
     }
+
     /**
      *
      *
@@ -1977,6 +2041,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1992,6 +2057,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2011,6 +2077,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *
@@ -2043,6 +2110,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
             com.google.protobuf.FieldMask.Builder,
             com.google.protobuf.FieldMaskOrBuilder>
         readMaskBuilder_;
+
     /**
      *
      *
@@ -2061,6 +2129,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasReadMask() {
       return ((bitField0_ & 0x00000400) != 0);
     }
+
     /**
      *
      *
@@ -2083,6 +2152,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return readMaskBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2109,6 +2179,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2132,6 +2203,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2163,6 +2235,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       }
       return this;
     }
+
     /**
      *
      *
@@ -2186,6 +2259,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2204,6 +2278,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2224,6 +2299,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
         return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
       }
     }
+
     /**
      *
      *

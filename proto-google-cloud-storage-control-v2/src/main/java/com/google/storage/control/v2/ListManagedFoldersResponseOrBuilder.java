@@ -34,6 +34,7 @@ public interface ListManagedFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.ManagedFolder managed_folders = 1;</code>
    */
   java.util.List<com.google.storage.control.v2.ManagedFolder> getManagedFoldersList();
+
   /**
    *
    *
@@ -44,6 +45,7 @@ public interface ListManagedFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.ManagedFolder managed_folders = 1;</code>
    */
   com.google.storage.control.v2.ManagedFolder getManagedFolders(int index);
+
   /**
    *
    *
@@ -54,6 +56,7 @@ public interface ListManagedFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.ManagedFolder managed_folders = 1;</code>
    */
   int getManagedFoldersCount();
+
   /**
    *
    *
@@ -65,6 +68,7 @@ public interface ListManagedFoldersResponseOrBuilder
    */
   java.util.List<? extends com.google.storage.control.v2.ManagedFolderOrBuilder>
       getManagedFoldersOrBuilderList();
+
   /**
    *
    *
@@ -89,6 +93,7 @@ public interface ListManagedFoldersResponseOrBuilder
    * @return The nextPageToken.
    */
   java.lang.String getNextPageToken();
+
   /**
    *
    *

@@ -49,6 +49,7 @@ public interface ChecksummedDataOrBuilder
    * @return Whether the crc32c field is set.
    */
   boolean hasCrc32C();
+
   /**
    *
    *

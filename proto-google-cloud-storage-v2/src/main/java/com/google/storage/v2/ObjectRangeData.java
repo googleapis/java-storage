@@ -33,6 +33,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     // @@protoc_insertion_point(message_implements:google.storage.v2.ObjectRangeData)
     ObjectRangeDataOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ObjectRangeData.newBuilder() to construct.
   private ObjectRangeData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -64,6 +65,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
   private int bitField0_;
   public static final int CHECKSUMMED_DATA_FIELD_NUMBER = 1;
   private com.google.storage.v2.ChecksummedData checksummedData_;
+
   /**
    *
    *
@@ -79,6 +81,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
   public boolean hasChecksummedData() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -96,6 +99,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
         ? com.google.storage.v2.ChecksummedData.getDefaultInstance()
         : checksummedData_;
   }
+
   /**
    *
    *
@@ -114,6 +118,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
 
   public static final int READ_RANGE_FIELD_NUMBER = 2;
   private com.google.storage.v2.ReadRange readRange_;
+
   /**
    *
    *
@@ -133,6 +138,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
   public boolean hasReadRange() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -152,6 +158,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
   public com.google.storage.v2.ReadRange getReadRange() {
     return readRange_ == null ? com.google.storage.v2.ReadRange.getDefaultInstance() : readRange_;
   }
+
   /**
    *
    *
@@ -172,6 +179,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
 
   public static final int RANGE_END_FIELD_NUMBER = 3;
   private boolean rangeEnd_ = false;
+
   /**
    *
    *
@@ -373,6 +381,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -608,6 +617,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
             com.google.storage.v2.ChecksummedData.Builder,
             com.google.storage.v2.ChecksummedDataOrBuilder>
         checksummedDataBuilder_;
+
     /**
      *
      *
@@ -622,6 +632,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     public boolean hasChecksummedData() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -642,6 +653,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
         return checksummedDataBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -664,6 +676,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -684,6 +697,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -711,6 +725,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       }
       return this;
     }
+
     /**
      *
      *
@@ -730,6 +745,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -744,6 +760,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return getChecksummedDataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -762,6 +779,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
             : checksummedData_;
       }
     }
+
     /**
      *
      *
@@ -794,6 +812,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
             com.google.storage.v2.ReadRange.Builder,
             com.google.storage.v2.ReadRangeOrBuilder>
         readRangeBuilder_;
+
     /**
      *
      *
@@ -812,6 +831,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     public boolean hasReadRange() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -836,6 +856,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
         return readRangeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -862,6 +883,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -885,6 +907,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -916,6 +939,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       }
       return this;
     }
+
     /**
      *
      *
@@ -939,6 +963,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -957,6 +982,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return getReadRangeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -979,6 +1005,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
             : readRange_;
       }
     }
+
     /**
      *
      *
@@ -1010,6 +1037,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     }
 
     private boolean rangeEnd_;
+
     /**
      *
      *
@@ -1025,6 +1053,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
     public boolean getRangeEnd() {
       return rangeEnd_;
     }
+
     /**
      *
      *
@@ -1044,6 +1073,7 @@ public final class ObjectRangeData extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *

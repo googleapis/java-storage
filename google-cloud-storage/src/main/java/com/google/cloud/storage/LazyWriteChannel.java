@@ -34,8 +34,7 @@ final class LazyWriteChannel<T> {
     this.sessionSupplier = sessionSupplier;
   }
 
-  @NonNull
-  BufferedWritableByteChannel getChannel() {
+  @NonNull BufferedWritableByteChannel getChannel() {
     if (channel != null) {
       return channel;
     } else {
@@ -49,8 +48,7 @@ final class LazyWriteChannel<T> {
     }
   }
 
-  @NonNull
-  BufferedWritableByteChannelSession<T> getSession() {
+  @NonNull BufferedWritableByteChannelSession<T> getSession() {
     if (session != null) {
       return session;
     } else {

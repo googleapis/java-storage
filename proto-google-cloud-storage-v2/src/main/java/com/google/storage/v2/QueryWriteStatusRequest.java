@@ -33,6 +33,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     // @@protoc_insertion_point(message_implements:google.storage.v2.QueryWriteStatusRequest)
     QueryWriteStatusRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use QueryWriteStatusRequest.newBuilder() to construct.
   private QueryWriteStatusRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object uploadId_ = "";
+
   /**
    *
    *
@@ -92,6 +94,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       return s;
     }
   }
+
   /**
    *
    *
@@ -119,6 +122,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 2;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -134,6 +138,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -151,6 +156,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -344,6 +350,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -560,6 +567,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     private int bitField0_;
 
     private java.lang.Object uploadId_ = "";
+
     /**
      *
      *
@@ -583,6 +591,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -606,6 +615,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -628,6 +638,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -646,6 +657,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -676,6 +688,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -690,6 +703,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -710,6 +724,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -733,6 +748,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -753,6 +769,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -782,6 +799,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       }
       return this;
     }
+
     /**
      *
      *
@@ -801,6 +819,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -816,6 +835,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -835,6 +855,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *

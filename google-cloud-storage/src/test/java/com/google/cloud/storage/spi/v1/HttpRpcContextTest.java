@@ -62,7 +62,8 @@ public class HttpRpcContextTest {
             .setContent(
                 "{\n"
                     + "  \"kind\": \"storage#serviceAccount\",\n"
-                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
+                    + "  \"email_address\":"
+                    + " \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
                     + "}\n")
             .setStatusCode(200);
     AuditingHttpTransport transport = new AuditingHttpTransport(response);

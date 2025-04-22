@@ -49,6 +49,7 @@ public interface ReadRangeErrorOrBuilder
    * @return Whether the status field is set.
    */
   boolean hasStatus();
+
   /**
    *
    *
@@ -61,6 +62,7 @@ public interface ReadRangeErrorOrBuilder
    * @return The status.
    */
   com.google.rpc.Status getStatus();
+
   /**
    *
    *

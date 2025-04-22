@@ -38,6 +38,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return The object.
    */
   java.lang.String getObject();
+
   /**
    *
    *
@@ -106,6 +108,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -136,6 +139,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -165,6 +169,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -192,6 +197,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -218,6 +224,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -230,6 +237,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -263,6 +271,7 @@ public interface BidiReadObjectSpecOrBuilder
    */
   @java.lang.Deprecated
   boolean hasReadMask();
+
   /**
    *
    *
@@ -285,6 +294,7 @@ public interface BidiReadObjectSpecOrBuilder
    */
   @java.lang.Deprecated
   com.google.protobuf.FieldMask getReadMask();
+
   /**
    *
    *
@@ -318,6 +328,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the readHandle field is set.
    */
   boolean hasReadHandle();
+
   /**
    *
    *
@@ -332,6 +343,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return The readHandle.
    */
   com.google.storage.v2.BidiReadHandle getReadHandle();
+
   /**
    *
    *
@@ -358,6 +370,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return Whether the routingToken field is set.
    */
   boolean hasRoutingToken();
+
   /**
    *
    *
@@ -371,6 +384,7 @@ public interface BidiReadObjectSpecOrBuilder
    * @return The routingToken.
    */
   java.lang.String getRoutingToken();
+
   /**
    *
    *

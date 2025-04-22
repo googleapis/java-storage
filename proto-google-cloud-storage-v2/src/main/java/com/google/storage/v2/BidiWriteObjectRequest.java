@@ -33,6 +33,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiWriteObjectRequest)
     BidiWriteObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiWriteObjectRequest.newBuilder() to construct.
   private BidiWriteObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -80,6 +81,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     private FirstMessageCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -130,6 +132,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     private DataCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -161,6 +164,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   }
 
   public static final int UPLOAD_ID_FIELD_NUMBER = 1;
+
   /**
    *
    *
@@ -176,6 +180,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasUploadId() {
     return firstMessageCase_ == 1;
   }
+
   /**
    *
    *
@@ -204,6 +209,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       return s;
     }
   }
+
   /**
    *
    *
@@ -234,6 +240,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   }
 
   public static final int WRITE_OBJECT_SPEC_FIELD_NUMBER = 2;
+
   /**
    *
    *
@@ -250,6 +257,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasWriteObjectSpec() {
     return firstMessageCase_ == 2;
   }
+
   /**
    *
    *
@@ -269,6 +277,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
     return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -288,6 +297,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   }
 
   public static final int APPEND_OBJECT_SPEC_FIELD_NUMBER = 11;
+
   /**
    *
    *
@@ -303,6 +313,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasAppendObjectSpec() {
     return firstMessageCase_ == 11;
   }
+
   /**
    *
    *
@@ -321,6 +332,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
     return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -340,6 +352,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int WRITE_OFFSET_FIELD_NUMBER = 3;
   private long writeOffset_ = 0L;
+
   /**
    *
    *
@@ -369,6 +382,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   }
 
   public static final int CHECKSUMMED_DATA_FIELD_NUMBER = 4;
+
   /**
    *
    *
@@ -385,6 +399,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasChecksummedData() {
     return dataCase_ == 4;
   }
+
   /**
    *
    *
@@ -404,6 +419,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
     return com.google.storage.v2.ChecksummedData.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -424,6 +440,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 6;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -442,6 +459,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -462,6 +480,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -483,6 +502,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int STATE_LOOKUP_FIELD_NUMBER = 7;
   private boolean stateLookup_ = false;
+
   /**
    *
    *
@@ -508,6 +528,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int FLUSH_FIELD_NUMBER = 8;
   private boolean flush_ = false;
+
   /**
    *
    *
@@ -531,6 +552,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int FINISH_WRITE_FIELD_NUMBER = 9;
   private boolean finishWrite_ = false;
+
   /**
    *
    *
@@ -554,6 +576,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 10;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -569,6 +592,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -586,6 +610,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -896,6 +921,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1302,6 +1328,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasUploadId() {
       return firstMessageCase_ == 1;
     }
+
     /**
      *
      *
@@ -1331,6 +1358,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1360,6 +1388,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1382,6 +1411,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1402,6 +1432,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1431,6 +1462,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             com.google.storage.v2.WriteObjectSpec.Builder,
             com.google.storage.v2.WriteObjectSpecOrBuilder>
         writeObjectSpecBuilder_;
+
     /**
      *
      *
@@ -1447,6 +1479,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasWriteObjectSpec() {
       return firstMessageCase_ == 2;
     }
+
     /**
      *
      *
@@ -1473,6 +1506,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1496,6 +1530,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1517,6 +1552,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1550,6 +1586,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1576,6 +1613,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1589,6 +1627,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public com.google.storage.v2.WriteObjectSpec.Builder getWriteObjectSpecBuilder() {
       return getWriteObjectSpecFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1610,6 +1649,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1649,6 +1689,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             com.google.storage.v2.AppendObjectSpec.Builder,
             com.google.storage.v2.AppendObjectSpecOrBuilder>
         appendObjectSpecBuilder_;
+
     /**
      *
      *
@@ -1664,6 +1705,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasAppendObjectSpec() {
       return firstMessageCase_ == 11;
     }
+
     /**
      *
      *
@@ -1689,6 +1731,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1711,6 +1754,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 11;
       return this;
     }
+
     /**
      *
      *
@@ -1731,6 +1775,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 11;
       return this;
     }
+
     /**
      *
      *
@@ -1763,6 +1808,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       firstMessageCase_ = 11;
       return this;
     }
+
     /**
      *
      *
@@ -1788,6 +1834,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1800,6 +1847,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public com.google.storage.v2.AppendObjectSpec.Builder getAppendObjectSpecBuilder() {
       return getAppendObjectSpecFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1820,6 +1868,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.AppendObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1854,6 +1903,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
 
     private long writeOffset_;
+
     /**
      *
      *
@@ -1881,6 +1931,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public long getWriteOffset() {
       return writeOffset_;
     }
+
     /**
      *
      *
@@ -1912,6 +1963,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1947,6 +1999,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             com.google.storage.v2.ChecksummedData.Builder,
             com.google.storage.v2.ChecksummedDataOrBuilder>
         checksummedDataBuilder_;
+
     /**
      *
      *
@@ -1963,6 +2016,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasChecksummedData() {
       return dataCase_ == 4;
     }
+
     /**
      *
      *
@@ -1989,6 +2043,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.ChecksummedData.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -2012,6 +2067,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -2033,6 +2089,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -2065,6 +2122,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -2091,6 +2149,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -2104,6 +2163,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public com.google.storage.v2.ChecksummedData.Builder getChecksummedDataBuilder() {
       return getChecksummedDataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2125,6 +2185,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return com.google.storage.v2.ChecksummedData.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -2163,6 +2224,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -2180,6 +2242,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -2203,6 +2266,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2228,6 +2292,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2251,6 +2316,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2281,6 +2347,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -2303,6 +2370,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2320,6 +2388,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2341,6 +2410,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             : objectChecksums_;
       }
     }
+
     /**
      *
      *
@@ -2371,6 +2441,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
 
     private boolean stateLookup_;
+
     /**
      *
      *
@@ -2393,6 +2464,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean getStateLookup() {
       return stateLookup_;
     }
+
     /**
      *
      *
@@ -2419,6 +2491,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2445,6 +2518,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
 
     private boolean flush_;
+
     /**
      *
      *
@@ -2465,6 +2539,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean getFlush() {
       return flush_;
     }
+
     /**
      *
      *
@@ -2489,6 +2564,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2513,6 +2589,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     }
 
     private boolean finishWrite_;
+
     /**
      *
      *
@@ -2533,6 +2610,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean getFinishWrite() {
       return finishWrite_;
     }
+
     /**
      *
      *
@@ -2557,6 +2635,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2586,6 +2665,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -2600,6 +2680,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -2620,6 +2701,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2643,6 +2725,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2663,6 +2746,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2692,6 +2776,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -2711,6 +2796,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2726,6 +2812,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2745,6 +2832,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *

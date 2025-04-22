@@ -38,6 +38,7 @@ public interface ListManagedFoldersRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -80,6 +81,7 @@ public interface ListManagedFoldersRequestOrBuilder
    * @return The pageToken.
    */
   java.lang.String getPageToken();
+
   /**
    *
    *
@@ -107,6 +109,7 @@ public interface ListManagedFoldersRequestOrBuilder
    * @return The prefix.
    */
   java.lang.String getPrefix();
+
   /**
    *
    *
@@ -136,6 +139,7 @@ public interface ListManagedFoldersRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

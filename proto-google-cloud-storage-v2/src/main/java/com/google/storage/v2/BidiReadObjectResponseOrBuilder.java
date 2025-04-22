@@ -40,6 +40,7 @@ public interface BidiReadObjectResponseOrBuilder
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
    */
   java.util.List<com.google.storage.v2.ObjectRangeData> getObjectDataRangesList();
+
   /**
    *
    *
@@ -56,6 +57,7 @@ public interface BidiReadObjectResponseOrBuilder
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
    */
   com.google.storage.v2.ObjectRangeData getObjectDataRanges(int index);
+
   /**
    *
    *
@@ -72,6 +74,7 @@ public interface BidiReadObjectResponseOrBuilder
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
    */
   int getObjectDataRangesCount();
+
   /**
    *
    *
@@ -89,6 +92,7 @@ public interface BidiReadObjectResponseOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.ObjectRangeDataOrBuilder>
       getObjectDataRangesOrBuilderList();
+
   /**
    *
    *
@@ -120,6 +124,7 @@ public interface BidiReadObjectResponseOrBuilder
    * @return Whether the metadata field is set.
    */
   boolean hasMetadata();
+
   /**
    *
    *
@@ -134,6 +139,7 @@ public interface BidiReadObjectResponseOrBuilder
    * @return The metadata.
    */
   com.google.storage.v2.Object getMetadata();
+
   /**
    *
    *
@@ -161,6 +167,7 @@ public interface BidiReadObjectResponseOrBuilder
    * @return Whether the readHandle field is set.
    */
   boolean hasReadHandle();
+
   /**
    *
    *
@@ -175,6 +182,7 @@ public interface BidiReadObjectResponseOrBuilder
    * @return The readHandle.
    */
   com.google.storage.v2.BidiReadHandle getReadHandle();
+
   /**
    *
    *

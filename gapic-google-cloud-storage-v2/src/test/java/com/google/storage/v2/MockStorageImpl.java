@@ -159,7 +159,8 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method LockBucketRetentionPolicy, expected %s or %s",
+                  "Unrecognized response type %s for method LockBucketRetentionPolicy, expected %s"
+                      + " or %s",
                   response == null ? "null" : response.getClass().getName(),
                   Bucket.class.getName(),
                   Exception.class.getName())));
@@ -323,7 +324,8 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method CancelResumableWrite, expected %s or %s",
+                  "Unrecognized response type %s for method CancelResumableWrite, expected %s or"
+                      + " %s",
                   response == null ? "null" : response.getClass().getName(),
                   CancelResumableWriteResponse.class.getName(),
                   Exception.class.getName())));
@@ -388,7 +390,8 @@ public class MockStorageImpl extends StorageImplBase {
               responseObserver.onError(
                   new IllegalArgumentException(
                       String.format(
-                          "Unrecognized response type %s for method BidiReadObject, expected %s or %s",
+                          "Unrecognized response type %s for method BidiReadObject, expected %s or"
+                              + " %s",
                           response == null ? "null" : response.getClass().getName(),
                           BidiReadObjectResponse.class.getName(),
                           Exception.class.getName())));
@@ -482,7 +485,8 @@ public class MockStorageImpl extends StorageImplBase {
               responseObserver.onError(
                   new IllegalArgumentException(
                       String.format(
-                          "Unrecognized response type %s for method BidiWriteObject, expected %s or %s",
+                          "Unrecognized response type %s for method BidiWriteObject, expected %s or"
+                              + " %s",
                           response == null ? "null" : response.getClass().getName(),
                           BidiWriteObjectResponse.class.getName(),
                           Exception.class.getName())));

@@ -33,6 +33,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiReadObjectResponse)
     BidiReadObjectResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiReadObjectResponse.newBuilder() to construct.
   private BidiReadObjectResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.ObjectRangeData> objectDataRanges_;
+
   /**
    *
    *
@@ -87,6 +89,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public java.util.List<com.google.storage.v2.ObjectRangeData> getObjectDataRangesList() {
     return objectDataRanges_;
   }
+
   /**
    *
    *
@@ -107,6 +110,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       getObjectDataRangesOrBuilderList() {
     return objectDataRanges_;
   }
+
   /**
    *
    *
@@ -126,6 +130,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public int getObjectDataRangesCount() {
     return objectDataRanges_.size();
   }
+
   /**
    *
    *
@@ -145,6 +150,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public com.google.storage.v2.ObjectRangeData getObjectDataRanges(int index) {
     return objectDataRanges_.get(index);
   }
+
   /**
    *
    *
@@ -167,6 +173,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
 
   public static final int METADATA_FIELD_NUMBER = 4;
   private com.google.storage.v2.Object metadata_;
+
   /**
    *
    *
@@ -184,6 +191,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public boolean hasMetadata() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -201,6 +209,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public com.google.storage.v2.Object getMetadata() {
     return metadata_ == null ? com.google.storage.v2.Object.getDefaultInstance() : metadata_;
   }
+
   /**
    *
    *
@@ -219,6 +228,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
 
   public static final int READ_HANDLE_FIELD_NUMBER = 7;
   private com.google.storage.v2.BidiReadHandle readHandle_;
+
   /**
    *
    *
@@ -236,6 +246,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
   public boolean hasReadHandle() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -255,6 +266,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         ? com.google.storage.v2.BidiReadHandle.getDefaultInstance()
         : readHandle_;
   }
+
   /**
    *
    *
@@ -462,6 +474,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -777,6 +790,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return objectDataRangesBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -799,6 +813,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return objectDataRangesBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -821,6 +836,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return objectDataRangesBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -849,6 +865,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -875,6 +892,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -903,6 +921,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -931,6 +950,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -957,6 +977,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -983,6 +1004,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1009,6 +1031,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1034,6 +1057,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1059,6 +1083,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1077,6 +1102,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
     public com.google.storage.v2.ObjectRangeData.Builder getObjectDataRangesBuilder(int index) {
       return getObjectDataRangesFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -1099,6 +1125,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return objectDataRangesBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -1122,6 +1149,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return java.util.Collections.unmodifiableList(objectDataRanges_);
       }
     }
+
     /**
      *
      *
@@ -1141,6 +1169,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       return getObjectDataRangesFieldBuilder()
           .addBuilder(com.google.storage.v2.ObjectRangeData.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -1160,6 +1189,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       return getObjectDataRangesFieldBuilder()
           .addBuilder(index, com.google.storage.v2.ObjectRangeData.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -1206,6 +1236,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         metadataBuilder_;
+
     /**
      *
      *
@@ -1222,6 +1253,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
     public boolean hasMetadata() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -1242,6 +1274,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return metadataBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1266,6 +1299,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1287,6 +1321,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1316,6 +1351,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1337,6 +1373,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1353,6 +1390,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return getMetadataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1371,6 +1409,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return metadata_ == null ? com.google.storage.v2.Object.getDefaultInstance() : metadata_;
       }
     }
+
     /**
      *
      *
@@ -1405,6 +1444,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
             com.google.storage.v2.BidiReadHandle.Builder,
             com.google.storage.v2.BidiReadHandleOrBuilder>
         readHandleBuilder_;
+
     /**
      *
      *
@@ -1421,6 +1461,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
     public boolean hasReadHandle() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1443,6 +1484,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
         return readHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1467,6 +1509,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1488,6 +1531,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1517,6 +1561,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       }
       return this;
     }
+
     /**
      *
      *
@@ -1538,6 +1583,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1554,6 +1600,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
       onChanged();
       return getReadHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1574,6 +1621,7 @@ public final class BidiReadObjectResponse extends com.google.protobuf.GeneratedM
             : readHandle_;
       }
     }
+
     /**
      *
      *

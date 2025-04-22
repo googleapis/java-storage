@@ -33,6 +33,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     // @@protoc_insertion_point(message_implements:google.storage.v2.ComposeObjectRequest)
     ComposeObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ComposeObjectRequest.newBuilder() to construct.
   private ComposeObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -83,6 +84,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * @return The name.
      */
     java.lang.String getName();
+
     /**
      *
      *
@@ -124,6 +126,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * @return Whether the objectPreconditions field is set.
      */
     boolean hasObjectPreconditions();
+
     /**
      *
      *
@@ -139,6 +142,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      */
     com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions
         getObjectPreconditions();
+
     /**
      *
      *
@@ -153,6 +157,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditionsOrBuilder
         getObjectPreconditionsOrBuilder();
   }
+
   /**
    *
    *
@@ -167,6 +172,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       // @@protoc_insertion_point(message_implements:google.storage.v2.ComposeObjectRequest.SourceObject)
       SourceObjectOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use SourceObject.newBuilder() to construct.
     private SourceObject(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -216,6 +222,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        * @return Whether the ifGenerationMatch field is set.
        */
       boolean hasIfGenerationMatch();
+
       /**
        *
        *
@@ -231,6 +238,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        */
       long getIfGenerationMatch();
     }
+
     /**
      *
      *
@@ -245,6 +253,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         // @@protoc_insertion_point(message_implements:google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions)
         ObjectPreconditionsOrBuilder {
       private static final long serialVersionUID = 0L;
+
       // Use ObjectPreconditions.newBuilder() to construct.
       private ObjectPreconditions(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -277,6 +286,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       private int bitField0_;
       public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 1;
       private long ifGenerationMatch_ = 0L;
+
       /**
        *
        *
@@ -294,6 +304,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       public boolean hasIfGenerationMatch() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -488,6 +499,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         Builder builder = new Builder(parent);
         return builder;
       }
+
       /**
        *
        *
@@ -690,6 +702,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         private int bitField0_;
 
         private long ifGenerationMatch_;
+
         /**
          *
          *
@@ -707,6 +720,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         public boolean hasIfGenerationMatch() {
           return ((bitField0_ & 0x00000001) != 0);
         }
+
         /**
          *
          *
@@ -724,6 +738,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         public long getIfGenerationMatch() {
           return ifGenerationMatch_;
         }
+
         /**
          *
          *
@@ -745,6 +760,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -839,6 +855,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -863,6 +880,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return s;
       }
     }
+
     /**
      *
      *
@@ -890,6 +908,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
     public static final int GENERATION_FIELD_NUMBER = 2;
     private long generation_ = 0L;
+
     /**
      *
      *
@@ -909,6 +928,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public static final int OBJECT_PRECONDITIONS_FIELD_NUMBER = 3;
     private com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions
         objectPreconditions_;
+
     /**
      *
      *
@@ -926,6 +946,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasObjectPreconditions() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -947,6 +968,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
               .getDefaultInstance()
           : objectPreconditions_;
     }
+
     /**
      *
      *
@@ -1152,6 +1174,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -1385,6 +1408,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       private int bitField0_;
 
       private java.lang.Object name_ = "";
+
       /**
        *
        *
@@ -1408,6 +1432,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -1431,6 +1456,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -1453,6 +1479,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1471,6 +1498,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1496,6 +1524,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
 
       private long generation_;
+
       /**
        *
        *
@@ -1511,6 +1540,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       public long getGeneration() {
         return generation_;
       }
+
       /**
        *
        *
@@ -1530,6 +1560,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1555,6 +1586,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
               com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions.Builder,
               com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditionsOrBuilder>
           objectPreconditionsBuilder_;
+
       /**
        *
        *
@@ -1571,6 +1603,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       public boolean hasObjectPreconditions() {
         return ((bitField0_ & 0x00000004) != 0);
       }
+
       /**
        *
        *
@@ -1595,6 +1628,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           return objectPreconditionsBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -1620,6 +1654,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1643,6 +1678,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1675,6 +1711,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         }
         return this;
       }
+
       /**
        *
        *
@@ -1696,6 +1733,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1713,6 +1751,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         onChanged();
         return getObjectPreconditionsFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -1735,6 +1774,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
               : objectPreconditions_;
         }
       }
+
       /**
        *
        *
@@ -1832,6 +1872,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   private int bitField0_;
   public static final int DESTINATION_FIELD_NUMBER = 1;
   private com.google.storage.v2.Object destination_;
+
   /**
    *
    *
@@ -1848,6 +1889,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasDestination() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -1864,6 +1906,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public com.google.storage.v2.Object getDestination() {
     return destination_ == null ? com.google.storage.v2.Object.getDefaultInstance() : destination_;
   }
+
   /**
    *
    *
@@ -1883,6 +1926,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject> sourceObjects_;
+
   /**
    *
    *
@@ -1897,6 +1941,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       getSourceObjectsList() {
     return sourceObjects_;
   }
+
   /**
    *
    *
@@ -1911,6 +1956,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       getSourceObjectsOrBuilderList() {
     return sourceObjects_;
   }
+
   /**
    *
    *
@@ -1924,6 +1970,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public int getSourceObjectsCount() {
     return sourceObjects_.size();
   }
+
   /**
    *
    *
@@ -1937,6 +1984,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public com.google.storage.v2.ComposeObjectRequest.SourceObject getSourceObjects(int index) {
     return sourceObjects_.get(index);
   }
+
   /**
    *
    *
@@ -1956,6 +2004,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationPredefinedAcl_ = "";
+
   /**
    *
    *
@@ -1981,6 +2030,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -2009,6 +2059,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -2026,6 +2077,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -2046,6 +2098,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 5;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -2062,6 +2115,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -2083,6 +2137,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object kmsKey_ = "";
+
   /**
    *
    *
@@ -2109,6 +2164,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -2138,6 +2194,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 7;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -2153,6 +2210,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -2170,6 +2228,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -2189,6 +2248,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 10;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -2205,6 +2265,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -2223,6 +2284,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -2493,6 +2555,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -2859,6 +2922,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         destinationBuilder_;
+
     /**
      *
      *
@@ -2874,6 +2938,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasDestination() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -2895,6 +2960,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return destinationBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2918,6 +2984,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2938,6 +3005,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2966,6 +3034,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -2986,6 +3055,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3001,6 +3071,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getDestinationFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -3020,6 +3091,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             : destination_;
       }
     }
+
     /**
      *
      *
@@ -3083,6 +3155,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return sourceObjectsBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -3100,6 +3173,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return sourceObjectsBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -3117,6 +3191,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return sourceObjectsBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -3141,6 +3216,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3163,6 +3239,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3186,6 +3263,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3210,6 +3288,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3231,6 +3310,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3253,6 +3333,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3275,6 +3356,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3295,6 +3377,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3315,6 +3398,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3329,6 +3413,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         int index) {
       return getSourceObjectsFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -3347,6 +3432,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return sourceObjectsBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -3366,6 +3452,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return java.util.Collections.unmodifiableList(sourceObjects_);
       }
     }
+
     /**
      *
      *
@@ -3381,6 +3468,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       return getSourceObjectsFieldBuilder()
           .addBuilder(com.google.storage.v2.ComposeObjectRequest.SourceObject.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -3397,6 +3485,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           .addBuilder(
               index, com.google.storage.v2.ComposeObjectRequest.SourceObject.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -3433,6 +3522,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object destinationPredefinedAcl_ = "";
+
     /**
      *
      *
@@ -3457,6 +3547,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -3481,6 +3572,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -3504,6 +3596,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3523,6 +3616,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3549,6 +3643,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -3566,6 +3661,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -3583,6 +3679,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -3604,6 +3701,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3625,6 +3723,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -3641,6 +3740,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -3657,6 +3757,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -3677,6 +3778,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3697,6 +3799,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object kmsKey_ = "";
+
     /**
      *
      *
@@ -3722,6 +3825,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -3747,6 +3851,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -3771,6 +3876,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3791,6 +3897,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3823,6 +3930,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -3837,6 +3945,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -3857,6 +3966,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -3880,6 +3990,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3900,6 +4011,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3929,6 +4041,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -3948,6 +4061,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3963,6 +4077,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -3982,6 +4097,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *
@@ -4014,6 +4130,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -4029,6 +4146,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -4050,6 +4168,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -4073,6 +4192,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4094,6 +4214,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4122,6 +4243,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -4142,6 +4264,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4157,6 +4280,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -4176,6 +4300,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             : objectChecksums_;
       }
     }
+
     /**
      *
      *

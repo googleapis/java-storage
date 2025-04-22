@@ -37,6 +37,7 @@ public interface CancelResumableWriteRequestOrBuilder
    * @return The uploadId.
    */
   java.lang.String getUploadId();
+
   /**
    *
    *

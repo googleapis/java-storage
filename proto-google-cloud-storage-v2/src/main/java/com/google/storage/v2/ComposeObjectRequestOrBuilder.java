@@ -37,6 +37,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return Whether the destination field is set.
    */
   boolean hasDestination();
+
   /**
    *
    *
@@ -50,6 +51,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return The destination.
    */
   com.google.storage.v2.Object getDestination();
+
   /**
    *
    *
@@ -72,6 +74,7 @@ public interface ComposeObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
    */
   java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject> getSourceObjectsList();
+
   /**
    *
    *
@@ -82,6 +85,7 @@ public interface ComposeObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
    */
   com.google.storage.v2.ComposeObjectRequest.SourceObject getSourceObjects(int index);
+
   /**
    *
    *
@@ -92,6 +96,7 @@ public interface ComposeObjectRequestOrBuilder
    * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
    */
   int getSourceObjectsCount();
+
   /**
    *
    *
@@ -103,6 +108,7 @@ public interface ComposeObjectRequestOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder>
       getSourceObjectsOrBuilderList();
+
   /**
    *
    *
@@ -129,6 +135,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return The destinationPredefinedAcl.
    */
   java.lang.String getDestinationPredefinedAcl();
+
   /**
    *
    *
@@ -158,6 +165,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -186,6 +194,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -215,6 +224,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return The kmsKey.
    */
   java.lang.String getKmsKey();
+
   /**
    *
    *
@@ -243,6 +253,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -255,6 +266,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -279,6 +291,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return Whether the objectChecksums field is set.
    */
   boolean hasObjectChecksums();
+
   /**
    *
    *
@@ -292,6 +305,7 @@ public interface ComposeObjectRequestOrBuilder
    * @return The objectChecksums.
    */
   com.google.storage.v2.ObjectChecksums getObjectChecksums();
+
   /**
    *
    *

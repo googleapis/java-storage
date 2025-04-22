@@ -192,9 +192,9 @@ interface Hasher {
           String.format(
               "Mismatch checksum value. Expected %s actual %s",
               expected.debugString(), actual.debugString()),
-          /*cause=*/ null,
+          /* cause= */ null,
           STATUS_CODE,
-          /*retryable=*/ false);
+          /* retryable= */ false);
       this.expected = expected;
       this.actual = actual;
     }

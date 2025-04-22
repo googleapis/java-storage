@@ -82,8 +82,9 @@ final class BackwardCompatibilityUtils {
       String msg =
           "The lifecycle condition "
               + resolveRuleActionType(from)
-              + " is not currently supported. Please update to the latest version of google-cloud-java."
-              + " Also, use LifecycleRule rather than the deprecated DeleteRule.";
+              + " is not currently supported. Please update to the latest version of"
+              + " google-cloud-java. Also, use LifecycleRule rather than the deprecated"
+              + " DeleteRule.";
       // manually construct a log record, so we maintain class name and method name
       // from the old implicit values.
       LogRecord record = new LogRecord(Level.WARNING, msg);
