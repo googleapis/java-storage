@@ -36,6 +36,7 @@ public interface BucketAccessControlOrBuilder
    * @return The role.
    */
   java.lang.String getRole();
+
   /**
    *
    *
@@ -61,6 +62,7 @@ public interface BucketAccessControlOrBuilder
    * @return The id.
    */
   java.lang.String getId();
+
   /**
    *
    *
@@ -103,6 +105,7 @@ public interface BucketAccessControlOrBuilder
    * @return The entity.
    */
   java.lang.String getEntity();
+
   /**
    *
    *
@@ -146,6 +149,7 @@ public interface BucketAccessControlOrBuilder
    * @return The entityAlt.
    */
   java.lang.String getEntityAlt();
+
   /**
    *
    *
@@ -172,6 +176,7 @@ public interface BucketAccessControlOrBuilder
    * @return The entityId.
    */
   java.lang.String getEntityId();
+
   /**
    *
    *
@@ -200,6 +205,7 @@ public interface BucketAccessControlOrBuilder
    * @return The etag.
    */
   java.lang.String getEtag();
+
   /**
    *
    *
@@ -228,6 +234,7 @@ public interface BucketAccessControlOrBuilder
    * @return The email.
    */
   java.lang.String getEmail();
+
   /**
    *
    *
@@ -253,6 +260,7 @@ public interface BucketAccessControlOrBuilder
    * @return The domain.
    */
   java.lang.String getDomain();
+
   /**
    *
    *
@@ -278,6 +286,7 @@ public interface BucketAccessControlOrBuilder
    * @return Whether the projectTeam field is set.
    */
   boolean hasProjectTeam();
+
   /**
    *
    *
@@ -290,6 +299,7 @@ public interface BucketAccessControlOrBuilder
    * @return The projectTeam.
    */
   com.google.storage.v2.ProjectTeam getProjectTeam();
+
   /**
    *
    *

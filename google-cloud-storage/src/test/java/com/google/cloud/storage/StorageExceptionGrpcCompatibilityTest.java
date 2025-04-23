@@ -259,7 +259,8 @@ public final class StorageExceptionGrpcCompatibilityTest {
     DebugInfo debugInfo =
         DebugInfo.newBuilder()
             .setDetail(
-                "bw-storage-dev-region-fine@default-223119.iam.gserviceaccount.com does not have storage.hmacKeys.list access to the Google Cloud project.")
+                "bw-storage-dev-region-fine@default-223119.iam.gserviceaccount.com does not have"
+                    + " storage.hmacKeys.list access to the Google Cloud project.")
             .build();
 
     ImmutableList<Any> anys = ImmutableList.of(Any.pack(errorInfo), Any.pack(debugInfo));

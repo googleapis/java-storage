@@ -47,7 +47,8 @@ public final class GenerateGrpcProtobufReflectConfig {
                           + "  }",
                       "{\n"
                           + "    \"name\":\"org.apache.commons.logging.impl.Jdk14Logger\",\n"
-                          + "    \"methods\":[{\"name\":\"<init>\",\"parameterTypes\":[\"java.lang.String\"] }]\n"
+                          + "    \"methods\":[{\"name\":\"<init>\",\"parameterTypes\":[\"java.lang.String\"]"
+                          + " }]\n"
                           + "  }",
                       "{\n"
                           + "    \"name\":\"org.apache.commons.logging.impl.LogFactoryImpl\",\n"
@@ -69,7 +70,11 @@ public final class GenerateGrpcProtobufReflectConfig {
                           name ->
                               String.format(
                                   Locale.US,
-                                  "{ \"name\": \"%s\", \"queryAllDeclaredConstructors\": true, \"queryAllPublicConstructors\": true, \"queryAllDeclaredMethods\": true, \"allPublicMethods\": true, \"allDeclaredClasses\": true, \"allPublicClasses\": true }",
+                                  "{ \"name\": \"%s\", \"queryAllDeclaredConstructors\": true,"
+                                      + " \"queryAllPublicConstructors\": true,"
+                                      + " \"queryAllDeclaredMethods\": true, \"allPublicMethods\":"
+                                      + " true, \"allDeclaredClasses\": true, \"allPublicClasses\":"
+                                      + " true }",
                                   name)))
               .flatMap(s -> s)
               .collect(Collectors.joining(",\n  ", "[\n  ", "\n]\n"));

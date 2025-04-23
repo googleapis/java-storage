@@ -34,6 +34,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiWriteObjectRedirectedError)
     BidiWriteObjectRedirectedErrorOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiWriteObjectRedirectedError.newBuilder() to construct.
   private BidiWriteObjectRedirectedError(
       com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
@@ -70,6 +71,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object routingToken_ = "";
+
   /**
    *
    *
@@ -85,6 +87,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
   public boolean hasRoutingToken() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -108,6 +111,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       return s;
     }
   }
+
   /**
    *
    *
@@ -134,6 +138,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
 
   public static final int WRITE_HANDLE_FIELD_NUMBER = 2;
   private com.google.storage.v2.BidiWriteHandle writeHandle_;
+
   /**
    *
    *
@@ -149,6 +154,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
   public boolean hasWriteHandle() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -166,6 +172,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
         ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
         : writeHandle_;
   }
+
   /**
    *
    *
@@ -184,6 +191,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
 
   public static final int GENERATION_FIELD_NUMBER = 3;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -202,6 +210,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
   public boolean hasGeneration() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -413,6 +422,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -643,6 +653,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     private int bitField0_;
 
     private java.lang.Object routingToken_ = "";
+
     /**
      *
      *
@@ -657,6 +668,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     public boolean hasRoutingToken() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -679,6 +691,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -701,6 +714,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -722,6 +736,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -739,6 +754,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -768,6 +784,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
             com.google.storage.v2.BidiWriteHandle.Builder,
             com.google.storage.v2.BidiWriteHandleOrBuilder>
         writeHandleBuilder_;
+
     /**
      *
      *
@@ -782,6 +799,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     public boolean hasWriteHandle() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -802,6 +820,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
         return writeHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -824,6 +843,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -843,6 +863,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -870,6 +891,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       }
       return this;
     }
+
     /**
      *
      *
@@ -889,6 +911,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -903,6 +926,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return getWriteHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -921,6 +945,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
             : writeHandle_;
       }
     }
+
     /**
      *
      *
@@ -948,6 +973,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -966,6 +992,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     public boolean hasGeneration() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -984,6 +1011,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1006,6 +1034,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
       onChanged();
       return this;
     }
+
     /**
      *
      *

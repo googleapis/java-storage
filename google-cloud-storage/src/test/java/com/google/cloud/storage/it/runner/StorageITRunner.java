@@ -154,7 +154,10 @@ public final class StorageITRunner extends Suite {
       AllowClassRule allowClassRule = testClass.getAnnotation(AllowClassRule.class);
       if (allowClassRule == null && !classRules.isEmpty()) {
         String msg =
-            "@CrossRun used along with @ClassRule. This can be dangerous, multiple class scopes will be created for cross running, possibly breaking expectations on rule scope. If the use of a @ClassRule is still desirable, please annotate your class with @CrossRun.AllowClassRule";
+            "@CrossRun used along with @ClassRule. This can be dangerous, multiple class scopes"
+                + " will be created for cross running, possibly breaking expectations on rule"
+                + " scope. If the use of a @ClassRule is still desirable, please annotate your"
+                + " class with @CrossRun.AllowClassRule";
         throw new InitializationError(msg);
       }
       return SneakyException.unwrap(

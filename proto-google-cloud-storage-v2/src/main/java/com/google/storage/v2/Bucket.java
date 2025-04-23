@@ -33,6 +33,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket)
     BucketOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use Bucket.newBuilder() to construct.
   private Bucket(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -101,6 +102,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     boolean getRequesterPays();
   }
+
   /**
    *
    *
@@ -115,6 +117,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Billing)
       BillingOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Billing.newBuilder() to construct.
     private Billing(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -145,6 +148,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int REQUESTER_PAYS_FIELD_NUMBER = 1;
     private boolean requesterPays_ = false;
+
     /**
      *
      *
@@ -320,6 +324,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -504,6 +509,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private boolean requesterPays_;
+
       /**
        *
        *
@@ -519,6 +525,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean getRequesterPays() {
         return requesterPays_;
       }
+
       /**
        *
        *
@@ -538,6 +545,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -639,6 +647,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return A list containing the origin.
      */
     java.util.List<java.lang.String> getOriginList();
+
     /**
      *
      *
@@ -653,6 +662,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The count of origin.
      */
     int getOriginCount();
+
     /**
      *
      *
@@ -668,6 +678,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The origin at the given index.
      */
     java.lang.String getOrigin(int index);
+
     /**
      *
      *
@@ -698,6 +709,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return A list containing the method.
      */
     java.util.List<java.lang.String> getMethodList();
+
     /**
      *
      *
@@ -712,6 +724,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The count of method.
      */
     int getMethodCount();
+
     /**
      *
      *
@@ -727,6 +740,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The method at the given index.
      */
     java.lang.String getMethod(int index);
+
     /**
      *
      *
@@ -757,6 +771,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return A list containing the responseHeader.
      */
     java.util.List<java.lang.String> getResponseHeaderList();
+
     /**
      *
      *
@@ -771,6 +786,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The count of responseHeader.
      */
     int getResponseHeaderCount();
+
     /**
      *
      *
@@ -786,6 +802,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The responseHeader at the given index.
      */
     java.lang.String getResponseHeader(int index);
+
     /**
      *
      *
@@ -817,6 +834,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     int getMaxAgeSeconds();
   }
+
   /**
    *
    *
@@ -834,6 +852,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Cors)
       CorsOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Cors.newBuilder() to construct.
     private Cors(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -871,6 +890,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     @SuppressWarnings("serial")
     private com.google.protobuf.LazyStringArrayList origin_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
+
     /**
      *
      *
@@ -887,6 +907,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ProtocolStringList getOriginList() {
       return origin_;
     }
+
     /**
      *
      *
@@ -903,6 +924,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getOriginCount() {
       return origin_.size();
     }
+
     /**
      *
      *
@@ -920,6 +942,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.lang.String getOrigin(int index) {
       return origin_.get(index);
     }
+
     /**
      *
      *
@@ -943,6 +966,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     @SuppressWarnings("serial")
     private com.google.protobuf.LazyStringArrayList method_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
+
     /**
      *
      *
@@ -959,6 +983,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ProtocolStringList getMethodList() {
       return method_;
     }
+
     /**
      *
      *
@@ -975,6 +1000,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getMethodCount() {
       return method_.size();
     }
+
     /**
      *
      *
@@ -992,6 +1018,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.lang.String getMethod(int index) {
       return method_.get(index);
     }
+
     /**
      *
      *
@@ -1015,6 +1042,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     @SuppressWarnings("serial")
     private com.google.protobuf.LazyStringArrayList responseHeader_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
+
     /**
      *
      *
@@ -1031,6 +1059,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ProtocolStringList getResponseHeaderList() {
       return responseHeader_;
     }
+
     /**
      *
      *
@@ -1047,6 +1076,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getResponseHeaderCount() {
       return responseHeader_.size();
     }
+
     /**
      *
      *
@@ -1064,6 +1094,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.lang.String getResponseHeader(int index) {
       return responseHeader_.get(index);
     }
+
     /**
      *
      *
@@ -1084,6 +1115,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int MAX_AGE_SECONDS_FIELD_NUMBER = 4;
     private int maxAgeSeconds_ = 0;
+
     /**
      *
      *
@@ -1308,6 +1340,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -1568,6 +1601,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ |= 0x00000001;
       }
+
       /**
        *
        *
@@ -1585,6 +1619,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         origin_.makeImmutable();
         return origin_;
       }
+
       /**
        *
        *
@@ -1601,6 +1636,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public int getOriginCount() {
         return origin_.size();
       }
+
       /**
        *
        *
@@ -1618,6 +1654,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public java.lang.String getOrigin(int index) {
         return origin_.get(index);
       }
+
       /**
        *
        *
@@ -1635,6 +1672,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.ByteString getOriginBytes(int index) {
         return origin_.getByteString(index);
       }
+
       /**
        *
        *
@@ -1660,6 +1698,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1684,6 +1723,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1705,6 +1745,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1725,6 +1766,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1760,6 +1802,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ |= 0x00000002;
       }
+
       /**
        *
        *
@@ -1777,6 +1820,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         method_.makeImmutable();
         return method_;
       }
+
       /**
        *
        *
@@ -1793,6 +1837,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public int getMethodCount() {
         return method_.size();
       }
+
       /**
        *
        *
@@ -1810,6 +1855,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public java.lang.String getMethod(int index) {
         return method_.get(index);
       }
+
       /**
        *
        *
@@ -1827,6 +1873,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.ByteString getMethodBytes(int index) {
         return method_.getByteString(index);
       }
+
       /**
        *
        *
@@ -1852,6 +1899,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1876,6 +1924,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1897,6 +1946,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1917,6 +1967,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1952,6 +2003,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ |= 0x00000004;
       }
+
       /**
        *
        *
@@ -1969,6 +2021,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         responseHeader_.makeImmutable();
         return responseHeader_;
       }
+
       /**
        *
        *
@@ -1985,6 +2038,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public int getResponseHeaderCount() {
         return responseHeader_.size();
       }
+
       /**
        *
        *
@@ -2002,6 +2056,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public java.lang.String getResponseHeader(int index) {
         return responseHeader_.get(index);
       }
+
       /**
        *
        *
@@ -2019,6 +2074,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.ByteString getResponseHeaderBytes(int index) {
         return responseHeader_.getByteString(index);
       }
+
       /**
        *
        *
@@ -2044,6 +2100,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2068,6 +2125,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2089,6 +2147,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2109,6 +2168,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2136,6 +2196,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private int maxAgeSeconds_;
+
       /**
        *
        *
@@ -2153,6 +2214,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public int getMaxAgeSeconds() {
         return maxAgeSeconds_;
       }
+
       /**
        *
        *
@@ -2174,6 +2236,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2276,6 +2339,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The defaultKmsKey.
      */
     java.lang.String getDefaultKmsKey();
+
     /**
      *
      *
@@ -2290,6 +2354,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getDefaultKmsKeyBytes();
   }
+
   /**
    *
    *
@@ -2304,6 +2369,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Encryption)
       EncryptionOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Encryption.newBuilder() to construct.
     private Encryption(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -2338,6 +2404,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object defaultKmsKey_ = "";
+
     /**
      *
      *
@@ -2362,6 +2429,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -2546,6 +2614,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -2732,6 +2801,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private java.lang.Object defaultKmsKey_ = "";
+
       /**
        *
        *
@@ -2755,6 +2825,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -2778,6 +2849,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -2800,6 +2872,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2818,6 +2891,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -2925,6 +2999,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the uniformBucketLevelAccess field is set.
      */
     boolean hasUniformBucketLevelAccess();
+
     /**
      *
      *
@@ -2939,6 +3014,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The uniformBucketLevelAccess.
      */
     com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess getUniformBucketLevelAccess();
+
     /**
      *
      *
@@ -2966,6 +3042,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The publicAccessPrevention.
      */
     java.lang.String getPublicAccessPrevention();
+
     /**
      *
      *
@@ -2980,6 +3057,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getPublicAccessPreventionBytes();
   }
+
   /**
    *
    *
@@ -2994,6 +3072,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.IamConfig)
       IamConfigOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use IamConfig.newBuilder() to construct.
     private IamConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -3057,6 +3136,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return Whether the lockTime field is set.
        */
       boolean hasLockTime();
+
       /**
        *
        *
@@ -3072,6 +3152,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return The lockTime.
        */
       com.google.protobuf.Timestamp getLockTime();
+
       /**
        *
        *
@@ -3086,6 +3167,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        */
       com.google.protobuf.TimestampOrBuilder getLockTimeOrBuilder();
     }
+
     /**
      *
      *
@@ -3102,6 +3184,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess)
         UniformBucketLevelAccessOrBuilder {
       private static final long serialVersionUID = 0L;
+
       // Use UniformBucketLevelAccess.newBuilder() to construct.
       private UniformBucketLevelAccess(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -3133,6 +3216,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
       public static final int ENABLED_FIELD_NUMBER = 1;
       private boolean enabled_ = false;
+
       /**
        *
        *
@@ -3151,6 +3235,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       public static final int LOCK_TIME_FIELD_NUMBER = 2;
       private com.google.protobuf.Timestamp lockTime_;
+
       /**
        *
        *
@@ -3169,6 +3254,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasLockTime() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -3187,6 +3273,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.Timestamp getLockTime() {
         return lockTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : lockTime_;
       }
+
       /**
        *
        *
@@ -3381,6 +3468,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         Builder builder = new Builder(parent);
         return builder;
       }
+
       /**
        *
        *
@@ -3603,6 +3691,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         private int bitField0_;
 
         private boolean enabled_;
+
         /**
          *
          *
@@ -3618,6 +3707,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean getEnabled() {
           return enabled_;
         }
+
         /**
          *
          *
@@ -3637,6 +3727,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -3661,6 +3752,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 com.google.protobuf.Timestamp.Builder,
                 com.google.protobuf.TimestampOrBuilder>
             lockTimeBuilder_;
+
         /**
          *
          *
@@ -3678,6 +3770,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasLockTime() {
           return ((bitField0_ & 0x00000002) != 0);
         }
+
         /**
          *
          *
@@ -3701,6 +3794,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return lockTimeBuilder_.getMessage();
           }
         }
+
         /**
          *
          *
@@ -3726,6 +3820,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -3748,6 +3843,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -3778,6 +3874,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
           return this;
         }
+
         /**
          *
          *
@@ -3800,6 +3897,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -3817,6 +3915,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return getLockTimeFieldBuilder().getBuilder();
         }
+
         /**
          *
          *
@@ -3838,6 +3937,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 : lockTime_;
           }
         }
+
         /**
          *
          *
@@ -3938,6 +4038,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public static final int UNIFORM_BUCKET_LEVEL_ACCESS_FIELD_NUMBER = 1;
     private com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess
         uniformBucketLevelAccess_;
+
     /**
      *
      *
@@ -3955,6 +4056,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasUniformBucketLevelAccess() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -3975,6 +4077,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess.getDefaultInstance()
           : uniformBucketLevelAccess_;
     }
+
     /**
      *
      *
@@ -3998,6 +4101,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object publicAccessPrevention_ = "";
+
     /**
      *
      *
@@ -4022,6 +4126,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -4224,6 +4329,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -4449,6 +4555,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess.Builder,
               com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccessOrBuilder>
           uniformBucketLevelAccessBuilder_;
+
       /**
        *
        *
@@ -4465,6 +4572,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasUniformBucketLevelAccess() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -4488,6 +4596,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return uniformBucketLevelAccessBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -4513,6 +4622,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -4535,6 +4645,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -4567,6 +4678,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -4588,6 +4700,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -4605,6 +4718,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getUniformBucketLevelAccessFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -4626,6 +4740,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : uniformBucketLevelAccess_;
         }
       }
+
       /**
        *
        *
@@ -4655,6 +4770,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private java.lang.Object publicAccessPrevention_ = "";
+
       /**
        *
        *
@@ -4678,6 +4794,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -4701,6 +4818,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -4723,6 +4841,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -4741,6 +4860,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -4845,6 +4965,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
      */
     java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> getRuleList();
+
     /**
      *
      *
@@ -4856,6 +4977,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
      */
     com.google.storage.v2.Bucket.Lifecycle.Rule getRule(int index);
+
     /**
      *
      *
@@ -4867,6 +4989,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
      */
     int getRuleCount();
+
     /**
      *
      *
@@ -4879,6 +5002,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     java.util.List<? extends com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder>
         getRuleOrBuilderList();
+
     /**
      *
      *
@@ -4891,6 +5015,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder getRuleOrBuilder(int index);
   }
+
   /**
    *
    *
@@ -4906,6 +5031,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Lifecycle)
       LifecycleOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Lifecycle.newBuilder() to construct.
     private Lifecycle(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -4953,6 +5079,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return Whether the action field is set.
        */
       boolean hasAction();
+
       /**
        *
        *
@@ -4965,6 +5092,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return The action.
        */
       com.google.storage.v2.Bucket.Lifecycle.Rule.Action getAction();
+
       /**
        *
        *
@@ -4988,6 +5116,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return Whether the condition field is set.
        */
       boolean hasCondition();
+
       /**
        *
        *
@@ -5000,6 +5129,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return The condition.
        */
       com.google.storage.v2.Bucket.Lifecycle.Rule.Condition getCondition();
+
       /**
        *
        *
@@ -5011,6 +5141,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        */
       com.google.storage.v2.Bucket.Lifecycle.Rule.ConditionOrBuilder getConditionOrBuilder();
     }
+
     /**
      *
      *
@@ -5026,6 +5157,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Lifecycle.Rule)
         RuleOrBuilder {
       private static final long serialVersionUID = 0L;
+
       // Use Rule.newBuilder() to construct.
       private Rule(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -5072,6 +5204,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The type.
          */
         java.lang.String getType();
+
         /**
          *
          *
@@ -5099,6 +5232,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The storageClass.
          */
         java.lang.String getStorageClass();
+
         /**
          *
          *
@@ -5113,6 +5247,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          */
         com.google.protobuf.ByteString getStorageClassBytes();
       }
+
       /**
        *
        *
@@ -5127,6 +5262,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Lifecycle.Rule.Action)
           ActionOrBuilder {
         private static final long serialVersionUID = 0L;
+
         // Use Action.newBuilder() to construct.
         private Action(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
           super(builder);
@@ -5162,6 +5298,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         @SuppressWarnings("serial")
         private volatile java.lang.Object type_ = "";
+
         /**
          *
          *
@@ -5186,6 +5323,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return s;
           }
         }
+
         /**
          *
          *
@@ -5215,6 +5353,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         @SuppressWarnings("serial")
         private volatile java.lang.Object storageClass_ = "";
+
         /**
          *
          *
@@ -5239,6 +5378,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return s;
           }
         }
+
         /**
          *
          *
@@ -5436,6 +5576,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           Builder builder = new Builder(parent);
           return builder;
         }
+
         /**
          *
          *
@@ -5638,6 +5779,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           private int bitField0_;
 
           private java.lang.Object type_ = "";
+
           /**
            *
            *
@@ -5661,6 +5803,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return (java.lang.String) ref;
             }
           }
+
           /**
            *
            *
@@ -5684,6 +5827,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return (com.google.protobuf.ByteString) ref;
             }
           }
+
           /**
            *
            *
@@ -5706,6 +5850,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -5724,6 +5869,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -5749,6 +5895,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
 
           private java.lang.Object storageClass_ = "";
+
           /**
            *
            *
@@ -5772,6 +5919,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return (java.lang.String) ref;
             }
           }
+
           /**
            *
            *
@@ -5795,6 +5943,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return (com.google.protobuf.ByteString) ref;
             }
           }
+
           /**
            *
            *
@@ -5817,6 +5966,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -5835,6 +5985,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -5943,6 +6094,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the ageDays field is set.
          */
         boolean hasAgeDays();
+
         /**
          *
          *
@@ -5972,6 +6124,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the createdBefore field is set.
          */
         boolean hasCreatedBefore();
+
         /**
          *
          *
@@ -5985,6 +6138,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The createdBefore.
          */
         com.google.type.Date getCreatedBefore();
+
         /**
          *
          *
@@ -6011,6 +6165,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the isLive field is set.
          */
         boolean hasIsLive();
+
         /**
          *
          *
@@ -6040,6 +6195,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the numNewerVersions field is set.
          */
         boolean hasNumNewerVersions();
+
         /**
          *
          *
@@ -6070,6 +6226,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return A list containing the matchesStorageClass.
          */
         java.util.List<java.lang.String> getMatchesStorageClassList();
+
         /**
          *
          *
@@ -6085,6 +6242,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The count of matchesStorageClass.
          */
         int getMatchesStorageClassCount();
+
         /**
          *
          *
@@ -6101,6 +6259,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The matchesStorageClass at the given index.
          */
         java.lang.String getMatchesStorageClass(int index);
+
         /**
          *
          *
@@ -6132,6 +6291,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the daysSinceCustomTime field is set.
          */
         boolean hasDaysSinceCustomTime();
+
         /**
          *
          *
@@ -6160,6 +6320,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the customTimeBefore field is set.
          */
         boolean hasCustomTimeBefore();
+
         /**
          *
          *
@@ -6173,6 +6334,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The customTimeBefore.
          */
         com.google.type.Date getCustomTimeBefore();
+
         /**
          *
          *
@@ -6201,6 +6363,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the daysSinceNoncurrentTime field is set.
          */
         boolean hasDaysSinceNoncurrentTime();
+
         /**
          *
          *
@@ -6232,6 +6395,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return Whether the noncurrentTimeBefore field is set.
          */
         boolean hasNoncurrentTimeBefore();
+
         /**
          *
          *
@@ -6246,6 +6410,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The noncurrentTimeBefore.
          */
         com.google.type.Date getNoncurrentTimeBefore();
+
         /**
          *
          *
@@ -6272,6 +6437,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return A list containing the matchesPrefix.
          */
         java.util.List<java.lang.String> getMatchesPrefixList();
+
         /**
          *
          *
@@ -6285,6 +6451,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The count of matchesPrefix.
          */
         int getMatchesPrefixCount();
+
         /**
          *
          *
@@ -6299,6 +6466,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The matchesPrefix at the given index.
          */
         java.lang.String getMatchesPrefix(int index);
+
         /**
          *
          *
@@ -6327,6 +6495,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return A list containing the matchesSuffix.
          */
         java.util.List<java.lang.String> getMatchesSuffixList();
+
         /**
          *
          *
@@ -6340,6 +6509,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The count of matchesSuffix.
          */
         int getMatchesSuffixCount();
+
         /**
          *
          *
@@ -6354,6 +6524,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * @return The matchesSuffix at the given index.
          */
         java.lang.String getMatchesSuffix(int index);
+
         /**
          *
          *
@@ -6369,6 +6540,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          */
         com.google.protobuf.ByteString getMatchesSuffixBytes(int index);
       }
+
       /**
        *
        *
@@ -6383,6 +6555,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Lifecycle.Rule.Condition)
           ConditionOrBuilder {
         private static final long serialVersionUID = 0L;
+
         // Use Condition.newBuilder() to construct.
         private Condition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
           super(builder);
@@ -6418,6 +6591,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         private int bitField0_;
         public static final int AGE_DAYS_FIELD_NUMBER = 1;
         private int ageDays_ = 0;
+
         /**
          *
          *
@@ -6436,6 +6610,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasAgeDays() {
           return ((bitField0_ & 0x00000001) != 0);
         }
+
         /**
          *
          *
@@ -6457,6 +6632,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int CREATED_BEFORE_FIELD_NUMBER = 2;
         private com.google.type.Date createdBefore_;
+
         /**
          *
          *
@@ -6473,6 +6649,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasCreatedBefore() {
           return ((bitField0_ & 0x00000002) != 0);
         }
+
         /**
          *
          *
@@ -6491,6 +6668,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               ? com.google.type.Date.getDefaultInstance()
               : createdBefore_;
         }
+
         /**
          *
          *
@@ -6510,6 +6688,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int IS_LIVE_FIELD_NUMBER = 3;
         private boolean isLive_ = false;
+
         /**
          *
          *
@@ -6527,6 +6706,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasIsLive() {
           return ((bitField0_ & 0x00000004) != 0);
         }
+
         /**
          *
          *
@@ -6547,6 +6727,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int NUM_NEWER_VERSIONS_FIELD_NUMBER = 4;
         private int numNewerVersions_ = 0;
+
         /**
          *
          *
@@ -6564,6 +6745,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasNumNewerVersions() {
           return ((bitField0_ & 0x00000008) != 0);
         }
+
         /**
          *
          *
@@ -6587,6 +6769,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         @SuppressWarnings("serial")
         private com.google.protobuf.LazyStringArrayList matchesStorageClass_ =
             com.google.protobuf.LazyStringArrayList.emptyList();
+
         /**
          *
          *
@@ -6604,6 +6787,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public com.google.protobuf.ProtocolStringList getMatchesStorageClassList() {
           return matchesStorageClass_;
         }
+
         /**
          *
          *
@@ -6621,6 +6805,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public int getMatchesStorageClassCount() {
           return matchesStorageClass_.size();
         }
+
         /**
          *
          *
@@ -6639,6 +6824,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public java.lang.String getMatchesStorageClass(int index) {
           return matchesStorageClass_.get(index);
         }
+
         /**
          *
          *
@@ -6660,6 +6846,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int DAYS_SINCE_CUSTOM_TIME_FIELD_NUMBER = 7;
         private int daysSinceCustomTime_ = 0;
+
         /**
          *
          *
@@ -6677,6 +6864,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasDaysSinceCustomTime() {
           return ((bitField0_ & 0x00000010) != 0);
         }
+
         /**
          *
          *
@@ -6697,6 +6885,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int CUSTOM_TIME_BEFORE_FIELD_NUMBER = 8;
         private com.google.type.Date customTimeBefore_;
+
         /**
          *
          *
@@ -6713,6 +6902,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasCustomTimeBefore() {
           return ((bitField0_ & 0x00000020) != 0);
         }
+
         /**
          *
          *
@@ -6731,6 +6921,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               ? com.google.type.Date.getDefaultInstance()
               : customTimeBefore_;
         }
+
         /**
          *
          *
@@ -6750,6 +6941,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int DAYS_SINCE_NONCURRENT_TIME_FIELD_NUMBER = 9;
         private int daysSinceNoncurrentTime_ = 0;
+
         /**
          *
          *
@@ -6769,6 +6961,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasDaysSinceNoncurrentTime() {
           return ((bitField0_ & 0x00000040) != 0);
         }
+
         /**
          *
          *
@@ -6791,6 +6984,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         public static final int NONCURRENT_TIME_BEFORE_FIELD_NUMBER = 10;
         private com.google.type.Date noncurrentTimeBefore_;
+
         /**
          *
          *
@@ -6808,6 +7002,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasNoncurrentTimeBefore() {
           return ((bitField0_ & 0x00000080) != 0);
         }
+
         /**
          *
          *
@@ -6827,6 +7022,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               ? com.google.type.Date.getDefaultInstance()
               : noncurrentTimeBefore_;
         }
+
         /**
          *
          *
@@ -6850,6 +7046,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         @SuppressWarnings("serial")
         private com.google.protobuf.LazyStringArrayList matchesPrefix_ =
             com.google.protobuf.LazyStringArrayList.emptyList();
+
         /**
          *
          *
@@ -6865,6 +7062,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public com.google.protobuf.ProtocolStringList getMatchesPrefixList() {
           return matchesPrefix_;
         }
+
         /**
          *
          *
@@ -6880,6 +7078,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public int getMatchesPrefixCount() {
           return matchesPrefix_.size();
         }
+
         /**
          *
          *
@@ -6896,6 +7095,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public java.lang.String getMatchesPrefix(int index) {
           return matchesPrefix_.get(index);
         }
+
         /**
          *
          *
@@ -6918,6 +7118,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         @SuppressWarnings("serial")
         private com.google.protobuf.LazyStringArrayList matchesSuffix_ =
             com.google.protobuf.LazyStringArrayList.emptyList();
+
         /**
          *
          *
@@ -6933,6 +7134,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public com.google.protobuf.ProtocolStringList getMatchesSuffixList() {
           return matchesSuffix_;
         }
+
         /**
          *
          *
@@ -6948,6 +7150,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public int getMatchesSuffixCount() {
           return matchesSuffix_.size();
         }
+
         /**
          *
          *
@@ -6964,6 +7167,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public java.lang.String getMatchesSuffix(int index) {
           return matchesSuffix_.get(index);
         }
+
         /**
          *
          *
@@ -7303,6 +7507,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           Builder builder = new Builder(parent);
           return builder;
         }
+
         /**
          *
          *
@@ -7688,6 +7893,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           private int bitField0_;
 
           private int ageDays_;
+
           /**
            *
            *
@@ -7706,6 +7912,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasAgeDays() {
             return ((bitField0_ & 0x00000001) != 0);
           }
+
           /**
            *
            *
@@ -7724,6 +7931,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getAgeDays() {
             return ageDays_;
           }
+
           /**
            *
            *
@@ -7746,6 +7954,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -7771,6 +7980,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
               createdBeforeBuilder_;
+
           /**
            *
            *
@@ -7786,6 +7996,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasCreatedBefore() {
             return ((bitField0_ & 0x00000002) != 0);
           }
+
           /**
            *
            *
@@ -7807,6 +8018,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return createdBeforeBuilder_.getMessage();
             }
           }
+
           /**
            *
            *
@@ -7830,6 +8042,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -7850,6 +8063,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -7878,6 +8092,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             return this;
           }
+
           /**
            *
            *
@@ -7898,6 +8113,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -7913,6 +8129,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return getCreatedBeforeFieldBuilder().getBuilder();
           }
+
           /**
            *
            *
@@ -7932,6 +8149,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   : createdBefore_;
             }
           }
+
           /**
            *
            *
@@ -7958,6 +8176,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
 
           private boolean isLive_;
+
           /**
            *
            *
@@ -7975,6 +8194,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasIsLive() {
             return ((bitField0_ & 0x00000004) != 0);
           }
+
           /**
            *
            *
@@ -7992,6 +8212,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean getIsLive() {
             return isLive_;
           }
+
           /**
            *
            *
@@ -8013,6 +8234,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8034,6 +8256,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
 
           private int numNewerVersions_;
+
           /**
            *
            *
@@ -8051,6 +8274,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasNumNewerVersions() {
             return ((bitField0_ & 0x00000008) != 0);
           }
+
           /**
            *
            *
@@ -8068,6 +8292,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getNumNewerVersions() {
             return numNewerVersions_;
           }
+
           /**
            *
            *
@@ -8089,6 +8314,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8119,6 +8345,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             bitField0_ |= 0x00000010;
           }
+
           /**
            *
            *
@@ -8137,6 +8364,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             matchesStorageClass_.makeImmutable();
             return matchesStorageClass_;
           }
+
           /**
            *
            *
@@ -8154,6 +8382,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getMatchesStorageClassCount() {
             return matchesStorageClass_.size();
           }
+
           /**
            *
            *
@@ -8172,6 +8401,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public java.lang.String getMatchesStorageClass(int index) {
             return matchesStorageClass_.get(index);
           }
+
           /**
            *
            *
@@ -8190,6 +8420,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public com.google.protobuf.ByteString getMatchesStorageClassBytes(int index) {
             return matchesStorageClass_.getByteString(index);
           }
+
           /**
            *
            *
@@ -8216,6 +8447,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8241,6 +8473,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8263,6 +8496,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8284,6 +8518,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8312,6 +8547,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
 
           private int daysSinceCustomTime_;
+
           /**
            *
            *
@@ -8329,6 +8565,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasDaysSinceCustomTime() {
             return ((bitField0_ & 0x00000020) != 0);
           }
+
           /**
            *
            *
@@ -8346,6 +8583,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getDaysSinceCustomTime() {
             return daysSinceCustomTime_;
           }
+
           /**
            *
            *
@@ -8367,6 +8605,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8391,6 +8630,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
               customTimeBeforeBuilder_;
+
           /**
            *
            *
@@ -8406,6 +8646,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasCustomTimeBefore() {
             return ((bitField0_ & 0x00000040) != 0);
           }
+
           /**
            *
            *
@@ -8427,6 +8668,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return customTimeBeforeBuilder_.getMessage();
             }
           }
+
           /**
            *
            *
@@ -8450,6 +8692,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8470,6 +8713,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8498,6 +8742,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             return this;
           }
+
           /**
            *
            *
@@ -8518,6 +8763,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8533,6 +8779,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return getCustomTimeBeforeFieldBuilder().getBuilder();
           }
+
           /**
            *
            *
@@ -8552,6 +8799,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   : customTimeBefore_;
             }
           }
+
           /**
            *
            *
@@ -8578,6 +8826,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
 
           private int daysSinceNoncurrentTime_;
+
           /**
            *
            *
@@ -8597,6 +8846,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasDaysSinceNoncurrentTime() {
             return ((bitField0_ & 0x00000080) != 0);
           }
+
           /**
            *
            *
@@ -8616,6 +8866,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getDaysSinceNoncurrentTime() {
             return daysSinceNoncurrentTime_;
           }
+
           /**
            *
            *
@@ -8639,6 +8890,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8665,6 +8917,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
               noncurrentTimeBeforeBuilder_;
+
           /**
            *
            *
@@ -8681,6 +8934,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public boolean hasNoncurrentTimeBefore() {
             return ((bitField0_ & 0x00000100) != 0);
           }
+
           /**
            *
            *
@@ -8703,6 +8957,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               return noncurrentTimeBeforeBuilder_.getMessage();
             }
           }
+
           /**
            *
            *
@@ -8727,6 +8982,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8748,6 +9004,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8777,6 +9034,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             return this;
           }
+
           /**
            *
            *
@@ -8798,6 +9056,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8814,6 +9073,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return getNoncurrentTimeBeforeFieldBuilder().getBuilder();
           }
+
           /**
            *
            *
@@ -8834,6 +9094,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   : noncurrentTimeBefore_;
             }
           }
+
           /**
            *
            *
@@ -8869,6 +9130,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             bitField0_ |= 0x00000200;
           }
+
           /**
            *
            *
@@ -8885,6 +9147,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             matchesPrefix_.makeImmutable();
             return matchesPrefix_;
           }
+
           /**
            *
            *
@@ -8900,6 +9163,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getMatchesPrefixCount() {
             return matchesPrefix_.size();
           }
+
           /**
            *
            *
@@ -8916,6 +9180,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public java.lang.String getMatchesPrefix(int index) {
             return matchesPrefix_.get(index);
           }
+
           /**
            *
            *
@@ -8932,6 +9197,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public com.google.protobuf.ByteString getMatchesPrefixBytes(int index) {
             return matchesPrefix_.getByteString(index);
           }
+
           /**
            *
            *
@@ -8956,6 +9222,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8979,6 +9246,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -8999,6 +9267,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9018,6 +9287,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9052,6 +9322,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             bitField0_ |= 0x00000400;
           }
+
           /**
            *
            *
@@ -9068,6 +9339,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             matchesSuffix_.makeImmutable();
             return matchesSuffix_;
           }
+
           /**
            *
            *
@@ -9083,6 +9355,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public int getMatchesSuffixCount() {
             return matchesSuffix_.size();
           }
+
           /**
            *
            *
@@ -9099,6 +9372,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public java.lang.String getMatchesSuffix(int index) {
             return matchesSuffix_.get(index);
           }
+
           /**
            *
            *
@@ -9115,6 +9389,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           public com.google.protobuf.ByteString getMatchesSuffixBytes(int index) {
             return matchesSuffix_.getByteString(index);
           }
+
           /**
            *
            *
@@ -9139,6 +9414,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9162,6 +9438,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9182,6 +9459,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9201,6 +9479,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             onChanged();
             return this;
           }
+
           /**
            *
            *
@@ -9293,6 +9572,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
       public static final int ACTION_FIELD_NUMBER = 1;
       private com.google.storage.v2.Bucket.Lifecycle.Rule.Action action_;
+
       /**
        *
        *
@@ -9308,6 +9588,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasAction() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -9325,6 +9606,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             ? com.google.storage.v2.Bucket.Lifecycle.Rule.Action.getDefaultInstance()
             : action_;
       }
+
       /**
        *
        *
@@ -9343,6 +9625,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       public static final int CONDITION_FIELD_NUMBER = 2;
       private com.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition_;
+
       /**
        *
        *
@@ -9358,6 +9641,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasCondition() {
         return ((bitField0_ & 0x00000002) != 0);
       }
+
       /**
        *
        *
@@ -9375,6 +9659,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             ? com.google.storage.v2.Bucket.Lifecycle.Rule.Condition.getDefaultInstance()
             : condition_;
       }
+
       /**
        *
        *
@@ -9571,6 +9856,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         Builder builder = new Builder(parent);
         return builder;
       }
+
       /**
        *
        *
@@ -9797,6 +10083,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 com.google.storage.v2.Bucket.Lifecycle.Rule.Action.Builder,
                 com.google.storage.v2.Bucket.Lifecycle.Rule.ActionOrBuilder>
             actionBuilder_;
+
         /**
          *
          *
@@ -9811,6 +10098,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasAction() {
           return ((bitField0_ & 0x00000001) != 0);
         }
+
         /**
          *
          *
@@ -9831,6 +10119,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return actionBuilder_.getMessage();
           }
         }
+
         /**
          *
          *
@@ -9853,6 +10142,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -9873,6 +10163,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -9901,6 +10192,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
           return this;
         }
+
         /**
          *
          *
@@ -9920,6 +10212,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -9934,6 +10227,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return getActionFieldBuilder().getBuilder();
         }
+
         /**
          *
          *
@@ -9952,6 +10246,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 : action_;
           }
         }
+
         /**
          *
          *
@@ -9984,6 +10279,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 com.google.storage.v2.Bucket.Lifecycle.Rule.Condition.Builder,
                 com.google.storage.v2.Bucket.Lifecycle.Rule.ConditionOrBuilder>
             conditionBuilder_;
+
         /**
          *
          *
@@ -9998,6 +10294,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public boolean hasCondition() {
           return ((bitField0_ & 0x00000002) != 0);
         }
+
         /**
          *
          *
@@ -10018,6 +10315,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return conditionBuilder_.getMessage();
           }
         }
+
         /**
          *
          *
@@ -10040,6 +10338,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -10060,6 +10359,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -10088,6 +10388,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
           return this;
         }
+
         /**
          *
          *
@@ -10107,6 +10408,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return this;
         }
+
         /**
          *
          *
@@ -10121,6 +10423,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           onChanged();
           return getConditionFieldBuilder().getBuilder();
         }
+
         /**
          *
          *
@@ -10140,6 +10443,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 : condition_;
           }
         }
+
         /**
          *
          *
@@ -10234,6 +10538,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> rule_;
+
     /**
      *
      *
@@ -10248,6 +10553,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> getRuleList() {
       return rule_;
     }
+
     /**
      *
      *
@@ -10263,6 +10569,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         getRuleOrBuilderList() {
       return rule_;
     }
+
     /**
      *
      *
@@ -10277,6 +10584,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getRuleCount() {
       return rule_.size();
     }
+
     /**
      *
      *
@@ -10291,6 +10599,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.storage.v2.Bucket.Lifecycle.Rule getRule(int index) {
       return rule_.get(index);
     }
+
     /**
      *
      *
@@ -10467,6 +10776,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -10731,6 +11041,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return ruleBuilder_.getMessageList();
         }
       }
+
       /**
        *
        *
@@ -10748,6 +11059,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return ruleBuilder_.getCount();
         }
       }
+
       /**
        *
        *
@@ -10765,6 +11077,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return ruleBuilder_.getMessage(index);
         }
       }
+
       /**
        *
        *
@@ -10788,6 +11101,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10809,6 +11123,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10832,6 +11147,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10855,6 +11171,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10875,6 +11192,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10896,6 +11214,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10917,6 +11236,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10937,6 +11257,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10957,6 +11278,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -10970,6 +11292,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.storage.v2.Bucket.Lifecycle.Rule.Builder getRuleBuilder(int index) {
         return getRuleFieldBuilder().getBuilder(index);
       }
+
       /**
        *
        *
@@ -10987,6 +11310,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return ruleBuilder_.getMessageOrBuilder(index);
         }
       }
+
       /**
        *
        *
@@ -11005,6 +11329,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return java.util.Collections.unmodifiableList(rule_);
         }
       }
+
       /**
        *
        *
@@ -11019,6 +11344,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return getRuleFieldBuilder()
             .addBuilder(com.google.storage.v2.Bucket.Lifecycle.Rule.getDefaultInstance());
       }
+
       /**
        *
        *
@@ -11033,6 +11359,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return getRuleFieldBuilder()
             .addBuilder(index, com.google.storage.v2.Bucket.Lifecycle.Rule.getDefaultInstance());
       }
+
       /**
        *
        *
@@ -11147,6 +11474,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The logBucket.
      */
     java.lang.String getLogBucket();
+
     /**
      *
      *
@@ -11173,6 +11501,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The logObjectPrefix.
      */
     java.lang.String getLogObjectPrefix();
+
     /**
      *
      *
@@ -11186,6 +11515,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getLogObjectPrefixBytes();
   }
+
   /**
    *
    *
@@ -11200,6 +11530,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Logging)
       LoggingOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Logging.newBuilder() to construct.
     private Logging(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -11235,6 +11566,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object logBucket_ = "";
+
     /**
      *
      *
@@ -11259,6 +11591,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -11288,6 +11621,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object logObjectPrefix_ = "";
+
     /**
      *
      *
@@ -11311,6 +11645,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -11503,6 +11838,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -11704,6 +12040,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private java.lang.Object logBucket_ = "";
+
       /**
        *
        *
@@ -11727,6 +12064,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -11750,6 +12088,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -11772,6 +12111,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -11790,6 +12130,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -11815,6 +12156,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private java.lang.Object logObjectPrefix_ = "";
+
       /**
        *
        *
@@ -11837,6 +12179,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -11859,6 +12202,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -11880,6 +12224,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -11897,6 +12242,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -12002,6 +12348,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the effectiveTime field is set.
      */
     boolean hasEffectiveTime();
+
     /**
      *
      *
@@ -12015,6 +12362,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The effectiveTime.
      */
     com.google.protobuf.Timestamp getEffectiveTime();
+
     /**
      *
      *
@@ -12056,6 +12404,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the retentionDuration field is set.
      */
     boolean hasRetentionDuration();
+
     /**
      *
      *
@@ -12072,6 +12421,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The retentionDuration.
      */
     com.google.protobuf.Duration getRetentionDuration();
+
     /**
      *
      *
@@ -12087,6 +12437,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder();
   }
+
   /**
    *
    *
@@ -12101,6 +12452,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.RetentionPolicy)
       RetentionPolicyOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use RetentionPolicy.newBuilder() to construct.
     private RetentionPolicy(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -12132,6 +12484,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
     public static final int EFFECTIVE_TIME_FIELD_NUMBER = 1;
     private com.google.protobuf.Timestamp effectiveTime_;
+
     /**
      *
      *
@@ -12148,6 +12501,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasEffectiveTime() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -12166,6 +12520,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.protobuf.Timestamp.getDefaultInstance()
           : effectiveTime_;
     }
+
     /**
      *
      *
@@ -12185,6 +12540,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int IS_LOCKED_FIELD_NUMBER = 2;
     private boolean isLocked_ = false;
+
     /**
      *
      *
@@ -12203,6 +12559,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int RETENTION_DURATION_FIELD_NUMBER = 4;
     private com.google.protobuf.Duration retentionDuration_;
+
     /**
      *
      *
@@ -12222,6 +12579,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasRetentionDuration() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -12243,6 +12601,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.protobuf.Duration.getDefaultInstance()
           : retentionDuration_;
     }
+
     /**
      *
      *
@@ -12451,6 +12810,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -12693,6 +13053,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Timestamp.Builder,
               com.google.protobuf.TimestampOrBuilder>
           effectiveTimeBuilder_;
+
       /**
        *
        *
@@ -12708,6 +13069,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasEffectiveTime() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -12729,6 +13091,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return effectiveTimeBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -12752,6 +13115,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -12772,6 +13136,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -12800,6 +13165,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -12820,6 +13186,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -12835,6 +13202,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getEffectiveTimeFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -12854,6 +13222,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : effectiveTime_;
         }
       }
+
       /**
        *
        *
@@ -12882,6 +13251,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private boolean isLocked_;
+
       /**
        *
        *
@@ -12897,6 +13267,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean getIsLocked() {
         return isLocked_;
       }
+
       /**
        *
        *
@@ -12916,6 +13287,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -12940,6 +13312,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Duration.Builder,
               com.google.protobuf.DurationOrBuilder>
           retentionDurationBuilder_;
+
       /**
        *
        *
@@ -12958,6 +13331,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasRetentionDuration() {
         return ((bitField0_ & 0x00000004) != 0);
       }
+
       /**
        *
        *
@@ -12982,6 +13356,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return retentionDurationBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -13008,6 +13383,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -13031,6 +13407,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -13062,6 +13439,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -13085,6 +13463,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -13103,6 +13482,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getRetentionDurationFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -13125,6 +13505,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : retentionDuration_;
         }
       }
+
       /**
        *
        *
@@ -13238,6 +13619,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the retentionDuration field is set.
      */
     boolean hasRetentionDuration();
+
     /**
      *
      *
@@ -13252,6 +13634,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The retentionDuration.
      */
     com.google.protobuf.Duration getRetentionDuration();
+
     /**
      *
      *
@@ -13277,6 +13660,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the effectiveTime field is set.
      */
     boolean hasEffectiveTime();
+
     /**
      *
      *
@@ -13289,6 +13673,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The effectiveTime.
      */
     com.google.protobuf.Timestamp getEffectiveTime();
+
     /**
      *
      *
@@ -13300,6 +13685,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
   }
+
   /**
    *
    *
@@ -13314,6 +13700,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.SoftDeletePolicy)
       SoftDeletePolicyOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use SoftDeletePolicy.newBuilder() to construct.
     private SoftDeletePolicy(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -13345,6 +13732,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
     public static final int RETENTION_DURATION_FIELD_NUMBER = 1;
     private com.google.protobuf.Duration retentionDuration_;
+
     /**
      *
      *
@@ -13362,6 +13750,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasRetentionDuration() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -13381,6 +13770,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.protobuf.Duration.getDefaultInstance()
           : retentionDuration_;
     }
+
     /**
      *
      *
@@ -13401,6 +13791,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
     private com.google.protobuf.Timestamp effectiveTime_;
+
     /**
      *
      *
@@ -13416,6 +13807,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasEffectiveTime() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -13433,6 +13825,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.protobuf.Timestamp.getDefaultInstance()
           : effectiveTime_;
     }
+
     /**
      *
      *
@@ -13628,6 +14021,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -13858,6 +14252,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Duration.Builder,
               com.google.protobuf.DurationOrBuilder>
           retentionDurationBuilder_;
+
       /**
        *
        *
@@ -13874,6 +14269,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasRetentionDuration() {
         return ((bitField0_ & 0x00000001) != 0);
       }
+
       /**
        *
        *
@@ -13896,6 +14292,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return retentionDurationBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -13920,6 +14317,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -13941,6 +14339,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -13970,6 +14369,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -13991,6 +14391,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -14007,6 +14408,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getRetentionDurationFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -14027,6 +14429,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : retentionDuration_;
         }
       }
+
       /**
        *
        *
@@ -14061,6 +14464,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Timestamp.Builder,
               com.google.protobuf.TimestampOrBuilder>
           effectiveTimeBuilder_;
+
       /**
        *
        *
@@ -14075,6 +14479,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasEffectiveTime() {
         return ((bitField0_ & 0x00000002) != 0);
       }
+
       /**
        *
        *
@@ -14095,6 +14500,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return effectiveTimeBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -14117,6 +14523,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -14136,6 +14543,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -14163,6 +14571,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -14182,6 +14591,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -14196,6 +14606,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getEffectiveTimeFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -14214,6 +14625,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : effectiveTime_;
         }
       }
+
       /**
        *
        *
@@ -14322,6 +14734,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     boolean getEnabled();
   }
+
   /**
    *
    *
@@ -14338,6 +14751,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Versioning)
       VersioningOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Versioning.newBuilder() to construct.
     private Versioning(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -14368,6 +14782,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int ENABLED_FIELD_NUMBER = 1;
     private boolean enabled_ = false;
+
     /**
      *
      *
@@ -14543,6 +14958,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -14729,6 +15145,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private boolean enabled_;
+
       /**
        *
        *
@@ -14744,6 +15161,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean getEnabled() {
         return enabled_;
       }
+
       /**
        *
        *
@@ -14763,6 +15181,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -14865,6 +15284,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The mainPageSuffix.
      */
     java.lang.String getMainPageSuffix();
+
     /**
      *
      *
@@ -14897,6 +15317,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The notFoundPage.
      */
     java.lang.String getNotFoundPage();
+
     /**
      *
      *
@@ -14914,6 +15335,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getNotFoundPageBytes();
   }
+
   /**
    *
    *
@@ -14930,6 +15352,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Website)
       WebsiteOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Website.newBuilder() to construct.
     private Website(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -14965,6 +15388,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object mainPageSuffix_ = "";
+
     /**
      *
      *
@@ -14991,6 +15415,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -15022,6 +15447,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object notFoundPage_ = "";
+
     /**
      *
      *
@@ -15049,6 +15475,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -15245,6 +15672,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -15448,6 +15876,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private java.lang.Object mainPageSuffix_ = "";
+
       /**
        *
        *
@@ -15473,6 +15902,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -15498,6 +15928,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -15522,6 +15953,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -15542,6 +15974,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -15569,6 +16002,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private java.lang.Object notFoundPage_ = "";
+
       /**
        *
        *
@@ -15595,6 +16029,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -15621,6 +16056,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -15646,6 +16082,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -15667,6 +16104,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -15775,6 +16213,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return A list containing the dataLocations.
      */
     java.util.List<java.lang.String> getDataLocationsList();
+
     /**
      *
      *
@@ -15787,6 +16226,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The count of dataLocations.
      */
     int getDataLocationsCount();
+
     /**
      *
      *
@@ -15800,6 +16240,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The dataLocations at the given index.
      */
     java.lang.String getDataLocations(int index);
+
     /**
      *
      *
@@ -15814,6 +16255,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getDataLocationsBytes(int index);
   }
+
   /**
    *
    *
@@ -15830,6 +16272,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.CustomPlacementConfig)
       CustomPlacementConfigOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use CustomPlacementConfig.newBuilder() to construct.
     private CustomPlacementConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -15865,6 +16308,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     @SuppressWarnings("serial")
     private com.google.protobuf.LazyStringArrayList dataLocations_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
+
     /**
      *
      *
@@ -15879,6 +16323,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ProtocolStringList getDataLocationsList() {
       return dataLocations_;
     }
+
     /**
      *
      *
@@ -15893,6 +16338,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getDataLocationsCount() {
       return dataLocations_.size();
     }
+
     /**
      *
      *
@@ -15908,6 +16354,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.lang.String getDataLocations(int index) {
       return dataLocations_.get(index);
     }
+
     /**
      *
      *
@@ -16091,6 +16538,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -16295,6 +16743,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ |= 0x00000001;
       }
+
       /**
        *
        *
@@ -16310,6 +16759,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         dataLocations_.makeImmutable();
         return dataLocations_;
       }
+
       /**
        *
        *
@@ -16324,6 +16774,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public int getDataLocationsCount() {
         return dataLocations_.size();
       }
+
       /**
        *
        *
@@ -16339,6 +16790,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public java.lang.String getDataLocations(int index) {
         return dataLocations_.get(index);
       }
+
       /**
        *
        *
@@ -16354,6 +16806,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
         return dataLocations_.getByteString(index);
       }
+
       /**
        *
        *
@@ -16377,6 +16830,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -16399,6 +16853,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -16418,6 +16873,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -16436,6 +16892,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -16559,6 +17016,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the toggleTime field is set.
      */
     boolean hasToggleTime();
+
     /**
      *
      *
@@ -16576,6 +17034,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The toggleTime.
      */
     com.google.protobuf.Timestamp getToggleTime();
+
     /**
      *
      *
@@ -16606,6 +17065,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the terminalStorageClass field is set.
      */
     boolean hasTerminalStorageClass();
+
     /**
      *
      *
@@ -16620,6 +17080,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The terminalStorageClass.
      */
     java.lang.String getTerminalStorageClass();
+
     /**
      *
      *
@@ -16650,6 +17111,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the terminalStorageClassUpdateTime field is set.
      */
     boolean hasTerminalStorageClassUpdateTime();
+
     /**
      *
      *
@@ -16665,6 +17127,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The terminalStorageClassUpdateTime.
      */
     com.google.protobuf.Timestamp getTerminalStorageClassUpdateTime();
+
     /**
      *
      *
@@ -16679,6 +17142,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.TimestampOrBuilder getTerminalStorageClassUpdateTimeOrBuilder();
   }
+
   /**
    *
    *
@@ -16693,6 +17157,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Autoclass)
       AutoclassOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use Autoclass.newBuilder() to construct.
     private Autoclass(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -16726,6 +17191,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
     public static final int ENABLED_FIELD_NUMBER = 1;
     private boolean enabled_ = false;
+
     /**
      *
      *
@@ -16744,6 +17210,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int TOGGLE_TIME_FIELD_NUMBER = 2;
     private com.google.protobuf.Timestamp toggleTime_;
+
     /**
      *
      *
@@ -16764,6 +17231,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasToggleTime() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -16784,6 +17252,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.Timestamp getToggleTime() {
       return toggleTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : toggleTime_;
     }
+
     /**
      *
      *
@@ -16807,6 +17276,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @SuppressWarnings("serial")
     private volatile java.lang.Object terminalStorageClass_ = "";
+
     /**
      *
      *
@@ -16824,6 +17294,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasTerminalStorageClass() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -16849,6 +17320,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return s;
       }
     }
+
     /**
      *
      *
@@ -16877,6 +17349,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int TERMINAL_STORAGE_CLASS_UPDATE_TIME_FIELD_NUMBER = 4;
     private com.google.protobuf.Timestamp terminalStorageClassUpdateTime_;
+
     /**
      *
      *
@@ -16895,6 +17368,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasTerminalStorageClassUpdateTime() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -16915,6 +17389,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           ? com.google.protobuf.Timestamp.getDefaultInstance()
           : terminalStorageClassUpdateTime_;
     }
+
     /**
      *
      *
@@ -17139,6 +17614,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -17393,6 +17869,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private boolean enabled_;
+
       /**
        *
        *
@@ -17408,6 +17885,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean getEnabled() {
         return enabled_;
       }
+
       /**
        *
        *
@@ -17427,6 +17905,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17451,6 +17930,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Timestamp.Builder,
               com.google.protobuf.TimestampOrBuilder>
           toggleTimeBuilder_;
+
       /**
        *
        *
@@ -17470,6 +17950,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasToggleTime() {
         return ((bitField0_ & 0x00000002) != 0);
       }
+
       /**
        *
        *
@@ -17495,6 +17976,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return toggleTimeBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -17522,6 +18004,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17546,6 +18029,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17578,6 +18062,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -17602,6 +18087,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17621,6 +18107,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getToggleTimeFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -17644,6 +18131,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : toggleTime_;
         }
       }
+
       /**
        *
        *
@@ -17676,6 +18164,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private java.lang.Object terminalStorageClass_ = "";
+
       /**
        *
        *
@@ -17692,6 +18181,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasTerminalStorageClass() {
         return ((bitField0_ & 0x00000004) != 0);
       }
+
       /**
        *
        *
@@ -17716,6 +18206,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (java.lang.String) ref;
         }
       }
+
       /**
        *
        *
@@ -17740,6 +18231,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return (com.google.protobuf.ByteString) ref;
         }
       }
+
       /**
        *
        *
@@ -17763,6 +18255,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17782,6 +18275,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17813,6 +18307,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.protobuf.Timestamp.Builder,
               com.google.protobuf.TimestampOrBuilder>
           terminalStorageClassUpdateTimeBuilder_;
+
       /**
        *
        *
@@ -17830,6 +18325,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean hasTerminalStorageClassUpdateTime() {
         return ((bitField0_ & 0x00000008) != 0);
       }
+
       /**
        *
        *
@@ -17853,6 +18349,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return terminalStorageClassUpdateTimeBuilder_.getMessage();
         }
       }
+
       /**
        *
        *
@@ -17878,6 +18375,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17901,6 +18399,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17932,6 +18431,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
       /**
        *
        *
@@ -17954,6 +18454,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -17971,6 +18472,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return getTerminalStorageClassUpdateTimeFieldBuilder().getBuilder();
       }
+
       /**
        *
        *
@@ -17992,6 +18494,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               : terminalStorageClassUpdateTime_;
         }
       }
+
       /**
        *
        *
@@ -18103,6 +18606,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     boolean getEnabled();
   }
+
   /**
    *
    *
@@ -18117,6 +18621,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.HierarchicalNamespace)
       HierarchicalNamespaceOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use HierarchicalNamespace.newBuilder() to construct.
     private HierarchicalNamespace(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -18147,6 +18652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final int ENABLED_FIELD_NUMBER = 1;
     private boolean enabled_ = false;
+
     /**
      *
      *
@@ -18323,6 +18829,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -18508,6 +19015,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private boolean enabled_;
+
       /**
        *
        *
@@ -18523,6 +19031,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public boolean getEnabled() {
         return enabled_;
       }
+
       /**
        *
        *
@@ -18542,6 +19051,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -18629,6 +19139,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object name_ = "";
+
   /**
    *
    *
@@ -18653,6 +19164,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18682,6 +19194,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucketId_ = "";
+
   /**
    *
    *
@@ -18707,6 +19220,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18737,6 +19251,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object etag_ = "";
+
   /**
    *
    *
@@ -18762,6 +19277,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18792,6 +19308,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object project_ = "";
+
   /**
    *
    *
@@ -18819,6 +19336,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18849,6 +19367,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int METAGENERATION_FIELD_NUMBER = 4;
   private long metageneration_ = 0L;
+
   /**
    *
    *
@@ -18869,6 +19388,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object location_ = "";
+
   /**
    *
    *
@@ -18897,6 +19417,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18930,6 +19451,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object locationType_ = "";
+
   /**
    *
    *
@@ -18954,6 +19476,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -18983,6 +19506,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object storageClass_ = "";
+
   /**
    *
    *
@@ -19011,6 +19535,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -19044,6 +19569,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object rpo_ = "";
+
   /**
    *
    *
@@ -19072,6 +19598,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -19105,6 +19632,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.BucketAccessControl> acl_;
+
   /**
    *
    *
@@ -19120,6 +19648,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public java.util.List<com.google.storage.v2.BucketAccessControl> getAclList() {
     return acl_;
   }
+
   /**
    *
    *
@@ -19136,6 +19665,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       getAclOrBuilderList() {
     return acl_;
   }
+
   /**
    *
    *
@@ -19151,6 +19681,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public int getAclCount() {
     return acl_.size();
   }
+
   /**
    *
    *
@@ -19166,6 +19697,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.BucketAccessControl getAcl(int index) {
     return acl_.get(index);
   }
+
   /**
    *
    *
@@ -19186,6 +19718,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.ObjectAccessControl> defaultObjectAcl_;
+
   /**
    *
    *
@@ -19201,6 +19734,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public java.util.List<com.google.storage.v2.ObjectAccessControl> getDefaultObjectAclList() {
     return defaultObjectAcl_;
   }
+
   /**
    *
    *
@@ -19217,6 +19751,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       getDefaultObjectAclOrBuilderList() {
     return defaultObjectAcl_;
   }
+
   /**
    *
    *
@@ -19232,6 +19767,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public int getDefaultObjectAclCount() {
     return defaultObjectAcl_.size();
   }
+
   /**
    *
    *
@@ -19247,6 +19783,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.ObjectAccessControl getDefaultObjectAcl(int index) {
     return defaultObjectAcl_.get(index);
   }
+
   /**
    *
    *
@@ -19266,6 +19803,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int LIFECYCLE_FIELD_NUMBER = 10;
   private com.google.storage.v2.Bucket.Lifecycle lifecycle_;
+
   /**
    *
    *
@@ -19283,6 +19821,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasLifecycle() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -19302,6 +19841,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.Lifecycle.getDefaultInstance()
         : lifecycle_;
   }
+
   /**
    *
    *
@@ -19322,6 +19862,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int CREATE_TIME_FIELD_NUMBER = 11;
   private com.google.protobuf.Timestamp createTime_;
+
   /**
    *
    *
@@ -19338,6 +19879,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasCreateTime() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -19354,6 +19896,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.protobuf.Timestamp getCreateTime() {
     return createTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : createTime_;
   }
+
   /**
    *
    *
@@ -19373,6 +19916,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.Bucket.Cors> cors_;
+
   /**
    *
    *
@@ -19387,6 +19931,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public java.util.List<com.google.storage.v2.Bucket.Cors> getCorsList() {
     return cors_;
   }
+
   /**
    *
    *
@@ -19402,6 +19947,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       getCorsOrBuilderList() {
     return cors_;
   }
+
   /**
    *
    *
@@ -19416,6 +19962,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public int getCorsCount() {
     return cors_.size();
   }
+
   /**
    *
    *
@@ -19430,6 +19977,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.Bucket.Cors getCors(int index) {
     return cors_.get(index);
   }
+
   /**
    *
    *
@@ -19447,6 +19995,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int UPDATE_TIME_FIELD_NUMBER = 13;
   private com.google.protobuf.Timestamp updateTime_;
+
   /**
    *
    *
@@ -19463,6 +20012,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasUpdateTime() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -19479,6 +20029,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.protobuf.Timestamp getUpdateTime() {
     return updateTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : updateTime_;
   }
+
   /**
    *
    *
@@ -19496,6 +20047,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int DEFAULT_EVENT_BASED_HOLD_FIELD_NUMBER = 14;
   private boolean defaultEventBasedHold_ = false;
+
   /**
    *
    *
@@ -19550,6 +20102,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public int getLabelsCount() {
     return internalGetLabels().getMap().size();
   }
+
   /**
    *
    *
@@ -19566,12 +20119,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
     return internalGetLabels().getMap().containsKey(key);
   }
+
   /** Use {@link #getLabelsMap()} instead. */
   @java.lang.Override
   @java.lang.Deprecated
   public java.util.Map<java.lang.String, java.lang.String> getLabels() {
     return getLabelsMap();
   }
+
   /**
    *
    *
@@ -19585,6 +20140,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public java.util.Map<java.lang.String, java.lang.String> getLabelsMap() {
     return internalGetLabels().getMap();
   }
+
   /**
    *
    *
@@ -19605,6 +20161,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     java.util.Map<java.lang.String, java.lang.String> map = internalGetLabels().getMap();
     return map.containsKey(key) ? map.get(key) : defaultValue;
   }
+
   /**
    *
    *
@@ -19628,6 +20185,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int WEBSITE_FIELD_NUMBER = 16;
   private com.google.storage.v2.Bucket.Website website_;
+
   /**
    *
    *
@@ -19646,6 +20204,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasWebsite() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -19664,6 +20223,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.Bucket.Website getWebsite() {
     return website_ == null ? com.google.storage.v2.Bucket.Website.getDefaultInstance() : website_;
   }
+
   /**
    *
    *
@@ -19683,6 +20243,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int VERSIONING_FIELD_NUMBER = 17;
   private com.google.storage.v2.Bucket.Versioning versioning_;
+
   /**
    *
    *
@@ -19698,6 +20259,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasVersioning() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -19715,6 +20277,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.Versioning.getDefaultInstance()
         : versioning_;
   }
+
   /**
    *
    *
@@ -19733,6 +20296,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int LOGGING_FIELD_NUMBER = 18;
   private com.google.storage.v2.Bucket.Logging logging_;
+
   /**
    *
    *
@@ -19749,6 +20313,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasLogging() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -19765,6 +20330,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.Bucket.Logging getLogging() {
     return logging_ == null ? com.google.storage.v2.Bucket.Logging.getDefaultInstance() : logging_;
   }
+
   /**
    *
    *
@@ -19782,6 +20348,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int OWNER_FIELD_NUMBER = 19;
   private com.google.storage.v2.Owner owner_;
+
   /**
    *
    *
@@ -19798,6 +20365,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasOwner() {
     return ((bitField0_ & 0x00000040) != 0);
   }
+
   /**
    *
    *
@@ -19814,6 +20382,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.Owner getOwner() {
     return owner_ == null ? com.google.storage.v2.Owner.getDefaultInstance() : owner_;
   }
+
   /**
    *
    *
@@ -19831,6 +20400,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int ENCRYPTION_FIELD_NUMBER = 20;
   private com.google.storage.v2.Bucket.Encryption encryption_;
+
   /**
    *
    *
@@ -19846,6 +20416,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasEncryption() {
     return ((bitField0_ & 0x00000080) != 0);
   }
+
   /**
    *
    *
@@ -19863,6 +20434,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.Encryption.getDefaultInstance()
         : encryption_;
   }
+
   /**
    *
    *
@@ -19881,6 +20453,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int BILLING_FIELD_NUMBER = 21;
   private com.google.storage.v2.Bucket.Billing billing_;
+
   /**
    *
    *
@@ -19896,6 +20469,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasBilling() {
     return ((bitField0_ & 0x00000100) != 0);
   }
+
   /**
    *
    *
@@ -19911,6 +20485,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public com.google.storage.v2.Bucket.Billing getBilling() {
     return billing_ == null ? com.google.storage.v2.Bucket.Billing.getDefaultInstance() : billing_;
   }
+
   /**
    *
    *
@@ -19927,6 +20502,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int RETENTION_POLICY_FIELD_NUMBER = 22;
   private com.google.storage.v2.Bucket.RetentionPolicy retentionPolicy_;
+
   /**
    *
    *
@@ -19950,6 +20526,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasRetentionPolicy() {
     return ((bitField0_ & 0x00000200) != 0);
   }
+
   /**
    *
    *
@@ -19975,6 +20552,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.RetentionPolicy.getDefaultInstance()
         : retentionPolicy_;
   }
+
   /**
    *
    *
@@ -20001,6 +20579,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int IAM_CONFIG_FIELD_NUMBER = 23;
   private com.google.storage.v2.Bucket.IamConfig iamConfig_;
+
   /**
    *
    *
@@ -20016,6 +20595,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasIamConfig() {
     return ((bitField0_ & 0x00000400) != 0);
   }
+
   /**
    *
    *
@@ -20033,6 +20613,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.IamConfig.getDefaultInstance()
         : iamConfig_;
   }
+
   /**
    *
    *
@@ -20051,6 +20632,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int SATISFIES_PZS_FIELD_NUMBER = 25;
   private boolean satisfiesPzs_ = false;
+
   /**
    *
    *
@@ -20069,6 +20651,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER = 26;
   private com.google.storage.v2.Bucket.CustomPlacementConfig customPlacementConfig_;
+
   /**
    *
    *
@@ -20086,6 +20669,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasCustomPlacementConfig() {
     return ((bitField0_ & 0x00000800) != 0);
   }
+
   /**
    *
    *
@@ -20105,6 +20689,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
         : customPlacementConfig_;
   }
+
   /**
    *
    *
@@ -20126,6 +20711,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int AUTOCLASS_FIELD_NUMBER = 28;
   private com.google.storage.v2.Bucket.Autoclass autoclass_;
+
   /**
    *
    *
@@ -20142,6 +20728,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasAutoclass() {
     return ((bitField0_ & 0x00001000) != 0);
   }
+
   /**
    *
    *
@@ -20160,6 +20747,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.Autoclass.getDefaultInstance()
         : autoclass_;
   }
+
   /**
    *
    *
@@ -20179,6 +20767,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int HIERARCHICAL_NAMESPACE_FIELD_NUMBER = 32;
   private com.google.storage.v2.Bucket.HierarchicalNamespace hierarchicalNamespace_;
+
   /**
    *
    *
@@ -20198,6 +20787,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasHierarchicalNamespace() {
     return ((bitField0_ & 0x00002000) != 0);
   }
+
   /**
    *
    *
@@ -20219,6 +20809,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.HierarchicalNamespace.getDefaultInstance()
         : hierarchicalNamespace_;
   }
+
   /**
    *
    *
@@ -20242,6 +20833,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
   public static final int SOFT_DELETE_POLICY_FIELD_NUMBER = 31;
   private com.google.storage.v2.Bucket.SoftDeletePolicy softDeletePolicy_;
+
   /**
    *
    *
@@ -20260,6 +20852,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   public boolean hasSoftDeletePolicy() {
     return ((bitField0_ & 0x00004000) != 0);
   }
+
   /**
    *
    *
@@ -20280,6 +20873,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()
         : softDeletePolicy_;
   }
+
   /**
    *
    *
@@ -20808,6 +21402,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -21653,6 +22248,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
 
     private java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -21676,6 +22272,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -21699,6 +22296,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -21721,6 +22319,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21739,6 +22338,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21764,6 +22364,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object bucketId_ = "";
+
     /**
      *
      *
@@ -21788,6 +22389,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -21812,6 +22414,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -21835,6 +22438,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21854,6 +22458,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21880,6 +22485,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object etag_ = "";
+
     /**
      *
      *
@@ -21904,6 +22510,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -21928,6 +22535,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -21951,6 +22559,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21970,6 +22579,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -21996,6 +22606,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object project_ = "";
+
     /**
      *
      *
@@ -22022,6 +22633,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -22048,6 +22660,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -22073,6 +22686,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22094,6 +22708,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22122,6 +22737,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private long metageneration_;
+
     /**
      *
      *
@@ -22137,6 +22753,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public long getMetageneration() {
       return metageneration_;
     }
+
     /**
      *
      *
@@ -22156,6 +22773,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22175,6 +22793,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object location_ = "";
+
     /**
      *
      *
@@ -22202,6 +22821,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -22229,6 +22849,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -22255,6 +22876,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22277,6 +22899,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22306,6 +22929,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object locationType_ = "";
+
     /**
      *
      *
@@ -22329,6 +22953,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -22352,6 +22977,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -22374,6 +23000,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22392,6 +23019,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22417,6 +23045,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object storageClass_ = "";
+
     /**
      *
      *
@@ -22444,6 +23073,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -22471,6 +23101,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -22497,6 +23128,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22519,6 +23151,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22548,6 +23181,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object rpo_ = "";
+
     /**
      *
      *
@@ -22575,6 +23209,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -22602,6 +23237,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -22628,6 +23264,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22650,6 +23287,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -22712,6 +23350,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return aclBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -22730,6 +23369,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return aclBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -22748,6 +23388,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return aclBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -22772,6 +23413,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22794,6 +23436,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22818,6 +23461,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22842,6 +23486,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22863,6 +23508,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22885,6 +23531,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22907,6 +23554,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22928,6 +23576,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22949,6 +23598,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -22963,6 +23613,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.storage.v2.BucketAccessControl.Builder getAclBuilder(int index) {
       return getAclFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -22981,6 +23632,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return aclBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -23000,6 +23652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return java.util.Collections.unmodifiableList(acl_);
       }
     }
+
     /**
      *
      *
@@ -23015,6 +23668,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getAclFieldBuilder()
           .addBuilder(com.google.storage.v2.BucketAccessControl.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -23030,6 +23684,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getAclFieldBuilder()
           .addBuilder(index, com.google.storage.v2.BucketAccessControl.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -23097,6 +23752,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return defaultObjectAclBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -23115,6 +23771,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return defaultObjectAclBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -23133,6 +23790,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return defaultObjectAclBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -23157,6 +23815,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23179,6 +23838,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23203,6 +23863,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23227,6 +23888,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23249,6 +23911,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23271,6 +23934,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23293,6 +23957,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23314,6 +23979,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23335,6 +24001,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23349,6 +24016,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.storage.v2.ObjectAccessControl.Builder getDefaultObjectAclBuilder(int index) {
       return getDefaultObjectAclFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -23368,6 +24036,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return defaultObjectAclBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -23387,6 +24056,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return java.util.Collections.unmodifiableList(defaultObjectAcl_);
       }
     }
+
     /**
      *
      *
@@ -23402,6 +24072,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getDefaultObjectAclFieldBuilder()
           .addBuilder(com.google.storage.v2.ObjectAccessControl.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -23417,6 +24088,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getDefaultObjectAclFieldBuilder()
           .addBuilder(index, com.google.storage.v2.ObjectAccessControl.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -23459,6 +24131,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Lifecycle.Builder,
             com.google.storage.v2.Bucket.LifecycleOrBuilder>
         lifecycleBuilder_;
+
     /**
      *
      *
@@ -23475,6 +24148,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasLifecycle() {
       return ((bitField0_ & 0x00000800) != 0);
     }
+
     /**
      *
      *
@@ -23497,6 +24171,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return lifecycleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -23521,6 +24196,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23542,6 +24218,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23571,6 +24248,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23592,6 +24270,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23608,6 +24287,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getLifecycleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -23628,6 +24308,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : lifecycle_;
       }
     }
+
     /**
      *
      *
@@ -23662,6 +24343,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.protobuf.Timestamp.Builder,
             com.google.protobuf.TimestampOrBuilder>
         createTimeBuilder_;
+
     /**
      *
      *
@@ -23678,6 +24360,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasCreateTime() {
       return ((bitField0_ & 0x00001000) != 0);
     }
+
     /**
      *
      *
@@ -23700,6 +24383,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return createTimeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -23724,6 +24408,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23745,6 +24430,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23774,6 +24460,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23795,6 +24482,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -23811,6 +24499,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getCreateTimeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -23831,6 +24520,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : createTime_;
       }
     }
+
     /**
      *
      *
@@ -23892,6 +24582,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return corsBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -23909,6 +24600,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return corsBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -23926,6 +24618,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return corsBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -23949,6 +24642,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23969,6 +24663,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -23992,6 +24687,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24015,6 +24711,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24035,6 +24732,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24055,6 +24753,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24076,6 +24775,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24096,6 +24796,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24116,6 +24817,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24129,6 +24831,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public com.google.storage.v2.Bucket.Cors.Builder getCorsBuilder(int index) {
       return getCorsFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -24146,6 +24849,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return corsBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -24164,6 +24868,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return java.util.Collections.unmodifiableList(cors_);
       }
     }
+
     /**
      *
      *
@@ -24178,6 +24883,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getCorsFieldBuilder()
           .addBuilder(com.google.storage.v2.Bucket.Cors.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -24192,6 +24898,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getCorsFieldBuilder()
           .addBuilder(index, com.google.storage.v2.Bucket.Cors.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -24229,6 +24936,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.protobuf.Timestamp.Builder,
             com.google.protobuf.TimestampOrBuilder>
         updateTimeBuilder_;
+
     /**
      *
      *
@@ -24245,6 +24953,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasUpdateTime() {
       return ((bitField0_ & 0x00004000) != 0);
     }
+
     /**
      *
      *
@@ -24267,6 +24976,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return updateTimeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -24291,6 +25001,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24312,6 +25023,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24341,6 +25053,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24362,6 +25075,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24378,6 +25092,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getUpdateTimeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -24398,6 +25113,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : updateTime_;
       }
     }
+
     /**
      *
      *
@@ -24427,6 +25143,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private boolean defaultEventBasedHold_;
+
     /**
      *
      *
@@ -24454,6 +25171,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean getDefaultEventBasedHold() {
       return defaultEventBasedHold_;
     }
+
     /**
      *
      *
@@ -24485,6 +25203,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24540,6 +25259,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public int getLabelsCount() {
       return internalGetLabels().getMap().size();
     }
+
     /**
      *
      *
@@ -24556,12 +25276,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return internalGetLabels().getMap().containsKey(key);
     }
+
     /** Use {@link #getLabelsMap()} instead. */
     @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, java.lang.String> getLabels() {
       return getLabelsMap();
     }
+
     /**
      *
      *
@@ -24575,6 +25297,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public java.util.Map<java.lang.String, java.lang.String> getLabelsMap() {
       return internalGetLabels().getMap();
     }
+
     /**
      *
      *
@@ -24595,6 +25318,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       java.util.Map<java.lang.String, java.lang.String> map = internalGetLabels().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
+
     /**
      *
      *
@@ -24621,6 +25345,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       internalGetMutableLabels().getMutableMap().clear();
       return this;
     }
+
     /**
      *
      *
@@ -24637,12 +25362,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       internalGetMutableLabels().getMutableMap().remove(key);
       return this;
     }
+
     /** Use alternate mutation accessors instead. */
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, java.lang.String> getMutableLabels() {
       bitField0_ |= 0x00010000;
       return internalGetMutableLabels().getMutableMap();
     }
+
     /**
      *
      *
@@ -24663,6 +25390,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       bitField0_ |= 0x00010000;
       return this;
     }
+
     /**
      *
      *
@@ -24684,6 +25412,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Website.Builder,
             com.google.storage.v2.Bucket.WebsiteOrBuilder>
         websiteBuilder_;
+
     /**
      *
      *
@@ -24701,6 +25430,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasWebsite() {
       return ((bitField0_ & 0x00020000) != 0);
     }
+
     /**
      *
      *
@@ -24724,6 +25454,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return websiteBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -24749,6 +25480,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24771,6 +25503,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24801,6 +25534,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -24823,6 +25557,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24840,6 +25575,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getWebsiteFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -24861,6 +25597,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : website_;
       }
     }
+
     /**
      *
      *
@@ -24896,6 +25633,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Versioning.Builder,
             com.google.storage.v2.Bucket.VersioningOrBuilder>
         versioningBuilder_;
+
     /**
      *
      *
@@ -24910,6 +25648,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasVersioning() {
       return ((bitField0_ & 0x00040000) != 0);
     }
+
     /**
      *
      *
@@ -24930,6 +25669,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return versioningBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -24952,6 +25692,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24971,6 +25712,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -24998,6 +25740,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -25017,6 +25760,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25031,6 +25775,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getVersioningFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -25049,6 +25794,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : versioning_;
       }
     }
+
     /**
      *
      *
@@ -25081,6 +25827,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Logging.Builder,
             com.google.storage.v2.Bucket.LoggingOrBuilder>
         loggingBuilder_;
+
     /**
      *
      *
@@ -25096,6 +25843,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasLogging() {
       return ((bitField0_ & 0x00080000) != 0);
     }
+
     /**
      *
      *
@@ -25117,6 +25865,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return loggingBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -25140,6 +25889,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25160,6 +25910,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25188,6 +25939,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -25208,6 +25960,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25223,6 +25976,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getLoggingFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -25242,6 +25996,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : logging_;
       }
     }
+
     /**
      *
      *
@@ -25275,6 +26030,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Owner.Builder,
             com.google.storage.v2.OwnerOrBuilder>
         ownerBuilder_;
+
     /**
      *
      *
@@ -25291,6 +26047,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasOwner() {
       return ((bitField0_ & 0x00100000) != 0);
     }
+
     /**
      *
      *
@@ -25311,6 +26068,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return ownerBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -25335,6 +26093,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25356,6 +26115,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25385,6 +26145,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -25406,6 +26167,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25422,6 +26184,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getOwnerFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -25440,6 +26203,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return owner_ == null ? com.google.storage.v2.Owner.getDefaultInstance() : owner_;
       }
     }
+
     /**
      *
      *
@@ -25474,6 +26238,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Encryption.Builder,
             com.google.storage.v2.Bucket.EncryptionOrBuilder>
         encryptionBuilder_;
+
     /**
      *
      *
@@ -25488,6 +26253,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasEncryption() {
       return ((bitField0_ & 0x00200000) != 0);
     }
+
     /**
      *
      *
@@ -25508,6 +26274,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return encryptionBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -25530,6 +26297,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25549,6 +26317,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25576,6 +26345,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -25595,6 +26365,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25609,6 +26380,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getEncryptionFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -25627,6 +26399,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : encryption_;
       }
     }
+
     /**
      *
      *
@@ -25659,6 +26432,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Billing.Builder,
             com.google.storage.v2.Bucket.BillingOrBuilder>
         billingBuilder_;
+
     /**
      *
      *
@@ -25673,6 +26447,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasBilling() {
       return ((bitField0_ & 0x00400000) != 0);
     }
+
     /**
      *
      *
@@ -25693,6 +26468,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return billingBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -25715,6 +26491,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25734,6 +26511,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25761,6 +26539,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -25780,6 +26559,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25794,6 +26574,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getBillingFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -25812,6 +26593,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : billing_;
       }
     }
+
     /**
      *
      *
@@ -25844,6 +26626,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.RetentionPolicy.Builder,
             com.google.storage.v2.Bucket.RetentionPolicyOrBuilder>
         retentionPolicyBuilder_;
+
     /**
      *
      *
@@ -25866,6 +26649,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasRetentionPolicy() {
       return ((bitField0_ & 0x00800000) != 0);
     }
+
     /**
      *
      *
@@ -25894,6 +26678,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return retentionPolicyBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -25924,6 +26709,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25952,6 +26738,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -25988,6 +26775,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -26015,6 +26803,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26037,6 +26826,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getRetentionPolicyFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -26063,6 +26853,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : retentionPolicy_;
       }
     }
+
     /**
      *
      *
@@ -26103,6 +26894,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.IamConfig.Builder,
             com.google.storage.v2.Bucket.IamConfigOrBuilder>
         iamConfigBuilder_;
+
     /**
      *
      *
@@ -26117,6 +26909,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasIamConfig() {
       return ((bitField0_ & 0x01000000) != 0);
     }
+
     /**
      *
      *
@@ -26137,6 +26930,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return iamConfigBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -26159,6 +26953,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26178,6 +26973,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26205,6 +27001,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -26224,6 +27021,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26238,6 +27036,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getIamConfigFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -26256,6 +27055,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : iamConfig_;
       }
     }
+
     /**
      *
      *
@@ -26283,6 +27083,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private boolean satisfiesPzs_;
+
     /**
      *
      *
@@ -26298,6 +27099,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean getSatisfiesPzs() {
       return satisfiesPzs_;
     }
+
     /**
      *
      *
@@ -26317,6 +27119,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26341,6 +27144,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
             com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>
         customPlacementConfigBuilder_;
+
     /**
      *
      *
@@ -26357,6 +27161,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasCustomPlacementConfig() {
       return ((bitField0_ & 0x04000000) != 0);
     }
+
     /**
      *
      *
@@ -26379,6 +27184,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return customPlacementConfigBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -26404,6 +27210,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26426,6 +27233,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26457,6 +27265,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -26478,6 +27287,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26495,6 +27305,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getCustomPlacementConfigFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -26516,6 +27327,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : customPlacementConfig_;
       }
     }
+
     /**
      *
      *
@@ -26550,6 +27362,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.Autoclass.Builder,
             com.google.storage.v2.Bucket.AutoclassOrBuilder>
         autoclassBuilder_;
+
     /**
      *
      *
@@ -26565,6 +27378,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasAutoclass() {
       return ((bitField0_ & 0x08000000) != 0);
     }
+
     /**
      *
      *
@@ -26586,6 +27400,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return autoclassBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -26609,6 +27424,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26629,6 +27445,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26657,6 +27474,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -26677,6 +27495,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26692,6 +27511,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getAutoclassFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -26711,6 +27531,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : autoclass_;
       }
     }
+
     /**
      *
      *
@@ -26744,6 +27565,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.HierarchicalNamespace.Builder,
             com.google.storage.v2.Bucket.HierarchicalNamespaceOrBuilder>
         hierarchicalNamespaceBuilder_;
+
     /**
      *
      *
@@ -26762,6 +27584,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasHierarchicalNamespace() {
       return ((bitField0_ & 0x10000000) != 0);
     }
+
     /**
      *
      *
@@ -26786,6 +27609,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return hierarchicalNamespaceBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -26813,6 +27637,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26837,6 +27662,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26870,6 +27696,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -26893,6 +27720,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -26912,6 +27740,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getHierarchicalNamespaceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -26935,6 +27764,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : hierarchicalNamespace_;
       }
     }
+
     /**
      *
      *
@@ -26971,6 +27801,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Bucket.SoftDeletePolicy.Builder,
             com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder>
         softDeletePolicyBuilder_;
+
     /**
      *
      *
@@ -26988,6 +27819,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     public boolean hasSoftDeletePolicy() {
       return ((bitField0_ & 0x20000000) != 0);
     }
+
     /**
      *
      *
@@ -27011,6 +27843,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return softDeletePolicyBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -27036,6 +27869,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -27059,6 +27893,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -27090,6 +27925,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -27112,6 +27948,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -27129,6 +27966,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getSoftDeletePolicyFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -27150,6 +27988,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             : softDeletePolicy_;
       }
     }
+
     /**
      *
      *

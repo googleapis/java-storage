@@ -35,8 +35,7 @@ public class MakeBucketPublic {
     Policy originalPolicy = storage.getIamPolicy(bucketName);
     storage.setIamPolicy(
         bucketName,
-        originalPolicy
-            .toBuilder()
+        originalPolicy.toBuilder()
             .addIdentity(StorageRoles.objectViewer(), Identity.allUsers()) // All users can view
             .build());
 

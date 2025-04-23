@@ -33,6 +33,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     // @@protoc_insertion_point(message_implements:google.storage.v2.WriteObjectRequest)
     WriteObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use WriteObjectRequest.newBuilder() to construct.
   private WriteObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -79,6 +80,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     private FirstMessageCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -127,6 +129,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     private DataCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -158,6 +161,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int UPLOAD_ID_FIELD_NUMBER = 1;
+
   /**
    *
    *
@@ -173,6 +177,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasUploadId() {
     return firstMessageCase_ == 1;
   }
+
   /**
    *
    *
@@ -201,6 +206,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -231,6 +237,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int WRITE_OBJECT_SPEC_FIELD_NUMBER = 2;
+
   /**
    *
    *
@@ -247,6 +254,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasWriteObjectSpec() {
     return firstMessageCase_ == 2;
   }
+
   /**
    *
    *
@@ -266,6 +274,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     }
     return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -286,6 +295,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int WRITE_OFFSET_FIELD_NUMBER = 3;
   private long writeOffset_ = 0L;
+
   /**
    *
    *
@@ -315,6 +325,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int CHECKSUMMED_DATA_FIELD_NUMBER = 4;
+
   /**
    *
    *
@@ -331,6 +342,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasChecksummedData() {
     return dataCase_ == 4;
   }
+
   /**
    *
    *
@@ -350,6 +362,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     }
     return com.google.storage.v2.ChecksummedData.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -370,6 +383,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 6;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -388,6 +402,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -408,6 +423,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -429,6 +445,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int FINISH_WRITE_FIELD_NUMBER = 7;
   private boolean finishWrite_ = false;
+
   /**
    *
    *
@@ -452,6 +469,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 8;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -467,6 +485,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -484,6 +503,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -760,6 +780,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1122,6 +1143,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasUploadId() {
       return firstMessageCase_ == 1;
     }
+
     /**
      *
      *
@@ -1151,6 +1173,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1180,6 +1203,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1202,6 +1226,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1222,6 +1247,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1251,6 +1277,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.WriteObjectSpec.Builder,
             com.google.storage.v2.WriteObjectSpecOrBuilder>
         writeObjectSpecBuilder_;
+
     /**
      *
      *
@@ -1267,6 +1294,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasWriteObjectSpec() {
       return firstMessageCase_ == 2;
     }
+
     /**
      *
      *
@@ -1293,6 +1321,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1316,6 +1345,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1337,6 +1367,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1370,6 +1401,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       firstMessageCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -1396,6 +1428,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1409,6 +1442,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.WriteObjectSpec.Builder getWriteObjectSpecBuilder() {
       return getWriteObjectSpecFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1430,6 +1464,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return com.google.storage.v2.WriteObjectSpec.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1465,6 +1500,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private long writeOffset_;
+
     /**
      *
      *
@@ -1492,6 +1528,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public long getWriteOffset() {
       return writeOffset_;
     }
+
     /**
      *
      *
@@ -1523,6 +1560,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1558,6 +1596,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.ChecksummedData.Builder,
             com.google.storage.v2.ChecksummedDataOrBuilder>
         checksummedDataBuilder_;
+
     /**
      *
      *
@@ -1574,6 +1613,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasChecksummedData() {
       return dataCase_ == 4;
     }
+
     /**
      *
      *
@@ -1600,6 +1640,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return com.google.storage.v2.ChecksummedData.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1623,6 +1664,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -1644,6 +1686,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -1676,6 +1719,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       dataCase_ = 4;
       return this;
     }
+
     /**
      *
      *
@@ -1702,6 +1746,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1715,6 +1760,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.ChecksummedData.Builder getChecksummedDataBuilder() {
       return getChecksummedDataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1736,6 +1782,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return com.google.storage.v2.ChecksummedData.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1774,6 +1821,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -1791,6 +1839,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1814,6 +1863,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1839,6 +1889,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1862,6 +1913,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1892,6 +1944,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1914,6 +1967,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1931,6 +1985,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1952,6 +2007,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             : objectChecksums_;
       }
     }
+
     /**
      *
      *
@@ -1982,6 +2038,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     }
 
     private boolean finishWrite_;
+
     /**
      *
      *
@@ -2002,6 +2059,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean getFinishWrite() {
       return finishWrite_;
     }
+
     /**
      *
      *
@@ -2026,6 +2084,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2055,6 +2114,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -2069,6 +2129,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -2089,6 +2150,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2112,6 +2174,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2132,6 +2195,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2161,6 +2225,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -2180,6 +2245,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2195,6 +2261,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2214,6 +2281,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *

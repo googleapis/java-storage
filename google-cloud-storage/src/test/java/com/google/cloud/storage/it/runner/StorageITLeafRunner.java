@@ -108,7 +108,9 @@ final class StorageITLeafRunner extends BlockJUnit4ClassRunner {
 
       if (anyTestWithTimeout || timeoutRule || timeoutClassRule) {
         String msg =
-            "Using @Test(timeout = 1), @Rule Timeout or @ClassRule Timeout can break multi-thread and Fixture support of StorageITRunner. Please refactor your test to detect a timeout in the test itself.";
+            "Using @Test(timeout = 1), @Rule Timeout or @ClassRule Timeout can break multi-thread"
+                + " and Fixture support of StorageITRunner. Please refactor your test to detect a"
+                + " timeout in the test itself.";
         Logger.getLogger(StorageITRunner.class.getName()).warning(msg);
       }
     }

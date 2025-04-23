@@ -33,6 +33,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.GetManagedFolderRequest)
     GetManagedFolderRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use GetManagedFolderRequest.newBuilder() to construct.
   private GetManagedFolderRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object name_ = "";
+
   /**
    *
    *
@@ -96,6 +98,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       return s;
     }
   }
+
   /**
    *
    *
@@ -126,6 +129,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 3;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -142,6 +146,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -161,6 +166,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 4;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -177,6 +183,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -198,6 +205,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object requestId_ = "";
+
   /**
    *
    *
@@ -224,6 +232,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       return s;
     }
   }
+
   /**
    *
    *
@@ -448,6 +457,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -677,6 +687,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     private int bitField0_;
 
     private java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -703,6 +714,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -729,6 +741,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -754,6 +767,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -775,6 +789,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -803,6 +818,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -819,6 +835,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -835,6 +852,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -855,6 +873,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -875,6 +894,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -891,6 +911,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -907,6 +928,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -927,6 +949,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -947,6 +970,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
     }
 
     private java.lang.Object requestId_ = "";
+
     /**
      *
      *
@@ -972,6 +996,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -997,6 +1022,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1021,6 +1047,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1041,6 +1068,7 @@ public final class GetManagedFolderRequest extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *

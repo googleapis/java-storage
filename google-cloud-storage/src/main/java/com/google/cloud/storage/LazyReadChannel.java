@@ -34,8 +34,7 @@ final class LazyReadChannel<RBC extends ReadableByteChannel, T> {
     this.sessionSupplier = sessionSupplier;
   }
 
-  @NonNull
-  RBC getChannel() {
+  @NonNull RBC getChannel() {
     if (channel != null) {
       return channel;
     } else {
@@ -49,8 +48,7 @@ final class LazyReadChannel<RBC extends ReadableByteChannel, T> {
     }
   }
 
-  @NonNull
-  ReadableByteChannelSession<RBC, T> getSession() {
+  @NonNull ReadableByteChannelSession<RBC, T> getSession() {
     if (session != null) {
       return session;
     } else {

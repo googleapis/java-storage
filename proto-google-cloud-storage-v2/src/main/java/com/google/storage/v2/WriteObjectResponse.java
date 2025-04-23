@@ -33,6 +33,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.WriteObjectResponse)
     WriteObjectResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use WriteObjectResponse.newBuilder() to construct.
   private WriteObjectResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -78,6 +79,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     private WriteStatusCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -111,6 +113,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PERSISTED_SIZE_FIELD_NUMBER = 1;
+
   /**
    *
    *
@@ -127,6 +130,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
   public boolean hasPersistedSize() {
     return writeStatusCase_ == 1;
   }
+
   /**
    *
    *
@@ -148,6 +152,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
   }
 
   public static final int RESOURCE_FIELD_NUMBER = 2;
+
   /**
    *
    *
@@ -164,6 +169,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
   public boolean hasResource() {
     return writeStatusCase_ == 2;
   }
+
   /**
    *
    *
@@ -183,6 +189,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     }
     return com.google.storage.v2.Object.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -390,6 +397,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -628,6 +636,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public boolean hasPersistedSize() {
       return writeStatusCase_ == 1;
     }
+
     /**
      *
      *
@@ -646,6 +655,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       }
       return 0L;
     }
+
     /**
      *
      *
@@ -666,6 +676,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -692,6 +703,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         resourceBuilder_;
+
     /**
      *
      *
@@ -708,6 +720,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public boolean hasResource() {
       return writeStatusCase_ == 2;
     }
+
     /**
      *
      *
@@ -734,6 +747,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -757,6 +771,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -777,6 +792,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -809,6 +825,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -835,6 +852,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -848,6 +866,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.Object.Builder getResourceBuilder() {
       return getResourceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -869,6 +888,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *

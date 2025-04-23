@@ -676,11 +676,13 @@ public final class ITObjectReadSessionFakeTest {
             () ->
                 assertThat(suppressedMessages)
                     .contains(
-                        "Mismatch checksum value. Expected crc32c{0x00000001} actual crc32c{0xe16dcdee}"),
+                        "Mismatch checksum value. Expected crc32c{0x00000001} actual"
+                            + " crc32c{0xe16dcdee}"),
             () ->
                 assertThat(suppressedMessages)
                     .contains(
-                        "Mismatch checksum value. Expected crc32c{0x00000002} actual crc32c{0xe16dcdee}"),
+                        "Mismatch checksum value. Expected crc32c{0x00000002} actual"
+                            + " crc32c{0xe16dcdee}"),
             () -> assertThat(suppressedMessages).contains("Asynchronous task failed"));
       }
     }

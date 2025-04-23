@@ -36,6 +36,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * @return Whether the routingToken field is set.
    */
   boolean hasRoutingToken();
+
   /**
    *
    *
@@ -48,6 +49,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * @return The routingToken.
    */
   java.lang.String getRoutingToken();
+
   /**
    *
    *
@@ -73,6 +75,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * @return Whether the writeHandle field is set.
    */
   boolean hasWriteHandle();
+
   /**
    *
    *
@@ -85,6 +88,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * @return The writeHandle.
    */
   com.google.storage.v2.BidiWriteHandle getWriteHandle();
+
   /**
    *
    *
@@ -111,6 +115,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * @return Whether the generation field is set.
    */
   boolean hasGeneration();
+
   /**
    *
    *

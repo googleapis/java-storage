@@ -348,18 +348,15 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       this.byteRangeSpec = requireNonNull(byteRangeSpec, "byteRangeSpec must be non null");
     }
 
-    @NonNull
-    StorageObject getObject() {
+    @NonNull StorageObject getObject() {
       return object;
     }
 
-    @NonNull
-    Map<StorageRpc.Option, ?> getOptions() {
+    @NonNull Map<StorageRpc.Option, ?> getOptions() {
       return options;
     }
 
-    @NonNull
-    ByteRangeSpec getByteRangeSpec() {
+    @NonNull ByteRangeSpec getByteRangeSpec() {
       return byteRangeSpec;
     }
 

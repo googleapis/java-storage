@@ -88,6 +88,7 @@ public class BucketInfo implements Serializable {
   private final Boolean versioningEnabled;
   private final String indexPage;
   private final String notFoundPage;
+
   /**
    * The getter for this property never returns null, however null awareness is critical for
    * encoding to properly determine how to process rules conversion.
@@ -250,7 +251,9 @@ public class BucketInfo implements Serializable {
       return isUniformBucketLevelAccessEnabled;
     }
 
-    /** @deprecated {@link #getUniformBucketLevelAccessLockedTimeOffsetDateTime()} */
+    /**
+     * @deprecated {@link #getUniformBucketLevelAccessLockedTimeOffsetDateTime()}
+     */
     @Deprecated
     public Long getUniformBucketLevelAccessLockedTime() {
       return millisOffsetDateTimeCodec.decode(uniformBucketLevelAccessLockedTime);
@@ -278,7 +281,9 @@ public class BucketInfo implements Serializable {
         return this;
       }
 
-      /** @deprecated in favor of {@link #setUniformBucketLevelAccessLockedTime(Long)}. */
+      /**
+       * @deprecated in favor of {@link #setUniformBucketLevelAccessLockedTime(Long)}.
+       */
       @Deprecated
       Builder setBucketPolicyOnlyLockedTime(Long bucketPolicyOnlyLockedTime) {
         return setUniformBucketLevelAccessLockedTime(bucketPolicyOnlyLockedTime);
@@ -1014,7 +1019,9 @@ public class BucketInfo implements Serializable {
         return age;
       }
 
-      /** @deprecated Use {@link #getCreatedBeforeOffsetDateTime()} */
+      /**
+       * @deprecated Use {@link #getCreatedBeforeOffsetDateTime()}
+       */
       @Deprecated
       public DateTime getCreatedBefore() {
         return Utils.dateTimeCodec.nullable().encode(createdBefore);
@@ -1574,7 +1581,9 @@ public class BucketInfo implements Serializable {
       this.time = time;
     }
 
-    /** @deprecated {@link #getTime()} */
+    /**
+     * @deprecated {@link #getTime()}
+     */
     @Deprecated
     public long getTimeMillis() {
       return millisUtcCodec.decode(time);
@@ -1727,7 +1736,9 @@ public class BucketInfo implements Serializable {
 
     abstract Builder setEtag(String etag);
 
-    /** @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Deprecated
     abstract Builder setCreateTime(Long createTime);
 
@@ -1737,7 +1748,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Deprecated
     abstract Builder setUpdateTime(Long updateTime);
 
@@ -1788,7 +1801,9 @@ public class BucketInfo implements Serializable {
     @BetaApi
     public abstract Builder setDefaultEventBasedHold(Boolean defaultEventBasedHold);
 
-    /** @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)}
+     */
     @BetaApi
     @Deprecated
     abstract Builder setRetentionEffectiveTime(Long retentionEffectiveTime);
@@ -2056,7 +2071,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated Use {@code setLifecycleRules} method instead. * */
+    /**
+     * @deprecated Use {@code setLifecycleRules} method instead. *
+     */
     @Override
     @Deprecated
     public Builder setDeleteRules(Iterable<? extends DeleteRule> rules) {
@@ -2156,7 +2173,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Deprecated
     @Override
     Builder setCreateTime(Long createTime) {
@@ -2172,7 +2191,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Deprecated
     @Override
     Builder setUpdateTime(Long updateTime) {
@@ -2260,7 +2281,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated Use {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setRetentionEffectiveTime(Long retentionEffectiveTime) {
@@ -2287,7 +2310,9 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated Use {@link #setRetentionPeriodDuration(Duration)} */
+    /**
+     * @deprecated Use {@link #setRetentionPeriodDuration(Duration)}
+     */
     @Override
     public Builder setRetentionPeriod(Long retentionPeriod) {
       return setRetentionPeriodDuration(nullableDurationSecondsCodec.decode(retentionPeriod));

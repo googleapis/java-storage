@@ -637,7 +637,9 @@ final class UnifiedOpts {
     }
   }
 
-  /** @see EncryptionKey */
+  /**
+   * @see EncryptionKey
+   */
   static final class DecryptionKey extends RpcOptVal<Key> implements ObjectSourceOpt {
     private static final long serialVersionUID = -2198422155991275316L;
 
@@ -760,7 +762,9 @@ final class UnifiedOpts {
     }
   }
 
-  /** @see DecryptionKey */
+  /**
+   * @see DecryptionKey
+   */
   static final class EncryptionKey extends RpcOptVal<Key>
       implements ObjectTargetOpt, ProjectAsSource<DecryptionKey> {
     private static final long serialVersionUID = -7335988656032764620L;
@@ -831,7 +835,9 @@ final class UnifiedOpts {
     }
   }
 
-  /** @see StartOffset */
+  /**
+   * @see StartOffset
+   */
   static final class EndOffset extends RpcOptVal<String> implements ObjectListOpt {
     private static final long serialVersionUID = 7446382028145458833L;
 
@@ -1943,7 +1949,9 @@ final class UnifiedOpts {
     }
   }
 
-  /** @see EndOffset */
+  /**
+   * @see EndOffset
+   */
   static final class StartOffset extends RpcOptVal<String> implements ObjectListOpt {
     private static final long serialVersionUID = -1459727336598737833L;
 
@@ -2258,6 +2266,7 @@ final class UnifiedOpts {
       }
       return new SetContentType("application/octet-stream");
     }
+
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
@@ -2292,6 +2301,7 @@ final class UnifiedOpts {
       checkArgument(generation != null, "Option ifGenerationMatch is missing a value");
       return generationMatch(generation);
     }
+
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
@@ -2326,6 +2336,7 @@ final class UnifiedOpts {
       checkArgument(generation != null, "Option ifGenerationNotMatch is missing a value");
       return generationNotMatch(generation);
     }
+
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
@@ -2361,6 +2372,7 @@ final class UnifiedOpts {
     public ObjectTargetOpt extractFromBlobId(BlobId id) {
       return NoOpObjectTargetOpt.INSTANCE;
     }
+
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
@@ -2407,6 +2419,7 @@ final class UnifiedOpts {
     public Mapper<GrpcCallContext> getGrpcMetadataMapper() {
       return Mapper.identity();
     }
+
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
@@ -2448,6 +2461,7 @@ final class UnifiedOpts {
       checkArgument(metageneration != null, "Option ifMetagenerationNotMatch is missing a value");
       return metagenerationNotMatch(metageneration);
     }
+
     // Both parent interfaces define this method, we need to declare a dis-ambiguous one
     @Override
     public Mapper<GrpcCallContext> getGrpcMetadataMapper() {

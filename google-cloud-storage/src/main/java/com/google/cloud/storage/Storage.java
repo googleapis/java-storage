@@ -5092,7 +5092,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity, BucketSourceOption... options);
 
-  /** @see #getAcl(String, Entity, BucketSourceOption...) */
+  /**
+   * @see #getAcl(String, Entity, BucketSourceOption...)
+   */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity);
 
@@ -5129,7 +5131,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options);
 
-  /** @see #deleteAcl(String, Entity, BucketSourceOption...) */
+  /**
+   * @see #deleteAcl(String, Entity, BucketSourceOption...)
+   */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity);
 
@@ -5159,7 +5163,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl, BucketSourceOption... options);
 
-  /** @see #createAcl(String, Acl, BucketSourceOption...) */
+  /**
+   * @see #createAcl(String, Acl, BucketSourceOption...)
+   */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl);
 
@@ -5189,7 +5195,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options);
 
-  /** @see #updateAcl(String, Acl, BucketSourceOption...) */
+  /**
+   * @see #updateAcl(String, Acl, BucketSourceOption...)
+   */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl);
 
@@ -5234,7 +5242,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket, BucketSourceOption... options);
 
-  /** @see #listAcls(String, BucketSourceOption...) */
+  /**
+   * @see #listAcls(String, BucketSourceOption...)
+   */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket);
 

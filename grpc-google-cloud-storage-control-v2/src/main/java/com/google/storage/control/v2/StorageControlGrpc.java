@@ -498,6 +498,19 @@ public final class StorageControlGrpc {
     return StorageControlStub.newStub(factory, channel);
   }
 
+  /** Creates a new blocking-style stub that supports all types of calls on the service */
+  public static StorageControlBlockingV2Stub newBlockingV2Stub(io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<StorageControlBlockingV2Stub> factory =
+        new io.grpc.stub.AbstractStub.StubFactory<StorageControlBlockingV2Stub>() {
+          @java.lang.Override
+          public StorageControlBlockingV2Stub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new StorageControlBlockingV2Stub(channel, callOptions);
+          }
+        };
+    return StorageControlBlockingV2Stub.newStub(factory, channel);
+  }
+
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
@@ -888,6 +901,163 @@ public final class StorageControlGrpc {
 
   /**
    * A stub to allow clients to do synchronous rpc calls to service StorageControl.
+   *
+   * <pre>
+   * StorageControl service includes selected control plane operations.
+   * </pre>
+   */
+  public static final class StorageControlBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<StorageControlBlockingV2Stub> {
+    private StorageControlBlockingV2Stub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected StorageControlBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new StorageControlBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new folder. This operation is only applicable to a hierarchical
+     * namespace enabled bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.Folder createFolder(
+        com.google.storage.control.v2.CreateFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty folder. This operation is only applicable to a
+     * hierarchical namespace enabled bucket.
+     * </pre>
+     */
+    public com.google.protobuf.Empty deleteFolder(
+        com.google.storage.control.v2.DeleteFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified folder. This operation is only
+     * applicable to a hierarchical namespace enabled bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.Folder getFolder(
+        com.google.storage.control.v2.GetFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of folders. This operation is only applicable to a
+     * hierarchical namespace enabled bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListFoldersResponse listFolders(
+        com.google.storage.control.v2.ListFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListFoldersMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Renames a source folder to a destination folder. This operation is only
+     * applicable to a hierarchical namespace enabled bucket. During a rename, the
+     * source and destination folders are locked until the long running operation
+     * completes.
+     * </pre>
+     */
+    public com.google.longrunning.Operation renameFolder(
+        com.google.storage.control.v2.RenameFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRenameFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the storage layout configuration for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.StorageLayout getStorageLayout(
+        com.google.storage.control.v2.GetStorageLayoutRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetStorageLayoutMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates a new managed folder.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ManagedFolder createManagedFolder(
+        com.google.storage.control.v2.CreateManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Permanently deletes an empty managed folder.
+     * </pre>
+     */
+    public com.google.protobuf.Empty deleteManagedFolder(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns metadata for the specified managed folder.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ManagedFolder getManagedFolder(
+        com.google.storage.control.v2.GetManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetManagedFolderMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retrieves a list of managed folders for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListManagedFoldersResponse listManagedFolders(
+        com.google.storage.control.v2.ListManagedFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service StorageControl.
    *
    * <pre>
    * StorageControl service includes selected control plane operations.

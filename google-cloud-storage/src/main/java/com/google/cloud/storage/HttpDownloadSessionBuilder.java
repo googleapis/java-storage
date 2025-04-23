@@ -53,6 +53,7 @@ final class HttpDownloadSessionBuilder {
 
     private final BlobReadChannelContext blobReadChannelContext;
     private boolean autoGzipDecompression;
+
     // private Hasher hasher; // TODO: wire in Hasher
 
     private ReadableByteChannelSessionBuilder(BlobReadChannelContext blobReadChannelContext) {

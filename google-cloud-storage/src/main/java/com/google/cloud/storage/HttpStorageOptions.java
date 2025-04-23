@@ -51,7 +51,9 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/** @since 2.14.0 */
+/**
+ * @since 2.14.0
+ */
 @TransportCompatibility(Transport.HTTP)
 // non-final because of mocking frameworks
 public class HttpStorageOptions extends StorageOptions {
@@ -92,7 +94,9 @@ public class HttpStorageOptions extends StorageOptions {
     return (StorageRpc) getRpc();
   }
 
-  /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+  /**
+   * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   @Override
   public OpenTelemetry getOpenTelemetry() {
@@ -269,7 +273,8 @@ public class HttpStorageOptions extends StorageOptions {
       requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
       checkArgument(
           blobWriteSessionConfig instanceof BlobWriteSessionConfig.HttpCompatible,
-          "The provided instance of BlobWriteSessionConfig is not compatible with this HTTP transport.");
+          "The provided instance of BlobWriteSessionConfig is not compatible with this HTTP"
+              + " transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
       return this;
     }
@@ -341,13 +346,17 @@ public class HttpStorageOptions extends StorageOptions {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    /** @since 2.29.0 This new api is in preview and is subject to breaking changes. */
+    /**
+     * @since 2.29.0 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
     public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
       return BlobWriteSessionConfigs.getDefault();
     }
 
-    /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+    /**
+     * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
     public OpenTelemetry getDefaultOpenTelemetry() {
       return OpenTelemetry.noop();

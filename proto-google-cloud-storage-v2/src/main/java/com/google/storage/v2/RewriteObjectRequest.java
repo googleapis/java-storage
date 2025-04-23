@@ -40,6 +40,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     // @@protoc_insertion_point(message_implements:google.storage.v2.RewriteObjectRequest)
     RewriteObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use RewriteObjectRequest.newBuilder() to construct.
   private RewriteObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -84,6 +85,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationName_ = "";
+
   /**
    *
    *
@@ -115,6 +117,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -151,6 +154,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationBucket_ = "";
+
   /**
    *
    *
@@ -177,6 +181,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -208,6 +213,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationKmsKey_ = "";
+
   /**
    *
    *
@@ -235,6 +241,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -265,6 +272,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int DESTINATION_FIELD_NUMBER = 1;
   private com.google.storage.v2.Object destination_;
+
   /**
    *
    *
@@ -286,6 +294,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasDestination() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -307,6 +316,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public com.google.storage.v2.Object getDestination() {
     return destination_ == null ? com.google.storage.v2.Object.getDefaultInstance() : destination_;
   }
+
   /**
    *
    *
@@ -331,6 +341,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object sourceBucket_ = "";
+
   /**
    *
    *
@@ -356,6 +367,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -386,6 +398,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object sourceObject_ = "";
+
   /**
    *
    *
@@ -409,6 +422,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -435,6 +449,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int SOURCE_GENERATION_FIELD_NUMBER = 4;
   private long sourceGeneration_ = 0L;
+
   /**
    *
    *
@@ -456,6 +471,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object rewriteToken_ = "";
+
   /**
    *
    *
@@ -483,6 +499,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -515,6 +532,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationPredefinedAcl_ = "";
+
   /**
    *
    *
@@ -540,6 +558,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -568,6 +587,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 7;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -585,6 +605,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -605,6 +626,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 8;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -623,6 +645,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -644,6 +667,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 9;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -660,6 +684,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -679,6 +704,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 10;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -695,6 +721,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -714,6 +741,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_SOURCE_GENERATION_MATCH_FIELD_NUMBER = 11;
   private long ifSourceGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -730,6 +758,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfSourceGenerationMatch() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -749,6 +778,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_SOURCE_GENERATION_NOT_MATCH_FIELD_NUMBER = 12;
   private long ifSourceGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -765,6 +795,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfSourceGenerationNotMatch() {
     return ((bitField0_ & 0x00000040) != 0);
   }
+
   /**
    *
    *
@@ -784,6 +815,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_SOURCE_METAGENERATION_MATCH_FIELD_NUMBER = 13;
   private long ifSourceMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -800,6 +832,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfSourceMetagenerationMatch() {
     return ((bitField0_ & 0x00000080) != 0);
   }
+
   /**
    *
    *
@@ -819,6 +852,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_SOURCE_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 14;
   private long ifSourceMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -835,6 +869,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfSourceMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000100) != 0);
   }
+
   /**
    *
    *
@@ -854,6 +889,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int MAX_BYTES_REWRITTEN_PER_CALL_FIELD_NUMBER = 15;
   private long maxBytesRewrittenPerCall_ = 0L;
+
   /**
    *
    *
@@ -881,6 +917,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object copySourceEncryptionAlgorithm_ = "";
+
   /**
    *
    *
@@ -905,6 +942,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -933,6 +971,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public static final int COPY_SOURCE_ENCRYPTION_KEY_BYTES_FIELD_NUMBER = 21;
   private com.google.protobuf.ByteString copySourceEncryptionKeyBytes_ =
       com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -954,6 +993,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public static final int COPY_SOURCE_ENCRYPTION_KEY_SHA256_BYTES_FIELD_NUMBER = 22;
   private com.google.protobuf.ByteString copySourceEncryptionKeySha256Bytes_ =
       com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -974,6 +1014,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 19;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -989,6 +1030,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000200) != 0);
   }
+
   /**
    *
    *
@@ -1006,6 +1048,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -1025,6 +1068,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 29;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -1041,6 +1085,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000400) != 0);
   }
+
   /**
    *
    *
@@ -1059,6 +1104,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -1508,6 +1554,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -2040,6 +2087,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     private int bitField0_;
 
     private java.lang.Object destinationName_ = "";
+
     /**
      *
      *
@@ -2070,6 +2118,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2100,6 +2149,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2129,6 +2179,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2154,6 +2205,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2186,6 +2238,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object destinationBucket_ = "";
+
     /**
      *
      *
@@ -2211,6 +2264,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2236,6 +2290,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2260,6 +2315,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2280,6 +2336,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2307,6 +2364,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object destinationKmsKey_ = "";
+
     /**
      *
      *
@@ -2333,6 +2391,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2359,6 +2418,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2384,6 +2444,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2405,6 +2466,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2438,6 +2500,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         destinationBuilder_;
+
     /**
      *
      *
@@ -2458,6 +2521,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasDestination() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -2484,6 +2548,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return destinationBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2512,6 +2577,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2537,6 +2603,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2570,6 +2637,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -2595,6 +2663,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2615,6 +2684,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getDestinationFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2639,6 +2709,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             : destination_;
       }
     }
+
     /**
      *
      *
@@ -2672,6 +2743,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object sourceBucket_ = "";
+
     /**
      *
      *
@@ -2696,6 +2768,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2720,6 +2793,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2743,6 +2817,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2762,6 +2837,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2788,6 +2864,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object sourceObject_ = "";
+
     /**
      *
      *
@@ -2810,6 +2887,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2832,6 +2910,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2853,6 +2932,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2870,6 +2950,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2894,6 +2975,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long sourceGeneration_;
+
     /**
      *
      *
@@ -2910,6 +2992,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getSourceGeneration() {
       return sourceGeneration_;
     }
+
     /**
      *
      *
@@ -2930,6 +3013,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2950,6 +3034,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object rewriteToken_ = "";
+
     /**
      *
      *
@@ -2976,6 +3061,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -3002,6 +3088,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -3027,6 +3114,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3048,6 +3136,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3076,6 +3165,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object destinationPredefinedAcl_ = "";
+
     /**
      *
      *
@@ -3100,6 +3190,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -3124,6 +3215,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -3147,6 +3239,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3166,6 +3259,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3192,6 +3286,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -3209,6 +3304,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -3226,6 +3322,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -3247,6 +3344,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3268,6 +3366,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -3286,6 +3385,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000400) != 0);
     }
+
     /**
      *
      *
@@ -3304,6 +3404,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -3326,6 +3427,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3348,6 +3450,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -3364,6 +3467,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000800) != 0);
     }
+
     /**
      *
      *
@@ -3380,6 +3484,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -3400,6 +3505,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3420,6 +3526,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -3436,6 +3543,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00001000) != 0);
     }
+
     /**
      *
      *
@@ -3452,6 +3560,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -3472,6 +3581,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3492,6 +3602,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifSourceGenerationMatch_;
+
     /**
      *
      *
@@ -3508,6 +3619,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfSourceGenerationMatch() {
       return ((bitField0_ & 0x00002000) != 0);
     }
+
     /**
      *
      *
@@ -3524,6 +3636,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfSourceGenerationMatch() {
       return ifSourceGenerationMatch_;
     }
+
     /**
      *
      *
@@ -3544,6 +3657,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3564,6 +3678,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifSourceGenerationNotMatch_;
+
     /**
      *
      *
@@ -3580,6 +3695,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfSourceGenerationNotMatch() {
       return ((bitField0_ & 0x00004000) != 0);
     }
+
     /**
      *
      *
@@ -3596,6 +3712,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfSourceGenerationNotMatch() {
       return ifSourceGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -3616,6 +3733,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3636,6 +3754,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifSourceMetagenerationMatch_;
+
     /**
      *
      *
@@ -3652,6 +3771,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfSourceMetagenerationMatch() {
       return ((bitField0_ & 0x00008000) != 0);
     }
+
     /**
      *
      *
@@ -3668,6 +3788,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfSourceMetagenerationMatch() {
       return ifSourceMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -3688,6 +3809,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3708,6 +3830,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifSourceMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -3724,6 +3847,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfSourceMetagenerationNotMatch() {
       return ((bitField0_ & 0x00010000) != 0);
     }
+
     /**
      *
      *
@@ -3740,6 +3864,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfSourceMetagenerationNotMatch() {
       return ifSourceMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -3760,6 +3885,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3780,6 +3906,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long maxBytesRewrittenPerCall_;
+
     /**
      *
      *
@@ -3802,6 +3929,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public long getMaxBytesRewrittenPerCall() {
       return maxBytesRewrittenPerCall_;
     }
+
     /**
      *
      *
@@ -3828,6 +3956,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3854,6 +3983,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object copySourceEncryptionAlgorithm_ = "";
+
     /**
      *
      *
@@ -3877,6 +4007,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -3900,6 +4031,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -3922,6 +4054,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3940,6 +4073,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -3966,6 +4100,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
     private com.google.protobuf.ByteString copySourceEncryptionKeyBytes_ =
         com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -3983,6 +4118,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public com.google.protobuf.ByteString getCopySourceEncryptionKeyBytes() {
       return copySourceEncryptionKeyBytes_;
     }
+
     /**
      *
      *
@@ -4006,6 +4142,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4028,6 +4165,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
     private com.google.protobuf.ByteString copySourceEncryptionKeySha256Bytes_ =
         com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -4045,6 +4183,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public com.google.protobuf.ByteString getCopySourceEncryptionKeySha256Bytes() {
       return copySourceEncryptionKeySha256Bytes_;
     }
+
     /**
      *
      *
@@ -4068,6 +4207,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4095,6 +4235,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -4109,6 +4250,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00200000) != 0);
     }
+
     /**
      *
      *
@@ -4129,6 +4271,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -4152,6 +4295,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4172,6 +4316,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4201,6 +4346,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -4220,6 +4366,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4235,6 +4382,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -4254,6 +4402,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *
@@ -4286,6 +4435,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -4301,6 +4451,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00400000) != 0);
     }
+
     /**
      *
      *
@@ -4322,6 +4473,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -4345,6 +4497,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4366,6 +4519,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4394,6 +4548,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -4414,6 +4569,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -4429,6 +4585,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -4448,6 +4605,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             : objectChecksums_;
       }
     }
+
     /**
      *
      *

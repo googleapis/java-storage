@@ -33,6 +33,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     // @@protoc_insertion_point(message_implements:google.storage.v2.GetBucketRequest)
     GetBucketRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use GetBucketRequest.newBuilder() to construct.
   private GetBucketRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -68,6 +69,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object name_ = "";
+
   /**
    *
    *
@@ -93,6 +95,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       return s;
     }
   }
+
   /**
    *
    *
@@ -121,6 +124,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -137,6 +141,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -156,6 +161,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 3;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -172,6 +178,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -191,6 +198,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
 
   public static final int READ_MASK_FIELD_NUMBER = 5;
   private com.google.protobuf.FieldMask readMask_;
+
   /**
    *
    *
@@ -208,6 +216,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   public boolean hasReadMask() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -225,6 +234,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   public com.google.protobuf.FieldMask getReadMask() {
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
   }
+
   /**
    *
    *
@@ -441,6 +451,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -681,6 +692,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     private int bitField0_;
 
     private java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -705,6 +717,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -729,6 +742,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -752,6 +766,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -771,6 +786,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -797,6 +813,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -813,6 +830,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -829,6 +847,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -849,6 +868,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -869,6 +889,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -885,6 +906,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -901,6 +923,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -921,6 +944,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -946,6 +970,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
             com.google.protobuf.FieldMask.Builder,
             com.google.protobuf.FieldMaskOrBuilder>
         readMaskBuilder_;
+
     /**
      *
      *
@@ -962,6 +987,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public boolean hasReadMask() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -982,6 +1008,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
         return readMaskBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1006,6 +1033,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1027,6 +1055,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1056,6 +1085,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       }
       return this;
     }
+
     /**
      *
      *
@@ -1077,6 +1107,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1093,6 +1124,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1111,6 +1143,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
         return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
       }
     }
+
     /**
      *
      *

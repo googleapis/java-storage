@@ -34,6 +34,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     // @@protoc_insertion_point(message_implements:google.storage.v2.CustomerEncryption)
     CustomerEncryptionOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use CustomerEncryption.newBuilder() to construct.
   private CustomerEncryption(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object encryptionAlgorithm_ = "";
+
   /**
    *
    *
@@ -92,6 +94,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -118,6 +121,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
 
   public static final int KEY_SHA256_BYTES_FIELD_NUMBER = 3;
   private com.google.protobuf.ByteString keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -302,6 +306,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -499,6 +504,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     private int bitField0_;
 
     private java.lang.Object encryptionAlgorithm_ = "";
+
     /**
      *
      *
@@ -521,6 +527,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -543,6 +550,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -564,6 +572,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -581,6 +590,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -605,6 +615,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     }
 
     private com.google.protobuf.ByteString keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -621,6 +632,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     public com.google.protobuf.ByteString getKeySha256Bytes() {
       return keySha256Bytes_;
     }
+
     /**
      *
      *
@@ -643,6 +655,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *

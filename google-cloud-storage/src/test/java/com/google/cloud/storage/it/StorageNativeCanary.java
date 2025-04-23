@@ -134,7 +134,9 @@ public final class StorageNativeCanary {
           () -> assertThat(deletes.get(1)).isTrue());
     } catch (Throwable e) {
       String hintMessage =
-          "Possible missing reflect-config configuration. Run the following to regenerate grpc reflect-config: mvn -Dmaven.test.skip.exec=true clean install && cd google-cloud-storage && mvn -Pregen-grpc-graalvm-reflect-config exec:exec";
+          "Possible missing reflect-config configuration. Run the following to regenerate grpc"
+              + " reflect-config: mvn -Dmaven.test.skip.exec=true clean install && cd"
+              + " google-cloud-storage && mvn -Pregen-grpc-graalvm-reflect-config exec:exec";
       Throwable linkageError = TestUtils.findThrowable(LinkageError.class, e);
       Throwable roe = TestUtils.findThrowable(ReflectiveOperationException.class, e);
       if (linkageError != null) {

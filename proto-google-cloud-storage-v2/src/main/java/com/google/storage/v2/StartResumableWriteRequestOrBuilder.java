@@ -38,6 +38,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return Whether the writeObjectSpec field is set.
    */
   boolean hasWriteObjectSpec();
+
   /**
    *
    *
@@ -52,6 +53,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return The writeObjectSpec.
    */
   com.google.storage.v2.WriteObjectSpec getWriteObjectSpec();
+
   /**
    *
    *
@@ -77,6 +79,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -89,6 +92,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -116,6 +120,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return Whether the objectChecksums field is set.
    */
   boolean hasObjectChecksums();
+
   /**
    *
    *
@@ -132,6 +137,7 @@ public interface StartResumableWriteRequestOrBuilder
    * @return The objectChecksums.
    */
   com.google.storage.v2.ObjectChecksums getObjectChecksums();
+
   /**
    *
    *

@@ -33,6 +33,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     // @@protoc_insertion_point(message_implements:google.storage.v2.ObjectChecksums)
     ObjectChecksumsOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ObjectChecksums.newBuilder() to construct.
   private ObjectChecksums(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -66,6 +67,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
   private int bitField0_;
   public static final int CRC32C_FIELD_NUMBER = 1;
   private int crc32C_ = 0;
+
   /**
    *
    *
@@ -84,6 +86,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
   public boolean hasCrc32C() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -105,6 +108,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
 
   public static final int MD5_HASH_FIELD_NUMBER = 2;
   private com.google.protobuf.ByteString md5Hash_ = com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -298,6 +302,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -495,6 +500,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     private int bitField0_;
 
     private int crc32C_;
+
     /**
      *
      *
@@ -513,6 +519,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     public boolean hasCrc32C() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -531,6 +538,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     public int getCrc32C() {
       return crc32C_;
     }
+
     /**
      *
      *
@@ -553,6 +561,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -575,6 +584,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     }
 
     private com.google.protobuf.ByteString md5Hash_ = com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -596,6 +606,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     public com.google.protobuf.ByteString getMd5Hash() {
       return md5Hash_;
     }
+
     /**
      *
      *
@@ -623,6 +634,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *

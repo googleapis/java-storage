@@ -36,6 +36,7 @@ public interface PendingRenameInfoOrBuilder
    * @return The operation.
    */
   java.lang.String getOperation();
+
   /**
    *
    *

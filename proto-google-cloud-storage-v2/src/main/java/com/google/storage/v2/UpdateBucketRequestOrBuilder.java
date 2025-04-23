@@ -37,6 +37,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return Whether the bucket field is set.
    */
   boolean hasBucket();
+
   /**
    *
    *
@@ -50,6 +51,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return The bucket.
    */
   com.google.storage.v2.Bucket getBucket();
+
   /**
    *
    *
@@ -75,6 +77,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -102,6 +105,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -130,6 +134,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return The predefinedAcl.
    */
   java.lang.String getPredefinedAcl();
+
   /**
    *
    *
@@ -159,6 +164,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return The predefinedDefaultObjectAcl.
    */
   java.lang.String getPredefinedDefaultObjectAcl();
+
   /**
    *
    *
@@ -194,6 +200,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return Whether the updateMask field is set.
    */
   boolean hasUpdateMask();
+
   /**
    *
    *
@@ -214,6 +221,7 @@ public interface UpdateBucketRequestOrBuilder
    * @return The updateMask.
    */
   com.google.protobuf.FieldMask getUpdateMask();
+
   /**
    *
    *

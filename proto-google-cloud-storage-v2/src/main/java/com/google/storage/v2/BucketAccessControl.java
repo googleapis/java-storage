@@ -33,6 +33,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.BucketAccessControl)
     BucketAccessControlOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BucketAccessControl.newBuilder() to construct.
   private BucketAccessControl(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -75,6 +76,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object role_ = "";
+
   /**
    *
    *
@@ -98,6 +100,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -126,6 +129,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object id_ = "";
+
   /**
    *
    *
@@ -149,6 +153,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -177,6 +182,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object entity_ = "";
+
   /**
    *
    *
@@ -217,6 +223,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -262,6 +269,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object entityAlt_ = "";
+
   /**
    *
    *
@@ -286,6 +294,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -315,6 +324,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object entityId_ = "";
+
   /**
    *
    *
@@ -338,6 +348,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -366,6 +377,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object etag_ = "";
+
   /**
    *
    *
@@ -392,6 +404,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -423,6 +436,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object email_ = "";
+
   /**
    *
    *
@@ -446,6 +460,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -474,6 +489,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object domain_ = "";
+
   /**
    *
    *
@@ -497,6 +513,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -523,6 +540,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
   public static final int PROJECT_TEAM_FIELD_NUMBER = 7;
   private com.google.storage.v2.ProjectTeam projectTeam_;
+
   /**
    *
    *
@@ -538,6 +556,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   public boolean hasProjectTeam() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -555,6 +574,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         ? com.google.storage.v2.ProjectTeam.getDefaultInstance()
         : projectTeam_;
   }
+
   /**
    *
    *
@@ -807,6 +827,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1125,6 +1146,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     private int bitField0_;
 
     private java.lang.Object role_ = "";
+
     /**
      *
      *
@@ -1147,6 +1169,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1169,6 +1192,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1190,6 +1214,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1207,6 +1232,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1231,6 +1257,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object id_ = "";
+
     /**
      *
      *
@@ -1253,6 +1280,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1275,6 +1303,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1296,6 +1325,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1313,6 +1343,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1337,6 +1368,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object entity_ = "";
+
     /**
      *
      *
@@ -1376,6 +1408,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1415,6 +1448,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1453,6 +1487,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1487,6 +1522,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1528,6 +1564,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object entityAlt_ = "";
+
     /**
      *
      *
@@ -1551,6 +1588,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1574,6 +1612,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1596,6 +1635,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1614,6 +1654,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1639,6 +1680,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object entityId_ = "";
+
     /**
      *
      *
@@ -1661,6 +1703,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1683,6 +1726,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1704,6 +1748,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1721,6 +1766,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1745,6 +1791,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object etag_ = "";
+
     /**
      *
      *
@@ -1770,6 +1817,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1795,6 +1843,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1819,6 +1868,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1839,6 +1889,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1866,6 +1917,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object email_ = "";
+
     /**
      *
      *
@@ -1888,6 +1940,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1910,6 +1963,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1931,6 +1985,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1948,6 +2003,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1972,6 +2028,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object domain_ = "";
+
     /**
      *
      *
@@ -1994,6 +2051,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2016,6 +2074,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2037,6 +2096,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2054,6 +2114,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2083,6 +2144,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
             com.google.storage.v2.ProjectTeam.Builder,
             com.google.storage.v2.ProjectTeamOrBuilder>
         projectTeamBuilder_;
+
     /**
      *
      *
@@ -2097,6 +2159,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     public boolean hasProjectTeam() {
       return ((bitField0_ & 0x00000100) != 0);
     }
+
     /**
      *
      *
@@ -2117,6 +2180,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         return projectTeamBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2139,6 +2203,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2158,6 +2223,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2185,6 +2251,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -2204,6 +2271,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2218,6 +2286,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       onChanged();
       return getProjectTeamFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2236,6 +2305,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
             : projectTeam_;
       }
     }
+
     /**
      *
      *

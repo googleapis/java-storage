@@ -68,24 +68,32 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     VERSION = tmp;
   }
 
-  /** @deprecated Use {@link HttpStorageFactory} */
+  /**
+   * @deprecated Use {@link HttpStorageFactory}
+   */
   @Deprecated
   public static class DefaultStorageFactory extends HttpStorageFactory {
     private static final long serialVersionUID = -7856840922014956661L;
 
-    /** @deprecated Use {@link HttpStorageDefaults#getDefaultServiceFactory()} */
+    /**
+     * @deprecated Use {@link HttpStorageDefaults#getDefaultServiceFactory()}
+     */
     @Deprecated
     public DefaultStorageFactory() {
       super();
     }
   }
 
-  /** @deprecated Use {@link HttpStorageRpcFactory} */
+  /**
+   * @deprecated Use {@link HttpStorageRpcFactory}
+   */
   @Deprecated
   public static class DefaultStorageRpcFactory extends HttpStorageRpcFactory {
     private static final long serialVersionUID = -7856840922014956661L;
 
-    /** @deprecated Use {@link HttpStorageDefaults#getDefaultRpcFactory()} */
+    /**
+     * @deprecated Use {@link HttpStorageDefaults#getDefaultRpcFactory()}
+     */
     @Deprecated
     public DefaultStorageRpcFactory() {
       super();
@@ -134,7 +142,9 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
 
   abstract static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {}
 
-  /** @deprecated Use {@link HttpStorageDefaults#getDefaultTransportOptions()} */
+  /**
+   * @deprecated Use {@link HttpStorageDefaults#getDefaultTransportOptions()}
+   */
   @Deprecated
   public static HttpTransportOptions getDefaultHttpTransportOptions() {
     return HttpStorageOptions.defaults().getDefaultTransportOptions();
@@ -158,7 +168,9 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     return VERSION;
   }
 
-  /** @since 2.47.0 This new api is in preview and is subject to breaking changes. */
+  /**
+   * @since 2.47.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public abstract OpenTelemetry getOpenTelemetry();
 

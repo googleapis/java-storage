@@ -34,6 +34,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     // @@protoc_insertion_point(message_implements:google.storage.v2.RestoreObjectRequest)
     RestoreObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use RestoreObjectRequest.newBuilder() to construct.
   private RestoreObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -71,6 +72,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -96,6 +98,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -126,6 +129,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object object_ = "";
+
   /**
    *
    *
@@ -149,6 +153,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -175,6 +180,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int GENERATION_FIELD_NUMBER = 3;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -195,6 +201,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object restoreToken_ = "";
+
   /**
    *
    *
@@ -222,6 +229,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       return s;
     }
   }
+
   /**
    *
    *
@@ -252,6 +260,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -269,6 +278,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -289,6 +299,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 5;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -307,6 +318,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -328,6 +340,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 6;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -344,6 +357,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -363,6 +377,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 7;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -379,6 +394,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -398,6 +414,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int COPY_SOURCE_ACL_FIELD_NUMBER = 9;
   private boolean copySourceAcl_ = false;
+
   /**
    *
    *
@@ -415,6 +432,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasCopySourceAcl() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -435,6 +453,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 8;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -450,6 +469,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -467,6 +487,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -757,6 +778,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1087,6 +1109,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -1111,6 +1134,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1135,6 +1159,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1158,6 +1183,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1177,6 +1203,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1203,6 +1230,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object object_ = "";
+
     /**
      *
      *
@@ -1225,6 +1253,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1247,6 +1276,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1268,6 +1298,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1285,6 +1316,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1309,6 +1341,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -1324,6 +1357,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1343,6 +1377,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1362,6 +1397,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private java.lang.Object restoreToken_ = "";
+
     /**
      *
      *
@@ -1388,6 +1424,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1414,6 +1451,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1439,6 +1477,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1460,6 +1499,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1488,6 +1528,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1505,6 +1546,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1522,6 +1564,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1543,6 +1586,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1564,6 +1608,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1582,6 +1627,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1600,6 +1646,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1622,6 +1669,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1644,6 +1692,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1660,6 +1709,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1676,6 +1726,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1696,6 +1747,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1716,6 +1768,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1732,6 +1785,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1748,6 +1802,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1768,6 +1823,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1788,6 +1844,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     private boolean copySourceAcl_;
+
     /**
      *
      *
@@ -1805,6 +1862,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasCopySourceAcl() {
       return ((bitField0_ & 0x00000100) != 0);
     }
+
     /**
      *
      *
@@ -1822,6 +1880,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean getCopySourceAcl() {
       return copySourceAcl_;
     }
+
     /**
      *
      *
@@ -1843,6 +1902,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1869,6 +1929,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -1883,6 +1944,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -1903,6 +1965,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1926,6 +1989,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1946,6 +2010,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1975,6 +2040,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       }
       return this;
     }
+
     /**
      *
      *
@@ -1994,6 +2060,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2009,6 +2076,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2028,6 +2096,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *

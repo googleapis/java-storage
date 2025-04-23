@@ -38,6 +38,7 @@ public interface MoveObjectRequestOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface MoveObjectRequestOrBuilder
    * @return The sourceObject.
    */
   java.lang.String getSourceObject();
+
   /**
    *
    *
@@ -90,6 +92,7 @@ public interface MoveObjectRequestOrBuilder
    * @return The destinationObject.
    */
   java.lang.String getDestinationObject();
+
   /**
    *
    *
@@ -119,6 +122,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifSourceGenerationMatch field is set.
    */
   boolean hasIfSourceGenerationMatch();
+
   /**
    *
    *
@@ -154,6 +158,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifSourceGenerationNotMatch field is set.
    */
   boolean hasIfSourceGenerationNotMatch();
+
   /**
    *
    *
@@ -191,6 +196,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifSourceMetagenerationMatch field is set.
    */
   boolean hasIfSourceMetagenerationMatch();
+
   /**
    *
    *
@@ -228,6 +234,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifSourceMetagenerationNotMatch field is set.
    */
   boolean hasIfSourceMetagenerationNotMatch();
+
   /**
    *
    *
@@ -263,6 +270,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -298,6 +306,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -334,6 +343,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -370,6 +380,7 @@ public interface MoveObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *

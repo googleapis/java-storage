@@ -37,6 +37,7 @@ public interface WriteObjectRequestOrBuilder
    * @return Whether the uploadId field is set.
    */
   boolean hasUploadId();
+
   /**
    *
    *
@@ -50,6 +51,7 @@ public interface WriteObjectRequestOrBuilder
    * @return The uploadId.
    */
   java.lang.String getUploadId();
+
   /**
    *
    *
@@ -77,6 +79,7 @@ public interface WriteObjectRequestOrBuilder
    * @return Whether the writeObjectSpec field is set.
    */
   boolean hasWriteObjectSpec();
+
   /**
    *
    *
@@ -90,6 +93,7 @@ public interface WriteObjectRequestOrBuilder
    * @return The writeObjectSpec.
    */
   com.google.storage.v2.WriteObjectSpec getWriteObjectSpec();
+
   /**
    *
    *
@@ -140,6 +144,7 @@ public interface WriteObjectRequestOrBuilder
    * @return Whether the checksummedData field is set.
    */
   boolean hasChecksummedData();
+
   /**
    *
    *
@@ -153,6 +158,7 @@ public interface WriteObjectRequestOrBuilder
    * @return The checksummedData.
    */
   com.google.storage.v2.ChecksummedData getChecksummedData();
+
   /**
    *
    *
@@ -180,6 +186,7 @@ public interface WriteObjectRequestOrBuilder
    * @return Whether the objectChecksums field is set.
    */
   boolean hasObjectChecksums();
+
   /**
    *
    *
@@ -195,6 +202,7 @@ public interface WriteObjectRequestOrBuilder
    * @return The objectChecksums.
    */
   com.google.storage.v2.ObjectChecksums getObjectChecksums();
+
   /**
    *
    *
@@ -239,6 +247,7 @@ public interface WriteObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -251,6 +260,7 @@ public interface WriteObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *

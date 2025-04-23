@@ -34,6 +34,7 @@ public interface BidiReadObjectErrorOrBuilder
    * <code>repeated .google.storage.v2.ReadRangeError read_range_errors = 1;</code>
    */
   java.util.List<com.google.storage.v2.ReadRangeError> getReadRangeErrorsList();
+
   /**
    *
    *
@@ -44,6 +45,7 @@ public interface BidiReadObjectErrorOrBuilder
    * <code>repeated .google.storage.v2.ReadRangeError read_range_errors = 1;</code>
    */
   com.google.storage.v2.ReadRangeError getReadRangeErrors(int index);
+
   /**
    *
    *
@@ -54,6 +56,7 @@ public interface BidiReadObjectErrorOrBuilder
    * <code>repeated .google.storage.v2.ReadRangeError read_range_errors = 1;</code>
    */
   int getReadRangeErrorsCount();
+
   /**
    *
    *
@@ -65,6 +68,7 @@ public interface BidiReadObjectErrorOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.ReadRangeErrorOrBuilder>
       getReadRangeErrorsOrBuilderList();
+
   /**
    *
    *

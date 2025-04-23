@@ -39,6 +39,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -82,6 +83,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The pageToken.
    */
   java.lang.String getPageToken();
+
   /**
    *
    *
@@ -109,6 +111,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The prefix.
    */
   java.lang.String getPrefix();
+
   /**
    *
    *
@@ -137,6 +140,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The delimiter.
    */
   java.lang.String getDelimiter();
+
   /**
    *
    *
@@ -167,6 +171,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The lexicographicStart.
    */
   java.lang.String getLexicographicStart();
+
   /**
    *
    *
@@ -198,6 +203,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The lexicographicEnd.
    */
   java.lang.String getLexicographicEnd();
+
   /**
    *
    *
@@ -229,6 +235,7 @@ public interface ListFoldersRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

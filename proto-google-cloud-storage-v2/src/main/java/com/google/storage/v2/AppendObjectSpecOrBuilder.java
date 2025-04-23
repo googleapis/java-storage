@@ -38,6 +38,7 @@ public interface AppendObjectSpecOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface AppendObjectSpecOrBuilder
    * @return The object.
    */
   java.lang.String getObject();
+
   /**
    *
    *
@@ -104,6 +106,7 @@ public interface AppendObjectSpecOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -131,6 +134,7 @@ public interface AppendObjectSpecOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -158,6 +162,7 @@ public interface AppendObjectSpecOrBuilder
    * @return Whether the routingToken field is set.
    */
   boolean hasRoutingToken();
+
   /**
    *
    *
@@ -171,6 +176,7 @@ public interface AppendObjectSpecOrBuilder
    * @return The routingToken.
    */
   java.lang.String getRoutingToken();
+
   /**
    *
    *
@@ -198,6 +204,7 @@ public interface AppendObjectSpecOrBuilder
    * @return Whether the writeHandle field is set.
    */
   boolean hasWriteHandle();
+
   /**
    *
    *
@@ -211,6 +218,7 @@ public interface AppendObjectSpecOrBuilder
    * @return The writeHandle.
    */
   com.google.storage.v2.BidiWriteHandle getWriteHandle();
+
   /**
    *
    *

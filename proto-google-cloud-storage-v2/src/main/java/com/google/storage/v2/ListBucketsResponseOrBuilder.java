@@ -34,6 +34,7 @@ public interface ListBucketsResponseOrBuilder
    * <code>repeated .google.storage.v2.Bucket buckets = 1;</code>
    */
   java.util.List<com.google.storage.v2.Bucket> getBucketsList();
+
   /**
    *
    *
@@ -44,6 +45,7 @@ public interface ListBucketsResponseOrBuilder
    * <code>repeated .google.storage.v2.Bucket buckets = 1;</code>
    */
   com.google.storage.v2.Bucket getBuckets(int index);
+
   /**
    *
    *
@@ -54,6 +56,7 @@ public interface ListBucketsResponseOrBuilder
    * <code>repeated .google.storage.v2.Bucket buckets = 1;</code>
    */
   int getBucketsCount();
+
   /**
    *
    *
@@ -64,6 +67,7 @@ public interface ListBucketsResponseOrBuilder
    * <code>repeated .google.storage.v2.Bucket buckets = 1;</code>
    */
   java.util.List<? extends com.google.storage.v2.BucketOrBuilder> getBucketsOrBuilderList();
+
   /**
    *
    *
@@ -88,6 +92,7 @@ public interface ListBucketsResponseOrBuilder
    * @return The nextPageToken.
    */
   java.lang.String getNextPageToken();
+
   /**
    *
    *

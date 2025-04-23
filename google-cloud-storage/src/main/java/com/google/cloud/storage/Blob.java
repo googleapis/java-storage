@@ -402,7 +402,9 @@ public class Blob extends BlobInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setTimeStorageClassUpdatedOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setTimeStorageClassUpdatedOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
@@ -423,7 +425,9 @@ public class Blob extends BlobInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setDeleteTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setDeleteTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setDeleteTime(Long deleteTime) {
@@ -437,7 +441,9 @@ public class Blob extends BlobInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setUpdateTime(Long updateTime) {
@@ -464,7 +470,9 @@ public class Blob extends BlobInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setCustomTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setCustomTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     public Builder setCustomTime(Long customTime) {
@@ -508,7 +516,9 @@ public class Blob extends BlobInfo {
       return this;
     }
 
-    /** @deprecated Use {@link #setRetentionExpirationTimeOffsetDateTime(OffsetDateTime)} */
+    /**
+     * @deprecated Use {@link #setRetentionExpirationTimeOffsetDateTime(OffsetDateTime)}
+     */
     @Override
     @Deprecated
     Builder setRetentionExpirationTime(Long retentionExpirationTime) {

@@ -33,6 +33,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     // @@protoc_insertion_point(message_implements:google.storage.v2.ListObjectsResponse)
     ListObjectsResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ListObjectsResponse.newBuilder() to construct.
   private ListObjectsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -69,6 +70,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.Object> objects_;
+
   /**
    *
    *
@@ -82,6 +84,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public java.util.List<com.google.storage.v2.Object> getObjectsList() {
     return objects_;
   }
+
   /**
    *
    *
@@ -95,6 +98,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public java.util.List<? extends com.google.storage.v2.ObjectOrBuilder> getObjectsOrBuilderList() {
     return objects_;
   }
+
   /**
    *
    *
@@ -108,6 +112,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public int getObjectsCount() {
     return objects_.size();
   }
+
   /**
    *
    *
@@ -121,6 +126,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public com.google.storage.v2.Object getObjects(int index) {
     return objects_.get(index);
   }
+
   /**
    *
    *
@@ -140,6 +146,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   @SuppressWarnings("serial")
   private com.google.protobuf.LazyStringArrayList prefixes_ =
       com.google.protobuf.LazyStringArrayList.emptyList();
+
   /**
    *
    *
@@ -155,6 +162,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public com.google.protobuf.ProtocolStringList getPrefixesList() {
     return prefixes_;
   }
+
   /**
    *
    *
@@ -170,6 +178,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public int getPrefixesCount() {
     return prefixes_.size();
   }
+
   /**
    *
    *
@@ -186,6 +195,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public java.lang.String getPrefixes(int index) {
     return prefixes_.get(index);
   }
+
   /**
    *
    *
@@ -207,6 +217,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object nextPageToken_ = "";
+
   /**
    *
    *
@@ -231,6 +242,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       return s;
     }
   }
+
   /**
    *
    *
@@ -442,6 +454,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -737,6 +750,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return objectsBuilder_.getMessageList();
       }
     }
+
     /**
      *
      *
@@ -753,6 +767,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return objectsBuilder_.getCount();
       }
     }
+
     /**
      *
      *
@@ -769,6 +784,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return objectsBuilder_.getMessage(index);
       }
     }
+
     /**
      *
      *
@@ -791,6 +807,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -810,6 +827,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -832,6 +850,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -854,6 +873,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -873,6 +893,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -892,6 +913,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -912,6 +934,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -931,6 +954,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -950,6 +974,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       return this;
     }
+
     /**
      *
      *
@@ -962,6 +987,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.Object.Builder getObjectsBuilder(int index) {
       return getObjectsFieldBuilder().getBuilder(index);
     }
+
     /**
      *
      *
@@ -978,6 +1004,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return objectsBuilder_.getMessageOrBuilder(index);
       }
     }
+
     /**
      *
      *
@@ -995,6 +1022,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return java.util.Collections.unmodifiableList(objects_);
       }
     }
+
     /**
      *
      *
@@ -1007,6 +1035,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.Object.Builder addObjectsBuilder() {
       return getObjectsFieldBuilder().addBuilder(com.google.storage.v2.Object.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -1020,6 +1049,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       return getObjectsFieldBuilder()
           .addBuilder(index, com.google.storage.v2.Object.getDefaultInstance());
     }
+
     /**
      *
      *
@@ -1059,6 +1089,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       bitField0_ |= 0x00000002;
     }
+
     /**
      *
      *
@@ -1075,6 +1106,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       prefixes_.makeImmutable();
       return prefixes_;
     }
+
     /**
      *
      *
@@ -1090,6 +1122,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public int getPrefixesCount() {
       return prefixes_.size();
     }
+
     /**
      *
      *
@@ -1106,6 +1139,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public java.lang.String getPrefixes(int index) {
       return prefixes_.get(index);
     }
+
     /**
      *
      *
@@ -1122,6 +1156,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public com.google.protobuf.ByteString getPrefixesBytes(int index) {
       return prefixes_.getByteString(index);
     }
+
     /**
      *
      *
@@ -1146,6 +1181,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1169,6 +1205,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1189,6 +1226,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1208,6 +1246,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1234,6 +1273,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     }
 
     private java.lang.Object nextPageToken_ = "";
+
     /**
      *
      *
@@ -1257,6 +1297,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1280,6 +1321,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1302,6 +1344,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1320,6 +1363,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       onChanged();
       return this;
     }
+
     /**
      *
      *

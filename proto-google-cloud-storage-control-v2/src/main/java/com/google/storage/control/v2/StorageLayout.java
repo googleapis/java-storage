@@ -33,6 +33,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     // @@protoc_insertion_point(message_implements:google.storage.control.v2.StorageLayout)
     StorageLayoutOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use StorageLayout.newBuilder() to construct.
   private StorageLayout(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -82,6 +83,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
      * @return A list containing the dataLocations.
      */
     java.util.List<java.lang.String> getDataLocationsList();
+
     /**
      *
      *
@@ -94,6 +96,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
      * @return The count of dataLocations.
      */
     int getDataLocationsCount();
+
     /**
      *
      *
@@ -107,6 +110,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
      * @return The dataLocations at the given index.
      */
     java.lang.String getDataLocations(int index);
+
     /**
      *
      *
@@ -121,6 +125,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
      */
     com.google.protobuf.ByteString getDataLocationsBytes(int index);
   }
+
   /**
    *
    *
@@ -137,6 +142,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.control.v2.StorageLayout.CustomPlacementConfig)
       CustomPlacementConfigOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use CustomPlacementConfig.newBuilder() to construct.
     private CustomPlacementConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -172,6 +178,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     @SuppressWarnings("serial")
     private com.google.protobuf.LazyStringArrayList dataLocations_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
+
     /**
      *
      *
@@ -186,6 +193,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ProtocolStringList getDataLocationsList() {
       return dataLocations_;
     }
+
     /**
      *
      *
@@ -200,6 +208,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     public int getDataLocationsCount() {
       return dataLocations_.size();
     }
+
     /**
      *
      *
@@ -215,6 +224,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     public java.lang.String getDataLocations(int index) {
       return dataLocations_.get(index);
     }
+
     /**
      *
      *
@@ -400,6 +410,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -611,6 +622,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ |= 0x00000001;
       }
+
       /**
        *
        *
@@ -626,6 +638,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         dataLocations_.makeImmutable();
         return dataLocations_;
       }
+
       /**
        *
        *
@@ -640,6 +653,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       public int getDataLocationsCount() {
         return dataLocations_.size();
       }
+
       /**
        *
        *
@@ -655,6 +669,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       public java.lang.String getDataLocations(int index) {
         return dataLocations_.get(index);
       }
+
       /**
        *
        *
@@ -670,6 +685,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
         return dataLocations_.getByteString(index);
       }
+
       /**
        *
        *
@@ -693,6 +709,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -715,6 +732,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -734,6 +752,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -752,6 +771,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -861,6 +881,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
      */
     boolean getEnabled();
   }
+
   /**
    *
    *
@@ -875,6 +896,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       // @@protoc_insertion_point(message_implements:google.storage.control.v2.StorageLayout.HierarchicalNamespace)
       HierarchicalNamespaceOrBuilder {
     private static final long serialVersionUID = 0L;
+
     // Use HierarchicalNamespace.newBuilder() to construct.
     private HierarchicalNamespace(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -905,6 +927,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
     public static final int ENABLED_FIELD_NUMBER = 1;
     private boolean enabled_ = false;
+
     /**
      *
      *
@@ -1083,6 +1106,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       Builder builder = new Builder(parent);
       return builder;
     }
+
     /**
      *
      *
@@ -1275,6 +1299,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       private int bitField0_;
 
       private boolean enabled_;
+
       /**
        *
        *
@@ -1290,6 +1315,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       public boolean getEnabled() {
         return enabled_;
       }
+
       /**
        *
        *
@@ -1309,6 +1335,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         onChanged();
         return this;
       }
+
       /**
        *
        *
@@ -1399,6 +1426,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object name_ = "";
+
   /**
    *
    *
@@ -1423,6 +1451,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -1452,6 +1481,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object location_ = "";
+
   /**
    *
    *
@@ -1475,6 +1505,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -1503,6 +1534,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object locationType_ = "";
+
   /**
    *
    *
@@ -1527,6 +1559,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       return s;
     }
   }
+
   /**
    *
    *
@@ -1554,6 +1587,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
   public static final int CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER = 4;
   private com.google.storage.control.v2.StorageLayout.CustomPlacementConfig customPlacementConfig_;
+
   /**
    *
    *
@@ -1572,6 +1606,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
   public boolean hasCustomPlacementConfig() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -1593,6 +1628,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.control.v2.StorageLayout.CustomPlacementConfig.getDefaultInstance()
         : customPlacementConfig_;
   }
+
   /**
    *
    *
@@ -1615,6 +1651,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
 
   public static final int HIERARCHICAL_NAMESPACE_FIELD_NUMBER = 5;
   private com.google.storage.control.v2.StorageLayout.HierarchicalNamespace hierarchicalNamespace_;
+
   /**
    *
    *
@@ -1633,6 +1670,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
   public boolean hasHierarchicalNamespace() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -1654,6 +1692,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         ? com.google.storage.control.v2.StorageLayout.HierarchicalNamespace.getDefaultInstance()
         : hierarchicalNamespace_;
   }
+
   /**
    *
    *
@@ -1881,6 +1920,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -2150,6 +2190,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
 
     private java.lang.Object name_ = "";
+
     /**
      *
      *
@@ -2173,6 +2214,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2196,6 +2238,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2218,6 +2261,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2236,6 +2280,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2261,6 +2306,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object location_ = "";
+
     /**
      *
      *
@@ -2283,6 +2329,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2305,6 +2352,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2326,6 +2374,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2343,6 +2392,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2367,6 +2417,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     }
 
     private java.lang.Object locationType_ = "";
+
     /**
      *
      *
@@ -2390,6 +2441,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2413,6 +2465,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2435,6 +2488,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2453,6 +2507,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2484,6 +2539,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.control.v2.StorageLayout.CustomPlacementConfig.Builder,
             com.google.storage.control.v2.StorageLayout.CustomPlacementConfigOrBuilder>
         customPlacementConfigBuilder_;
+
     /**
      *
      *
@@ -2501,6 +2557,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     public boolean hasCustomPlacementConfig() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -2525,6 +2582,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return customPlacementConfigBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2551,6 +2609,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2574,6 +2633,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2607,6 +2667,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -2629,6 +2690,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2647,6 +2709,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getCustomPlacementConfigFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2669,6 +2732,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
             : customPlacementConfig_;
       }
     }
+
     /**
      *
      *
@@ -2705,6 +2769,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.control.v2.StorageLayout.HierarchicalNamespace.Builder,
             com.google.storage.control.v2.StorageLayout.HierarchicalNamespaceOrBuilder>
         hierarchicalNamespaceBuilder_;
+
     /**
      *
      *
@@ -2722,6 +2787,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
     public boolean hasHierarchicalNamespace() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -2746,6 +2812,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
         return hierarchicalNamespaceBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2772,6 +2839,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2795,6 +2863,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2828,6 +2897,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
     /**
      *
      *
@@ -2850,6 +2920,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2868,6 +2939,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return getHierarchicalNamespaceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2890,6 +2962,7 @@ public final class StorageLayout extends com.google.protobuf.GeneratedMessageV3
             : hierarchicalNamespace_;
       }
     }
+
     /**
      *
      *

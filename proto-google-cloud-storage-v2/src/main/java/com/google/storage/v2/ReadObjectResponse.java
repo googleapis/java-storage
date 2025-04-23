@@ -33,6 +33,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     // @@protoc_insertion_point(message_implements:google.storage.v2.ReadObjectResponse)
     ReadObjectResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use ReadObjectResponse.newBuilder() to construct.
   private ReadObjectResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -64,6 +65,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   private int bitField0_;
   public static final int CHECKSUMMED_DATA_FIELD_NUMBER = 1;
   private com.google.storage.v2.ChecksummedData checksummedData_;
+
   /**
    *
    *
@@ -82,6 +84,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   public boolean hasChecksummedData() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -102,6 +105,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.ChecksummedData.getDefaultInstance()
         : checksummedData_;
   }
+
   /**
    *
    *
@@ -123,6 +127,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 2;
   private com.google.storage.v2.ObjectChecksums objectChecksums_;
+
   /**
    *
    *
@@ -140,6 +145,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   public boolean hasObjectChecksums() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -159,6 +165,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
         : objectChecksums_;
   }
+
   /**
    *
    *
@@ -179,6 +186,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
 
   public static final int CONTENT_RANGE_FIELD_NUMBER = 3;
   private com.google.storage.v2.ContentRange contentRange_;
+
   /**
    *
    *
@@ -196,6 +204,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   public boolean hasContentRange() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -215,6 +224,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.ContentRange.getDefaultInstance()
         : contentRange_;
   }
+
   /**
    *
    *
@@ -235,6 +245,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
 
   public static final int METADATA_FIELD_NUMBER = 4;
   private com.google.storage.v2.Object metadata_;
+
   /**
    *
    *
@@ -251,6 +262,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   public boolean hasMetadata() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -267,6 +279,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
   public com.google.storage.v2.Object getMetadata() {
     return metadata_ == null ? com.google.storage.v2.Object.getDefaultInstance() : metadata_;
   }
+
   /**
    *
    *
@@ -487,6 +500,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -749,6 +763,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.ChecksummedData.Builder,
             com.google.storage.v2.ChecksummedDataOrBuilder>
         checksummedDataBuilder_;
+
     /**
      *
      *
@@ -766,6 +781,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     public boolean hasChecksummedData() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -789,6 +805,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         return checksummedDataBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -814,6 +831,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -837,6 +855,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -867,6 +886,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -889,6 +909,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -906,6 +927,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getChecksummedDataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -927,6 +949,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             : checksummedData_;
       }
     }
+
     /**
      *
      *
@@ -962,6 +985,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.ObjectChecksums.Builder,
             com.google.storage.v2.ObjectChecksumsOrBuilder>
         objectChecksumsBuilder_;
+
     /**
      *
      *
@@ -978,6 +1002,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     public boolean hasObjectChecksums() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -1000,6 +1025,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         return objectChecksumsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1024,6 +1050,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1046,6 +1073,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1075,6 +1103,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1096,6 +1125,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1112,6 +1142,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1132,6 +1163,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             : objectChecksums_;
       }
     }
+
     /**
      *
      *
@@ -1166,6 +1198,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.ContentRange.Builder,
             com.google.storage.v2.ContentRangeOrBuilder>
         contentRangeBuilder_;
+
     /**
      *
      *
@@ -1182,6 +1215,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     public boolean hasContentRange() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1204,6 +1238,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         return contentRangeBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1228,6 +1263,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1249,6 +1285,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1278,6 +1315,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1299,6 +1337,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1315,6 +1354,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getContentRangeFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1335,6 +1375,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             : contentRange_;
       }
     }
+
     /**
      *
      *
@@ -1369,6 +1410,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         metadataBuilder_;
+
     /**
      *
      *
@@ -1384,6 +1426,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
     public boolean hasMetadata() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1403,6 +1446,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         return metadataBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1426,6 +1470,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1446,6 +1491,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1474,6 +1520,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1494,6 +1541,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1509,6 +1557,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getMetadataFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1526,6 +1575,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
         return metadata_ == null ? com.google.storage.v2.Object.getDefaultInstance() : metadata_;
       }
     }
+
     /**
      *
      *

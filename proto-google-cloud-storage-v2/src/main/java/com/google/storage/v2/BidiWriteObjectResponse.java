@@ -33,6 +33,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiWriteObjectResponse)
     BidiWriteObjectResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiWriteObjectResponse.newBuilder() to construct.
   private BidiWriteObjectResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -79,6 +80,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     private WriteStatusCase(int value) {
       this.value = value;
     }
+
     /**
      * @param value The number of the enum to look for.
      * @return The enum associated with the given number.
@@ -112,6 +114,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
   }
 
   public static final int PERSISTED_SIZE_FIELD_NUMBER = 1;
+
   /**
    *
    *
@@ -128,6 +131,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
   public boolean hasPersistedSize() {
     return writeStatusCase_ == 1;
   }
+
   /**
    *
    *
@@ -149,6 +153,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
   }
 
   public static final int RESOURCE_FIELD_NUMBER = 2;
+
   /**
    *
    *
@@ -165,6 +170,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
   public boolean hasResource() {
     return writeStatusCase_ == 2;
   }
+
   /**
    *
    *
@@ -184,6 +190,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     }
     return com.google.storage.v2.Object.getDefaultInstance();
   }
+
   /**
    *
    *
@@ -204,6 +211,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
 
   public static final int WRITE_HANDLE_FIELD_NUMBER = 3;
   private com.google.storage.v2.BidiWriteHandle writeHandle_;
+
   /**
    *
    *
@@ -221,6 +229,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
   public boolean hasWriteHandle() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -240,6 +249,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
         ? com.google.storage.v2.BidiWriteHandle.getDefaultInstance()
         : writeHandle_;
   }
+
   /**
    *
    *
@@ -461,6 +471,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -729,6 +740,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     public boolean hasPersistedSize() {
       return writeStatusCase_ == 1;
     }
+
     /**
      *
      *
@@ -747,6 +759,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       }
       return 0L;
     }
+
     /**
      *
      *
@@ -767,6 +780,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -793,6 +807,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         resourceBuilder_;
+
     /**
      *
      *
@@ -809,6 +824,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     public boolean hasResource() {
       return writeStatusCase_ == 2;
     }
+
     /**
      *
      *
@@ -835,6 +851,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -858,6 +875,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -878,6 +896,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -910,6 +929,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       writeStatusCase_ = 2;
       return this;
     }
+
     /**
      *
      *
@@ -936,6 +956,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       }
       return this;
     }
+
     /**
      *
      *
@@ -949,6 +970,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     public com.google.storage.v2.Object.Builder getResourceBuilder() {
       return getResourceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -970,6 +992,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
         return com.google.storage.v2.Object.getDefaultInstance();
       }
     }
+
     /**
      *
      *
@@ -1008,6 +1031,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
             com.google.storage.v2.BidiWriteHandle.Builder,
             com.google.storage.v2.BidiWriteHandleOrBuilder>
         writeHandleBuilder_;
+
     /**
      *
      *
@@ -1024,6 +1048,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
     public boolean hasWriteHandle() {
       return ((bitField0_ & 0x00000004) != 0);
     }
+
     /**
      *
      *
@@ -1046,6 +1071,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
         return writeHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1070,6 +1096,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1091,6 +1118,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1120,6 +1148,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       }
       return this;
     }
+
     /**
      *
      *
@@ -1141,6 +1170,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1157,6 +1187,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
       onChanged();
       return getWriteHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1177,6 +1208,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
             : writeHandle_;
       }
     }
+
     /**
      *
      *
