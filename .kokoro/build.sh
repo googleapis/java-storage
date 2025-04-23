@@ -55,15 +55,15 @@ set +e
 case ${JOB_TYPE} in
 test)
     echo "SUREFIRE_JVM_OPT: ${SUREFIRE_JVM_OPT}"
-    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
+    mvn test -B -ntp -Dfmt.skip=true -Dclirr.skip=true -Denforcer.skip=true ${SUREFIRE_JVM_OPT}
     RETURN_CODE=$?
     ;;
 lint)
-    mvn com.coveo:fmt-maven-plugin:check -B -ntp
+    mvn com.spotify.fmt:fmt-maven-plugin:check -B -ntp
     RETURN_CODE=$?
     ;;
 javadoc)
-    mvn javadoc:javadoc javadoc:test-javadoc -B -ntp
+    mvn javadoc:javadoc javadoc:test-javadoc -B -ntp -Dfmt.skip=true
     RETURN_CODE=$?
     ;;
 integration)
@@ -75,13 +75,14 @@ integration)
       -Denforcer.skip=true \
       -Dcheckstyle.skip=true \
       -DskipUnitTests=true \
+      -Dfmt.skip=true \
       -fae \
       verify
     RETURN_CODE=$?
     ;;
 graalvm)
     # Run Unit and Integration Tests with Native Image
-    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
+    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test -Dfmt.skip=true
     RETURN_CODE=$?
     ;;
 samples)
@@ -105,6 +106,7 @@ samples)
           -DtrimStackTrace=false \
           -Dclirr.skip=true \
           -Denforcer.skip=true \
+		  -Dfmt.skip=true \
           -fae \
           verify
         RETURN_CODE=$?
@@ -114,7 +116,7 @@ samples)
     fi
     ;;
 clirr)
-    mvn -B -ntp -Denforcer.skip=true clirr:check
+    mvn -B -ntp -Dfmt.skip=true -Denforcer.skip=true clirr:check
     RETURN_CODE=$?
     ;;
 *)
