@@ -35,7 +35,7 @@ final class SyncingFileChannel implements UnbufferedWritableByteChannel {
     long written = fc.write(srcs, offset, length);
     // metadata in this case are things like mtime, atime etc. Those are not important to our needs
     // simply force the file contents to by synced.
-    fc.force(/*includeMetaData = */ false);
+    fc.force(/* includeMetaData= */ false);
     return written;
   }
 

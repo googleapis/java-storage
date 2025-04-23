@@ -36,6 +36,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the resource field is set.
    */
   boolean hasResource();
+
   /**
    *
    *
@@ -48,6 +49,7 @@ public interface WriteObjectSpecOrBuilder
    * @return The resource.
    */
   com.google.storage.v2.Object getResource();
+
   /**
    *
    *
@@ -73,6 +75,7 @@ public interface WriteObjectSpecOrBuilder
    * @return The predefinedAcl.
    */
   java.lang.String getPredefinedAcl();
+
   /**
    *
    *
@@ -102,6 +105,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -132,6 +136,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -161,6 +166,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -188,6 +194,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -220,6 +227,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the objectSize field is set.
    */
   boolean hasObjectSize();
+
   /**
    *
    *
@@ -252,6 +260,7 @@ public interface WriteObjectSpecOrBuilder
    * @return Whether the appendable field is set.
    */
   boolean hasAppendable();
+
   /**
    *
    *

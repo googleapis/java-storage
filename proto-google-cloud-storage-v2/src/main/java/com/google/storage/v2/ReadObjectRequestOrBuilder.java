@@ -38,6 +38,7 @@ public interface ReadObjectRequestOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface ReadObjectRequestOrBuilder
    * @return The object.
    */
   java.lang.String getObject();
+
   /**
    *
    *
@@ -146,6 +148,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -176,6 +179,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -205,6 +209,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -232,6 +237,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -258,6 +264,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -270,6 +277,7 @@ public interface ReadObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *
@@ -297,6 +305,7 @@ public interface ReadObjectRequestOrBuilder
    * @return Whether the readMask field is set.
    */
   boolean hasReadMask();
+
   /**
    *
    *
@@ -313,6 +322,7 @@ public interface ReadObjectRequestOrBuilder
    * @return The readMask.
    */
   com.google.protobuf.FieldMask getReadMask();
+
   /**
    *
    *

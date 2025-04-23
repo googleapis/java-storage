@@ -33,6 +33,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     // @@protoc_insertion_point(message_implements:google.storage.v2.RewriteResponse)
     RewriteResponseOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use RewriteResponse.newBuilder() to construct.
   private RewriteResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -66,6 +67,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
   private int bitField0_;
   public static final int TOTAL_BYTES_REWRITTEN_FIELD_NUMBER = 1;
   private long totalBytesRewritten_ = 0L;
+
   /**
    *
    *
@@ -85,6 +87,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
 
   public static final int OBJECT_SIZE_FIELD_NUMBER = 2;
   private long objectSize_ = 0L;
+
   /**
    *
    *
@@ -104,6 +107,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
 
   public static final int DONE_FIELD_NUMBER = 3;
   private boolean done_ = false;
+
   /**
    *
    *
@@ -125,6 +129,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object rewriteToken_ = "";
+
   /**
    *
    *
@@ -149,6 +154,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       return s;
     }
   }
+
   /**
    *
    *
@@ -176,6 +182,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
 
   public static final int RESOURCE_FIELD_NUMBER = 5;
   private com.google.storage.v2.Object resource_;
+
   /**
    *
    *
@@ -192,6 +199,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
   public boolean hasResource() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -208,6 +216,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
   public com.google.storage.v2.Object getResource() {
     return resource_ == null ? com.google.storage.v2.Object.getDefaultInstance() : resource_;
   }
+
   /**
    *
    *
@@ -421,6 +430,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -672,6 +682,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     private int bitField0_;
 
     private long totalBytesRewritten_;
+
     /**
      *
      *
@@ -688,6 +699,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     public long getTotalBytesRewritten() {
       return totalBytesRewritten_;
     }
+
     /**
      *
      *
@@ -708,6 +720,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -728,6 +741,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     }
 
     private long objectSize_;
+
     /**
      *
      *
@@ -744,6 +758,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     public long getObjectSize() {
       return objectSize_;
     }
+
     /**
      *
      *
@@ -764,6 +779,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -784,6 +800,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     }
 
     private boolean done_;
+
     /**
      *
      *
@@ -800,6 +817,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     public boolean getDone() {
       return done_;
     }
+
     /**
      *
      *
@@ -820,6 +838,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -840,6 +859,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     }
 
     private java.lang.Object rewriteToken_ = "";
+
     /**
      *
      *
@@ -863,6 +883,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -886,6 +907,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -908,6 +930,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -926,6 +949,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -956,6 +980,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
             com.google.storage.v2.Object.Builder,
             com.google.storage.v2.ObjectOrBuilder>
         resourceBuilder_;
+
     /**
      *
      *
@@ -971,6 +996,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
     public boolean hasResource() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -990,6 +1016,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
         return resourceBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1013,6 +1040,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1033,6 +1061,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1061,6 +1090,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       }
       return this;
     }
+
     /**
      *
      *
@@ -1081,6 +1111,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1096,6 +1127,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
       onChanged();
       return getResourceFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1113,6 +1145,7 @@ public final class RewriteResponse extends com.google.protobuf.GeneratedMessageV
         return resource_ == null ? com.google.storage.v2.Object.getDefaultInstance() : resource_;
       }
     }
+
     /**
      *
      *

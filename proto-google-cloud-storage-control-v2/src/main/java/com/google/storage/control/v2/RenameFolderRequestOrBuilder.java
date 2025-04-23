@@ -39,6 +39,7 @@ public interface RenameFolderRequestOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -67,6 +68,7 @@ public interface RenameFolderRequestOrBuilder
    * @return The destinationFolderId.
    */
   java.lang.String getDestinationFolderId();
+
   /**
    *
    *
@@ -93,6 +95,7 @@ public interface RenameFolderRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -120,6 +123,7 @@ public interface RenameFolderRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -150,6 +154,7 @@ public interface RenameFolderRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

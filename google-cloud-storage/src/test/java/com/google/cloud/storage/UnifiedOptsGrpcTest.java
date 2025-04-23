@@ -1397,7 +1397,15 @@ public final class UnifiedOptsGrpcTest {
       assertThat(expected)
           .hasMessageThat()
           .contains(
-              "[accept-encoding, cache-control, connection, content-id, content-length, content-range, content-transfer-encoding, content-type, date, etag, if-match, if-none-match, keep-alive, range, te, trailer, transfer-encoding, user-agent, x-goog-api-client, x-goog-content-length-range, x-goog-copy-source-encryption-algorithm, x-goog-copy-source-encryption-key, x-goog-copy-source-encryption-key-sha256, x-goog-encryption-algorithm, x-goog-encryption-key, x-goog-encryption-key-sha256, x-goog-meta-a, x-goog-request-params, x-goog-user-project, x-http-method-override, x-upload-content-length, x-upload-content-type]");
+              "[accept-encoding, cache-control, connection, content-id, content-length,"
+                  + " content-range, content-transfer-encoding, content-type, date, etag, if-match,"
+                  + " if-none-match, keep-alive, range, te, trailer, transfer-encoding, user-agent,"
+                  + " x-goog-api-client, x-goog-content-length-range,"
+                  + " x-goog-copy-source-encryption-algorithm, x-goog-copy-source-encryption-key,"
+                  + " x-goog-copy-source-encryption-key-sha256, x-goog-encryption-algorithm,"
+                  + " x-goog-encryption-key, x-goog-encryption-key-sha256, x-goog-meta-a,"
+                  + " x-goog-request-params, x-goog-user-project, x-http-method-override,"
+                  + " x-upload-content-length, x-upload-content-type]");
     }
   }
 

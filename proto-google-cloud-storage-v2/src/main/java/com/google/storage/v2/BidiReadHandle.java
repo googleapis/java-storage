@@ -35,6 +35,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiReadHandle)
     BidiReadHandleOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiReadHandle.newBuilder() to construct.
   private BidiReadHandle(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -67,6 +68,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
 
   public static final int HANDLE_FIELD_NUMBER = 1;
   private com.google.protobuf.ByteString handle_ = com.google.protobuf.ByteString.EMPTY;
+
   /**
    *
    *
@@ -240,6 +242,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -422,6 +425,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
     private int bitField0_;
 
     private com.google.protobuf.ByteString handle_ = com.google.protobuf.ByteString.EMPTY;
+
     /**
      *
      *
@@ -437,6 +441,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
     public com.google.protobuf.ByteString getHandle() {
       return handle_;
     }
+
     /**
      *
      *
@@ -458,6 +463,7 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
       onChanged();
       return this;
     }
+
     /**
      *
      *

@@ -40,6 +40,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the object field is set.
    */
   boolean hasObject();
+
   /**
    *
    *
@@ -56,6 +57,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return The object.
    */
   com.google.storage.v2.Object getObject();
+
   /**
    *
    *
@@ -85,6 +87,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -115,6 +118,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -144,6 +148,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -171,6 +176,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -199,6 +205,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return The predefinedAcl.
    */
   java.lang.String getPredefinedAcl();
+
   /**
    *
    *
@@ -234,6 +241,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the updateMask field is set.
    */
   boolean hasUpdateMask();
+
   /**
    *
    *
@@ -254,6 +262,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return The updateMask.
    */
   com.google.protobuf.FieldMask getUpdateMask();
+
   /**
    *
    *
@@ -285,6 +294,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -297,6 +307,7 @@ public interface UpdateObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *

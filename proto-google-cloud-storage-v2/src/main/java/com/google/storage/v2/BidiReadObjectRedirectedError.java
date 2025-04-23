@@ -34,6 +34,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiReadObjectRedirectedError)
     BidiReadObjectRedirectedErrorOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiReadObjectRedirectedError.newBuilder() to construct.
   private BidiReadObjectRedirectedError(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -67,6 +68,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
   private int bitField0_;
   public static final int READ_HANDLE_FIELD_NUMBER = 1;
   private com.google.storage.v2.BidiReadHandle readHandle_;
+
   /**
    *
    *
@@ -83,6 +85,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
   public boolean hasReadHandle() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -101,6 +104,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
         ? com.google.storage.v2.BidiReadHandle.getDefaultInstance()
         : readHandle_;
   }
+
   /**
    *
    *
@@ -122,6 +126,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object routingToken_ = "";
+
   /**
    *
    *
@@ -137,6 +142,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
   public boolean hasRoutingToken() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -160,6 +166,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       return s;
     }
   }
+
   /**
    *
    *
@@ -362,6 +369,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -582,6 +590,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
             com.google.storage.v2.BidiReadHandle.Builder,
             com.google.storage.v2.BidiReadHandleOrBuilder>
         readHandleBuilder_;
+
     /**
      *
      *
@@ -597,6 +606,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
     public boolean hasReadHandle() {
       return ((bitField0_ & 0x00000001) != 0);
     }
+
     /**
      *
      *
@@ -618,6 +628,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
         return readHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -641,6 +652,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -661,6 +673,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -689,6 +702,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       }
       return this;
     }
+
     /**
      *
      *
@@ -709,6 +723,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -724,6 +739,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return getReadHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -743,6 +759,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
             : readHandle_;
       }
     }
+
     /**
      *
      *
@@ -771,6 +788,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
     }
 
     private java.lang.Object routingToken_ = "";
+
     /**
      *
      *
@@ -785,6 +803,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
     public boolean hasRoutingToken() {
       return ((bitField0_ & 0x00000002) != 0);
     }
+
     /**
      *
      *
@@ -807,6 +826,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -829,6 +849,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -850,6 +871,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -867,6 +889,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
       onChanged();
       return this;
     }
+
     /**
      *
      *

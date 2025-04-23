@@ -38,6 +38,7 @@ public interface CreateBucketRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -71,6 +72,7 @@ public interface CreateBucketRequestOrBuilder
    * @return Whether the bucket field is set.
    */
   boolean hasBucket();
+
   /**
    *
    *
@@ -89,6 +91,7 @@ public interface CreateBucketRequestOrBuilder
    * @return The bucket.
    */
   com.google.storage.v2.Bucket getBucket();
+
   /**
    *
    *
@@ -120,6 +123,7 @@ public interface CreateBucketRequestOrBuilder
    * @return The bucketId.
    */
   java.lang.String getBucketId();
+
   /**
    *
    *
@@ -149,6 +153,7 @@ public interface CreateBucketRequestOrBuilder
    * @return The predefinedAcl.
    */
   java.lang.String getPredefinedAcl();
+
   /**
    *
    *
@@ -178,6 +183,7 @@ public interface CreateBucketRequestOrBuilder
    * @return The predefinedDefaultObjectAcl.
    */
   java.lang.String getPredefinedDefaultObjectAcl();
+
   /**
    *
    *

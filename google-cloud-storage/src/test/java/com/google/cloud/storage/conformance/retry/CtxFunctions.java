@@ -77,6 +77,7 @@ final class CtxFunctions {
      */
     static final CtxFunction bucketInfo =
         (ctx, c) -> ctx.map(s -> s.with(BucketInfo.of(c.getBucketName())));
+
     /**
      * Populate a compose request for the state present in the ctx.
      *
@@ -114,6 +115,7 @@ final class CtxFunctions {
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName())));
     private static final CtxFunction blobIdWithGenerationZero =
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName(), 0L)));
+
     /**
      * Populate a blobId and blob info for the state present in the ctx which specifies a null
      * generation. Use when a generation value shouldn't be part of a request or other evaluation.
@@ -123,6 +125,7 @@ final class CtxFunctions {
      */
     static final CtxFunction blobInfoWithoutGeneration =
         blobIdWithoutGeneration.andThen(blobIdAndBlobInfo);
+
     /**
      * Populate a blobId and blob info for the state present in the ctx which specifies a generation
      * of 0 (zero).
@@ -150,6 +153,7 @@ final class CtxFunctions {
           Bucket resolvedBucket = ctx.getStorage().create(bucketInfo);
           return ctx.map(s -> s.with(resolvedBucket));
         };
+
     /**
      * Create a new object in the {@link State#getBucket()} and populate a blobId, blob info and
      * blob for the state present in the ctx.

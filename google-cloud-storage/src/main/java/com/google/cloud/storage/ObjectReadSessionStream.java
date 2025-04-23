@@ -415,7 +415,8 @@ final class ObjectReadSessionStream
       // cause it to retry and pending remaining reads.
       ApiException apiException =
           ApiExceptionFactory.createException(
-              "Stream error, reclassifying as ABORTED for reads not specified in BidiReadObjectError",
+              "Stream error, reclassifying as ABORTED for reads not specified in"
+                  + " BidiReadObjectError",
               t,
               GrpcStatusCode.of(Code.ABORTED),
               true);

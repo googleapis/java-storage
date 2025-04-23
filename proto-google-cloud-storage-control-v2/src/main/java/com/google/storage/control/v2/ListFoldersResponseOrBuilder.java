@@ -34,6 +34,7 @@ public interface ListFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.Folder folders = 1;</code>
    */
   java.util.List<com.google.storage.control.v2.Folder> getFoldersList();
+
   /**
    *
    *
@@ -44,6 +45,7 @@ public interface ListFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.Folder folders = 1;</code>
    */
   com.google.storage.control.v2.Folder getFolders(int index);
+
   /**
    *
    *
@@ -54,6 +56,7 @@ public interface ListFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.Folder folders = 1;</code>
    */
   int getFoldersCount();
+
   /**
    *
    *
@@ -64,6 +67,7 @@ public interface ListFoldersResponseOrBuilder
    * <code>repeated .google.storage.control.v2.Folder folders = 1;</code>
    */
   java.util.List<? extends com.google.storage.control.v2.FolderOrBuilder> getFoldersOrBuilderList();
+
   /**
    *
    *
@@ -88,6 +92,7 @@ public interface ListFoldersResponseOrBuilder
    * @return The nextPageToken.
    */
   java.lang.String getNextPageToken();
+
   /**
    *
    *

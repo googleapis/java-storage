@@ -33,6 +33,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     // @@protoc_insertion_point(message_implements:google.storage.v2.BidiReadObjectSpec)
     BidiReadObjectSpecOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use BidiReadObjectSpec.newBuilder() to construct.
   private BidiReadObjectSpec(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -70,6 +71,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -95,6 +97,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -125,6 +128,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object object_ = "";
+
   /**
    *
    *
@@ -148,6 +152,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -174,6 +179,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int GENERATION_FIELD_NUMBER = 3;
   private long generation_ = 0L;
+
   /**
    *
    *
@@ -193,6 +199,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -210,6 +217,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -230,6 +238,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 5;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -248,6 +257,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -269,6 +279,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 6;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -285,6 +296,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -304,6 +316,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 7;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -320,6 +333,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -339,6 +353,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 8;
   private com.google.storage.v2.CommonObjectRequestParams commonObjectRequestParams_;
+
   /**
    *
    *
@@ -354,6 +369,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasCommonObjectRequestParams() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -371,6 +387,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
         : commonObjectRequestParams_;
   }
+
   /**
    *
    *
@@ -390,6 +407,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int READ_MASK_FIELD_NUMBER = 12;
   private com.google.protobuf.FieldMask readMask_;
+
   /**
    *
    *
@@ -415,6 +433,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasReadMask() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -440,6 +459,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public com.google.protobuf.FieldMask getReadMask() {
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
   }
+
   /**
    *
    *
@@ -464,6 +484,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   public static final int READ_HANDLE_FIELD_NUMBER = 13;
   private com.google.storage.v2.BidiReadHandle readHandle_;
+
   /**
    *
    *
@@ -481,6 +502,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasReadHandle() {
     return ((bitField0_ & 0x00000040) != 0);
   }
+
   /**
    *
    *
@@ -500,6 +522,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         ? com.google.storage.v2.BidiReadHandle.getDefaultInstance()
         : readHandle_;
   }
+
   /**
    *
    *
@@ -522,6 +545,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object routingToken_ = "";
+
   /**
    *
    *
@@ -538,6 +562,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
   public boolean hasRoutingToken() {
     return ((bitField0_ & 0x00000080) != 0);
   }
+
   /**
    *
    *
@@ -562,6 +587,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       return s;
     }
   }
+
   /**
    *
    *
@@ -878,6 +904,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1232,6 +1259,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -1256,6 +1284,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1280,6 +1309,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1303,6 +1333,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1322,6 +1353,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1348,6 +1380,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object object_ = "";
+
     /**
      *
      *
@@ -1370,6 +1403,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1392,6 +1426,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1413,6 +1448,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1430,6 +1466,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1454,6 +1491,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private long generation_;
+
     /**
      *
      *
@@ -1470,6 +1508,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public long getGeneration() {
       return generation_;
     }
+
     /**
      *
      *
@@ -1490,6 +1529,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1510,6 +1550,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1527,6 +1568,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1544,6 +1586,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1565,6 +1608,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1586,6 +1630,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1604,6 +1649,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1622,6 +1668,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1644,6 +1691,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1666,6 +1714,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -1682,6 +1731,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1698,6 +1748,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1718,6 +1769,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1738,6 +1790,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1754,6 +1807,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1770,6 +1824,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1790,6 +1845,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1815,6 +1871,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.CommonObjectRequestParams.Builder,
             com.google.storage.v2.CommonObjectRequestParamsOrBuilder>
         commonObjectRequestParamsBuilder_;
+
     /**
      *
      *
@@ -1829,6 +1886,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasCommonObjectRequestParams() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1849,6 +1907,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return commonObjectRequestParamsBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -1872,6 +1931,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1892,6 +1952,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1921,6 +1982,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -1940,6 +2002,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1955,6 +2018,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -1974,6 +2038,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
             : commonObjectRequestParams_;
       }
     }
+
     /**
      *
      *
@@ -2006,6 +2071,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
             com.google.protobuf.FieldMask.Builder,
             com.google.protobuf.FieldMaskOrBuilder>
         readMaskBuilder_;
+
     /**
      *
      *
@@ -2030,6 +2096,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasReadMask() {
       return ((bitField0_ & 0x00000100) != 0);
     }
+
     /**
      *
      *
@@ -2058,6 +2125,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return readMaskBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2088,6 +2156,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2115,6 +2184,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2150,6 +2220,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -2177,6 +2248,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2199,6 +2271,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2223,6 +2296,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
       }
     }
+
     /**
      *
      *
@@ -2262,6 +2336,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
             com.google.storage.v2.BidiReadHandle.Builder,
             com.google.storage.v2.BidiReadHandleOrBuilder>
         readHandleBuilder_;
+
     /**
      *
      *
@@ -2278,6 +2353,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasReadHandle() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -2300,6 +2376,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return readHandleBuilder_.getMessage();
       }
     }
+
     /**
      *
      *
@@ -2324,6 +2401,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2345,6 +2423,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2374,6 +2453,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       }
       return this;
     }
+
     /**
      *
      *
@@ -2395,6 +2475,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2411,6 +2492,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return getReadHandleFieldBuilder().getBuilder();
     }
+
     /**
      *
      *
@@ -2431,6 +2513,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
             : readHandle_;
       }
     }
+
     /**
      *
      *
@@ -2460,6 +2543,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     }
 
     private java.lang.Object routingToken_ = "";
+
     /**
      *
      *
@@ -2475,6 +2559,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
     public boolean hasRoutingToken() {
       return ((bitField0_ & 0x00000400) != 0);
     }
+
     /**
      *
      *
@@ -2498,6 +2583,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -2521,6 +2607,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -2543,6 +2630,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2561,6 +2649,7 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
     /**
      *
      *

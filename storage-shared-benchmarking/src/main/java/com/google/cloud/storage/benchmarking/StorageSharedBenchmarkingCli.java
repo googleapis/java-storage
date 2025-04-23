@@ -61,7 +61,8 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       names = "-object_size",
       defaultValue = "1048576..1048576",
       description =
-          "any positive integer, or an inclusive range such as min..max where min and max are positive integers")
+          "any positive integer, or an inclusive range such as min..max where min and max are"
+              + " positive integers")
   String objectSize;
 
   @Option(
@@ -261,6 +262,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     public static Range of(int min, int max) {
       return new Range(min, max);
     }
+
     // Takes an object size range of format min..max and creates a range object
     public static Range of(String range) {
       Pattern p = Pattern.compile("\\.\\.");

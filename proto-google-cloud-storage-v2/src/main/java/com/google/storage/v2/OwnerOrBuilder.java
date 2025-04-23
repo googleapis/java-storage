@@ -36,6 +36,7 @@ public interface OwnerOrBuilder
    * @return The entity.
    */
   java.lang.String getEntity();
+
   /**
    *
    *
@@ -61,6 +62,7 @@ public interface OwnerOrBuilder
    * @return The entityId.
    */
   java.lang.String getEntityId();
+
   /**
    *
    *

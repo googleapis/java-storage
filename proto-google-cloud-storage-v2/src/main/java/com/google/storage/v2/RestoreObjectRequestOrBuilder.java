@@ -38,6 +38,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return The object.
    */
   java.lang.String getObject();
+
   /**
    *
    *
@@ -107,6 +109,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return The restoreToken.
    */
   java.lang.String getRestoreToken();
+
   /**
    *
    *
@@ -138,6 +141,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the ifGenerationMatch field is set.
    */
   boolean hasIfGenerationMatch();
+
   /**
    *
    *
@@ -168,6 +172,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the ifGenerationNotMatch field is set.
    */
   boolean hasIfGenerationNotMatch();
+
   /**
    *
    *
@@ -197,6 +202,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the ifMetagenerationMatch field is set.
    */
   boolean hasIfMetagenerationMatch();
+
   /**
    *
    *
@@ -224,6 +230,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
   boolean hasIfMetagenerationNotMatch();
+
   /**
    *
    *
@@ -252,6 +259,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the copySourceAcl field is set.
    */
   boolean hasCopySourceAcl();
+
   /**
    *
    *
@@ -279,6 +287,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return Whether the commonObjectRequestParams field is set.
    */
   boolean hasCommonObjectRequestParams();
+
   /**
    *
    *
@@ -291,6 +300,7 @@ public interface RestoreObjectRequestOrBuilder
    * @return The commonObjectRequestParams.
    */
   com.google.storage.v2.CommonObjectRequestParams getCommonObjectRequestParams();
+
   /**
    *
    *

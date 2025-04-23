@@ -37,6 +37,7 @@ public interface BucketOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -65,6 +66,7 @@ public interface BucketOrBuilder
    * @return The bucketId.
    */
   java.lang.String getBucketId();
+
   /**
    *
    *
@@ -94,6 +96,7 @@ public interface BucketOrBuilder
    * @return The etag.
    */
   java.lang.String getEtag();
+
   /**
    *
    *
@@ -125,6 +128,7 @@ public interface BucketOrBuilder
    * @return The project.
    */
   java.lang.String getProject();
+
   /**
    *
    *
@@ -172,6 +176,7 @@ public interface BucketOrBuilder
    * @return The location.
    */
   java.lang.String getLocation();
+
   /**
    *
    *
@@ -203,6 +208,7 @@ public interface BucketOrBuilder
    * @return The locationType.
    */
   java.lang.String getLocationType();
+
   /**
    *
    *
@@ -234,6 +240,7 @@ public interface BucketOrBuilder
    * @return The storageClass.
    */
   java.lang.String getStorageClass();
+
   /**
    *
    *
@@ -269,6 +276,7 @@ public interface BucketOrBuilder
    * @return The rpo.
    */
   java.lang.String getRpo();
+
   /**
    *
    *
@@ -299,6 +307,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
    */
   java.util.List<com.google.storage.v2.BucketAccessControl> getAclList();
+
   /**
    *
    *
@@ -311,6 +320,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
    */
   com.google.storage.v2.BucketAccessControl getAcl(int index);
+
   /**
    *
    *
@@ -323,6 +333,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
    */
   int getAclCount();
+
   /**
    *
    *
@@ -336,6 +347,7 @@ public interface BucketOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.BucketAccessControlOrBuilder>
       getAclOrBuilderList();
+
   /**
    *
    *
@@ -361,6 +373,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
    */
   java.util.List<com.google.storage.v2.ObjectAccessControl> getDefaultObjectAclList();
+
   /**
    *
    *
@@ -373,6 +386,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
    */
   com.google.storage.v2.ObjectAccessControl getDefaultObjectAcl(int index);
+
   /**
    *
    *
@@ -385,6 +399,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
    */
   int getDefaultObjectAclCount();
+
   /**
    *
    *
@@ -398,6 +413,7 @@ public interface BucketOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
       getDefaultObjectAclOrBuilderList();
+
   /**
    *
    *
@@ -425,6 +441,7 @@ public interface BucketOrBuilder
    * @return Whether the lifecycle field is set.
    */
   boolean hasLifecycle();
+
   /**
    *
    *
@@ -439,6 +456,7 @@ public interface BucketOrBuilder
    * @return The lifecycle.
    */
   com.google.storage.v2.Bucket.Lifecycle getLifecycle();
+
   /**
    *
    *
@@ -465,6 +483,7 @@ public interface BucketOrBuilder
    * @return Whether the createTime field is set.
    */
   boolean hasCreateTime();
+
   /**
    *
    *
@@ -478,6 +497,7 @@ public interface BucketOrBuilder
    * @return The createTime.
    */
   com.google.protobuf.Timestamp getCreateTime();
+
   /**
    *
    *
@@ -501,6 +521,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
    */
   java.util.List<com.google.storage.v2.Bucket.Cors> getCorsList();
+
   /**
    *
    *
@@ -512,6 +533,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
    */
   com.google.storage.v2.Bucket.Cors getCors(int index);
+
   /**
    *
    *
@@ -523,6 +545,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
    */
   int getCorsCount();
+
   /**
    *
    *
@@ -534,6 +557,7 @@ public interface BucketOrBuilder
    * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
    */
   java.util.List<? extends com.google.storage.v2.Bucket.CorsOrBuilder> getCorsOrBuilderList();
+
   /**
    *
    *
@@ -559,6 +583,7 @@ public interface BucketOrBuilder
    * @return Whether the updateTime field is set.
    */
   boolean hasUpdateTime();
+
   /**
    *
    *
@@ -572,6 +597,7 @@ public interface BucketOrBuilder
    * @return The updateTime.
    */
   com.google.protobuf.Timestamp getUpdateTime();
+
   /**
    *
    *
@@ -619,6 +645,7 @@ public interface BucketOrBuilder
    * <code>map&lt;string, string&gt; labels = 15;</code>
    */
   int getLabelsCount();
+
   /**
    *
    *
@@ -629,9 +656,11 @@ public interface BucketOrBuilder
    * <code>map&lt;string, string&gt; labels = 15;</code>
    */
   boolean containsLabels(java.lang.String key);
+
   /** Use {@link #getLabelsMap()} instead. */
   @java.lang.Deprecated
   java.util.Map<java.lang.String, java.lang.String> getLabels();
+
   /**
    *
    *
@@ -642,6 +671,7 @@ public interface BucketOrBuilder
    * <code>map&lt;string, string&gt; labels = 15;</code>
    */
   java.util.Map<java.lang.String, java.lang.String> getLabelsMap();
+
   /**
    *
    *
@@ -656,6 +686,7 @@ public interface BucketOrBuilder
       java.lang.String key,
       /* nullable */
       java.lang.String defaultValue);
+
   /**
    *
    *
@@ -682,6 +713,7 @@ public interface BucketOrBuilder
    * @return Whether the website field is set.
    */
   boolean hasWebsite();
+
   /**
    *
    *
@@ -697,6 +729,7 @@ public interface BucketOrBuilder
    * @return The website.
    */
   com.google.storage.v2.Bucket.Website getWebsite();
+
   /**
    *
    *
@@ -723,6 +756,7 @@ public interface BucketOrBuilder
    * @return Whether the versioning field is set.
    */
   boolean hasVersioning();
+
   /**
    *
    *
@@ -735,6 +769,7 @@ public interface BucketOrBuilder
    * @return The versioning.
    */
   com.google.storage.v2.Bucket.Versioning getVersioning();
+
   /**
    *
    *
@@ -759,6 +794,7 @@ public interface BucketOrBuilder
    * @return Whether the logging field is set.
    */
   boolean hasLogging();
+
   /**
    *
    *
@@ -772,6 +808,7 @@ public interface BucketOrBuilder
    * @return The logging.
    */
   com.google.storage.v2.Bucket.Logging getLogging();
+
   /**
    *
    *
@@ -797,6 +834,7 @@ public interface BucketOrBuilder
    * @return Whether the owner field is set.
    */
   boolean hasOwner();
+
   /**
    *
    *
@@ -810,6 +848,7 @@ public interface BucketOrBuilder
    * @return The owner.
    */
   com.google.storage.v2.Owner getOwner();
+
   /**
    *
    *
@@ -834,6 +873,7 @@ public interface BucketOrBuilder
    * @return Whether the encryption field is set.
    */
   boolean hasEncryption();
+
   /**
    *
    *
@@ -846,6 +886,7 @@ public interface BucketOrBuilder
    * @return The encryption.
    */
   com.google.storage.v2.Bucket.Encryption getEncryption();
+
   /**
    *
    *
@@ -869,6 +910,7 @@ public interface BucketOrBuilder
    * @return Whether the billing field is set.
    */
   boolean hasBilling();
+
   /**
    *
    *
@@ -881,6 +923,7 @@ public interface BucketOrBuilder
    * @return The billing.
    */
   com.google.storage.v2.Bucket.Billing getBilling();
+
   /**
    *
    *
@@ -912,6 +955,7 @@ public interface BucketOrBuilder
    * @return Whether the retentionPolicy field is set.
    */
   boolean hasRetentionPolicy();
+
   /**
    *
    *
@@ -932,6 +976,7 @@ public interface BucketOrBuilder
    * @return The retentionPolicy.
    */
   com.google.storage.v2.Bucket.RetentionPolicy getRetentionPolicy();
+
   /**
    *
    *
@@ -963,6 +1008,7 @@ public interface BucketOrBuilder
    * @return Whether the iamConfig field is set.
    */
   boolean hasIamConfig();
+
   /**
    *
    *
@@ -975,6 +1021,7 @@ public interface BucketOrBuilder
    * @return The iamConfig.
    */
   com.google.storage.v2.Bucket.IamConfig getIamConfig();
+
   /**
    *
    *
@@ -1013,6 +1060,7 @@ public interface BucketOrBuilder
    * @return Whether the customPlacementConfig field is set.
    */
   boolean hasCustomPlacementConfig();
+
   /**
    *
    *
@@ -1027,6 +1075,7 @@ public interface BucketOrBuilder
    * @return The customPlacementConfig.
    */
   com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig();
+
   /**
    *
    *
@@ -1053,6 +1102,7 @@ public interface BucketOrBuilder
    * @return Whether the autoclass field is set.
    */
   boolean hasAutoclass();
+
   /**
    *
    *
@@ -1066,6 +1116,7 @@ public interface BucketOrBuilder
    * @return The autoclass.
    */
   com.google.storage.v2.Bucket.Autoclass getAutoclass();
+
   /**
    *
    *
@@ -1094,6 +1145,7 @@ public interface BucketOrBuilder
    * @return Whether the hierarchicalNamespace field is set.
    */
   boolean hasHierarchicalNamespace();
+
   /**
    *
    *
@@ -1110,6 +1162,7 @@ public interface BucketOrBuilder
    * @return The hierarchicalNamespace.
    */
   com.google.storage.v2.Bucket.HierarchicalNamespace getHierarchicalNamespace();
+
   /**
    *
    *
@@ -1140,6 +1193,7 @@ public interface BucketOrBuilder
    * @return Whether the softDeletePolicy field is set.
    */
   boolean hasSoftDeletePolicy();
+
   /**
    *
    *
@@ -1155,6 +1209,7 @@ public interface BucketOrBuilder
    * @return The softDeletePolicy.
    */
   com.google.storage.v2.Bucket.SoftDeletePolicy getSoftDeletePolicy();
+
   /**
    *
    *

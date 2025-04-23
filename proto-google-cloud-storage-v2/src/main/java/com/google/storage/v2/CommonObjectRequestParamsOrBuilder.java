@@ -37,6 +37,7 @@ public interface CommonObjectRequestParamsOrBuilder
    * @return The encryptionAlgorithm.
    */
   java.lang.String getEncryptionAlgorithm();
+
   /**
    *
    *

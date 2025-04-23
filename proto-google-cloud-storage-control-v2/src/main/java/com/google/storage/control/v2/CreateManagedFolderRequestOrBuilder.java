@@ -38,6 +38,7 @@ public interface CreateManagedFolderRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -70,6 +71,7 @@ public interface CreateManagedFolderRequestOrBuilder
    * @return Whether the managedFolder field is set.
    */
   boolean hasManagedFolder();
+
   /**
    *
    *
@@ -87,6 +89,7 @@ public interface CreateManagedFolderRequestOrBuilder
    * @return The managedFolder.
    */
   com.google.storage.control.v2.ManagedFolder getManagedFolder();
+
   /**
    *
    *
@@ -116,6 +119,7 @@ public interface CreateManagedFolderRequestOrBuilder
    * @return The managedFolderId.
    */
   java.lang.String getManagedFolderId();
+
   /**
    *
    *
@@ -145,6 +149,7 @@ public interface CreateManagedFolderRequestOrBuilder
    * @return The requestId.
    */
   java.lang.String getRequestId();
+
   /**
    *
    *

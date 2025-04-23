@@ -79,6 +79,7 @@ public interface RewriteResponseOrBuilder
    * @return The rewriteToken.
    */
   java.lang.String getRewriteToken();
+
   /**
    *
    *
@@ -106,6 +107,7 @@ public interface RewriteResponseOrBuilder
    * @return Whether the resource field is set.
    */
   boolean hasResource();
+
   /**
    *
    *
@@ -119,6 +121,7 @@ public interface RewriteResponseOrBuilder
    * @return The resource.
    */
   com.google.storage.v2.Object getResource();
+
   /**
    *
    *

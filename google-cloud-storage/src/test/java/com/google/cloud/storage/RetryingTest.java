@@ -87,7 +87,8 @@ public final class RetryingTest {
         () ->
             assertThat(messages)
                 .contains(
-                    "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3"),
+                    "Operation failed to complete within attempt budget (attempts: 3, maxAttempts:"
+                        + " 3"),
         () -> assertThat(messages).contains("{unavailable}"),
         () -> assertThat(messages).contains("{internal}"));
   }
@@ -126,7 +127,8 @@ public final class RetryingTest {
         () ->
             assertThat(messages)
                 .contains(
-                    "Operation failed to complete within attempt budget (attempts: 3, maxAttempts: 3"),
+                    "Operation failed to complete within attempt budget (attempts: 3, maxAttempts:"
+                        + " 3"),
         () -> assertThat(messages).contains("{unavailable}"),
         () -> assertThat(messages).contains("{internal}"),
         () -> assertThat(messages).containsMatch(UUID_PATTERN));

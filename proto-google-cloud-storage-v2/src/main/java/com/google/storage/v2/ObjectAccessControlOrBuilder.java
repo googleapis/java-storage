@@ -39,6 +39,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The role.
    */
   java.lang.String getRole();
+
   /**
    *
    *
@@ -67,6 +68,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The id.
    */
   java.lang.String getId();
+
   /**
    *
    *
@@ -109,6 +111,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The entity.
    */
   java.lang.String getEntity();
+
   /**
    *
    *
@@ -152,6 +155,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The entityAlt.
    */
   java.lang.String getEntityAlt();
+
   /**
    *
    *
@@ -178,6 +182,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The entityId.
    */
   java.lang.String getEntityId();
+
   /**
    *
    *
@@ -206,6 +211,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The etag.
    */
   java.lang.String getEtag();
+
   /**
    *
    *
@@ -234,6 +240,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The email.
    */
   java.lang.String getEmail();
+
   /**
    *
    *
@@ -259,6 +266,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The domain.
    */
   java.lang.String getDomain();
+
   /**
    *
    *
@@ -284,6 +292,7 @@ public interface ObjectAccessControlOrBuilder
    * @return Whether the projectTeam field is set.
    */
   boolean hasProjectTeam();
+
   /**
    *
    *
@@ -296,6 +305,7 @@ public interface ObjectAccessControlOrBuilder
    * @return The projectTeam.
    */
   com.google.storage.v2.ProjectTeam getProjectTeam();
+
   /**
    *
    *

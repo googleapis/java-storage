@@ -72,7 +72,8 @@ enum ResumableSessionFailureScenario {
   SCENARIO_5(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Client side data loss detected. Attempt to append to a resumable session with an offset higher than the backend has"),
+      "Client side data loss detected. Attempt to append to a resumable session with an offset"
+          + " higher than the backend has"),
   SCENARIO_7(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",

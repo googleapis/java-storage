@@ -597,7 +597,8 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
                 obs.onError(
                     TestUtils.apiException(
                         Code.OUT_OF_RANGE,
-                        "Upload request started at offset '262144', which is past expected offset '0'."));
+                        "Upload request started at offset '262144', which is past expected offset"
+                            + " '0'."));
               } else {
                 obs.onError(
                     TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));

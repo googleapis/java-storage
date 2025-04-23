@@ -36,6 +36,7 @@ public interface RenameFolderMetadataOrBuilder
    * @return Whether the commonMetadata field is set.
    */
   boolean hasCommonMetadata();
+
   /**
    *
    *
@@ -48,6 +49,7 @@ public interface RenameFolderMetadataOrBuilder
    * @return The commonMetadata.
    */
   com.google.storage.control.v2.CommonLongRunningOperationMetadata getCommonMetadata();
+
   /**
    *
    *
@@ -72,6 +74,7 @@ public interface RenameFolderMetadataOrBuilder
    * @return The sourceFolderId.
    */
   java.lang.String getSourceFolderId();
+
   /**
    *
    *
@@ -97,6 +100,7 @@ public interface RenameFolderMetadataOrBuilder
    * @return The destinationFolderId.
    */
   java.lang.String getDestinationFolderId();
+
   /**
    *
    *

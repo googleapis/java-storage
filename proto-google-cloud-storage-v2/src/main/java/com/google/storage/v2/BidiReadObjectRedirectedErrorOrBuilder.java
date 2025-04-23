@@ -37,6 +37,7 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    * @return Whether the readHandle field is set.
    */
   boolean hasReadHandle();
+
   /**
    *
    *
@@ -50,6 +51,7 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    * @return The readHandle.
    */
   com.google.storage.v2.BidiReadHandle getReadHandle();
+
   /**
    *
    *
@@ -74,6 +76,7 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    * @return Whether the routingToken field is set.
    */
   boolean hasRoutingToken();
+
   /**
    *
    *
@@ -86,6 +89,7 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    * @return The routingToken.
    */
   java.lang.String getRoutingToken();
+
   /**
    *
    *

@@ -104,13 +104,21 @@ interface RetryContext {
    */
   final class RetryBudgetExhaustedComment extends Throwable {
     RetryBudgetExhaustedComment(String comment) {
-      super(comment, /*cause=*/ null, /*enableSuppression=*/ true, /*writableStackTrace=*/ false);
+      super(
+          comment,
+          /* cause= */ null,
+          /* enableSuppression= */ true,
+          /* writableStackTrace= */ false);
     }
   }
 
   final class BackoffComment extends Throwable {
     private BackoffComment(String message) {
-      super(message, /*cause=*/ null, /*enableSuppression=*/ true, /*writableStackTrace=*/ false);
+      super(
+          message,
+          /* cause= */ null,
+          /* enableSuppression= */ true,
+          /* writableStackTrace= */ false);
     }
 
     static BackoffComment fromResult(BackoffResult result) {
@@ -229,6 +237,7 @@ interface RetryContext {
     public void execute(Runnable command) {
       throw new UnsupportedOperationException();
     }
+
     // </editor-fold>
 
     private final class DirectScheduledFuture implements ScheduledFuture<Object> {

@@ -37,6 +37,7 @@ public interface WriteObjectResponseOrBuilder
    * @return Whether the persistedSize field is set.
    */
   boolean hasPersistedSize();
+
   /**
    *
    *
@@ -64,6 +65,7 @@ public interface WriteObjectResponseOrBuilder
    * @return Whether the resource field is set.
    */
   boolean hasResource();
+
   /**
    *
    *
@@ -77,6 +79,7 @@ public interface WriteObjectResponseOrBuilder
    * @return The resource.
    */
   com.google.storage.v2.Object getResource();
+
   /**
    *
    *

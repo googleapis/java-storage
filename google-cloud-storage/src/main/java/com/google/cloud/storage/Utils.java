@@ -131,7 +131,8 @@ final class Utils {
                 return bucket;
               } else {
                 throw new IllegalArgumentException(
-                    "Project scoped buckets are not supported by this version of the library. (bucket = "
+                    "Project scoped buckets are not supported by this version of the library."
+                        + " (bucket = "
                         + bucket
                         + ")");
               }

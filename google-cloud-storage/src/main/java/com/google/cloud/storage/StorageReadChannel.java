@@ -36,7 +36,9 @@ interface StorageReadChannel extends ReadChannel {
     return ByteRangeSpec.nullRange();
   }
 
-  /** @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)} */
+  /**
+   * @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)}
+   */
   @Deprecated
   @SuppressWarnings("resource")
   @Override
@@ -53,7 +55,9 @@ interface StorageReadChannel extends ReadChannel {
     }
   }
 
-  /** @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)} */
+  /**
+   * @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)}
+   */
   @SuppressWarnings("resource")
   @Deprecated
   @Override
@@ -63,7 +67,9 @@ interface StorageReadChannel extends ReadChannel {
     return this;
   }
 
-  /** @deprecated Use {@link #getByteRangeSpec()} */
+  /**
+   * @deprecated Use {@link #getByteRangeSpec()}
+   */
   @Deprecated
   @Override
   default long limit() {

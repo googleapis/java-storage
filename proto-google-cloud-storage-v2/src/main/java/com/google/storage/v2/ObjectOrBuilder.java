@@ -42,6 +42,7 @@ public interface ObjectOrBuilder
    * @return The name.
    */
   java.lang.String getName();
+
   /**
    *
    *
@@ -75,6 +76,7 @@ public interface ObjectOrBuilder
    * @return The bucket.
    */
   java.lang.String getBucket();
+
   /**
    *
    *
@@ -105,6 +107,7 @@ public interface ObjectOrBuilder
    * @return The etag.
    */
   java.lang.String getEtag();
+
   /**
    *
    *
@@ -149,6 +152,7 @@ public interface ObjectOrBuilder
    * @return Whether the restoreToken field is set.
    */
   boolean hasRestoreToken();
+
   /**
    *
    *
@@ -163,6 +167,7 @@ public interface ObjectOrBuilder
    * @return The restoreToken.
    */
   java.lang.String getRestoreToken();
+
   /**
    *
    *
@@ -206,6 +211,7 @@ public interface ObjectOrBuilder
    * @return The storageClass.
    */
   java.lang.String getStorageClass();
+
   /**
    *
    *
@@ -246,6 +252,7 @@ public interface ObjectOrBuilder
    * @return The contentEncoding.
    */
   java.lang.String getContentEncoding();
+
   /**
    *
    *
@@ -273,6 +280,7 @@ public interface ObjectOrBuilder
    * @return The contentDisposition.
    */
   java.lang.String getContentDisposition();
+
   /**
    *
    *
@@ -302,6 +310,7 @@ public interface ObjectOrBuilder
    * @return The cacheControl.
    */
   java.lang.String getCacheControl();
+
   /**
    *
    *
@@ -330,6 +339,7 @@ public interface ObjectOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
    */
   java.util.List<com.google.storage.v2.ObjectAccessControl> getAclList();
+
   /**
    *
    *
@@ -342,6 +352,7 @@ public interface ObjectOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
    */
   com.google.storage.v2.ObjectAccessControl getAcl(int index);
+
   /**
    *
    *
@@ -354,6 +365,7 @@ public interface ObjectOrBuilder
    * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
    */
   int getAclCount();
+
   /**
    *
    *
@@ -367,6 +379,7 @@ public interface ObjectOrBuilder
    */
   java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
       getAclOrBuilderList();
+
   /**
    *
    *
@@ -393,6 +406,7 @@ public interface ObjectOrBuilder
    * @return The contentLanguage.
    */
   java.lang.String getContentLanguage();
+
   /**
    *
    *
@@ -421,6 +435,7 @@ public interface ObjectOrBuilder
    * @return Whether the deleteTime field is set.
    */
   boolean hasDeleteTime();
+
   /**
    *
    *
@@ -435,6 +450,7 @@ public interface ObjectOrBuilder
    * @return The deleteTime.
    */
   com.google.protobuf.Timestamp getDeleteTime();
+
   /**
    *
    *
@@ -462,6 +478,7 @@ public interface ObjectOrBuilder
    * @return Whether the finalizeTime field is set.
    */
   boolean hasFinalizeTime();
+
   /**
    *
    *
@@ -476,6 +493,7 @@ public interface ObjectOrBuilder
    * @return The finalizeTime.
    */
   com.google.protobuf.Timestamp getFinalizeTime();
+
   /**
    *
    *
@@ -504,6 +522,7 @@ public interface ObjectOrBuilder
    * @return The contentType.
    */
   java.lang.String getContentType();
+
   /**
    *
    *
@@ -533,6 +552,7 @@ public interface ObjectOrBuilder
    * @return Whether the createTime field is set.
    */
   boolean hasCreateTime();
+
   /**
    *
    *
@@ -546,6 +566,7 @@ public interface ObjectOrBuilder
    * @return The createTime.
    */
   com.google.protobuf.Timestamp getCreateTime();
+
   /**
    *
    *
@@ -590,6 +611,7 @@ public interface ObjectOrBuilder
    * @return Whether the checksums field is set.
    */
   boolean hasChecksums();
+
   /**
    *
    *
@@ -608,6 +630,7 @@ public interface ObjectOrBuilder
    * @return The checksums.
    */
   com.google.storage.v2.ObjectChecksums getChecksums();
+
   /**
    *
    *
@@ -643,6 +666,7 @@ public interface ObjectOrBuilder
    * @return Whether the updateTime field is set.
    */
   boolean hasUpdateTime();
+
   /**
    *
    *
@@ -661,6 +685,7 @@ public interface ObjectOrBuilder
    * @return The updateTime.
    */
   com.google.protobuf.Timestamp getUpdateTime();
+
   /**
    *
    *
@@ -691,6 +716,7 @@ public interface ObjectOrBuilder
    * @return The kmsKey.
    */
   java.lang.String getKmsKey();
+
   /**
    *
    *
@@ -720,6 +746,7 @@ public interface ObjectOrBuilder
    * @return Whether the updateStorageClassTime field is set.
    */
   boolean hasUpdateStorageClassTime();
+
   /**
    *
    *
@@ -735,6 +762,7 @@ public interface ObjectOrBuilder
    * @return The updateStorageClassTime.
    */
   com.google.protobuf.Timestamp getUpdateStorageClassTime();
+
   /**
    *
    *
@@ -784,6 +812,7 @@ public interface ObjectOrBuilder
    * @return Whether the retentionExpireTime field is set.
    */
   boolean hasRetentionExpireTime();
+
   /**
    *
    *
@@ -802,6 +831,7 @@ public interface ObjectOrBuilder
    * @return The retentionExpireTime.
    */
   com.google.protobuf.Timestamp getRetentionExpireTime();
+
   /**
    *
    *
@@ -829,6 +859,7 @@ public interface ObjectOrBuilder
    * <code>map&lt;string, string&gt; metadata = 22;</code>
    */
   int getMetadataCount();
+
   /**
    *
    *
@@ -839,9 +870,11 @@ public interface ObjectOrBuilder
    * <code>map&lt;string, string&gt; metadata = 22;</code>
    */
   boolean containsMetadata(java.lang.String key);
+
   /** Use {@link #getMetadataMap()} instead. */
   @java.lang.Deprecated
   java.util.Map<java.lang.String, java.lang.String> getMetadata();
+
   /**
    *
    *
@@ -852,6 +885,7 @@ public interface ObjectOrBuilder
    * <code>map&lt;string, string&gt; metadata = 22;</code>
    */
   java.util.Map<java.lang.String, java.lang.String> getMetadataMap();
+
   /**
    *
    *
@@ -866,6 +900,7 @@ public interface ObjectOrBuilder
       java.lang.String key,
       /* nullable */
       java.lang.String defaultValue);
+
   /**
    *
    *
@@ -899,6 +934,7 @@ public interface ObjectOrBuilder
    * @return Whether the eventBasedHold field is set.
    */
   boolean hasEventBasedHold();
+
   /**
    *
    *
@@ -935,6 +971,7 @@ public interface ObjectOrBuilder
    * @return Whether the owner field is set.
    */
   boolean hasOwner();
+
   /**
    *
    *
@@ -948,6 +985,7 @@ public interface ObjectOrBuilder
    * @return The owner.
    */
   com.google.storage.v2.Owner getOwner();
+
   /**
    *
    *
@@ -973,6 +1011,7 @@ public interface ObjectOrBuilder
    * @return Whether the customerEncryption field is set.
    */
   boolean hasCustomerEncryption();
+
   /**
    *
    *
@@ -986,6 +1025,7 @@ public interface ObjectOrBuilder
    * @return The customerEncryption.
    */
   com.google.storage.v2.CustomerEncryption getCustomerEncryption();
+
   /**
    *
    *
@@ -1010,6 +1050,7 @@ public interface ObjectOrBuilder
    * @return Whether the customTime field is set.
    */
   boolean hasCustomTime();
+
   /**
    *
    *
@@ -1022,6 +1063,7 @@ public interface ObjectOrBuilder
    * @return The customTime.
    */
   com.google.protobuf.Timestamp getCustomTime();
+
   /**
    *
    *
@@ -1050,6 +1092,7 @@ public interface ObjectOrBuilder
    * @return Whether the softDeleteTime field is set.
    */
   boolean hasSoftDeleteTime();
+
   /**
    *
    *
@@ -1067,6 +1110,7 @@ public interface ObjectOrBuilder
    * @return The softDeleteTime.
    */
   com.google.protobuf.Timestamp getSoftDeleteTime();
+
   /**
    *
    *
@@ -1100,6 +1144,7 @@ public interface ObjectOrBuilder
    * @return Whether the hardDeleteTime field is set.
    */
   boolean hasHardDeleteTime();
+
   /**
    *
    *
@@ -1117,6 +1162,7 @@ public interface ObjectOrBuilder
    * @return The hardDeleteTime.
    */
   com.google.protobuf.Timestamp getHardDeleteTime();
+
   /**
    *
    *

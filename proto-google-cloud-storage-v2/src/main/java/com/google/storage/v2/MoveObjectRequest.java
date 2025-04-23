@@ -33,6 +33,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     // @@protoc_insertion_point(message_implements:google.storage.v2.MoveObjectRequest)
     MoveObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use MoveObjectRequest.newBuilder() to construct.
   private MoveObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
@@ -70,6 +71,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -95,6 +97,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       return s;
     }
   }
+
   /**
    *
    *
@@ -125,6 +128,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object sourceObject_ = "";
+
   /**
    *
    *
@@ -148,6 +152,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       return s;
     }
   }
+
   /**
    *
    *
@@ -176,6 +181,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object destinationObject_ = "";
+
   /**
    *
    *
@@ -199,6 +205,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       return s;
     }
   }
+
   /**
    *
    *
@@ -225,6 +232,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_SOURCE_GENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifSourceGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -244,6 +252,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfSourceGenerationMatch() {
     return ((bitField0_ & 0x00000001) != 0);
   }
+
   /**
    *
    *
@@ -266,6 +275,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_SOURCE_GENERATION_NOT_MATCH_FIELD_NUMBER = 5;
   private long ifSourceGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -287,6 +297,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfSourceGenerationNotMatch() {
     return ((bitField0_ & 0x00000002) != 0);
   }
+
   /**
    *
    *
@@ -311,6 +322,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_SOURCE_METAGENERATION_MATCH_FIELD_NUMBER = 6;
   private long ifSourceMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -332,6 +344,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfSourceMetagenerationMatch() {
     return ((bitField0_ & 0x00000004) != 0);
   }
+
   /**
    *
    *
@@ -356,6 +369,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_SOURCE_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 7;
   private long ifSourceMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -377,6 +391,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfSourceMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000008) != 0);
   }
+
   /**
    *
    *
@@ -401,6 +416,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 8;
   private long ifGenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -420,6 +436,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfGenerationMatch() {
     return ((bitField0_ & 0x00000010) != 0);
   }
+
   /**
    *
    *
@@ -442,6 +459,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 9;
   private long ifGenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -463,6 +481,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfGenerationNotMatch() {
     return ((bitField0_ & 0x00000020) != 0);
   }
+
   /**
    *
    *
@@ -487,6 +506,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 10;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -507,6 +527,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfMetagenerationMatch() {
     return ((bitField0_ & 0x00000040) != 0);
   }
+
   /**
    *
    *
@@ -530,6 +551,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 11;
   private long ifMetagenerationNotMatch_ = 0L;
+
   /**
    *
    *
@@ -551,6 +573,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
   public boolean hasIfMetagenerationNotMatch() {
     return ((bitField0_ & 0x00000080) != 0);
   }
+
   /**
    *
    *
@@ -868,6 +891,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -1195,6 +1219,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -1219,6 +1244,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1243,6 +1269,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1266,6 +1293,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1285,6 +1313,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1311,6 +1340,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private java.lang.Object sourceObject_ = "";
+
     /**
      *
      *
@@ -1333,6 +1363,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1355,6 +1386,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1376,6 +1408,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1393,6 +1426,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1417,6 +1451,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private java.lang.Object destinationObject_ = "";
+
     /**
      *
      *
@@ -1439,6 +1474,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -1461,6 +1497,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -1482,6 +1519,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1499,6 +1537,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1523,6 +1562,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifSourceGenerationMatch_;
+
     /**
      *
      *
@@ -1543,6 +1583,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfSourceGenerationMatch() {
       return ((bitField0_ & 0x00000008) != 0);
     }
+
     /**
      *
      *
@@ -1563,6 +1604,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfSourceGenerationMatch() {
       return ifSourceGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1587,6 +1629,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1611,6 +1654,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifSourceGenerationNotMatch_;
+
     /**
      *
      *
@@ -1632,6 +1676,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfSourceGenerationNotMatch() {
       return ((bitField0_ & 0x00000010) != 0);
     }
+
     /**
      *
      *
@@ -1653,6 +1698,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfSourceGenerationNotMatch() {
       return ifSourceGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1678,6 +1724,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1703,6 +1750,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifSourceMetagenerationMatch_;
+
     /**
      *
      *
@@ -1724,6 +1772,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfSourceMetagenerationMatch() {
       return ((bitField0_ & 0x00000020) != 0);
     }
+
     /**
      *
      *
@@ -1745,6 +1794,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfSourceMetagenerationMatch() {
       return ifSourceMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -1770,6 +1820,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1795,6 +1846,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifSourceMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -1816,6 +1868,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfSourceMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000040) != 0);
     }
+
     /**
      *
      *
@@ -1837,6 +1890,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfSourceMetagenerationNotMatch() {
       return ifSourceMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -1862,6 +1916,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1887,6 +1942,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifGenerationMatch_;
+
     /**
      *
      *
@@ -1907,6 +1963,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfGenerationMatch() {
       return ((bitField0_ & 0x00000080) != 0);
     }
+
     /**
      *
      *
@@ -1927,6 +1984,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfGenerationMatch() {
       return ifGenerationMatch_;
     }
+
     /**
      *
      *
@@ -1951,6 +2009,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -1975,6 +2034,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifGenerationNotMatch_;
+
     /**
      *
      *
@@ -1996,6 +2056,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfGenerationNotMatch() {
       return ((bitField0_ & 0x00000100) != 0);
     }
+
     /**
      *
      *
@@ -2017,6 +2078,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfGenerationNotMatch() {
       return ifGenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -2042,6 +2104,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2067,6 +2130,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -2087,6 +2151,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfMetagenerationMatch() {
       return ((bitField0_ & 0x00000200) != 0);
     }
+
     /**
      *
      *
@@ -2107,6 +2172,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -2131,6 +2197,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -2155,6 +2222,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     }
 
     private long ifMetagenerationNotMatch_;
+
     /**
      *
      *
@@ -2176,6 +2244,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public boolean hasIfMetagenerationNotMatch() {
       return ((bitField0_ & 0x00000400) != 0);
     }
+
     /**
      *
      *
@@ -2197,6 +2266,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
     public long getIfMetagenerationNotMatch() {
       return ifMetagenerationNotMatch_;
     }
+
     /**
      *
      *
@@ -2222,6 +2292,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
       onChanged();
       return this;
     }
+
     /**
      *
      *

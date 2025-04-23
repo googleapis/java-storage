@@ -33,6 +33,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     // @@protoc_insertion_point(message_implements:google.storage.v2.LockBucketRetentionPolicyRequest)
     LockBucketRetentionPolicyRequestOrBuilder {
   private static final long serialVersionUID = 0L;
+
   // Use LockBucketRetentionPolicyRequest.newBuilder() to construct.
   private LockBucketRetentionPolicyRequest(
       com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
@@ -68,6 +69,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
 
   @SuppressWarnings("serial")
   private volatile java.lang.Object bucket_ = "";
+
   /**
    *
    *
@@ -93,6 +95,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       return s;
     }
   }
+
   /**
    *
    *
@@ -121,6 +124,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
   private long ifMetagenerationMatch_ = 0L;
+
   /**
    *
    *
@@ -307,6 +311,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     Builder builder = new Builder(parent);
     return builder;
   }
+
   /**
    *
    *
@@ -504,6 +509,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     private int bitField0_;
 
     private java.lang.Object bucket_ = "";
+
     /**
      *
      *
@@ -528,6 +534,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
         return (java.lang.String) ref;
       }
     }
+
     /**
      *
      *
@@ -552,6 +559,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
     /**
      *
      *
@@ -575,6 +583,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -594,6 +603,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       onChanged();
       return this;
     }
+
     /**
      *
      *
@@ -620,6 +630,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     }
 
     private long ifMetagenerationMatch_;
+
     /**
      *
      *
@@ -636,6 +647,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     public long getIfMetagenerationMatch() {
       return ifMetagenerationMatch_;
     }
+
     /**
      *
      *
@@ -656,6 +668,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       onChanged();
       return this;
     }
+
     /**
      *
      *

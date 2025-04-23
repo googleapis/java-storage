@@ -38,6 +38,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The parent.
    */
   java.lang.String getParent();
+
   /**
    *
    *
@@ -82,6 +83,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The pageToken.
    */
   java.lang.String getPageToken();
+
   /**
    *
    *
@@ -113,6 +115,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The delimiter.
    */
   java.lang.String getDelimiter();
+
   /**
    *
    *
@@ -158,6 +161,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The prefix.
    */
   java.lang.String getPrefix();
+
   /**
    *
    *
@@ -202,6 +206,7 @@ public interface ListObjectsRequestOrBuilder
    * @return Whether the readMask field is set.
    */
   boolean hasReadMask();
+
   /**
    *
    *
@@ -217,6 +222,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The readMask.
    */
   com.google.protobuf.FieldMask getReadMask();
+
   /**
    *
    *
@@ -246,6 +252,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The lexicographicStart.
    */
   java.lang.String getLexicographicStart();
+
   /**
    *
    *
@@ -277,6 +284,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The lexicographicEnd.
    */
   java.lang.String getLexicographicEnd();
+
   /**
    *
    *
@@ -336,6 +344,7 @@ public interface ListObjectsRequestOrBuilder
    * @return The matchGlob.
    */
   java.lang.String getMatchGlob();
+
   /**
    *
    *

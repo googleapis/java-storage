@@ -481,7 +481,8 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
                   String message =
                       String.format(
                           Locale.US,
-                          "Incomplete parallel composite upload cleanup after previous error. Unknown object ids: %s",
+                          "Incomplete parallel composite upload cleanup after previous error."
+                              + " Unknown object ids: %s",
                           failedGsUris);
                   StorageException storageException = new StorageException(0, message, null);
                   originalFailure.addSuppressed(storageException);

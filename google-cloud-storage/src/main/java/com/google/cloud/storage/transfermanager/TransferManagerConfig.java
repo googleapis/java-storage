@@ -80,6 +80,7 @@ public final class TransferManagerConfig {
   public boolean isAllowDivideAndConquerDownload() {
     return allowDivideAndConquerDownload;
   }
+
   /**
    * Whether to allow Transfer Manager to perform Parallel Composite Uploads if it determines
    * chunking will be beneficial

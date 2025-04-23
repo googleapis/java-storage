@@ -27,8 +27,8 @@ final class HttpUploadSessionBuilder {
     return INSTANCE;
   }
 
-  @NonNull
-  HttpWritableByteChannelSessionBuilder byteChannel(@NonNull HttpClientContext httpClientContext) {
+  @NonNull HttpWritableByteChannelSessionBuilder byteChannel(
+      @NonNull HttpClientContext httpClientContext) {
     return new HttpWritableByteChannelSessionBuilder(httpClientContext);
   }
 }

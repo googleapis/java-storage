@@ -37,6 +37,7 @@ public interface BidiWriteObjectResponseOrBuilder
    * @return Whether the persistedSize field is set.
    */
   boolean hasPersistedSize();
+
   /**
    *
    *
@@ -64,6 +65,7 @@ public interface BidiWriteObjectResponseOrBuilder
    * @return Whether the resource field is set.
    */
   boolean hasResource();
+
   /**
    *
    *
@@ -77,6 +79,7 @@ public interface BidiWriteObjectResponseOrBuilder
    * @return The resource.
    */
   com.google.storage.v2.Object getResource();
+
   /**
    *
    *
@@ -103,6 +106,7 @@ public interface BidiWriteObjectResponseOrBuilder
    * @return Whether the writeHandle field is set.
    */
   boolean hasWriteHandle();
+
   /**
    *
    *
@@ -117,6 +121,7 @@ public interface BidiWriteObjectResponseOrBuilder
    * @return The writeHandle.
    */
   com.google.storage.v2.BidiWriteHandle getWriteHandle();
+
   /**
    *
    *
