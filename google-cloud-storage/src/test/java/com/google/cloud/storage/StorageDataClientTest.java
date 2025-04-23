@@ -16,20 +16,31 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.ReadRange;
-import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public final class StorageDataClientTest {
 
+  @Mock public ScheduledExecutorService exec;
+
   @Test
-  public void readSession_requestWithRangeRead_noAllowed() throws IOException {
+  public void readSession_requestWithRangeRead_noAllowed() throws Exception {
     try (StorageDataClient dc =
-        StorageDataClient.create(null, null, null, IOAutoCloseable.noOp())) {
+        StorageDataClient.create(exec, Duration.ofSeconds(2), null, null, IOAutoCloseable.noOp())) {
       assertThrows(
           IllegalArgumentException.class,
           () -> {
@@ -40,5 +51,16 @@ public final class StorageDataClientTest {
             dc.readSession(req, GrpcCallContext.createDefault());
           });
     }
+  }
+
+  @Test
+  public void executorServiceProvidedShouldBeClosed() throws Exception {
+    assertThat(exec).isNotNull();
+    StorageDataClient sdc =
+        StorageDataClient.create(exec, Duration.ofSeconds(2), null, null, IOAutoCloseable.noOp());
+
+    sdc.close();
+    verify(exec, times(1)).shutdownNow();
+    verify(exec, times(1)).awaitTermination(TimeUnit.SECONDS.toNanos(2), TimeUnit.NANOSECONDS);
   }
 }

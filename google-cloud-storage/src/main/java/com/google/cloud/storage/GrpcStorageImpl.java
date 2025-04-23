@@ -203,7 +203,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public void close() throws Exception {
-    try (StorageClient s = storageClient) {
+    try (StorageClient s = storageClient;
+        StorageDataClient ignore = storageDataClient) {
       s.shutdownNow();
       java.time.Duration terminationAwaitDuration = getOptions().getTerminationAwaitDuration();
       s.awaitTermination(terminationAwaitDuration.toMillis(), TimeUnit.MILLISECONDS);
