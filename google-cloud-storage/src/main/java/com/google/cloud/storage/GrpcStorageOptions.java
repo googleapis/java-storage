@@ -911,6 +911,7 @@ public final class GrpcStorageOptions extends StorageOptions
             StorageDataClient dataClient =
                 StorageDataClient.create(
                     executor,
+                    grpcStorageOptions.terminationAwaitDuration,
                     new ZeroCopyBidiStreamingCallable<>(
                         stub.bidiReadObjectCallable(), stub.bidiReadObjectResponseMarshaller),
                     retryContextProvider,
@@ -932,6 +933,7 @@ public final class GrpcStorageOptions extends StorageOptions
             StorageDataClient dataClient =
                 StorageDataClient.create(
                     executor,
+                    grpcStorageOptions.terminationAwaitDuration,
                     new ZeroCopyBidiStreamingCallable<>(
                         client.bidiReadObjectCallable(),
                         ResponseContentLifecycleManager.noopBidiReadObjectResponse()),

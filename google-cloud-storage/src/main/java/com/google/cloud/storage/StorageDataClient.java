@@ -29,12 +29,15 @@ import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.storage.v2.BidiReadObjectRequest;
 import com.google.storage.v2.BidiReadObjectResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @InternalApi
-final class StorageDataClient implements IOAutoCloseable {
+final class StorageDataClient implements AutoCloseable {
 
   private final ScheduledExecutorService executor;
+  private final Duration terminationAwaitDuration;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       bidiReadObject;
   private final RetryContextProvider retryContextProvider;
@@ -42,10 +45,12 @@ final class StorageDataClient implements IOAutoCloseable {
 
   private StorageDataClient(
       ScheduledExecutorService executor,
+      Duration terminationAwaitDuration,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> bidiReadObject,
       RetryContextProvider retryContextProvider,
       IOAutoCloseable onClose) {
     this.executor = executor;
+    this.terminationAwaitDuration = terminationAwaitDuration;
     this.bidiReadObject = bidiReadObject;
     this.retryContextProvider = retryContextProvider;
     this.onClose = onClose;
@@ -112,11 +117,14 @@ final class StorageDataClient implements IOAutoCloseable {
     return objectReadSessionFuture;
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Override
-  public void close() throws IOException {
-    //noinspection EmptyTryBlock
+  public void close() throws Exception {
     try (IOAutoCloseable ignore = onClose) {
-      // intentional
+      // today, we own the executor service. If StorageDataClient is ever standalone, this code will
+      // need to be re-evaluated. Especially if a customer is able to provide the executor.
+      executor.shutdownNow();
+      executor.awaitTermination(terminationAwaitDuration.toNanos(), TimeUnit.NANOSECONDS);
     }
   }
 
@@ -127,10 +135,12 @@ final class StorageDataClient implements IOAutoCloseable {
 
   static StorageDataClient create(
       ScheduledExecutorService executor,
+      Duration terminationAwaitDuration,
       ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse> read,
       RetryContextProvider retryContextProvider,
       IOAutoCloseable onClose) {
-    return new StorageDataClient(executor, read, retryContextProvider, onClose);
+    return new StorageDataClient(
+        executor, terminationAwaitDuration, read, retryContextProvider, onClose);
   }
 
   @FunctionalInterface
