@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.51.0](https://github.com/googleapis/java-storage/compare/v2.50.0...v2.51.0) (2025-04-23)
+
+
+### Features
+
+* Add @BetaApi Storage#blobAppendableUpload for gRPC Transport ([#3020](https://github.com/googleapis/java-storage/pull/3020)) ([62b6248](https://github.com/googleapis/java-storage/commit/62b62482c10d79c9f7d1b7c6cedd9e7d422a58ad))
+* Add @BetaApi Storage#blobReadSession for gRPC Transport ([#3020](https://github.com/googleapis/java-storage/pull/3020)) ([62b6248](https://github.com/googleapis/java-storage/commit/62b62482c10d79c9f7d1b7c6cedd9e7d422a58ad))
+* Implement improved retry context information ([#3020](https://github.com/googleapis/java-storage/pull/3020)) ([62b6248](https://github.com/googleapis/java-storage/commit/62b62482c10d79c9f7d1b7c6cedd9e7d422a58ad))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.56.0 ([8f9f5ec](https://github.com/googleapis/java-storage/commit/8f9f5ec4506bde58fbf2351c99f0d67cdcfcd88e))
+* Ensure object generation is sent for Storage#update(BlobInfo) using HTTP Transport ([#3006](https://github.com/googleapis/java-storage/issues/3006)) ([2a3e0e7](https://github.com/googleapis/java-storage/commit/2a3e0e7453c5e3e45bc06eec1ba6d2bc193143e6)), closes [#2980](https://github.com/googleapis/java-storage/issues/2980)
+* Update 416 handling for ReadChannel ([#3018](https://github.com/googleapis/java-storage/issues/3018)) ([4a9c3e4](https://github.com/googleapis/java-storage/commit/4a9c3e46e8d4fa64813869cadf247cf77f1844d5))
+* Update gRPC Bidi resumable upload to have more robust error message generation ([#2998](https://github.com/googleapis/java-storage/issues/2998)) ([79b5d85](https://github.com/googleapis/java-storage/commit/79b5d8559b2e655178db2ba75116ddba5a581a7b))
+* Update gRPC implementation for storage.buckets.get to translate NOT_FOUND to null ([#3005](https://github.com/googleapis/java-storage/issues/3005)) ([704af65](https://github.com/googleapis/java-storage/commit/704af65b25fe38d146b960775a69644cd80f2e78))
+
+
+### Dependencies
+
+* Remove explicit version declarations for packages that are in shared-dependencies  ([#3014](https://github.com/googleapis/java-storage/issues/3014)) ([61cdb30](https://github.com/googleapis/java-storage/commit/61cdb30f250d2fdaaf79e0d060eb573197c7a90e))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250312-2.0.0 ([#3000](https://github.com/googleapis/java-storage/issues/3000)) ([78fc076](https://github.com/googleapis/java-storage/commit/78fc0763c89fb0e603d75b20c9c67eabc2b9f729))
+* Update dependency com.google.cloud.opentelemetry:exporter-trace to v0.34.0 ([#2938](https://github.com/googleapis/java-storage/issues/2938)) ([ff6f696](https://github.com/googleapis/java-storage/commit/ff6f696e8c4a539b5e6755fbd550096ee4688ecc))
+* Update sdk-platform-java dependencies ([#3046](https://github.com/googleapis/java-storage/issues/3046)) ([861f958](https://github.com/googleapis/java-storage/commit/861f9586e041f65061fb3da7f88955c4214d450c))
+* Update sdk-platform-java dependencies ([#3053](https://github.com/googleapis/java-storage/issues/3053)) ([921d1ba](https://github.com/googleapis/java-storage/commit/921d1ba0a547242c70cbb7dfb2cb190fa761398f))
+
 ## [2.50.0](https://github.com/googleapis/java-storage/compare/v2.49.0...v2.50.0) (2025-03-14)
 
 
