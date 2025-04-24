@@ -63,7 +63,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -71,7 +70,6 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.TEST_BENCH)
 public final class ITBlobWriteChannelTest {
 
-  private static final Logger LOGGER = Logger.getLogger(ITBlobWriteChannelTest.class.getName());
   private static final String NOW_STRING;
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
 

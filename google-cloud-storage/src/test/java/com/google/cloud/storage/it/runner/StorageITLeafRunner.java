@@ -26,7 +26,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -36,6 +35,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
+import org.slf4j.LoggerFactory;
 
 final class StorageITLeafRunner extends BlockJUnit4ClassRunner {
   private final CrossRunIntersection crossRunIntersection;
@@ -111,7 +111,7 @@ final class StorageITLeafRunner extends BlockJUnit4ClassRunner {
             "Using @Test(timeout = 1), @Rule Timeout or @ClassRule Timeout can break multi-thread"
                 + " and Fixture support of StorageITRunner. Please refactor your test to detect a"
                 + " timeout in the test itself.";
-        Logger.getLogger(StorageITRunner.class.getName()).warning(msg);
+        LoggerFactory.getLogger(StorageITRunner.class).warn(msg);
       }
     }
     super.validateTestMethods(errors);

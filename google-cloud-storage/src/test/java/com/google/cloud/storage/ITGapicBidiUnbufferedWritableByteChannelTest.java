@@ -48,11 +48,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
-import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ITGapicBidiUnbufferedWritableByteChannelTest {
 
@@ -830,7 +831,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
   }
 
   static class BidiWriteService extends StorageImplBase {
-    private static final Logger LOGGER = Logger.getLogger(BidiWriteService.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BidiWriteService.class);
     private final BiConsumer<StreamObserver<BidiWriteObjectResponse>, List<BidiWriteObjectRequest>>
         c;
 
@@ -878,7 +879,7 @@ public final class ITGapicBidiUnbufferedWritableByteChannelTest {
                   .map(l -> l.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine))
                   .collect(joining),
               build.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine));
-      LOGGER.warning(msg);
+      LOGGER.warn(msg);
     }
 
     @Override

@@ -63,7 +63,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.After;
@@ -71,6 +70,8 @@ import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Load and dynamically generate a series of test cases to verify if the {@link Storage} and
@@ -86,7 +87,7 @@ import org.junit.runner.RunWith;
 @Parameterized(RetryConformanceParameterProvider.class)
 @ParallelFriendly
 public class ITRetryConformanceTest {
-  private static final Logger LOGGER = Logger.getLogger(ITRetryConformanceTest.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(ITRetryConformanceTest.class);
 
   private RetryTestFixture retryTestFixture;
 
@@ -100,7 +101,7 @@ public class ITRetryConformanceTest {
 
   @Before
   public void setUp() throws Throwable {
-    LOGGER.fine("Running setup...");
+    LOGGER.trace("Running setup...");
     retryTestFixture = retryParameter.retryTestFixture;
     testRetryConformance = retryParameter.testRetryConformance;
     mapping = retryParameter.rpcMethodMapping;
@@ -111,12 +112,12 @@ public class ITRetryConformanceTest {
     // the case setup fails for some reason
     ctx = ctx(nonTestStorage, empty());
     ctx = mapping.getSetup().apply(ctx, testRetryConformance).leftMap(s -> testStorage);
-    LOGGER.fine("Running setup complete");
+    LOGGER.trace("Running setup complete");
   }
 
   @After
   public void tearDown() throws Throwable {
-    LOGGER.fine("Running teardown...");
+    LOGGER.trace("Running teardown...");
     if (ctx != null) {
       ctx = ctx.leftMap(s -> nonTestStorage);
       getReplaceStorageInObjectsFromCtx()
@@ -124,7 +125,7 @@ public class ITRetryConformanceTest {
           .apply(ctx, testRetryConformance);
     }
     retryTestFixture.finished(null);
-    LOGGER.fine("Running teardown complete");
+    LOGGER.trace("Running teardown complete");
   }
 
   /**
@@ -133,7 +134,7 @@ public class ITRetryConformanceTest {
    */
   @Test
   public void test() throws Throwable {
-    LOGGER.fine("Running test...");
+    LOGGER.trace("Running test...");
     assertThat(ctx).isNotNull();
     try {
       ctx =
@@ -146,7 +147,7 @@ public class ITRetryConformanceTest {
       retryTestFixture.failed(e, null);
       throw e;
     }
-    LOGGER.fine("Running test complete");
+    LOGGER.trace("Running test complete");
   }
 
   /**
@@ -374,7 +375,7 @@ public class ITRetryConformanceTest {
                   .collect(Collectors.toSet()));
 
       if (!unusedMappings.isEmpty()) {
-        LOGGER.warning(
+        LOGGER.warn(
             String.format(
                 Locale.US,
                 "Declared but unused mappings with ids: [%s]",
