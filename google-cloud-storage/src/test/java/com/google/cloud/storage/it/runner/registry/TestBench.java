@@ -249,7 +249,14 @@ public final class TestBench implements ManagedLifecycle {
               "--publish",
               gRPCPort + ":9090",
               String.format(Locale.US, "--name=%s", containerName),
-              dockerImage);
+              dockerImage,
+              "gunicorn",
+              "--bind=0.0.0.0:9000",
+              "--worker-class=sync",
+              "--threads=10",
+              "--access-logfile=-",
+              "--keep-alive=0",
+              "testbench:run()");
       process =
           new ProcessBuilder()
               .command(command)
