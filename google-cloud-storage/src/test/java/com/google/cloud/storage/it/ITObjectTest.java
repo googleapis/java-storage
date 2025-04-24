@@ -1607,4 +1607,86 @@ public class ITObjectTest {
         () -> assertThat(gen1_2.getMetadata()).isEqualTo(meta3),
         () -> assertThat(gen1_2.getGeneration()).isEqualTo(gen1.getGeneration()));
   }
+
+  @Test
+  public void listBlob_includeTrailingDelimiter() throws Exception {
+    final byte[] A = new byte[] {(byte) 'A'};
+
+    String basePath = generator.randomObjectName();
+    // create a series of objects under a stable test specific path
+    BlobId a = BlobId.of(bucket.getName(), String.format("%s/a", basePath));
+    BlobId b = BlobId.of(bucket.getName(), String.format("%s/b", basePath));
+    BlobId c = BlobId.of(bucket.getName(), String.format("%s/c", basePath));
+    BlobId a_ = BlobId.of(bucket.getName(), String.format("%s/a/", basePath));
+    BlobId b_ = BlobId.of(bucket.getName(), String.format("%s/b/", basePath));
+    BlobId c_ = BlobId.of(bucket.getName(), String.format("%s/c/", basePath));
+    BlobId d_ = BlobId.of(bucket.getName(), String.format("%s/d/", basePath));
+    BlobId a_A1 = BlobId.of(bucket.getName(), String.format("%s/a/A1", basePath));
+    BlobId a_A2 = BlobId.of(bucket.getName(), String.format("%s/a/A2", basePath));
+    BlobId b_B1 = BlobId.of(bucket.getName(), String.format("%s/b/B1", basePath));
+    BlobId c_C2 = BlobId.of(bucket.getName(), String.format("%s/c/C2", basePath));
+
+    storage.create(BlobInfo.newBuilder(a).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(b).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(c).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(a_).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(b_).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(c_).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(d_).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(a_A1).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(a_A2).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(b_B1).build(), A, BlobTargetOption.doesNotExist());
+    storage.create(BlobInfo.newBuilder(c_C2).build(), A, BlobTargetOption.doesNotExist());
+
+    // define all our options
+    BlobListOption[] blobListOptions =
+        new BlobListOption[] {
+          BlobListOption.currentDirectory(),
+          BlobListOption.includeTrailingDelimiter(),
+          BlobListOption.fields(BlobField.NAME, BlobField.GENERATION, BlobField.SIZE),
+          BlobListOption.prefix(basePath + "/")
+        };
+    // list and collect all the object names
+    List<Blob> blobs =
+        storage.list(bucket.getName(), blobListOptions).streamAll().collect(Collectors.toList());
+
+    // figure out what the base prefix of the objects is, so we can trim it down to make assertions
+    // more terse.
+    int trimLen = String.format(Locale.US, "gs://%s/%s", bucket.getName(), basePath).length();
+    List<String> names =
+        blobs.stream()
+            .map(
+                bi -> {
+                  String uri = bi.getBlobId().toGsUtilUriWithGeneration();
+                  int genIdx = uri.indexOf("#");
+                  String substring;
+                  if (genIdx > -1) {
+                    // trim the string representation of the generation to make assertions easier.
+                    // We really only need to know that a generation is present, not it's exact
+                    // value.
+                    substring = uri.substring(trimLen, genIdx + 1);
+                  } else {
+                    substring = uri.substring(trimLen);
+                  }
+                  return "..." + substring;
+                })
+            .collect(Collectors.toList());
+
+    assertThat(names)
+        .containsExactly(
+            // items
+            ".../a#",
+            ".../b#",
+            ".../c#",
+            // items included due to includeTrailingDelimiter
+            ".../a/#",
+            ".../b/#",
+            ".../c/#",
+            ".../d/#",
+            // prefixes
+            ".../a/",
+            ".../b/",
+            ".../c/",
+            ".../d/");
+  }
 }
