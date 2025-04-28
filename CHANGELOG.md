@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.52.0](https://github.com/googleapis/java-storage/compare/v2.51.0...v2.52.0) (2025-04-28)
+
+
+### Features
+
+* Add Storage.BlobListOption#includeTrailingDelimiter ([#3038](https://github.com/googleapis/java-storage/issues/3038)) ([0b7a0df](https://github.com/googleapis/java-storage/commit/0b7a0dff91af0e22e84ba3ca08862141292b3b30))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.56.2 ([74c46dd](https://github.com/googleapis/java-storage/commit/74c46ddcd91553bcb8145c536389bbe0ca32886c))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250416-2.0.0 ([#3063](https://github.com/googleapis/java-storage/issues/3063)) ([d496d5b](https://github.com/googleapis/java-storage/commit/d496d5bcc1f6ee922bb8f02bfc91d4aeffb8f9a7))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250420-2.0.0 ([#3070](https://github.com/googleapis/java-storage/issues/3070)) ([1ef50f2](https://github.com/googleapis/java-storage/commit/1ef50f2936e62602db689cffbe166c9494ac58f6))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.46.2 ([#3061](https://github.com/googleapis/java-storage/issues/3061)) ([cb43a6c](https://github.com/googleapis/java-storage/commit/cb43a6c368367e15dfd7c2205689df04547d1a9c))
+* Update googleapis/sdk-platform-java action to v2.56.2 ([#3055](https://github.com/googleapis/java-storage/issues/3055)) ([7025ad7](https://github.com/googleapis/java-storage/commit/7025ad7db438741ab6d74d5e3f768d0a2bd4da5c))
+
 ## [2.51.0](https://github.com/googleapis/java-storage/compare/v2.50.0...v2.51.0) (2025-04-23)
 
 
