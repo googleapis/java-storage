@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.52.1](https://github.com/googleapis/java-storage/compare/v2.52.0...v2.52.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* Fix grpc ReadObject memory leak introduced in 2.51.0 ([#3080](https://github.com/googleapis/java-storage/issues/3080)) ([7057629](https://github.com/googleapis/java-storage/commit/705762947fad452462ad0e55ec5898e6389a0ac3))
+
 ## [2.52.0](https://github.com/googleapis/java-storage/compare/v2.51.0...v2.52.0) (2025-04-28)
 
 
