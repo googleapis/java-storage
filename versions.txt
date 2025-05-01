@@ -1,10 +1,10 @@
 # Format:
 # module:released-version:current-version
 
-google-cloud-storage:2.52.1:2.52.1
-gapic-google-cloud-storage-v2:2.52.1:2.52.1
-grpc-google-cloud-storage-v2:2.52.1:2.52.1
-proto-google-cloud-storage-v2:2.52.1:2.52.1
-google-cloud-storage-control:2.52.1:2.52.1
-proto-google-cloud-storage-control-v2:2.52.1:2.52.1
-grpc-google-cloud-storage-control-v2:2.52.1:2.52.1
+google-cloud-storage:2.52.1:2.52.2-SNAPSHOT
+gapic-google-cloud-storage-v2:2.52.1:2.52.2-SNAPSHOT
+grpc-google-cloud-storage-v2:2.52.1:2.52.2-SNAPSHOT
+proto-google-cloud-storage-v2:2.52.1:2.52.2-SNAPSHOT
+google-cloud-storage-control:2.52.1:2.52.2-SNAPSHOT
+proto-google-cloud-storage-control-v2:2.52.1:2.52.2-SNAPSHOT
+grpc-google-cloud-storage-control-v2:2.52.1:2.52.2-SNAPSHOT
