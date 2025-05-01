@@ -163,41 +163,42 @@ final class GapicUnbufferedReadableByteChannel
       readObjectObserver.request();
 
       ReadObjectResponse resp = (ReadObjectResponse) take;
-      ResponseContentLifecycleHandle<ReadObjectResponse> handle =
-          read.getResponseContentLifecycleManager().get(resp);
-      ReadObjectResponseChildRef ref = ReadObjectResponseChildRef.from(handle);
-      if (resp.hasMetadata()) {
-        Object respMetadata = resp.getMetadata();
-        if (metadata == null) {
-          metadata = respMetadata;
-        } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
-          throw closeWithError(
-              String.format(
-                  Locale.US,
-                  "Mismatch Generation between subsequent reads. Expected %d but received %d",
-                  metadata.getGeneration(),
-                  respMetadata.getGeneration()));
+      try (ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+          read.getResponseContentLifecycleManager().get(resp)) {
+        ReadObjectResponseChildRef ref = ReadObjectResponseChildRef.from(handle);
+        if (resp.hasMetadata()) {
+          Object respMetadata = resp.getMetadata();
+          if (metadata == null) {
+            metadata = respMetadata;
+          } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
+            throw closeWithError(
+                String.format(
+                    Locale.US,
+                    "Mismatch Generation between subsequent reads. Expected %d but received %d",
+                    metadata.getGeneration(),
+                    respMetadata.getGeneration()));
+          }
         }
-      }
-      ChecksummedData checksummedData = resp.getChecksummedData();
-      ByteString content = checksummedData.getContent();
-      int contentSize = content.size();
-      // Very important to know whether a crc32c value is set. Without checking, protobuf will
-      // happily return 0, which is a valid crc32c value.
-      if (checksummedData.hasCrc32C()) {
-        Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
-        try {
-          hasher.validate(expected, content);
-        } catch (IOException e) {
-          close();
-          throw e;
+        ChecksummedData checksummedData = resp.getChecksummedData();
+        ByteString content = checksummedData.getContent();
+        int contentSize = content.size();
+        // Very important to know whether a crc32c value is set. Without checking, protobuf will
+        // happily return 0, which is a valid crc32c value.
+        if (checksummedData.hasCrc32C()) {
+          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
+          try {
+            hasher.validate(expected, content);
+          } catch (IOException e) {
+            close();
+            throw e;
+          }
         }
-      }
-      ref.copy(c, dsts, offset, length);
-      if (ref.hasRemaining()) {
-        leftovers = ref;
-      } else {
-        ref.close();
+        ref.copy(c, dsts, offset, length);
+        if (ref.hasRemaining()) {
+          leftovers = ref;
+        } else {
+          ref.close();
+        }
       }
     }
     long read = c.read();
