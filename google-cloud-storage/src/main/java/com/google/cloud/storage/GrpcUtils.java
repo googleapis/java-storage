@@ -72,6 +72,7 @@ final class GrpcUtils {
   static <C extends Closeable> void closeAll(Collection<C> closeables) throws IOException {
     IOException ioException =
         closeables.stream()
+            .filter(Objects::nonNull)
             .map(
                 stream -> {
                   try {
