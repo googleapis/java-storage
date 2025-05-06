@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.52.2](https://github.com/googleapis/java-storage/compare/v2.52.1...v2.52.2) (2025-05-06)
+
+
+### Bug Fixes
+
+* Fix a possible NPE that could happen when shutting down a grpc Storage instance ([#3089](https://github.com/googleapis/java-storage/issues/3089)) ([56f5d0a](https://github.com/googleapis/java-storage/commit/56f5d0ae8826d3d03c436fd0b91630cd09c09a3d))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250424-2.0.0 ([#3084](https://github.com/googleapis/java-storage/issues/3084)) ([c7afbde](https://github.com/googleapis/java-storage/commit/c7afbde3b1a78a56c017283850f90938d66e44fd))
+* Update sdk-platform-java dependencies ([#3087](https://github.com/googleapis/java-storage/issues/3087)) ([762ca13](https://github.com/googleapis/java-storage/commit/762ca1374a8e738fbafc49d17fd38375962d026f))
+
 ## [2.52.1](https://github.com/googleapis/java-storage/compare/v2.52.0...v2.52.1) (2025-05-01)
 
 
@@ -9,6 +22,10 @@
 
 ## [2.52.0](https://github.com/googleapis/java-storage/compare/v2.51.0...v2.52.0) (2025-04-28)
 
+> [!IMPORTANT]  
+> This release has a direct memory leak when using gRPC transport for downloads.
+>
+> Please update to [2.52.1](https://github.com/googleapis/java-storage/releases/tag/v2.52.1) or later which contains the fix.
 
 ### Features
 
@@ -29,6 +46,10 @@
 
 ## [2.51.0](https://github.com/googleapis/java-storage/compare/v2.50.0...v2.51.0) (2025-04-23)
 
+> [!IMPORTANT]  
+> This release has a direct memory leak when using gRPC transport for downloads.
+> 
+> Please update to [2.52.1](https://github.com/googleapis/java-storage/releases/tag/v2.52.1) or later which contains the fix.
 
 ### Features
 
