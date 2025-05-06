@@ -22,6 +22,10 @@
 
 ## [2.52.0](https://github.com/googleapis/java-storage/compare/v2.51.0...v2.52.0) (2025-04-28)
 
+> [!IMPORTANT]  
+> This release has a direct memory leak when using gRPC transport for downloads.
+>
+> Please update to [2.52.1](https://github.com/googleapis/java-storage/releases/tag/v2.52.1) or later which contains the fix.
 
 ### Features
 
@@ -42,6 +46,10 @@
 
 ## [2.51.0](https://github.com/googleapis/java-storage/compare/v2.50.0...v2.51.0) (2025-04-23)
 
+> [!IMPORTANT]  
+> This release has a direct memory leak when using gRPC transport for downloads.
+> 
+> Please update to [2.52.1](https://github.com/googleapis/java-storage/releases/tag/v2.52.1) or later which contains the fix.
 
 ### Features
 
