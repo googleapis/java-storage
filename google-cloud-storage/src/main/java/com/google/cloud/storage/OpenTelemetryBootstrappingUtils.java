@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFunction;
-import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.opentelemetry.metric.GoogleCloudMetricExporter;
@@ -59,6 +58,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class OpenTelemetryBootstrappingUtils {
   private static final Collection<String> METRICS_TO_ENABLE =
@@ -88,15 +89,41 @@ final class OpenTelemetryBootstrappingUtils {
 
   static final Logger log = Logger.getLogger(OpenTelemetryBootstrappingUtils.class.getName());
 
-  static void enableGrpcMetrics(
-      InstantiatingGrpcChannelProvider.Builder channelProviderBuilder,
+  @NonNull
+  static ChannelConfigurator enableGrpcMetrics(
+      @Nullable ChannelConfigurator channelConfigurator,
       String endpoint,
-      String projectId,
+      @Nullable String projectId,
       String universeDomain,
       boolean shouldSuppressExceptions) {
+    GCPResourceProvider resourceProvider = new GCPResourceProvider();
+    Attributes detectedAttributes = resourceProvider.getAttributes();
+
+    @Nullable String detectedProjectId =
+        detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
+    if (projectId == null && detectedProjectId == null) {
+      log.warning(
+          "Unable to determine the Project ID in order to report metrics. No gRPC client metrics will be reported.");
+      return channelConfigurator != null ? channelConfigurator : ChannelConfigurator.identity();
+    }
+
+    String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
+    if (!projectIdToUse.equals(projectId)) {
+      log.warning(
+          "The Project ID configured for gRPC client metrics is "
+              + projectIdToUse
+              + ", but the Project ID of the storage client is "
+              + projectId
+              + ". Make sure that the service account in use has the required metric writing role "
+              + "(roles/monitoring.metricWriter) in the project "
+              + projectIdToUse
+              + ", or metrics will not be written.");
+    }
+
     String metricServiceEndpoint = getCloudMonitoringEndpoint(endpoint, universeDomain);
     SdkMeterProvider provider =
-        createMeterProvider(metricServiceEndpoint, projectId, shouldSuppressExceptions);
+        createMeterProvider(
+            metricServiceEndpoint, projectIdToUse, detectedAttributes, shouldSuppressExceptions);
 
     OpenTelemetrySdk openTelemetrySdk =
         OpenTelemetrySdk.builder().setMeterProvider(provider).build();
@@ -106,16 +133,48 @@ final class OpenTelemetryBootstrappingUtils {
             .addOptionalLabel("grpc.lb.locality")
             .enableMetrics(METRICS_TO_ENABLE)
             .build();
-    ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> channelConfigurator =
-        channelProviderBuilder.getChannelConfigurator();
-    channelProviderBuilder.setChannelConfigurator(
+    ChannelConfigurator otelConfigurator =
         b -> {
           grpcOpenTelemetry.configureChannelBuilder(b);
-          if (channelConfigurator != null) {
-            return channelConfigurator.apply(b);
-          }
           return b;
-        });
+        };
+    return otelConfigurator.andThen(channelConfigurator);
+  }
+
+  @SuppressWarnings("rawtypes") // ManagedChannelBuilder
+  @FunctionalInterface
+  interface ChannelConfigurator extends ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> {
+    @NonNull
+    default ChannelConfigurator andThen(@Nullable ChannelConfigurator then) {
+      if (then == null) {
+        return this;
+      }
+      return b -> then.apply(this.apply(b));
+    }
+
+    static ChannelConfigurator identity() {
+      return IdentityChannelConfigurator.INSTANCE;
+    }
+
+    static ChannelConfigurator lift(
+        @Nullable ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder> f) {
+      if (f == null) {
+        return identity();
+      }
+      return f::apply;
+    }
+  }
+
+  @SuppressWarnings("rawtypes") // ManagedChannelBuilder
+  private static final class IdentityChannelConfigurator implements ChannelConfigurator {
+    private static final IdentityChannelConfigurator INSTANCE = new IdentityChannelConfigurator();
+
+    private IdentityChannelConfigurator() {}
+
+    @Override
+    public ManagedChannelBuilder apply(ManagedChannelBuilder input) {
+      return input;
+    }
   }
 
   @VisibleForTesting
@@ -147,24 +206,10 @@ final class OpenTelemetryBootstrappingUtils {
 
   @VisibleForTesting
   static SdkMeterProvider createMeterProvider(
-      String metricServiceEndpoint, String projectId, boolean shouldSuppressExceptions) {
-    GCPResourceProvider resourceProvider = new GCPResourceProvider();
-    Attributes detectedAttributes = resourceProvider.getAttributes();
-
-    String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
-    String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
-
-    if (!projectIdToUse.equals(projectId)) {
-      log.warning(
-          "The Project ID configured for metrics is "
-              + projectIdToUse
-              + ", but the Project ID of the storage client is "
-              + projectId
-              + ". Make sure that the service account in use has the required metric writing role "
-              + "(roles/monitoring.metricWriter) in the project "
-              + projectIdToUse
-              + ", or metrics will not be written.");
-    }
+      String metricServiceEndpoint,
+      String projectIdToUse,
+      Attributes detectedAttributes,
+      boolean shouldSuppressExceptions) {
 
     MonitoredResourceDescription monitoredResourceDescription =
         new MonitoredResourceDescription(

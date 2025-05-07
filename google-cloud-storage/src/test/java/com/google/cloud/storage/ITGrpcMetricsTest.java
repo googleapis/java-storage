@@ -21,6 +21,8 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.contrib.gcp.resource.GCPResourceProvider;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +38,14 @@ public class ITGrpcMetricsTest {
                 "storage.googleapis.com:443", "storage.googleapis.com"))
         .isEqualTo("monitoring.googleapis.com:443");
 
+    GCPResourceProvider resourceProvider = new GCPResourceProvider();
+    Attributes detectedAttributes = resourceProvider.getAttributes();
     SdkMeterProvider provider =
         OpenTelemetryBootstrappingUtils.createMeterProvider(
-            "monitoring.googleapis.com:443", grpcStorageOptions.getProjectId(), false);
+            "monitoring.googleapis.com:443",
+            grpcStorageOptions.getProjectId(),
+            detectedAttributes,
+            false);
 
     /*
      * SDKMeterProvider doesn't expose the relevant fields we want to test, but they are present in

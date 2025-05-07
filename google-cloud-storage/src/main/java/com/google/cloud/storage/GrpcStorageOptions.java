@@ -60,6 +60,7 @@ import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyBidiStreamingCallable;
 import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
+import com.google.cloud.storage.OpenTelemetryBootstrappingUtils.ChannelConfigurator;
 import com.google.cloud.storage.RetryContext.RetryContextProvider;
 import com.google.cloud.storage.Retrying.DefaultRetrier;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -332,12 +333,14 @@ public final class GrpcStorageOptions extends StorageOptions
     }
 
     if (enableGrpcClientMetrics) {
-      OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
-          channelProviderBuilder,
-          endpoint,
-          this.getProjectId(),
-          this.getUniverseDomain(),
-          !grpcClientMetricsManuallyEnabled);
+      ChannelConfigurator channelConfigurator =
+          OpenTelemetryBootstrappingUtils.enableGrpcMetrics(
+              ChannelConfigurator.lift(channelProviderBuilder.getChannelConfigurator()),
+              endpoint,
+              this.getProjectId(),
+              this.getUniverseDomain(),
+              !grpcClientMetricsManuallyEnabled);
+      channelProviderBuilder.setChannelConfigurator(channelConfigurator);
     }
 
     builder.setTransportChannelProvider(channelProviderBuilder.build());
