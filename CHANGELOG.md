@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.52.3](https://github.com/googleapis/java-storage/compare/v2.52.2...v2.52.3) (2025-05-08)
+
+
+### Bug Fixes
+
+* Update grpc client side metrics detection to be graceful when not running on gcp ([#3097](https://github.com/googleapis/java-storage/issues/3097)) ([10cd32d](https://github.com/googleapis/java-storage/commit/10cd32d51aa061304b5b4d0d632a2eed694cd1d6))
+
 ## [2.52.2](https://github.com/googleapis/java-storage/compare/v2.52.1...v2.52.2) (2025-05-06)
 
 
