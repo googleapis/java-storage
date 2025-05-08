@@ -103,7 +103,8 @@ final class OpenTelemetryBootstrappingUtils {
         detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
     if (projectId == null && detectedProjectId == null) {
       log.warning(
-          "Unable to determine the Project ID in order to report metrics. No gRPC client metrics will be reported.");
+          "Unable to determine the Project ID in order to report metrics. No gRPC client metrics"
+              + " will be reported.");
       return channelConfigurator != null ? channelConfigurator : ChannelConfigurator.identity();
     }
 
