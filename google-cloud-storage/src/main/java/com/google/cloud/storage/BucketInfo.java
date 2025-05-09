@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -101,6 +102,7 @@ public class BucketInfo implements Serializable {
   private final OffsetDateTime createTime;
   private final OffsetDateTime updateTime;
   private final Long metageneration;
+  private final BigInteger projectNumber;
   private final List<Cors> cors;
   private final List<Acl> acl;
   private final List<Acl> defaultAcl;
@@ -1760,6 +1762,8 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    abstract Builder setProjectNumber(BigInteger projectNumber);
+
     abstract Builder setMetageneration(Long metageneration);
 
     abstract Builder setLocationType(String locationType);
@@ -1893,6 +1897,8 @@ public class BucketInfo implements Serializable {
 
     abstract Builder clearMetageneration();
 
+    abstract Builder clearProjectNumber();
+
     abstract Builder clearCors();
 
     abstract Builder clearAcl();
@@ -1939,6 +1945,7 @@ public class BucketInfo implements Serializable {
     private OffsetDateTime createTime;
     private OffsetDateTime updateTime;
     private Long metageneration;
+    private BigInteger projectNumber;
     private List<Cors> cors;
     private List<Acl> acl;
     private List<Acl> defaultAcl;
@@ -1971,6 +1978,7 @@ public class BucketInfo implements Serializable {
       createTime = bucketInfo.createTime;
       updateTime = bucketInfo.updateTime;
       metageneration = bucketInfo.metageneration;
+      projectNumber = bucketInfo.projectNumber;
       location = bucketInfo.location;
       rpo = bucketInfo.rpo;
       storageClass = bucketInfo.storageClass;
@@ -2212,6 +2220,12 @@ public class BucketInfo implements Serializable {
     @Override
     Builder setMetageneration(Long metageneration) {
       this.metageneration = metageneration;
+      return this;
+    }
+
+    @Override
+    Builder setProjectNumber(BigInteger projectNumber) {
+      this.projectNumber = projectNumber;
       return this;
     }
 
@@ -2509,6 +2523,12 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    BuilderImpl clearProjectNumber() {
+      this.projectNumber = null;
+      return this;
+    }
+
+    @Override
     BuilderImpl clearCors() {
       this.cors = null;
       return this;
@@ -2607,6 +2627,7 @@ public class BucketInfo implements Serializable {
     createTime = builder.createTime;
     updateTime = builder.updateTime;
     metageneration = builder.metageneration;
+    projectNumber = builder.projectNumber;
     location = builder.location;
     rpo = builder.rpo;
     storageClass = builder.storageClass;
@@ -2778,6 +2799,11 @@ public class BucketInfo implements Serializable {
   /** Returns the metadata generation of this bucket. */
   public Long getMetageneration() {
     return metageneration;
+  }
+
+  /** Returns the project number of the bucket. */
+  public BigInteger getProjectNumber() {
+    return projectNumber;
   }
 
   /**
@@ -3005,6 +3031,7 @@ public class BucketInfo implements Serializable {
         createTime,
         updateTime,
         metageneration,
+        projectNumber,
         cors,
         acl,
         defaultAcl,
@@ -3048,6 +3075,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(createTime, that.createTime)
         && Objects.equals(updateTime, that.updateTime)
         && Objects.equals(metageneration, that.metageneration)
+        && Objects.equals(projectNumber, that.projectNumber)
         && Objects.equals(cors, that.cors)
         && Objects.equals(acl, that.acl)
         && Objects.equals(defaultAcl, that.defaultAcl)
