@@ -58,14 +58,14 @@ public final class ITCleanupOldBucketsTest {
     String bucketNamePrefix = bucket.getName().substring(0, UUID.randomUUID().toString().length());
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
-    OffsetDateTime _24hoursAgo = now.minusHours(24);
+    OffsetDateTime twentyFourHoursAgo = now.minusHours(24);
 
     ImmutableList<String> bucketsToClean = page.streamAll()
         .map(Bucket::asBucketInfo)
         .filter(bucket -> {
           OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
           String name = bucket.getName();
-          return ctime.isBefore(_24hoursAgo)
+          return ctime.isBefore(twentyFourHoursAgo)
               && (name.startsWith("gcloud") || name.startsWith(bucketNamePrefix));
         })
         .map(BucketInfo::getName)
