@@ -54,7 +54,8 @@ final class BucketInfoShim implements ManagedLifecycle {
       createdBucket = s.create(bucketInfo).asBucketInfo();
     } catch (StorageException se) {
       String msg = se.getMessage();
-      if (se.getCode() == 400 && msg.contains("not a valid zone in location")) {
+      if (se.getCode() == 400 && (msg.contains("not a valid zone in location"))
+          || msg.contains("custom placement config")) {
         assumeTrue(
             "Skipping test due to bucket setup unavailable in current zone. (" + msg + ")", false);
       }
