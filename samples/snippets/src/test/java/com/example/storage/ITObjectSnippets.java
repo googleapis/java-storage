@@ -59,6 +59,7 @@ import com.example.storage.object.UploadEncryptedObject;
 import com.example.storage.object.UploadKmsEncryptedObject;
 import com.example.storage.object.UploadObject;
 import com.example.storage.object.UploadObjectFromMemory;
+import com.google.cloud.kms.v1.CryptoKey;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -307,17 +308,18 @@ public class ITObjectSnippets extends TestBase {
     assertArrayEquals(CONTENT, Files.readAllBytes(newDownloadFile.toPath()));
 
     assertNull(storage.get(bucket.getName(), encryptedBlob).getKmsKeyName());
+    CryptoKey key1 = kmsFixture.getKey1();
     ChangeObjectCsekToKms.changeObjectFromCsekToKms(
         GOOGLE_CLOUD_PROJECT,
         bucket.getName(),
         encryptedBlob,
         newEncryptionKey,
-        kmsFixture.getKey1().getName());
+        key1.getName());
     assertTrue(
         storage
             .get(bucket.getName(), encryptedBlob)
             .getKmsKeyName()
-            .contains(kmsFixture.getKey1().getName()));
+            .contains(key1. getName()));
   }
 
   @Test
