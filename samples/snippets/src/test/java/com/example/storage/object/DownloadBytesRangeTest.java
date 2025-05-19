@@ -48,8 +48,10 @@ public class DownloadBytesRangeTest extends TestBase {
     };
 
     BlobInfo gen1 = storage.create(
-        BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(), bytes,
-        BlobTargetOption.doesNotExist());
+        BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+        bytes,
+        BlobTargetOption.doesNotExist()
+    );
 
     File file = tmp.newFile();
 

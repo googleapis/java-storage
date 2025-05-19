@@ -30,15 +30,16 @@ class DownloadMany {
   public static void downloadManyBlobs(
       String bucketName, List<BlobInfo> blobs, Path destinationDirectory) throws Exception {
 
-    try (TransferManager transferManager = TransferManagerConfig.newBuilder().build()
-        .getService()) {
+    try (TransferManager transferManager =
+        TransferManagerConfig.newBuilder().build().getService()) {
       ParallelDownloadConfig parallelDownloadConfig =
           ParallelDownloadConfig.newBuilder()
               .setBucketName(bucketName)
               .setDownloadDirectory(destinationDirectory)
               .build();
 
-      List<DownloadResult> results = transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
+      List<DownloadResult> results =
+          transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
       for (DownloadResult result : results) {
         System.out.println(

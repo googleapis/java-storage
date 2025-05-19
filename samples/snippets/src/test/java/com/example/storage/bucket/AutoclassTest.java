@@ -36,7 +36,8 @@ public class AutoclassTest extends TestBase {
             .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
             .build());
     try {
-      SetBucketAutoclass.setBucketAutoclass(GOOGLE_CLOUD_PROJECT, autoclassBucket, StorageClass.NEARLINE);
+      SetBucketAutoclass.setBucketAutoclass(
+          GOOGLE_CLOUD_PROJECT, autoclassBucket, StorageClass.NEARLINE);
       Autoclass autoclass = storage.get(autoclassBucket).getAutoclass();
       assertThat(autoclass.getEnabled()).isTrue();
 

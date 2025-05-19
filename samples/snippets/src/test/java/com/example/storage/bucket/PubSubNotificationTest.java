@@ -53,7 +53,6 @@ public class PubSubNotificationTest extends TestBase {
   private String topic;
   private NotificationInfo notificationInfo;
 
-
   @BeforeClass
   public static void configureTopicAdminClient() throws IOException {
     topicAdminClient = TopicAdminClient.create();
@@ -84,8 +83,9 @@ public class PubSubNotificationTest extends TestBase {
     // https://cloud.google.com/iam/docs/overview#concepts_related_identity
     String member =
         GOOGLE_CLOUD_PROJECT_NUMBER != null
-            ? String.format("serviceAccount:service-%s@gs-project-accounts.iam.gserviceaccount.com",
-            GOOGLE_CLOUD_PROJECT_NUMBER)
+            ? String.format(
+                "serviceAccount:service-%s@gs-project-accounts.iam.gserviceaccount.com",
+                GOOGLE_CLOUD_PROJECT_NUMBER)
             : "allAuthenticatedUsers";
     Binding binding = Binding.newBuilder().setRole("roles/owner").addMembers(member).build();
     SetIamPolicyRequest setIamPolicyRequest =
@@ -112,7 +112,11 @@ public class PubSubNotificationTest extends TestBase {
   @Test
   public void testCreateBucketPubSubNotification() {
     CreateBucketPubSubNotification.createBucketPubSubNotification(
-        bucketName, topic, CUSTOM_ATTRIBUTES, EVENT_TYPES, OBJECT_NAME_PREFIX,
+        bucketName,
+        topic,
+        CUSTOM_ATTRIBUTES,
+        EVENT_TYPES,
+        OBJECT_NAME_PREFIX,
         Notification.PayloadFormat.JSON_API_V1);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(topic);
   }

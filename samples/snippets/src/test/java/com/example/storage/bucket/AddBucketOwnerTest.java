@@ -40,8 +40,7 @@ public class AddBucketOwnerTest extends TestBase {
 
       String bucketName = tmpBucket.getBucket().getName();
 
-      AddBucketOwner.addBucketOwner(
-          GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      AddBucketOwner.addBucketOwner(GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
       assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     }
   }
