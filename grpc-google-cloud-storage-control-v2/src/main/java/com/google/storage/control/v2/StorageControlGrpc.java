@@ -485,6 +485,659 @@ public final class StorageControlGrpc {
     return getListManagedFoldersMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getCreateAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateAnywhereCache",
+      requestType = com.google.storage.control.v2.CreateAnywhereCacheRequest.class,
+      responseType = com.google.longrunning.Operation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.CreateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getCreateAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.CreateAnywhereCacheRequest,
+            com.google.longrunning.Operation>
+        getCreateAnywhereCacheMethod;
+    if ((getCreateAnywhereCacheMethod = StorageControlGrpc.getCreateAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getCreateAnywhereCacheMethod = StorageControlGrpc.getCreateAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getCreateAnywhereCacheMethod =
+              getCreateAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.CreateAnywhereCacheRequest,
+                          com.google.longrunning.Operation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "CreateAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.CreateAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.longrunning.Operation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("CreateAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getCreateAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getUpdateAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateAnywhereCache",
+      requestType = com.google.storage.control.v2.UpdateAnywhereCacheRequest.class,
+      responseType = com.google.longrunning.Operation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+          com.google.longrunning.Operation>
+      getUpdateAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+            com.google.longrunning.Operation>
+        getUpdateAnywhereCacheMethod;
+    if ((getUpdateAnywhereCacheMethod = StorageControlGrpc.getUpdateAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getUpdateAnywhereCacheMethod = StorageControlGrpc.getUpdateAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getUpdateAnywhereCacheMethod =
+              getUpdateAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+                          com.google.longrunning.Operation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UpdateAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.UpdateAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.longrunning.Operation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("UpdateAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DisableAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getDisableAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DisableAnywhereCache",
+      requestType = com.google.storage.control.v2.DisableAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.DisableAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getDisableAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.DisableAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getDisableAnywhereCacheMethod;
+    if ((getDisableAnywhereCacheMethod = StorageControlGrpc.getDisableAnywhereCacheMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getDisableAnywhereCacheMethod = StorageControlGrpc.getDisableAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getDisableAnywhereCacheMethod =
+              getDisableAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.DisableAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DisableAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.DisableAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("DisableAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getDisableAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.PauseAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getPauseAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "PauseAnywhereCache",
+      requestType = com.google.storage.control.v2.PauseAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.PauseAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getPauseAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.PauseAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getPauseAnywhereCacheMethod;
+    if ((getPauseAnywhereCacheMethod = StorageControlGrpc.getPauseAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getPauseAnywhereCacheMethod = StorageControlGrpc.getPauseAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getPauseAnywhereCacheMethod =
+              getPauseAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.PauseAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "PauseAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.PauseAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("PauseAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getPauseAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getResumeAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ResumeAnywhereCache",
+      requestType = com.google.storage.control.v2.ResumeAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getResumeAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getResumeAnywhereCacheMethod;
+    if ((getResumeAnywhereCacheMethod = StorageControlGrpc.getResumeAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getResumeAnywhereCacheMethod = StorageControlGrpc.getResumeAnywhereCacheMethod)
+            == null) {
+          StorageControlGrpc.getResumeAnywhereCacheMethod =
+              getResumeAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "ResumeAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ResumeAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("ResumeAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getResumeAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getGetAnywhereCacheMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAnywhereCache",
+      requestType = com.google.storage.control.v2.GetAnywhereCacheRequest.class,
+      responseType = com.google.storage.control.v2.AnywhereCache.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetAnywhereCacheRequest,
+          com.google.storage.control.v2.AnywhereCache>
+      getGetAnywhereCacheMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetAnywhereCacheRequest,
+            com.google.storage.control.v2.AnywhereCache>
+        getGetAnywhereCacheMethod;
+    if ((getGetAnywhereCacheMethod = StorageControlGrpc.getGetAnywhereCacheMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetAnywhereCacheMethod = StorageControlGrpc.getGetAnywhereCacheMethod) == null) {
+          StorageControlGrpc.getGetAnywhereCacheMethod =
+              getGetAnywhereCacheMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetAnywhereCacheRequest,
+                          com.google.storage.control.v2.AnywhereCache>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAnywhereCache"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetAnywhereCacheRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.AnywhereCache.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("GetAnywhereCache"))
+                      .build();
+        }
+      }
+    }
+    return getGetAnywhereCacheMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListAnywhereCachesRequest,
+          com.google.storage.control.v2.ListAnywhereCachesResponse>
+      getListAnywhereCachesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListAnywhereCaches",
+      requestType = com.google.storage.control.v2.ListAnywhereCachesRequest.class,
+      responseType = com.google.storage.control.v2.ListAnywhereCachesResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.ListAnywhereCachesRequest,
+          com.google.storage.control.v2.ListAnywhereCachesResponse>
+      getListAnywhereCachesMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.ListAnywhereCachesRequest,
+            com.google.storage.control.v2.ListAnywhereCachesResponse>
+        getListAnywhereCachesMethod;
+    if ((getListAnywhereCachesMethod = StorageControlGrpc.getListAnywhereCachesMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getListAnywhereCachesMethod = StorageControlGrpc.getListAnywhereCachesMethod)
+            == null) {
+          StorageControlGrpc.getListAnywhereCachesMethod =
+              getListAnywhereCachesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.ListAnywhereCachesRequest,
+                          com.google.storage.control.v2.ListAnywhereCachesResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAnywhereCaches"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListAnywhereCachesRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.ListAnywhereCachesResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("ListAnywhereCaches"))
+                      .build();
+        }
+      }
+    }
+    return getListAnywhereCachesMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetProjectIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetProjectIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetProjectIntelligenceConfig",
+      requestType = com.google.storage.control.v2.GetProjectIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetProjectIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetProjectIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetProjectIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getGetProjectIntelligenceConfigMethod;
+    if ((getGetProjectIntelligenceConfigMethod =
+            StorageControlGrpc.getGetProjectIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetProjectIntelligenceConfigMethod =
+                StorageControlGrpc.getGetProjectIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getGetProjectIntelligenceConfigMethod =
+              getGetProjectIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetProjectIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetProjectIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetProjectIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier(
+                              "GetProjectIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getGetProjectIntelligenceConfigMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateProjectIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateProjectIntelligenceConfig",
+      requestType = com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateProjectIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getUpdateProjectIntelligenceConfigMethod;
+    if ((getUpdateProjectIntelligenceConfigMethod =
+            StorageControlGrpc.getUpdateProjectIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getUpdateProjectIntelligenceConfigMethod =
+                StorageControlGrpc.getUpdateProjectIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getUpdateProjectIntelligenceConfigMethod =
+              getUpdateProjectIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UpdateProjectIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier(
+                              "UpdateProjectIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateProjectIntelligenceConfigMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetFolderIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetFolderIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFolderIntelligenceConfig",
+      requestType = com.google.storage.control.v2.GetFolderIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetFolderIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetFolderIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetFolderIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getGetFolderIntelligenceConfigMethod;
+    if ((getGetFolderIntelligenceConfigMethod =
+            StorageControlGrpc.getGetFolderIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetFolderIntelligenceConfigMethod =
+                StorageControlGrpc.getGetFolderIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getGetFolderIntelligenceConfigMethod =
+              getGetFolderIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetFolderIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetFolderIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetFolderIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("GetFolderIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getGetFolderIntelligenceConfigMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateFolderIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateFolderIntelligenceConfig",
+      requestType = com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateFolderIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getUpdateFolderIntelligenceConfigMethod;
+    if ((getUpdateFolderIntelligenceConfigMethod =
+            StorageControlGrpc.getUpdateFolderIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getUpdateFolderIntelligenceConfigMethod =
+                StorageControlGrpc.getUpdateFolderIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getUpdateFolderIntelligenceConfigMethod =
+              getUpdateFolderIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UpdateFolderIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier(
+                              "UpdateFolderIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateFolderIntelligenceConfigMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetOrganizationIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetOrganizationIntelligenceConfig",
+      requestType = com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getGetOrganizationIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getGetOrganizationIntelligenceConfigMethod;
+    if ((getGetOrganizationIntelligenceConfigMethod =
+            StorageControlGrpc.getGetOrganizationIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetOrganizationIntelligenceConfigMethod =
+                StorageControlGrpc.getGetOrganizationIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getGetOrganizationIntelligenceConfigMethod =
+              getGetOrganizationIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetOrganizationIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier(
+                              "GetOrganizationIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getGetOrganizationIntelligenceConfigMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateOrganizationIntelligenceConfigMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateOrganizationIntelligenceConfig",
+      requestType = com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest.class,
+      responseType = com.google.storage.control.v2.IntelligenceConfig.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
+          com.google.storage.control.v2.IntelligenceConfig>
+      getUpdateOrganizationIntelligenceConfigMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
+            com.google.storage.control.v2.IntelligenceConfig>
+        getUpdateOrganizationIntelligenceConfigMethod;
+    if ((getUpdateOrganizationIntelligenceConfigMethod =
+            StorageControlGrpc.getUpdateOrganizationIntelligenceConfigMethod)
+        == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getUpdateOrganizationIntelligenceConfigMethod =
+                StorageControlGrpc.getUpdateOrganizationIntelligenceConfigMethod)
+            == null) {
+          StorageControlGrpc.getUpdateOrganizationIntelligenceConfigMethod =
+              getUpdateOrganizationIntelligenceConfigMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
+                          com.google.storage.control.v2.IntelligenceConfig>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "UpdateOrganizationIntelligenceConfig"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2
+                                  .UpdateOrganizationIntelligenceConfigRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.control.v2.IntelligenceConfig
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier(
+                              "UpdateOrganizationIntelligenceConfig"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateOrganizationIntelligenceConfigMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static StorageControlStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<StorageControlStub> factory =
@@ -695,6 +1348,199 @@ public final class StorageControlGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getListManagedFoldersMethod(), responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    default void createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCreateAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    default void updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    default void disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDisableAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    default void pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getPauseAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    default void resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getResumeAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    default void getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetAnywhereCacheMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    default void listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListAnywhereCachesResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getListAnywhereCachesMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void getProjectIntelligenceConfig(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetProjectIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void updateProjectIntelligenceConfig(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateProjectIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void getFolderIntelligenceConfig(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetFolderIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void updateFolderIntelligenceConfig(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateFolderIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void getOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetOrganizationIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    default void updateOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateOrganizationIntelligenceConfigMethod(), responseObserver);
+    }
   }
 
   /**
@@ -897,6 +1743,225 @@ public final class StorageControlGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public void createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public void updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public void disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDisableAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public void pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getPauseAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public void resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getResumeAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public void getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAnywhereCacheMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public void listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.ListAnywhereCachesResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListAnywhereCachesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void getProjectIntelligenceConfig(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetProjectIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void updateProjectIntelligenceConfig(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateProjectIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void getFolderIntelligenceConfig(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetFolderIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void updateFolderIntelligenceConfig(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateFolderIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void getOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetOrganizationIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public void updateOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /**
@@ -1054,6 +2119,179 @@ public final class StorageControlGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.longrunning.Operation createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public com.google.longrunning.Operation updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDisableAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPauseAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getResumeAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListAnywhereCachesResponse listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListAnywhereCachesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getProjectIntelligenceConfig(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetProjectIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateProjectIntelligenceConfig(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateProjectIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getFolderIntelligenceConfig(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFolderIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateFolderIntelligenceConfig(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateFolderIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -1210,6 +2448,179 @@ public final class StorageControlGrpc {
         com.google.storage.control.v2.ListManagedFoldersRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.longrunning.Operation createAnywhereCache(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public com.google.longrunning.Operation updateAnywhereCache(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache disableAnywhereCache(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDisableAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache pauseAnywhereCache(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPauseAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache resumeAnywhereCache(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getResumeAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.storage.control.v2.AnywhereCache getAnywhereCache(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAnywhereCacheMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public com.google.storage.control.v2.ListAnywhereCachesResponse listAnywhereCaches(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListAnywhereCachesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getProjectIntelligenceConfig(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetProjectIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateProjectIntelligenceConfig(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateProjectIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getFolderIntelligenceConfig(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFolderIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateFolderIntelligenceConfig(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateFolderIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig getOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.storage.control.v2.IntelligenceConfig updateOrganizationIntelligenceConfig(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
   }
 
@@ -1373,6 +2784,200 @@ public final class StorageControlGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListManagedFoldersMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Creates an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>
+        createAnywhereCache(com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an Anywhere Cache instance. Mutable fields include `ttl` and
+     * `admission_policy`.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>
+        updateAnywhereCache(com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Disables an Anywhere Cache instance. A disabled instance is read-only. The
+     * disablement could be revoked by calling ResumeAnywhereCache. The cache
+     * instance will be deleted automatically if it remains in the disabled state
+     * for at least one hour.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        disableAnywhereCache(com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDisableAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Pauses an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        pauseAnywhereCache(com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getPauseAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Resumes a disabled or paused Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        resumeAnywhereCache(com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getResumeAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets an Anywhere Cache instance.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.AnywhereCache>
+        getAnywhereCache(com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAnywhereCacheMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Lists Anywhere Cache instances for a given bucket.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.ListAnywhereCachesResponse>
+        listAnywhereCaches(com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListAnywhereCachesMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        getProjectIntelligenceConfig(
+            com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetProjectIntelligenceConfigMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Project scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        updateProjectIntelligenceConfig(
+            com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateProjectIntelligenceConfigMethod(), getCallOptions()),
+          request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        getFolderIntelligenceConfig(
+            com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetFolderIntelligenceConfigMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Folder scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        updateFolderIntelligenceConfig(
+            com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateFolderIntelligenceConfigMethod(), getCallOptions()),
+          request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Returns the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        getOrganizationIntelligenceConfig(
+            com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetOrganizationIntelligenceConfigMethod(), getCallOptions()),
+          request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates the Organization scoped singleton IntelligenceConfig resource.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.control.v2.IntelligenceConfig>
+        updateOrganizationIntelligenceConfig(
+            com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_CREATE_FOLDER = 0;
@@ -1385,6 +2990,19 @@ public final class StorageControlGrpc {
   private static final int METHODID_DELETE_MANAGED_FOLDER = 7;
   private static final int METHODID_GET_MANAGED_FOLDER = 8;
   private static final int METHODID_LIST_MANAGED_FOLDERS = 9;
+  private static final int METHODID_CREATE_ANYWHERE_CACHE = 10;
+  private static final int METHODID_UPDATE_ANYWHERE_CACHE = 11;
+  private static final int METHODID_DISABLE_ANYWHERE_CACHE = 12;
+  private static final int METHODID_PAUSE_ANYWHERE_CACHE = 13;
+  private static final int METHODID_RESUME_ANYWHERE_CACHE = 14;
+  private static final int METHODID_GET_ANYWHERE_CACHE = 15;
+  private static final int METHODID_LIST_ANYWHERE_CACHES = 16;
+  private static final int METHODID_GET_PROJECT_INTELLIGENCE_CONFIG = 17;
+  private static final int METHODID_UPDATE_PROJECT_INTELLIGENCE_CONFIG = 18;
+  private static final int METHODID_GET_FOLDER_INTELLIGENCE_CONFIG = 19;
+  private static final int METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG = 20;
+  private static final int METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG = 21;
+  private static final int METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG = 22;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1457,6 +3075,83 @@ public final class StorageControlGrpc {
               (com.google.storage.control.v2.ListManagedFoldersRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.google.storage.control.v2.ListManagedFoldersResponse>)
+                  responseObserver);
+          break;
+        case METHODID_CREATE_ANYWHERE_CACHE:
+          serviceImpl.createAnywhereCache(
+              (com.google.storage.control.v2.CreateAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
+          break;
+        case METHODID_UPDATE_ANYWHERE_CACHE:
+          serviceImpl.updateAnywhereCache(
+              (com.google.storage.control.v2.UpdateAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
+          break;
+        case METHODID_DISABLE_ANYWHERE_CACHE:
+          serviceImpl.disableAnywhereCache(
+              (com.google.storage.control.v2.DisableAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_PAUSE_ANYWHERE_CACHE:
+          serviceImpl.pauseAnywhereCache(
+              (com.google.storage.control.v2.PauseAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_RESUME_ANYWHERE_CACHE:
+          serviceImpl.resumeAnywhereCache(
+              (com.google.storage.control.v2.ResumeAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ANYWHERE_CACHE:
+          serviceImpl.getAnywhereCache(
+              (com.google.storage.control.v2.GetAnywhereCacheRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.AnywhereCache>)
+                  responseObserver);
+          break;
+        case METHODID_LIST_ANYWHERE_CACHES:
+          serviceImpl.listAnywhereCaches(
+              (com.google.storage.control.v2.ListAnywhereCachesRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.google.storage.control.v2.ListAnywhereCachesResponse>)
+                  responseObserver);
+          break;
+        case METHODID_GET_PROJECT_INTELLIGENCE_CONFIG:
+          serviceImpl.getProjectIntelligenceConfig(
+              (com.google.storage.control.v2.GetProjectIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_PROJECT_INTELLIGENCE_CONFIG:
+          serviceImpl.updateProjectIntelligenceConfig(
+              (com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_GET_FOLDER_INTELLIGENCE_CONFIG:
+          serviceImpl.getFolderIntelligenceConfig(
+              (com.google.storage.control.v2.GetFolderIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG:
+          serviceImpl.updateFolderIntelligenceConfig(
+              (com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG:
+          serviceImpl.getOrganizationIntelligenceConfig(
+              (com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG:
+          serviceImpl.updateOrganizationIntelligenceConfig(
+              (com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
                   responseObserver);
           break;
         default:
@@ -1542,6 +3237,95 @@ public final class StorageControlGrpc {
                     com.google.storage.control.v2.ListManagedFoldersRequest,
                     com.google.storage.control.v2.ListManagedFoldersResponse>(
                     service, METHODID_LIST_MANAGED_FOLDERS)))
+        .addMethod(
+            getCreateAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.CreateAnywhereCacheRequest,
+                    com.google.longrunning.Operation>(service, METHODID_CREATE_ANYWHERE_CACHE)))
+        .addMethod(
+            getUpdateAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.UpdateAnywhereCacheRequest,
+                    com.google.longrunning.Operation>(service, METHODID_UPDATE_ANYWHERE_CACHE)))
+        .addMethod(
+            getDisableAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.DisableAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_DISABLE_ANYWHERE_CACHE)))
+        .addMethod(
+            getPauseAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.PauseAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_PAUSE_ANYWHERE_CACHE)))
+        .addMethod(
+            getResumeAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.ResumeAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_RESUME_ANYWHERE_CACHE)))
+        .addMethod(
+            getGetAnywhereCacheMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetAnywhereCacheRequest,
+                    com.google.storage.control.v2.AnywhereCache>(
+                    service, METHODID_GET_ANYWHERE_CACHE)))
+        .addMethod(
+            getListAnywhereCachesMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.ListAnywhereCachesRequest,
+                    com.google.storage.control.v2.ListAnywhereCachesResponse>(
+                    service, METHODID_LIST_ANYWHERE_CACHES)))
+        .addMethod(
+            getGetProjectIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetProjectIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_GET_PROJECT_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getUpdateProjectIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_UPDATE_PROJECT_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getGetFolderIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetFolderIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_GET_FOLDER_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getUpdateFolderIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getGetOrganizationIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getUpdateOrganizationIntelligenceConfigMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
+                    com.google.storage.control.v2.IntelligenceConfig>(
+                    service, METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG)))
         .build();
   }
 
@@ -1603,6 +3387,19 @@ public final class StorageControlGrpc {
                       .addMethod(getDeleteManagedFolderMethod())
                       .addMethod(getGetManagedFolderMethod())
                       .addMethod(getListManagedFoldersMethod())
+                      .addMethod(getCreateAnywhereCacheMethod())
+                      .addMethod(getUpdateAnywhereCacheMethod())
+                      .addMethod(getDisableAnywhereCacheMethod())
+                      .addMethod(getPauseAnywhereCacheMethod())
+                      .addMethod(getResumeAnywhereCacheMethod())
+                      .addMethod(getGetAnywhereCacheMethod())
+                      .addMethod(getListAnywhereCachesMethod())
+                      .addMethod(getGetProjectIntelligenceConfigMethod())
+                      .addMethod(getUpdateProjectIntelligenceConfigMethod())
+                      .addMethod(getGetFolderIntelligenceConfigMethod())
+                      .addMethod(getUpdateFolderIntelligenceConfigMethod())
+                      .addMethod(getGetOrganizationIntelligenceConfigMethod())
+                      .addMethod(getUpdateOrganizationIntelligenceConfigMethod())
                       .build();
         }
       }

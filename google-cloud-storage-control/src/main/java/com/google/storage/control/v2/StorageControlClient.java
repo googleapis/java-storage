@@ -30,6 +30,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
 import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
+import com.google.protobuf.FieldMask;
 import com.google.storage.control.v2.stub.StorageControlStub;
 import com.google.storage.control.v2.stub.StorageControlStubSettings;
 import java.io.IOException;
@@ -258,6 +259,252 @@ import javax.annotation.Generated;
  *      <ul>
  *           <li><p> listManagedFoldersPagedCallable()
  *           <li><p> listManagedFoldersCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> CreateAnywhereCache</td>
+ *      <td><p> Creates an Anywhere Cache instance.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> createAnywhereCacheAsync(CreateAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>Methods that return long-running operations have "Async" method variants that return `OperationFuture`, which is used to track polling of the service.</p>
+ *      <ul>
+ *           <li><p> createAnywhereCacheAsync(BucketName parent, AnywhereCache anywhereCache)
+ *           <li><p> createAnywhereCacheAsync(String parent, AnywhereCache anywhereCache)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> createAnywhereCacheOperationCallable()
+ *           <li><p> createAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateAnywhereCache</td>
+ *      <td><p> Updates an Anywhere Cache instance. Mutable fields include `ttl` and `admission_policy`.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateAnywhereCacheAsync(UpdateAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>Methods that return long-running operations have "Async" method variants that return `OperationFuture`, which is used to track polling of the service.</p>
+ *      <ul>
+ *           <li><p> updateAnywhereCacheAsync(AnywhereCache anywhereCache, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateAnywhereCacheOperationCallable()
+ *           <li><p> updateAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> DisableAnywhereCache</td>
+ *      <td><p> Disables an Anywhere Cache instance. A disabled instance is read-only. The disablement could be revoked by calling ResumeAnywhereCache. The cache instance will be deleted automatically if it remains in the disabled state for at least one hour.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> disableAnywhereCache(DisableAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> disableAnywhereCache(AnywhereCacheName name)
+ *           <li><p> disableAnywhereCache(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> disableAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> PauseAnywhereCache</td>
+ *      <td><p> Pauses an Anywhere Cache instance.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> pauseAnywhereCache(PauseAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> pauseAnywhereCache(AnywhereCacheName name)
+ *           <li><p> pauseAnywhereCache(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> pauseAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ResumeAnywhereCache</td>
+ *      <td><p> Resumes a disabled or paused Anywhere Cache instance.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> resumeAnywhereCache(ResumeAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> resumeAnywhereCache(AnywhereCacheName name)
+ *           <li><p> resumeAnywhereCache(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> resumeAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetAnywhereCache</td>
+ *      <td><p> Gets an Anywhere Cache instance.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getAnywhereCache(GetAnywhereCacheRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getAnywhereCache(AnywhereCacheName name)
+ *           <li><p> getAnywhereCache(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getAnywhereCacheCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> ListAnywhereCaches</td>
+ *      <td><p> Lists Anywhere Cache instances for a given bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> listAnywhereCaches(ListAnywhereCachesRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> listAnywhereCaches(BucketName parent)
+ *           <li><p> listAnywhereCaches(String parent)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> listAnywhereCachesPagedCallable()
+ *           <li><p> listAnywhereCachesCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetProjectIntelligenceConfig</td>
+ *      <td><p> Returns the Project scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getProjectIntelligenceConfig(GetProjectIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getProjectIntelligenceConfig(IntelligenceConfigName name)
+ *           <li><p> getProjectIntelligenceConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getProjectIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateProjectIntelligenceConfig</td>
+ *      <td><p> Updates the Project scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateProjectIntelligenceConfig(UpdateProjectIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateProjectIntelligenceConfig(IntelligenceConfig intelligenceConfig, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateProjectIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetFolderIntelligenceConfig</td>
+ *      <td><p> Returns the Folder scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getFolderIntelligenceConfig(GetFolderIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getFolderIntelligenceConfig(IntelligenceConfigName name)
+ *           <li><p> getFolderIntelligenceConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getFolderIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateFolderIntelligenceConfig</td>
+ *      <td><p> Updates the Folder scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateFolderIntelligenceConfig(UpdateFolderIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateFolderIntelligenceConfig(IntelligenceConfig intelligenceConfig, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateFolderIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetOrganizationIntelligenceConfig</td>
+ *      <td><p> Returns the Organization scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getOrganizationIntelligenceConfig(GetOrganizationIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getOrganizationIntelligenceConfig(IntelligenceConfigName name)
+ *           <li><p> getOrganizationIntelligenceConfig(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getOrganizationIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> UpdateOrganizationIntelligenceConfig</td>
+ *      <td><p> Updates the Organization scoped singleton IntelligenceConfig resource.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> updateOrganizationIntelligenceConfig(UpdateOrganizationIntelligenceConfigRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> updateOrganizationIntelligenceConfig(IntelligenceConfig intelligenceConfig, FieldMask updateMask)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> updateOrganizationIntelligenceConfigCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -1780,6 +2027,1606 @@ public class StorageControlClient implements BackgroundResource {
     return stub.listManagedFoldersCallable();
   }
 
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+   *   AnywhereCache response =
+   *       storageControlClient.createAnywhereCacheAsync(parent, anywhereCache).get();
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this cache belongs. Format:
+   *     `projects/{project}/buckets/{bucket}`
+   * @param anywhereCache Required. Properties of the Anywhere Cache instance being created. The
+   *     parent bucket name is specified in the `parent` field. Server uses the default value of
+   *     `ttl` or `admission_policy` if not specified in request.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<AnywhereCache, CreateAnywhereCacheMetadata> createAnywhereCacheAsync(
+      BucketName parent, AnywhereCache anywhereCache) {
+    CreateAnywhereCacheRequest request =
+        CreateAnywhereCacheRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .setAnywhereCache(anywhereCache)
+            .build();
+    return createAnywhereCacheAsync(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+   *   AnywhereCache response =
+   *       storageControlClient.createAnywhereCacheAsync(parent, anywhereCache).get();
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this cache belongs. Format:
+   *     `projects/{project}/buckets/{bucket}`
+   * @param anywhereCache Required. Properties of the Anywhere Cache instance being created. The
+   *     parent bucket name is specified in the `parent` field. Server uses the default value of
+   *     `ttl` or `admission_policy` if not specified in request.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<AnywhereCache, CreateAnywhereCacheMetadata> createAnywhereCacheAsync(
+      String parent, AnywhereCache anywhereCache) {
+    CreateAnywhereCacheRequest request =
+        CreateAnywhereCacheRequest.newBuilder()
+            .setParent(parent)
+            .setAnywhereCache(anywhereCache)
+            .build();
+    return createAnywhereCacheAsync(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   CreateAnywhereCacheRequest request =
+   *       CreateAnywhereCacheRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.createAnywhereCacheAsync(request).get();
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<AnywhereCache, CreateAnywhereCacheMetadata> createAnywhereCacheAsync(
+      CreateAnywhereCacheRequest request) {
+    return createAnywhereCacheOperationCallable().futureCall(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   CreateAnywhereCacheRequest request =
+   *       CreateAnywhereCacheRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   OperationFuture<AnywhereCache, CreateAnywhereCacheMetadata> future =
+   *       storageControlClient.createAnywhereCacheOperationCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final OperationCallable<
+          CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationCallable() {
+    return stub.createAnywhereCacheOperationCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   CreateAnywhereCacheRequest request =
+   *       CreateAnywhereCacheRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<Operation> future =
+   *       storageControlClient.createAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<CreateAnywhereCacheRequest, Operation> createAnywhereCacheCallable() {
+    return stub.createAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an Anywhere Cache instance. Mutable fields include `ttl` and `admission_policy`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   AnywhereCache response =
+   *       storageControlClient.updateAnywhereCacheAsync(anywhereCache, updateMask).get();
+   * }
+   * }</pre>
+   *
+   * @param anywhereCache Required. The Anywhere Cache instance to be updated.
+   * @param updateMask Required. List of fields to be updated. Mutable fields of AnywhereCache
+   *     include `ttl` and `admission_policy`.
+   *     <p>To specify ALL fields, specify a single field with the value `&#42;`. Note: We recommend
+   *     against doing this. If a new field is introduced at a later time, an older client updating
+   *     with the `&#42;` may accidentally reset the new field's value.
+   *     <p>Not specifying any fields is an error.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<AnywhereCache, UpdateAnywhereCacheMetadata> updateAnywhereCacheAsync(
+      AnywhereCache anywhereCache, FieldMask updateMask) {
+    UpdateAnywhereCacheRequest request =
+        UpdateAnywhereCacheRequest.newBuilder()
+            .setAnywhereCache(anywhereCache)
+            .setUpdateMask(updateMask)
+            .build();
+    return updateAnywhereCacheAsync(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an Anywhere Cache instance. Mutable fields include `ttl` and `admission_policy`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateAnywhereCacheRequest request =
+   *       UpdateAnywhereCacheRequest.newBuilder()
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.updateAnywhereCacheAsync(request).get();
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<AnywhereCache, UpdateAnywhereCacheMetadata> updateAnywhereCacheAsync(
+      UpdateAnywhereCacheRequest request) {
+    return updateAnywhereCacheOperationCallable().futureCall(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an Anywhere Cache instance. Mutable fields include `ttl` and `admission_policy`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateAnywhereCacheRequest request =
+   *       UpdateAnywhereCacheRequest.newBuilder()
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   OperationFuture<AnywhereCache, UpdateAnywhereCacheMetadata> future =
+   *       storageControlClient.updateAnywhereCacheOperationCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final OperationCallable<
+          UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationCallable() {
+    return stub.updateAnywhereCacheOperationCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an Anywhere Cache instance. Mutable fields include `ttl` and `admission_policy`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateAnywhereCacheRequest request =
+   *       UpdateAnywhereCacheRequest.newBuilder()
+   *           .setAnywhereCache(AnywhereCache.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<Operation> future =
+   *       storageControlClient.updateAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheCallable() {
+    return stub.updateAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disables an Anywhere Cache instance. A disabled instance is read-only. The disablement could be
+   * revoked by calling ResumeAnywhereCache. The cache instance will be deleted automatically if it
+   * remains in the disabled state for at least one hour.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   AnywhereCache response = storageControlClient.disableAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache disableAnywhereCache(AnywhereCacheName name) {
+    DisableAnywhereCacheRequest request =
+        DisableAnywhereCacheRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return disableAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disables an Anywhere Cache instance. A disabled instance is read-only. The disablement could be
+   * revoked by calling ResumeAnywhereCache. The cache instance will be deleted automatically if it
+   * remains in the disabled state for at least one hour.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   AnywhereCache response = storageControlClient.disableAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache disableAnywhereCache(String name) {
+    DisableAnywhereCacheRequest request =
+        DisableAnywhereCacheRequest.newBuilder().setName(name).build();
+    return disableAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disables an Anywhere Cache instance. A disabled instance is read-only. The disablement could be
+   * revoked by calling ResumeAnywhereCache. The cache instance will be deleted automatically if it
+   * remains in the disabled state for at least one hour.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DisableAnywhereCacheRequest request =
+   *       DisableAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.disableAnywhereCache(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache disableAnywhereCache(DisableAnywhereCacheRequest request) {
+    return disableAnywhereCacheCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disables an Anywhere Cache instance. A disabled instance is read-only. The disablement could be
+   * revoked by calling ResumeAnywhereCache. The cache instance will be deleted automatically if it
+   * remains in the disabled state for at least one hour.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DisableAnywhereCacheRequest request =
+   *       DisableAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<AnywhereCache> future =
+   *       storageControlClient.disableAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheCallable() {
+    return stub.disableAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Pauses an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   AnywhereCache response = storageControlClient.pauseAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache pauseAnywhereCache(AnywhereCacheName name) {
+    PauseAnywhereCacheRequest request =
+        PauseAnywhereCacheRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return pauseAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Pauses an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   AnywhereCache response = storageControlClient.pauseAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache pauseAnywhereCache(String name) {
+    PauseAnywhereCacheRequest request =
+        PauseAnywhereCacheRequest.newBuilder().setName(name).build();
+    return pauseAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Pauses an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   PauseAnywhereCacheRequest request =
+   *       PauseAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.pauseAnywhereCache(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache pauseAnywhereCache(PauseAnywhereCacheRequest request) {
+    return pauseAnywhereCacheCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Pauses an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   PauseAnywhereCacheRequest request =
+   *       PauseAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<AnywhereCache> future =
+   *       storageControlClient.pauseAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<PauseAnywhereCacheRequest, AnywhereCache>
+      pauseAnywhereCacheCallable() {
+    return stub.pauseAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Resumes a disabled or paused Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   AnywhereCache response = storageControlClient.resumeAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache resumeAnywhereCache(AnywhereCacheName name) {
+    ResumeAnywhereCacheRequest request =
+        ResumeAnywhereCacheRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return resumeAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Resumes a disabled or paused Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   AnywhereCache response = storageControlClient.resumeAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache resumeAnywhereCache(String name) {
+    ResumeAnywhereCacheRequest request =
+        ResumeAnywhereCacheRequest.newBuilder().setName(name).build();
+    return resumeAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Resumes a disabled or paused Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ResumeAnywhereCacheRequest request =
+   *       ResumeAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.resumeAnywhereCache(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache resumeAnywhereCache(ResumeAnywhereCacheRequest request) {
+    return resumeAnywhereCacheCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Resumes a disabled or paused Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ResumeAnywhereCacheRequest request =
+   *       ResumeAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<AnywhereCache> future =
+   *       storageControlClient.resumeAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheCallable() {
+    return stub.resumeAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   AnywhereCache response = storageControlClient.getAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache getAnywhereCache(AnywhereCacheName name) {
+    GetAnywhereCacheRequest request =
+        GetAnywhereCacheRequest.newBuilder().setName(name == null ? null : name.toString()).build();
+    return getAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   AnywhereCache response = storageControlClient.getAnywhereCache(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name field in the request should be:
+   *     `projects/{project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache getAnywhereCache(String name) {
+    GetAnywhereCacheRequest request = GetAnywhereCacheRequest.newBuilder().setName(name).build();
+    return getAnywhereCache(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetAnywhereCacheRequest request =
+   *       GetAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   AnywhereCache response = storageControlClient.getAnywhereCache(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AnywhereCache getAnywhereCache(GetAnywhereCacheRequest request) {
+    return getAnywhereCacheCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets an Anywhere Cache instance.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetAnywhereCacheRequest request =
+   *       GetAnywhereCacheRequest.newBuilder()
+   *           .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<AnywhereCache> future =
+   *       storageControlClient.getAnywhereCacheCallable().futureCall(request);
+   *   // Do something.
+   *   AnywhereCache response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheCallable() {
+    return stub.getAnywhereCacheCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Anywhere Cache instances for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   for (AnywhereCache element : storageControlClient.listAnywhereCaches(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this cache belongs.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListAnywhereCachesPagedResponse listAnywhereCaches(BucketName parent) {
+    ListAnywhereCachesRequest request =
+        ListAnywhereCachesRequest.newBuilder()
+            .setParent(parent == null ? null : parent.toString())
+            .build();
+    return listAnywhereCaches(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Anywhere Cache instances for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   for (AnywhereCache element : storageControlClient.listAnywhereCaches(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param parent Required. The bucket to which this cache belongs.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListAnywhereCachesPagedResponse listAnywhereCaches(String parent) {
+    ListAnywhereCachesRequest request =
+        ListAnywhereCachesRequest.newBuilder().setParent(parent).build();
+    return listAnywhereCaches(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Anywhere Cache instances for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListAnywhereCachesRequest request =
+   *       ListAnywhereCachesRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   for (AnywhereCache element : storageControlClient.listAnywhereCaches(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListAnywhereCachesPagedResponse listAnywhereCaches(
+      ListAnywhereCachesRequest request) {
+    return listAnywhereCachesPagedCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Anywhere Cache instances for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListAnywhereCachesRequest request =
+   *       ListAnywhereCachesRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<AnywhereCache> future =
+   *       storageControlClient.listAnywhereCachesPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (AnywhereCache element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesPagedCallable() {
+    return stub.listAnywhereCachesPagedCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Anywhere Cache instances for a given bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ListAnywhereCachesRequest request =
+   *       ListAnywhereCachesRequest.newBuilder()
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken("pageToken873572522")
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   while (true) {
+   *     ListAnywhereCachesResponse response =
+   *         storageControlClient.listAnywhereCachesCallable().call(request);
+   *     for (AnywhereCache element : response.getAnywhereCachesList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+      listAnywhereCachesCallable() {
+    return stub.listAnywhereCachesCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfigName name =
+   *       IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]");
+   *   IntelligenceConfig response = storageControlClient.getProjectIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     project.
+   *     <p>Format: `projects/{id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getProjectIntelligenceConfig(IntelligenceConfigName name) {
+    GetProjectIntelligenceConfigRequest request =
+        GetProjectIntelligenceConfigRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return getProjectIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name =
+   *       IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString();
+   *   IntelligenceConfig response = storageControlClient.getProjectIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     project.
+   *     <p>Format: `projects/{id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getProjectIntelligenceConfig(String name) {
+    GetProjectIntelligenceConfigRequest request =
+        GetProjectIntelligenceConfigRequest.newBuilder().setName(name).build();
+    return getProjectIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetProjectIntelligenceConfigRequest request =
+   *       GetProjectIntelligenceConfigRequest.newBuilder()
+   *           .setName(
+   *               IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]")
+   *                   .toString())
+   *           .build();
+   *   IntelligenceConfig response = storageControlClient.getProjectIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getProjectIntelligenceConfig(
+      GetProjectIntelligenceConfigRequest request) {
+    return getProjectIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetProjectIntelligenceConfigRequest request =
+   *       GetProjectIntelligenceConfigRequest.newBuilder()
+   *           .setName(
+   *               IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]")
+   *                   .toString())
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.getProjectIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
+      getProjectIntelligenceConfigCallable() {
+    return stub.getProjectIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   IntelligenceConfig response =
+   *       storageControlClient.updateProjectIntelligenceConfig(intelligenceConfig, updateMask);
+   * }
+   * }</pre>
+   *
+   * @param intelligenceConfig Required. The `IntelligenceConfig` resource to be updated.
+   * @param updateMask Required. The `update_mask` that specifies the fields within the
+   *     `IntelligenceConfig` resource that should be modified by this update. Only the listed
+   *     fields are updated.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateProjectIntelligenceConfig(
+      IntelligenceConfig intelligenceConfig, FieldMask updateMask) {
+    UpdateProjectIntelligenceConfigRequest request =
+        UpdateProjectIntelligenceConfigRequest.newBuilder()
+            .setIntelligenceConfig(intelligenceConfig)
+            .setUpdateMask(updateMask)
+            .build();
+    return updateProjectIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateProjectIntelligenceConfigRequest request =
+   *       UpdateProjectIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   IntelligenceConfig response = storageControlClient.updateProjectIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateProjectIntelligenceConfig(
+      UpdateProjectIntelligenceConfigRequest request) {
+    return updateProjectIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Project scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateProjectIntelligenceConfigRequest request =
+   *       UpdateProjectIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.updateProjectIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
+      updateProjectIntelligenceConfigCallable() {
+    return stub.updateProjectIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfigName name =
+   *       IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]");
+   *   IntelligenceConfig response = storageControlClient.getFolderIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     folder.
+   *     <p>Format: `folders/{id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getFolderIntelligenceConfig(IntelligenceConfigName name) {
+    GetFolderIntelligenceConfigRequest request =
+        GetFolderIntelligenceConfigRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return getFolderIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name =
+   *       IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString();
+   *   IntelligenceConfig response = storageControlClient.getFolderIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     folder.
+   *     <p>Format: `folders/{id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getFolderIntelligenceConfig(String name) {
+    GetFolderIntelligenceConfigRequest request =
+        GetFolderIntelligenceConfigRequest.newBuilder().setName(name).build();
+    return getFolderIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetFolderIntelligenceConfigRequest request =
+   *       GetFolderIntelligenceConfigRequest.newBuilder()
+   *           .setName(
+   *               IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString())
+   *           .build();
+   *   IntelligenceConfig response = storageControlClient.getFolderIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getFolderIntelligenceConfig(
+      GetFolderIntelligenceConfigRequest request) {
+    return getFolderIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetFolderIntelligenceConfigRequest request =
+   *       GetFolderIntelligenceConfigRequest.newBuilder()
+   *           .setName(
+   *               IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString())
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.getFolderIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
+      getFolderIntelligenceConfigCallable() {
+    return stub.getFolderIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   IntelligenceConfig response =
+   *       storageControlClient.updateFolderIntelligenceConfig(intelligenceConfig, updateMask);
+   * }
+   * }</pre>
+   *
+   * @param intelligenceConfig Required. The `IntelligenceConfig` resource to be updated.
+   * @param updateMask Required. The `update_mask` that specifies the fields within the
+   *     `IntelligenceConfig` resource that should be modified by this update. Only the listed
+   *     fields are updated.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateFolderIntelligenceConfig(
+      IntelligenceConfig intelligenceConfig, FieldMask updateMask) {
+    UpdateFolderIntelligenceConfigRequest request =
+        UpdateFolderIntelligenceConfigRequest.newBuilder()
+            .setIntelligenceConfig(intelligenceConfig)
+            .setUpdateMask(updateMask)
+            .build();
+    return updateFolderIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateFolderIntelligenceConfigRequest request =
+   *       UpdateFolderIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   IntelligenceConfig response = storageControlClient.updateFolderIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateFolderIntelligenceConfig(
+      UpdateFolderIntelligenceConfigRequest request) {
+    return updateFolderIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Folder scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateFolderIntelligenceConfigRequest request =
+   *       UpdateFolderIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.updateFolderIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
+      updateFolderIntelligenceConfigCallable() {
+    return stub.updateFolderIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfigName name = IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]");
+   *   IntelligenceConfig response = storageControlClient.getOrganizationIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     organization.
+   *     <p>Format: `organizations/{org_id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getOrganizationIntelligenceConfig(IntelligenceConfigName name) {
+    GetOrganizationIntelligenceConfigRequest request =
+        GetOrganizationIntelligenceConfigRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return getOrganizationIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name =
+   *       IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString();
+   *   IntelligenceConfig response = storageControlClient.getOrganizationIntelligenceConfig(name);
+   * }
+   * }</pre>
+   *
+   * @param name Required. The name of the `IntelligenceConfig` resource associated with your
+   *     organization.
+   *     <p>Format: `organizations/{org_id}/locations/global/intelligenceConfig`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getOrganizationIntelligenceConfig(String name) {
+    GetOrganizationIntelligenceConfigRequest request =
+        GetOrganizationIntelligenceConfigRequest.newBuilder().setName(name).build();
+    return getOrganizationIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetOrganizationIntelligenceConfigRequest request =
+   *       GetOrganizationIntelligenceConfigRequest.newBuilder()
+   *           .setName(IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]").toString())
+   *           .build();
+   *   IntelligenceConfig response = storageControlClient.getOrganizationIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig getOrganizationIntelligenceConfig(
+      GetOrganizationIntelligenceConfigRequest request) {
+    return getOrganizationIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetOrganizationIntelligenceConfigRequest request =
+   *       GetOrganizationIntelligenceConfigRequest.newBuilder()
+   *           .setName(IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]").toString())
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.getOrganizationIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      getOrganizationIntelligenceConfigCallable() {
+    return stub.getOrganizationIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   IntelligenceConfig response =
+   *       storageControlClient.updateOrganizationIntelligenceConfig(intelligenceConfig, updateMask);
+   * }
+   * }</pre>
+   *
+   * @param intelligenceConfig Required. The `IntelligenceConfig` resource to be updated.
+   * @param updateMask Required. The `update_mask` that specifies the fields within the
+   *     `IntelligenceConfig` resource that should be modified by this update. Only the listed
+   *     fields are updated.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateOrganizationIntelligenceConfig(
+      IntelligenceConfig intelligenceConfig, FieldMask updateMask) {
+    UpdateOrganizationIntelligenceConfigRequest request =
+        UpdateOrganizationIntelligenceConfigRequest.newBuilder()
+            .setIntelligenceConfig(intelligenceConfig)
+            .setUpdateMask(updateMask)
+            .build();
+    return updateOrganizationIntelligenceConfig(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateOrganizationIntelligenceConfigRequest request =
+   *       UpdateOrganizationIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   IntelligenceConfig response =
+   *       storageControlClient.updateOrganizationIntelligenceConfig(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final IntelligenceConfig updateOrganizationIntelligenceConfig(
+      UpdateOrganizationIntelligenceConfigRequest request) {
+    return updateOrganizationIntelligenceConfigCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the Organization scoped singleton IntelligenceConfig resource.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   UpdateOrganizationIntelligenceConfigRequest request =
+   *       UpdateOrganizationIntelligenceConfigRequest.newBuilder()
+   *           .setIntelligenceConfig(IntelligenceConfig.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<IntelligenceConfig> future =
+   *       storageControlClient.updateOrganizationIntelligenceConfigCallable().futureCall(request);
+   *   // Do something.
+   *   IntelligenceConfig response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      updateOrganizationIntelligenceConfigCallable() {
+    return stub.updateOrganizationIntelligenceConfigCallable();
+  }
+
   @Override
   public final void close() {
     stub.close();
@@ -1960,6 +3807,86 @@ public class StorageControlClient implements BackgroundResource {
     protected ListManagedFoldersFixedSizeCollection createCollection(
         List<ListManagedFoldersPage> pages, int collectionSize) {
       return new ListManagedFoldersFixedSizeCollection(pages, collectionSize);
+    }
+  }
+
+  public static class ListAnywhereCachesPagedResponse
+      extends AbstractPagedListResponse<
+          ListAnywhereCachesRequest,
+          ListAnywhereCachesResponse,
+          AnywhereCache,
+          ListAnywhereCachesPage,
+          ListAnywhereCachesFixedSizeCollection> {
+
+    public static ApiFuture<ListAnywhereCachesPagedResponse> createAsync(
+        PageContext<ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache> context,
+        ApiFuture<ListAnywhereCachesResponse> futureResponse) {
+      ApiFuture<ListAnywhereCachesPage> futurePage =
+          ListAnywhereCachesPage.createEmptyPage().createPageAsync(context, futureResponse);
+      return ApiFutures.transform(
+          futurePage,
+          input -> new ListAnywhereCachesPagedResponse(input),
+          MoreExecutors.directExecutor());
+    }
+
+    private ListAnywhereCachesPagedResponse(ListAnywhereCachesPage page) {
+      super(page, ListAnywhereCachesFixedSizeCollection.createEmptyCollection());
+    }
+  }
+
+  public static class ListAnywhereCachesPage
+      extends AbstractPage<
+          ListAnywhereCachesRequest,
+          ListAnywhereCachesResponse,
+          AnywhereCache,
+          ListAnywhereCachesPage> {
+
+    private ListAnywhereCachesPage(
+        PageContext<ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache> context,
+        ListAnywhereCachesResponse response) {
+      super(context, response);
+    }
+
+    private static ListAnywhereCachesPage createEmptyPage() {
+      return new ListAnywhereCachesPage(null, null);
+    }
+
+    @Override
+    protected ListAnywhereCachesPage createPage(
+        PageContext<ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache> context,
+        ListAnywhereCachesResponse response) {
+      return new ListAnywhereCachesPage(context, response);
+    }
+
+    @Override
+    public ApiFuture<ListAnywhereCachesPage> createPageAsync(
+        PageContext<ListAnywhereCachesRequest, ListAnywhereCachesResponse, AnywhereCache> context,
+        ApiFuture<ListAnywhereCachesResponse> futureResponse) {
+      return super.createPageAsync(context, futureResponse);
+    }
+  }
+
+  public static class ListAnywhereCachesFixedSizeCollection
+      extends AbstractFixedSizeCollection<
+          ListAnywhereCachesRequest,
+          ListAnywhereCachesResponse,
+          AnywhereCache,
+          ListAnywhereCachesPage,
+          ListAnywhereCachesFixedSizeCollection> {
+
+    private ListAnywhereCachesFixedSizeCollection(
+        List<ListAnywhereCachesPage> pages, int collectionSize) {
+      super(pages, collectionSize);
+    }
+
+    private static ListAnywhereCachesFixedSizeCollection createEmptyCollection() {
+      return new ListAnywhereCachesFixedSizeCollection(null, 0);
+    }
+
+    @Override
+    protected ListAnywhereCachesFixedSizeCollection createCollection(
+        List<ListAnywhereCachesPage> pages, int collectionSize) {
+      return new ListAnywhereCachesFixedSizeCollection(pages, collectionSize);
     }
   }
 }

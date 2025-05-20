@@ -16,6 +16,7 @@
 
 package com.google.storage.control.v2;
 
+import static com.google.storage.control.v2.StorageControlClient.ListAnywhereCachesPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
@@ -31,7 +32,9 @@ import com.google.common.collect.Lists;
 import com.google.longrunning.Operation;
 import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.Any;
+import com.google.protobuf.Duration;
 import com.google.protobuf.Empty;
+import com.google.protobuf.FieldMask;
 import com.google.protobuf.Timestamp;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
@@ -939,6 +942,1042 @@ public class StorageControlClientTest {
     try {
       String parent = "parent-995424086";
       client.listManagedFolders(parent);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void createAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    Operation resultOperation =
+        Operation.newBuilder()
+            .setName("createAnywhereCacheTest")
+            .setDone(true)
+            .setResponse(Any.pack(expectedResponse))
+            .build();
+    mockStorageControl.addResponse(resultOperation);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+    AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+
+    AnywhereCache actualResponse = client.createAnywhereCacheAsync(parent, anywhereCache).get();
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateAnywhereCacheRequest actualRequest = ((CreateAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertEquals(anywhereCache, actualRequest.getAnywhereCache());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+      client.createAnywhereCacheAsync(parent, anywhereCache).get();
+      Assert.fail("No exception raised");
+    } catch (ExecutionException e) {
+      Assert.assertEquals(InvalidArgumentException.class, e.getCause().getClass());
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
+  public void createAnywhereCacheTest2() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    Operation resultOperation =
+        Operation.newBuilder()
+            .setName("createAnywhereCacheTest")
+            .setDone(true)
+            .setResponse(Any.pack(expectedResponse))
+            .build();
+    mockStorageControl.addResponse(resultOperation);
+
+    String parent = "parent-995424086";
+    AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+
+    AnywhereCache actualResponse = client.createAnywhereCacheAsync(parent, anywhereCache).get();
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CreateAnywhereCacheRequest actualRequest = ((CreateAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertEquals(anywhereCache, actualRequest.getAnywhereCache());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void createAnywhereCacheExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+      client.createAnywhereCacheAsync(parent, anywhereCache).get();
+      Assert.fail("No exception raised");
+    } catch (ExecutionException e) {
+      Assert.assertEquals(InvalidArgumentException.class, e.getCause().getClass());
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
+  public void updateAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    Operation resultOperation =
+        Operation.newBuilder()
+            .setName("updateAnywhereCacheTest")
+            .setDone(true)
+            .setResponse(Any.pack(expectedResponse))
+            .build();
+    mockStorageControl.addResponse(resultOperation);
+
+    AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+    FieldMask updateMask = FieldMask.newBuilder().build();
+
+    AnywhereCache actualResponse = client.updateAnywhereCacheAsync(anywhereCache, updateMask).get();
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    UpdateAnywhereCacheRequest actualRequest = ((UpdateAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(anywhereCache, actualRequest.getAnywhereCache());
+    Assert.assertEquals(updateMask, actualRequest.getUpdateMask());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void updateAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      AnywhereCache anywhereCache = AnywhereCache.newBuilder().build();
+      FieldMask updateMask = FieldMask.newBuilder().build();
+      client.updateAnywhereCacheAsync(anywhereCache, updateMask).get();
+      Assert.fail("No exception raised");
+    } catch (ExecutionException e) {
+      Assert.assertEquals(InvalidArgumentException.class, e.getCause().getClass());
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
+  public void disableAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+
+    AnywhereCache actualResponse = client.disableAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DisableAnywhereCacheRequest actualRequest =
+        ((DisableAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void disableAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      client.disableAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void disableAnywhereCacheTest2() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    AnywhereCache actualResponse = client.disableAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DisableAnywhereCacheRequest actualRequest =
+        ((DisableAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void disableAnywhereCacheExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.disableAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void pauseAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+
+    AnywhereCache actualResponse = client.pauseAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    PauseAnywhereCacheRequest actualRequest = ((PauseAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void pauseAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      client.pauseAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void pauseAnywhereCacheTest2() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    AnywhereCache actualResponse = client.pauseAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    PauseAnywhereCacheRequest actualRequest = ((PauseAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void pauseAnywhereCacheExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.pauseAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void resumeAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+
+    AnywhereCache actualResponse = client.resumeAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ResumeAnywhereCacheRequest actualRequest = ((ResumeAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void resumeAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      client.resumeAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void resumeAnywhereCacheTest2() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    AnywhereCache actualResponse = client.resumeAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ResumeAnywhereCacheRequest actualRequest = ((ResumeAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void resumeAnywhereCacheExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.resumeAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getAnywhereCacheTest() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+
+    AnywhereCache actualResponse = client.getAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetAnywhereCacheRequest actualRequest = ((GetAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getAnywhereCacheExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      AnywhereCacheName name = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      client.getAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getAnywhereCacheTest2() throws Exception {
+    AnywhereCache expectedResponse =
+        AnywhereCache.newBuilder()
+            .setName(AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+            .setZone("zone3744684")
+            .setTtl(Duration.newBuilder().build())
+            .setAdmissionPolicy("admissionPolicy-1063600485")
+            .setState("state109757585")
+            .setCreateTime(Timestamp.newBuilder().build())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setPendingUpdate(true)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    AnywhereCache actualResponse = client.getAnywhereCache(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetAnywhereCacheRequest actualRequest = ((GetAnywhereCacheRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getAnywhereCacheExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getAnywhereCache(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listAnywhereCachesTest() throws Exception {
+    AnywhereCache responsesElement = AnywhereCache.newBuilder().build();
+    ListAnywhereCachesResponse expectedResponse =
+        ListAnywhereCachesResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllAnywhereCaches(Arrays.asList(responsesElement))
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+
+    ListAnywhereCachesPagedResponse pagedListResponse = client.listAnywhereCaches(parent);
+
+    List<AnywhereCache> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getAnywhereCachesList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListAnywhereCachesRequest actualRequest = ((ListAnywhereCachesRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent.toString(), actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listAnywhereCachesExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
+      client.listAnywhereCaches(parent);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void listAnywhereCachesTest2() throws Exception {
+    AnywhereCache responsesElement = AnywhereCache.newBuilder().build();
+    ListAnywhereCachesResponse expectedResponse =
+        ListAnywhereCachesResponse.newBuilder()
+            .setNextPageToken("")
+            .addAllAnywhereCaches(Arrays.asList(responsesElement))
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String parent = "parent-995424086";
+
+    ListAnywhereCachesPagedResponse pagedListResponse = client.listAnywhereCaches(parent);
+
+    List<AnywhereCache> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+
+    Assert.assertEquals(1, resources.size());
+    Assert.assertEquals(expectedResponse.getAnywhereCachesList().get(0), resources.get(0));
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    ListAnywhereCachesRequest actualRequest = ((ListAnywhereCachesRequest) actualRequests.get(0));
+
+    Assert.assertEquals(parent, actualRequest.getParent());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void listAnywhereCachesExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String parent = "parent-995424086";
+      client.listAnywhereCaches(parent);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getProjectIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfigName name =
+        IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]");
+
+    IntelligenceConfig actualResponse = client.getProjectIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetProjectIntelligenceConfigRequest actualRequest =
+        ((GetProjectIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getProjectIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfigName name =
+          IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]");
+      client.getProjectIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getProjectIntelligenceConfigTest2() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    IntelligenceConfig actualResponse = client.getProjectIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetProjectIntelligenceConfigRequest actualRequest =
+        ((GetProjectIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getProjectIntelligenceConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getProjectIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void updateProjectIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofProjectLocationName("[PROJECT]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+    FieldMask updateMask = FieldMask.newBuilder().build();
+
+    IntelligenceConfig actualResponse =
+        client.updateProjectIntelligenceConfig(intelligenceConfig, updateMask);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    UpdateProjectIntelligenceConfigRequest actualRequest =
+        ((UpdateProjectIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(intelligenceConfig, actualRequest.getIntelligenceConfig());
+    Assert.assertEquals(updateMask, actualRequest.getUpdateMask());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void updateProjectIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+      FieldMask updateMask = FieldMask.newBuilder().build();
+      client.updateProjectIntelligenceConfig(intelligenceConfig, updateMask);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getFolderIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfigName name =
+        IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]");
+
+    IntelligenceConfig actualResponse = client.getFolderIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetFolderIntelligenceConfigRequest actualRequest =
+        ((GetFolderIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getFolderIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfigName name =
+          IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]");
+      client.getFolderIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getFolderIntelligenceConfigTest2() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    IntelligenceConfig actualResponse = client.getFolderIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetFolderIntelligenceConfigRequest actualRequest =
+        ((GetFolderIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getFolderIntelligenceConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getFolderIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void updateFolderIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(
+                IntelligenceConfigName.ofFolderLocationName("[FOLDER]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+    FieldMask updateMask = FieldMask.newBuilder().build();
+
+    IntelligenceConfig actualResponse =
+        client.updateFolderIntelligenceConfig(intelligenceConfig, updateMask);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    UpdateFolderIntelligenceConfigRequest actualRequest =
+        ((UpdateFolderIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(intelligenceConfig, actualRequest.getIntelligenceConfig());
+    Assert.assertEquals(updateMask, actualRequest.getUpdateMask());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void updateFolderIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+      FieldMask updateMask = FieldMask.newBuilder().build();
+      client.updateFolderIntelligenceConfig(intelligenceConfig, updateMask);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getOrganizationIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfigName name = IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]");
+
+    IntelligenceConfig actualResponse = client.getOrganizationIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetOrganizationIntelligenceConfigRequest actualRequest =
+        ((GetOrganizationIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getOrganizationIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfigName name = IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]");
+      client.getOrganizationIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getOrganizationIntelligenceConfigTest2() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String name = "name3373707";
+
+    IntelligenceConfig actualResponse = client.getOrganizationIntelligenceConfig(name);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetOrganizationIntelligenceConfigRequest actualRequest =
+        ((GetOrganizationIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getOrganizationIntelligenceConfigExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.getOrganizationIntelligenceConfig(name);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void updateOrganizationIntelligenceConfigTest() throws Exception {
+    IntelligenceConfig expectedResponse =
+        IntelligenceConfig.newBuilder()
+            .setName(IntelligenceConfigName.ofOrgLocationName("[ORG]", "[LOCATION]").toString())
+            .setUpdateTime(Timestamp.newBuilder().build())
+            .setFilter(IntelligenceConfig.Filter.newBuilder().build())
+            .setEffectiveIntelligenceConfig(
+                IntelligenceConfig.EffectiveIntelligenceConfig.newBuilder().build())
+            .setTrialConfig(IntelligenceConfig.TrialConfig.newBuilder().build())
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+    FieldMask updateMask = FieldMask.newBuilder().build();
+
+    IntelligenceConfig actualResponse =
+        client.updateOrganizationIntelligenceConfig(intelligenceConfig, updateMask);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    UpdateOrganizationIntelligenceConfigRequest actualRequest =
+        ((UpdateOrganizationIntelligenceConfigRequest) actualRequests.get(0));
+
+    Assert.assertEquals(intelligenceConfig, actualRequest.getIntelligenceConfig());
+    Assert.assertEquals(updateMask, actualRequest.getUpdateMask());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void updateOrganizationIntelligenceConfigExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
+      FieldMask updateMask = FieldMask.newBuilder().build();
+      client.updateOrganizationIntelligenceConfig(intelligenceConfig, updateMask);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
