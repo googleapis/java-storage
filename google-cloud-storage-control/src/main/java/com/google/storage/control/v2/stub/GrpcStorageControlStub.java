@@ -16,6 +16,7 @@
 
 package com.google.storage.control.v2.stub;
 
+import static com.google.storage.control.v2.StorageControlClient.ListAnywhereCachesPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListFoldersPagedResponse;
 import static com.google.storage.control.v2.StorageControlClient.ListManagedFoldersPagedResponse;
 
@@ -32,22 +33,40 @@ import com.google.common.base.Strings;
 import com.google.longrunning.Operation;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
+import com.google.storage.control.v2.AnywhereCache;
+import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
+import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
+import com.google.storage.control.v2.DisableAnywhereCacheRequest;
 import com.google.storage.control.v2.Folder;
+import com.google.storage.control.v2.GetAnywhereCacheRequest;
+import com.google.storage.control.v2.GetFolderIntelligenceConfigRequest;
 import com.google.storage.control.v2.GetFolderRequest;
 import com.google.storage.control.v2.GetManagedFolderRequest;
+import com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest;
+import com.google.storage.control.v2.GetProjectIntelligenceConfigRequest;
 import com.google.storage.control.v2.GetStorageLayoutRequest;
+import com.google.storage.control.v2.IntelligenceConfig;
+import com.google.storage.control.v2.ListAnywhereCachesRequest;
+import com.google.storage.control.v2.ListAnywhereCachesResponse;
 import com.google.storage.control.v2.ListFoldersRequest;
 import com.google.storage.control.v2.ListFoldersResponse;
 import com.google.storage.control.v2.ListManagedFoldersRequest;
 import com.google.storage.control.v2.ListManagedFoldersResponse;
 import com.google.storage.control.v2.ManagedFolder;
+import com.google.storage.control.v2.PauseAnywhereCacheRequest;
 import com.google.storage.control.v2.RenameFolderMetadata;
 import com.google.storage.control.v2.RenameFolderRequest;
+import com.google.storage.control.v2.ResumeAnywhereCacheRequest;
 import com.google.storage.control.v2.StorageLayout;
+import com.google.storage.control.v2.UpdateAnywhereCacheMetadata;
+import com.google.storage.control.v2.UpdateAnywhereCacheRequest;
+import com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest;
+import com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest;
+import com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
@@ -157,6 +176,150 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(ListManagedFoldersResponse.getDefaultInstance()))
               .build();
 
+  private static final MethodDescriptor<CreateAnywhereCacheRequest, Operation>
+      createAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<CreateAnywhereCacheRequest, Operation>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/CreateAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(CreateAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<UpdateAnywhereCacheRequest, Operation>
+      updateAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<UpdateAnywhereCacheRequest, Operation>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/UpdateAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(UpdateAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<DisableAnywhereCacheRequest, AnywhereCache>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/DisableAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(DisableAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<PauseAnywhereCacheRequest, AnywhereCache>
+      pauseAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<PauseAnywhereCacheRequest, AnywhereCache>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/PauseAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(PauseAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<ResumeAnywhereCacheRequest, AnywhereCache>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/ResumeAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(ResumeAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<GetAnywhereCacheRequest, AnywhereCache>
+      getAnywhereCacheMethodDescriptor =
+          MethodDescriptor.<GetAnywhereCacheRequest, AnywhereCache>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/GetAnywhereCache")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(GetAnywhereCacheRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+      listAnywhereCachesMethodDescriptor =
+          MethodDescriptor.<ListAnywhereCachesRequest, ListAnywhereCachesResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/ListAnywhereCaches")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(ListAnywhereCachesRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(ListAnywhereCachesResponse.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
+      getProjectIntelligenceConfigMethodDescriptor =
+          MethodDescriptor.<GetProjectIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/GetProjectIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(GetProjectIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
+      updateProjectIntelligenceConfigMethodDescriptor =
+          MethodDescriptor.<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/UpdateProjectIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(
+                      UpdateProjectIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
+      getFolderIntelligenceConfigMethodDescriptor =
+          MethodDescriptor.<GetFolderIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/GetFolderIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(GetFolderIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
+      updateFolderIntelligenceConfigMethodDescriptor =
+          MethodDescriptor.<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/UpdateFolderIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(UpdateFolderIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<
+          GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      getOrganizationIntelligenceConfigMethodDescriptor =
+          MethodDescriptor
+              .<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/GetOrganizationIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(
+                      GetOrganizationIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
+  private static final MethodDescriptor<
+          UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      updateOrganizationIntelligenceConfigMethodDescriptor =
+          MethodDescriptor
+              .<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(
+                  "google.storage.control.v2.StorageControl/UpdateOrganizationIntelligenceConfig")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(
+                      UpdateOrganizationIntelligenceConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .build();
+
   private final UnaryCallable<CreateFolderRequest, Folder> createFolderCallable;
   private final UnaryCallable<DeleteFolderRequest, Empty> deleteFolderCallable;
   private final UnaryCallable<GetFolderRequest, Folder> getFolderCallable;
@@ -175,6 +338,36 @@ public class GrpcStorageControlStub extends StorageControlStub {
       listManagedFoldersCallable;
   private final UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
       listManagedFoldersPagedCallable;
+  private final UnaryCallable<CreateAnywhereCacheRequest, Operation> createAnywhereCacheCallable;
+  private final OperationCallable<
+          CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationCallable;
+  private final UnaryCallable<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheCallable;
+  private final OperationCallable<
+          UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationCallable;
+  private final UnaryCallable<DisableAnywhereCacheRequest, AnywhereCache>
+      disableAnywhereCacheCallable;
+  private final UnaryCallable<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheCallable;
+  private final UnaryCallable<ResumeAnywhereCacheRequest, AnywhereCache>
+      resumeAnywhereCacheCallable;
+  private final UnaryCallable<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheCallable;
+  private final UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+      listAnywhereCachesCallable;
+  private final UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesPagedCallable;
+  private final UnaryCallable<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
+      getProjectIntelligenceConfigCallable;
+  private final UnaryCallable<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
+      updateProjectIntelligenceConfigCallable;
+  private final UnaryCallable<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
+      getFolderIntelligenceConfigCallable;
+  private final UnaryCallable<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
+      updateFolderIntelligenceConfigCallable;
+  private final UnaryCallable<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      getOrganizationIntelligenceConfigCallable;
+  private final UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      updateOrganizationIntelligenceConfigCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -199,6 +392,20 @@ public class GrpcStorageControlStub extends StorageControlStub {
   private static final PathTemplate GET_MANAGED_FOLDER_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate LIST_MANAGED_FOLDERS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate CREATE_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate UPDATE_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate DISABLE_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate PAUSE_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate RESUME_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate GET_ANYWHERE_CACHE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate LIST_ANYWHERE_CACHES_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
 
   public static final GrpcStorageControlStub create(StorageControlStubSettings settings)
@@ -417,6 +624,218 @@ public class GrpcStorageControlStub extends StorageControlStub {
                       return requestBuilder.build();
                     })
                 .build();
+    GrpcCallSettings<CreateAnywhereCacheRequest, Operation> createAnywhereCacheTransportSettings =
+        GrpcCallSettings.<CreateAnywhereCacheRequest, Operation>newBuilder()
+            .setMethodDescriptor(createAnywhereCacheMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "bucket", CREATE_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  CreateAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheTransportSettings =
+        GrpcCallSettings.<UpdateAnywhereCacheRequest, Operation>newBuilder()
+            .setMethodDescriptor(updateAnywhereCacheMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getAnywhereCache() != null) {
+                    builder.add(
+                        request.getAnywhereCache().getName(),
+                        "bucket",
+                        UPDATE_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                  }
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  UpdateAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<DisableAnywhereCacheRequest, AnywhereCache>
+        disableAnywhereCacheTransportSettings =
+            GrpcCallSettings.<DisableAnywhereCacheRequest, AnywhereCache>newBuilder()
+                .setMethodDescriptor(disableAnywhereCacheMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getName(), "bucket", DISABLE_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      DisableAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
+    GrpcCallSettings<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheTransportSettings =
+        GrpcCallSettings.<PauseAnywhereCacheRequest, AnywhereCache>newBuilder()
+            .setMethodDescriptor(pauseAnywhereCacheMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", PAUSE_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  PauseAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<ResumeAnywhereCacheRequest, AnywhereCache>
+        resumeAnywhereCacheTransportSettings =
+            GrpcCallSettings.<ResumeAnywhereCacheRequest, AnywhereCache>newBuilder()
+                .setMethodDescriptor(resumeAnywhereCacheMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getName(), "bucket", RESUME_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      ResumeAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
+    GrpcCallSettings<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheTransportSettings =
+        GrpcCallSettings.<GetAnywhereCacheRequest, AnywhereCache>newBuilder()
+            .setMethodDescriptor(getAnywhereCacheMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", GET_ANYWHERE_CACHE_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .setRequestMutator(
+                request -> {
+                  GetAnywhereCacheRequest.Builder requestBuilder = request.toBuilder();
+                  if (Strings.isNullOrEmpty(request.getRequestId())) {
+                    requestBuilder.setRequestId(UUID.randomUUID().toString());
+                  }
+                  return requestBuilder.build();
+                })
+            .build();
+    GrpcCallSettings<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+        listAnywhereCachesTransportSettings =
+            GrpcCallSettings.<ListAnywhereCachesRequest, ListAnywhereCachesResponse>newBuilder()
+                .setMethodDescriptor(listAnywhereCachesMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getParent(), "bucket", LIST_ANYWHERE_CACHES_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      ListAnywhereCachesRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
+    GrpcCallSettings<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
+        getProjectIntelligenceConfigTransportSettings =
+            GrpcCallSettings.<GetProjectIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(getProjectIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add("name", String.valueOf(request.getName()));
+                      return builder.build();
+                    })
+                .build();
+    GrpcCallSettings<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
+        updateProjectIntelligenceConfigTransportSettings =
+            GrpcCallSettings
+                .<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(updateProjectIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          "intelligence_config.name",
+                          String.valueOf(request.getIntelligenceConfig().getName()));
+                      return builder.build();
+                    })
+                .build();
+    GrpcCallSettings<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
+        getFolderIntelligenceConfigTransportSettings =
+            GrpcCallSettings.<GetFolderIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(getFolderIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add("name", String.valueOf(request.getName()));
+                      return builder.build();
+                    })
+                .build();
+    GrpcCallSettings<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
+        updateFolderIntelligenceConfigTransportSettings =
+            GrpcCallSettings.<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(updateFolderIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          "intelligence_config.name",
+                          String.valueOf(request.getIntelligenceConfig().getName()));
+                      return builder.build();
+                    })
+                .build();
+    GrpcCallSettings<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+        getOrganizationIntelligenceConfigTransportSettings =
+            GrpcCallSettings
+                .<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(getOrganizationIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add("name", String.valueOf(request.getName()));
+                      return builder.build();
+                    })
+                .build();
+    GrpcCallSettings<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+        updateOrganizationIntelligenceConfigTransportSettings =
+            GrpcCallSettings
+                .<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>newBuilder()
+                .setMethodDescriptor(updateOrganizationIntelligenceConfigMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          "intelligence_config.name",
+                          String.valueOf(request.getIntelligenceConfig().getName()));
+                      return builder.build();
+                    })
+                .build();
 
     this.createFolderCallable =
         callableFactory.createUnaryCallable(
@@ -467,6 +886,86 @@ public class GrpcStorageControlStub extends StorageControlStub {
         callableFactory.createPagedCallable(
             listManagedFoldersTransportSettings,
             settings.listManagedFoldersSettings(),
+            clientContext);
+    this.createAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            createAnywhereCacheTransportSettings,
+            settings.createAnywhereCacheSettings(),
+            clientContext);
+    this.createAnywhereCacheOperationCallable =
+        callableFactory.createOperationCallable(
+            createAnywhereCacheTransportSettings,
+            settings.createAnywhereCacheOperationSettings(),
+            clientContext,
+            operationsStub);
+    this.updateAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            updateAnywhereCacheTransportSettings,
+            settings.updateAnywhereCacheSettings(),
+            clientContext);
+    this.updateAnywhereCacheOperationCallable =
+        callableFactory.createOperationCallable(
+            updateAnywhereCacheTransportSettings,
+            settings.updateAnywhereCacheOperationSettings(),
+            clientContext,
+            operationsStub);
+    this.disableAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            disableAnywhereCacheTransportSettings,
+            settings.disableAnywhereCacheSettings(),
+            clientContext);
+    this.pauseAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            pauseAnywhereCacheTransportSettings,
+            settings.pauseAnywhereCacheSettings(),
+            clientContext);
+    this.resumeAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            resumeAnywhereCacheTransportSettings,
+            settings.resumeAnywhereCacheSettings(),
+            clientContext);
+    this.getAnywhereCacheCallable =
+        callableFactory.createUnaryCallable(
+            getAnywhereCacheTransportSettings, settings.getAnywhereCacheSettings(), clientContext);
+    this.listAnywhereCachesCallable =
+        callableFactory.createUnaryCallable(
+            listAnywhereCachesTransportSettings,
+            settings.listAnywhereCachesSettings(),
+            clientContext);
+    this.listAnywhereCachesPagedCallable =
+        callableFactory.createPagedCallable(
+            listAnywhereCachesTransportSettings,
+            settings.listAnywhereCachesSettings(),
+            clientContext);
+    this.getProjectIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            getProjectIntelligenceConfigTransportSettings,
+            settings.getProjectIntelligenceConfigSettings(),
+            clientContext);
+    this.updateProjectIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            updateProjectIntelligenceConfigTransportSettings,
+            settings.updateProjectIntelligenceConfigSettings(),
+            clientContext);
+    this.getFolderIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            getFolderIntelligenceConfigTransportSettings,
+            settings.getFolderIntelligenceConfigSettings(),
+            clientContext);
+    this.updateFolderIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            updateFolderIntelligenceConfigTransportSettings,
+            settings.updateFolderIntelligenceConfigSettings(),
+            clientContext);
+    this.getOrganizationIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            getOrganizationIntelligenceConfigTransportSettings,
+            settings.getOrganizationIntelligenceConfigSettings(),
+            clientContext);
+    this.updateOrganizationIntelligenceConfigCallable =
+        callableFactory.createUnaryCallable(
+            updateOrganizationIntelligenceConfigTransportSettings,
+            settings.updateOrganizationIntelligenceConfigSettings(),
             clientContext);
 
     this.backgroundResources =
@@ -543,6 +1042,96 @@ public class GrpcStorageControlStub extends StorageControlStub {
   public UnaryCallable<ListManagedFoldersRequest, ListManagedFoldersPagedResponse>
       listManagedFoldersPagedCallable() {
     return listManagedFoldersPagedCallable;
+  }
+
+  @Override
+  public UnaryCallable<CreateAnywhereCacheRequest, Operation> createAnywhereCacheCallable() {
+    return createAnywhereCacheCallable;
+  }
+
+  @Override
+  public OperationCallable<CreateAnywhereCacheRequest, AnywhereCache, CreateAnywhereCacheMetadata>
+      createAnywhereCacheOperationCallable() {
+    return createAnywhereCacheOperationCallable;
+  }
+
+  @Override
+  public UnaryCallable<UpdateAnywhereCacheRequest, Operation> updateAnywhereCacheCallable() {
+    return updateAnywhereCacheCallable;
+  }
+
+  @Override
+  public OperationCallable<UpdateAnywhereCacheRequest, AnywhereCache, UpdateAnywhereCacheMetadata>
+      updateAnywhereCacheOperationCallable() {
+    return updateAnywhereCacheOperationCallable;
+  }
+
+  @Override
+  public UnaryCallable<DisableAnywhereCacheRequest, AnywhereCache> disableAnywhereCacheCallable() {
+    return disableAnywhereCacheCallable;
+  }
+
+  @Override
+  public UnaryCallable<PauseAnywhereCacheRequest, AnywhereCache> pauseAnywhereCacheCallable() {
+    return pauseAnywhereCacheCallable;
+  }
+
+  @Override
+  public UnaryCallable<ResumeAnywhereCacheRequest, AnywhereCache> resumeAnywhereCacheCallable() {
+    return resumeAnywhereCacheCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetAnywhereCacheRequest, AnywhereCache> getAnywhereCacheCallable() {
+    return getAnywhereCacheCallable;
+  }
+
+  @Override
+  public UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
+      listAnywhereCachesCallable() {
+    return listAnywhereCachesCallable;
+  }
+
+  @Override
+  public UnaryCallable<ListAnywhereCachesRequest, ListAnywhereCachesPagedResponse>
+      listAnywhereCachesPagedCallable() {
+    return listAnywhereCachesPagedCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
+      getProjectIntelligenceConfigCallable() {
+    return getProjectIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
+      updateProjectIntelligenceConfigCallable() {
+    return updateProjectIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
+      getFolderIntelligenceConfigCallable() {
+    return getFolderIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
+      updateFolderIntelligenceConfigCallable() {
+    return updateFolderIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      getOrganizationIntelligenceConfigCallable() {
+    return getOrganizationIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
+      updateOrganizationIntelligenceConfigCallable() {
+    return updateOrganizationIntelligenceConfigCallable;
   }
 
   @Override
