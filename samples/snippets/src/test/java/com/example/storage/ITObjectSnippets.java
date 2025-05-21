@@ -149,7 +149,9 @@ public class ITObjectSnippets extends TestBase {
       storage.createFrom(info(objectName), file1.getPath(), BlobWriteOption.doesNotExist());
       DownloadObject.downloadObject(
           GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, file1.getPath().toString());
-      assertArrayEquals(Files.readAllBytes(file1.getPath()), storage.get(bucket.getName(), objectName).getContent());
+      byte[] expected = Files.readAllBytes(file1.getPath());
+      byte[] actual = storage.readAllBytes(bucket.getName(), objectName);
+      assertArrayEquals(expected, actual);
     }
   }
 
@@ -288,7 +290,9 @@ public class ITObjectSnippets extends TestBase {
       String objectName = generator.randomObjectName();
       UploadObject.uploadObject(
           GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, file1.getPath().toString());
-      assertArrayEquals(Files.readAllBytes(file1.getPath()), storage.get(bucket.getName(), objectName).getContent());
+      byte[] expected = Files.readAllBytes(file1.getPath());
+      byte[] actual = storage.readAllBytes(bucket.getName(), objectName);
+      assertArrayEquals(expected, actual);
     }
   }
 
