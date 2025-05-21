@@ -20,6 +20,7 @@ package com.example.storage.object;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.util.HashMap;
@@ -53,7 +54,8 @@ public class SetObjectMetadata {
 
     // Does an upsert operation, if the key already exists it's replaced by the new value, otherwise
     // it's added.
-    blob.toBuilder().setMetadata(newMetadata).build().update(precondition);
+    BlobInfo pendingUpdate = blob.toBuilder().setMetadata(newMetadata).build();
+    storage.update(pendingUpdate, precondition);
 
     System.out.println(
         "Updated custom metadata for object " + objectName + " in bucket " + bucketName);

@@ -64,11 +64,16 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.TmpFile;
+import com.google.cloud.storage.it.BucketCleaner;
 import com.google.cloud.storage.it.TemporaryBucket;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.KmsFixture;
@@ -83,7 +88,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Date;
-import java.util.Map;
 import java.util.Random;
 import javax.net.ssl.HttpsURLConnection;
 import org.junit.Assert;
@@ -103,13 +107,13 @@ public class ITObjectSnippets extends TestBase {
   @Test
   public void testChangeObjectStorageClass() {
     String objectName = generator.randomObjectName();
-    Blob blob = storage.get(bucket.getName(), objectName);
-    Assert.assertNotEquals(StorageClass.COLDLINE, blob.getStorageClass());
+    BlobInfo gen1 = storage.create(info(objectName), CONTENT, BlobTargetOption.doesNotExist());
+    Assert.assertNotEquals(StorageClass.COLDLINE, gen1.getStorageClass());
     ChangeObjectStorageClass.changeObjectStorageClass(
         GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName);
-    assertEquals(
-        StorageClass.COLDLINE, storage.get(bucket.getName(), objectName).getStorageClass());
-    assertArrayEquals(CONTENT, storage.get(bucket.getName(), objectName).getContent());
+    Blob gen2 = storage.get(bucket.getName(), objectName);
+    assertEquals(StorageClass.COLDLINE, gen2.getStorageClass());
+    assertArrayEquals(CONTENT, gen2.getContent());
   }
 
   @Test
@@ -122,6 +126,7 @@ public class ITObjectSnippets extends TestBase {
       String newBucket = tmpBucket.getBucket().getName();
 
       String objectName = generator.randomObjectName();
+      storage.create(info(objectName));
       CopyObject.copyObject(GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, newBucket);
       assertNotNull(storage.get(newBucket, objectName));
     }
@@ -137,29 +142,48 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testDownloadObject() throws IOException {
-    File tempFile = tmpDir.newFile("file.txt");
-    DownloadObject.downloadObject(
-        GOOGLE_CLOUD_PROJECT, bucket.getName(), generator.randomObjectName(), tempFile.getPath());
-    assertEquals("Hello, World!", new String(Files.readAllBytes(tempFile.toPath())));
+  public void testDownloadObject() throws Exception {
+    Path baseDir = tmpDir.getRoot().toPath();
+    try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13)) {
+      String objectName = generator.randomObjectName();
+      storage.createFrom(info(objectName), file1.getPath(), BlobWriteOption.doesNotExist());
+      DownloadObject.downloadObject(
+          GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, file1.getPath().toString());
+      assertArrayEquals(Files.readAllBytes(file1.getPath()), storage.get(bucket.getName(), objectName).getContent());
+    }
   }
 
   @Test
   public void testDownloadObjectIntoMemory() throws IOException {
+    String objectName = generator.randomObjectName();
+    storage.create(info(objectName), CONTENT, BlobTargetOption.doesNotExist());
     DownloadObjectIntoMemory.downloadObjectIntoMemory(
-        GOOGLE_CLOUD_PROJECT, bucket.getName(), generator.randomObjectName());
+        GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName);
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+    assertThat(snippetOutput).contains("The contents of " + objectName);
   }
 
   @Test
-  public void testDownloadPublicObject() throws IOException {
-    String publicBlob = generator.randomObjectName();
-    BlobId publicBlobId = BlobId.of(bucket.getName(), publicBlob);
-    storage.create(BlobInfo.newBuilder(publicBlobId).build(), CONTENT);
-    storage.createAcl(publicBlobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
-    File tempFile = tmpDir.newFile("file.txt");
-    DownloadPublicObject.downloadPublicObject(bucket.getName(), publicBlob, tempFile.toPath());
-    assertEquals("Hello, World!", new String(Files.readAllBytes(tempFile.toPath())));
+  public void testDownloadPublicObject() throws Exception {
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
+            .setIamConfiguration(IamConfiguration.newBuilder()
+                .setIsUniformBucketLevelAccessEnabled(false)
+                .build())
+            .build())
+        .setStorage(storage)
+        .build()) {
+      String bucketName = tmpBucket.getBucket().getName();
+
+      String publicBlob = generator.randomObjectName();
+      BlobId publicBlobId = BlobId.of(bucketName, publicBlob);
+      Blob gen1 = storage.create(BlobInfo.newBuilder(publicBlobId).build(), CONTENT,
+          BlobTargetOption.doesNotExist());
+      storage.createAcl(gen1.getBlobId(), Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+      File tempFile = tmpDir.newFile("file.txt");
+      DownloadPublicObject.downloadPublicObject(bucketName, publicBlob, tempFile.toPath());
+      assertEquals("Hello, World!", new String(Files.readAllBytes(tempFile.toPath())));
+    }
   }
 
   @Test
@@ -205,9 +229,11 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testListObjects() {
+    String name1 = generator.randomObjectName();
+    storage.create(info(name1), BlobTargetOption.doesNotExist());
     ListObjects.listObjects(GOOGLE_CLOUD_PROJECT, bucket.getName());
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
-    assertTrue(snippetOutput.contains(generator.randomObjectName()));
+    assertTrue(snippetOutput.contains(name1));
   }
 
   @Test
@@ -236,8 +262,8 @@ public class ITObjectSnippets extends TestBase {
 
       String newBucket = tmpBucket.getBucket().getName();
       BlobInfo gen1 =
-          storage.create(BlobInfo.newBuilder(BlobId.of(bucket.getName(), blob)).build());
-      MoveObject.moveObject(GOOGLE_CLOUD_PROJECT, bucket.getName(), blob, newBucket, newBlob);
+          storage.create(BlobInfo.newBuilder(BlobId.of(newBucket, blob)).build());
+      MoveObject.moveObject(GOOGLE_CLOUD_PROJECT, newBucket, blob, newBucket, newBlob);
       assertNotNull(storage.get(newBucket, newBlob));
       assertNull(storage.get(bucket.getName(), blob));
     }
@@ -245,11 +271,14 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testSetObjectMetadata() {
-    SetObjectMetadata.setObjectMetadata(
-        GOOGLE_CLOUD_PROJECT, bucket.getName(), generator.randomObjectName());
-    Map<String, String> metadata =
-        storage.get(bucket.getName(), generator.randomObjectName()).getMetadata();
-    assertEquals("value", metadata.get("keyToAddOrUpdate"));
+    String bucketName = bucket.getName();
+    String name1 = generator.randomObjectName();
+    BlobInfo b1Gen1 = storage.create(BlobInfo.newBuilder(bucketName, name1).build());
+
+    SetObjectMetadata.setObjectMetadata(GOOGLE_CLOUD_PROJECT, bucket.getName(), name1);
+    BlobInfo b1Gen2 = storage.get(bucketName, name1);
+    assertThat(b1Gen2).isNotNull();
+    assertThat(b1Gen2.getMetadata()).containsAtLeast("keyToAddOrUpdate", "value");
   }
 
   @Test
@@ -259,7 +288,7 @@ public class ITObjectSnippets extends TestBase {
       String objectName = generator.randomObjectName();
       UploadObject.uploadObject(
           GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, file1.getPath().toString());
-      assertArrayEquals(CONTENT, storage.get(bucket.getName(), objectName).getContent());
+      assertArrayEquals(Files.readAllBytes(file1.getPath()), storage.get(bucket.getName(), objectName).getContent());
     }
   }
 
@@ -323,34 +352,41 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testObjectVersioningOperations() {
-    storage.get(bucket.getName()).toBuilder().setVersioningEnabled(true).build().update();
-    String versionedBlob = generator.randomObjectName();
-    final Blob originalBlob =
-        storage.create(BlobInfo.newBuilder(bucket.getName(), versionedBlob).build(), CONTENT);
-    byte[] content2 = "Hello, World 2".getBytes(UTF_8);
-    storage.create(BlobInfo.newBuilder(bucket.getName(), versionedBlob).build(), content2);
+  public void testObjectVersioningOperations() throws Exception {
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
+            .setVersioningEnabled(true).build())
+        .setStorage(storage)
+        .build()) {
+      String bucketName = tmpBucket.getBucket().getName();
 
-    ListObjectsWithOldVersions.listObjectsWithOldVersions(GOOGLE_CLOUD_PROJECT, bucket.getName());
-    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+      String versionedBlob = generator.randomObjectName();
+      final Blob originalBlob =
+          storage.create(BlobInfo.newBuilder(bucketName, versionedBlob).build(), CONTENT);
+      byte[] content2 = "Hello, World 2".getBytes(UTF_8);
+      storage.create(BlobInfo.newBuilder(bucketName, versionedBlob).build(), content2);
 
-    snippetOutput = snippetOutput.replaceFirst(versionedBlob, "");
-    assertTrue(snippetOutput.contains(versionedBlob));
+      ListObjectsWithOldVersions.listObjectsWithOldVersions(GOOGLE_CLOUD_PROJECT, bucketName);
+      String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
 
-    String copiedblob = generator.randomObjectName();
-    CopyOldVersionOfObject.copyOldVersionOfObject(
-        GOOGLE_CLOUD_PROJECT,
-        bucket.getName(),
-        versionedBlob,
-        originalBlob.getGeneration(),
-        copiedblob);
-    assertArrayEquals(CONTENT, storage.get(bucket.getName(), copiedblob).getContent());
+      snippetOutput = snippetOutput.replaceFirst(versionedBlob, "");
+      assertTrue(snippetOutput.contains(versionedBlob));
 
-    DeleteOldVersionOfObject.deleteOldVersionOfObject(
-        GOOGLE_CLOUD_PROJECT, bucket.getName(), versionedBlob, originalBlob.getGeneration());
-    assertNull(
-        storage.get(BlobId.of(bucket.getName(), versionedBlob, originalBlob.getGeneration())));
-    assertNotNull(storage.get(bucket.getName(), versionedBlob));
+      String copiedblob = generator.randomObjectName();
+      CopyOldVersionOfObject.copyOldVersionOfObject(
+          GOOGLE_CLOUD_PROJECT,
+          bucketName,
+          versionedBlob,
+          originalBlob.getGeneration(),
+          copiedblob);
+      assertArrayEquals(CONTENT, storage.get(bucketName, copiedblob).getContent());
+
+      DeleteOldVersionOfObject.deleteOldVersionOfObject(
+          GOOGLE_CLOUD_PROJECT, bucketName, versionedBlob, originalBlob.getGeneration());
+      assertNull(
+          storage.get(BlobId.of(bucketName, versionedBlob, originalBlob.getGeneration())));
+      assertNotNull(storage.get(bucketName, versionedBlob));
+    }
   }
 
   @Test
@@ -442,26 +478,26 @@ public class ITObjectSnippets extends TestBase {
     String prefix = generator.randomObjectName();
     String name1 = prefix + "/1.txt";
     String name2 = prefix + "/2.txt";
-    storage.create(BlobInfo.newBuilder(bucket.getName(), name1).build());
-    storage.create(BlobInfo.newBuilder(bucket.getName(), name2).build());
+    String bucketName = bucket.getName();
+    BlobInfo b1Gen1 = storage.create(BlobInfo.newBuilder(bucketName, name1).build());
+    BlobInfo b2Gen1 = storage.create(BlobInfo.newBuilder(bucketName, name2).build());
 
-    BatchSetObjectMetadata.batchSetObjectMetadata(GOOGLE_CLOUD_PROJECT, bucket.getName(), prefix);
+    BatchSetObjectMetadata.batchSetObjectMetadata(GOOGLE_CLOUD_PROJECT, bucketName, prefix + "/");
 
-    Map<String, String> firstBlobMetadata = storage.get(bucket.getName(), name1).getMetadata();
-    Map<String, String> secondBlobMetadata = storage.get(bucket.getName(), name2).getMetadata();
-
-    assertEquals("value", firstBlobMetadata.get("keyToAddOrUpdate"));
-    assertEquals("value", secondBlobMetadata.get("keyToAddOrUpdate"));
+    BlobInfo b1Gen2 = storage.get(bucketName, name1);
+    BlobInfo b2Gen2 = storage.get(bucketName, name2);
+    assertThat(b1Gen2).isNotNull();
+    assertThat(b2Gen2).isNotNull();
+    assertThat(b1Gen2.getMetadata()).containsAtLeast("keyToAddOrUpdate", "value");
+    assertThat(b2Gen2.getMetadata()).containsAtLeast("keyToAddOrUpdate", "value");
   }
 
   @Test
-  public void testSetObjectRetentionPolicy() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
-
-      String tempBucket = tmpBucket.getBucket().getName();
+  public void testSetObjectRetentionPolicy() {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    Bucket tmpBucket = storage.create(bucketInfo, BucketTargetOption.enableObjectRetention(true));
+    String tempBucket = tmpBucket.getName();
+    try {
 
       String retentionBlob = generator.randomObjectName();
       BlobInfo gen1 = storage.create(BlobInfo.newBuilder(tempBucket, retentionBlob).build());
@@ -475,6 +511,8 @@ public class ITObjectSnippets extends TestBase {
             gen1.toBuilder().setRetention(null).build(),
             BlobTargetOption.overrideUnlockedRetention(true));
       }
+    } finally {
+      BucketCleaner.doCleanup(tempBucket, storage);
     }
   }
 

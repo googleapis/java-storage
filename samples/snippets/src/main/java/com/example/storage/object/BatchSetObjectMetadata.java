@@ -86,7 +86,11 @@ public class BatchSetObjectMetadata {
             + "' had their metadata updated successfully.");
 
     if (!failures.isEmpty()) {
-      System.out.println("While processing, there were " + failures.size());
+      System.out.println("While processing, there were " + failures.size() + " failures");
+
+      for (StorageException failure : failures) {
+        failure.printStackTrace(System.out);
+      }
     }
   }
 }
