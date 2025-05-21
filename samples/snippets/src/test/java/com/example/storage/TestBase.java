@@ -28,6 +28,7 @@ import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -43,11 +44,11 @@ public abstract class TestBase {
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
 
-  protected BlobInfo info() {
-    return BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+  protected BlobInfo info(@NonNull String name) {
+    return BlobInfo.newBuilder(bucket, name).build();
   }
 
   protected BlobInfo createEmptyObject() {
-    return storage.create(info(), BlobTargetOption.doesNotExist());
+    return storage.create(info(generator.randomObjectName()), BlobTargetOption.doesNotExist());
   }
 }

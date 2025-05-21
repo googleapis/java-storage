@@ -32,7 +32,6 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,8 +110,8 @@ public class ITTransferManagerSamples extends TestBase {
     String name1 = generator.randomObjectName();
     String name2 = generator.randomObjectName();
     String name3 = generator.randomObjectName();
-    List<BlobInfo> blobs = IntStream.rangeClosed(1, 3)
-        .mapToObj(i -> info())
+    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
+        .map(this::info)
         .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
         .collect(ImmutableList.toImmutableList());
     DownloadMany.downloadManyBlobs(bucket.getName(), blobs, downloadDirectory.getRoot().toPath());
@@ -142,8 +141,8 @@ public class ITTransferManagerSamples extends TestBase {
     String name1 = generator.randomObjectName();
     String name2 = generator.randomObjectName();
     String name3 = generator.randomObjectName();
-    List<BlobInfo> blobs = IntStream.rangeClosed(1, 3)
-        .mapToObj(i -> info())
+    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
+        .map(this::info)
         .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
         .collect(ImmutableList.toImmutableList());
     AllowDivideAndConquerDownload.divideAndConquerDownloadAllowed(
