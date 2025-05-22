@@ -25,6 +25,7 @@ public final class Env {
   public static final String GOOGLE_CLOUD_PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
   public static final String GOOGLE_CLOUD_PROJECT_NUMBER =
       System.getenv("GOOGLE_CLOUD_PROJECT_NUMBER");
+  public static final String JOB_TYPE = System.getenv("JOB_TYPE");
 
   private Env() {}
 }
