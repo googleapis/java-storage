@@ -23,6 +23,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.it.BucketCleaner;
 import com.google.storage.control.v2.StorageControlClient;
+import java.util.Locale;
 
 /** Shim to lift a BucketInfo to be a managed bucket instance */
 final class BucketInfoShim implements ManagedLifecycle {
@@ -53,10 +54,10 @@ final class BucketInfoShim implements ManagedLifecycle {
     try {
       createdBucket = s.create(bucketInfo).asBucketInfo();
     } catch (StorageException se) {
-      String msg = se.getMessage();
+      String msg = se.getMessage().toLowerCase(Locale.US);
       if (se.getCode() == 400 && (msg.contains("not a valid zone in location"))
           || msg.contains("custom placement config")
-          || msg.contains("Zonal")) {
+          || msg.contains("zonal")) {
         assumeTrue(
             "Skipping test due to bucket setup unavailable in current zone. (" + msg + ")", false);
       }
