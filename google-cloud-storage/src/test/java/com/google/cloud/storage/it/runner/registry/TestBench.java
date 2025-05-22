@@ -58,10 +58,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ManagedLifecycle} which integrates with the <a target="_blank"
@@ -89,7 +89,7 @@ import java.util.regex.Pattern;
  */
 public final class TestBench implements ManagedLifecycle {
 
-  private static final Logger LOGGER = Logger.getLogger(TestBench.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestBench.class);
 
   private final boolean ignorePullError;
   private final String baseUri;
@@ -206,8 +206,8 @@ public final class TestBench implements ManagedLifecycle {
 
       File outFile = outPath.toFile();
       File errFile = errPath.toFile();
-      LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
-      LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
+      LOGGER.info("Redirecting server stdout to: {}", outFile.getAbsolutePath());
+      LOGGER.info("Redirecting server stderr to: {}", errFile.getAbsolutePath());
       String dockerImage = String.format(Locale.US, "%s:%s", dockerImageName, dockerImageTag);
       // First try and pull the docker image, this validates docker is available and running
       // on the host, as well as gives time for the image to be downloaded independently of
@@ -263,7 +263,7 @@ public final class TestBench implements ManagedLifecycle {
               .redirectOutput(outFile)
               .redirectError(errFile)
               .start();
-      LOGGER.log(Level.INFO, command.toString());
+      LOGGER.info(command.toString());
       try {
         // wait a small amount of time for the server to come up before probing
         Thread.sleep(500);
@@ -317,22 +317,19 @@ public final class TestBench implements ManagedLifecycle {
         if (processExitValue != 0) {
           attemptForceStopContainer = true;
         }
-        System.out.println("processExitValue = " + processExitValue);
-        LOGGER.warning("Container exit value = " + processExitValue);
+        LOGGER.warn("Container exit value = {}", processExitValue);
       } catch (IllegalThreadStateException e) {
         attemptForceStopContainer = true;
       }
 
       if (attemptForceStopContainer) {
-        LOGGER.warning("Container did not gracefully exit, attempting to explicitly stop it.");
-        System.out.println("Container did not gracefully exit, attempting to explicitly stop it.");
+        LOGGER.warn("Container did not gracefully exit, attempting to explicitly stop it.");
         ImmutableList<String> command = ImmutableList.of("docker", "kill", containerName);
-        System.out.println("command = " + command);
-        LOGGER.log(Level.WARNING, command.toString());
+        LOGGER.warn(command.toString());
         Process shutdownProcess = new ProcessBuilder(command).start();
         shutdownProcess.waitFor(5, TimeUnit.SECONDS);
         int shutdownProcessExitValue = shutdownProcess.exitValue();
-        LOGGER.warning("Container exit value = " + shutdownProcessExitValue);
+        LOGGER.warn("Container exit value = {}", shutdownProcessExitValue);
       }
 
       // wait for the server to shutdown
@@ -373,10 +370,10 @@ public final class TestBench implements ManagedLifecycle {
 
   private void dumpServerLogs(Path outFile, Path errFile) throws IOException {
     try {
-      LOGGER.warning("Dumping contents of stdout");
+      LOGGER.warn("Dumping contents of stdout");
       dumpServerLog("stdout", outFile.toFile());
     } finally {
-      LOGGER.warning("Dumping contents of stderr");
+      LOGGER.warn("Dumping contents of stderr");
       dumpServerLog("stderr", errFile.toFile());
     }
   }
@@ -385,7 +382,7 @@ public final class TestBench implements ManagedLifecycle {
     try (BufferedReader reader = new BufferedReader(new FileReader(out))) {
       String line;
       while ((line = reader.readLine()) != null) {
-        LOGGER.warning("<" + prefix + "> " + line);
+        LOGGER.warn("<{}> {}", prefix, line);
       }
     }
   }

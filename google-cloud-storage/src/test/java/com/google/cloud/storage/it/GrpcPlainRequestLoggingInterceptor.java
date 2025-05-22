@@ -50,11 +50,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Client side interceptor which will log gRPC request, headers, response, status and trailers in
@@ -67,7 +67,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class GrpcPlainRequestLoggingInterceptor implements ClientInterceptor {
 
   private static final Logger LOGGER =
-      Logger.getLogger(GrpcPlainRequestLoggingInterceptor.class.getName());
+      LoggerFactory.getLogger(GrpcPlainRequestLoggingInterceptor.class);
 
   private static final GrpcPlainRequestLoggingInterceptor INSTANCE =
       new GrpcPlainRequestLoggingInterceptor();
@@ -117,14 +117,13 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       @Override
       public void start(Listener<RespT> responseListener, Metadata headers) {
         if (headers.containsKey(X_GOOG_REQUEST_PARAMS)) {
-          LOGGER.log(Level.CONFIG, () -> String.format(">>> headers = %s", headers));
+          LOGGER.atDebug().log(() -> String.format(">>> headers = %s", headers));
         }
         SimpleForwardingClientCallListener<RespT> listener =
             new SimpleForwardingClientCallListener<RespT>(responseListener) {
               @Override
               public void onMessage(RespT message) {
-                LOGGER.log(
-                    Level.CONFIG,
+                LOGGER.atDebug().log(
                     () ->
                         String.format(
                             Locale.US,
@@ -136,7 +135,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
               @Override
               public void onClose(Status status, Metadata trailers) {
-                LOGGER.log(Level.CONFIG, lazyOnCloseLogString(status, trailers));
+                LOGGER.atDebug().log(lazyOnCloseLogString(status, trailers));
                 super.onClose(status, trailers);
               }
             };
@@ -145,8 +144,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
       @Override
       public void sendMessage(ReqT message) {
-        LOGGER.log(
-            Level.CONFIG,
+        LOGGER.atDebug().log(
             () ->
                 String.format(
                     Locale.US,

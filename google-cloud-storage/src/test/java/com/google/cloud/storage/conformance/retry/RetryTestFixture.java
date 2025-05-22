@@ -29,11 +29,12 @@ import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.logging.Logger;
 import org.junit.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JUnit 4 {@link TestRule} which integrates with {@link TestBench} and {@link
@@ -44,7 +45,7 @@ import org.junit.runner.Description;
  * <p>Provides pre-configured instances of {@link Storage} for setup/teardown & test.
  */
 final class RetryTestFixture extends TestWatcher {
-  private static final Logger LOGGER = Logger.getLogger(RetryTestFixture.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(RetryTestFixture.class);
   private static final int STATUS_CODE_NOT_IMPLEMENTED = 501;
 
   private final CleanupStrategy cleanupStrategy;
@@ -83,7 +84,7 @@ final class RetryTestFixture extends TestWatcher {
 
   @Override
   protected void starting(Description description) {
-    LOGGER.fine("Setting up retry_test resource...");
+    LOGGER.trace("Setting up retry_test resource...");
     RetryTestResource retryTestResource =
         RetryTestResource.newRetryTestResource(
             testRetryConformance.getMethod(),
@@ -93,20 +94,26 @@ final class RetryTestFixture extends TestWatcher {
       retryTest = testBench.createRetryTest(retryTestResource);
     } catch (HttpResponseException e) {
       if (e.getStatusCode() == STATUS_CODE_NOT_IMPLEMENTED) {
-        throw new AssumptionViolatedException(
-            "Testbench not yet implemented for " + retryTestResource);
+        AssumptionViolatedException exception =
+            new AssumptionViolatedException(
+                "Testbench not yet implemented for " + retryTestResource);
+        // make skips due to not implemented more terse
+        // we know where this comes from, we don't need the full stack trace for each of the
+        // 200+ occurrences.
+        exception.setStackTrace(new StackTraceElement[0]);
+        throw exception;
       } else {
         throw new RuntimeException(e);
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    LOGGER.fine("Setting up retry_test resource complete");
+    LOGGER.trace("Setting up retry_test resource complete");
   }
 
   @Override
   protected void finished(Description description) {
-    LOGGER.fine("Verifying end state of retry_test resource...");
+    LOGGER.trace("Verifying end state of retry_test resource...");
     try (Storage ignore1 = nonTestStorage;
         Storage ignore2 = testStorage) { // use try-with to shut down grpc resources
       try {
@@ -117,7 +124,7 @@ final class RetryTestFixture extends TestWatcher {
           }
         }
       } finally {
-        LOGGER.fine("Verifying end state of retry_test resource complete");
+        LOGGER.trace("Verifying end state of retry_test resource complete");
         if ((shouldCleanup(testSuccess, testSkipped)) && retryTest != null) {
           testBench.deleteRetryTest(retryTest);
           retryTest = null;

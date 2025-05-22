@@ -39,12 +39,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
@@ -53,7 +53,7 @@ import org.junit.runner.RunWith;
 public class ITNotificationTest {
   private static final Notification.PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
-  private static final Logger log = Logger.getLogger(ITNotificationTest.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(ITNotificationTest.class);
   private static final String DOES_NOT_EXIST_ID = "something-that-does-not-exist-probably";
 
   @Inject public Backend backend;
@@ -110,7 +110,7 @@ public class ITNotificationTest {
         topicAdminClient.deleteTopic(topic);
         topicAdminClient.close();
       } catch (Exception e) {
-        log.log(Level.WARNING, "Error while trying to delete topic and shutdown topic client", e);
+        LOGGER.warn("Error while trying to delete topic and shutdown topic client", e);
       }
       topicAdminClient = null;
     }

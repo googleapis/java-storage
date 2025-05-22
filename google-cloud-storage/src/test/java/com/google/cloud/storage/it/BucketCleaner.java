@@ -42,18 +42,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BucketCleaner {
 
-  private static final Logger LOGGER = Logger.getLogger(BucketCleaner.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(BucketCleaner.class);
 
   public static void doCleanup(String bucketName, Storage s) {
-    LOGGER.fine("Starting bucket cleanup...");
+    LOGGER.trace("Starting bucket cleanup...");
     String projectId = s.getOptions().getProjectId();
     try {
       // TODO: probe bucket existence, a bad test could have deleted the bucket
@@ -73,16 +73,16 @@ public final class BucketCleaner {
       if (!anyFailedObjectDeletes) {
         s.delete(bucketName, BucketSourceOption.userProject(projectId));
       } else {
-        LOGGER.warning("Unable to delete bucket due to previous failed object deletes");
+        LOGGER.warn("Unable to delete bucket due to previous failed object deletes");
       }
-      LOGGER.fine("Bucket cleanup complete");
+      LOGGER.trace("Bucket cleanup complete");
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e, () -> "Error during bucket cleanup.");
+      LOGGER.error("Error during bucket cleanup.");
     }
   }
 
   public static void doCleanup(String bucketName, Storage s, StorageControlClient ctrl) {
-    LOGGER.warning("Starting bucket cleanup: " + bucketName);
+    LOGGER.warn("Starting bucket cleanup: {}", bucketName);
     String projectId = s.getOptions().getProjectId();
     try {
       // TODO: probe bucket existence, a bad test could have deleted the bucket
@@ -140,7 +140,7 @@ public final class BucketCleaner {
                       folder -> {
                         String formatted =
                             String.format(Locale.US, "folder = %s", folder.getName());
-                        LOGGER.warning(formatted);
+                        LOGGER.warn(formatted);
                         boolean success = true;
                         try {
                           ctrl.deleteFolderCallable()
@@ -176,7 +176,7 @@ public final class BucketCleaner {
                       managedFolder -> {
                         String formatted =
                             String.format(Locale.US, "managedFolder = %s", managedFolder.getName());
-                        LOGGER.warning(formatted);
+                        LOGGER.warn(formatted);
                         boolean success = true;
                         try {
                           ctrl.deleteManagedFolderCallable()
@@ -214,7 +214,7 @@ public final class BucketCleaner {
       if (!anyFailedObjectDelete && !anyFailedFolderDelete && !anyFailedManagedFolderDelete) {
         s.delete(bucketName, BucketSourceOption.userProject(projectId));
       } else {
-        LOGGER.warning(
+        LOGGER.warn(
             String.format(
                 Locale.US,
                 "Unable to delete bucket %s due to previous failed %s deletes",
@@ -222,9 +222,9 @@ public final class BucketCleaner {
                 failed));
       }
 
-      LOGGER.warning("Bucket cleanup complete: " + bucketName);
+      LOGGER.warn("Bucket cleanup complete: {}", bucketName);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e, () -> "Error during bucket cleanup.");
+      LOGGER.error("Error during bucket cleanup.");
     }
   }
 
@@ -234,7 +234,7 @@ public final class BucketCleaner {
         deleteResults.stream().filter(r -> !r.success).collect(Collectors.toList());
     failedDeletes.forEach(
         r ->
-            LOGGER.warning(
+            LOGGER.warn(
                 String.format(
                     Locale.US, "Failed to delete %s %s/%s", resourceType, bucketName, r.name)));
     return !failedDeletes.isEmpty();

@@ -51,14 +51,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final Logger LOGGER =
-      Logger.getLogger(ITGapicUnbufferedWritableByteChannelTest.class.getName());
+      LoggerFactory.getLogger(ITGapicUnbufferedWritableByteChannelTest.class);
 
   private static final Hasher HASHER = Hasher.enabled();
   private static final ChunkSegmenter segmenter =
@@ -202,7 +203,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
         c.close();
       } catch (PermissionDeniedException ignore) {
         for (String debugMessage : debugMessages) {
-          LOGGER.warning(debugMessage);
+          LOGGER.warn(debugMessage);
         }
       }
       assertThat(result.get()).isEqualTo(resp5);
@@ -331,7 +332,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
   }
 
   static class DirectWriteService extends StorageImplBase {
-    private static final Logger LOGGER = Logger.getLogger(DirectWriteService.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DirectWriteService.class);
     private final BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c;
 
     private ImmutableList.Builder<WriteObjectRequest> requests;
@@ -368,7 +369,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
                   .map(l -> l.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine))
                   .collect(joining),
               build.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine));
-      LOGGER.warning(msg);
+      LOGGER.warn(msg);
     }
 
     @Override

@@ -105,8 +105,9 @@ import java.util.Map.Entry;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class which serves to try and organize all of the {@link RpcMethodMapping} for the retry
@@ -120,7 +121,7 @@ import java.util.stream.Collectors;
 @Immutable
 @SuppressWarnings("Guava")
 final class RpcMethodMappings {
-  private static final Logger LOGGER = Logger.getLogger(RpcMethodMappings.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(RpcMethodMappings.class);
 
   private static final Predicate<TestRetryConformance> groupIsDownload =
       methodGroupIs("storage.objects.download");
@@ -224,7 +225,7 @@ final class RpcMethodMappings {
 
   private void reportMappingSummary() {
     int mappingCount = funcMap.values().stream().mapToInt(m -> 1).sum();
-    LOGGER.info("Current total number of mappings defined: " + mappingCount);
+    LOGGER.info("Current total number of mappings defined: {}", mappingCount);
     String counts =
         funcMap.asMap().entrySet().stream()
             .map(
@@ -244,7 +245,7 @@ final class RpcMethodMappings {
                 })
             .sorted()
             .collect(Collectors.joining("\n", "\n", ""));
-    LOGGER.info("Current number of mappings per rpc method: " + counts);
+    LOGGER.info("Current number of mappings per rpc method: {}", counts);
     OptionalInt max =
         funcMap.values().stream().map(RpcMethodMapping::getMappingId).mapToInt(i -> i).max();
     if (max.isPresent()) {
