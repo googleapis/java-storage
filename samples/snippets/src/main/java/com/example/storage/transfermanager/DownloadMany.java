@@ -28,24 +28,26 @@ import java.util.List;
 class DownloadMany {
 
   public static void downloadManyBlobs(
-      String bucketName, List<BlobInfo> blobs, Path destinationDirectory) {
+      String bucketName, List<BlobInfo> blobs, Path destinationDirectory) throws Exception {
 
-    TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
-    ParallelDownloadConfig parallelDownloadConfig =
-        ParallelDownloadConfig.newBuilder()
-            .setBucketName(bucketName)
-            .setDownloadDirectory(destinationDirectory)
-            .build();
+    try (TransferManager transferManager =
+        TransferManagerConfig.newBuilder().build().getService()) {
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(destinationDirectory)
+              .build();
 
-    List<DownloadResult> results =
-        transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
+      List<DownloadResult> results =
+          transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
-    for (DownloadResult result : results) {
-      System.out.println(
-          "Download of "
-              + result.getInput().getName()
-              + " completed with status "
-              + result.getStatus());
+      for (DownloadResult result : results) {
+        System.out.println(
+            "Download of "
+                + result.getInput().getName()
+                + " completed with status "
+                + result.getStatus());
+      }
     }
   }
 }

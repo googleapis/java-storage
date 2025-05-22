@@ -16,39 +16,54 @@
 
 package com.example.storage.bucket;
 
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.it.TemporaryBucket;
 import org.junit.Test;
 
 public class RemoveBucketDefaultOwnerTest extends TestBase {
 
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
-
   @Test
-  public void testRemoveBucketDefaultOwner() {
+  public void testRemoveBucketDefaultOwner() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
-    // Add User as Default Owner
-    Acl newDefaultOwner = Acl.of(new User(IT_SERVICE_ACCOUNT_EMAIL), Role.OWNER);
-    bucket.createDefaultAcl(newDefaultOwner);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
 
-    // Remove User as Default owner
-    RemoveBucketDefaultOwner.removeBucketDefaultOwner(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
-    assertThat(bucket.getDefaultAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNull();
+      String bucketName = tmpBucket.getBucket().getName();
+
+      // Add User as Default Owner
+      Acl newDefaultOwner = Acl.of(IT_SERVICE_ACCOUNT_USER, Role.OWNER);
+      storage.createDefaultAcl(bucketName, newDefaultOwner);
+
+      // Remove User as Default owner
+      RemoveBucketDefaultOwner.removeBucketDefaultOwner(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
+    }
   }
 
   @Test
-  public void testUserNotFound() {
-    // Remove User without Default Owner Permissions
-    RemoveBucketDefaultOwner.removeBucketDefaultOwner(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
+  public void testUserNotFound() throws Exception {
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+      // Remove User without Default Owner Permissions
+      RemoveBucketDefaultOwner.removeBucketDefaultOwner(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
+    }
   }
 }

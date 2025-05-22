@@ -16,26 +16,30 @@
 
 package com.example.storage.object;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
-import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import org.junit.Test;
 
-public class AddFileOwnerTest extends TestBase {
-
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
+public class AddBlobOwnerTest extends TestBase {
 
   @Test
-  public void testAddFileOwner() {
+  public void testAddBlobOwner() {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
+    BlobInfo gen1 = createEmptyObject();
+    BlobId id = gen1.getBlobId();
     // Add Ownership to the file.
-    AddFileOwner.addFileOwner(
-        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
+    AddBlobOwner.addBlobOwner(
+        GOOGLE_CLOUD_PROJECT, id.getBucket(), IT_SERVICE_ACCOUNT_EMAIL, id.getName());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(blob.getAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNotNull();
+    assertThat(storage.getAcl(id, IT_SERVICE_ACCOUNT_USER)).isNotNull();
   }
 }

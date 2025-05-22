@@ -19,15 +19,21 @@ package com.example.storage.object;
 // [START storage_batch_request]
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageBatch;
+import com.google.cloud.storage.StorageBatchResult;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class BatchSetObjectMetadata {
   public static void batchSetObjectMetadata(
-      String projectId, String bucketName, String directoryPrefix) {
+      String projectId, String bucketName, String pathPrefix) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,7 +42,7 @@ public class BatchSetObjectMetadata {
 
     // The directory prefix. All objects in the bucket with this prefix will have their metadata
     // updated
-    // String directoryPrefix = "yourDirectory/";
+    // String pathPrefix = "yourPath/";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Map<String, String> newMetadata = new HashMap<>();
@@ -44,24 +50,48 @@ public class BatchSetObjectMetadata {
     Page<Blob> blobs =
         storage.list(
             bucketName,
-            Storage.BlobListOption.prefix(directoryPrefix),
-            Storage.BlobListOption.currentDirectory());
+            Storage.BlobListOption.prefix(pathPrefix),
+            Storage.BlobListOption.delimiter("/"));
     StorageBatch batchRequest = storage.batch();
 
     // Add all blobs with the given prefix to the batch request
-    for (Blob blob : blobs.iterateAll()) {
-      batchRequest.update(blob.toBuilder().setMetadata(newMetadata).build());
-    }
+    List<StorageBatchResult<Blob>> batchResults =
+        blobs
+            .streamAll()
+            .map(blob -> batchRequest.update(blob.toBuilder().setMetadata(newMetadata).build()))
+            .collect(Collectors.toList());
 
     // Execute the batch request
     batchRequest.submit();
+    List<StorageException> failures =
+        batchResults.stream()
+            .map(
+                r -> {
+                  try {
+                    BlobInfo blob = r.get();
+                    return null;
+                  } catch (StorageException e) {
+                    return e;
+                  }
+                })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
 
     System.out.println(
-        "All blobs in bucket "
+        (batchResults.size() - failures.size())
+            + " blobs in bucket "
             + bucketName
             + " with prefix '"
-            + directoryPrefix
-            + "' had their metadata updated.");
+            + pathPrefix
+            + "' had their metadata updated successfully.");
+
+    if (!failures.isEmpty()) {
+      System.out.println("While processing, there were " + failures.size() + " failures");
+
+      for (StorageException failure : failures) {
+        failure.printStackTrace(System.out);
+      }
+    }
   }
 }
 // [END storage_batch_request]

@@ -18,7 +18,6 @@ package com.example.storage.object;
 
 // [START storage_download_public_file]
 
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -39,8 +38,7 @@ public class DownloadPublicObject {
     // Instantiate an anonymous Google Cloud Storage client, which can only access public files
     Storage storage = StorageOptions.getUnauthenticatedInstance().getService();
 
-    Blob blob = storage.get(BlobId.of(bucketName, publicObjectName));
-    blob.downloadTo(destFilePath);
+    storage.downloadTo(BlobId.of(bucketName, publicObjectName), destFilePath);
 
     System.out.println(
         "Downloaded public object "

@@ -16,25 +16,32 @@
 
 package com.example.storage.bucket;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_EMAIL;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.example.storage.TestBase;
-import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.it.TemporaryBucket;
 import org.junit.Test;
 
 public class AddBucketOwnerTest extends TestBase {
 
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
-
   @Test
-  public void testAddBucketOwner() {
+  public void testAddBucketOwner() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    AddBucketOwner.addBucketOwner(
-        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
-    assertThat(bucket.getAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNotNull();
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+
+      String bucketName = tmpBucket.getBucket().getName();
+
+      AddBucketOwner.addBucketOwner(GOOGLE_CLOUD_PROJECT, bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+      assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+    }
   }
 }

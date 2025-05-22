@@ -16,6 +16,7 @@
 
 package com.example.storage.bucket;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.example.storage.TestBase;
@@ -27,8 +28,6 @@ import org.junit.Test;
 
 public class AutoclassTest extends TestBase {
 
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-
   @Test
   public void testSetGetBucketAutoclass() throws Exception {
     String autoclassBucket = RemoteStorageHelper.generateBucketName();
@@ -37,11 +36,12 @@ public class AutoclassTest extends TestBase {
             .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
             .build());
     try {
-      SetBucketAutoclass.setBucketAutoclass(PROJECT_ID, autoclassBucket, StorageClass.NEARLINE);
+      SetBucketAutoclass.setBucketAutoclass(
+          GOOGLE_CLOUD_PROJECT, autoclassBucket, StorageClass.NEARLINE);
       Autoclass autoclass = storage.get(autoclassBucket).getAutoclass();
       assertThat(autoclass.getEnabled()).isTrue();
 
-      GetBucketAutoclass.getBucketAutoclass(PROJECT_ID, autoclassBucket);
+      GetBucketAutoclass.getBucketAutoclass(GOOGLE_CLOUD_PROJECT, autoclassBucket);
       assertThat(stdOut.getCapturedOutputAsUtf8String())
           .contains(autoclass.getToggleTime().toString());
     } finally {

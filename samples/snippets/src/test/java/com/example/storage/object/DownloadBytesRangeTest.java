@@ -18,7 +18,11 @@ package com.example.storage.object;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.example.storage.Env;
 import com.example.storage.TestBase;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,7 +47,11 @@ public class DownloadBytesRangeTest extends TestBase {
       's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
-    blob = storage.create(blob, bytes);
+    BlobInfo gen1 = storage.create(
+        BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+        bytes,
+        BlobTargetOption.doesNotExist()
+    );
 
     File file = tmp.newFile();
 
@@ -53,10 +61,11 @@ public class DownloadBytesRangeTest extends TestBase {
 
     try {
       String destFileName = file.getAbsolutePath();
+      BlobId id = gen1.getBlobId();
       DownloadByteRange.downloadByteRange(
-          System.getenv("GOOGLE_CLOUD_PROJECT"),
-          bucketName,
-          blobName,
+          Env.GOOGLE_CLOUD_PROJECT,
+          id.getBucket(),
+          id.getName(),
           startByte,
           endBytes,
           destFileName);

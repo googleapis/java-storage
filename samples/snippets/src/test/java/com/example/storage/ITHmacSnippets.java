@@ -19,6 +19,7 @@ package com.example.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import com.example.storage.hmac.ActivateHmacKey;
 import com.example.storage.hmac.CreateHmacKey;
@@ -33,10 +34,8 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ITHmacSnippets extends TestBase {
@@ -46,10 +45,18 @@ public class ITHmacSnippets extends TestBase {
 
   @Before
   public void before() {
+    // Skip running Hmac snippet tests in CI
+    // All of our samples CI uses a single service account. Each service account can only have 5
+    // HMAC keys.
+    // We have 6 test scenarios defined.
+    // If more than one build is running at the same time they will fight with each other's limit
+    // These samples have not materially changed since 2022-03 (as of 2025-05).
+    // Additionally, we have more robust integration tests for HMAC operations in the library
+    // itself.
+    assumeFalse("skipping hmac snippet tests in CI due to racy interactions",
+        "samples".equals(Env.JOB_TYPE));
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
   }
-
-  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5, 2000L);
 
   private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
     Page<HmacKey.HmacKeyMetadata> metadatas =

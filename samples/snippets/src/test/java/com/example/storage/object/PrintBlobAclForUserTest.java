@@ -16,40 +16,45 @@
 
 package com.example.storage.object;
 
+import static com.example.storage.Env.IT_SERVICE_ACCOUNT_USER;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static com.google.common.truth.Truth.assertWithMessage;
 
+import com.example.storage.Env;
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import org.junit.Test;
 
-public class PrintFileAclForUserTest extends TestBase {
+public class PrintBlobAclForUserTest extends TestBase {
 
-  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
+  public static final String IT_SERVICE_ACCOUNT_EMAIL = Env.IT_SERVICE_ACCOUNT_EMAIL;
 
   @Test
-  public void testPrintBucketAclByUser() {
+  public void testPrintBucketAclByUser() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    Entity testUser = new User(IT_SERVICE_ACCOUNT_EMAIL);
-    blob.createAcl(Acl.of(testUser, Role.READER));
-    PrintFileAclForUser.printFileAclForUser(bucketName, blobName, IT_SERVICE_ACCOUNT_EMAIL);
+    BlobInfo gen1 = createEmptyObject();
+    BlobId id = gen1.getBlobId();
+    storage.createAcl(id, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
+    PrintBlobAclForUser.printBlobAclForUser(id.getBucket(), id.getName(), IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
   }
 
   @Test
-  public void testUserNotFound() {
+  public void testUserNotFound() throws Exception {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+    assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
+    BlobInfo gen1 = createEmptyObject();
+    BlobId id = gen1.getBlobId();
     // Delete Acl just in case to make sure the User ACL is not present
-    blob.deleteAcl(new User(IT_SERVICE_ACCOUNT_EMAIL));
-    PrintFileAclForUser.printFileAclForUser(bucketName, blobName, IT_SERVICE_ACCOUNT_EMAIL);
+    storage.deleteAcl(id, IT_SERVICE_ACCOUNT_USER);
+    PrintBlobAclForUser.printBlobAclForUser(id.getBucket(), id.getName(), IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("not found");
   }
