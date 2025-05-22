@@ -58,13 +58,13 @@ public interface ListBucketsRequestOrBuilder
    *
    *
    * <pre>
-   * Maximum number of buckets to return in a single response. The service will
-   * use this parameter or 1,000 items, whichever is smaller. If "acl" is
-   * present in the read_mask, the service will use this parameter of 200 items,
-   * whichever is smaller.
+   * Optional. Maximum number of buckets to return in a single response. The
+   * service will use this parameter or 1,000 items, whichever is smaller. If
+   * "acl" is present in the read_mask, the service will use this parameter of
+   * 200 items, whichever is smaller.
    * </pre>
    *
-   * <code>int32 page_size = 2;</code>
+   * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageSize.
    */
@@ -74,11 +74,11 @@ public interface ListBucketsRequestOrBuilder
    *
    *
    * <pre>
-   * A previously-returned page token representing part of the larger set of
-   * results to view.
+   * Optional. A previously-returned page token representing part of the larger
+   * set of results to view.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageToken.
    */
@@ -88,11 +88,11 @@ public interface ListBucketsRequestOrBuilder
    *
    *
    * <pre>
-   * A previously-returned page token representing part of the larger set of
-   * results to view.
+   * Optional. A previously-returned page token representing part of the larger
+   * set of results to view.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for pageToken.
    */
@@ -102,10 +102,10 @@ public interface ListBucketsRequestOrBuilder
    *
    *
    * <pre>
-   * Filter results to buckets whose names begin with this prefix.
+   * Optional. Filter results to buckets whose names begin with this prefix.
    * </pre>
    *
-   * <code>string prefix = 4;</code>
+   * <code>string prefix = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The prefix.
    */
@@ -115,10 +115,10 @@ public interface ListBucketsRequestOrBuilder
    *
    *
    * <pre>
-   * Filter results to buckets whose names begin with this prefix.
+   * Optional. Filter results to buckets whose names begin with this prefix.
    * </pre>
    *
-   * <code>string prefix = 4;</code>
+   * <code>string prefix = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for prefix.
    */

@@ -68,10 +68,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject> getSourceObjectsList();
 
@@ -79,10 +82,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ComposeObjectRequest.SourceObject getSourceObjects(int index);
 
@@ -90,10 +96,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getSourceObjectsCount();
 
@@ -101,10 +110,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder>
       getSourceObjectsOrBuilderList();
@@ -113,10 +125,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder getSourceObjectsOrBuilder(
       int index);
@@ -125,12 +140,12 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 9;</code>
+   * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The destinationPredefinedAcl.
    */
@@ -140,12 +155,12 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 9;</code>
+   * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for destinationPredefinedAcl.
    */
@@ -213,13 +228,15 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Resource name of the Cloud KMS key, of the form
+   * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
    * that will be used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
-   * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The kmsKey.
    */
@@ -229,13 +246,15 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Resource name of the Cloud KMS key, of the form
+   * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
    * that will be used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
-   * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for kmsKey.
    */
@@ -245,10 +264,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -258,10 +280,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -271,10 +296,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 
@@ -282,11 +310,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -296,11 +326,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -310,11 +342,13 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 }

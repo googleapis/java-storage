@@ -28,11 +28,14 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the readObjectSpec field is set.
    */
@@ -42,11 +45,14 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The readObjectSpec.
    */
@@ -56,11 +62,14 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.BidiReadObjectSpecOrBuilder getReadObjectSpecOrBuilder();
 
@@ -68,15 +77,17 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.ReadRange> getReadRangesList();
 
@@ -84,15 +95,17 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ReadRange getReadRanges(int index);
 
@@ -100,15 +113,17 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getReadRangesCount();
 
@@ -116,15 +131,17 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.ReadRangeOrBuilder> getReadRangesOrBuilderList();
 
@@ -132,15 +149,17 @@ public interface BidiReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ReadRangeOrBuilder getReadRangesOrBuilder(int index);
 }

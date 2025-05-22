@@ -28,10 +28,10 @@ public interface OwnerOrBuilder
    *
    *
    * <pre>
-   * The entity, in the form `user-`*userId*.
+   * Optional. The entity, in the form `user-`*userId*.
    * </pre>
    *
-   * <code>string entity = 1;</code>
+   * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entity.
    */
@@ -41,10 +41,10 @@ public interface OwnerOrBuilder
    *
    *
    * <pre>
-   * The entity, in the form `user-`*userId*.
+   * Optional. The entity, in the form `user-`*userId*.
    * </pre>
    *
-   * <code>string entity = 1;</code>
+   * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entity.
    */
@@ -54,10 +54,10 @@ public interface OwnerOrBuilder
    *
    *
    * <pre>
-   * The ID for the entity.
+   * Optional. The ID for the entity.
    * </pre>
    *
-   * <code>string entity_id = 2;</code>
+   * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entityId.
    */
@@ -67,10 +67,10 @@ public interface OwnerOrBuilder
    *
    *
    * <pre>
-   * The ID for the entity.
+   * Optional. The ID for the entity.
    * </pre>
    *
-   * <code>string entity_id = 2;</code>
+   * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entityId.
    */

@@ -72,10 +72,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The entity, in the form `user-`*userId*.
+   * Optional. The entity, in the form `user-`*userId*.
    * </pre>
    *
-   * <code>string entity = 1;</code>
+   * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entity.
    */
@@ -96,10 +96,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The entity, in the form `user-`*userId*.
+   * Optional. The entity, in the form `user-`*userId*.
    * </pre>
    *
-   * <code>string entity = 1;</code>
+   * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entity.
    */
@@ -125,10 +125,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The ID for the entity.
+   * Optional. The ID for the entity.
    * </pre>
    *
-   * <code>string entity_id = 2;</code>
+   * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entityId.
    */
@@ -149,10 +149,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The ID for the entity.
+   * Optional. The ID for the entity.
    * </pre>
    *
-   * <code>string entity_id = 2;</code>
+   * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entityId.
    */
@@ -535,10 +535,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The entity, in the form `user-`*userId*.
+     * Optional. The entity, in the form `user-`*userId*.
      * </pre>
      *
-     * <code>string entity = 1;</code>
+     * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The entity.
      */
@@ -558,10 +558,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The entity, in the form `user-`*userId*.
+     * Optional. The entity, in the form `user-`*userId*.
      * </pre>
      *
-     * <code>string entity = 1;</code>
+     * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for entity.
      */
@@ -581,10 +581,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The entity, in the form `user-`*userId*.
+     * Optional. The entity, in the form `user-`*userId*.
      * </pre>
      *
-     * <code>string entity = 1;</code>
+     * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The entity to set.
      * @return This builder for chaining.
@@ -603,10 +603,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The entity, in the form `user-`*userId*.
+     * Optional. The entity, in the form `user-`*userId*.
      * </pre>
      *
-     * <code>string entity = 1;</code>
+     * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -621,10 +621,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The entity, in the form `user-`*userId*.
+     * Optional. The entity, in the form `user-`*userId*.
      * </pre>
      *
-     * <code>string entity = 1;</code>
+     * <code>string entity = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for entity to set.
      * @return This builder for chaining.
@@ -646,10 +646,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The ID for the entity.
+     * Optional. The ID for the entity.
      * </pre>
      *
-     * <code>string entity_id = 2;</code>
+     * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The entityId.
      */
@@ -669,10 +669,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The ID for the entity.
+     * Optional. The ID for the entity.
      * </pre>
      *
-     * <code>string entity_id = 2;</code>
+     * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for entityId.
      */
@@ -692,10 +692,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The ID for the entity.
+     * Optional. The ID for the entity.
      * </pre>
      *
-     * <code>string entity_id = 2;</code>
+     * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The entityId to set.
      * @return This builder for chaining.
@@ -714,10 +714,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The ID for the entity.
+     * Optional. The ID for the entity.
      * </pre>
      *
-     * <code>string entity_id = 2;</code>
+     * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -732,10 +732,10 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The ID for the entity.
+     * Optional. The ID for the entity.
      * </pre>
      *
-     * <code>string entity_id = 2;</code>
+     * <code>string entity_id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for entityId to set.
      * @return This builder for chaining.

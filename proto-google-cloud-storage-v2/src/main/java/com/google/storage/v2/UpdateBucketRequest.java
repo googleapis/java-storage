@@ -201,12 +201,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 8;</code>
+   * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -227,12 +227,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 8;</code>
+   * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -258,12 +258,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 9;</code>
+   * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The predefinedDefaultObjectAcl.
    */
@@ -284,12 +285,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 9;</code>
+   * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The bytes for predefinedDefaultObjectAcl.
    */
@@ -1236,12 +1238,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 8;</code>
+     * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The predefinedAcl.
      */
@@ -1261,12 +1263,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 8;</code>
+     * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for predefinedAcl.
      */
@@ -1286,12 +1288,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 8;</code>
+     * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The predefinedAcl to set.
      * @return This builder for chaining.
@@ -1310,12 +1312,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 8;</code>
+     * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1330,12 +1332,12 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 8;</code>
+     * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for predefinedAcl to set.
      * @return This builder for chaining.
@@ -1357,12 +1359,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 9;</code>
+     * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The predefinedDefaultObjectAcl.
      */
@@ -1382,12 +1385,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 9;</code>
+     * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The bytes for predefinedDefaultObjectAcl.
      */
@@ -1407,12 +1411,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 9;</code>
+     * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The predefinedDefaultObjectAcl to set.
      * @return This builder for chaining.
@@ -1431,12 +1436,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 9;</code>
+     * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -1451,12 +1457,13 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 9;</code>
+     * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The bytes for predefinedDefaultObjectAcl to set.
      * @return This builder for chaining.

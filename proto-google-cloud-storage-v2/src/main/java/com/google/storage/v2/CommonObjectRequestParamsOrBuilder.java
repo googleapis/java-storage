@@ -28,11 +28,11 @@ public interface CommonObjectRequestParamsOrBuilder
    *
    *
    * <pre>
-   * Encryption algorithm used with the Customer-Supplied Encryption Keys
-   * feature.
+   * Optional. Encryption algorithm used with the Customer-Supplied Encryption
+   * Keys feature.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The encryptionAlgorithm.
    */
@@ -42,11 +42,11 @@ public interface CommonObjectRequestParamsOrBuilder
    *
    *
    * <pre>
-   * Encryption algorithm used with the Customer-Supplied Encryption Keys
-   * feature.
+   * Optional. Encryption algorithm used with the Customer-Supplied Encryption
+   * Keys feature.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for encryptionAlgorithm.
    */
@@ -56,11 +56,11 @@ public interface CommonObjectRequestParamsOrBuilder
    *
    *
    * <pre>
-   * Encryption key used with the Customer-Supplied Encryption Keys feature.
-   * In raw bytes format (not base64-encoded).
+   * Optional. Encryption key used with the Customer-Supplied Encryption Keys
+   * feature. In raw bytes format (not base64-encoded).
    * </pre>
    *
-   * <code>bytes encryption_key_bytes = 4;</code>
+   * <code>bytes encryption_key_bytes = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The encryptionKeyBytes.
    */
@@ -70,11 +70,11 @@ public interface CommonObjectRequestParamsOrBuilder
    *
    *
    * <pre>
-   * SHA256 hash of encryption key used with the Customer-Supplied Encryption
-   * Keys feature.
+   * Optional. SHA256 hash of encryption key used with the Customer-Supplied
+   * Encryption Keys feature.
    * </pre>
    *
-   * <code>bytes encryption_key_sha256_bytes = 5;</code>
+   * <code>bytes encryption_key_sha256_bytes = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The encryptionKeySha256Bytes.
    */

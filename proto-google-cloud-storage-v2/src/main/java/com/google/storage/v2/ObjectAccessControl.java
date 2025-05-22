@@ -81,13 +81,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The access permission for the entity. One of the following values:
+   * Optional. The access permission for the entity. One of the following
+   * values:
    * * `READER`
    * * `WRITER`
    * * `OWNER`
    * </pre>
    *
-   * <code>string role = 1;</code>
+   * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The role.
    */
@@ -108,13 +109,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The access permission for the entity. One of the following values:
+   * Optional. The access permission for the entity. One of the following
+   * values:
    * * `READER`
    * * `WRITER`
    * * `OWNER`
    * </pre>
    *
-   * <code>string role = 1;</code>
+   * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for role.
    */
@@ -140,10 +142,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID of the access-control entry.
+   * Optional. The ID of the access-control entry.
    * </pre>
    *
-   * <code>string id = 2;</code>
+   * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The id.
    */
@@ -164,10 +166,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID of the access-control entry.
+   * Optional. The ID of the access-control entry.
    * </pre>
    *
-   * <code>string id = 2;</code>
+   * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for id.
    */
@@ -193,7 +195,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The entity holding the permission, in one of the following forms:
+   * Optional. The entity holding the permission, in one of the following forms:
    * * `user-{userid}`
    * * `user-{email}`
    * * `group-{groupid}`
@@ -213,7 +215,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * returned on response.
    * </pre>
    *
-   * <code>string entity = 3;</code>
+   * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entity.
    */
@@ -234,7 +236,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The entity holding the permission, in one of the following forms:
+   * Optional. The entity holding the permission, in one of the following forms:
    * * `user-{userid}`
    * * `user-{email}`
    * * `group-{groupid}`
@@ -254,7 +256,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * returned on response.
    * </pre>
    *
-   * <code>string entity = 3;</code>
+   * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entity.
    */
@@ -335,10 +337,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID for the entity, if any.
+   * Optional. The ID for the entity, if any.
    * </pre>
    *
-   * <code>string entity_id = 4;</code>
+   * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entityId.
    */
@@ -359,10 +361,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID for the entity, if any.
+   * Optional. The ID for the entity, if any.
    * </pre>
    *
-   * <code>string entity_id = 4;</code>
+   * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entityId.
    */
@@ -388,13 +390,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The etag of the ObjectAccessControl.
+   * Optional. The etag of the ObjectAccessControl.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object's ObjectAccessControl.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -415,13 +417,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The etag of the ObjectAccessControl.
+   * Optional. The etag of the ObjectAccessControl.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object's ObjectAccessControl.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */
@@ -447,10 +449,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The email address associated with the entity, if any.
+   * Optional. The email address associated with the entity, if any.
    * </pre>
    *
-   * <code>string email = 5;</code>
+   * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The email.
    */
@@ -471,10 +473,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The email address associated with the entity, if any.
+   * Optional. The email address associated with the entity, if any.
    * </pre>
    *
-   * <code>string email = 5;</code>
+   * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for email.
    */
@@ -500,10 +502,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The domain associated with the entity, if any.
+   * Optional. The domain associated with the entity, if any.
    * </pre>
    *
-   * <code>string domain = 6;</code>
+   * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The domain.
    */
@@ -524,10 +526,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The domain associated with the entity, if any.
+   * Optional. The domain associated with the entity, if any.
    * </pre>
    *
-   * <code>string domain = 6;</code>
+   * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for domain.
    */
@@ -551,10 +553,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the projectTeam field is set.
    */
@@ -567,10 +571,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The projectTeam.
    */
@@ -585,10 +591,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ProjectTeamOrBuilder getProjectTeamOrBuilder() {
@@ -1157,13 +1165,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The access permission for the entity. One of the following values:
+     * Optional. The access permission for the entity. One of the following
+     * values:
      * * `READER`
      * * `WRITER`
      * * `OWNER`
      * </pre>
      *
-     * <code>string role = 1;</code>
+     * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The role.
      */
@@ -1183,13 +1192,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The access permission for the entity. One of the following values:
+     * Optional. The access permission for the entity. One of the following
+     * values:
      * * `READER`
      * * `WRITER`
      * * `OWNER`
      * </pre>
      *
-     * <code>string role = 1;</code>
+     * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for role.
      */
@@ -1209,13 +1219,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The access permission for the entity. One of the following values:
+     * Optional. The access permission for the entity. One of the following
+     * values:
      * * `READER`
      * * `WRITER`
      * * `OWNER`
      * </pre>
      *
-     * <code>string role = 1;</code>
+     * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The role to set.
      * @return This builder for chaining.
@@ -1234,13 +1245,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The access permission for the entity. One of the following values:
+     * Optional. The access permission for the entity. One of the following
+     * values:
      * * `READER`
      * * `WRITER`
      * * `OWNER`
      * </pre>
      *
-     * <code>string role = 1;</code>
+     * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1255,13 +1267,14 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The access permission for the entity. One of the following values:
+     * Optional. The access permission for the entity. One of the following
+     * values:
      * * `READER`
      * * `WRITER`
      * * `OWNER`
      * </pre>
      *
-     * <code>string role = 1;</code>
+     * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for role to set.
      * @return This builder for chaining.
@@ -1283,10 +1296,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID of the access-control entry.
+     * Optional. The ID of the access-control entry.
      * </pre>
      *
-     * <code>string id = 2;</code>
+     * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The id.
      */
@@ -1306,10 +1319,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID of the access-control entry.
+     * Optional. The ID of the access-control entry.
      * </pre>
      *
-     * <code>string id = 2;</code>
+     * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for id.
      */
@@ -1329,10 +1342,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID of the access-control entry.
+     * Optional. The ID of the access-control entry.
      * </pre>
      *
-     * <code>string id = 2;</code>
+     * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The id to set.
      * @return This builder for chaining.
@@ -1351,10 +1364,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID of the access-control entry.
+     * Optional. The ID of the access-control entry.
      * </pre>
      *
-     * <code>string id = 2;</code>
+     * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1369,10 +1382,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID of the access-control entry.
+     * Optional. The ID of the access-control entry.
      * </pre>
      *
-     * <code>string id = 2;</code>
+     * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for id to set.
      * @return This builder for chaining.
@@ -1394,7 +1407,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The entity holding the permission, in one of the following forms:
+     * Optional. The entity holding the permission, in one of the following forms:
      * * `user-{userid}`
      * * `user-{email}`
      * * `group-{groupid}`
@@ -1414,7 +1427,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * returned on response.
      * </pre>
      *
-     * <code>string entity = 3;</code>
+     * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The entity.
      */
@@ -1434,7 +1447,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The entity holding the permission, in one of the following forms:
+     * Optional. The entity holding the permission, in one of the following forms:
      * * `user-{userid}`
      * * `user-{email}`
      * * `group-{groupid}`
@@ -1454,7 +1467,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * returned on response.
      * </pre>
      *
-     * <code>string entity = 3;</code>
+     * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for entity.
      */
@@ -1474,7 +1487,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The entity holding the permission, in one of the following forms:
+     * Optional. The entity holding the permission, in one of the following forms:
      * * `user-{userid}`
      * * `user-{email}`
      * * `group-{groupid}`
@@ -1494,7 +1507,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * returned on response.
      * </pre>
      *
-     * <code>string entity = 3;</code>
+     * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The entity to set.
      * @return This builder for chaining.
@@ -1513,7 +1526,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The entity holding the permission, in one of the following forms:
+     * Optional. The entity holding the permission, in one of the following forms:
      * * `user-{userid}`
      * * `user-{email}`
      * * `group-{groupid}`
@@ -1533,7 +1546,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * returned on response.
      * </pre>
      *
-     * <code>string entity = 3;</code>
+     * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1548,7 +1561,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The entity holding the permission, in one of the following forms:
+     * Optional. The entity holding the permission, in one of the following forms:
      * * `user-{userid}`
      * * `user-{email}`
      * * `group-{groupid}`
@@ -1568,7 +1581,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * returned on response.
      * </pre>
      *
-     * <code>string entity = 3;</code>
+     * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for entity to set.
      * @return This builder for chaining.
@@ -1706,10 +1719,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID for the entity, if any.
+     * Optional. The ID for the entity, if any.
      * </pre>
      *
-     * <code>string entity_id = 4;</code>
+     * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The entityId.
      */
@@ -1729,10 +1742,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID for the entity, if any.
+     * Optional. The ID for the entity, if any.
      * </pre>
      *
-     * <code>string entity_id = 4;</code>
+     * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for entityId.
      */
@@ -1752,10 +1765,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID for the entity, if any.
+     * Optional. The ID for the entity, if any.
      * </pre>
      *
-     * <code>string entity_id = 4;</code>
+     * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The entityId to set.
      * @return This builder for chaining.
@@ -1774,10 +1787,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID for the entity, if any.
+     * Optional. The ID for the entity, if any.
      * </pre>
      *
-     * <code>string entity_id = 4;</code>
+     * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1792,10 +1805,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID for the entity, if any.
+     * Optional. The ID for the entity, if any.
      * </pre>
      *
-     * <code>string entity_id = 4;</code>
+     * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for entityId to set.
      * @return This builder for chaining.
@@ -1817,13 +1830,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The etag of the ObjectAccessControl.
+     * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The etag.
      */
@@ -1843,13 +1856,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The etag of the ObjectAccessControl.
+     * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for etag.
      */
@@ -1869,13 +1882,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The etag of the ObjectAccessControl.
+     * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The etag to set.
      * @return This builder for chaining.
@@ -1894,13 +1907,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The etag of the ObjectAccessControl.
+     * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1915,13 +1928,13 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The etag of the ObjectAccessControl.
+     * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
-     * <code>string etag = 8;</code>
+     * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for etag to set.
      * @return This builder for chaining.
@@ -1943,10 +1956,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The email address associated with the entity, if any.
+     * Optional. The email address associated with the entity, if any.
      * </pre>
      *
-     * <code>string email = 5;</code>
+     * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The email.
      */
@@ -1966,10 +1979,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The email address associated with the entity, if any.
+     * Optional. The email address associated with the entity, if any.
      * </pre>
      *
-     * <code>string email = 5;</code>
+     * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for email.
      */
@@ -1989,10 +2002,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The email address associated with the entity, if any.
+     * Optional. The email address associated with the entity, if any.
      * </pre>
      *
-     * <code>string email = 5;</code>
+     * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The email to set.
      * @return This builder for chaining.
@@ -2011,10 +2024,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The email address associated with the entity, if any.
+     * Optional. The email address associated with the entity, if any.
      * </pre>
      *
-     * <code>string email = 5;</code>
+     * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -2029,10 +2042,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The email address associated with the entity, if any.
+     * Optional. The email address associated with the entity, if any.
      * </pre>
      *
-     * <code>string email = 5;</code>
+     * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for email to set.
      * @return This builder for chaining.
@@ -2054,10 +2067,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The domain associated with the entity, if any.
+     * Optional. The domain associated with the entity, if any.
      * </pre>
      *
-     * <code>string domain = 6;</code>
+     * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The domain.
      */
@@ -2077,10 +2090,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The domain associated with the entity, if any.
+     * Optional. The domain associated with the entity, if any.
      * </pre>
      *
-     * <code>string domain = 6;</code>
+     * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for domain.
      */
@@ -2100,10 +2113,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The domain associated with the entity, if any.
+     * Optional. The domain associated with the entity, if any.
      * </pre>
      *
-     * <code>string domain = 6;</code>
+     * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The domain to set.
      * @return This builder for chaining.
@@ -2122,10 +2135,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The domain associated with the entity, if any.
+     * Optional. The domain associated with the entity, if any.
      * </pre>
      *
-     * <code>string domain = 6;</code>
+     * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -2140,10 +2153,10 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The domain associated with the entity, if any.
+     * Optional. The domain associated with the entity, if any.
      * </pre>
      *
-     * <code>string domain = 6;</code>
+     * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for domain to set.
      * @return This builder for chaining.
@@ -2170,10 +2183,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the projectTeam field is set.
      */
@@ -2185,10 +2200,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The projectTeam.
      */
@@ -2206,10 +2223,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setProjectTeam(com.google.storage.v2.ProjectTeam value) {
       if (projectTeamBuilder_ == null) {
@@ -2229,10 +2248,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setProjectTeam(com.google.storage.v2.ProjectTeam.Builder builderForValue) {
       if (projectTeamBuilder_ == null) {
@@ -2249,10 +2270,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeProjectTeam(com.google.storage.v2.ProjectTeam value) {
       if (projectTeamBuilder_ == null) {
@@ -2277,10 +2300,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearProjectTeam() {
       bitField0_ = (bitField0_ & ~0x00000100);
@@ -2297,10 +2322,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ProjectTeam.Builder getProjectTeamBuilder() {
       bitField0_ |= 0x00000100;
@@ -2312,10 +2339,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ProjectTeamOrBuilder getProjectTeamOrBuilder() {
       if (projectTeamBuilder_ != null) {
@@ -2331,10 +2360,12 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The project team associated with the entity, if any.
+     * Optional. The project team associated with the entity, if any.
      * </pre>
      *
-     * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+     * <code>
+     * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.ProjectTeam,

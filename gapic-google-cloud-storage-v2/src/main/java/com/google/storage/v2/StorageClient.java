@@ -184,7 +184,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetIamPolicy</td>
- *      <td><p> Gets the IAM policy for a specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}`.</td>
+ *      <td><p> Gets the IAM policy for a specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -203,7 +203,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> SetIamPolicy</td>
- *      <td><p> Updates an IAM policy for the specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}`.</td>
+ *      <td><p> Updates an IAM policy for the specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -856,11 +856,13 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
-   *     project of the bucket must be specified in the `bucket.project` field. This field must be
-   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   * @param parent Required. The project to which this bucket will belong. This field must either be
+   *     empty or `projects/_`. The project ID that owns this bucket should be specified in the
+   *     `bucket.project` field.
+   * @param bucket Optional. Properties of the new bucket being inserted. The name of the bucket is
+   *     specified in the `bucket_id` field. Populating `bucket.name` field will result in an error.
+   *     The project of the bucket must be specified in the `bucket.project` field. This field must
+   *     be in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
    *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
@@ -897,11 +899,13 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
-   *     project of the bucket must be specified in the `bucket.project` field. This field must be
-   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   * @param parent Required. The project to which this bucket will belong. This field must either be
+   *     empty or `projects/_`. The project ID that owns this bucket should be specified in the
+   *     `bucket.project` field.
+   * @param bucket Optional. Properties of the new bucket being inserted. The name of the bucket is
+   *     specified in the `bucket_id` field. Populating `bucket.name` field will result in an error.
+   *     The project of the bucket must be specified in the `bucket.project` field. This field must
+   *     be in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
    *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
@@ -1266,7 +1270,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1298,7 +1303,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1327,7 +1333,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1359,7 +1366,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1390,7 +1398,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1427,7 +1436,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1461,7 +1471,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1494,7 +1505,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}`.
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
    *
@@ -1977,8 +1989,8 @@ public class StorageClient implements BackgroundResource {
    * @param bucket Required. Name of the bucket in which the object resides.
    * @param object Required. The name of the finalized object to delete. Note: If you want to delete
    *     an unfinalized resumable upload please use `CancelResumableWrite`.
-   * @param generation If present, permanently deletes a specific revision of this object (as
-   *     opposed to the latest version, the default).
+   * @param generation Optional. If present, permanently deletes a specific revision of this object
+   *     (as opposed to the latest version, the default).
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteObject(BucketName bucket, String object, long generation) {
@@ -2028,8 +2040,8 @@ public class StorageClient implements BackgroundResource {
    * @param bucket Required. Name of the bucket in which the object resides.
    * @param object Required. The name of the finalized object to delete. Note: If you want to delete
    *     an unfinalized resumable upload please use `CancelResumableWrite`.
-   * @param generation If present, permanently deletes a specific revision of this object (as
-   *     opposed to the latest version, the default).
+   * @param generation Optional. If present, permanently deletes a specific revision of this object
+   *     (as opposed to the latest version, the default).
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteObject(String bucket, String object, long generation) {
@@ -2483,8 +2495,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param bucket Required. Name of the bucket in which the object resides.
    * @param object Required. Name of the object.
-   * @param generation If present, selects a specific revision of this object (as opposed to the
-   *     latest version, the default).
+   * @param generation Optional. If present, selects a specific revision of this object (as opposed
+   *     to the latest version, the default).
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Object getObject(BucketName bucket, String object, long generation) {
@@ -2526,8 +2538,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param bucket Required. Name of the bucket in which the object resides.
    * @param object Required. Name of the object.
-   * @param generation If present, selects a specific revision of this object (as opposed to the
-   *     latest version, the default).
+   * @param generation Optional. If present, selects a specific revision of this object (as opposed
+   *     to the latest version, the default).
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Object getObject(String bucket, String object, long generation) {

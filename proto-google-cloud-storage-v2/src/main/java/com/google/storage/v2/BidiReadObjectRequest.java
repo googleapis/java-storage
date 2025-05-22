@@ -72,11 +72,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the readObjectSpec field is set.
    */
@@ -89,11 +92,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The readObjectSpec.
    */
@@ -108,11 +114,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * The first message of each stream should set this field. If this is not
-   * the first message, an error will be returned. Describes the object to read.
+   * Optional. The first message of each stream should set this field. If this
+   * is not the first message, an error will be returned. Describes the object
+   * to read.
    * </pre>
    *
-   * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.BidiReadObjectSpecOrBuilder getReadObjectSpecOrBuilder() {
@@ -130,15 +139,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.ReadRange> getReadRangesList() {
@@ -149,15 +160,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.ReadRangeOrBuilder>
@@ -169,15 +182,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getReadRangesCount() {
@@ -188,15 +203,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ReadRange getReadRanges(int index) {
@@ -207,15 +224,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-   * is large enough to require multiple responses, they are guaranteed to be
-   * delivered in increasing offset order. There are no ordering guarantees
-   * across ranges. When no ranges are provided, the response message will not
-   * include ObjectRangeData. For full object downloads, the offset and size can
-   * be set to 0.
+   * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+   * single range is large enough to require multiple responses, they are
+   * guaranteed to be delivered in increasing offset order. There are no
+   * ordering guarantees across ranges. When no ranges are provided, the
+   * response message will not include ObjectRangeData. For full object
+   * downloads, the offset and size can be set to 0.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ReadRangeOrBuilder getReadRangesOrBuilder(int index) {
@@ -666,11 +685,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the readObjectSpec field is set.
      */
@@ -682,11 +704,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The readObjectSpec.
      */
@@ -704,11 +729,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setReadObjectSpec(com.google.storage.v2.BidiReadObjectSpec value) {
       if (readObjectSpecBuilder_ == null) {
@@ -728,11 +756,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setReadObjectSpec(
         com.google.storage.v2.BidiReadObjectSpec.Builder builderForValue) {
@@ -750,11 +781,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeReadObjectSpec(com.google.storage.v2.BidiReadObjectSpec value) {
       if (readObjectSpecBuilder_ == null) {
@@ -779,11 +813,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearReadObjectSpec() {
       bitField0_ = (bitField0_ & ~0x00000001);
@@ -800,11 +837,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BidiReadObjectSpec.Builder getReadObjectSpecBuilder() {
       bitField0_ |= 0x00000001;
@@ -816,11 +856,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BidiReadObjectSpecOrBuilder getReadObjectSpecOrBuilder() {
       if (readObjectSpecBuilder_ != null) {
@@ -836,11 +879,14 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * The first message of each stream should set this field. If this is not
-     * the first message, an error will be returned. Describes the object to read.
+     * Optional. The first message of each stream should set this field. If this
+     * is not the first message, an error will be returned. Describes the object
+     * to read.
      * </pre>
      *
-     * <code>.google.storage.v2.BidiReadObjectSpec read_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.BidiReadObjectSpec read_object_spec = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.BidiReadObjectSpec,
@@ -879,15 +925,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ReadRange> getReadRangesList() {
       if (readRangesBuilder_ == null) {
@@ -901,15 +949,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public int getReadRangesCount() {
       if (readRangesBuilder_ == null) {
@@ -923,15 +973,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ReadRange getReadRanges(int index) {
       if (readRangesBuilder_ == null) {
@@ -945,15 +997,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setReadRanges(int index, com.google.storage.v2.ReadRange value) {
       if (readRangesBuilder_ == null) {
@@ -973,15 +1027,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setReadRanges(
         int index, com.google.storage.v2.ReadRange.Builder builderForValue) {
@@ -999,15 +1055,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addReadRanges(com.google.storage.v2.ReadRange value) {
       if (readRangesBuilder_ == null) {
@@ -1027,15 +1085,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addReadRanges(int index, com.google.storage.v2.ReadRange value) {
       if (readRangesBuilder_ == null) {
@@ -1055,15 +1115,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addReadRanges(com.google.storage.v2.ReadRange.Builder builderForValue) {
       if (readRangesBuilder_ == null) {
@@ -1080,15 +1142,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addReadRanges(
         int index, com.google.storage.v2.ReadRange.Builder builderForValue) {
@@ -1106,15 +1170,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAllReadRanges(
         java.lang.Iterable<? extends com.google.storage.v2.ReadRange> values) {
@@ -1132,15 +1198,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearReadRanges() {
       if (readRangesBuilder_ == null) {
@@ -1157,15 +1225,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeReadRanges(int index) {
       if (readRangesBuilder_ == null) {
@@ -1182,15 +1252,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ReadRange.Builder getReadRangesBuilder(int index) {
       return getReadRangesFieldBuilder().getBuilder(index);
@@ -1200,15 +1272,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ReadRangeOrBuilder getReadRangesOrBuilder(int index) {
       if (readRangesBuilder_ == null) {
@@ -1222,15 +1296,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<? extends com.google.storage.v2.ReadRangeOrBuilder>
         getReadRangesOrBuilderList() {
@@ -1245,15 +1321,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ReadRange.Builder addReadRangesBuilder() {
       return getReadRangesFieldBuilder()
@@ -1264,15 +1342,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ReadRange.Builder addReadRangesBuilder(int index) {
       return getReadRangesFieldBuilder()
@@ -1283,15 +1363,17 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      *
      * <pre>
-     * Provides a list of 0 or more (up to 100) ranges to read. If a single range
-     * is large enough to require multiple responses, they are guaranteed to be
-     * delivered in increasing offset order. There are no ordering guarantees
-     * across ranges. When no ranges are provided, the response message will not
-     * include ObjectRangeData. For full object downloads, the offset and size can
-     * be set to 0.
+     * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
+     * single range is large enough to require multiple responses, they are
+     * guaranteed to be delivered in increasing offset order. There are no
+     * ordering guarantees across ranges. When no ranges are provided, the
+     * response message will not include ObjectRangeData. For full object
+     * downloads, the offset and size can be set to 0.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ReadRange read_ranges = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.ReadRange read_ranges = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ReadRange.Builder> getReadRangesBuilderList() {
       return getReadRangesFieldBuilder().getBuilderList();

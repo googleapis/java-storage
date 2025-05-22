@@ -85,6 +85,1184 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
             com.google.storage.v2.Object.class, com.google.storage.v2.Object.Builder.class);
   }
 
+  public interface RetentionOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Object.Retention)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The mode of the Retention.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The enum numeric value on the wire for mode.
+     */
+    int getModeValue();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The mode of the Retention.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The mode.
+     */
+    com.google.storage.v2.Object.Retention.Mode getMode();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the retainUntilTime field is set.
+     */
+    boolean hasRetainUntilTime();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The retainUntilTime.
+     */
+    com.google.protobuf.Timestamp getRetainUntilTime();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.protobuf.TimestampOrBuilder getRetainUntilTimeOrBuilder();
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Specifies retention parameters of the object. Objects under retention
+   * cannot be deleted or overwritten until their retention expires.
+   * </pre>
+   *
+   * Protobuf type {@code google.storage.v2.Object.Retention}
+   */
+  public static final class Retention extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Object.Retention)
+      RetentionOrBuilder {
+    private static final long serialVersionUID = 0L;
+
+    // Use Retention.newBuilder() to construct.
+    private Retention(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private Retention() {
+      mode_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new Retention();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Object_Retention_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Object_Retention_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.google.storage.v2.Object.Retention.class,
+              com.google.storage.v2.Object.Retention.Builder.class);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Retention mode values.
+     * </pre>
+     *
+     * Protobuf enum {@code google.storage.v2.Object.Retention.Mode}
+     */
+    public enum Mode implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       *
+       *
+       * <pre>
+       * No specified mode. Object is not under retention.
+       * </pre>
+       *
+       * <code>MODE_UNSPECIFIED = 0;</code>
+       */
+      MODE_UNSPECIFIED(0),
+      /**
+       *
+       *
+       * <pre>
+       * Retention period may be decreased or increased.
+       * The Retention configuration may be removed.
+       * The mode may be changed to locked.
+       * </pre>
+       *
+       * <code>UNLOCKED = 1;</code>
+       */
+      UNLOCKED(1),
+      /**
+       *
+       *
+       * <pre>
+       * Retention period may be increased.
+       * The Retention configuration cannot be removed.
+       * The mode cannot be changed.
+       * </pre>
+       *
+       * <code>LOCKED = 2;</code>
+       */
+      LOCKED(2),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       *
+       *
+       * <pre>
+       * No specified mode. Object is not under retention.
+       * </pre>
+       *
+       * <code>MODE_UNSPECIFIED = 0;</code>
+       */
+      public static final int MODE_UNSPECIFIED_VALUE = 0;
+
+      /**
+       *
+       *
+       * <pre>
+       * Retention period may be decreased or increased.
+       * The Retention configuration may be removed.
+       * The mode may be changed to locked.
+       * </pre>
+       *
+       * <code>UNLOCKED = 1;</code>
+       */
+      public static final int UNLOCKED_VALUE = 1;
+
+      /**
+       *
+       *
+       * <pre>
+       * Retention period may be increased.
+       * The Retention configuration cannot be removed.
+       * The mode cannot be changed.
+       * </pre>
+       *
+       * <code>LOCKED = 2;</code>
+       */
+      public static final int LOCKED_VALUE = 2;
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static Mode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       */
+      public static Mode forNumber(int value) {
+        switch (value) {
+          case 0:
+            return MODE_UNSPECIFIED;
+          case 1:
+            return UNLOCKED;
+          case 2:
+            return LOCKED;
+          default:
+            return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Mode> internalGetValueMap() {
+        return internalValueMap;
+      }
+
+      private static final com.google.protobuf.Internal.EnumLiteMap<Mode> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Mode>() {
+            public Mode findValueByNumber(int number) {
+              return Mode.forNumber(number);
+            }
+          };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalStateException(
+              "Can't get the descriptor of an unrecognized enum value.");
+        }
+        return getDescriptor().getValues().get(ordinal());
+      }
+
+      public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+        return getDescriptor();
+      }
+
+      public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+        return com.google.storage.v2.Object.Retention.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final Mode[] VALUES = values();
+
+      public static Mode valueOf(com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private Mode(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:google.storage.v2.Object.Retention.Mode)
+    }
+
+    private int bitField0_;
+    public static final int MODE_FIELD_NUMBER = 1;
+    private int mode_ = 0;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The mode of the Retention.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The enum numeric value on the wire for mode.
+     */
+    @java.lang.Override
+    public int getModeValue() {
+      return mode_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The mode of the Retention.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The mode.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Object.Retention.Mode getMode() {
+      com.google.storage.v2.Object.Retention.Mode result =
+          com.google.storage.v2.Object.Retention.Mode.forNumber(mode_);
+      return result == null ? com.google.storage.v2.Object.Retention.Mode.UNRECOGNIZED : result;
+    }
+
+    public static final int RETAIN_UNTIL_TIME_FIELD_NUMBER = 2;
+    private com.google.protobuf.Timestamp retainUntilTime_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the retainUntilTime field is set.
+     */
+    @java.lang.Override
+    public boolean hasRetainUntilTime() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The retainUntilTime.
+     */
+    @java.lang.Override
+    public com.google.protobuf.Timestamp getRetainUntilTime() {
+      return retainUntilTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : retainUntilTime_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The timestamp that the object needs to be retained until.
+     * Value cannot be set in the past or more than 100 years in the future.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.TimestampOrBuilder getRetainUntilTimeOrBuilder() {
+      return retainUntilTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : retainUntilTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (mode_ != com.google.storage.v2.Object.Retention.Mode.MODE_UNSPECIFIED.getNumber()) {
+        output.writeEnum(1, mode_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(2, getRetainUntilTime());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (mode_ != com.google.storage.v2.Object.Retention.Mode.MODE_UNSPECIFIED.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream.computeEnumSize(1, mode_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getRetainUntilTime());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.google.storage.v2.Object.Retention)) {
+        return super.equals(obj);
+      }
+      com.google.storage.v2.Object.Retention other = (com.google.storage.v2.Object.Retention) obj;
+
+      if (mode_ != other.mode_) return false;
+      if (hasRetainUntilTime() != other.hasRetainUntilTime()) return false;
+      if (hasRetainUntilTime()) {
+        if (!getRetainUntilTime().equals(other.getRetainUntilTime())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + MODE_FIELD_NUMBER;
+      hash = (53 * hash) + mode_;
+      if (hasRetainUntilTime()) {
+        hash = (37 * hash) + RETAIN_UNTIL_TIME_FIELD_NUMBER;
+        hash = (53 * hash) + getRetainUntilTime().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Object.Retention parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.google.storage.v2.Object.Retention prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Specifies retention parameters of the object. Objects under retention
+     * cannot be deleted or overwritten until their retention expires.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Object.Retention}
+     */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Object.Retention)
+        com.google.storage.v2.Object.RetentionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Object_Retention_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Object_Retention_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Object.Retention.class,
+                com.google.storage.v2.Object.Retention.Builder.class);
+      }
+
+      // Construct using com.google.storage.v2.Object.Retention.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRetainUntilTimeFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        mode_ = 0;
+        retainUntilTime_ = null;
+        if (retainUntilTimeBuilder_ != null) {
+          retainUntilTimeBuilder_.dispose();
+          retainUntilTimeBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Object_Retention_descriptor;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Object.Retention getDefaultInstanceForType() {
+        return com.google.storage.v2.Object.Retention.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Object.Retention build() {
+        com.google.storage.v2.Object.Retention result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Object.Retention buildPartial() {
+        com.google.storage.v2.Object.Retention result =
+            new com.google.storage.v2.Object.Retention(this);
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.google.storage.v2.Object.Retention result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.mode_ = mode_;
+        }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.retainUntilTime_ =
+              retainUntilTimeBuilder_ == null ? retainUntilTime_ : retainUntilTimeBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.storage.v2.Object.Retention) {
+          return mergeFrom((com.google.storage.v2.Object.Retention) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.google.storage.v2.Object.Retention other) {
+        if (other == com.google.storage.v2.Object.Retention.getDefaultInstance()) return this;
+        if (other.mode_ != 0) {
+          setModeValue(other.getModeValue());
+        }
+        if (other.hasRetainUntilTime()) {
+          mergeRetainUntilTime(other.getRetainUntilTime());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8:
+                {
+                  mode_ = input.readEnum();
+                  bitField0_ |= 0x00000001;
+                  break;
+                } // case 8
+              case 18:
+                {
+                  input.readMessage(
+                      getRetainUntilTimeFieldBuilder().getBuilder(), extensionRegistry);
+                  bitField0_ |= 0x00000002;
+                  break;
+                } // case 18
+              default:
+                {
+                  if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                    done = true; // was an endgroup tag
+                  }
+                  break;
+                } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private int bitField0_;
+
+      private int mode_ = 0;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The mode of the Retention.
+       * </pre>
+       *
+       * <code>
+       * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The enum numeric value on the wire for mode.
+       */
+      @java.lang.Override
+      public int getModeValue() {
+        return mode_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The mode of the Retention.
+       * </pre>
+       *
+       * <code>
+       * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param value The enum numeric value on the wire for mode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setModeValue(int value) {
+        mode_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The mode of the Retention.
+       * </pre>
+       *
+       * <code>
+       * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The mode.
+       */
+      @java.lang.Override
+      public com.google.storage.v2.Object.Retention.Mode getMode() {
+        com.google.storage.v2.Object.Retention.Mode result =
+            com.google.storage.v2.Object.Retention.Mode.forNumber(mode_);
+        return result == null ? com.google.storage.v2.Object.Retention.Mode.UNRECOGNIZED : result;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The mode of the Retention.
+       * </pre>
+       *
+       * <code>
+       * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param value The mode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMode(com.google.storage.v2.Object.Retention.Mode value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        mode_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The mode of the Retention.
+       * </pre>
+       *
+       * <code>
+       * .google.storage.v2.Object.Retention.Mode mode = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMode() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        mode_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Timestamp retainUntilTime_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          retainUntilTimeBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return Whether the retainUntilTime field is set.
+       */
+      public boolean hasRetainUntilTime() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The retainUntilTime.
+       */
+      public com.google.protobuf.Timestamp getRetainUntilTime() {
+        if (retainUntilTimeBuilder_ == null) {
+          return retainUntilTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : retainUntilTime_;
+        } else {
+          return retainUntilTimeBuilder_.getMessage();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setRetainUntilTime(com.google.protobuf.Timestamp value) {
+        if (retainUntilTimeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          retainUntilTime_ = value;
+        } else {
+          retainUntilTimeBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setRetainUntilTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+        if (retainUntilTimeBuilder_ == null) {
+          retainUntilTime_ = builderForValue.build();
+        } else {
+          retainUntilTimeBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder mergeRetainUntilTime(com.google.protobuf.Timestamp value) {
+        if (retainUntilTimeBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)
+              && retainUntilTime_ != null
+              && retainUntilTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+            getRetainUntilTimeBuilder().mergeFrom(value);
+          } else {
+            retainUntilTime_ = value;
+          }
+        } else {
+          retainUntilTimeBuilder_.mergeFrom(value);
+        }
+        if (retainUntilTime_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder clearRetainUntilTime() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        retainUntilTime_ = null;
+        if (retainUntilTimeBuilder_ != null) {
+          retainUntilTimeBuilder_.dispose();
+          retainUntilTimeBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.protobuf.Timestamp.Builder getRetainUntilTimeBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getRetainUntilTimeFieldBuilder().getBuilder();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.protobuf.TimestampOrBuilder getRetainUntilTimeOrBuilder() {
+        if (retainUntilTimeBuilder_ != null) {
+          return retainUntilTimeBuilder_.getMessageOrBuilder();
+        } else {
+          return retainUntilTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : retainUntilTime_;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The timestamp that the object needs to be retained until.
+       * Value cannot be set in the past or more than 100 years in the future.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp retain_until_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          getRetainUntilTimeFieldBuilder() {
+        if (retainUntilTimeBuilder_ == null) {
+          retainUntilTimeBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Timestamp,
+                  com.google.protobuf.Timestamp.Builder,
+                  com.google.protobuf.TimestampOrBuilder>(
+                  getRetainUntilTime(), getParentForChildren(), isClean());
+          retainUntilTime_ = null;
+        }
+        return retainUntilTimeBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Object.Retention)
+    }
+
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Object.Retention)
+    private static final com.google.storage.v2.Object.Retention DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.google.storage.v2.Object.Retention();
+    }
+
+    public static com.google.storage.v2.Object.Retention getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Retention> PARSER =
+        new com.google.protobuf.AbstractParser<Retention>() {
+          @java.lang.Override
+          public Retention parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            Builder builder = newBuilder();
+            try {
+              builder.mergeFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+              throw e.setUnfinishedMessage(builder.buildPartial());
+            } catch (com.google.protobuf.UninitializedMessageException e) {
+              throw e.asInvalidProtocolBufferException()
+                  .setUnfinishedMessage(builder.buildPartial());
+            } catch (java.io.IOException e) {
+              throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                  .setUnfinishedMessage(builder.buildPartial());
+            }
+            return builder.buildPartial();
+          }
+        };
+
+    public static com.google.protobuf.Parser<Retention> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Retention> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.storage.v2.Object.Retention getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private int bitField0_;
   public static final int NAME_FIELD_NUMBER = 1;
 
@@ -217,13 +1395,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The etag of the object.
+   * Optional. The etag of the object.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object.
    * </pre>
    *
-   * <code>string etag = 27;</code>
+   * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -244,13 +1422,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The etag of the object.
+   * Optional. The etag of the object.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object.
    * </pre>
    *
-   * <code>string etag = 27;</code>
+   * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */
@@ -393,10 +1571,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Storage class of the object.
+   * Optional. Storage class of the object.
    * </pre>
    *
-   * <code>string storage_class = 5;</code>
+   * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The storageClass.
    */
@@ -417,10 +1595,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Storage class of the object.
+   * Optional. Storage class of the object.
    * </pre>
    *
-   * <code>string storage_class = 5;</code>
+   * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for storageClass.
    */
@@ -466,11 +1644,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Encoding of the object data, matching
+   * Optional. Content-Encoding of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
    * </pre>
    *
-   * <code>string content_encoding = 7;</code>
+   * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentEncoding.
    */
@@ -491,11 +1669,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Encoding of the object data, matching
+   * Optional. Content-Encoding of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
    * </pre>
    *
-   * <code>string content_encoding = 7;</code>
+   * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentEncoding.
    */
@@ -521,11 +1699,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Disposition of the object data, matching
+   * Optional. Content-Disposition of the object data, matching
    * [https://tools.ietf.org/html/rfc6266][RFC 6266].
    * </pre>
    *
-   * <code>string content_disposition = 8;</code>
+   * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentDisposition.
    */
@@ -546,11 +1724,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Disposition of the object data, matching
+   * Optional. Content-Disposition of the object data, matching
    * [https://tools.ietf.org/html/rfc6266][RFC 6266].
    * </pre>
    *
-   * <code>string content_disposition = 8;</code>
+   * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentDisposition.
    */
@@ -576,13 +1754,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Cache-Control directive for the object data, matching
+   * Optional. Cache-Control directive for the object data, matching
    * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
    * If omitted, and the object is accessible to all anonymous users, the
    * default will be `public, max-age=3600`.
    * </pre>
    *
-   * <code>string cache_control = 9;</code>
+   * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The cacheControl.
    */
@@ -603,13 +1781,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Cache-Control directive for the object data, matching
+   * Optional. Cache-Control directive for the object data, matching
    * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
    * If omitted, and the object is accessible to all anonymous users, the
    * default will be `public, max-age=3600`.
    * </pre>
    *
-   * <code>string cache_control = 9;</code>
+   * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for cacheControl.
    */
@@ -635,12 +1813,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.ObjectAccessControl> getAclList() {
@@ -651,12 +1831,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
@@ -668,12 +1850,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getAclCount() {
@@ -684,12 +1868,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectAccessControl getAcl(int index) {
@@ -700,12 +1886,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectAccessControlOrBuilder getAclOrBuilder(int index) {
@@ -721,11 +1909,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Language of the object data, matching
+   * Optional. Content-Language of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
    * </pre>
    *
-   * <code>string content_language = 11;</code>
+   * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentLanguage.
    */
@@ -746,11 +1934,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Language of the object data, matching
+   * Optional. Content-Language of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
    * </pre>
    *
-   * <code>string content_language = 11;</code>
+   * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentLanguage.
    */
@@ -890,13 +2078,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Type of the object data, matching
+   * Optional. Content-Type of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
    *
-   * <code>string content_type = 13;</code>
+   * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentType.
    */
@@ -917,13 +2105,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Content-Type of the object data, matching
+   * Optional. Content-Type of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
    *
-   * <code>string content_type = 13;</code>
+   * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentType.
    */
@@ -1159,11 +2347,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-   * such a key.
+   * Optional. Cloud KMS Key used to encrypt this object, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The kmsKey.
    */
@@ -1184,11 +2374,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-   * such a key.
+   * Optional. Cloud KMS Key used to encrypt this object, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for kmsKey.
    */
@@ -1274,14 +2466,15 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Whether an object is under temporary hold. While this flag is set to true,
-   * the object is protected against deletion and overwrites.  A common use case
-   * of this flag is regulatory investigations where objects need to be retained
-   * while the investigation is ongoing. Note that unlike event-based hold,
-   * temporary hold does not impact retention expiration time of an object.
+   * Optional. Whether an object is under temporary hold. While this flag is set
+   * to true, the object is protected against deletion and overwrites.  A common
+   * use case of this flag is regulatory investigations where objects need to be
+   * retained while the investigation is ongoing. Note that unlike event-based
+   * hold, temporary hold does not impact retention expiration time of an
+   * object.
    * </pre>
    *
-   * <code>bool temporary_hold = 20;</code>
+   * <code>bool temporary_hold = 20 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The temporaryHold.
    */
@@ -1297,16 +2490,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the retentionExpireTime field is set.
    */
@@ -1319,16 +2513,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The retentionExpireTime.
    */
@@ -1343,16 +2538,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.protobuf.TimestampOrBuilder getRetentionExpireTimeOrBuilder() {
@@ -1392,10 +2588,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public boolean containsMetadata(java.lang.String key) {
@@ -1416,10 +2612,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
@@ -1430,10 +2626,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public /* nullable */ java.lang.String getMetadataOrDefault(
@@ -1451,10 +2647,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public java.lang.String getMetadataOrThrow(java.lang.String key) {
@@ -1582,11 +2778,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customerEncryption field is set.
    */
@@ -1599,11 +2797,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customerEncryption.
    */
@@ -1618,11 +2818,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder() {
@@ -1638,10 +2840,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customTime field is set.
    */
@@ -1654,10 +2857,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customTime.
    */
@@ -1670,10 +2874,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.protobuf.TimestampOrBuilder getCustomTimeOrBuilder() {
@@ -1816,6 +3021,68 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         : hardDeleteTime_;
   }
 
+  public static final int RETENTION_FIELD_NUMBER = 30;
+  private com.google.storage.v2.Object.Retention retention_;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the retention field is set.
+   */
+  @java.lang.Override
+  public boolean hasRetention() {
+    return ((bitField0_ & 0x00004000) != 0);
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The retention.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Object.Retention getRetention() {
+    return retention_ == null
+        ? com.google.storage.v2.Object.Retention.getDefaultInstance()
+        : retention_;
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Object.RetentionOrBuilder getRetentionOrBuilder() {
+    return retention_ == null
+        ? com.google.storage.v2.Object.Retention.getDefaultInstance()
+        : retention_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -1915,6 +3182,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     }
     if (((bitField0_ & 0x00002000) != 0)) {
       output.writeMessage(29, getHardDeleteTime());
+    }
+    if (((bitField0_ & 0x00004000) != 0)) {
+      output.writeMessage(30, getRetention());
     }
     if (((bitField0_ & 0x00000001) != 0)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 35, restoreToken_);
@@ -2027,6 +3297,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (((bitField0_ & 0x00002000) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(29, getHardDeleteTime());
     }
+    if (((bitField0_ & 0x00004000) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(30, getRetention());
+    }
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(35, restoreToken_);
     }
@@ -2120,6 +3393,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (hasHardDeleteTime() != other.hasHardDeleteTime()) return false;
     if (hasHardDeleteTime()) {
       if (!getHardDeleteTime().equals(other.getHardDeleteTime())) return false;
+    }
+    if (hasRetention() != other.hasRetention()) return false;
+    if (hasRetention()) {
+      if (!getRetention().equals(other.getRetention())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -2225,6 +3502,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (hasHardDeleteTime()) {
       hash = (37 * hash) + HARD_DELETE_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getHardDeleteTime().hashCode();
+    }
+    if (hasRetention()) {
+      hash = (37 * hash) + RETENTION_FIELD_NUMBER;
+      hash = (53 * hash) + getRetention().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -2399,6 +3680,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         getCustomTimeFieldBuilder();
         getSoftDeleteTimeFieldBuilder();
         getHardDeleteTimeFieldBuilder();
+        getRetentionFieldBuilder();
       }
     }
 
@@ -2490,6 +3772,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       if (hardDeleteTimeBuilder_ != null) {
         hardDeleteTimeBuilder_.dispose();
         hardDeleteTimeBuilder_ = null;
+      }
+      retention_ = null;
+      if (retentionBuilder_ != null) {
+        retentionBuilder_.dispose();
+        retentionBuilder_ = null;
       }
       return this;
     }
@@ -2655,6 +3942,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         result.hardDeleteTime_ =
             hardDeleteTimeBuilder_ == null ? hardDeleteTime_ : hardDeleteTimeBuilder_.build();
         to_bitField0_ |= 0x00002000;
+      }
+      if (((from_bitField0_ & 0x80000000) != 0)) {
+        result.retention_ = retentionBuilder_ == null ? retention_ : retentionBuilder_.build();
+        to_bitField0_ |= 0x00004000;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -2841,6 +4132,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.hasHardDeleteTime()) {
         mergeHardDeleteTime(other.getHardDeleteTime());
+      }
+      if (other.hasRetention()) {
+        mergeRetention(other.getRetention());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -3058,6 +4352,12 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
                 bitField0_ |= 0x40000000;
                 break;
               } // case 234
+            case 242:
+              {
+                input.readMessage(getRetentionFieldBuilder().getBuilder(), extensionRegistry);
+                bitField0_ |= 0x80000000;
+                break;
+              } // case 242
             case 282:
               {
                 restoreToken_ = input.readStringRequireUtf8();
@@ -3357,13 +4657,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The etag of the object.
+     * Optional. The etag of the object.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object.
      * </pre>
      *
-     * <code>string etag = 27;</code>
+     * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The etag.
      */
@@ -3383,13 +4683,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The etag of the object.
+     * Optional. The etag of the object.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object.
      * </pre>
      *
-     * <code>string etag = 27;</code>
+     * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for etag.
      */
@@ -3409,13 +4709,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The etag of the object.
+     * Optional. The etag of the object.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object.
      * </pre>
      *
-     * <code>string etag = 27;</code>
+     * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The etag to set.
      * @return This builder for chaining.
@@ -3434,13 +4734,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The etag of the object.
+     * Optional. The etag of the object.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object.
      * </pre>
      *
-     * <code>string etag = 27;</code>
+     * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -3455,13 +4755,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The etag of the object.
+     * Optional. The etag of the object.
      * If included in the metadata of an update or delete request message, the
      * operation will only be performed if the etag matches that of the live
      * object.
      * </pre>
      *
-     * <code>string etag = 27;</code>
+     * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for etag to set.
      * @return This builder for chaining.
@@ -3745,10 +5045,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Storage class of the object.
+     * Optional. Storage class of the object.
      * </pre>
      *
-     * <code>string storage_class = 5;</code>
+     * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The storageClass.
      */
@@ -3768,10 +5068,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Storage class of the object.
+     * Optional. Storage class of the object.
      * </pre>
      *
-     * <code>string storage_class = 5;</code>
+     * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for storageClass.
      */
@@ -3791,10 +5091,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Storage class of the object.
+     * Optional. Storage class of the object.
      * </pre>
      *
-     * <code>string storage_class = 5;</code>
+     * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The storageClass to set.
      * @return This builder for chaining.
@@ -3813,10 +5113,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Storage class of the object.
+     * Optional. Storage class of the object.
      * </pre>
      *
-     * <code>string storage_class = 5;</code>
+     * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -3831,10 +5131,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Storage class of the object.
+     * Optional. Storage class of the object.
      * </pre>
      *
-     * <code>string storage_class = 5;</code>
+     * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for storageClass to set.
      * @return This builder for chaining.
@@ -3915,11 +5215,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Encoding of the object data, matching
+     * Optional. Content-Encoding of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
      * </pre>
      *
-     * <code>string content_encoding = 7;</code>
+     * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The contentEncoding.
      */
@@ -3939,11 +5239,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Encoding of the object data, matching
+     * Optional. Content-Encoding of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
      * </pre>
      *
-     * <code>string content_encoding = 7;</code>
+     * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for contentEncoding.
      */
@@ -3963,11 +5263,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Encoding of the object data, matching
+     * Optional. Content-Encoding of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
      * </pre>
      *
-     * <code>string content_encoding = 7;</code>
+     * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The contentEncoding to set.
      * @return This builder for chaining.
@@ -3986,11 +5286,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Encoding of the object data, matching
+     * Optional. Content-Encoding of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
      * </pre>
      *
-     * <code>string content_encoding = 7;</code>
+     * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -4005,11 +5305,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Encoding of the object data, matching
+     * Optional. Content-Encoding of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
      * </pre>
      *
-     * <code>string content_encoding = 7;</code>
+     * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for contentEncoding to set.
      * @return This builder for chaining.
@@ -4031,11 +5331,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Disposition of the object data, matching
+     * Optional. Content-Disposition of the object data, matching
      * [https://tools.ietf.org/html/rfc6266][RFC 6266].
      * </pre>
      *
-     * <code>string content_disposition = 8;</code>
+     * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The contentDisposition.
      */
@@ -4055,11 +5355,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Disposition of the object data, matching
+     * Optional. Content-Disposition of the object data, matching
      * [https://tools.ietf.org/html/rfc6266][RFC 6266].
      * </pre>
      *
-     * <code>string content_disposition = 8;</code>
+     * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for contentDisposition.
      */
@@ -4079,11 +5379,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Disposition of the object data, matching
+     * Optional. Content-Disposition of the object data, matching
      * [https://tools.ietf.org/html/rfc6266][RFC 6266].
      * </pre>
      *
-     * <code>string content_disposition = 8;</code>
+     * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The contentDisposition to set.
      * @return This builder for chaining.
@@ -4102,11 +5402,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Disposition of the object data, matching
+     * Optional. Content-Disposition of the object data, matching
      * [https://tools.ietf.org/html/rfc6266][RFC 6266].
      * </pre>
      *
-     * <code>string content_disposition = 8;</code>
+     * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -4121,11 +5421,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Disposition of the object data, matching
+     * Optional. Content-Disposition of the object data, matching
      * [https://tools.ietf.org/html/rfc6266][RFC 6266].
      * </pre>
      *
-     * <code>string content_disposition = 8;</code>
+     * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for contentDisposition to set.
      * @return This builder for chaining.
@@ -4147,13 +5447,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cache-Control directive for the object data, matching
+     * Optional. Cache-Control directive for the object data, matching
      * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
      * If omitted, and the object is accessible to all anonymous users, the
      * default will be `public, max-age=3600`.
      * </pre>
      *
-     * <code>string cache_control = 9;</code>
+     * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The cacheControl.
      */
@@ -4173,13 +5473,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cache-Control directive for the object data, matching
+     * Optional. Cache-Control directive for the object data, matching
      * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
      * If omitted, and the object is accessible to all anonymous users, the
      * default will be `public, max-age=3600`.
      * </pre>
      *
-     * <code>string cache_control = 9;</code>
+     * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for cacheControl.
      */
@@ -4199,13 +5499,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cache-Control directive for the object data, matching
+     * Optional. Cache-Control directive for the object data, matching
      * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
      * If omitted, and the object is accessible to all anonymous users, the
      * default will be `public, max-age=3600`.
      * </pre>
      *
-     * <code>string cache_control = 9;</code>
+     * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The cacheControl to set.
      * @return This builder for chaining.
@@ -4224,13 +5524,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cache-Control directive for the object data, matching
+     * Optional. Cache-Control directive for the object data, matching
      * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
      * If omitted, and the object is accessible to all anonymous users, the
      * default will be `public, max-age=3600`.
      * </pre>
      *
-     * <code>string cache_control = 9;</code>
+     * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -4245,13 +5545,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cache-Control directive for the object data, matching
+     * Optional. Cache-Control directive for the object data, matching
      * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
      * If omitted, and the object is accessible to all anonymous users, the
      * default will be `public, max-age=3600`.
      * </pre>
      *
-     * <code>string cache_control = 9;</code>
+     * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for cacheControl to set.
      * @return This builder for chaining.
@@ -4287,12 +5587,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ObjectAccessControl> getAclList() {
       if (aclBuilder_ == null) {
@@ -4306,12 +5608,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public int getAclCount() {
       if (aclBuilder_ == null) {
@@ -4325,12 +5629,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl getAcl(int index) {
       if (aclBuilder_ == null) {
@@ -4344,12 +5650,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAcl(int index, com.google.storage.v2.ObjectAccessControl value) {
       if (aclBuilder_ == null) {
@@ -4369,12 +5677,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAcl(
         int index, com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
@@ -4392,12 +5702,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(com.google.storage.v2.ObjectAccessControl value) {
       if (aclBuilder_ == null) {
@@ -4417,12 +5729,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(int index, com.google.storage.v2.ObjectAccessControl value) {
       if (aclBuilder_ == null) {
@@ -4442,12 +5756,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
       if (aclBuilder_ == null) {
@@ -4464,12 +5780,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(
         int index, com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
@@ -4487,12 +5805,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAllAcl(
         java.lang.Iterable<? extends com.google.storage.v2.ObjectAccessControl> values) {
@@ -4510,12 +5830,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearAcl() {
       if (aclBuilder_ == null) {
@@ -4532,12 +5854,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeAcl(int index) {
       if (aclBuilder_ == null) {
@@ -4554,12 +5878,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder getAclBuilder(int index) {
       return getAclFieldBuilder().getBuilder(index);
@@ -4569,12 +5895,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControlOrBuilder getAclOrBuilder(int index) {
       if (aclBuilder_ == null) {
@@ -4588,12 +5916,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
         getAclOrBuilderList() {
@@ -4608,12 +5938,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder addAclBuilder() {
       return getAclFieldBuilder()
@@ -4624,12 +5956,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder addAclBuilder(int index) {
       return getAclFieldBuilder()
@@ -4640,12 +5974,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the object.
+     * Optional. Access controls on the object.
      * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ObjectAccessControl.Builder> getAclBuilderList() {
       return getAclFieldBuilder().getBuilderList();
@@ -4674,11 +6010,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Language of the object data, matching
+     * Optional. Content-Language of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
      * </pre>
      *
-     * <code>string content_language = 11;</code>
+     * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The contentLanguage.
      */
@@ -4698,11 +6034,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Language of the object data, matching
+     * Optional. Content-Language of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
      * </pre>
      *
-     * <code>string content_language = 11;</code>
+     * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for contentLanguage.
      */
@@ -4722,11 +6058,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Language of the object data, matching
+     * Optional. Content-Language of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
      * </pre>
      *
-     * <code>string content_language = 11;</code>
+     * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The contentLanguage to set.
      * @return This builder for chaining.
@@ -4745,11 +6081,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Language of the object data, matching
+     * Optional. Content-Language of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
      * </pre>
      *
-     * <code>string content_language = 11;</code>
+     * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -4764,11 +6100,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Language of the object data, matching
+     * Optional. Content-Language of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
      * </pre>
      *
-     * <code>string content_language = 11;</code>
+     * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for contentLanguage to set.
      * @return This builder for chaining.
@@ -5223,13 +6559,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Type of the object data, matching
+     * Optional. Content-Type of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
      *
-     * <code>string content_type = 13;</code>
+     * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The contentType.
      */
@@ -5249,13 +6585,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Type of the object data, matching
+     * Optional. Content-Type of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
      *
-     * <code>string content_type = 13;</code>
+     * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for contentType.
      */
@@ -5275,13 +6611,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Type of the object data, matching
+     * Optional. Content-Type of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
      *
-     * <code>string content_type = 13;</code>
+     * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The contentType to set.
      * @return This builder for chaining.
@@ -5300,13 +6636,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Type of the object data, matching
+     * Optional. Content-Type of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
      *
-     * <code>string content_type = 13;</code>
+     * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -5321,13 +6657,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Content-Type of the object data, matching
+     * Optional. Content-Type of the object data, matching
      * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
      *
-     * <code>string content_type = 13;</code>
+     * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for contentType to set.
      * @return This builder for chaining.
@@ -6125,11 +7461,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-     * such a key.
+     * Optional. Cloud KMS Key used to encrypt this object, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The kmsKey.
      */
@@ -6149,11 +7487,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-     * such a key.
+     * Optional. Cloud KMS Key used to encrypt this object, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for kmsKey.
      */
@@ -6173,11 +7513,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-     * such a key.
+     * Optional. Cloud KMS Key used to encrypt this object, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The kmsKey to set.
      * @return This builder for chaining.
@@ -6196,11 +7538,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-     * such a key.
+     * Optional. Cloud KMS Key used to encrypt this object, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -6215,11 +7559,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-     * such a key.
+     * Optional. Cloud KMS Key used to encrypt this object, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for kmsKey to set.
      * @return This builder for chaining.
@@ -6463,14 +7809,15 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether an object is under temporary hold. While this flag is set to true,
-     * the object is protected against deletion and overwrites.  A common use case
-     * of this flag is regulatory investigations where objects need to be retained
-     * while the investigation is ongoing. Note that unlike event-based hold,
-     * temporary hold does not impact retention expiration time of an object.
+     * Optional. Whether an object is under temporary hold. While this flag is set
+     * to true, the object is protected against deletion and overwrites.  A common
+     * use case of this flag is regulatory investigations where objects need to be
+     * retained while the investigation is ongoing. Note that unlike event-based
+     * hold, temporary hold does not impact retention expiration time of an
+     * object.
      * </pre>
      *
-     * <code>bool temporary_hold = 20;</code>
+     * <code>bool temporary_hold = 20 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The temporaryHold.
      */
@@ -6483,14 +7830,15 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether an object is under temporary hold. While this flag is set to true,
-     * the object is protected against deletion and overwrites.  A common use case
-     * of this flag is regulatory investigations where objects need to be retained
-     * while the investigation is ongoing. Note that unlike event-based hold,
-     * temporary hold does not impact retention expiration time of an object.
+     * Optional. Whether an object is under temporary hold. While this flag is set
+     * to true, the object is protected against deletion and overwrites.  A common
+     * use case of this flag is regulatory investigations where objects need to be
+     * retained while the investigation is ongoing. Note that unlike event-based
+     * hold, temporary hold does not impact retention expiration time of an
+     * object.
      * </pre>
      *
-     * <code>bool temporary_hold = 20;</code>
+     * <code>bool temporary_hold = 20 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The temporaryHold to set.
      * @return This builder for chaining.
@@ -6507,14 +7855,15 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether an object is under temporary hold. While this flag is set to true,
-     * the object is protected against deletion and overwrites.  A common use case
-     * of this flag is regulatory investigations where objects need to be retained
-     * while the investigation is ongoing. Note that unlike event-based hold,
-     * temporary hold does not impact retention expiration time of an object.
+     * Optional. Whether an object is under temporary hold. While this flag is set
+     * to true, the object is protected against deletion and overwrites.  A common
+     * use case of this flag is regulatory investigations where objects need to be
+     * retained while the investigation is ongoing. Note that unlike event-based
+     * hold, temporary hold does not impact retention expiration time of an
+     * object.
      * </pre>
      *
-     * <code>bool temporary_hold = 20;</code>
+     * <code>bool temporary_hold = 20 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -6536,16 +7885,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the retentionExpireTime field is set.
      */
@@ -6557,16 +7907,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The retentionExpireTime.
      */
@@ -6584,16 +7935,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setRetentionExpireTime(com.google.protobuf.Timestamp value) {
       if (retentionExpireTimeBuilder_ == null) {
@@ -6613,16 +7965,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setRetentionExpireTime(com.google.protobuf.Timestamp.Builder builderForValue) {
       if (retentionExpireTimeBuilder_ == null) {
@@ -6639,16 +7992,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeRetentionExpireTime(com.google.protobuf.Timestamp value) {
       if (retentionExpireTimeBuilder_ == null) {
@@ -6673,16 +8027,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearRetentionExpireTime() {
       bitField0_ = (bitField0_ & ~0x00800000);
@@ -6699,16 +8054,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.protobuf.Timestamp.Builder getRetentionExpireTimeBuilder() {
       bitField0_ |= 0x00800000;
@@ -6720,16 +8076,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.protobuf.TimestampOrBuilder getRetentionExpireTimeOrBuilder() {
       if (retentionExpireTimeBuilder_ != null) {
@@ -6745,16 +8102,17 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A server-determined value that specifies the earliest time that the
-     * object's retention period expires.
-     * Note 1: This field is not provided for objects with an active event-based
-     * hold, since retention expiration is unknown until the hold is removed.
-     * Note 2: This value can be provided even when temporary hold is set (so that
-     * the user can reason about policy without having to first unset the
-     * temporary hold).
+     * Optional. A server-determined value that specifies the earliest time that
+     * the object's retention period expires. Note 1: This field is not provided
+     * for objects with an active event-based hold, since retention expiration is
+     * unknown until the hold is removed. Note 2: This value can be provided even
+     * when temporary hold is set (so that the user can reason about policy
+     * without having to first unset the temporary hold).
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+     * <code>
+     * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp,
@@ -6804,10 +8162,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public boolean containsMetadata(java.lang.String key) {
@@ -6828,10 +8187,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
@@ -6842,10 +8202,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public /* nullable */ java.lang.String getMetadataOrDefault(
@@ -6863,10 +8224,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public java.lang.String getMetadataOrThrow(java.lang.String key) {
@@ -6890,10 +8252,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeMetadata(java.lang.String key) {
       if (key == null) {
@@ -6914,10 +8277,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder putMetadata(java.lang.String key, java.lang.String value) {
       if (key == null) {
@@ -6935,10 +8299,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided metadata, in key/value pairs.
+     * Optional. User-provided metadata, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; metadata = 22;</code>
+     * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder putAllMetadata(java.util.Map<java.lang.String, java.lang.String> values) {
       internalGetMutableMetadata().getMutableMap().putAll(values);
@@ -7277,11 +8642,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the customerEncryption field is set.
      */
@@ -7293,11 +8660,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The customerEncryption.
      */
@@ -7315,11 +8684,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomerEncryption(com.google.storage.v2.CustomerEncryption value) {
       if (customerEncryptionBuilder_ == null) {
@@ -7339,11 +8710,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomerEncryption(
         com.google.storage.v2.CustomerEncryption.Builder builderForValue) {
@@ -7361,11 +8734,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCustomerEncryption(com.google.storage.v2.CustomerEncryption value) {
       if (customerEncryptionBuilder_ == null) {
@@ -7391,11 +8766,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCustomerEncryption() {
       bitField0_ = (bitField0_ & ~0x08000000);
@@ -7412,11 +8789,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CustomerEncryption.Builder getCustomerEncryptionBuilder() {
       bitField0_ |= 0x08000000;
@@ -7428,11 +8807,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder() {
       if (customerEncryptionBuilder_ != null) {
@@ -7448,11 +8829,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-     * such a key.
+     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * encrypted by such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+     * <code>
+     * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CustomerEncryption,
@@ -7482,10 +8865,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the customTime field is set.
      */
@@ -7497,10 +8881,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The customTime.
      */
@@ -7518,10 +8903,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomTime(com.google.protobuf.Timestamp value) {
       if (customTimeBuilder_ == null) {
@@ -7541,10 +8927,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomTime(com.google.protobuf.Timestamp.Builder builderForValue) {
       if (customTimeBuilder_ == null) {
@@ -7561,10 +8948,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCustomTime(com.google.protobuf.Timestamp value) {
       if (customTimeBuilder_ == null) {
@@ -7589,10 +8977,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCustomTime() {
       bitField0_ = (bitField0_ & ~0x10000000);
@@ -7609,10 +8998,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.protobuf.Timestamp.Builder getCustomTimeBuilder() {
       bitField0_ |= 0x10000000;
@@ -7624,10 +9014,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.protobuf.TimestampOrBuilder getCustomTimeOrBuilder() {
       if (customTimeBuilder_ != null) {
@@ -7643,10 +9034,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A user-specified timestamp set on an object.
+     * Optional. A user-specified timestamp set on an object.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+     * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp,
@@ -8141,6 +9533,227 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         hardDeleteTime_ = null;
       }
       return hardDeleteTimeBuilder_;
+    }
+
+    private com.google.storage.v2.Object.Retention retention_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Object.Retention,
+            com.google.storage.v2.Object.Retention.Builder,
+            com.google.storage.v2.Object.RetentionOrBuilder>
+        retentionBuilder_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the retention field is set.
+     */
+    public boolean hasRetention() {
+      return ((bitField0_ & 0x80000000) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The retention.
+     */
+    public com.google.storage.v2.Object.Retention getRetention() {
+      if (retentionBuilder_ == null) {
+        return retention_ == null
+            ? com.google.storage.v2.Object.Retention.getDefaultInstance()
+            : retention_;
+      } else {
+        return retentionBuilder_.getMessage();
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setRetention(com.google.storage.v2.Object.Retention value) {
+      if (retentionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        retention_ = value;
+      } else {
+        retentionBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x80000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setRetention(com.google.storage.v2.Object.Retention.Builder builderForValue) {
+      if (retentionBuilder_ == null) {
+        retention_ = builderForValue.build();
+      } else {
+        retentionBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x80000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder mergeRetention(com.google.storage.v2.Object.Retention value) {
+      if (retentionBuilder_ == null) {
+        if (((bitField0_ & 0x80000000) != 0)
+            && retention_ != null
+            && retention_ != com.google.storage.v2.Object.Retention.getDefaultInstance()) {
+          getRetentionBuilder().mergeFrom(value);
+        } else {
+          retention_ = value;
+        }
+      } else {
+        retentionBuilder_.mergeFrom(value);
+      }
+      if (retention_ != null) {
+        bitField0_ |= 0x80000000;
+        onChanged();
+      }
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder clearRetention() {
+      bitField0_ = (bitField0_ & ~0x80000000);
+      retention_ = null;
+      if (retentionBuilder_ != null) {
+        retentionBuilder_.dispose();
+        retentionBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Object.Retention.Builder getRetentionBuilder() {
+      bitField0_ |= 0x80000000;
+      onChanged();
+      return getRetentionFieldBuilder().getBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Object.RetentionOrBuilder getRetentionOrBuilder() {
+      if (retentionBuilder_ != null) {
+        return retentionBuilder_.getMessageOrBuilder();
+      } else {
+        return retention_ == null
+            ? com.google.storage.v2.Object.Retention.getDefaultInstance()
+            : retention_;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Retention configuration of this object.
+     * May only be configured if the bucket has object retention enabled.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Object.Retention,
+            com.google.storage.v2.Object.Retention.Builder,
+            com.google.storage.v2.Object.RetentionOrBuilder>
+        getRetentionFieldBuilder() {
+      if (retentionBuilder_ == null) {
+        retentionBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.Object.Retention,
+                com.google.storage.v2.Object.Retention.Builder,
+                com.google.storage.v2.Object.RetentionOrBuilder>(
+                getRetention(), getParentForChildren(), isClean());
+        retention_ = null;
+      }
+      return retentionBuilder_;
     }
 
     @java.lang.Override

@@ -218,14 +218,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The name of the Cloud KMS key that will be used to encrypt the destination
-   * object. The Cloud KMS key must be located in same location as the object.
-   * If the parameter is not specified, the request uses the destination
-   * bucket's default encryption key, if any, or else the Google-managed
-   * encryption key.
+   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * destination object. The Cloud KMS key must be located in same location as
+   * the object. If the parameter is not specified, the request uses the
+   * destination bucket's default encryption key, if any, or else the
+   * Google-managed encryption key.
    * </pre>
    *
-   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The destinationKmsKey.
    */
@@ -246,14 +248,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The name of the Cloud KMS key that will be used to encrypt the destination
-   * object. The Cloud KMS key must be located in same location as the object.
-   * If the parameter is not specified, the request uses the destination
-   * bucket's default encryption key, if any, or else the Google-managed
-   * encryption key.
+   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * destination object. The Cloud KMS key must be located in same location as
+   * the object. If the parameter is not specified, the request uses the
+   * destination bucket's default encryption key, if any, or else the
+   * Google-managed encryption key.
    * </pre>
    *
-   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for destinationKmsKey.
    */
@@ -277,7 +281,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Properties of the destination, post-rewrite object.
+   * Optional. Properties of the destination, post-rewrite object.
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
@@ -286,7 +290,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * copied from the source object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object destination = 1;</code>
+   * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the destination field is set.
    */
@@ -299,7 +304,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Properties of the destination, post-rewrite object.
+   * Optional. Properties of the destination, post-rewrite object.
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
@@ -308,7 +313,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * copied from the source object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object destination = 1;</code>
+   * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The destination.
    */
@@ -321,7 +327,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Properties of the destination, post-rewrite object.
+   * Optional. Properties of the destination, post-rewrite object.
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
@@ -330,7 +336,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * copied from the source object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object destination = 1;</code>
+   * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getDestinationOrBuilder() {
@@ -454,11 +461,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * If present, selects a specific revision of the source object (as opposed to
-   * the latest version, the default).
+   * Optional. If present, selects a specific revision of the source object (as
+   * opposed to the latest version, the default).
    * </pre>
    *
-   * <code>int64 source_generation = 4;</code>
+   * <code>int64 source_generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The sourceGeneration.
    */
@@ -476,14 +483,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Include this field (from the previous rewrite response) on each rewrite
-   * request after the first one, until the rewrite response 'done' flag is
-   * true. Calls that provide a rewriteToken can omit all other request fields,
-   * but if included those fields must match the values provided in the first
-   * rewrite request.
+   * Optional. Include this field (from the previous rewrite response) on each
+   * rewrite request after the first one, until the rewrite response 'done' flag
+   * is true. Calls that provide a rewriteToken can omit all other request
+   * fields, but if included those fields must match the values provided in the
+   * first rewrite request.
    * </pre>
    *
-   * <code>string rewrite_token = 5;</code>
+   * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The rewriteToken.
    */
@@ -504,14 +511,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Include this field (from the previous rewrite response) on each rewrite
-   * request after the first one, until the rewrite response 'done' flag is
-   * true. Calls that provide a rewriteToken can omit all other request fields,
-   * but if included those fields must match the values provided in the first
-   * rewrite request.
+   * Optional. Include this field (from the previous rewrite response) on each
+   * rewrite request after the first one, until the rewrite response 'done' flag
+   * is true. Calls that provide a rewriteToken can omit all other request
+   * fields, but if included those fields must match the values provided in the
+   * first rewrite request.
    * </pre>
    *
-   * <code>string rewrite_token = 5;</code>
+   * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for rewriteToken.
    */
@@ -537,12 +544,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 28;</code>
+   * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The destinationPredefinedAcl.
    */
@@ -563,12 +570,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 28;</code>
+   * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for destinationPredefinedAcl.
    */
@@ -894,17 +901,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The maximum number of bytes that will be rewritten per rewrite request.
-   * Most callers
-   * shouldn't need to specify this parameter - it is primarily in place to
-   * support testing. If specified the value must be an integral multiple of
-   * 1 MiB (1048576). Also, this only applies to requests where the source and
-   * destination span locations and/or storage classes. Finally, this value must
-   * not change across rewrite calls else you'll get an error that the
-   * `rewriteToken` is invalid.
+   * Optional. The maximum number of bytes that will be rewritten per rewrite
+   * request. Most callers shouldn't need to specify this parameter - it is
+   * primarily in place to support testing. If specified the value must be an
+   * integral multiple of 1 MiB (1048576). Also, this only applies to requests
+   * where the source and destination span locations and/or storage classes.
+   * Finally, this value must not change across rewrite calls else you'll get an
+   * error that the `rewriteToken` is invalid.
    * </pre>
    *
-   * <code>int64 max_bytes_rewritten_per_call = 15;</code>
+   * <code>int64 max_bytes_rewritten_per_call = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The maxBytesRewrittenPerCall.
    */
@@ -922,11 +928,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any. Used if the source
-   * object was encrypted with a Customer-Supplied Encryption Key.
+   * Optional. The algorithm used to encrypt the source object, if any. Used if
+   * the source object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
-   * <code>string copy_source_encryption_algorithm = 16;</code>
+   * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The copySourceEncryptionAlgorithm.
    */
@@ -947,11 +954,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any. Used if the source
-   * object was encrypted with a Customer-Supplied Encryption Key.
+   * Optional. The algorithm used to encrypt the source object, if any. Used if
+   * the source object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
-   * <code>string copy_source_encryption_algorithm = 16;</code>
+   * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The bytes for copySourceEncryptionAlgorithm.
    */
@@ -976,12 +984,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
-   * the source object, if it was encrypted with a Customer-Supplied Encryption
-   * Key.
+   * Optional. The raw bytes (not base64-encoded) AES-256 encryption key used to
+   * encrypt the source object, if it was encrypted with a Customer-Supplied
+   * Encryption Key.
    * </pre>
    *
-   * <code>bytes copy_source_encryption_key_bytes = 21;</code>
+   * <code>bytes copy_source_encryption_key_bytes = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The copySourceEncryptionKeyBytes.
    */
@@ -998,12 +1007,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
-   * to encrypt the source object, if it was encrypted with a Customer-Supplied
-   * Encryption Key.
+   * Optional. The raw bytes (not base64-encoded) SHA256 hash of the encryption
+   * key used to encrypt the source object, if it was encrypted with a
+   * Customer-Supplied Encryption Key.
    * </pre>
    *
-   * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
+   * <code>
+   * bytes copy_source_encryption_key_sha256_bytes = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The copySourceEncryptionKeySha256Bytes.
    */
@@ -1019,10 +1030,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -1035,10 +1049,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -1053,10 +1070,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
@@ -1073,11 +1093,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * destination object after rewriting.
+   * Optional. The checksums of the complete object. This will be used to
+   * validate the destination object after rewriting.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -1090,11 +1112,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * destination object after rewriting.
+   * Optional. The checksums of the complete object. This will be used to
+   * validate the destination object after rewriting.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -1109,11 +1133,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be used to validate the
-   * destination object after rewriting.
+   * Optional. The checksums of the complete object. This will be used to
+   * validate the destination object after rewriting.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
@@ -2369,14 +2395,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt the destination
-     * object. The Cloud KMS key must be located in same location as the object.
-     * If the parameter is not specified, the request uses the destination
-     * bucket's default encryption key, if any, or else the Google-managed
-     * encryption key.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * destination object. The Cloud KMS key must be located in same location as
+     * the object. If the parameter is not specified, the request uses the
+     * destination bucket's default encryption key, if any, or else the
+     * Google-managed encryption key.
      * </pre>
      *
-     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The destinationKmsKey.
      */
@@ -2396,14 +2424,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt the destination
-     * object. The Cloud KMS key must be located in same location as the object.
-     * If the parameter is not specified, the request uses the destination
-     * bucket's default encryption key, if any, or else the Google-managed
-     * encryption key.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * destination object. The Cloud KMS key must be located in same location as
+     * the object. If the parameter is not specified, the request uses the
+     * destination bucket's default encryption key, if any, or else the
+     * Google-managed encryption key.
      * </pre>
      *
-     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for destinationKmsKey.
      */
@@ -2423,14 +2453,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt the destination
-     * object. The Cloud KMS key must be located in same location as the object.
-     * If the parameter is not specified, the request uses the destination
-     * bucket's default encryption key, if any, or else the Google-managed
-     * encryption key.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * destination object. The Cloud KMS key must be located in same location as
+     * the object. If the parameter is not specified, the request uses the
+     * destination bucket's default encryption key, if any, or else the
+     * Google-managed encryption key.
      * </pre>
      *
-     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The destinationKmsKey to set.
      * @return This builder for chaining.
@@ -2449,14 +2481,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt the destination
-     * object. The Cloud KMS key must be located in same location as the object.
-     * If the parameter is not specified, the request uses the destination
-     * bucket's default encryption key, if any, or else the Google-managed
-     * encryption key.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * destination object. The Cloud KMS key must be located in same location as
+     * the object. If the parameter is not specified, the request uses the
+     * destination bucket's default encryption key, if any, or else the
+     * Google-managed encryption key.
      * </pre>
      *
-     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -2471,14 +2505,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt the destination
-     * object. The Cloud KMS key must be located in same location as the object.
-     * If the parameter is not specified, the request uses the destination
-     * bucket's default encryption key, if any, or else the Google-managed
-     * encryption key.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * destination object. The Cloud KMS key must be located in same location as
+     * the object. If the parameter is not specified, the request uses the
+     * destination bucket's default encryption key, if any, or else the
+     * Google-managed encryption key.
      * </pre>
      *
-     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string destination_kms_key = 27 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for destinationKmsKey to set.
      * @return This builder for chaining.
@@ -2505,7 +2541,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2514,7 +2550,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the destination field is set.
      */
@@ -2526,7 +2563,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2535,7 +2572,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The destination.
      */
@@ -2553,7 +2591,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2562,7 +2600,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setDestination(com.google.storage.v2.Object value) {
       if (destinationBuilder_ == null) {
@@ -2582,7 +2621,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2591,7 +2630,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setDestination(com.google.storage.v2.Object.Builder builderForValue) {
       if (destinationBuilder_ == null) {
@@ -2608,7 +2648,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2617,7 +2657,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeDestination(com.google.storage.v2.Object value) {
       if (destinationBuilder_ == null) {
@@ -2642,7 +2683,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2651,7 +2692,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearDestination() {
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -2668,7 +2710,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2677,7 +2719,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Object.Builder getDestinationBuilder() {
       bitField0_ |= 0x00000008;
@@ -2689,7 +2732,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2698,7 +2741,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectOrBuilder getDestinationOrBuilder() {
       if (destinationBuilder_ != null) {
@@ -2714,7 +2758,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Properties of the destination, post-rewrite object.
+     * Optional. Properties of the destination, post-rewrite object.
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
@@ -2723,7 +2767,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * copied from the source object.
      * </pre>
      *
-     * <code>.google.storage.v2.Object destination = 1;</code>
+     * <code>.google.storage.v2.Object destination = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Object,
@@ -2980,11 +3025,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If present, selects a specific revision of the source object (as opposed to
-     * the latest version, the default).
+     * Optional. If present, selects a specific revision of the source object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 source_generation = 4;</code>
+     * <code>int64 source_generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The sourceGeneration.
      */
@@ -2997,11 +3042,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If present, selects a specific revision of the source object (as opposed to
-     * the latest version, the default).
+     * Optional. If present, selects a specific revision of the source object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 source_generation = 4;</code>
+     * <code>int64 source_generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The sourceGeneration to set.
      * @return This builder for chaining.
@@ -3018,11 +3063,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If present, selects a specific revision of the source object (as opposed to
-     * the latest version, the default).
+     * Optional. If present, selects a specific revision of the source object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 source_generation = 4;</code>
+     * <code>int64 source_generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -3039,14 +3084,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Include this field (from the previous rewrite response) on each rewrite
-     * request after the first one, until the rewrite response 'done' flag is
-     * true. Calls that provide a rewriteToken can omit all other request fields,
-     * but if included those fields must match the values provided in the first
-     * rewrite request.
+     * Optional. Include this field (from the previous rewrite response) on each
+     * rewrite request after the first one, until the rewrite response 'done' flag
+     * is true. Calls that provide a rewriteToken can omit all other request
+     * fields, but if included those fields must match the values provided in the
+     * first rewrite request.
      * </pre>
      *
-     * <code>string rewrite_token = 5;</code>
+     * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The rewriteToken.
      */
@@ -3066,14 +3111,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Include this field (from the previous rewrite response) on each rewrite
-     * request after the first one, until the rewrite response 'done' flag is
-     * true. Calls that provide a rewriteToken can omit all other request fields,
-     * but if included those fields must match the values provided in the first
-     * rewrite request.
+     * Optional. Include this field (from the previous rewrite response) on each
+     * rewrite request after the first one, until the rewrite response 'done' flag
+     * is true. Calls that provide a rewriteToken can omit all other request
+     * fields, but if included those fields must match the values provided in the
+     * first rewrite request.
      * </pre>
      *
-     * <code>string rewrite_token = 5;</code>
+     * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for rewriteToken.
      */
@@ -3093,14 +3138,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Include this field (from the previous rewrite response) on each rewrite
-     * request after the first one, until the rewrite response 'done' flag is
-     * true. Calls that provide a rewriteToken can omit all other request fields,
-     * but if included those fields must match the values provided in the first
-     * rewrite request.
+     * Optional. Include this field (from the previous rewrite response) on each
+     * rewrite request after the first one, until the rewrite response 'done' flag
+     * is true. Calls that provide a rewriteToken can omit all other request
+     * fields, but if included those fields must match the values provided in the
+     * first rewrite request.
      * </pre>
      *
-     * <code>string rewrite_token = 5;</code>
+     * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The rewriteToken to set.
      * @return This builder for chaining.
@@ -3119,14 +3164,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Include this field (from the previous rewrite response) on each rewrite
-     * request after the first one, until the rewrite response 'done' flag is
-     * true. Calls that provide a rewriteToken can omit all other request fields,
-     * but if included those fields must match the values provided in the first
-     * rewrite request.
+     * Optional. Include this field (from the previous rewrite response) on each
+     * rewrite request after the first one, until the rewrite response 'done' flag
+     * is true. Calls that provide a rewriteToken can omit all other request
+     * fields, but if included those fields must match the values provided in the
+     * first rewrite request.
      * </pre>
      *
-     * <code>string rewrite_token = 5;</code>
+     * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -3141,14 +3186,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Include this field (from the previous rewrite response) on each rewrite
-     * request after the first one, until the rewrite response 'done' flag is
-     * true. Calls that provide a rewriteToken can omit all other request fields,
-     * but if included those fields must match the values provided in the first
-     * rewrite request.
+     * Optional. Include this field (from the previous rewrite response) on each
+     * rewrite request after the first one, until the rewrite response 'done' flag
+     * is true. Calls that provide a rewriteToken can omit all other request
+     * fields, but if included those fields must match the values provided in the
+     * first rewrite request.
      * </pre>
      *
-     * <code>string rewrite_token = 5;</code>
+     * <code>string rewrite_token = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for rewriteToken to set.
      * @return This builder for chaining.
@@ -3170,12 +3215,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 28;</code>
+     * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The destinationPredefinedAcl.
      */
@@ -3195,12 +3241,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 28;</code>
+     * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The bytes for destinationPredefinedAcl.
      */
@@ -3220,12 +3267,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 28;</code>
+     * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The destinationPredefinedAcl to set.
      * @return This builder for chaining.
@@ -3244,12 +3292,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 28;</code>
+     * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -3264,12 +3313,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 28;</code>
+     * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The bytes for destinationPredefinedAcl to set.
      * @return This builder for chaining.
@@ -3911,17 +3961,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The maximum number of bytes that will be rewritten per rewrite request.
-     * Most callers
-     * shouldn't need to specify this parameter - it is primarily in place to
-     * support testing. If specified the value must be an integral multiple of
-     * 1 MiB (1048576). Also, this only applies to requests where the source and
-     * destination span locations and/or storage classes. Finally, this value must
-     * not change across rewrite calls else you'll get an error that the
-     * `rewriteToken` is invalid.
+     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * request. Most callers shouldn't need to specify this parameter - it is
+     * primarily in place to support testing. If specified the value must be an
+     * integral multiple of 1 MiB (1048576). Also, this only applies to requests
+     * where the source and destination span locations and/or storage classes.
+     * Finally, this value must not change across rewrite calls else you'll get an
+     * error that the `rewriteToken` is invalid.
      * </pre>
      *
-     * <code>int64 max_bytes_rewritten_per_call = 15;</code>
+     * <code>int64 max_bytes_rewritten_per_call = 15 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The maxBytesRewrittenPerCall.
      */
@@ -3934,17 +3984,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The maximum number of bytes that will be rewritten per rewrite request.
-     * Most callers
-     * shouldn't need to specify this parameter - it is primarily in place to
-     * support testing. If specified the value must be an integral multiple of
-     * 1 MiB (1048576). Also, this only applies to requests where the source and
-     * destination span locations and/or storage classes. Finally, this value must
-     * not change across rewrite calls else you'll get an error that the
-     * `rewriteToken` is invalid.
+     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * request. Most callers shouldn't need to specify this parameter - it is
+     * primarily in place to support testing. If specified the value must be an
+     * integral multiple of 1 MiB (1048576). Also, this only applies to requests
+     * where the source and destination span locations and/or storage classes.
+     * Finally, this value must not change across rewrite calls else you'll get an
+     * error that the `rewriteToken` is invalid.
      * </pre>
      *
-     * <code>int64 max_bytes_rewritten_per_call = 15;</code>
+     * <code>int64 max_bytes_rewritten_per_call = 15 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The maxBytesRewrittenPerCall to set.
      * @return This builder for chaining.
@@ -3961,17 +4011,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The maximum number of bytes that will be rewritten per rewrite request.
-     * Most callers
-     * shouldn't need to specify this parameter - it is primarily in place to
-     * support testing. If specified the value must be an integral multiple of
-     * 1 MiB (1048576). Also, this only applies to requests where the source and
-     * destination span locations and/or storage classes. Finally, this value must
-     * not change across rewrite calls else you'll get an error that the
-     * `rewriteToken` is invalid.
+     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * request. Most callers shouldn't need to specify this parameter - it is
+     * primarily in place to support testing. If specified the value must be an
+     * integral multiple of 1 MiB (1048576). Also, this only applies to requests
+     * where the source and destination span locations and/or storage classes.
+     * Finally, this value must not change across rewrite calls else you'll get an
+     * error that the `rewriteToken` is invalid.
      * </pre>
      *
-     * <code>int64 max_bytes_rewritten_per_call = 15;</code>
+     * <code>int64 max_bytes_rewritten_per_call = 15 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -3988,11 +4038,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any. Used if the source
-     * object was encrypted with a Customer-Supplied Encryption Key.
+     * Optional. The algorithm used to encrypt the source object, if any. Used if
+     * the source object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>string copy_source_encryption_algorithm = 16;</code>
+     * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The copySourceEncryptionAlgorithm.
      */
@@ -4012,11 +4063,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any. Used if the source
-     * object was encrypted with a Customer-Supplied Encryption Key.
+     * Optional. The algorithm used to encrypt the source object, if any. Used if
+     * the source object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>string copy_source_encryption_algorithm = 16;</code>
+     * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The bytes for copySourceEncryptionAlgorithm.
      */
@@ -4036,11 +4088,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any. Used if the source
-     * object was encrypted with a Customer-Supplied Encryption Key.
+     * Optional. The algorithm used to encrypt the source object, if any. Used if
+     * the source object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>string copy_source_encryption_algorithm = 16;</code>
+     * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The copySourceEncryptionAlgorithm to set.
      * @return This builder for chaining.
@@ -4059,11 +4112,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any. Used if the source
-     * object was encrypted with a Customer-Supplied Encryption Key.
+     * Optional. The algorithm used to encrypt the source object, if any. Used if
+     * the source object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>string copy_source_encryption_algorithm = 16;</code>
+     * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -4078,11 +4132,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any. Used if the source
-     * object was encrypted with a Customer-Supplied Encryption Key.
+     * Optional. The algorithm used to encrypt the source object, if any. Used if
+     * the source object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>string copy_source_encryption_algorithm = 16;</code>
+     * <code>string copy_source_encryption_algorithm = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The bytes for copySourceEncryptionAlgorithm to set.
      * @return This builder for chaining.
@@ -4105,12 +4160,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
-     * the source object, if it was encrypted with a Customer-Supplied Encryption
-     * Key.
+     * Optional. The raw bytes (not base64-encoded) AES-256 encryption key used to
+     * encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_bytes = 21;</code>
+     * <code>bytes copy_source_encryption_key_bytes = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The copySourceEncryptionKeyBytes.
      */
@@ -4123,12 +4179,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
-     * the source object, if it was encrypted with a Customer-Supplied Encryption
-     * Key.
+     * Optional. The raw bytes (not base64-encoded) AES-256 encryption key used to
+     * encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_bytes = 21;</code>
+     * <code>bytes copy_source_encryption_key_bytes = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The copySourceEncryptionKeyBytes to set.
      * @return This builder for chaining.
@@ -4147,12 +4204,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
-     * the source object, if it was encrypted with a Customer-Supplied Encryption
-     * Key.
+     * Optional. The raw bytes (not base64-encoded) AES-256 encryption key used to
+     * encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_bytes = 21;</code>
+     * <code>bytes copy_source_encryption_key_bytes = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -4170,12 +4228,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
-     * to encrypt the source object, if it was encrypted with a Customer-Supplied
-     * Encryption Key.
+     * Optional. The raw bytes (not base64-encoded) SHA256 hash of the encryption
+     * key used to encrypt the source object, if it was encrypted with a
+     * Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
+     * <code>
+     * bytes copy_source_encryption_key_sha256_bytes = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The copySourceEncryptionKeySha256Bytes.
      */
@@ -4188,12 +4248,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
-     * to encrypt the source object, if it was encrypted with a Customer-Supplied
-     * Encryption Key.
+     * Optional. The raw bytes (not base64-encoded) SHA256 hash of the encryption
+     * key used to encrypt the source object, if it was encrypted with a
+     * Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
+     * <code>
+     * bytes copy_source_encryption_key_sha256_bytes = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The copySourceEncryptionKeySha256Bytes to set.
      * @return This builder for chaining.
@@ -4212,12 +4274,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
-     * to encrypt the source object, if it was encrypted with a Customer-Supplied
-     * Encryption Key.
+     * Optional. The raw bytes (not base64-encoded) SHA256 hash of the encryption
+     * key used to encrypt the source object, if it was encrypted with a
+     * Customer-Supplied Encryption Key.
      * </pre>
      *
-     * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
+     * <code>
+     * bytes copy_source_encryption_key_sha256_bytes = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -4240,10 +4304,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the commonObjectRequestParams field is set.
      */
@@ -4255,10 +4322,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The commonObjectRequestParams.
      */
@@ -4276,10 +4346,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -4300,10 +4373,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
@@ -4321,10 +4397,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -4351,10 +4430,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCommonObjectRequestParams() {
       bitField0_ = (bitField0_ & ~0x00200000);
@@ -4371,10 +4453,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
@@ -4387,10 +4472,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
         getCommonObjectRequestParamsOrBuilder() {
@@ -4407,10 +4495,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 19 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CommonObjectRequestParams,
@@ -4440,11 +4531,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the objectChecksums field is set.
      */
@@ -4456,11 +4549,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The objectChecksums.
      */
@@ -4478,11 +4573,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
@@ -4502,11 +4599,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setObjectChecksums(
         com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
@@ -4524,11 +4623,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
@@ -4553,11 +4654,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearObjectChecksums() {
       bitField0_ = (bitField0_ & ~0x00400000);
@@ -4574,11 +4677,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
       bitField0_ |= 0x00400000;
@@ -4590,11 +4695,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
       if (objectChecksumsBuilder_ != null) {
@@ -4610,11 +4717,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be used to validate the
-     * destination object after rewriting.
+     * Optional. The checksums of the complete object. This will be used to
+     * validate the destination object after rewriting.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 29 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.ObjectChecksums,

@@ -28,10 +28,10 @@ public interface CustomerEncryptionOrBuilder
    *
    *
    * <pre>
-   * The encryption algorithm.
+   * Optional. The encryption algorithm.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The encryptionAlgorithm.
    */
@@ -41,10 +41,10 @@ public interface CustomerEncryptionOrBuilder
    *
    *
    * <pre>
-   * The encryption algorithm.
+   * Optional. The encryption algorithm.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for encryptionAlgorithm.
    */
@@ -54,11 +54,11 @@ public interface CustomerEncryptionOrBuilder
    *
    *
    * <pre>
-   * SHA256 hash value of the encryption key.
+   * Optional. SHA256 hash value of the encryption key.
    * In raw bytes format (not base64-encoded).
    * </pre>
    *
-   * <code>bytes key_sha256_bytes = 3;</code>
+   * <code>bytes key_sha256_bytes = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The keySha256Bytes.
    */

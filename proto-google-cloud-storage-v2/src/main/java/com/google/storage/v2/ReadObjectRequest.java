@@ -183,11 +183,11 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * If present, selects a specific revision of this object (as opposed
-   * to the latest version, the default).
+   * Optional. If present, selects a specific revision of this object (as
+   * opposed to the latest version, the default).
    * </pre>
    *
-   * <code>int64 generation = 3;</code>
+   * <code>int64 generation = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The generation.
    */
@@ -203,8 +203,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The offset for the first byte to return in the read, relative to the start
-   * of the object.
+   * Optional. The offset for the first byte to return in the read, relative to
+   * the start of the object.
    *
    * A negative `read_offset` value will be interpreted as the number of bytes
    * back from the end of the object to be returned. For example, if an object's
@@ -214,7 +214,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * return the entire object.
    * </pre>
    *
-   * <code>int64 read_offset = 4;</code>
+   * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The readOffset.
    */
@@ -230,16 +230,17 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The maximum number of `data` bytes the server is allowed to return in the
-   * sum of all `Object` messages. A `read_limit` of zero indicates that there
-   * is no limit, and a negative `read_limit` will cause an error.
+   * Optional. The maximum number of `data` bytes the server is allowed to
+   * return in the sum of all `Object` messages. A `read_limit` of zero
+   * indicates that there is no limit, and a negative `read_limit` will cause an
+   * error.
    *
    * If the stream returns fewer bytes than allowed by the `read_limit` and no
    * error occurred, the stream includes all data from the `read_offset` to the
    * end of the resource.
    * </pre>
    *
-   * <code>int64 read_limit = 5;</code>
+   * <code>int64 read_limit = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The readLimit.
    */
@@ -409,10 +410,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -425,10 +429,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -443,10 +450,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
@@ -1381,11 +1391,11 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed
-     * to the latest version, the default).
+     * Optional. If present, selects a specific revision of this object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The generation.
      */
@@ -1398,11 +1408,11 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed
-     * to the latest version, the default).
+     * Optional. If present, selects a specific revision of this object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The generation to set.
      * @return This builder for chaining.
@@ -1419,11 +1429,11 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed
-     * to the latest version, the default).
+     * Optional. If present, selects a specific revision of this object (as
+     * opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1440,8 +1450,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The offset for the first byte to return in the read, relative to the start
-     * of the object.
+     * Optional. The offset for the first byte to return in the read, relative to
+     * the start of the object.
      *
      * A negative `read_offset` value will be interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
@@ -1451,7 +1461,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * return the entire object.
      * </pre>
      *
-     * <code>int64 read_offset = 4;</code>
+     * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The readOffset.
      */
@@ -1464,8 +1474,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The offset for the first byte to return in the read, relative to the start
-     * of the object.
+     * Optional. The offset for the first byte to return in the read, relative to
+     * the start of the object.
      *
      * A negative `read_offset` value will be interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
@@ -1475,7 +1485,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * return the entire object.
      * </pre>
      *
-     * <code>int64 read_offset = 4;</code>
+     * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The readOffset to set.
      * @return This builder for chaining.
@@ -1492,8 +1502,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The offset for the first byte to return in the read, relative to the start
-     * of the object.
+     * Optional. The offset for the first byte to return in the read, relative to
+     * the start of the object.
      *
      * A negative `read_offset` value will be interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
@@ -1503,7 +1513,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * return the entire object.
      * </pre>
      *
-     * <code>int64 read_offset = 4;</code>
+     * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1520,16 +1530,17 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The maximum number of `data` bytes the server is allowed to return in the
-     * sum of all `Object` messages. A `read_limit` of zero indicates that there
-     * is no limit, and a negative `read_limit` will cause an error.
+     * Optional. The maximum number of `data` bytes the server is allowed to
+     * return in the sum of all `Object` messages. A `read_limit` of zero
+     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
      * error occurred, the stream includes all data from the `read_offset` to the
      * end of the resource.
      * </pre>
      *
-     * <code>int64 read_limit = 5;</code>
+     * <code>int64 read_limit = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The readLimit.
      */
@@ -1542,16 +1553,17 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The maximum number of `data` bytes the server is allowed to return in the
-     * sum of all `Object` messages. A `read_limit` of zero indicates that there
-     * is no limit, and a negative `read_limit` will cause an error.
+     * Optional. The maximum number of `data` bytes the server is allowed to
+     * return in the sum of all `Object` messages. A `read_limit` of zero
+     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
      * error occurred, the stream includes all data from the `read_offset` to the
      * end of the resource.
      * </pre>
      *
-     * <code>int64 read_limit = 5;</code>
+     * <code>int64 read_limit = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The readLimit to set.
      * @return This builder for chaining.
@@ -1568,16 +1580,17 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The maximum number of `data` bytes the server is allowed to return in the
-     * sum of all `Object` messages. A `read_limit` of zero indicates that there
-     * is no limit, and a negative `read_limit` will cause an error.
+     * Optional. The maximum number of `data` bytes the server is allowed to
+     * return in the sum of all `Object` messages. A `read_limit` of zero
+     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
      * error occurred, the stream includes all data from the `read_offset` to the
      * end of the resource.
      * </pre>
      *
-     * <code>int64 read_limit = 5;</code>
+     * <code>int64 read_limit = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1915,10 +1928,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the commonObjectRequestParams field is set.
      */
@@ -1930,10 +1946,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The commonObjectRequestParams.
      */
@@ -1951,10 +1970,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -1975,10 +1997,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
@@ -1996,10 +2021,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -2026,10 +2054,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCommonObjectRequestParams() {
       bitField0_ = (bitField0_ & ~0x00000200);
@@ -2046,10 +2077,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
@@ -2062,10 +2096,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
         getCommonObjectRequestParamsOrBuilder() {
@@ -2082,10 +2119,13 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CommonObjectRequestParams,

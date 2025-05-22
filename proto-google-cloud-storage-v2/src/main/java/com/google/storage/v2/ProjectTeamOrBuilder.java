@@ -28,10 +28,10 @@ public interface ProjectTeamOrBuilder
    *
    *
    * <pre>
-   * The project number.
+   * Optional. The project number.
    * </pre>
    *
-   * <code>string project_number = 1;</code>
+   * <code>string project_number = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The projectNumber.
    */
@@ -41,10 +41,10 @@ public interface ProjectTeamOrBuilder
    *
    *
    * <pre>
-   * The project number.
+   * Optional. The project number.
    * </pre>
    *
-   * <code>string project_number = 1;</code>
+   * <code>string project_number = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for projectNumber.
    */
@@ -54,10 +54,10 @@ public interface ProjectTeamOrBuilder
    *
    *
    * <pre>
-   * The team.
+   * Optional. The team.
    * </pre>
    *
-   * <code>string team = 2;</code>
+   * <code>string team = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The team.
    */
@@ -67,10 +67,10 @@ public interface ProjectTeamOrBuilder
    *
    *
    * <pre>
-   * The team.
+   * Optional. The team.
    * </pre>
    *
-   * <code>string team = 2;</code>
+   * <code>string team = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for team.
    */

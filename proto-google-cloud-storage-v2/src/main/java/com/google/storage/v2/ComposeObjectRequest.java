@@ -103,10 +103,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The generation of this object to use as the source.
+     * Optional. The generation of this object to use as the source.
      * </pre>
      *
-     * <code>int64 generation = 2;</code>
+     * <code>int64 generation = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The generation.
      */
@@ -116,11 +116,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return Whether the objectPreconditions field is set.
@@ -131,11 +131,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return The objectPreconditions.
@@ -147,11 +147,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditionsOrBuilder
@@ -913,10 +913,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The generation of this object to use as the source.
+     * Optional. The generation of this object to use as the source.
      * </pre>
      *
-     * <code>int64 generation = 2;</code>
+     * <code>int64 generation = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The generation.
      */
@@ -933,11 +933,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return Whether the objectPreconditions field is set.
@@ -951,11 +951,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return The objectPreconditions.
@@ -973,11 +973,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Conditions that must be met for this operation to execute.
+     * Optional. Conditions that must be met for this operation to execute.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+     * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     @java.lang.Override
@@ -1529,10 +1529,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The generation of this object to use as the source.
+       * Optional. The generation of this object to use as the source.
        * </pre>
        *
-       * <code>int64 generation = 2;</code>
+       * <code>int64 generation = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The generation.
        */
@@ -1545,10 +1545,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The generation of this object to use as the source.
+       * Optional. The generation of this object to use as the source.
        * </pre>
        *
-       * <code>int64 generation = 2;</code>
+       * <code>int64 generation = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The generation to set.
        * @return This builder for chaining.
@@ -1565,10 +1565,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The generation of this object to use as the source.
+       * Optional. The generation of this object to use as the source.
        * </pre>
        *
-       * <code>int64 generation = 2;</code>
+       * <code>int64 generation = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -1591,11 +1591,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        *
        * @return Whether the objectPreconditions field is set.
@@ -1608,11 +1608,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        *
        * @return The objectPreconditions.
@@ -1633,11 +1633,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder setObjectPreconditions(
@@ -1659,11 +1659,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder setObjectPreconditions(
@@ -1683,11 +1683,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder mergeObjectPreconditions(
@@ -1716,11 +1716,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder clearObjectPreconditions() {
@@ -1738,11 +1738,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions.Builder
@@ -1756,11 +1756,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditionsOrBuilder
@@ -1779,11 +1779,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * Conditions that must be met for this operation to execute.
+       * Optional. Conditions that must be met for this operation to execute.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3;
+       * .google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions object_preconditions = 3 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -1931,10 +1931,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject>
@@ -1946,10 +1949,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder>
@@ -1961,10 +1967,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getSourceObjectsCount() {
@@ -1975,10 +1984,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ComposeObjectRequest.SourceObject getSourceObjects(int index) {
@@ -1989,10 +2001,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The list of source objects that will be concatenated into a single object.
+   * Optional. The list of source objects that will be concatenated into a
+   * single object.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;</code>
+   * <code>
+   * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder getSourceObjectsOrBuilder(
@@ -2009,12 +2024,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 9;</code>
+   * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The destinationPredefinedAcl.
    */
@@ -2035,12 +2050,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to the destination object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of access controls to the destination
+   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string destination_predefined_acl = 9;</code>
+   * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for destinationPredefinedAcl.
    */
@@ -2142,13 +2157,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Resource name of the Cloud KMS key, of the form
+   * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
    * that will be used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
-   * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The kmsKey.
    */
@@ -2169,13 +2186,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Resource name of the Cloud KMS key, of the form
+   * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
    * that will be used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
-   * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for kmsKey.
    */
@@ -2199,10 +2218,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -2215,10 +2237,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -2233,10 +2258,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
@@ -2253,11 +2281,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -2270,11 +2300,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -2289,11 +2321,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The checksums of the complete object. This will be validated against the
-   * combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This will be validated
+   * against the combined checksums of the component objects.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
@@ -3141,10 +3175,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject>
@@ -3160,10 +3196,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public int getSourceObjectsCount() {
@@ -3178,10 +3216,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public com.google.storage.v2.ComposeObjectRequest.SourceObject getSourceObjects(int index) {
@@ -3196,10 +3236,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder setSourceObjects(
@@ -3221,10 +3263,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder setSourceObjects(
@@ -3244,10 +3288,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder addSourceObjects(com.google.storage.v2.ComposeObjectRequest.SourceObject value) {
@@ -3268,10 +3314,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder addSourceObjects(
@@ -3293,10 +3341,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder addSourceObjects(
@@ -3315,10 +3365,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder addSourceObjects(
@@ -3338,10 +3390,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder addAllSourceObjects(
@@ -3361,10 +3415,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder clearSourceObjects() {
@@ -3382,10 +3438,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public Builder removeSourceObjects(int index) {
@@ -3403,10 +3461,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public com.google.storage.v2.ComposeObjectRequest.SourceObject.Builder getSourceObjectsBuilder(
@@ -3418,10 +3478,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public com.google.storage.v2.ComposeObjectRequest.SourceObjectOrBuilder
@@ -3437,10 +3499,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public java.util.List<
@@ -3457,10 +3521,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public com.google.storage.v2.ComposeObjectRequest.SourceObject.Builder
@@ -3473,10 +3539,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public com.google.storage.v2.ComposeObjectRequest.SourceObject.Builder addSourceObjectsBuilder(
@@ -3490,10 +3558,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The list of source objects that will be concatenated into a single object.
+     * Optional. The list of source objects that will be concatenated into a
+     * single object.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2;
+     * <code>
+     * repeated .google.storage.v2.ComposeObjectRequest.SourceObject source_objects = 2 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     public java.util.List<com.google.storage.v2.ComposeObjectRequest.SourceObject.Builder>
@@ -3527,12 +3597,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 9;</code>
+     * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The destinationPredefinedAcl.
      */
@@ -3552,12 +3622,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 9;</code>
+     * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for destinationPredefinedAcl.
      */
@@ -3577,12 +3647,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 9;</code>
+     * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The destinationPredefinedAcl to set.
      * @return This builder for chaining.
@@ -3601,12 +3671,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 9;</code>
+     * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -3621,12 +3691,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of access controls to the destination
+     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string destination_predefined_acl = 9;</code>
+     * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for destinationPredefinedAcl to set.
      * @return This builder for chaining.
@@ -3804,13 +3874,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Resource name of the Cloud KMS key, of the form
+     * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
      * that will be used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
-     * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The kmsKey.
      */
@@ -3830,13 +3902,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Resource name of the Cloud KMS key, of the form
+     * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
      * that will be used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
-     * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for kmsKey.
      */
@@ -3856,13 +3930,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Resource name of the Cloud KMS key, of the form
+     * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
      * that will be used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
-     * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The kmsKey to set.
      * @return This builder for chaining.
@@ -3881,13 +3957,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Resource name of the Cloud KMS key, of the form
+     * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
      * that will be used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
-     * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -3902,13 +3980,15 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Resource name of the Cloud KMS key, of the form
+     * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
      * that will be used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
-     * <code>string kms_key = 6 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string kms_key = 6 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for kmsKey to set.
      * @return This builder for chaining.
@@ -3935,10 +4015,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the commonObjectRequestParams field is set.
      */
@@ -3950,10 +4033,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The commonObjectRequestParams.
      */
@@ -3971,10 +4057,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -3995,10 +4084,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
@@ -4016,10 +4108,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -4046,10 +4141,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCommonObjectRequestParams() {
       bitField0_ = (bitField0_ & ~0x00000040);
@@ -4066,10 +4164,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
@@ -4082,10 +4183,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
         getCommonObjectRequestParamsOrBuilder() {
@@ -4102,10 +4206,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CommonObjectRequestParams,
@@ -4135,11 +4242,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the objectChecksums field is set.
      */
@@ -4151,11 +4260,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The objectChecksums.
      */
@@ -4173,11 +4284,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
@@ -4197,11 +4310,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setObjectChecksums(
         com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
@@ -4219,11 +4334,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
@@ -4248,11 +4365,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearObjectChecksums() {
       bitField0_ = (bitField0_ & ~0x00000080);
@@ -4269,11 +4388,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
       bitField0_ |= 0x00000080;
@@ -4285,11 +4406,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
       if (objectChecksumsBuilder_ != null) {
@@ -4305,11 +4428,13 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The checksums of the complete object. This will be validated against the
-     * combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This will be validated
+     * against the combined checksums of the component objects.
      * </pre>
      *
-     * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+     * <code>
+     * .google.storage.v2.ObjectChecksums object_checksums = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.ObjectChecksums,

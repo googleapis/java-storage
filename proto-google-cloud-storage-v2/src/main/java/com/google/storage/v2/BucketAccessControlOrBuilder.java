@@ -28,10 +28,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The access permission for the entity.
+   * Optional. The access permission for the entity.
    * </pre>
    *
-   * <code>string role = 1;</code>
+   * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The role.
    */
@@ -41,10 +41,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The access permission for the entity.
+   * Optional. The access permission for the entity.
    * </pre>
    *
-   * <code>string role = 1;</code>
+   * <code>string role = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for role.
    */
@@ -54,10 +54,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The ID of the access-control entry.
+   * Optional. The ID of the access-control entry.
    * </pre>
    *
-   * <code>string id = 2;</code>
+   * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The id.
    */
@@ -67,10 +67,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The ID of the access-control entry.
+   * Optional. The ID of the access-control entry.
    * </pre>
    *
-   * <code>string id = 2;</code>
+   * <code>string id = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for id.
    */
@@ -80,7 +80,7 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The entity holding the permission, in one of the following forms:
+   * Optional. The entity holding the permission, in one of the following forms:
    * * `user-{userid}`
    * * `user-{email}`
    * * `group-{groupid}`
@@ -100,7 +100,7 @@ public interface BucketAccessControlOrBuilder
    * returned on response.
    * </pre>
    *
-   * <code>string entity = 3;</code>
+   * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entity.
    */
@@ -110,7 +110,7 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The entity holding the permission, in one of the following forms:
+   * Optional. The entity holding the permission, in one of the following forms:
    * * `user-{userid}`
    * * `user-{email}`
    * * `group-{groupid}`
@@ -130,7 +130,7 @@ public interface BucketAccessControlOrBuilder
    * returned on response.
    * </pre>
    *
-   * <code>string entity = 3;</code>
+   * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entity.
    */
@@ -168,10 +168,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The ID for the entity, if any.
+   * Optional. The ID for the entity, if any.
    * </pre>
    *
-   * <code>string entity_id = 4;</code>
+   * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The entityId.
    */
@@ -181,10 +181,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The ID for the entity, if any.
+   * Optional. The ID for the entity, if any.
    * </pre>
    *
-   * <code>string entity_id = 4;</code>
+   * <code>string entity_id = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for entityId.
    */
@@ -194,13 +194,13 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The etag of the BucketAccessControl.
+   * Optional. The etag of the BucketAccessControl.
    * If included in the metadata of an update or delete request message, the
    * operation operation will only be performed if the etag matches that of the
    * bucket's BucketAccessControl.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -210,13 +210,13 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The etag of the BucketAccessControl.
+   * Optional. The etag of the BucketAccessControl.
    * If included in the metadata of an update or delete request message, the
    * operation operation will only be performed if the etag matches that of the
    * bucket's BucketAccessControl.
    * </pre>
    *
-   * <code>string etag = 8;</code>
+   * <code>string etag = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */
@@ -226,10 +226,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The email address associated with the entity, if any.
+   * Optional. The email address associated with the entity, if any.
    * </pre>
    *
-   * <code>string email = 5;</code>
+   * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The email.
    */
@@ -239,10 +239,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The email address associated with the entity, if any.
+   * Optional. The email address associated with the entity, if any.
    * </pre>
    *
-   * <code>string email = 5;</code>
+   * <code>string email = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for email.
    */
@@ -252,10 +252,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The domain associated with the entity, if any.
+   * Optional. The domain associated with the entity, if any.
    * </pre>
    *
-   * <code>string domain = 6;</code>
+   * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The domain.
    */
@@ -265,10 +265,10 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The domain associated with the entity, if any.
+   * Optional. The domain associated with the entity, if any.
    * </pre>
    *
-   * <code>string domain = 6;</code>
+   * <code>string domain = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for domain.
    */
@@ -278,10 +278,12 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the projectTeam field is set.
    */
@@ -291,10 +293,12 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The projectTeam.
    */
@@ -304,10 +308,12 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * The project team associated with the entity, if any.
+   * Optional. The project team associated with the entity, if any.
    * </pre>
    *
-   * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
+   * <code>
+   * .google.storage.v2.ProjectTeam project_team = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ProjectTeamOrBuilder getProjectTeamOrBuilder();
 }

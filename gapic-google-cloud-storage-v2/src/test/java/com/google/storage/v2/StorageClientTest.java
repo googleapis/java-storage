@@ -202,6 +202,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -269,6 +270,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -336,6 +338,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -409,6 +412,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -570,6 +574,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -638,6 +643,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -960,6 +966,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1033,6 +1040,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1291,6 +1299,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1367,6 +1376,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1480,6 +1490,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1553,6 +1564,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1626,6 +1638,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1702,6 +1715,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1908,6 +1922,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2409,6 +2424,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2485,6 +2501,7 @@ public class StorageClientTest {
             .setCustomTime(Timestamp.newBuilder().build())
             .setSoftDeleteTime(Timestamp.newBuilder().build())
             .setHardDeleteTime(Timestamp.newBuilder().build())
+            .setRetention(Object.Retention.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 

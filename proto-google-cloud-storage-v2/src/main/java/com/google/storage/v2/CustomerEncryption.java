@@ -75,10 +75,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * The encryption algorithm.
+   * Optional. The encryption algorithm.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The encryptionAlgorithm.
    */
@@ -99,10 +99,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * The encryption algorithm.
+   * Optional. The encryption algorithm.
    * </pre>
    *
-   * <code>string encryption_algorithm = 1;</code>
+   * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for encryptionAlgorithm.
    */
@@ -126,11 +126,11 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * SHA256 hash value of the encryption key.
+   * Optional. SHA256 hash value of the encryption key.
    * In raw bytes format (not base64-encoded).
    * </pre>
    *
-   * <code>bytes key_sha256_bytes = 3;</code>
+   * <code>bytes key_sha256_bytes = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The keySha256Bytes.
    */
@@ -509,10 +509,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The encryption algorithm.
+     * Optional. The encryption algorithm.
      * </pre>
      *
-     * <code>string encryption_algorithm = 1;</code>
+     * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The encryptionAlgorithm.
      */
@@ -532,10 +532,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The encryption algorithm.
+     * Optional. The encryption algorithm.
      * </pre>
      *
-     * <code>string encryption_algorithm = 1;</code>
+     * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for encryptionAlgorithm.
      */
@@ -555,10 +555,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The encryption algorithm.
+     * Optional. The encryption algorithm.
      * </pre>
      *
-     * <code>string encryption_algorithm = 1;</code>
+     * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The encryptionAlgorithm to set.
      * @return This builder for chaining.
@@ -577,10 +577,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The encryption algorithm.
+     * Optional. The encryption algorithm.
      * </pre>
      *
-     * <code>string encryption_algorithm = 1;</code>
+     * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -595,10 +595,10 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The encryption algorithm.
+     * Optional. The encryption algorithm.
      * </pre>
      *
-     * <code>string encryption_algorithm = 1;</code>
+     * <code>string encryption_algorithm = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for encryptionAlgorithm to set.
      * @return This builder for chaining.
@@ -620,11 +620,11 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * SHA256 hash value of the encryption key.
+     * Optional. SHA256 hash value of the encryption key.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
-     * <code>bytes key_sha256_bytes = 3;</code>
+     * <code>bytes key_sha256_bytes = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The keySha256Bytes.
      */
@@ -637,11 +637,11 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * SHA256 hash value of the encryption key.
+     * Optional. SHA256 hash value of the encryption key.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
-     * <code>bytes key_sha256_bytes = 3;</code>
+     * <code>bytes key_sha256_bytes = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The keySha256Bytes to set.
      * @return This builder for chaining.
@@ -660,11 +660,11 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * SHA256 hash value of the encryption key.
+     * Optional. SHA256 hash value of the encryption key.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
-     * <code>bytes key_sha256_bytes = 3;</code>
+     * <code>bytes key_sha256_bytes = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
