@@ -77,7 +77,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong.
+   * Required. The project to which this bucket will belong. This field must
+   * either be empty or `projects/_`. The project ID that owns this bucket
+   * should be specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -103,7 +105,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong.
+   * Required. The project to which this bucket will belong. This field must
+   * either be empty or `projects/_`. The project ID that owns this bucket
+   * should be specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -132,7 +136,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -141,7 +145,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return Whether the bucket field is set.
    */
@@ -154,7 +158,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -163,7 +167,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bucket.
    */
@@ -176,7 +180,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -185,7 +189,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
@@ -258,12 +262,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 6;</code>
+   * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -284,12 +288,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 6;</code>
+   * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -315,12 +319,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 7;</code>
+   * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The predefinedDefaultObjectAcl.
    */
@@ -341,12 +346,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 7;</code>
+   * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The bytes for predefinedDefaultObjectAcl.
    */
@@ -828,7 +834,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project to which this bucket will belong.
+     * Required. The project to which this bucket will belong. This field must
+     * either be empty or `projects/_`. The project ID that owns this bucket
+     * should be specified in the `bucket.project` field.
      * </pre>
      *
      * <code>
@@ -853,7 +861,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project to which this bucket will belong.
+     * Required. The project to which this bucket will belong. This field must
+     * either be empty or `projects/_`. The project ID that owns this bucket
+     * should be specified in the `bucket.project` field.
      * </pre>
      *
      * <code>
@@ -878,7 +888,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project to which this bucket will belong.
+     * Required. The project to which this bucket will belong. This field must
+     * either be empty or `projects/_`. The project ID that owns this bucket
+     * should be specified in the `bucket.project` field.
      * </pre>
      *
      * <code>
@@ -902,7 +914,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project to which this bucket will belong.
+     * Required. The project to which this bucket will belong. This field must
+     * either be empty or `projects/_`. The project ID that owns this bucket
+     * should be specified in the `bucket.project` field.
      * </pre>
      *
      * <code>
@@ -922,7 +936,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project to which this bucket will belong.
+     * Required. The project to which this bucket will belong. This field must
+     * either be empty or `projects/_`. The project ID that owns this bucket
+     * should be specified in the `bucket.project` field.
      * </pre>
      *
      * <code>
@@ -954,7 +970,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -963,7 +979,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return Whether the bucket field is set.
      */
@@ -975,7 +991,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -984,7 +1000,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bucket.
      */
@@ -1000,7 +1016,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1009,7 +1025,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -1029,7 +1045,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1038,7 +1054,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket.Builder builderForValue) {
       if (bucketBuilder_ == null) {
@@ -1055,7 +1071,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1064,7 +1080,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder mergeBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -1089,7 +1105,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1098,7 +1114,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder clearBucket() {
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -1115,7 +1131,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1124,7 +1140,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public com.google.storage.v2.Bucket.Builder getBucketBuilder() {
       bitField0_ |= 0x00000002;
@@ -1136,7 +1152,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1145,7 +1161,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
       if (bucketBuilder_ != null) {
@@ -1159,7 +1175,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Properties of the new bucket being inserted.
+     * Optional. Properties of the new bucket being inserted.
      * The name of the bucket is specified in the `bucket_id` field. Populating
      * `bucket.name` field will result in an error.
      * The project of the bucket must be specified in the `bucket.project` field.
@@ -1168,7 +1184,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * field must be either empty or `projects/_`.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2;</code>
+     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket,
@@ -1314,12 +1330,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 6;</code>
+     * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The predefinedAcl.
      */
@@ -1339,12 +1355,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 6;</code>
+     * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for predefinedAcl.
      */
@@ -1364,12 +1380,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 6;</code>
+     * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The predefinedAcl to set.
      * @return This builder for chaining.
@@ -1388,12 +1404,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 6;</code>
+     * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1408,12 +1424,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this bucket.
+     * Optional. Apply a predefined set of access controls to this bucket.
      * Valid values are "authenticatedRead", "private", "projectPrivate",
      * "publicRead", or "publicReadWrite".
      * </pre>
      *
-     * <code>string predefined_acl = 6;</code>
+     * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for predefinedAcl to set.
      * @return This builder for chaining.
@@ -1435,12 +1451,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 7;</code>
+     * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The predefinedDefaultObjectAcl.
      */
@@ -1460,12 +1477,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 7;</code>
+     * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The bytes for predefinedDefaultObjectAcl.
      */
@@ -1485,12 +1503,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 7;</code>
+     * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The predefinedDefaultObjectAcl to set.
      * @return This builder for chaining.
@@ -1509,12 +1528,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 7;</code>
+     * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -1529,12 +1549,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of default object access controls to this bucket.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * Optional. Apply a predefined set of default object access controls to this
+     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_default_object_acl = 7;</code>
+     * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @param value The bytes for predefinedDefaultObjectAcl to set.
      * @return This builder for chaining.

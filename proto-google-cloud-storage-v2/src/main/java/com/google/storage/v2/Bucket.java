@@ -93,10 +93,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * When set to true, Requester Pays is enabled for this bucket.
+     * Optional. When set to true, Requester Pays is enabled for this bucket.
      * </pre>
      *
-     * <code>bool requester_pays = 1;</code>
+     * <code>bool requester_pays = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The requesterPays.
      */
@@ -153,10 +153,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * When set to true, Requester Pays is enabled for this bucket.
+     * Optional. When set to true, Requester Pays is enabled for this bucket.
      * </pre>
      *
-     * <code>bool requester_pays = 1;</code>
+     * <code>bool requester_pays = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The requesterPays.
      */
@@ -514,10 +514,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * When set to true, Requester Pays is enabled for this bucket.
+       * Optional. When set to true, Requester Pays is enabled for this bucket.
        * </pre>
        *
-       * <code>bool requester_pays = 1;</code>
+       * <code>bool requester_pays = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The requesterPays.
        */
@@ -530,10 +530,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * When set to true, Requester Pays is enabled for this bucket.
+       * Optional. When set to true, Requester Pays is enabled for this bucket.
        * </pre>
        *
-       * <code>bool requester_pays = 1;</code>
+       * <code>bool requester_pays = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The requesterPays to set.
        * @return This builder for chaining.
@@ -550,10 +550,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * When set to true, Requester Pays is enabled for this bucket.
+       * Optional. When set to true, Requester Pays is enabled for this bucket.
        * </pre>
        *
-       * <code>bool requester_pays = 1;</code>
+       * <code>bool requester_pays = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -637,12 +637,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the origin.
      */
@@ -652,12 +652,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of origin.
      */
@@ -667,12 +667,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The origin at the given index.
@@ -683,12 +683,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the origin at the given index.
@@ -699,12 +699,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the method.
      */
@@ -714,12 +715,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of method.
      */
@@ -729,12 +731,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The method at the given index.
@@ -745,12 +748,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the method at the given index.
@@ -761,12 +765,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the responseHeader.
      */
@@ -776,12 +780,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of responseHeader.
      */
@@ -791,12 +795,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The responseHeader at the given index.
@@ -807,12 +811,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the responseHeader at the given index.
@@ -823,12 +827,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The value, in seconds, to return in the
+     * Optional. The value, in seconds, to return in the
      * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
      * header] used in preflight responses.
      * </pre>
      *
-     * <code>int32 max_age_seconds = 4;</code>
+     * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The maxAgeSeconds.
      */
@@ -895,12 +899,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the origin.
      */
@@ -912,12 +916,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of origin.
      */
@@ -929,12 +933,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The origin at the given index.
@@ -947,12 +951,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of Origins eligible to receive CORS response headers. See
-     * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+     * Optional. The list of Origins eligible to receive CORS response headers.
+     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
      * Note: "*" is permitted in the list of origins, and means "any Origin".
      * </pre>
      *
-     * <code>repeated string origin = 1;</code>
+     * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the origin at the given index.
@@ -971,12 +975,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the method.
      */
@@ -988,12 +993,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of method.
      */
@@ -1005,12 +1011,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The method at the given index.
@@ -1023,12 +1030,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP methods on which to include CORS response headers,
+     * Optional. The list of HTTP methods on which to include CORS response
+     * headers,
      * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
-     * <code>repeated string method = 2;</code>
+     * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the method at the given index.
@@ -1047,12 +1055,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the responseHeader.
      */
@@ -1064,12 +1072,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of responseHeader.
      */
@@ -1081,12 +1089,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The responseHeader at the given index.
@@ -1099,12 +1107,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The list of HTTP headers other than the
+     * Optional. The list of HTTP headers other than the
      * [https://www.w3.org/TR/cors/#simple-response-header][simple response
      * headers] to give permission for the user-agent to share across domains.
      * </pre>
      *
-     * <code>repeated string response_header = 3;</code>
+     * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the responseHeader at the given index.
@@ -1120,12 +1128,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The value, in seconds, to return in the
+     * Optional. The value, in seconds, to return in the
      * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
      * header] used in preflight responses.
      * </pre>
      *
-     * <code>int32 max_age_seconds = 4;</code>
+     * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The maxAgeSeconds.
      */
@@ -1606,12 +1614,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return A list containing the origin.
        */
@@ -1624,12 +1632,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The count of origin.
        */
@@ -1641,12 +1649,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the element to return.
        * @return The origin at the given index.
@@ -1659,12 +1667,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the value to return.
        * @return The bytes of the origin at the given index.
@@ -1677,12 +1685,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index to set the value at.
        * @param value The origin to set.
@@ -1703,12 +1711,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The origin to add.
        * @return This builder for chaining.
@@ -1728,12 +1736,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param values The origin to add.
        * @return This builder for chaining.
@@ -1750,12 +1758,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -1771,12 +1779,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of Origins eligible to receive CORS response headers. See
-       * [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
+       * Optional. The list of Origins eligible to receive CORS response headers.
+       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
        * Note: "*" is permitted in the list of origins, and means "any Origin".
        * </pre>
        *
-       * <code>repeated string origin = 1;</code>
+       * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes of the origin to add.
        * @return This builder for chaining.
@@ -1807,12 +1815,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return A list containing the method.
        */
@@ -1825,12 +1834,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The count of method.
        */
@@ -1842,12 +1852,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the element to return.
        * @return The method at the given index.
@@ -1860,12 +1871,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the value to return.
        * @return The bytes of the method at the given index.
@@ -1878,12 +1890,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index to set the value at.
        * @param value The method to set.
@@ -1904,12 +1917,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The method to add.
        * @return This builder for chaining.
@@ -1929,12 +1943,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param values The method to add.
        * @return This builder for chaining.
@@ -1951,12 +1966,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -1972,12 +1988,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP methods on which to include CORS response headers,
+       * Optional. The list of HTTP methods on which to include CORS response
+       * headers,
        * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
-       * <code>repeated string method = 2;</code>
+       * <code>repeated string method = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes of the method to add.
        * @return This builder for chaining.
@@ -2008,12 +2025,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return A list containing the responseHeader.
        */
@@ -2026,12 +2043,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The count of responseHeader.
        */
@@ -2043,12 +2060,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the element to return.
        * @return The responseHeader at the given index.
@@ -2061,12 +2078,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the value to return.
        * @return The bytes of the responseHeader at the given index.
@@ -2079,12 +2096,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index to set the value at.
        * @param value The responseHeader to set.
@@ -2105,12 +2122,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The responseHeader to add.
        * @return This builder for chaining.
@@ -2130,12 +2147,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param values The responseHeader to add.
        * @return This builder for chaining.
@@ -2152,12 +2169,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -2173,12 +2190,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The list of HTTP headers other than the
+       * Optional. The list of HTTP headers other than the
        * [https://www.w3.org/TR/cors/#simple-response-header][simple response
        * headers] to give permission for the user-agent to share across domains.
        * </pre>
        *
-       * <code>repeated string response_header = 3;</code>
+       * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes of the responseHeader to add.
        * @return This builder for chaining.
@@ -2201,12 +2218,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The value, in seconds, to return in the
+       * Optional. The value, in seconds, to return in the
        * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
        * header] used in preflight responses.
        * </pre>
        *
-       * <code>int32 max_age_seconds = 4;</code>
+       * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The maxAgeSeconds.
        */
@@ -2219,12 +2236,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The value, in seconds, to return in the
+       * Optional. The value, in seconds, to return in the
        * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
        * header] used in preflight responses.
        * </pre>
        *
-       * <code>int32 max_age_seconds = 4;</code>
+       * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The maxAgeSeconds to set.
        * @return This builder for chaining.
@@ -2241,12 +2258,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The value, in seconds, to return in the
+       * Optional. The value, in seconds, to return in the
        * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
        * header] used in preflight responses.
        * </pre>
        *
-       * <code>int32 max_age_seconds = 4;</code>
+       * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -2330,11 +2347,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt objects
-     * inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt
+     * objects inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
-     * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The defaultKmsKey.
      */
@@ -2344,11 +2363,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt objects
-     * inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt
+     * objects inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
-     * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for defaultKmsKey.
      */
@@ -2409,11 +2430,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt objects
-     * inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt
+     * objects inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
-     * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The defaultKmsKey.
      */
@@ -2434,11 +2457,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The name of the Cloud KMS key that will be used to encrypt objects
-     * inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that will be used to encrypt
+     * objects inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
-     * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for defaultKmsKey.
      */
@@ -2806,11 +2831,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The name of the Cloud KMS key that will be used to encrypt objects
-       * inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that will be used to encrypt
+       * objects inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
-       * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+       * <code>
+       * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+       * </code>
        *
        * @return The defaultKmsKey.
        */
@@ -2830,11 +2857,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The name of the Cloud KMS key that will be used to encrypt objects
-       * inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that will be used to encrypt
+       * objects inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
-       * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+       * <code>
+       * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+       * </code>
        *
        * @return The bytes for defaultKmsKey.
        */
@@ -2854,11 +2883,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The name of the Cloud KMS key that will be used to encrypt objects
-       * inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that will be used to encrypt
+       * objects inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
-       * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+       * <code>
+       * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+       * </code>
        *
        * @param value The defaultKmsKey to set.
        * @return This builder for chaining.
@@ -2877,11 +2908,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The name of the Cloud KMS key that will be used to encrypt objects
-       * inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that will be used to encrypt
+       * objects inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
-       * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+       * <code>
+       * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+       * </code>
        *
        * @return This builder for chaining.
        */
@@ -2896,11 +2929,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The name of the Cloud KMS key that will be used to encrypt objects
-       * inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that will be used to encrypt
+       * objects inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
-       * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
+       * <code>
+       * string default_kms_key = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+       * </code>
        *
        * @param value The bytes for defaultKmsKey to set.
        * @return This builder for chaining.
@@ -2989,11 +3024,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return Whether the uniformBucketLevelAccess field is set.
@@ -3004,11 +3039,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return The uniformBucketLevelAccess.
@@ -3019,11 +3054,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccessOrBuilder
@@ -3033,11 +3068,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention. Valid values are
-     * "enforced" or "inherited".
+     * Optional. Whether IAM will enforce public access prevention. Valid values
+     * are "enforced" or "inherited".
      * </pre>
      *
-     * <code>string public_access_prevention = 3;</code>
+     * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The publicAccessPrevention.
      */
@@ -3047,11 +3082,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention. Valid values are
-     * "enforced" or "inherited".
+     * Optional. Whether IAM will enforce public access prevention. Valid values
+     * are "enforced" or "inherited".
      * </pre>
      *
-     * <code>string public_access_prevention = 3;</code>
+     * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for publicAccessPrevention.
      */
@@ -3112,10 +3147,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If set, access checks only use bucket-level IAM policies or above.
+       * Optional. If set, access checks only use bucket-level IAM policies or
+       * above.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The enabled.
        */
@@ -3125,13 +3161,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the lockTime field is set.
        */
@@ -3141,13 +3178,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The lockTime.
        */
@@ -3157,13 +3195,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       com.google.protobuf.TimestampOrBuilder getLockTimeOrBuilder();
     }
@@ -3221,10 +3260,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If set, access checks only use bucket-level IAM policies or above.
+       * Optional. If set, access checks only use bucket-level IAM policies or
+       * above.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The enabled.
        */
@@ -3240,13 +3280,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the lockTime field is set.
        */
@@ -3259,13 +3300,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The lockTime.
        */
@@ -3278,13 +3320,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The deadline time for changing
+       * Optional. The deadline time for changing
        * `iam_config.uniform_bucket_level_access.enabled` from `true` to
        * `false`. Mutable until the specified deadline is reached, but not
        * afterward.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+       * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       @java.lang.Override
       public com.google.protobuf.TimestampOrBuilder getLockTimeOrBuilder() {
@@ -3696,10 +3739,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * If set, access checks only use bucket-level IAM policies or above.
+         * Optional. If set, access checks only use bucket-level IAM policies or
+         * above.
          * </pre>
          *
-         * <code>bool enabled = 1;</code>
+         * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The enabled.
          */
@@ -3712,10 +3756,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * If set, access checks only use bucket-level IAM policies or above.
+         * Optional. If set, access checks only use bucket-level IAM policies or
+         * above.
          * </pre>
          *
-         * <code>bool enabled = 1;</code>
+         * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @param value The enabled to set.
          * @return This builder for chaining.
@@ -3732,10 +3777,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * If set, access checks only use bucket-level IAM policies or above.
+         * Optional. If set, access checks only use bucket-level IAM policies or
+         * above.
          * </pre>
          *
-         * <code>bool enabled = 1;</code>
+         * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return This builder for chaining.
          */
@@ -3757,13 +3803,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the lockTime field is set.
          */
@@ -3775,13 +3822,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The lockTime.
          */
@@ -3799,13 +3847,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setLockTime(com.google.protobuf.Timestamp value) {
           if (lockTimeBuilder_ == null) {
@@ -3825,13 +3874,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setLockTime(com.google.protobuf.Timestamp.Builder builderForValue) {
           if (lockTimeBuilder_ == null) {
@@ -3848,13 +3898,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder mergeLockTime(com.google.protobuf.Timestamp value) {
           if (lockTimeBuilder_ == null) {
@@ -3879,13 +3930,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder clearLockTime() {
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -3902,13 +3954,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.protobuf.Timestamp.Builder getLockTimeBuilder() {
           bitField0_ |= 0x00000002;
@@ -3920,13 +3973,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.protobuf.TimestampOrBuilder getLockTimeOrBuilder() {
           if (lockTimeBuilder_ != null) {
@@ -3942,13 +3996,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The deadline time for changing
+         * Optional. The deadline time for changing
          * `iam_config.uniform_bucket_level_access.enabled` from `true` to
          * `false`. Mutable until the specified deadline is reached, but not
          * afterward.
          * </pre>
          *
-         * <code>.google.protobuf.Timestamp lock_time = 2;</code>
+         * <code>.google.protobuf.Timestamp lock_time = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
                 com.google.protobuf.Timestamp,
@@ -4043,11 +4098,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return Whether the uniformBucketLevelAccess field is set.
@@ -4061,11 +4116,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      *
      * @return The uniformBucketLevelAccess.
@@ -4082,11 +4137,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Bucket restriction options currently enforced on the bucket.
+     * Optional. Bucket restriction options currently enforced on the bucket.
      * </pre>
      *
      * <code>
-     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+     * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
      * </code>
      */
     @java.lang.Override
@@ -4106,11 +4161,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention. Valid values are
-     * "enforced" or "inherited".
+     * Optional. Whether IAM will enforce public access prevention. Valid values
+     * are "enforced" or "inherited".
      * </pre>
      *
-     * <code>string public_access_prevention = 3;</code>
+     * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The publicAccessPrevention.
      */
@@ -4131,11 +4186,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention. Valid values are
-     * "enforced" or "inherited".
+     * Optional. Whether IAM will enforce public access prevention. Valid values
+     * are "enforced" or "inherited".
      * </pre>
      *
-     * <code>string public_access_prevention = 3;</code>
+     * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for publicAccessPrevention.
      */
@@ -4560,11 +4615,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        *
        * @return Whether the uniformBucketLevelAccess field is set.
@@ -4577,11 +4632,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        *
        * @return The uniformBucketLevelAccess.
@@ -4601,11 +4656,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder setUniformBucketLevelAccess(
@@ -4627,11 +4682,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder setUniformBucketLevelAccess(
@@ -4650,11 +4705,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder mergeUniformBucketLevelAccess(
@@ -4683,11 +4738,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public Builder clearUniformBucketLevelAccess() {
@@ -4705,11 +4760,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess.Builder
@@ -4723,11 +4778,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       public com.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccessOrBuilder
@@ -4745,11 +4800,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Bucket restriction options currently enforced on the bucket.
+       * Optional. Bucket restriction options currently enforced on the bucket.
        * </pre>
        *
        * <code>
-       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1;
+       * .google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccess uniform_bucket_level_access = 1 [(.google.api.field_behavior) = OPTIONAL];
        * </code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -4775,11 +4830,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention. Valid values are
-       * "enforced" or "inherited".
+       * Optional. Whether IAM will enforce public access prevention. Valid values
+       * are "enforced" or "inherited".
        * </pre>
        *
-       * <code>string public_access_prevention = 3;</code>
+       * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The publicAccessPrevention.
        */
@@ -4799,11 +4854,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention. Valid values are
-       * "enforced" or "inherited".
+       * Optional. Whether IAM will enforce public access prevention. Valid values
+       * are "enforced" or "inherited".
        * </pre>
        *
-       * <code>string public_access_prevention = 3;</code>
+       * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The bytes for publicAccessPrevention.
        */
@@ -4823,11 +4878,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention. Valid values are
-       * "enforced" or "inherited".
+       * Optional. Whether IAM will enforce public access prevention. Valid values
+       * are "enforced" or "inherited".
        * </pre>
        *
-       * <code>string public_access_prevention = 3;</code>
+       * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The publicAccessPrevention to set.
        * @return This builder for chaining.
@@ -4846,11 +4901,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention. Valid values are
-       * "enforced" or "inherited".
+       * Optional. Whether IAM will enforce public access prevention. Valid values
+       * are "enforced" or "inherited".
        * </pre>
        *
-       * <code>string public_access_prevention = 3;</code>
+       * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -4865,11 +4920,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention. Valid values are
-       * "enforced" or "inherited".
+       * Optional. Whether IAM will enforce public access prevention. Valid values
+       * are "enforced" or "inherited".
        * </pre>
        *
-       * <code>string public_access_prevention = 3;</code>
+       * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes for publicAccessPrevention to set.
        * @return This builder for chaining.
@@ -4958,11 +5013,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> getRuleList();
 
@@ -4970,11 +5027,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     com.google.storage.v2.Bucket.Lifecycle.Rule getRule(int index);
 
@@ -4982,11 +5041,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     int getRuleCount();
 
@@ -4994,11 +5055,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     java.util.List<? extends com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder>
         getRuleOrBuilderList();
@@ -5007,11 +5070,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder getRuleOrBuilder(int index);
   }
@@ -5071,10 +5136,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the action field is set.
        */
@@ -5084,10 +5151,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The action.
        */
@@ -5097,10 +5166,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       com.google.storage.v2.Bucket.Lifecycle.Rule.ActionOrBuilder getActionOrBuilder();
 
@@ -5108,10 +5179,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the condition field is set.
        */
@@ -5121,10 +5194,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The condition.
        */
@@ -5134,10 +5209,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       com.google.storage.v2.Bucket.Lifecycle.Rule.ConditionOrBuilder getConditionOrBuilder();
     }
@@ -5195,11 +5272,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-         * `AbortIncompleteMultipartUpload` are supported.
+         * Optional. Type of the action. Currently, only `Delete`,
+         * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+         * supported.
          * </pre>
          *
-         * <code>string type = 1;</code>
+         * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The type.
          */
@@ -5209,11 +5287,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-         * `AbortIncompleteMultipartUpload` are supported.
+         * Optional. Type of the action. Currently, only `Delete`,
+         * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+         * supported.
          * </pre>
          *
-         * <code>string type = 1;</code>
+         * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The bytes for type.
          */
@@ -5223,11 +5302,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Target storage class. Required iff the type of the action is
-         * SetStorageClass.
+         * Optional. Target storage class. Required iff the type of the action
+         * is SetStorageClass.
          * </pre>
          *
-         * <code>string storage_class = 2;</code>
+         * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The storageClass.
          */
@@ -5237,11 +5316,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Target storage class. Required iff the type of the action is
-         * SetStorageClass.
+         * Optional. Target storage class. Required iff the type of the action
+         * is SetStorageClass.
          * </pre>
          *
-         * <code>string storage_class = 2;</code>
+         * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The bytes for storageClass.
          */
@@ -5303,11 +5382,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-         * `AbortIncompleteMultipartUpload` are supported.
+         * Optional. Type of the action. Currently, only `Delete`,
+         * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+         * supported.
          * </pre>
          *
-         * <code>string type = 1;</code>
+         * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The type.
          */
@@ -5328,11 +5408,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-         * `AbortIncompleteMultipartUpload` are supported.
+         * Optional. Type of the action. Currently, only `Delete`,
+         * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+         * supported.
          * </pre>
          *
-         * <code>string type = 1;</code>
+         * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The bytes for type.
          */
@@ -5358,11 +5439,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Target storage class. Required iff the type of the action is
-         * SetStorageClass.
+         * Optional. Target storage class. Required iff the type of the action
+         * is SetStorageClass.
          * </pre>
          *
-         * <code>string storage_class = 2;</code>
+         * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The storageClass.
          */
@@ -5383,11 +5464,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Target storage class. Required iff the type of the action is
-         * SetStorageClass.
+         * Optional. Target storage class. Required iff the type of the action
+         * is SetStorageClass.
          * </pre>
          *
-         * <code>string storage_class = 2;</code>
+         * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
          *
          * @return The bytes for storageClass.
          */
@@ -5784,11 +5865,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-           * `AbortIncompleteMultipartUpload` are supported.
+           * Optional. Type of the action. Currently, only `Delete`,
+           * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+           * supported.
            * </pre>
            *
-           * <code>string type = 1;</code>
+           * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return The type.
            */
@@ -5808,11 +5890,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-           * `AbortIncompleteMultipartUpload` are supported.
+           * Optional. Type of the action. Currently, only `Delete`,
+           * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+           * supported.
            * </pre>
            *
-           * <code>string type = 1;</code>
+           * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return The bytes for type.
            */
@@ -5832,11 +5915,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-           * `AbortIncompleteMultipartUpload` are supported.
+           * Optional. Type of the action. Currently, only `Delete`,
+           * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+           * supported.
            * </pre>
            *
-           * <code>string type = 1;</code>
+           * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @param value The type to set.
            * @return This builder for chaining.
@@ -5855,11 +5939,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-           * `AbortIncompleteMultipartUpload` are supported.
+           * Optional. Type of the action. Currently, only `Delete`,
+           * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+           * supported.
            * </pre>
            *
-           * <code>string type = 1;</code>
+           * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return This builder for chaining.
            */
@@ -5874,11 +5959,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
-           * `AbortIncompleteMultipartUpload` are supported.
+           * Optional. Type of the action. Currently, only `Delete`,
+           * `SetStorageClass`, and `AbortIncompleteMultipartUpload` are
+           * supported.
            * </pre>
            *
-           * <code>string type = 1;</code>
+           * <code>string type = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @param value The bytes for type to set.
            * @return This builder for chaining.
@@ -5900,11 +5986,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Target storage class. Required iff the type of the action is
-           * SetStorageClass.
+           * Optional. Target storage class. Required iff the type of the action
+           * is SetStorageClass.
            * </pre>
            *
-           * <code>string storage_class = 2;</code>
+           * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return The storageClass.
            */
@@ -5924,11 +6010,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Target storage class. Required iff the type of the action is
-           * SetStorageClass.
+           * Optional. Target storage class. Required iff the type of the action
+           * is SetStorageClass.
            * </pre>
            *
-           * <code>string storage_class = 2;</code>
+           * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return The bytes for storageClass.
            */
@@ -5948,11 +6034,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Target storage class. Required iff the type of the action is
-           * SetStorageClass.
+           * Optional. Target storage class. Required iff the type of the action
+           * is SetStorageClass.
            * </pre>
            *
-           * <code>string storage_class = 2;</code>
+           * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @param value The storageClass to set.
            * @return This builder for chaining.
@@ -5971,11 +6057,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Target storage class. Required iff the type of the action is
-           * SetStorageClass.
+           * Optional. Target storage class. Required iff the type of the action
+           * is SetStorageClass.
            * </pre>
            *
-           * <code>string storage_class = 2;</code>
+           * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @return This builder for chaining.
            */
@@ -5990,11 +6076,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Target storage class. Required iff the type of the action is
-           * SetStorageClass.
+           * Optional. Target storage class. Required iff the type of the action
+           * is SetStorageClass.
            * </pre>
            *
-           * <code>string storage_class = 2;</code>
+           * <code>string storage_class = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
            *
            * @param value The bytes for storageClass to set.
            * @return This builder for chaining.
@@ -6115,11 +6201,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the createdBefore field is set.
          */
@@ -6129,11 +6216,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The createdBefore.
          */
@@ -6143,11 +6231,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         com.google.type.DateOrBuilder getCreatedBeforeOrBuilder();
 
@@ -6215,13 +6304,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesStorageClass.
          */
@@ -6231,13 +6322,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesStorageClass.
          */
@@ -6247,13 +6340,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesStorageClass at the given index.
@@ -6264,13 +6359,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesStorageClass at the given index.
@@ -6311,11 +6408,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the customTimeBefore field is set.
          */
@@ -6325,11 +6423,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The customTimeBefore.
          */
@@ -6339,11 +6438,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         com.google.type.DateOrBuilder getCustomTimeBeforeOrBuilder();
 
@@ -6385,12 +6485,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the noncurrentTimeBefore field is set.
          */
@@ -6400,12 +6502,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The noncurrentTimeBefore.
          */
@@ -6415,12 +6519,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         com.google.type.DateOrBuilder getNoncurrentTimeBeforeOrBuilder();
 
@@ -6428,11 +6534,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesPrefix.
          */
@@ -6442,11 +6549,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesPrefix.
          */
@@ -6456,11 +6564,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesPrefix at the given index.
@@ -6471,11 +6580,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesPrefix at the given index.
@@ -6486,11 +6596,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesSuffix.
          */
@@ -6500,11 +6611,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesSuffix.
          */
@@ -6514,11 +6626,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesSuffix at the given index.
@@ -6529,11 +6642,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesSuffix at the given index.
@@ -6637,11 +6751,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the createdBefore field is set.
          */
@@ -6654,11 +6769,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The createdBefore.
          */
@@ -6673,11 +6789,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is satisfied when an object is created before midnight
-         * of the specified date in UTC.
+         * Optional. This condition is satisfied when an object is created
+         * before midnight of the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date created_before = 2;</code>
+         * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         @java.lang.Override
         public com.google.type.DateOrBuilder getCreatedBeforeOrBuilder() {
@@ -6774,13 +6891,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesStorageClass.
          */
@@ -6792,13 +6911,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesStorageClass.
          */
@@ -6810,13 +6931,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesStorageClass at the given index.
@@ -6829,13 +6952,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Objects having any of the storage classes specified by this condition
-         * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * Optional. Objects having any of the storage classes specified by this
+         * condition will be matched. Values include `MULTI_REGIONAL`,
+         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
-         * <code>repeated string matches_storage_class = 5;</code>
+         * <code>
+         * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesStorageClass at the given index.
@@ -6890,11 +7015,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the customTimeBefore field is set.
          */
@@ -6907,11 +7033,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The customTimeBefore.
          */
@@ -6926,11 +7053,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * An object matches this condition if the custom timestamp set on the
-         * object is before the specified date in UTC.
+         * Optional. An object matches this condition if the custom timestamp
+         * set on the object is before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date custom_time_before = 8;</code>
+         * <code>.google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         @java.lang.Override
         public com.google.type.DateOrBuilder getCustomTimeBeforeOrBuilder() {
@@ -6989,12 +7117,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the noncurrentTimeBefore field is set.
          */
@@ -7007,12 +7137,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The noncurrentTimeBefore.
          */
@@ -7027,12 +7159,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * This condition is relevant only for versioned objects. An object
-         * version satisfies this condition only if it became noncurrent before
-         * the specified date in UTC.
+         * Optional. This condition is relevant only for versioned objects. An
+         * object version satisfies this condition only if it became noncurrent
+         * before the specified date in UTC.
          * </pre>
          *
-         * <code>.google.type.Date noncurrent_time_before = 10;</code>
+         * <code>
+         * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         @java.lang.Override
         public com.google.type.DateOrBuilder getNoncurrentTimeBeforeOrBuilder() {
@@ -7051,11 +7185,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesPrefix.
          */
@@ -7067,11 +7202,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesPrefix.
          */
@@ -7083,11 +7219,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesPrefix at the given index.
@@ -7100,11 +7237,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name prefixes. If any prefix exactly matches the
-         * beginning of the object name, the condition evaluates to true.
+         * Optional. List of object name prefixes. If any prefix exactly matches
+         * the beginning of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_prefix = 11;</code>
+         * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesPrefix at the given index.
@@ -7123,11 +7261,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return A list containing the matchesSuffix.
          */
@@ -7139,11 +7278,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The count of matchesSuffix.
          */
@@ -7155,11 +7295,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the element to return.
          * @return The matchesSuffix at the given index.
@@ -7172,11 +7313,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * List of object name suffixes. If any suffix exactly matches the
-         * end of the object name, the condition evaluates to true.
+         * Optional. List of object name suffixes. If any suffix exactly matches
+         * the end of the object name, the condition evaluates to true.
          * </pre>
          *
-         * <code>repeated string matches_suffix = 12;</code>
+         * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @param index The index of the value to return.
          * @return The bytes of the matchesSuffix at the given index.
@@ -7985,11 +8127,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return Whether the createdBefore field is set.
            */
@@ -8001,11 +8144,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The createdBefore.
            */
@@ -8023,11 +8167,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setCreatedBefore(com.google.type.Date value) {
             if (createdBeforeBuilder_ == null) {
@@ -8047,11 +8192,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setCreatedBefore(com.google.type.Date.Builder builderForValue) {
             if (createdBeforeBuilder_ == null) {
@@ -8068,11 +8214,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder mergeCreatedBefore(com.google.type.Date value) {
             if (createdBeforeBuilder_ == null) {
@@ -8097,11 +8244,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder clearCreatedBefore() {
             bitField0_ = (bitField0_ & ~0x00000002);
@@ -8118,11 +8266,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.Date.Builder getCreatedBeforeBuilder() {
             bitField0_ |= 0x00000002;
@@ -8134,11 +8283,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.DateOrBuilder getCreatedBeforeOrBuilder() {
             if (createdBeforeBuilder_ != null) {
@@ -8154,11 +8304,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is satisfied when an object is created before midnight
-           * of the specified date in UTC.
+           * Optional. This condition is satisfied when an object is created
+           * before midnight of the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date created_before = 2;</code>
+           * <code>.google.type.Date created_before = 2 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
@@ -8350,13 +8501,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return A list containing the matchesStorageClass.
            */
@@ -8369,13 +8522,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The count of matchesStorageClass.
            */
@@ -8387,13 +8542,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the element to return.
            * @return The matchesStorageClass at the given index.
@@ -8406,13 +8563,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the value to return.
            * @return The bytes of the matchesStorageClass at the given index.
@@ -8425,13 +8584,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index to set the value at.
            * @param value The matchesStorageClass to set.
@@ -8452,13 +8613,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The matchesStorageClass to add.
            * @return This builder for chaining.
@@ -8478,13 +8641,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param values The matchesStorageClass to add.
            * @return This builder for chaining.
@@ -8501,13 +8666,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return This builder for chaining.
            */
@@ -8523,13 +8690,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Objects having any of the storage classes specified by this condition
-           * will be matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
-           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * Optional. Objects having any of the storage classes specified by this
+           * condition will be matched. Values include `MULTI_REGIONAL`,
+           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
-           * <code>repeated string matches_storage_class = 5;</code>
+           * <code>
+           * repeated string matches_storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The bytes of the matchesStorageClass to add.
            * @return This builder for chaining.
@@ -8635,11 +8804,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return Whether the customTimeBefore field is set.
            */
@@ -8651,11 +8822,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The customTimeBefore.
            */
@@ -8673,11 +8846,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setCustomTimeBefore(com.google.type.Date value) {
             if (customTimeBeforeBuilder_ == null) {
@@ -8697,11 +8872,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setCustomTimeBefore(com.google.type.Date.Builder builderForValue) {
             if (customTimeBeforeBuilder_ == null) {
@@ -8718,11 +8895,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder mergeCustomTimeBefore(com.google.type.Date value) {
             if (customTimeBeforeBuilder_ == null) {
@@ -8747,11 +8926,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder clearCustomTimeBefore() {
             bitField0_ = (bitField0_ & ~0x00000040);
@@ -8768,11 +8949,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.Date.Builder getCustomTimeBeforeBuilder() {
             bitField0_ |= 0x00000040;
@@ -8784,11 +8967,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.DateOrBuilder getCustomTimeBeforeOrBuilder() {
             if (customTimeBeforeBuilder_ != null) {
@@ -8804,11 +8989,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * An object matches this condition if the custom timestamp set on the
-           * object is before the specified date in UTC.
+           * Optional. An object matches this condition if the custom timestamp
+           * set on the object is before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date custom_time_before = 8;</code>
+           * <code>
+           * .google.type.Date custom_time_before = 8 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
@@ -8922,12 +9109,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return Whether the noncurrentTimeBefore field is set.
            */
@@ -8939,12 +9128,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The noncurrentTimeBefore.
            */
@@ -8962,12 +9153,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setNoncurrentTimeBefore(com.google.type.Date value) {
             if (noncurrentTimeBeforeBuilder_ == null) {
@@ -8987,12 +9180,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder setNoncurrentTimeBefore(com.google.type.Date.Builder builderForValue) {
             if (noncurrentTimeBeforeBuilder_ == null) {
@@ -9009,12 +9204,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder mergeNoncurrentTimeBefore(com.google.type.Date value) {
             if (noncurrentTimeBeforeBuilder_ == null) {
@@ -9039,12 +9236,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public Builder clearNoncurrentTimeBefore() {
             bitField0_ = (bitField0_ & ~0x00000100);
@@ -9061,12 +9260,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.Date.Builder getNoncurrentTimeBeforeBuilder() {
             bitField0_ |= 0x00000100;
@@ -9078,12 +9279,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           public com.google.type.DateOrBuilder getNoncurrentTimeBeforeOrBuilder() {
             if (noncurrentTimeBeforeBuilder_ != null) {
@@ -9099,12 +9302,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * This condition is relevant only for versioned objects. An object
-           * version satisfies this condition only if it became noncurrent before
-           * the specified date in UTC.
+           * Optional. This condition is relevant only for versioned objects. An
+           * object version satisfies this condition only if it became noncurrent
+           * before the specified date in UTC.
            * </pre>
            *
-           * <code>.google.type.Date noncurrent_time_before = 10;</code>
+           * <code>
+           * .google.type.Date noncurrent_time_before = 10 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            */
           private com.google.protobuf.SingleFieldBuilderV3<
                   com.google.type.Date, com.google.type.Date.Builder, com.google.type.DateOrBuilder>
@@ -9135,11 +9340,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return A list containing the matchesPrefix.
            */
@@ -9152,11 +9358,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The count of matchesPrefix.
            */
@@ -9168,11 +9375,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the element to return.
            * @return The matchesPrefix at the given index.
@@ -9185,11 +9393,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the value to return.
            * @return The bytes of the matchesPrefix at the given index.
@@ -9202,11 +9411,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index to set the value at.
            * @param value The matchesPrefix to set.
@@ -9227,11 +9437,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The matchesPrefix to add.
            * @return This builder for chaining.
@@ -9251,11 +9462,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param values The matchesPrefix to add.
            * @return This builder for chaining.
@@ -9272,11 +9484,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return This builder for chaining.
            */
@@ -9292,11 +9505,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name prefixes. If any prefix exactly matches the
-           * beginning of the object name, the condition evaluates to true.
+           * Optional. List of object name prefixes. If any prefix exactly matches
+           * the beginning of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_prefix = 11;</code>
+           * <code>repeated string matches_prefix = 11 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The bytes of the matchesPrefix to add.
            * @return This builder for chaining.
@@ -9327,11 +9541,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return A list containing the matchesSuffix.
            */
@@ -9344,11 +9559,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return The count of matchesSuffix.
            */
@@ -9360,11 +9576,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the element to return.
            * @return The matchesSuffix at the given index.
@@ -9377,11 +9594,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index of the value to return.
            * @return The bytes of the matchesSuffix at the given index.
@@ -9394,11 +9612,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param index The index to set the value at.
            * @param value The matchesSuffix to set.
@@ -9419,11 +9638,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The matchesSuffix to add.
            * @return This builder for chaining.
@@ -9443,11 +9663,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param values The matchesSuffix to add.
            * @return This builder for chaining.
@@ -9464,11 +9685,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @return This builder for chaining.
            */
@@ -9484,11 +9706,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * List of object name suffixes. If any suffix exactly matches the
-           * end of the object name, the condition evaluates to true.
+           * Optional. List of object name suffixes. If any suffix exactly matches
+           * the end of the object name, the condition evaluates to true.
            * </pre>
            *
-           * <code>repeated string matches_suffix = 12;</code>
+           * <code>repeated string matches_suffix = 12 [(.google.api.field_behavior) = OPTIONAL];
+           * </code>
            *
            * @param value The bytes of the matchesSuffix to add.
            * @return This builder for chaining.
@@ -9577,10 +9800,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the action field is set.
        */
@@ -9593,10 +9818,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The action.
        */
@@ -9611,10 +9838,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The action to take.
+       * Optional. The action to take.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       @java.lang.Override
       public com.google.storage.v2.Bucket.Lifecycle.Rule.ActionOrBuilder getActionOrBuilder() {
@@ -9630,10 +9859,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the condition field is set.
        */
@@ -9646,10 +9877,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The condition.
        */
@@ -9664,10 +9897,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The condition(s) under which the action will be taken.
+       * Optional. The condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+       * <code>
+       * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       @java.lang.Override
       public com.google.storage.v2.Bucket.Lifecycle.Rule.ConditionOrBuilder
@@ -10088,10 +10323,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the action field is set.
          */
@@ -10103,10 +10340,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The action.
          */
@@ -10124,10 +10363,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setAction(com.google.storage.v2.Bucket.Lifecycle.Rule.Action value) {
           if (actionBuilder_ == null) {
@@ -10147,10 +10388,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setAction(
             com.google.storage.v2.Bucket.Lifecycle.Rule.Action.Builder builderForValue) {
@@ -10168,10 +10411,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder mergeAction(com.google.storage.v2.Bucket.Lifecycle.Rule.Action value) {
           if (actionBuilder_ == null) {
@@ -10197,10 +10442,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder clearAction() {
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -10217,10 +10464,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.storage.v2.Bucket.Lifecycle.Rule.Action.Builder getActionBuilder() {
           bitField0_ |= 0x00000001;
@@ -10232,10 +10481,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.storage.v2.Bucket.Lifecycle.Rule.ActionOrBuilder getActionOrBuilder() {
           if (actionBuilder_ != null) {
@@ -10251,10 +10502,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The action to take.
+         * Optional. The action to take.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Action action = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
                 com.google.storage.v2.Bucket.Lifecycle.Rule.Action,
@@ -10284,10 +10537,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return Whether the condition field is set.
          */
@@ -10299,10 +10554,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          *
          * @return The condition.
          */
@@ -10320,10 +10577,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setCondition(com.google.storage.v2.Bucket.Lifecycle.Rule.Condition value) {
           if (conditionBuilder_ == null) {
@@ -10343,10 +10602,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder setCondition(
             com.google.storage.v2.Bucket.Lifecycle.Rule.Condition.Builder builderForValue) {
@@ -10364,10 +10625,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder mergeCondition(com.google.storage.v2.Bucket.Lifecycle.Rule.Condition value) {
           if (conditionBuilder_ == null) {
@@ -10393,10 +10656,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public Builder clearCondition() {
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -10413,10 +10678,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.storage.v2.Bucket.Lifecycle.Rule.Condition.Builder getConditionBuilder() {
           bitField0_ |= 0x00000002;
@@ -10428,10 +10695,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         public com.google.storage.v2.Bucket.Lifecycle.Rule.ConditionOrBuilder
             getConditionOrBuilder() {
@@ -10448,10 +10717,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * The condition(s) under which the action will be taken.
+         * Optional. The condition(s) under which the action will be taken.
          * </pre>
          *
-         * <code>.google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2;</code>
+         * <code>
+         * .google.storage.v2.Bucket.Lifecycle.Rule.Condition condition = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
                 com.google.storage.v2.Bucket.Lifecycle.Rule.Condition,
@@ -10543,11 +10814,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> getRuleList() {
@@ -10558,11 +10831,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public java.util.List<? extends com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder>
@@ -10574,11 +10849,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public int getRuleCount() {
@@ -10589,11 +10866,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public com.google.storage.v2.Bucket.Lifecycle.Rule getRule(int index) {
@@ -10604,11 +10883,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A lifecycle management rule, which is made of an action to take and the
-     * condition(s) under which the action will be taken.
+     * Optional. A lifecycle management rule, which is made of an action to take
+     * and the condition(s) under which the action will be taken.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder getRuleOrBuilder(int index) {
@@ -11028,11 +11309,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule> getRuleList() {
         if (ruleBuilder_ == null) {
@@ -11046,11 +11329,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public int getRuleCount() {
         if (ruleBuilder_ == null) {
@@ -11064,11 +11349,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.storage.v2.Bucket.Lifecycle.Rule getRule(int index) {
         if (ruleBuilder_ == null) {
@@ -11082,11 +11369,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setRule(int index, com.google.storage.v2.Bucket.Lifecycle.Rule value) {
         if (ruleBuilder_ == null) {
@@ -11106,11 +11395,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setRule(
           int index, com.google.storage.v2.Bucket.Lifecycle.Rule.Builder builderForValue) {
@@ -11128,11 +11419,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder addRule(com.google.storage.v2.Bucket.Lifecycle.Rule value) {
         if (ruleBuilder_ == null) {
@@ -11152,11 +11445,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder addRule(int index, com.google.storage.v2.Bucket.Lifecycle.Rule value) {
         if (ruleBuilder_ == null) {
@@ -11176,11 +11471,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder addRule(com.google.storage.v2.Bucket.Lifecycle.Rule.Builder builderForValue) {
         if (ruleBuilder_ == null) {
@@ -11197,11 +11494,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder addRule(
           int index, com.google.storage.v2.Bucket.Lifecycle.Rule.Builder builderForValue) {
@@ -11219,11 +11518,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder addAllRule(
           java.lang.Iterable<? extends com.google.storage.v2.Bucket.Lifecycle.Rule> values) {
@@ -11241,11 +11542,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder clearRule() {
         if (ruleBuilder_ == null) {
@@ -11262,11 +11565,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder removeRule(int index) {
         if (ruleBuilder_ == null) {
@@ -11283,11 +11588,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.storage.v2.Bucket.Lifecycle.Rule.Builder getRuleBuilder(int index) {
         return getRuleFieldBuilder().getBuilder(index);
@@ -11297,11 +11604,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder getRuleOrBuilder(int index) {
         if (ruleBuilder_ == null) {
@@ -11315,11 +11624,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public java.util.List<? extends com.google.storage.v2.Bucket.Lifecycle.RuleOrBuilder>
           getRuleOrBuilderList() {
@@ -11334,11 +11645,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.storage.v2.Bucket.Lifecycle.Rule.Builder addRuleBuilder() {
         return getRuleFieldBuilder()
@@ -11349,11 +11662,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.storage.v2.Bucket.Lifecycle.Rule.Builder addRuleBuilder(int index) {
         return getRuleFieldBuilder()
@@ -11364,11 +11679,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A lifecycle management rule, which is made of an action to take and the
-       * condition(s) under which the action will be taken.
+       * Optional. A lifecycle management rule, which is made of an action to take
+       * and the condition(s) under which the action will be taken.
        * </pre>
        *
-       * <code>repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1;</code>
+       * <code>
+       * repeated .google.storage.v2.Bucket.Lifecycle.Rule rule = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public java.util.List<com.google.storage.v2.Bucket.Lifecycle.Rule.Builder>
           getRuleBuilderList() {
@@ -11465,11 +11782,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The destination bucket where the current bucket's logs should be placed,
-     * using path format (like `projects/123456/buckets/foo`).
+     * Optional. The destination bucket where the current bucket's logs should
+     * be placed, using path format (like `projects/123456/buckets/foo`).
      * </pre>
      *
-     * <code>string log_bucket = 1;</code>
+     * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The logBucket.
      */
@@ -11479,11 +11796,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The destination bucket where the current bucket's logs should be placed,
-     * using path format (like `projects/123456/buckets/foo`).
+     * Optional. The destination bucket where the current bucket's logs should
+     * be placed, using path format (like `projects/123456/buckets/foo`).
      * </pre>
      *
-     * <code>string log_bucket = 1;</code>
+     * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for logBucket.
      */
@@ -11493,10 +11810,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A prefix for log object names.
+     * Optional. A prefix for log object names.
      * </pre>
      *
-     * <code>string log_object_prefix = 2;</code>
+     * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The logObjectPrefix.
      */
@@ -11506,10 +11823,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A prefix for log object names.
+     * Optional. A prefix for log object names.
      * </pre>
      *
-     * <code>string log_object_prefix = 2;</code>
+     * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for logObjectPrefix.
      */
@@ -11571,11 +11888,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The destination bucket where the current bucket's logs should be placed,
-     * using path format (like `projects/123456/buckets/foo`).
+     * Optional. The destination bucket where the current bucket's logs should
+     * be placed, using path format (like `projects/123456/buckets/foo`).
      * </pre>
      *
-     * <code>string log_bucket = 1;</code>
+     * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The logBucket.
      */
@@ -11596,11 +11913,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The destination bucket where the current bucket's logs should be placed,
-     * using path format (like `projects/123456/buckets/foo`).
+     * Optional. The destination bucket where the current bucket's logs should
+     * be placed, using path format (like `projects/123456/buckets/foo`).
      * </pre>
      *
-     * <code>string log_bucket = 1;</code>
+     * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for logBucket.
      */
@@ -11626,10 +11943,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A prefix for log object names.
+     * Optional. A prefix for log object names.
      * </pre>
      *
-     * <code>string log_object_prefix = 2;</code>
+     * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The logObjectPrefix.
      */
@@ -11650,10 +11967,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A prefix for log object names.
+     * Optional. A prefix for log object names.
      * </pre>
      *
-     * <code>string log_object_prefix = 2;</code>
+     * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for logObjectPrefix.
      */
@@ -12045,11 +12362,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The destination bucket where the current bucket's logs should be placed,
-       * using path format (like `projects/123456/buckets/foo`).
+       * Optional. The destination bucket where the current bucket's logs should
+       * be placed, using path format (like `projects/123456/buckets/foo`).
        * </pre>
        *
-       * <code>string log_bucket = 1;</code>
+       * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The logBucket.
        */
@@ -12069,11 +12386,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The destination bucket where the current bucket's logs should be placed,
-       * using path format (like `projects/123456/buckets/foo`).
+       * Optional. The destination bucket where the current bucket's logs should
+       * be placed, using path format (like `projects/123456/buckets/foo`).
        * </pre>
        *
-       * <code>string log_bucket = 1;</code>
+       * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The bytes for logBucket.
        */
@@ -12093,11 +12410,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The destination bucket where the current bucket's logs should be placed,
-       * using path format (like `projects/123456/buckets/foo`).
+       * Optional. The destination bucket where the current bucket's logs should
+       * be placed, using path format (like `projects/123456/buckets/foo`).
        * </pre>
        *
-       * <code>string log_bucket = 1;</code>
+       * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The logBucket to set.
        * @return This builder for chaining.
@@ -12116,11 +12433,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The destination bucket where the current bucket's logs should be placed,
-       * using path format (like `projects/123456/buckets/foo`).
+       * Optional. The destination bucket where the current bucket's logs should
+       * be placed, using path format (like `projects/123456/buckets/foo`).
        * </pre>
        *
-       * <code>string log_bucket = 1;</code>
+       * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -12135,11 +12452,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The destination bucket where the current bucket's logs should be placed,
-       * using path format (like `projects/123456/buckets/foo`).
+       * Optional. The destination bucket where the current bucket's logs should
+       * be placed, using path format (like `projects/123456/buckets/foo`).
        * </pre>
        *
-       * <code>string log_bucket = 1;</code>
+       * <code>string log_bucket = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes for logBucket to set.
        * @return This builder for chaining.
@@ -12161,10 +12478,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A prefix for log object names.
+       * Optional. A prefix for log object names.
        * </pre>
        *
-       * <code>string log_object_prefix = 2;</code>
+       * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The logObjectPrefix.
        */
@@ -12184,10 +12501,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A prefix for log object names.
+       * Optional. A prefix for log object names.
        * </pre>
        *
-       * <code>string log_object_prefix = 2;</code>
+       * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The bytes for logObjectPrefix.
        */
@@ -12207,10 +12524,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A prefix for log object names.
+       * Optional. A prefix for log object names.
        * </pre>
        *
-       * <code>string log_object_prefix = 2;</code>
+       * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The logObjectPrefix to set.
        * @return This builder for chaining.
@@ -12229,10 +12546,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A prefix for log object names.
+       * Optional. A prefix for log object names.
        * </pre>
        *
-       * <code>string log_object_prefix = 2;</code>
+       * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -12247,10 +12564,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A prefix for log object names.
+       * Optional. A prefix for log object names.
        * </pre>
        *
-       * <code>string log_object_prefix = 2;</code>
+       * <code>string log_object_prefix = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes for logObjectPrefix to set.
        * @return This builder for chaining.
@@ -12339,11 +12656,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the effectiveTime field is set.
      */
@@ -12353,11 +12672,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The effectiveTime.
      */
@@ -12367,11 +12688,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
 
@@ -12379,10 +12702,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Once locked, an object retention policy cannot be modified.
+     * Optional. Once locked, an object retention policy cannot be modified.
      * </pre>
      *
-     * <code>bool is_locked = 2;</code>
+     * <code>bool is_locked = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The isLocked.
      */
@@ -12392,14 +12715,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the retentionDuration field is set.
      */
@@ -12409,14 +12734,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The retentionDuration.
      */
@@ -12426,14 +12753,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder();
   }
@@ -12489,11 +12818,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the effectiveTime field is set.
      */
@@ -12506,11 +12837,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The effectiveTime.
      */
@@ -12525,11 +12858,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Server-determined value that indicates the time from which policy was
-     * enforced and effective.
+     * Optional. Server-determined value that indicates the time from which
+     * policy was enforced and effective.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
@@ -12545,10 +12880,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Once locked, an object retention policy cannot be modified.
+     * Optional. Once locked, an object retention policy cannot be modified.
      * </pre>
      *
-     * <code>bool is_locked = 2;</code>
+     * <code>bool is_locked = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The isLocked.
      */
@@ -12564,14 +12899,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the retentionDuration field is set.
      */
@@ -12584,14 +12921,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The retentionDuration.
      */
@@ -12606,14 +12945,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration that objects need to be retained. Retention duration must be
-     * greater than zero and less than 100 years. Note that enforcement of
-     * retention periods less than a day is not guaranteed. Such periods should
-     * only be used for testing purposes. Any `nanos` value specified will be
-     * rounded down to the nearest second.
+     * Optional. The duration that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes. Any `nanos` value
+     * specified will be rounded down to the nearest second.
      * </pre>
      *
-     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     * <code>
+     * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     @java.lang.Override
     public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
@@ -13058,11 +13399,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the effectiveTime field is set.
        */
@@ -13074,11 +13417,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The effectiveTime.
        */
@@ -13096,11 +13441,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setEffectiveTime(com.google.protobuf.Timestamp value) {
         if (effectiveTimeBuilder_ == null) {
@@ -13120,11 +13467,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setEffectiveTime(com.google.protobuf.Timestamp.Builder builderForValue) {
         if (effectiveTimeBuilder_ == null) {
@@ -13141,11 +13490,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder mergeEffectiveTime(com.google.protobuf.Timestamp value) {
         if (effectiveTimeBuilder_ == null) {
@@ -13170,11 +13521,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder clearEffectiveTime() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -13191,11 +13544,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.protobuf.Timestamp.Builder getEffectiveTimeBuilder() {
         bitField0_ |= 0x00000001;
@@ -13207,11 +13562,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
         if (effectiveTimeBuilder_ != null) {
@@ -13227,11 +13584,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Server-determined value that indicates the time from which policy was
-       * enforced and effective.
+       * Optional. Server-determined value that indicates the time from which
+       * policy was enforced and effective.
        * </pre>
        *
-       * <code>.google.protobuf.Timestamp effective_time = 1;</code>
+       * <code>
+       * .google.protobuf.Timestamp effective_time = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
               com.google.protobuf.Timestamp,
@@ -13256,10 +13615,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Once locked, an object retention policy cannot be modified.
+       * Optional. Once locked, an object retention policy cannot be modified.
        * </pre>
        *
-       * <code>bool is_locked = 2;</code>
+       * <code>bool is_locked = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The isLocked.
        */
@@ -13272,10 +13631,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Once locked, an object retention policy cannot be modified.
+       * Optional. Once locked, an object retention policy cannot be modified.
        * </pre>
        *
-       * <code>bool is_locked = 2;</code>
+       * <code>bool is_locked = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The isLocked to set.
        * @return This builder for chaining.
@@ -13292,10 +13651,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Once locked, an object retention policy cannot be modified.
+       * Optional. Once locked, an object retention policy cannot be modified.
        * </pre>
        *
-       * <code>bool is_locked = 2;</code>
+       * <code>bool is_locked = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -13317,14 +13676,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return Whether the retentionDuration field is set.
        */
@@ -13336,14 +13697,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        *
        * @return The retentionDuration.
        */
@@ -13361,14 +13724,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setRetentionDuration(com.google.protobuf.Duration value) {
         if (retentionDurationBuilder_ == null) {
@@ -13388,14 +13753,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder setRetentionDuration(com.google.protobuf.Duration.Builder builderForValue) {
         if (retentionDurationBuilder_ == null) {
@@ -13412,14 +13779,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder mergeRetentionDuration(com.google.protobuf.Duration value) {
         if (retentionDurationBuilder_ == null) {
@@ -13444,14 +13813,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public Builder clearRetentionDuration() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -13468,14 +13839,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.protobuf.Duration.Builder getRetentionDurationBuilder() {
         bitField0_ |= 0x00000004;
@@ -13487,14 +13860,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
         if (retentionDurationBuilder_ != null) {
@@ -13510,14 +13885,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * The duration that objects need to be retained. Retention duration must be
-       * greater than zero and less than 100 years. Note that enforcement of
-       * retention periods less than a day is not guaranteed. Such periods should
-       * only be used for testing purposes. Any `nanos` value specified will be
-       * rounded down to the nearest second.
+       * Optional. The duration that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes. Any `nanos` value
+       * specified will be rounded down to the nearest second.
        * </pre>
        *
-       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       * <code>
+       * .google.protobuf.Duration retention_duration = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
               com.google.protobuf.Duration,
@@ -14725,10 +15102,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * While set to true, versioning is fully enabled for this bucket.
+     * Optional. While set to true, versioning is fully enabled for this bucket.
      * </pre>
      *
-     * <code>bool enabled = 1;</code>
+     * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The enabled.
      */
@@ -14787,10 +15164,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * While set to true, versioning is fully enabled for this bucket.
+     * Optional. While set to true, versioning is fully enabled for this bucket.
      * </pre>
      *
-     * <code>bool enabled = 1;</code>
+     * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The enabled.
      */
@@ -15150,10 +15527,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * While set to true, versioning is fully enabled for this bucket.
+       * Optional. While set to true, versioning is fully enabled for this bucket.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The enabled.
        */
@@ -15166,10 +15543,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * While set to true, versioning is fully enabled for this bucket.
+       * Optional. While set to true, versioning is fully enabled for this bucket.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The enabled to set.
        * @return This builder for chaining.
@@ -15186,10 +15563,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * While set to true, versioning is fully enabled for this bucket.
+       * Optional. While set to true, versioning is fully enabled for this bucket.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -15273,13 +15650,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, the service will ensure the path
-     * has a trailing '/', append this suffix, and attempt to retrieve the
-     * resulting object. This allows the creation of `index.html`
+     * Optional. If the requested object path is missing, the service will
+     * ensure the path has a trailing '/', append this suffix, and attempt to
+     * retrieve the resulting object. This allows the creation of `index.html`
      * objects to represent directory pages.
      * </pre>
      *
-     * <code>string main_page_suffix = 1;</code>
+     * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The mainPageSuffix.
      */
@@ -15289,13 +15666,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, the service will ensure the path
-     * has a trailing '/', append this suffix, and attempt to retrieve the
-     * resulting object. This allows the creation of `index.html`
+     * Optional. If the requested object path is missing, the service will
+     * ensure the path has a trailing '/', append this suffix, and attempt to
+     * retrieve the resulting object. This allows the creation of `index.html`
      * objects to represent directory pages.
      * </pre>
      *
-     * <code>string main_page_suffix = 1;</code>
+     * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for mainPageSuffix.
      */
@@ -15305,14 +15682,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, and any
+     * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
      * will return the named object from this bucket as the content for a
      * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
      * result.
      * </pre>
      *
-     * <code>string not_found_page = 2;</code>
+     * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The notFoundPage.
      */
@@ -15322,14 +15699,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, and any
+     * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
      * will return the named object from this bucket as the content for a
      * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
      * result.
      * </pre>
      *
-     * <code>string not_found_page = 2;</code>
+     * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for notFoundPage.
      */
@@ -15393,13 +15770,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, the service will ensure the path
-     * has a trailing '/', append this suffix, and attempt to retrieve the
-     * resulting object. This allows the creation of `index.html`
+     * Optional. If the requested object path is missing, the service will
+     * ensure the path has a trailing '/', append this suffix, and attempt to
+     * retrieve the resulting object. This allows the creation of `index.html`
      * objects to represent directory pages.
      * </pre>
      *
-     * <code>string main_page_suffix = 1;</code>
+     * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The mainPageSuffix.
      */
@@ -15420,13 +15797,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, the service will ensure the path
-     * has a trailing '/', append this suffix, and attempt to retrieve the
-     * resulting object. This allows the creation of `index.html`
+     * Optional. If the requested object path is missing, the service will
+     * ensure the path has a trailing '/', append this suffix, and attempt to
+     * retrieve the resulting object. This allows the creation of `index.html`
      * objects to represent directory pages.
      * </pre>
      *
-     * <code>string main_page_suffix = 1;</code>
+     * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for mainPageSuffix.
      */
@@ -15452,14 +15829,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, and any
+     * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
      * will return the named object from this bucket as the content for a
      * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
      * result.
      * </pre>
      *
-     * <code>string not_found_page = 2;</code>
+     * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The notFoundPage.
      */
@@ -15480,14 +15857,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * If the requested object path is missing, and any
+     * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
      * will return the named object from this bucket as the content for a
      * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
      * result.
      * </pre>
      *
-     * <code>string not_found_page = 2;</code>
+     * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for notFoundPage.
      */
@@ -15881,13 +16258,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, the service will ensure the path
-       * has a trailing '/', append this suffix, and attempt to retrieve the
-       * resulting object. This allows the creation of `index.html`
+       * Optional. If the requested object path is missing, the service will
+       * ensure the path has a trailing '/', append this suffix, and attempt to
+       * retrieve the resulting object. This allows the creation of `index.html`
        * objects to represent directory pages.
        * </pre>
        *
-       * <code>string main_page_suffix = 1;</code>
+       * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The mainPageSuffix.
        */
@@ -15907,13 +16284,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, the service will ensure the path
-       * has a trailing '/', append this suffix, and attempt to retrieve the
-       * resulting object. This allows the creation of `index.html`
+       * Optional. If the requested object path is missing, the service will
+       * ensure the path has a trailing '/', append this suffix, and attempt to
+       * retrieve the resulting object. This allows the creation of `index.html`
        * objects to represent directory pages.
        * </pre>
        *
-       * <code>string main_page_suffix = 1;</code>
+       * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The bytes for mainPageSuffix.
        */
@@ -15933,13 +16310,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, the service will ensure the path
-       * has a trailing '/', append this suffix, and attempt to retrieve the
-       * resulting object. This allows the creation of `index.html`
+       * Optional. If the requested object path is missing, the service will
+       * ensure the path has a trailing '/', append this suffix, and attempt to
+       * retrieve the resulting object. This allows the creation of `index.html`
        * objects to represent directory pages.
        * </pre>
        *
-       * <code>string main_page_suffix = 1;</code>
+       * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The mainPageSuffix to set.
        * @return This builder for chaining.
@@ -15958,13 +16335,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, the service will ensure the path
-       * has a trailing '/', append this suffix, and attempt to retrieve the
-       * resulting object. This allows the creation of `index.html`
+       * Optional. If the requested object path is missing, the service will
+       * ensure the path has a trailing '/', append this suffix, and attempt to
+       * retrieve the resulting object. This allows the creation of `index.html`
        * objects to represent directory pages.
        * </pre>
        *
-       * <code>string main_page_suffix = 1;</code>
+       * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -15979,13 +16356,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, the service will ensure the path
-       * has a trailing '/', append this suffix, and attempt to retrieve the
-       * resulting object. This allows the creation of `index.html`
+       * Optional. If the requested object path is missing, the service will
+       * ensure the path has a trailing '/', append this suffix, and attempt to
+       * retrieve the resulting object. This allows the creation of `index.html`
        * objects to represent directory pages.
        * </pre>
        *
-       * <code>string main_page_suffix = 1;</code>
+       * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes for mainPageSuffix to set.
        * @return This builder for chaining.
@@ -16007,14 +16384,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, and any
+       * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
        * will return the named object from this bucket as the content for a
        * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
        * result.
        * </pre>
        *
-       * <code>string not_found_page = 2;</code>
+       * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The notFoundPage.
        */
@@ -16034,14 +16411,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, and any
+       * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
        * will return the named object from this bucket as the content for a
        * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
        * result.
        * </pre>
        *
-       * <code>string not_found_page = 2;</code>
+       * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The bytes for notFoundPage.
        */
@@ -16061,14 +16438,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, and any
+       * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
        * will return the named object from this bucket as the content for a
        * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
        * result.
        * </pre>
        *
-       * <code>string not_found_page = 2;</code>
+       * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The notFoundPage to set.
        * @return This builder for chaining.
@@ -16087,14 +16464,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, and any
+       * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
        * will return the named object from this bucket as the content for a
        * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
        * result.
        * </pre>
        *
-       * <code>string not_found_page = 2;</code>
+       * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -16109,14 +16486,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * If the requested object path is missing, and any
+       * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
        * will return the named object from this bucket as the content for a
        * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
        * result.
        * </pre>
        *
-       * <code>string not_found_page = 2;</code>
+       * <code>string not_found_page = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes for notFoundPage to set.
        * @return This builder for chaining.
@@ -16205,10 +16582,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the dataLocations.
      */
@@ -16218,10 +16595,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of dataLocations.
      */
@@ -16231,10 +16608,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The dataLocations at the given index.
@@ -16245,10 +16622,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the dataLocations at the given index.
@@ -16313,10 +16690,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return A list containing the dataLocations.
      */
@@ -16328,10 +16705,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The count of dataLocations.
      */
@@ -16343,10 +16720,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the element to return.
      * @return The dataLocations at the given index.
@@ -16359,10 +16736,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Optional. List of locations to use for data placement.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the dataLocations at the given index.
@@ -16748,10 +17125,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return A list containing the dataLocations.
        */
@@ -16764,10 +17141,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The count of dataLocations.
        */
@@ -16779,10 +17156,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the element to return.
        * @return The dataLocations at the given index.
@@ -16795,10 +17172,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index of the value to return.
        * @return The bytes of the dataLocations at the given index.
@@ -16811,10 +17188,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param index The index to set the value at.
        * @param value The dataLocations to set.
@@ -16835,10 +17212,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The dataLocations to add.
        * @return This builder for chaining.
@@ -16858,10 +17235,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param values The dataLocations to add.
        * @return This builder for chaining.
@@ -16878,10 +17255,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -16897,10 +17274,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Optional. List of locations to use for data placement.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
+       * <code>repeated string data_locations = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The bytes of the dataLocations to add.
        * @return This builder for chaining.
@@ -16990,10 +17367,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Enables Autoclass.
+     * Optional. Enables Autoclass.
      * </pre>
      *
-     * <code>bool enabled = 1;</code>
+     * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The enabled.
      */
@@ -17196,10 +17573,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Enables Autoclass.
+     * Optional. Enables Autoclass.
      * </pre>
      *
-     * <code>bool enabled = 1;</code>
+     * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The enabled.
      */
@@ -17874,10 +18251,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Enables Autoclass.
+       * Optional. Enables Autoclass.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return The enabled.
        */
@@ -17890,10 +18267,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Enables Autoclass.
+       * Optional. Enables Autoclass.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @param value The enabled to set.
        * @return This builder for chaining.
@@ -17910,10 +18287,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Enables Autoclass.
+       * Optional. Enables Autoclass.
        * </pre>
        *
-       * <code>bool enabled = 1;</code>
+       * <code>bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
        *
        * @return This builder for chaining.
        */
@@ -18588,6 +18965,3965 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
+  public interface IpFilterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.IpFilter)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return Whether the mode field is set.
+     */
+    boolean hasMode();
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return The mode.
+     */
+    java.lang.String getMode();
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return The bytes for mode.
+     */
+    com.google.protobuf.ByteString getModeBytes();
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     *
+     * @return Whether the publicNetworkSource field is set.
+     */
+    boolean hasPublicNetworkSource();
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     *
+     * @return The publicNetworkSource.
+     */
+    com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource getPublicNetworkSource();
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     */
+    com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder
+        getPublicNetworkSourceOrBuilder();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+        getVpcNetworkSourcesList();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getVpcNetworkSources(int index);
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    int getVpcNetworkSourcesCount();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    java.util.List<? extends com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>
+        getVpcNetworkSourcesOrBuilderList();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder getVpcNetworkSourcesOrBuilder(
+        int index);
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Whether or not to allow VPCs from orgs different than the
+     * bucket's parent org to access the bucket. When set to true, validations
+     * on the existence of the VPCs won't be performed. If set to false, each
+     * VPC network source will be checked to belong to the same org as the
+     * bucket as well as validated for existence.
+     * </pre>
+     *
+     * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The allowCrossOrgVpcs.
+     */
+    boolean getAllowCrossOrgVpcs();
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * The [bucket IP
+   * filtering](https://cloud.google.com/storage/docs/ip-filtering-overview)
+   * configuration. Specifies the network sources that can access the bucket, as
+   * well as its underlying objects.
+   * </pre>
+   *
+   * Protobuf type {@code google.storage.v2.Bucket.IpFilter}
+   */
+  public static final class IpFilter extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.IpFilter)
+      IpFilterOrBuilder {
+    private static final long serialVersionUID = 0L;
+
+    // Use IpFilter.newBuilder() to construct.
+    private IpFilter(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private IpFilter() {
+      mode_ = "";
+      vpcNetworkSources_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new IpFilter();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_IpFilter_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_IpFilter_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.google.storage.v2.Bucket.IpFilter.class,
+              com.google.storage.v2.Bucket.IpFilter.Builder.class);
+    }
+
+    public interface PublicNetworkSourceOrBuilder
+        extends
+        // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.IpFilter.PublicNetworkSource)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return A list containing the allowedIpCidrRanges.
+       */
+      java.util.List<java.lang.String> getAllowedIpCidrRangesList();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The count of allowedIpCidrRanges.
+       */
+      int getAllowedIpCidrRangesCount();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the element to return.
+       * @return The allowedIpCidrRanges at the given index.
+       */
+      java.lang.String getAllowedIpCidrRanges(int index);
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the allowedIpCidrRanges at the given index.
+       */
+      com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * The public network IP address ranges that can access the bucket and its
+     * data.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.IpFilter.PublicNetworkSource}
+     */
+    public static final class PublicNetworkSource extends com.google.protobuf.GeneratedMessageV3
+        implements
+        // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.IpFilter.PublicNetworkSource)
+        PublicNetworkSourceOrBuilder {
+      private static final long serialVersionUID = 0L;
+
+      // Use PublicNetworkSource.newBuilder() to construct.
+      private PublicNetworkSource(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+
+      private PublicNetworkSource() {
+        allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+      }
+
+      @java.lang.Override
+      @SuppressWarnings({"unused"})
+      protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+        return new PublicNetworkSource();
+      }
+
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_PublicNetworkSource_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_PublicNetworkSource_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.class,
+                com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder.class);
+      }
+
+      public static final int ALLOWED_IP_CIDR_RANGES_FIELD_NUMBER = 1;
+
+      @SuppressWarnings("serial")
+      private com.google.protobuf.LazyStringArrayList allowedIpCidrRanges_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return A list containing the allowedIpCidrRanges.
+       */
+      public com.google.protobuf.ProtocolStringList getAllowedIpCidrRangesList() {
+        return allowedIpCidrRanges_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The count of allowedIpCidrRanges.
+       */
+      public int getAllowedIpCidrRangesCount() {
+        return allowedIpCidrRanges_.size();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the element to return.
+       * @return The allowedIpCidrRanges at the given index.
+       */
+      public java.lang.String getAllowedIpCidrRanges(int index) {
+        return allowedIpCidrRanges_.get(index);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+       * operate or access the bucket and its underlying objects.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the allowedIpCidrRanges at the given index.
+       */
+      public com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index) {
+        return allowedIpCidrRanges_.getByteString(index);
+      }
+
+      private byte memoizedIsInitialized = -1;
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+        for (int i = 0; i < allowedIpCidrRanges_.size(); i++) {
+          com.google.protobuf.GeneratedMessageV3.writeString(
+              output, 1, allowedIpCidrRanges_.getRaw(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        {
+          int dataSize = 0;
+          for (int i = 0; i < allowedIpCidrRanges_.size(); i++) {
+            dataSize += computeStringSizeNoTag(allowedIpCidrRanges_.getRaw(i));
+          }
+          size += dataSize;
+          size += 1 * getAllowedIpCidrRangesList().size();
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+          return true;
+        }
+        if (!(obj instanceof com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource)) {
+          return super.equals(obj);
+        }
+        com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource other =
+            (com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource) obj;
+
+        if (!getAllowedIpCidrRangesList().equals(other.getAllowedIpCidrRangesList())) return false;
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+        return true;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (getAllowedIpCidrRangesCount() > 0) {
+          hash = (37 * hash) + ALLOWED_IP_CIDR_RANGES_FIELD_NUMBER;
+          hash = (53 * hash) + getAllowedIpCidrRangesList().hashCode();
+        }
+        hash = (29 * hash) + getUnknownFields().hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseDelimitedFrom(
+          java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseDelimitedFrom(
+          java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() {
+        return newBuilder();
+      }
+
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+
+      public static Builder newBuilder(
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The public network IP address ranges that can access the bucket and its
+       * data.
+       * </pre>
+       *
+       * Protobuf type {@code google.storage.v2.Bucket.IpFilter.PublicNetworkSource}
+       */
+      public static final class Builder
+          extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+          implements
+          // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.IpFilter.PublicNetworkSource)
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_PublicNetworkSource_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_PublicNetworkSource_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.class,
+                  com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder.class);
+        }
+
+        // Construct using com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.newBuilder()
+        private Builder() {}
+
+        private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+        }
+
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          bitField0_ = 0;
+          allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_PublicNetworkSource_descriptor;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource
+            getDefaultInstanceForType() {
+          return com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource build() {
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource buildPartial() {
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource result =
+              new com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource(this);
+          if (bitField0_ != 0) {
+            buildPartial0(result);
+          }
+          onBuilt();
+          return result;
+        }
+
+        private void buildPartial0(
+            com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource result) {
+          int from_bitField0_ = bitField0_;
+          if (((from_bitField0_ & 0x00000001) != 0)) {
+            allowedIpCidrRanges_.makeImmutable();
+            result.allowedIpCidrRanges_ = allowedIpCidrRanges_;
+          }
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return super.clone();
+        }
+
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.setField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return super.clearField(field);
+        }
+
+        @java.lang.Override
+        public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return super.clearOneof(oneof);
+        }
+
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index,
+            java.lang.Object value) {
+          return super.setRepeatedField(field, index, value);
+        }
+
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.addRepeatedField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource) {
+            return mergeFrom((com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource) other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource other) {
+          if (other
+              == com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance())
+            return this;
+          if (!other.allowedIpCidrRanges_.isEmpty()) {
+            if (allowedIpCidrRanges_.isEmpty()) {
+              allowedIpCidrRanges_ = other.allowedIpCidrRanges_;
+              bitField0_ |= 0x00000001;
+            } else {
+              ensureAllowedIpCidrRangesIsMutable();
+              allowedIpCidrRanges_.addAll(other.allowedIpCidrRanges_);
+            }
+            onChanged();
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
+          try {
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 10:
+                  {
+                    java.lang.String s = input.readStringRequireUtf8();
+                    ensureAllowedIpCidrRangesIsMutable();
+                    allowedIpCidrRanges_.add(s);
+                    break;
+                  } // case 10
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.unwrapIOException();
+          } finally {
+            onChanged();
+          } // finally
+          return this;
+        }
+
+        private int bitField0_;
+
+        private com.google.protobuf.LazyStringArrayList allowedIpCidrRanges_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
+
+        private void ensureAllowedIpCidrRangesIsMutable() {
+          if (!allowedIpCidrRanges_.isModifiable()) {
+            allowedIpCidrRanges_ =
+                new com.google.protobuf.LazyStringArrayList(allowedIpCidrRanges_);
+          }
+          bitField0_ |= 0x00000001;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return A list containing the allowedIpCidrRanges.
+         */
+        public com.google.protobuf.ProtocolStringList getAllowedIpCidrRangesList() {
+          allowedIpCidrRanges_.makeImmutable();
+          return allowedIpCidrRanges_;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return The count of allowedIpCidrRanges.
+         */
+        public int getAllowedIpCidrRangesCount() {
+          return allowedIpCidrRanges_.size();
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index of the element to return.
+         * @return The allowedIpCidrRanges at the given index.
+         */
+        public java.lang.String getAllowedIpCidrRanges(int index) {
+          return allowedIpCidrRanges_.get(index);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the allowedIpCidrRanges at the given index.
+         */
+        public com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index) {
+          return allowedIpCidrRanges_.getByteString(index);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index to set the value at.
+         * @param value The allowedIpCidrRanges to set.
+         * @return This builder for chaining.
+         */
+        public Builder setAllowedIpCidrRanges(int index, java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.set(index, value);
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param value The allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllowedIpCidrRanges(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.add(value);
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param values The allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllAllowedIpCidrRanges(java.lang.Iterable<java.lang.String> values) {
+          ensureAllowedIpCidrRangesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, allowedIpCidrRanges_);
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearAllowedIpCidrRanges() {
+          allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          ;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to
+         * operate or access the bucket and its underlying objects.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 1 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param value The bytes of the allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllowedIpCidrRangesBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.add(value);
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+        // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.IpFilter.PublicNetworkSource)
+      }
+
+      // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.IpFilter.PublicNetworkSource)
+      private static final com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource
+          DEFAULT_INSTANCE;
+
+      static {
+        DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource();
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<PublicNetworkSource> PARSER =
+          new com.google.protobuf.AbstractParser<PublicNetworkSource>() {
+            @java.lang.Override
+            public PublicNetworkSource parsePartialFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+              Builder builder = newBuilder();
+              try {
+                builder.mergeFrom(input, extensionRegistry);
+              } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(builder.buildPartial());
+              } catch (com.google.protobuf.UninitializedMessageException e) {
+                throw e.asInvalidProtocolBufferException()
+                    .setUnfinishedMessage(builder.buildPartial());
+              } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                    .setUnfinishedMessage(builder.buildPartial());
+              }
+              return builder.buildPartial();
+            }
+          };
+
+      public static com.google.protobuf.Parser<PublicNetworkSource> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<PublicNetworkSource> getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+    }
+
+    public interface VpcNetworkSourceOrBuilder
+        extends
+        // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.IpFilter.VpcNetworkSource)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return Whether the network field is set.
+       */
+      boolean hasNetwork();
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return The network.
+       */
+      java.lang.String getNetwork();
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return The bytes for network.
+       */
+      com.google.protobuf.ByteString getNetworkBytes();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return A list containing the allowedIpCidrRanges.
+       */
+      java.util.List<java.lang.String> getAllowedIpCidrRangesList();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The count of allowedIpCidrRanges.
+       */
+      int getAllowedIpCidrRangesCount();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the element to return.
+       * @return The allowedIpCidrRanges at the given index.
+       */
+      java.lang.String getAllowedIpCidrRanges(int index);
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the allowedIpCidrRanges at the given index.
+       */
+      com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * The list of VPC networks that can access the bucket.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.IpFilter.VpcNetworkSource}
+     */
+    public static final class VpcNetworkSource extends com.google.protobuf.GeneratedMessageV3
+        implements
+        // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.IpFilter.VpcNetworkSource)
+        VpcNetworkSourceOrBuilder {
+      private static final long serialVersionUID = 0L;
+
+      // Use VpcNetworkSource.newBuilder() to construct.
+      private VpcNetworkSource(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+
+      private VpcNetworkSource() {
+        network_ = "";
+        allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+      }
+
+      @java.lang.Override
+      @SuppressWarnings({"unused"})
+      protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+        return new VpcNetworkSource();
+      }
+
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_VpcNetworkSource_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_VpcNetworkSource_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.class,
+                com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder.class);
+      }
+
+      private int bitField0_;
+      public static final int NETWORK_FIELD_NUMBER = 1;
+
+      @SuppressWarnings("serial")
+      private volatile java.lang.Object network_ = "";
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return Whether the network field is set.
+       */
+      @java.lang.Override
+      public boolean hasNetwork() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return The network.
+       */
+      @java.lang.Override
+      public java.lang.String getNetwork() {
+        java.lang.Object ref = network_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          network_ = s;
+          return s;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Name of the network.
+       *
+       * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       * </pre>
+       *
+       * <code>optional string network = 1;</code>
+       *
+       * @return The bytes for network.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getNetworkBytes() {
+        java.lang.Object ref = network_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          network_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int ALLOWED_IP_CIDR_RANGES_FIELD_NUMBER = 2;
+
+      @SuppressWarnings("serial")
+      private com.google.protobuf.LazyStringArrayList allowedIpCidrRanges_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return A list containing the allowedIpCidrRanges.
+       */
+      public com.google.protobuf.ProtocolStringList getAllowedIpCidrRangesList() {
+        return allowedIpCidrRanges_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The count of allowedIpCidrRanges.
+       */
+      public int getAllowedIpCidrRangesCount() {
+        return allowedIpCidrRanges_.size();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the element to return.
+       * @return The allowedIpCidrRanges at the given index.
+       */
+      public java.lang.String getAllowedIpCidrRanges(int index) {
+        return allowedIpCidrRanges_.get(index);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+       * can access the bucket. In the CIDR IP address block, the specified IP
+       * address must be properly truncated, meaning all the host bits must be
+       * zero or else the input is considered malformed. For example,
+       * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+       * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       * </pre>
+       *
+       * <code>repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the allowedIpCidrRanges at the given index.
+       */
+      public com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index) {
+        return allowedIpCidrRanges_.getByteString(index);
+      }
+
+      private byte memoizedIsInitialized = -1;
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+        if (((bitField0_ & 0x00000001) != 0)) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, network_);
+        }
+        for (int i = 0; i < allowedIpCidrRanges_.size(); i++) {
+          com.google.protobuf.GeneratedMessageV3.writeString(
+              output, 2, allowedIpCidrRanges_.getRaw(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, network_);
+        }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < allowedIpCidrRanges_.size(); i++) {
+            dataSize += computeStringSizeNoTag(allowedIpCidrRanges_.getRaw(i));
+          }
+          size += dataSize;
+          size += 1 * getAllowedIpCidrRangesList().size();
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+          return true;
+        }
+        if (!(obj instanceof com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource)) {
+          return super.equals(obj);
+        }
+        com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource other =
+            (com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource) obj;
+
+        if (hasNetwork() != other.hasNetwork()) return false;
+        if (hasNetwork()) {
+          if (!getNetwork().equals(other.getNetwork())) return false;
+        }
+        if (!getAllowedIpCidrRangesList().equals(other.getAllowedIpCidrRangesList())) return false;
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+        return true;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (hasNetwork()) {
+          hash = (37 * hash) + NETWORK_FIELD_NUMBER;
+          hash = (53 * hash) + getNetwork().hashCode();
+        }
+        if (getAllowedIpCidrRangesCount() > 0) {
+          hash = (37 * hash) + ALLOWED_IP_CIDR_RANGES_FIELD_NUMBER;
+          hash = (53 * hash) + getAllowedIpCidrRangesList().hashCode();
+        }
+        hash = (29 * hash) + getUnknownFields().hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseDelimitedFrom(
+          java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseDelimitedFrom(
+          java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() {
+        return newBuilder();
+      }
+
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+
+      public static Builder newBuilder(
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The list of VPC networks that can access the bucket.
+       * </pre>
+       *
+       * Protobuf type {@code google.storage.v2.Bucket.IpFilter.VpcNetworkSource}
+       */
+      public static final class Builder
+          extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+          implements
+          // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.IpFilter.VpcNetworkSource)
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_VpcNetworkSource_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_VpcNetworkSource_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.class,
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder.class);
+        }
+
+        // Construct using com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.newBuilder()
+        private Builder() {}
+
+        private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+        }
+
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          bitField0_ = 0;
+          network_ = "";
+          allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_IpFilter_VpcNetworkSource_descriptor;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getDefaultInstanceForType() {
+          return com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource build() {
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource buildPartial() {
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource result =
+              new com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource(this);
+          if (bitField0_ != 0) {
+            buildPartial0(result);
+          }
+          onBuilt();
+          return result;
+        }
+
+        private void buildPartial0(com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource result) {
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) != 0)) {
+            result.network_ = network_;
+            to_bitField0_ |= 0x00000001;
+          }
+          if (((from_bitField0_ & 0x00000002) != 0)) {
+            allowedIpCidrRanges_.makeImmutable();
+            result.allowedIpCidrRanges_ = allowedIpCidrRanges_;
+          }
+          result.bitField0_ |= to_bitField0_;
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return super.clone();
+        }
+
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.setField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return super.clearField(field);
+        }
+
+        @java.lang.Override
+        public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return super.clearOneof(oneof);
+        }
+
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index,
+            java.lang.Object value) {
+          return super.setRepeatedField(field, index, value);
+        }
+
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.addRepeatedField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource) {
+            return mergeFrom((com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource) other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource other) {
+          if (other == com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.getDefaultInstance())
+            return this;
+          if (other.hasNetwork()) {
+            network_ = other.network_;
+            bitField0_ |= 0x00000001;
+            onChanged();
+          }
+          if (!other.allowedIpCidrRanges_.isEmpty()) {
+            if (allowedIpCidrRanges_.isEmpty()) {
+              allowedIpCidrRanges_ = other.allowedIpCidrRanges_;
+              bitField0_ |= 0x00000002;
+            } else {
+              ensureAllowedIpCidrRangesIsMutable();
+              allowedIpCidrRanges_.addAll(other.allowedIpCidrRanges_);
+            }
+            onChanged();
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
+          try {
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 10:
+                  {
+                    network_ = input.readStringRequireUtf8();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 10
+                case 18:
+                  {
+                    java.lang.String s = input.readStringRequireUtf8();
+                    ensureAllowedIpCidrRangesIsMutable();
+                    allowedIpCidrRanges_.add(s);
+                    break;
+                  } // case 18
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.unwrapIOException();
+          } finally {
+            onChanged();
+          } // finally
+          return this;
+        }
+
+        private int bitField0_;
+
+        private java.lang.Object network_ = "";
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @return Whether the network field is set.
+         */
+        public boolean hasNetwork() {
+          return ((bitField0_ & 0x00000001) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @return The network.
+         */
+        public java.lang.String getNetwork() {
+          java.lang.Object ref = network_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            network_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @return The bytes for network.
+         */
+        public com.google.protobuf.ByteString getNetworkBytes() {
+          java.lang.Object ref = network_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+            network_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @param value The network to set.
+         * @return This builder for chaining.
+         */
+        public Builder setNetwork(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          network_ = value;
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearNetwork() {
+          network_ = getDefaultInstance().getNetwork();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Name of the network.
+         *
+         * Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         * </pre>
+         *
+         * <code>optional string network = 1;</code>
+         *
+         * @param value The bytes for network to set.
+         * @return This builder for chaining.
+         */
+        public Builder setNetworkBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          network_ = value;
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        private com.google.protobuf.LazyStringArrayList allowedIpCidrRanges_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
+
+        private void ensureAllowedIpCidrRangesIsMutable() {
+          if (!allowedIpCidrRanges_.isModifiable()) {
+            allowedIpCidrRanges_ =
+                new com.google.protobuf.LazyStringArrayList(allowedIpCidrRanges_);
+          }
+          bitField0_ |= 0x00000002;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return A list containing the allowedIpCidrRanges.
+         */
+        public com.google.protobuf.ProtocolStringList getAllowedIpCidrRangesList() {
+          allowedIpCidrRanges_.makeImmutable();
+          return allowedIpCidrRanges_;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return The count of allowedIpCidrRanges.
+         */
+        public int getAllowedIpCidrRangesCount() {
+          return allowedIpCidrRanges_.size();
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index of the element to return.
+         * @return The allowedIpCidrRanges at the given index.
+         */
+        public java.lang.String getAllowedIpCidrRanges(int index) {
+          return allowedIpCidrRanges_.get(index);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the allowedIpCidrRanges at the given index.
+         */
+        public com.google.protobuf.ByteString getAllowedIpCidrRangesBytes(int index) {
+          return allowedIpCidrRanges_.getByteString(index);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param index The index to set the value at.
+         * @param value The allowedIpCidrRanges to set.
+         * @return This builder for chaining.
+         */
+        public Builder setAllowedIpCidrRanges(int index, java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.set(index, value);
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param value The allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllowedIpCidrRanges(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.add(value);
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param values The allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllAllowedIpCidrRanges(java.lang.Iterable<java.lang.String> values) {
+          ensureAllowedIpCidrRangesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, allowedIpCidrRanges_);
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearAllowedIpCidrRanges() {
+          allowedIpCidrRanges_ = com.google.protobuf.LazyStringArrayList.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          ;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that
+         * can access the bucket. In the CIDR IP address block, the specified IP
+         * address must be properly truncated, meaning all the host bits must be
+         * zero or else the input is considered malformed. For example,
+         * `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for
+         * IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         * </pre>
+         *
+         * <code>
+         * repeated string allowed_ip_cidr_ranges = 2 [(.google.api.field_behavior) = OPTIONAL];
+         * </code>
+         *
+         * @param value The bytes of the allowedIpCidrRanges to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllowedIpCidrRangesBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          ensureAllowedIpCidrRangesIsMutable();
+          allowedIpCidrRanges_.add(value);
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+        // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.IpFilter.VpcNetworkSource)
+      }
+
+      // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.IpFilter.VpcNetworkSource)
+      private static final com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource DEFAULT_INSTANCE;
+
+      static {
+        DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource();
+      }
+
+      public static com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<VpcNetworkSource> PARSER =
+          new com.google.protobuf.AbstractParser<VpcNetworkSource>() {
+            @java.lang.Override
+            public VpcNetworkSource parsePartialFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+              Builder builder = newBuilder();
+              try {
+                builder.mergeFrom(input, extensionRegistry);
+              } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(builder.buildPartial());
+              } catch (com.google.protobuf.UninitializedMessageException e) {
+                throw e.asInvalidProtocolBufferException()
+                    .setUnfinishedMessage(builder.buildPartial());
+              } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                    .setUnfinishedMessage(builder.buildPartial());
+              }
+              return builder.buildPartial();
+            }
+          };
+
+      public static com.google.protobuf.Parser<VpcNetworkSource> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<VpcNetworkSource> getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+    }
+
+    private int bitField0_;
+    public static final int MODE_FIELD_NUMBER = 1;
+
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object mode_ = "";
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return Whether the mode field is set.
+     */
+    @java.lang.Override
+    public boolean hasMode() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return The mode.
+     */
+    @java.lang.Override
+    public java.lang.String getMode() {
+      java.lang.Object ref = mode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        mode_ = s;
+        return s;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * The state of the IP filter configuration. Valid values are `Enabled` and
+     * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+     * bucket and all incoming requests to the bucket are evaluated against
+     * these rules. When set to `Disabled`, IP filtering rules are not applied
+     * to a bucket.".
+     * </pre>
+     *
+     * <code>optional string mode = 1;</code>
+     *
+     * @return The bytes for mode.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getModeBytes() {
+      java.lang.Object ref = mode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        mode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PUBLIC_NETWORK_SOURCE_FIELD_NUMBER = 2;
+    private com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource publicNetworkSource_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     *
+     * @return Whether the publicNetworkSource field is set.
+     */
+    @java.lang.Override
+    public boolean hasPublicNetworkSource() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     *
+     * @return The publicNetworkSource.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource getPublicNetworkSource() {
+      return publicNetworkSource_ == null
+          ? com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance()
+          : publicNetworkSource_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Public IPs allowed to operate or access the bucket.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder
+        getPublicNetworkSourceOrBuilder() {
+      return publicNetworkSource_ == null
+          ? com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance()
+          : publicNetworkSource_;
+    }
+
+    public static final int VPC_NETWORK_SOURCES_FIELD_NUMBER = 3;
+
+    @SuppressWarnings("serial")
+    private java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+        vpcNetworkSources_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+        getVpcNetworkSourcesList() {
+      return vpcNetworkSources_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>
+        getVpcNetworkSourcesOrBuilderList() {
+      return vpcNetworkSources_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public int getVpcNetworkSourcesCount() {
+      return vpcNetworkSources_.size();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getVpcNetworkSources(int index) {
+      return vpcNetworkSources_.get(index);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The list of network sources that are allowed to access
+     * operations on the bucket or the underlying objects.
+     * </pre>
+     *
+     * <code>
+     * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder
+        getVpcNetworkSourcesOrBuilder(int index) {
+      return vpcNetworkSources_.get(index);
+    }
+
+    public static final int ALLOW_CROSS_ORG_VPCS_FIELD_NUMBER = 4;
+    private boolean allowCrossOrgVpcs_ = false;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Whether or not to allow VPCs from orgs different than the
+     * bucket's parent org to access the bucket. When set to true, validations
+     * on the existence of the VPCs won't be performed. If set to false, each
+     * VPC network source will be checked to belong to the same org as the
+     * bucket as well as validated for existence.
+     * </pre>
+     *
+     * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The allowCrossOrgVpcs.
+     */
+    @java.lang.Override
+    public boolean getAllowCrossOrgVpcs() {
+      return allowCrossOrgVpcs_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (((bitField0_ & 0x00000001) != 0)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, mode_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(2, getPublicNetworkSource());
+      }
+      for (int i = 0; i < vpcNetworkSources_.size(); i++) {
+        output.writeMessage(3, vpcNetworkSources_.get(i));
+      }
+      if (allowCrossOrgVpcs_ != false) {
+        output.writeBool(4, allowCrossOrgVpcs_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, mode_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(2, getPublicNetworkSource());
+      }
+      for (int i = 0; i < vpcNetworkSources_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(3, vpcNetworkSources_.get(i));
+      }
+      if (allowCrossOrgVpcs_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, allowCrossOrgVpcs_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.google.storage.v2.Bucket.IpFilter)) {
+        return super.equals(obj);
+      }
+      com.google.storage.v2.Bucket.IpFilter other = (com.google.storage.v2.Bucket.IpFilter) obj;
+
+      if (hasMode() != other.hasMode()) return false;
+      if (hasMode()) {
+        if (!getMode().equals(other.getMode())) return false;
+      }
+      if (hasPublicNetworkSource() != other.hasPublicNetworkSource()) return false;
+      if (hasPublicNetworkSource()) {
+        if (!getPublicNetworkSource().equals(other.getPublicNetworkSource())) return false;
+      }
+      if (!getVpcNetworkSourcesList().equals(other.getVpcNetworkSourcesList())) return false;
+      if (getAllowCrossOrgVpcs() != other.getAllowCrossOrgVpcs()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasMode()) {
+        hash = (37 * hash) + MODE_FIELD_NUMBER;
+        hash = (53 * hash) + getMode().hashCode();
+      }
+      if (hasPublicNetworkSource()) {
+        hash = (37 * hash) + PUBLIC_NETWORK_SOURCE_FIELD_NUMBER;
+        hash = (53 * hash) + getPublicNetworkSource().hashCode();
+      }
+      if (getVpcNetworkSourcesCount() > 0) {
+        hash = (37 * hash) + VPC_NETWORK_SOURCES_FIELD_NUMBER;
+        hash = (53 * hash) + getVpcNetworkSourcesList().hashCode();
+      }
+      hash = (37 * hash) + ALLOW_CROSS_ORG_VPCS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getAllowCrossOrgVpcs());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.google.storage.v2.Bucket.IpFilter prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * The [bucket IP
+     * filtering](https://cloud.google.com/storage/docs/ip-filtering-overview)
+     * configuration. Specifies the network sources that can access the bucket, as
+     * well as its underlying objects.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.IpFilter}
+     */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.IpFilter)
+        com.google.storage.v2.Bucket.IpFilterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.IpFilter.class,
+                com.google.storage.v2.Bucket.IpFilter.Builder.class);
+      }
+
+      // Construct using com.google.storage.v2.Bucket.IpFilter.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getPublicNetworkSourceFieldBuilder();
+          getVpcNetworkSourcesFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        mode_ = "";
+        publicNetworkSource_ = null;
+        if (publicNetworkSourceBuilder_ != null) {
+          publicNetworkSourceBuilder_.dispose();
+          publicNetworkSourceBuilder_ = null;
+        }
+        if (vpcNetworkSourcesBuilder_ == null) {
+          vpcNetworkSources_ = java.util.Collections.emptyList();
+        } else {
+          vpcNetworkSources_ = null;
+          vpcNetworkSourcesBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        allowCrossOrgVpcs_ = false;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_IpFilter_descriptor;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.IpFilter getDefaultInstanceForType() {
+        return com.google.storage.v2.Bucket.IpFilter.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.IpFilter build() {
+        com.google.storage.v2.Bucket.IpFilter result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.IpFilter buildPartial() {
+        com.google.storage.v2.Bucket.IpFilter result =
+            new com.google.storage.v2.Bucket.IpFilter(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(com.google.storage.v2.Bucket.IpFilter result) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            vpcNetworkSources_ = java.util.Collections.unmodifiableList(vpcNetworkSources_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.vpcNetworkSources_ = vpcNetworkSources_;
+        } else {
+          result.vpcNetworkSources_ = vpcNetworkSourcesBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(com.google.storage.v2.Bucket.IpFilter result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.mode_ = mode_;
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.publicNetworkSource_ =
+              publicNetworkSourceBuilder_ == null
+                  ? publicNetworkSource_
+                  : publicNetworkSourceBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.allowCrossOrgVpcs_ = allowCrossOrgVpcs_;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.storage.v2.Bucket.IpFilter) {
+          return mergeFrom((com.google.storage.v2.Bucket.IpFilter) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.google.storage.v2.Bucket.IpFilter other) {
+        if (other == com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()) return this;
+        if (other.hasMode()) {
+          mode_ = other.mode_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.hasPublicNetworkSource()) {
+          mergePublicNetworkSource(other.getPublicNetworkSource());
+        }
+        if (vpcNetworkSourcesBuilder_ == null) {
+          if (!other.vpcNetworkSources_.isEmpty()) {
+            if (vpcNetworkSources_.isEmpty()) {
+              vpcNetworkSources_ = other.vpcNetworkSources_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureVpcNetworkSourcesIsMutable();
+              vpcNetworkSources_.addAll(other.vpcNetworkSources_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vpcNetworkSources_.isEmpty()) {
+            if (vpcNetworkSourcesBuilder_.isEmpty()) {
+              vpcNetworkSourcesBuilder_.dispose();
+              vpcNetworkSourcesBuilder_ = null;
+              vpcNetworkSources_ = other.vpcNetworkSources_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              vpcNetworkSourcesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVpcNetworkSourcesFieldBuilder()
+                      : null;
+            } else {
+              vpcNetworkSourcesBuilder_.addAllMessages(other.vpcNetworkSources_);
+            }
+          }
+        }
+        if (other.getAllowCrossOrgVpcs() != false) {
+          setAllowCrossOrgVpcs(other.getAllowCrossOrgVpcs());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10:
+                {
+                  mode_ = input.readStringRequireUtf8();
+                  bitField0_ |= 0x00000001;
+                  break;
+                } // case 10
+              case 18:
+                {
+                  input.readMessage(
+                      getPublicNetworkSourceFieldBuilder().getBuilder(), extensionRegistry);
+                  bitField0_ |= 0x00000002;
+                  break;
+                } // case 18
+              case 26:
+                {
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource m =
+                      input.readMessage(
+                          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.parser(),
+                          extensionRegistry);
+                  if (vpcNetworkSourcesBuilder_ == null) {
+                    ensureVpcNetworkSourcesIsMutable();
+                    vpcNetworkSources_.add(m);
+                  } else {
+                    vpcNetworkSourcesBuilder_.addMessage(m);
+                  }
+                  break;
+                } // case 26
+              case 32:
+                {
+                  allowCrossOrgVpcs_ = input.readBool();
+                  bitField0_ |= 0x00000008;
+                  break;
+                } // case 32
+              default:
+                {
+                  if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                    done = true; // was an endgroup tag
+                  }
+                  break;
+                } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.lang.Object mode_ = "";
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @return Whether the mode field is set.
+       */
+      public boolean hasMode() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @return The mode.
+       */
+      public java.lang.String getMode() {
+        java.lang.Object ref = mode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          mode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @return The bytes for mode.
+       */
+      public com.google.protobuf.ByteString getModeBytes() {
+        java.lang.Object ref = mode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          mode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @param value The mode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        mode_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMode() {
+        mode_ = getDefaultInstance().getMode();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * The state of the IP filter configuration. Valid values are `Enabled` and
+       * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
+       * bucket and all incoming requests to the bucket are evaluated against
+       * these rules. When set to `Disabled`, IP filtering rules are not applied
+       * to a bucket.".
+       * </pre>
+       *
+       * <code>optional string mode = 1;</code>
+       *
+       * @param value The bytes for mode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setModeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+        mode_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource publicNetworkSource_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource,
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder,
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder>
+          publicNetworkSourceBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       *
+       * @return Whether the publicNetworkSource field is set.
+       */
+      public boolean hasPublicNetworkSource() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       *
+       * @return The publicNetworkSource.
+       */
+      public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource getPublicNetworkSource() {
+        if (publicNetworkSourceBuilder_ == null) {
+          return publicNetworkSource_ == null
+              ? com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance()
+              : publicNetworkSource_;
+        } else {
+          return publicNetworkSourceBuilder_.getMessage();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public Builder setPublicNetworkSource(
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource value) {
+        if (publicNetworkSourceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          publicNetworkSource_ = value;
+        } else {
+          publicNetworkSourceBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public Builder setPublicNetworkSource(
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder builderForValue) {
+        if (publicNetworkSourceBuilder_ == null) {
+          publicNetworkSource_ = builderForValue.build();
+        } else {
+          publicNetworkSourceBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public Builder mergePublicNetworkSource(
+          com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource value) {
+        if (publicNetworkSourceBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)
+              && publicNetworkSource_ != null
+              && publicNetworkSource_
+                  != com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource
+                      .getDefaultInstance()) {
+            getPublicNetworkSourceBuilder().mergeFrom(value);
+          } else {
+            publicNetworkSource_ = value;
+          }
+        } else {
+          publicNetworkSourceBuilder_.mergeFrom(value);
+        }
+        if (publicNetworkSource_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public Builder clearPublicNetworkSource() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        publicNetworkSource_ = null;
+        if (publicNetworkSourceBuilder_ != null) {
+          publicNetworkSourceBuilder_.dispose();
+          publicNetworkSourceBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder
+          getPublicNetworkSourceBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getPublicNetworkSourceFieldBuilder().getBuilder();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder
+          getPublicNetworkSourceOrBuilder() {
+        if (publicNetworkSourceBuilder_ != null) {
+          return publicNetworkSourceBuilder_.getMessageOrBuilder();
+        } else {
+          return publicNetworkSource_ == null
+              ? com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.getDefaultInstance()
+              : publicNetworkSource_;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Public IPs allowed to operate or access the bucket.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.IpFilter.PublicNetworkSource public_network_source = 2;
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource,
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder,
+              com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder>
+          getPublicNetworkSourceFieldBuilder() {
+        if (publicNetworkSourceBuilder_ == null) {
+          publicNetworkSourceBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource,
+                  com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource.Builder,
+                  com.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceOrBuilder>(
+                  getPublicNetworkSource(), getParentForChildren(), isClean());
+          publicNetworkSource_ = null;
+        }
+        return publicNetworkSourceBuilder_;
+      }
+
+      private java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+          vpcNetworkSources_ = java.util.Collections.emptyList();
+
+      private void ensureVpcNetworkSourcesIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          vpcNetworkSources_ =
+              new java.util.ArrayList<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>(
+                  vpcNetworkSources_);
+          bitField0_ |= 0x00000004;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource,
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder,
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>
+          vpcNetworkSourcesBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+          getVpcNetworkSourcesList() {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vpcNetworkSources_);
+        } else {
+          return vpcNetworkSourcesBuilder_.getMessageList();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public int getVpcNetworkSourcesCount() {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          return vpcNetworkSources_.size();
+        } else {
+          return vpcNetworkSourcesBuilder_.getCount();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource getVpcNetworkSources(
+          int index) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          return vpcNetworkSources_.get(index);
+        } else {
+          return vpcNetworkSourcesBuilder_.getMessage(index);
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setVpcNetworkSources(
+          int index, com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource value) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.set(index, value);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setVpcNetworkSources(
+          int index,
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder builderForValue) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder addVpcNetworkSources(
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource value) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.add(value);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder addVpcNetworkSources(
+          int index, com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource value) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.add(index, value);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder addVpcNetworkSources(
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder builderForValue) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder addVpcNetworkSources(
+          int index,
+          com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder builderForValue) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder addAllVpcNetworkSources(
+          java.lang.Iterable<? extends com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource>
+              values) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          ensureVpcNetworkSourcesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vpcNetworkSources_);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder clearVpcNetworkSources() {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          vpcNetworkSources_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.clear();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder removeVpcNetworkSources(int index) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          ensureVpcNetworkSourcesIsMutable();
+          vpcNetworkSources_.remove(index);
+          onChanged();
+        } else {
+          vpcNetworkSourcesBuilder_.remove(index);
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder
+          getVpcNetworkSourcesBuilder(int index) {
+        return getVpcNetworkSourcesFieldBuilder().getBuilder(index);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder
+          getVpcNetworkSourcesOrBuilder(int index) {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          return vpcNetworkSources_.get(index);
+        } else {
+          return vpcNetworkSourcesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public java.util.List<
+              ? extends com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>
+          getVpcNetworkSourcesOrBuilderList() {
+        if (vpcNetworkSourcesBuilder_ != null) {
+          return vpcNetworkSourcesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vpcNetworkSources_);
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder
+          addVpcNetworkSourcesBuilder() {
+        return getVpcNetworkSourcesFieldBuilder()
+            .addBuilder(
+                com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.getDefaultInstance());
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder
+          addVpcNetworkSourcesBuilder(int index) {
+        return getVpcNetworkSourcesFieldBuilder()
+            .addBuilder(
+                index, com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.getDefaultInstance());
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. The list of network sources that are allowed to access
+       * operations on the bucket or the underlying objects.
+       * </pre>
+       *
+       * <code>
+       * repeated .google.storage.v2.Bucket.IpFilter.VpcNetworkSource vpc_network_sources = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public java.util.List<com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder>
+          getVpcNetworkSourcesBuilderList() {
+        return getVpcNetworkSourcesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource,
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder,
+              com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>
+          getVpcNetworkSourcesFieldBuilder() {
+        if (vpcNetworkSourcesBuilder_ == null) {
+          vpcNetworkSourcesBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource,
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource.Builder,
+                  com.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceOrBuilder>(
+                  vpcNetworkSources_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vpcNetworkSources_ = null;
+        }
+        return vpcNetworkSourcesBuilder_;
+      }
+
+      private boolean allowCrossOrgVpcs_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Whether or not to allow VPCs from orgs different than the
+       * bucket's parent org to access the bucket. When set to true, validations
+       * on the existence of the VPCs won't be performed. If set to false, each
+       * VPC network source will be checked to belong to the same org as the
+       * bucket as well as validated for existence.
+       * </pre>
+       *
+       * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+       *
+       * @return The allowCrossOrgVpcs.
+       */
+      @java.lang.Override
+      public boolean getAllowCrossOrgVpcs() {
+        return allowCrossOrgVpcs_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Whether or not to allow VPCs from orgs different than the
+       * bucket's parent org to access the bucket. When set to true, validations
+       * on the existence of the VPCs won't be performed. If set to false, each
+       * VPC network source will be checked to belong to the same org as the
+       * bucket as well as validated for existence.
+       * </pre>
+       *
+       * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+       *
+       * @param value The allowCrossOrgVpcs to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAllowCrossOrgVpcs(boolean value) {
+
+        allowCrossOrgVpcs_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Whether or not to allow VPCs from orgs different than the
+       * bucket's parent org to access the bucket. When set to true, validations
+       * on the existence of the VPCs won't be performed. If set to false, each
+       * VPC network source will be checked to belong to the same org as the
+       * bucket as well as validated for existence.
+       * </pre>
+       *
+       * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAllowCrossOrgVpcs() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        allowCrossOrgVpcs_ = false;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.IpFilter)
+    }
+
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.IpFilter)
+    private static final com.google.storage.v2.Bucket.IpFilter DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.IpFilter();
+    }
+
+    public static com.google.storage.v2.Bucket.IpFilter getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<IpFilter> PARSER =
+        new com.google.protobuf.AbstractParser<IpFilter>() {
+          @java.lang.Override
+          public IpFilter parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            Builder builder = newBuilder();
+            try {
+              builder.mergeFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+              throw e.setUnfinishedMessage(builder.buildPartial());
+            } catch (com.google.protobuf.UninitializedMessageException e) {
+              throw e.asInvalidProtocolBufferException()
+                  .setUnfinishedMessage(builder.buildPartial());
+            } catch (java.io.IOException e) {
+              throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                  .setUnfinishedMessage(builder.buildPartial());
+            }
+            return builder.buildPartial();
+          }
+        };
+
+    public static com.google.protobuf.Parser<IpFilter> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<IpFilter> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.IpFilter getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface HierarchicalNamespaceOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.HierarchicalNamespace)
@@ -19144,11 +23480,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The name of the bucket.
+   * Identifier. The name of the bucket.
    * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
-   * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
    *
    * @return The name.
    */
@@ -19169,11 +23505,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The name of the bucket.
+   * Identifier. The name of the bucket.
    * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
-   * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
    *
    * @return The bytes for name.
    */
@@ -19316,6 +23652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Immutable. The project which owns this bucket, in the format of
    * "projects/{projectIdentifier}".
    * {projectIdentifier} can be the project ID or project number.
+   * Output values will always be in project number format.
    * </pre>
    *
    * <code>
@@ -19344,6 +23681,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Immutable. The project which owns this bucket, in the format of
    * "projects/{projectIdentifier}".
    * {projectIdentifier} can be the project ID or project number.
+   * Output values will always be in project number format.
    * </pre>
    *
    * <code>
@@ -19511,15 +23849,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's default storage class, used whenever no storageClass is
-   * specified for a newly-created object. This defines how objects in the
+   * Optional. The bucket's default storage class, used whenever no storageClass
+   * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
    * If this value is not specified when the bucket is created, it will default
    * to `STANDARD`. For more information, see
    * https://developers.google.com/storage/docs/storage-classes.
    * </pre>
    *
-   * <code>string storage_class = 7;</code>
+   * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The storageClass.
    */
@@ -19540,15 +23878,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's default storage class, used whenever no storageClass is
-   * specified for a newly-created object. This defines how objects in the
+   * Optional. The bucket's default storage class, used whenever no storageClass
+   * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
    * If this value is not specified when the bucket is created, it will default
    * to `STANDARD`. For more information, see
    * https://developers.google.com/storage/docs/storage-classes.
    * </pre>
    *
-   * <code>string storage_class = 7;</code>
+   * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for storageClass.
    */
@@ -19574,15 +23912,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The recovery point objective for cross-region replication of the bucket.
-   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-   * buckets only. If rpo is not specified when the bucket is created, it
-   * defaults to "DEFAULT". For more information, see
+   * Optional. The recovery point objective for cross-region replication of the
+   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * dual-region buckets only. If rpo is not specified when the bucket is
+   * created, it defaults to "DEFAULT". For more information, see
    * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
-   * <code>string rpo = 27;</code>
+   * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The rpo.
    */
@@ -19603,15 +23941,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The recovery point objective for cross-region replication of the bucket.
-   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-   * buckets only. If rpo is not specified when the bucket is created, it
-   * defaults to "DEFAULT". For more information, see
+   * Optional. The recovery point objective for cross-region replication of the
+   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * dual-region buckets only. If rpo is not specified when the bucket is
+   * created, it defaults to "DEFAULT". For more information, see
    * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
-   * <code>string rpo = 27;</code>
+   * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for rpo.
    */
@@ -19637,12 +23975,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.BucketAccessControl> getAclList() {
@@ -19653,12 +23993,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.BucketAccessControlOrBuilder>
@@ -19670,12 +24012,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getAclCount() {
@@ -19686,12 +24030,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.BucketAccessControl getAcl(int index) {
@@ -19702,12 +24048,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.BucketAccessControlOrBuilder getAclOrBuilder(int index) {
@@ -19723,12 +24071,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.ObjectAccessControl> getDefaultObjectAclList() {
@@ -19739,12 +24089,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
@@ -19756,12 +24108,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getDefaultObjectAclCount() {
@@ -19772,12 +24126,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectAccessControl getDefaultObjectAcl(int index) {
@@ -19788,12 +24144,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectAccessControlOrBuilder getDefaultObjectAclOrBuilder(
@@ -19808,12 +24166,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the lifecycle field is set.
    */
@@ -19826,12 +24186,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The lifecycle.
    */
@@ -19846,12 +24208,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.LifecycleOrBuilder getLifecycleOrBuilder() {
@@ -19921,11 +24285,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<com.google.storage.v2.Bucket.Cors> getCorsList() {
@@ -19936,11 +24302,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public java.util.List<? extends com.google.storage.v2.Bucket.CorsOrBuilder>
@@ -19952,11 +24320,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public int getCorsCount() {
@@ -19967,11 +24337,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.Cors getCors(int index) {
@@ -19982,11 +24354,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.CorsOrBuilder getCorsOrBuilder(int index) {
@@ -20052,22 +24426,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The default value for event-based hold on newly created objects in this
-   * bucket.  Event-based hold is a way to retain objects indefinitely until an
-   * event occurs, signified by the
-   * hold's release. After being released, such objects will be subject to
-   * bucket-level retention (if any).  One sample use case of this flag is for
-   * banks to hold loan documents for at least 3 years after loan is paid in
-   * full. Here, bucket-level retention is 3 years and the event is loan being
-   * paid in full. In this example, these objects will be held intact for any
-   * number of years until the event has occurred (event-based hold on the
-   * object is released) and then 3 more years after that. That means retention
-   * duration of the objects begins from the moment event-based hold
-   * transitioned from true to false.  Objects under event-based hold cannot be
-   * deleted, overwritten or archived until the hold is removed.
+   * Optional. The default value for event-based hold on newly created objects
+   * in this bucket.  Event-based hold is a way to retain objects indefinitely
+   * until an event occurs, signified by the hold's release. After being
+   * released, such objects will be subject to bucket-level retention (if any).
+   * One sample use case of this flag is for banks to hold loan documents for at
+   * least 3 years after loan is paid in full. Here, bucket-level retention is 3
+   * years and the event is loan being paid in full. In this example, these
+   * objects will be held intact for any number of years until the event has
+   * occurred (event-based hold on the object is released) and then 3 more years
+   * after that. That means retention duration of the objects begins from the
+   * moment event-based hold transitioned from true to false.  Objects under
+   * event-based hold cannot be deleted, overwritten or archived until the hold
+   * is removed.
    * </pre>
    *
-   * <code>bool default_event_based_hold = 14;</code>
+   * <code>bool default_event_based_hold = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The defaultEventBasedHold.
    */
@@ -20107,10 +24481,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public boolean containsLabels(java.lang.String key) {
@@ -20131,10 +24505,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public java.util.Map<java.lang.String, java.lang.String> getLabelsMap() {
@@ -20145,10 +24519,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public /* nullable */ java.lang.String getLabelsOrDefault(
@@ -20166,10 +24540,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   @java.lang.Override
   public java.lang.String getLabelsOrThrow(java.lang.String key) {
@@ -20190,13 +24564,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the website field is set.
    */
@@ -20209,13 +24584,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The website.
    */
@@ -20228,13 +24604,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.WebsiteOrBuilder getWebsiteOrBuilder() {
@@ -20248,10 +24625,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the versioning field is set.
    */
@@ -20264,10 +24643,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The versioning.
    */
@@ -20282,10 +24663,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.VersioningOrBuilder getVersioningOrBuilder() {
@@ -20301,11 +24684,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the logging field is set.
    */
@@ -20318,11 +24702,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The logging.
    */
@@ -20335,11 +24720,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.LoggingOrBuilder getLoggingOrBuilder() {
@@ -20405,10 +24791,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the encryption field is set.
    */
@@ -20421,10 +24809,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The encryption.
    */
@@ -20439,10 +24829,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.EncryptionOrBuilder getEncryptionOrBuilder() {
@@ -20458,10 +24850,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the billing field is set.
    */
@@ -20474,10 +24867,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The billing.
    */
@@ -20490,10 +24884,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.BillingOrBuilder getBillingOrBuilder() {
@@ -20507,18 +24902,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the retentionPolicy field is set.
    */
@@ -20531,18 +24928,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The retentionPolicy.
    */
@@ -20557,18 +24956,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.RetentionPolicyOrBuilder getRetentionPolicyOrBuilder() {
@@ -20584,10 +24985,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the iamConfig field is set.
    */
@@ -20600,10 +25003,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The iamConfig.
    */
@@ -20618,10 +25023,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.IamConfigOrBuilder getIamConfigOrBuilder() {
@@ -20637,10 +25044,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Reserved for future use.
+   * Optional. Reserved for future use.
    * </pre>
    *
-   * <code>bool satisfies_pzs = 25;</code>
+   * <code>bool satisfies_pzs = 25 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The satisfiesPzs.
    */
@@ -20656,12 +25063,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customPlacementConfig field is set.
    */
@@ -20674,12 +25084,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customPlacementConfig.
    */
@@ -20694,12 +25107,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
@@ -20716,11 +25132,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the autoclass field is set.
    */
@@ -20733,11 +25152,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The autoclass.
    */
@@ -20752,11 +25174,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder() {
@@ -20893,6 +25318,65 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         : softDeletePolicy_;
   }
 
+  public static final int IP_FILTER_FIELD_NUMBER = 38;
+  private com.google.storage.v2.Bucket.IpFilter ipFilter_;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the ipFilter field is set.
+   */
+  @java.lang.Override
+  public boolean hasIpFilter() {
+    return ((bitField0_ & 0x00008000) != 0);
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The ipFilter.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.IpFilter getIpFilter() {
+    return ipFilter_ == null
+        ? com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()
+        : ipFilter_;
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.IpFilterOrBuilder getIpFilterOrBuilder() {
+    return ipFilter_ == null
+        ? com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()
+        : ipFilter_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -20995,6 +25479,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
     if (((bitField0_ & 0x00002000) != 0)) {
       output.writeMessage(32, getHierarchicalNamespace());
+    }
+    if (((bitField0_ & 0x00008000) != 0)) {
+      output.writeMessage(38, getIpFilter());
     }
     getUnknownFields().writeTo(output);
   }
@@ -21104,6 +25591,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       size +=
           com.google.protobuf.CodedOutputStream.computeMessageSize(32, getHierarchicalNamespace());
     }
+    if (((bitField0_ & 0x00008000) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(38, getIpFilter());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -21193,6 +25683,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasSoftDeletePolicy() != other.hasSoftDeletePolicy()) return false;
     if (hasSoftDeletePolicy()) {
       if (!getSoftDeletePolicy().equals(other.getSoftDeletePolicy())) return false;
+    }
+    if (hasIpFilter() != other.hasIpFilter()) return false;
+    if (hasIpFilter()) {
+      if (!getIpFilter().equals(other.getIpFilter())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -21302,6 +25796,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasSoftDeletePolicy()) {
       hash = (37 * hash) + SOFT_DELETE_POLICY_FIELD_NUMBER;
       hash = (53 * hash) + getSoftDeletePolicy().hashCode();
+    }
+    if (hasIpFilter()) {
+      hash = (37 * hash) + IP_FILTER_FIELD_NUMBER;
+      hash = (53 * hash) + getIpFilter().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -21481,6 +25979,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         getAutoclassFieldBuilder();
         getHierarchicalNamespaceFieldBuilder();
         getSoftDeletePolicyFieldBuilder();
+        getIpFilterFieldBuilder();
       }
     }
 
@@ -21595,6 +26094,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (softDeletePolicyBuilder_ != null) {
         softDeletePolicyBuilder_.dispose();
         softDeletePolicyBuilder_ = null;
+      }
+      ipFilter_ = null;
+      if (ipFilterBuilder_ != null) {
+        ipFilterBuilder_.dispose();
+        ipFilterBuilder_ = null;
       }
       return this;
     }
@@ -21766,6 +26270,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         result.softDeletePolicy_ =
             softDeletePolicyBuilder_ == null ? softDeletePolicy_ : softDeletePolicyBuilder_.build();
         to_bitField0_ |= 0x00004000;
+      }
+      if (((from_bitField0_ & 0x40000000) != 0)) {
+        result.ipFilter_ = ipFilterBuilder_ == null ? ipFilter_ : ipFilterBuilder_.build();
+        to_bitField0_ |= 0x00008000;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -21991,6 +26499,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.hasSoftDeletePolicy()) {
         mergeSoftDeletePolicy(other.getSoftDeletePolicy());
+      }
+      if (other.hasIpFilter()) {
+        mergeIpFilter(other.getIpFilter());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -22228,6 +26739,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 bitField0_ |= 0x10000000;
                 break;
               } // case 258
+            case 306:
+              {
+                input.readMessage(getIpFilterFieldBuilder().getBuilder(), extensionRegistry);
+                bitField0_ |= 0x40000000;
+                break;
+              } // case 306
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -22253,11 +26770,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of the bucket.
+     * Identifier. The name of the bucket.
      * Format: `projects/{project}/buckets/{bucket}`
      * </pre>
      *
-     * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
      *
      * @return The name.
      */
@@ -22277,11 +26794,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of the bucket.
+     * Identifier. The name of the bucket.
      * Format: `projects/{project}/buckets/{bucket}`
      * </pre>
      *
-     * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
      *
      * @return The bytes for name.
      */
@@ -22301,11 +26818,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of the bucket.
+     * Identifier. The name of the bucket.
      * Format: `projects/{project}/buckets/{bucket}`
      * </pre>
      *
-     * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
      *
      * @param value The name to set.
      * @return This builder for chaining.
@@ -22324,11 +26841,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of the bucket.
+     * Identifier. The name of the bucket.
      * Format: `projects/{project}/buckets/{bucket}`
      * </pre>
      *
-     * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
      *
      * @return This builder for chaining.
      */
@@ -22343,11 +26860,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of the bucket.
+     * Identifier. The name of the bucket.
      * Format: `projects/{project}/buckets/{bucket}`
      * </pre>
      *
-     * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
      *
      * @param value The bytes for name to set.
      * @return This builder for chaining.
@@ -22614,6 +27131,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Immutable. The project which owns this bucket, in the format of
      * "projects/{projectIdentifier}".
      * {projectIdentifier} can be the project ID or project number.
+     * Output values will always be in project number format.
      * </pre>
      *
      * <code>
@@ -22641,6 +27159,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Immutable. The project which owns this bucket, in the format of
      * "projects/{projectIdentifier}".
      * {projectIdentifier} can be the project ID or project number.
+     * Output values will always be in project number format.
      * </pre>
      *
      * <code>
@@ -22668,6 +27187,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Immutable. The project which owns this bucket, in the format of
      * "projects/{projectIdentifier}".
      * {projectIdentifier} can be the project ID or project number.
+     * Output values will always be in project number format.
      * </pre>
      *
      * <code>
@@ -22694,6 +27214,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Immutable. The project which owns this bucket, in the format of
      * "projects/{projectIdentifier}".
      * {projectIdentifier} can be the project ID or project number.
+     * Output values will always be in project number format.
      * </pre>
      *
      * <code>
@@ -22716,6 +27237,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Immutable. The project which owns this bucket, in the format of
      * "projects/{projectIdentifier}".
      * {projectIdentifier} can be the project ID or project number.
+     * Output values will always be in project number format.
      * </pre>
      *
      * <code>
@@ -23050,15 +27572,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's default storage class, used whenever no storageClass is
-     * specified for a newly-created object. This defines how objects in the
+     * Optional. The bucket's default storage class, used whenever no storageClass
+     * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
      * If this value is not specified when the bucket is created, it will default
      * to `STANDARD`. For more information, see
      * https://developers.google.com/storage/docs/storage-classes.
      * </pre>
      *
-     * <code>string storage_class = 7;</code>
+     * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The storageClass.
      */
@@ -23078,15 +27600,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's default storage class, used whenever no storageClass is
-     * specified for a newly-created object. This defines how objects in the
+     * Optional. The bucket's default storage class, used whenever no storageClass
+     * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
      * If this value is not specified when the bucket is created, it will default
      * to `STANDARD`. For more information, see
      * https://developers.google.com/storage/docs/storage-classes.
      * </pre>
      *
-     * <code>string storage_class = 7;</code>
+     * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for storageClass.
      */
@@ -23106,15 +27628,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's default storage class, used whenever no storageClass is
-     * specified for a newly-created object. This defines how objects in the
+     * Optional. The bucket's default storage class, used whenever no storageClass
+     * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
      * If this value is not specified when the bucket is created, it will default
      * to `STANDARD`. For more information, see
      * https://developers.google.com/storage/docs/storage-classes.
      * </pre>
      *
-     * <code>string storage_class = 7;</code>
+     * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The storageClass to set.
      * @return This builder for chaining.
@@ -23133,15 +27655,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's default storage class, used whenever no storageClass is
-     * specified for a newly-created object. This defines how objects in the
+     * Optional. The bucket's default storage class, used whenever no storageClass
+     * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
      * If this value is not specified when the bucket is created, it will default
      * to `STANDARD`. For more information, see
      * https://developers.google.com/storage/docs/storage-classes.
      * </pre>
      *
-     * <code>string storage_class = 7;</code>
+     * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -23156,15 +27678,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's default storage class, used whenever no storageClass is
-     * specified for a newly-created object. This defines how objects in the
+     * Optional. The bucket's default storage class, used whenever no storageClass
+     * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
      * If this value is not specified when the bucket is created, it will default
      * to `STANDARD`. For more information, see
      * https://developers.google.com/storage/docs/storage-classes.
      * </pre>
      *
-     * <code>string storage_class = 7;</code>
+     * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for storageClass to set.
      * @return This builder for chaining.
@@ -23186,15 +27708,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The recovery point objective for cross-region replication of the bucket.
-     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-     * buckets only. If rpo is not specified when the bucket is created, it
-     * defaults to "DEFAULT". For more information, see
+     * Optional. The recovery point objective for cross-region replication of the
+     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * dual-region buckets only. If rpo is not specified when the bucket is
+     * created, it defaults to "DEFAULT". For more information, see
      * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
-     * <code>string rpo = 27;</code>
+     * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The rpo.
      */
@@ -23214,15 +27736,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The recovery point objective for cross-region replication of the bucket.
-     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-     * buckets only. If rpo is not specified when the bucket is created, it
-     * defaults to "DEFAULT". For more information, see
+     * Optional. The recovery point objective for cross-region replication of the
+     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * dual-region buckets only. If rpo is not specified when the bucket is
+     * created, it defaults to "DEFAULT". For more information, see
      * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
-     * <code>string rpo = 27;</code>
+     * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for rpo.
      */
@@ -23242,15 +27764,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The recovery point objective for cross-region replication of the bucket.
-     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-     * buckets only. If rpo is not specified when the bucket is created, it
-     * defaults to "DEFAULT". For more information, see
+     * Optional. The recovery point objective for cross-region replication of the
+     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * dual-region buckets only. If rpo is not specified when the bucket is
+     * created, it defaults to "DEFAULT". For more information, see
      * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
-     * <code>string rpo = 27;</code>
+     * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The rpo to set.
      * @return This builder for chaining.
@@ -23269,15 +27791,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The recovery point objective for cross-region replication of the bucket.
-     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-     * buckets only. If rpo is not specified when the bucket is created, it
-     * defaults to "DEFAULT". For more information, see
+     * Optional. The recovery point objective for cross-region replication of the
+     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * dual-region buckets only. If rpo is not specified when the bucket is
+     * created, it defaults to "DEFAULT". For more information, see
      * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
-     * <code>string rpo = 27;</code>
+     * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -23292,15 +27814,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The recovery point objective for cross-region replication of the bucket.
-     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-     * buckets only. If rpo is not specified when the bucket is created, it
-     * defaults to "DEFAULT". For more information, see
+     * Optional. The recovery point objective for cross-region replication of the
+     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * dual-region buckets only. If rpo is not specified when the bucket is
+     * created, it defaults to "DEFAULT". For more information, see
      * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
-     * <code>string rpo = 27;</code>
+     * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for rpo to set.
      * @return This builder for chaining.
@@ -23336,12 +27858,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.BucketAccessControl> getAclList() {
       if (aclBuilder_ == null) {
@@ -23355,12 +27879,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public int getAclCount() {
       if (aclBuilder_ == null) {
@@ -23374,12 +27900,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BucketAccessControl getAcl(int index) {
       if (aclBuilder_ == null) {
@@ -23393,12 +27921,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAcl(int index, com.google.storage.v2.BucketAccessControl value) {
       if (aclBuilder_ == null) {
@@ -23418,12 +27948,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAcl(
         int index, com.google.storage.v2.BucketAccessControl.Builder builderForValue) {
@@ -23441,12 +27973,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(com.google.storage.v2.BucketAccessControl value) {
       if (aclBuilder_ == null) {
@@ -23466,12 +28000,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(int index, com.google.storage.v2.BucketAccessControl value) {
       if (aclBuilder_ == null) {
@@ -23491,12 +28027,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(com.google.storage.v2.BucketAccessControl.Builder builderForValue) {
       if (aclBuilder_ == null) {
@@ -23513,12 +28051,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAcl(
         int index, com.google.storage.v2.BucketAccessControl.Builder builderForValue) {
@@ -23536,12 +28076,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAllAcl(
         java.lang.Iterable<? extends com.google.storage.v2.BucketAccessControl> values) {
@@ -23559,12 +28101,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearAcl() {
       if (aclBuilder_ == null) {
@@ -23581,12 +28125,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeAcl(int index) {
       if (aclBuilder_ == null) {
@@ -23603,12 +28149,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BucketAccessControl.Builder getAclBuilder(int index) {
       return getAclFieldBuilder().getBuilder(index);
@@ -23618,12 +28166,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BucketAccessControlOrBuilder getAclOrBuilder(int index) {
       if (aclBuilder_ == null) {
@@ -23637,12 +28187,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<? extends com.google.storage.v2.BucketAccessControlOrBuilder>
         getAclOrBuilderList() {
@@ -23657,12 +28209,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BucketAccessControl.Builder addAclBuilder() {
       return getAclFieldBuilder()
@@ -23673,12 +28227,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.BucketAccessControl.Builder addAclBuilder(int index) {
       return getAclFieldBuilder()
@@ -23689,12 +28245,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Access controls on the bucket.
+     * Optional. Access controls on the bucket.
      * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+     * <code>
+     * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.BucketAccessControl.Builder> getAclBuilderList() {
       return getAclFieldBuilder().getBuilderList();
@@ -23738,12 +28296,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ObjectAccessControl> getDefaultObjectAclList() {
       if (defaultObjectAclBuilder_ == null) {
@@ -23757,12 +28317,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public int getDefaultObjectAclCount() {
       if (defaultObjectAclBuilder_ == null) {
@@ -23776,12 +28338,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl getDefaultObjectAcl(int index) {
       if (defaultObjectAclBuilder_ == null) {
@@ -23795,12 +28359,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setDefaultObjectAcl(int index, com.google.storage.v2.ObjectAccessControl value) {
       if (defaultObjectAclBuilder_ == null) {
@@ -23820,12 +28386,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setDefaultObjectAcl(
         int index, com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
@@ -23843,12 +28411,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addDefaultObjectAcl(com.google.storage.v2.ObjectAccessControl value) {
       if (defaultObjectAclBuilder_ == null) {
@@ -23868,12 +28438,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addDefaultObjectAcl(int index, com.google.storage.v2.ObjectAccessControl value) {
       if (defaultObjectAclBuilder_ == null) {
@@ -23893,12 +28465,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addDefaultObjectAcl(
         com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
@@ -23916,12 +28490,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addDefaultObjectAcl(
         int index, com.google.storage.v2.ObjectAccessControl.Builder builderForValue) {
@@ -23939,12 +28515,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAllDefaultObjectAcl(
         java.lang.Iterable<? extends com.google.storage.v2.ObjectAccessControl> values) {
@@ -23962,12 +28540,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearDefaultObjectAcl() {
       if (defaultObjectAclBuilder_ == null) {
@@ -23984,12 +28564,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeDefaultObjectAcl(int index) {
       if (defaultObjectAclBuilder_ == null) {
@@ -24006,12 +28588,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder getDefaultObjectAclBuilder(int index) {
       return getDefaultObjectAclFieldBuilder().getBuilder(index);
@@ -24021,12 +28605,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControlOrBuilder getDefaultObjectAclOrBuilder(
         int index) {
@@ -24041,12 +28627,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
         getDefaultObjectAclOrBuilderList() {
@@ -24061,12 +28649,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder addDefaultObjectAclBuilder() {
       return getDefaultObjectAclFieldBuilder()
@@ -24077,12 +28667,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.ObjectAccessControl.Builder addDefaultObjectAclBuilder(int index) {
       return getDefaultObjectAclFieldBuilder()
@@ -24093,12 +28685,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Default access controls to apply to new objects when no ACL is provided.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-     * requests to set, read, or modify acl is an error.
+     * Optional. Default access controls to apply to new objects when no ACL is
+     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+     * <code>
+     * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.ObjectAccessControl.Builder>
         getDefaultObjectAclBuilderList() {
@@ -24136,12 +28730,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the lifecycle field is set.
      */
@@ -24153,12 +28749,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The lifecycle.
      */
@@ -24176,12 +28774,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setLifecycle(com.google.storage.v2.Bucket.Lifecycle value) {
       if (lifecycleBuilder_ == null) {
@@ -24201,12 +28801,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setLifecycle(com.google.storage.v2.Bucket.Lifecycle.Builder builderForValue) {
       if (lifecycleBuilder_ == null) {
@@ -24223,12 +28825,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeLifecycle(com.google.storage.v2.Bucket.Lifecycle value) {
       if (lifecycleBuilder_ == null) {
@@ -24253,12 +28857,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearLifecycle() {
       bitField0_ = (bitField0_ & ~0x00000800);
@@ -24275,12 +28881,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Lifecycle.Builder getLifecycleBuilder() {
       bitField0_ |= 0x00000800;
@@ -24292,12 +28900,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.LifecycleOrBuilder getLifecycleOrBuilder() {
       if (lifecycleBuilder_ != null) {
@@ -24313,12 +28923,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's lifecycle config. See
+     * Optional. The bucket's lifecycle config. See
      * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
      * for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Lifecycle,
@@ -24569,11 +29181,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.Bucket.Cors> getCorsList() {
       if (corsBuilder_ == null) {
@@ -24587,11 +29201,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public int getCorsCount() {
       if (corsBuilder_ == null) {
@@ -24605,11 +29221,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Cors getCors(int index) {
       if (corsBuilder_ == null) {
@@ -24623,11 +29241,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCors(int index, com.google.storage.v2.Bucket.Cors value) {
       if (corsBuilder_ == null) {
@@ -24647,11 +29267,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCors(int index, com.google.storage.v2.Bucket.Cors.Builder builderForValue) {
       if (corsBuilder_ == null) {
@@ -24668,11 +29290,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addCors(com.google.storage.v2.Bucket.Cors value) {
       if (corsBuilder_ == null) {
@@ -24692,11 +29316,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addCors(int index, com.google.storage.v2.Bucket.Cors value) {
       if (corsBuilder_ == null) {
@@ -24716,11 +29342,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addCors(com.google.storage.v2.Bucket.Cors.Builder builderForValue) {
       if (corsBuilder_ == null) {
@@ -24737,11 +29365,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addCors(int index, com.google.storage.v2.Bucket.Cors.Builder builderForValue) {
       if (corsBuilder_ == null) {
@@ -24758,11 +29388,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder addAllCors(
         java.lang.Iterable<? extends com.google.storage.v2.Bucket.Cors> values) {
@@ -24780,11 +29412,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCors() {
       if (corsBuilder_ == null) {
@@ -24801,11 +29435,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder removeCors(int index) {
       if (corsBuilder_ == null) {
@@ -24822,11 +29458,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Cors.Builder getCorsBuilder(int index) {
       return getCorsFieldBuilder().getBuilder(index);
@@ -24836,11 +29474,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.CorsOrBuilder getCorsOrBuilder(int index) {
       if (corsBuilder_ == null) {
@@ -24854,11 +29494,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<? extends com.google.storage.v2.Bucket.CorsOrBuilder>
         getCorsOrBuilderList() {
@@ -24873,11 +29515,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Cors.Builder addCorsBuilder() {
       return getCorsFieldBuilder()
@@ -24888,11 +29532,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Cors.Builder addCorsBuilder(int index) {
       return getCorsFieldBuilder()
@@ -24903,11 +29549,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-     * (CORS) config.
+     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+     * Sharing] (CORS) config.
      * </pre>
      *
-     * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+     * <code>
+     * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public java.util.List<com.google.storage.v2.Bucket.Cors.Builder> getCorsBuilderList() {
       return getCorsFieldBuilder().getBuilderList();
@@ -25148,22 +29796,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The default value for event-based hold on newly created objects in this
-     * bucket.  Event-based hold is a way to retain objects indefinitely until an
-     * event occurs, signified by the
-     * hold's release. After being released, such objects will be subject to
-     * bucket-level retention (if any).  One sample use case of this flag is for
-     * banks to hold loan documents for at least 3 years after loan is paid in
-     * full. Here, bucket-level retention is 3 years and the event is loan being
-     * paid in full. In this example, these objects will be held intact for any
-     * number of years until the event has occurred (event-based hold on the
-     * object is released) and then 3 more years after that. That means retention
-     * duration of the objects begins from the moment event-based hold
-     * transitioned from true to false.  Objects under event-based hold cannot be
-     * deleted, overwritten or archived until the hold is removed.
+     * Optional. The default value for event-based hold on newly created objects
+     * in this bucket.  Event-based hold is a way to retain objects indefinitely
+     * until an event occurs, signified by the hold's release. After being
+     * released, such objects will be subject to bucket-level retention (if any).
+     * One sample use case of this flag is for banks to hold loan documents for at
+     * least 3 years after loan is paid in full. Here, bucket-level retention is 3
+     * years and the event is loan being paid in full. In this example, these
+     * objects will be held intact for any number of years until the event has
+     * occurred (event-based hold on the object is released) and then 3 more years
+     * after that. That means retention duration of the objects begins from the
+     * moment event-based hold transitioned from true to false.  Objects under
+     * event-based hold cannot be deleted, overwritten or archived until the hold
+     * is removed.
      * </pre>
      *
-     * <code>bool default_event_based_hold = 14;</code>
+     * <code>bool default_event_based_hold = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The defaultEventBasedHold.
      */
@@ -25176,22 +29824,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The default value for event-based hold on newly created objects in this
-     * bucket.  Event-based hold is a way to retain objects indefinitely until an
-     * event occurs, signified by the
-     * hold's release. After being released, such objects will be subject to
-     * bucket-level retention (if any).  One sample use case of this flag is for
-     * banks to hold loan documents for at least 3 years after loan is paid in
-     * full. Here, bucket-level retention is 3 years and the event is loan being
-     * paid in full. In this example, these objects will be held intact for any
-     * number of years until the event has occurred (event-based hold on the
-     * object is released) and then 3 more years after that. That means retention
-     * duration of the objects begins from the moment event-based hold
-     * transitioned from true to false.  Objects under event-based hold cannot be
-     * deleted, overwritten or archived until the hold is removed.
+     * Optional. The default value for event-based hold on newly created objects
+     * in this bucket.  Event-based hold is a way to retain objects indefinitely
+     * until an event occurs, signified by the hold's release. After being
+     * released, such objects will be subject to bucket-level retention (if any).
+     * One sample use case of this flag is for banks to hold loan documents for at
+     * least 3 years after loan is paid in full. Here, bucket-level retention is 3
+     * years and the event is loan being paid in full. In this example, these
+     * objects will be held intact for any number of years until the event has
+     * occurred (event-based hold on the object is released) and then 3 more years
+     * after that. That means retention duration of the objects begins from the
+     * moment event-based hold transitioned from true to false.  Objects under
+     * event-based hold cannot be deleted, overwritten or archived until the hold
+     * is removed.
      * </pre>
      *
-     * <code>bool default_event_based_hold = 14;</code>
+     * <code>bool default_event_based_hold = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The defaultEventBasedHold to set.
      * @return This builder for chaining.
@@ -25208,22 +29856,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The default value for event-based hold on newly created objects in this
-     * bucket.  Event-based hold is a way to retain objects indefinitely until an
-     * event occurs, signified by the
-     * hold's release. After being released, such objects will be subject to
-     * bucket-level retention (if any).  One sample use case of this flag is for
-     * banks to hold loan documents for at least 3 years after loan is paid in
-     * full. Here, bucket-level retention is 3 years and the event is loan being
-     * paid in full. In this example, these objects will be held intact for any
-     * number of years until the event has occurred (event-based hold on the
-     * object is released) and then 3 more years after that. That means retention
-     * duration of the objects begins from the moment event-based hold
-     * transitioned from true to false.  Objects under event-based hold cannot be
-     * deleted, overwritten or archived until the hold is removed.
+     * Optional. The default value for event-based hold on newly created objects
+     * in this bucket.  Event-based hold is a way to retain objects indefinitely
+     * until an event occurs, signified by the hold's release. After being
+     * released, such objects will be subject to bucket-level retention (if any).
+     * One sample use case of this flag is for banks to hold loan documents for at
+     * least 3 years after loan is paid in full. Here, bucket-level retention is 3
+     * years and the event is loan being paid in full. In this example, these
+     * objects will be held intact for any number of years until the event has
+     * occurred (event-based hold on the object is released) and then 3 more years
+     * after that. That means retention duration of the objects begins from the
+     * moment event-based hold transitioned from true to false.  Objects under
+     * event-based hold cannot be deleted, overwritten or archived until the hold
+     * is removed.
      * </pre>
      *
-     * <code>bool default_event_based_hold = 14;</code>
+     * <code>bool default_event_based_hold = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -25264,10 +29912,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     @java.lang.Override
     public boolean containsLabels(java.lang.String key) {
@@ -25288,10 +29936,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     @java.lang.Override
     public java.util.Map<java.lang.String, java.lang.String> getLabelsMap() {
@@ -25302,10 +29950,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     @java.lang.Override
     public /* nullable */ java.lang.String getLabelsOrDefault(
@@ -25323,10 +29971,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     @java.lang.Override
     public java.lang.String getLabelsOrThrow(java.lang.String key) {
@@ -25350,10 +29998,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder removeLabels(java.lang.String key) {
       if (key == null) {
@@ -25374,10 +30022,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder putLabels(java.lang.String key, java.lang.String value) {
       if (key == null) {
@@ -25395,10 +30043,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * User-provided labels, in key/value pairs.
+     * Optional. User-provided labels, in key/value pairs.
      * </pre>
      *
-     * <code>map&lt;string, string&gt; labels = 15;</code>
+     * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
      */
     public Builder putAllLabels(java.util.Map<java.lang.String, java.lang.String> values) {
       internalGetMutableLabels().getMutableMap().putAll(values);
@@ -25417,13 +30065,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the website field is set.
      */
@@ -25435,13 +30085,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The website.
      */
@@ -25459,13 +30111,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setWebsite(com.google.storage.v2.Bucket.Website value) {
       if (websiteBuilder_ == null) {
@@ -25485,13 +30139,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setWebsite(com.google.storage.v2.Bucket.Website.Builder builderForValue) {
       if (websiteBuilder_ == null) {
@@ -25508,13 +30164,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeWebsite(com.google.storage.v2.Bucket.Website value) {
       if (websiteBuilder_ == null) {
@@ -25539,13 +30197,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearWebsite() {
       bitField0_ = (bitField0_ & ~0x00020000);
@@ -25562,13 +30222,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Website.Builder getWebsiteBuilder() {
       bitField0_ |= 0x00020000;
@@ -25580,13 +30242,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.WebsiteOrBuilder getWebsiteOrBuilder() {
       if (websiteBuilder_ != null) {
@@ -25602,13 +30266,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's website config, controlling how the service behaves
+     * Optional. The bucket's website config, controlling how the service behaves
      * when accessing bucket contents as a web site. See the
      * [https://cloud.google.com/storage/docs/static-website][Static Website
      * Examples] for more information.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Website,
@@ -25638,10 +30304,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the versioning field is set.
      */
@@ -25653,10 +30321,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The versioning.
      */
@@ -25674,10 +30344,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setVersioning(com.google.storage.v2.Bucket.Versioning value) {
       if (versioningBuilder_ == null) {
@@ -25697,10 +30369,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setVersioning(com.google.storage.v2.Bucket.Versioning.Builder builderForValue) {
       if (versioningBuilder_ == null) {
@@ -25717,10 +30391,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeVersioning(com.google.storage.v2.Bucket.Versioning value) {
       if (versioningBuilder_ == null) {
@@ -25745,10 +30421,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearVersioning() {
       bitField0_ = (bitField0_ & ~0x00040000);
@@ -25765,10 +30443,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Versioning.Builder getVersioningBuilder() {
       bitField0_ |= 0x00040000;
@@ -25780,10 +30460,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.VersioningOrBuilder getVersioningOrBuilder() {
       if (versioningBuilder_ != null) {
@@ -25799,10 +30481,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's versioning config.
+     * Optional. The bucket's versioning config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Versioning,
@@ -25832,11 +30516,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the logging field is set.
      */
@@ -25848,11 +30534,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The logging.
      */
@@ -25870,11 +30558,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setLogging(com.google.storage.v2.Bucket.Logging value) {
       if (loggingBuilder_ == null) {
@@ -25894,11 +30584,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setLogging(com.google.storage.v2.Bucket.Logging.Builder builderForValue) {
       if (loggingBuilder_ == null) {
@@ -25915,11 +30607,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeLogging(com.google.storage.v2.Bucket.Logging value) {
       if (loggingBuilder_ == null) {
@@ -25944,11 +30638,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearLogging() {
       bitField0_ = (bitField0_ & ~0x00080000);
@@ -25965,11 +30661,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Logging.Builder getLoggingBuilder() {
       bitField0_ |= 0x00080000;
@@ -25981,11 +30679,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.LoggingOrBuilder getLoggingOrBuilder() {
       if (loggingBuilder_ != null) {
@@ -26001,11 +30701,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's logging config, which defines the destination bucket
+     * Optional. The bucket's logging config, which defines the destination bucket
      * and name prefix (if any) for the current bucket's logs.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Logging,
@@ -26243,10 +30945,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the encryption field is set.
      */
@@ -26258,10 +30962,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The encryption.
      */
@@ -26279,10 +30985,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setEncryption(com.google.storage.v2.Bucket.Encryption value) {
       if (encryptionBuilder_ == null) {
@@ -26302,10 +31010,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setEncryption(com.google.storage.v2.Bucket.Encryption.Builder builderForValue) {
       if (encryptionBuilder_ == null) {
@@ -26322,10 +31032,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeEncryption(com.google.storage.v2.Bucket.Encryption value) {
       if (encryptionBuilder_ == null) {
@@ -26350,10 +31062,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearEncryption() {
       bitField0_ = (bitField0_ & ~0x00200000);
@@ -26370,10 +31084,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Encryption.Builder getEncryptionBuilder() {
       bitField0_ |= 0x00200000;
@@ -26385,10 +31101,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.EncryptionOrBuilder getEncryptionOrBuilder() {
       if (encryptionBuilder_ != null) {
@@ -26404,10 +31122,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Encryption config for a bucket.
+     * Optional. Encryption config for a bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Encryption,
@@ -26437,10 +31157,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the billing field is set.
      */
@@ -26452,10 +31174,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The billing.
      */
@@ -26473,10 +31197,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setBilling(com.google.storage.v2.Bucket.Billing value) {
       if (billingBuilder_ == null) {
@@ -26496,10 +31222,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setBilling(com.google.storage.v2.Bucket.Billing.Builder builderForValue) {
       if (billingBuilder_ == null) {
@@ -26516,10 +31244,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeBilling(com.google.storage.v2.Bucket.Billing value) {
       if (billingBuilder_ == null) {
@@ -26544,10 +31274,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearBilling() {
       bitField0_ = (bitField0_ & ~0x00400000);
@@ -26564,10 +31296,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Billing.Builder getBillingBuilder() {
       bitField0_ |= 0x00400000;
@@ -26579,10 +31313,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.BillingOrBuilder getBillingOrBuilder() {
       if (billingBuilder_ != null) {
@@ -26598,10 +31334,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's billing config.
+     * Optional. The bucket's billing config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Billing,
@@ -26631,18 +31369,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the retentionPolicy field is set.
      */
@@ -26654,18 +31394,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The retentionPolicy.
      */
@@ -26683,18 +31425,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setRetentionPolicy(com.google.storage.v2.Bucket.RetentionPolicy value) {
       if (retentionPolicyBuilder_ == null) {
@@ -26714,18 +31458,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setRetentionPolicy(
         com.google.storage.v2.Bucket.RetentionPolicy.Builder builderForValue) {
@@ -26743,18 +31489,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeRetentionPolicy(com.google.storage.v2.Bucket.RetentionPolicy value) {
       if (retentionPolicyBuilder_ == null) {
@@ -26780,18 +31528,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearRetentionPolicy() {
       bitField0_ = (bitField0_ & ~0x00800000);
@@ -26808,18 +31558,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.RetentionPolicy.Builder getRetentionPolicyBuilder() {
       bitField0_ |= 0x00800000;
@@ -26831,18 +31583,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.RetentionPolicyOrBuilder getRetentionPolicyOrBuilder() {
       if (retentionPolicyBuilder_ != null) {
@@ -26858,18 +31612,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's retention policy. The retention policy enforces a minimum
-     * retention time for all objects contained in the bucket, based on their
-     * creation time. Any attempt to overwrite or delete objects younger than the
-     * retention period will result in a PERMISSION_DENIED error.  An unlocked
-     * retention policy can be modified or removed from the bucket via a
+     * Optional. The bucket's retention policy. The retention policy enforces a
+     * minimum retention time for all objects contained in the bucket, based on
+     * their creation time. Any attempt to overwrite or delete objects younger
+     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
      * Attempting to remove or decrease period of a locked retention policy will
      * result in a PERMISSION_DENIED error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+     * <code>
+     * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.RetentionPolicy,
@@ -26899,10 +31655,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the iamConfig field is set.
      */
@@ -26914,10 +31672,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The iamConfig.
      */
@@ -26935,10 +31695,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setIamConfig(com.google.storage.v2.Bucket.IamConfig value) {
       if (iamConfigBuilder_ == null) {
@@ -26958,10 +31720,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setIamConfig(com.google.storage.v2.Bucket.IamConfig.Builder builderForValue) {
       if (iamConfigBuilder_ == null) {
@@ -26978,10 +31742,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeIamConfig(com.google.storage.v2.Bucket.IamConfig value) {
       if (iamConfigBuilder_ == null) {
@@ -27006,10 +31772,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearIamConfig() {
       bitField0_ = (bitField0_ & ~0x01000000);
@@ -27026,10 +31794,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.IamConfig.Builder getIamConfigBuilder() {
       bitField0_ |= 0x01000000;
@@ -27041,10 +31811,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.IamConfigOrBuilder getIamConfigOrBuilder() {
       if (iamConfigBuilder_ != null) {
@@ -27060,10 +31832,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's IAM config.
+     * Optional. The bucket's IAM config.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+     * <code>
+     * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.IamConfig,
@@ -27088,10 +31862,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Reserved for future use.
+     * Optional. Reserved for future use.
      * </pre>
      *
-     * <code>bool satisfies_pzs = 25;</code>
+     * <code>bool satisfies_pzs = 25 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The satisfiesPzs.
      */
@@ -27104,10 +31878,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Reserved for future use.
+     * Optional. Reserved for future use.
      * </pre>
      *
-     * <code>bool satisfies_pzs = 25;</code>
+     * <code>bool satisfies_pzs = 25 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The satisfiesPzs to set.
      * @return This builder for chaining.
@@ -27124,10 +31898,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Reserved for future use.
+     * Optional. Reserved for future use.
      * </pre>
      *
-     * <code>bool satisfies_pzs = 25;</code>
+     * <code>bool satisfies_pzs = 25 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -27149,12 +31923,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the customPlacementConfig field is set.
      */
@@ -27166,12 +31943,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The customPlacementConfig.
      */
@@ -27189,12 +31969,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomPlacementConfig(
         com.google.storage.v2.Bucket.CustomPlacementConfig value) {
@@ -27215,12 +31998,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCustomPlacementConfig(
         com.google.storage.v2.Bucket.CustomPlacementConfig.Builder builderForValue) {
@@ -27238,12 +32024,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCustomPlacementConfig(
         com.google.storage.v2.Bucket.CustomPlacementConfig value) {
@@ -27270,12 +32059,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCustomPlacementConfig() {
       bitField0_ = (bitField0_ & ~0x04000000);
@@ -27292,12 +32084,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.CustomPlacementConfig.Builder
         getCustomPlacementConfigBuilder() {
@@ -27310,12 +32105,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
         getCustomPlacementConfigOrBuilder() {
@@ -27332,12 +32130,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a
+     * Optional. Configuration that, if present, specifies the data placement for
+     * a
      * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
      * dual-region].
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>
+     * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.CustomPlacementConfig,
@@ -27367,11 +32168,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the autoclass field is set.
      */
@@ -27383,11 +32187,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The autoclass.
      */
@@ -27405,11 +32212,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAutoclass(com.google.storage.v2.Bucket.Autoclass value) {
       if (autoclassBuilder_ == null) {
@@ -27429,11 +32239,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setAutoclass(com.google.storage.v2.Bucket.Autoclass.Builder builderForValue) {
       if (autoclassBuilder_ == null) {
@@ -27450,11 +32263,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeAutoclass(com.google.storage.v2.Bucket.Autoclass value) {
       if (autoclassBuilder_ == null) {
@@ -27479,11 +32295,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearAutoclass() {
       bitField0_ = (bitField0_ & ~0x08000000);
@@ -27500,11 +32319,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.Autoclass.Builder getAutoclassBuilder() {
       bitField0_ |= 0x08000000;
@@ -27516,11 +32338,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder() {
       if (autoclassBuilder_ != null) {
@@ -27536,11 +32361,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The bucket's Autoclass configuration. If there is no configuration, the
-     * Autoclass feature will be disabled and have no effect on the bucket.
+     * Optional. The bucket's Autoclass configuration. If there is no
+     * configuration, the Autoclass feature will be disabled and have no effect on
+     * the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+     * <code>
+     * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.Autoclass,
@@ -28016,6 +32844,218 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         softDeletePolicy_ = null;
       }
       return softDeletePolicyBuilder_;
+    }
+
+    private com.google.storage.v2.Bucket.IpFilter ipFilter_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.IpFilter,
+            com.google.storage.v2.Bucket.IpFilter.Builder,
+            com.google.storage.v2.Bucket.IpFilterOrBuilder>
+        ipFilterBuilder_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the ipFilter field is set.
+     */
+    public boolean hasIpFilter() {
+      return ((bitField0_ & 0x40000000) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The ipFilter.
+     */
+    public com.google.storage.v2.Bucket.IpFilter getIpFilter() {
+      if (ipFilterBuilder_ == null) {
+        return ipFilter_ == null
+            ? com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()
+            : ipFilter_;
+      } else {
+        return ipFilterBuilder_.getMessage();
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setIpFilter(com.google.storage.v2.Bucket.IpFilter value) {
+      if (ipFilterBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ipFilter_ = value;
+      } else {
+        ipFilterBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setIpFilter(com.google.storage.v2.Bucket.IpFilter.Builder builderForValue) {
+      if (ipFilterBuilder_ == null) {
+        ipFilter_ = builderForValue.build();
+      } else {
+        ipFilterBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder mergeIpFilter(com.google.storage.v2.Bucket.IpFilter value) {
+      if (ipFilterBuilder_ == null) {
+        if (((bitField0_ & 0x40000000) != 0)
+            && ipFilter_ != null
+            && ipFilter_ != com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()) {
+          getIpFilterBuilder().mergeFrom(value);
+        } else {
+          ipFilter_ = value;
+        }
+      } else {
+        ipFilterBuilder_.mergeFrom(value);
+      }
+      if (ipFilter_ != null) {
+        bitField0_ |= 0x40000000;
+        onChanged();
+      }
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder clearIpFilter() {
+      bitField0_ = (bitField0_ & ~0x40000000);
+      ipFilter_ = null;
+      if (ipFilterBuilder_ != null) {
+        ipFilterBuilder_.dispose();
+        ipFilterBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.IpFilter.Builder getIpFilterBuilder() {
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return getIpFilterFieldBuilder().getBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.IpFilterOrBuilder getIpFilterOrBuilder() {
+      if (ipFilterBuilder_ != null) {
+        return ipFilterBuilder_.getMessageOrBuilder();
+      } else {
+        return ipFilter_ == null
+            ? com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()
+            : ipFilter_;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's IP filter configuration.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.IpFilter,
+            com.google.storage.v2.Bucket.IpFilter.Builder,
+            com.google.storage.v2.Bucket.IpFilterOrBuilder>
+        getIpFilterFieldBuilder() {
+      if (ipFilterBuilder_ == null) {
+        ipFilterBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.Bucket.IpFilter,
+                com.google.storage.v2.Bucket.IpFilter.Builder,
+                com.google.storage.v2.Bucket.IpFilterOrBuilder>(
+                getIpFilter(), getParentForChildren(), isClean());
+        ipFilter_ = null;
+      }
+      return ipFilterBuilder_;
     }
 
     @java.lang.Override

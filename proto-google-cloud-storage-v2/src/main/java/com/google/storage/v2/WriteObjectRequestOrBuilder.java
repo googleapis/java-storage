@@ -175,13 +175,15 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first or last request (either with first_message, or
-   * finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first or last request (either with first_message,
+   * or finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -191,13 +193,15 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first or last request (either with first_message, or
-   * finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first or last request (either with first_message,
+   * or finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -207,13 +211,15 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first or last request (either with first_message, or
-   * finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first or last request (either with first_message,
+   * or finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 
@@ -221,7 +227,7 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If `true`, this indicates that the write is complete. Sending any
+   * Optional. If `true`, this indicates that the write is complete. Sending any
    * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
    * will cause an error.
    * For a non-resumable write (where the upload_id was not set in the first
@@ -229,7 +235,7 @@ public interface WriteObjectRequestOrBuilder
    * stream.
    * </pre>
    *
-   * <code>bool finish_write = 7;</code>
+   * <code>bool finish_write = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The finishWrite.
    */
@@ -239,10 +245,13 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -252,10 +261,13 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -265,10 +277,13 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 

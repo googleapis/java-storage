@@ -123,12 +123,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 7;</code>
+   * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -149,12 +149,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 7;</code>
+   * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -1165,12 +1165,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 7;</code>
+     * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The predefinedAcl.
      */
@@ -1190,12 +1190,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 7;</code>
+     * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for predefinedAcl.
      */
@@ -1215,12 +1215,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 7;</code>
+     * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The predefinedAcl to set.
      * @return This builder for chaining.
@@ -1239,12 +1239,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 7;</code>
+     * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1259,12 +1259,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 7;</code>
+     * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for predefinedAcl to set.
      * @return This builder for chaining.

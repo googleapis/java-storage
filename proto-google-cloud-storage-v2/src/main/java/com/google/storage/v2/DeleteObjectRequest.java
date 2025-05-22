@@ -188,11 +188,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * If present, permanently deletes a specific revision of this object (as
-   * opposed to the latest version, the default).
+   * Optional. If present, permanently deletes a specific revision of this
+   * object (as opposed to the latest version, the default).
    * </pre>
    *
-   * <code>int64 generation = 4;</code>
+   * <code>int64 generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The generation.
    */
@@ -362,10 +362,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -378,10 +381,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -396,10 +402,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
@@ -1208,11 +1217,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If present, permanently deletes a specific revision of this object (as
-     * opposed to the latest version, the default).
+     * Optional. If present, permanently deletes a specific revision of this
+     * object (as opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 4;</code>
+     * <code>int64 generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The generation.
      */
@@ -1225,11 +1234,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If present, permanently deletes a specific revision of this object (as
-     * opposed to the latest version, the default).
+     * Optional. If present, permanently deletes a specific revision of this
+     * object (as opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 4;</code>
+     * <code>int64 generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The generation to set.
      * @return This builder for chaining.
@@ -1246,11 +1255,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If present, permanently deletes a specific revision of this object (as
-     * opposed to the latest version, the default).
+     * Optional. If present, permanently deletes a specific revision of this
+     * object (as opposed to the latest version, the default).
      * </pre>
      *
-     * <code>int64 generation = 4;</code>
+     * <code>int64 generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1588,10 +1597,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the commonObjectRequestParams field is set.
      */
@@ -1603,10 +1615,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The commonObjectRequestParams.
      */
@@ -1624,10 +1639,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -1648,10 +1666,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
@@ -1669,10 +1690,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -1699,10 +1723,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCommonObjectRequestParams() {
       bitField0_ = (bitField0_ & ~0x00000080);
@@ -1719,10 +1746,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
@@ -1735,10 +1765,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
         getCommonObjectRequestParamsOrBuilder() {
@@ -1755,10 +1788,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CommonObjectRequestParams,

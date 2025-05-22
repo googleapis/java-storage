@@ -1197,7 +1197,9 @@ public final class StorageGrpc {
      * <pre>
      * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     default void getIamPolicy(
@@ -1213,7 +1215,9 @@ public final class StorageGrpc {
      * <pre>
      * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     default void setIamPolicy(
@@ -1763,7 +1767,9 @@ public final class StorageGrpc {
      * <pre>
      * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public void getIamPolicy(
@@ -1781,7 +1787,9 @@ public final class StorageGrpc {
      * <pre>
      * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public void setIamPolicy(
@@ -2314,7 +2322,9 @@ public final class StorageGrpc {
      * <pre>
      * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2328,7 +2338,9 @@ public final class StorageGrpc {
      * <pre>
      * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
@@ -2821,7 +2833,9 @@ public final class StorageGrpc {
      * <pre>
      * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2835,7 +2849,9 @@ public final class StorageGrpc {
      * <pre>
      * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
@@ -3200,7 +3216,9 @@ public final class StorageGrpc {
      * <pre>
      * Gets the IAM policy for a specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3215,7 +3233,9 @@ public final class StorageGrpc {
      * <pre>
      * Updates an IAM policy for the specified bucket.
      * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}`.
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>

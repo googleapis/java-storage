@@ -289,12 +289,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 10;</code>
+   * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -315,12 +315,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 10;</code>
+   * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -417,10 +417,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -433,10 +436,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -451,10 +457,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
@@ -1582,12 +1591,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 10;</code>
+     * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The predefinedAcl.
      */
@@ -1607,12 +1616,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 10;</code>
+     * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for predefinedAcl.
      */
@@ -1632,12 +1641,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 10;</code>
+     * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The predefinedAcl to set.
      * @return This builder for chaining.
@@ -1656,12 +1665,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 10;</code>
+     * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1676,12 +1685,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Apply a predefined set of access controls to this object.
+     * Optional. Apply a predefined set of access controls to this object.
      * Valid values are "authenticatedRead", "bucketOwnerFullControl",
      * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>string predefined_acl = 10;</code>
+     * <code>string predefined_acl = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for predefinedAcl to set.
      * @return This builder for chaining.
@@ -1974,10 +1983,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return Whether the commonObjectRequestParams field is set.
      */
@@ -1989,10 +2001,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      *
      * @return The commonObjectRequestParams.
      */
@@ -2010,10 +2025,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -2034,10 +2052,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder setCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
@@ -2055,10 +2076,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
@@ -2085,10 +2109,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public Builder clearCommonObjectRequestParams() {
       bitField0_ = (bitField0_ & ~0x00000080);
@@ -2105,10 +2132,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
@@ -2121,10 +2151,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
         getCommonObjectRequestParamsOrBuilder() {
@@ -2141,10 +2174,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * A set of parameters common to Storage API requests concerning an object.
+     * Optional. A set of parameters common to Storage API requests concerning an
+     * object.
      * </pre>
      *
-     * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
+     * <code>
+     * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 8 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.CommonObjectRequestParams,

@@ -212,13 +212,15 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first request or the
-   * last request (with finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first request or the last request (with
+   * finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -228,13 +230,15 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first request or the
-   * last request (with finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first request or the last request (with
+   * finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -244,13 +248,15 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specified checksums the call will fail. May only be
-   * provided in the first request or the
-   * last request (with finish_write set).
+   * Optional. Checksums for the complete object. If the checksums computed by
+   * the service don't match the specified checksums the call will fail. May
+   * only be provided in the first request or the last request (with
+   * finish_write set).
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 6 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 
@@ -258,17 +264,17 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * For each BidiWriteObjectRequest where state_lookup is `true` or the client
-   * closes the stream, the service will send a BidiWriteObjectResponse
-   * containing the current persisted size. The persisted size sent in responses
-   * covers all the bytes the server has persisted thus far and can be used to
-   * decide what data is safe for the client to drop. Note that the object's
-   * current size reported by the BidiWriteObjectResponse may lag behind the
-   * number of bytes written by the client. This field is ignored if
-   * `finish_write` is set to true.
+   * Optional. For each BidiWriteObjectRequest where state_lookup is `true` or
+   * the client closes the stream, the service will send a
+   * BidiWriteObjectResponse containing the current persisted size. The
+   * persisted size sent in responses covers all the bytes the server has
+   * persisted thus far and can be used to decide what data is safe for the
+   * client to drop. Note that the object's current size reported by the
+   * BidiWriteObjectResponse may lag behind the number of bytes written by the
+   * client. This field is ignored if `finish_write` is set to true.
    * </pre>
    *
-   * <code>bool state_lookup = 7;</code>
+   * <code>bool state_lookup = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The stateLookup.
    */
@@ -278,15 +284,15 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Persists data written on the stream, up to and including the current
-   * message, to permanent storage. This option should be used sparingly as it
-   * may reduce performance. Ongoing writes will periodically be persisted on
-   * the server even when `flush` is not set. This field is ignored if
+   * Optional. Persists data written on the stream, up to and including the
+   * current message, to permanent storage. This option should be used sparingly
+   * as it may reduce performance. Ongoing writes will periodically be persisted
+   * on the server even when `flush` is not set. This field is ignored if
    * `finish_write` is set to true since there's no need to checkpoint or flush
    * if this message completes the write.
    * </pre>
    *
-   * <code>bool flush = 8;</code>
+   * <code>bool flush = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The flush.
    */
@@ -296,7 +302,7 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If `true`, this indicates that the write is complete. Sending any
+   * Optional. If `true`, this indicates that the write is complete. Sending any
    * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
    * will cause an error.
    * For a non-resumable write (where the upload_id was not set in the first
@@ -304,7 +310,7 @@ public interface BidiWriteObjectRequestOrBuilder
    * stream.
    * </pre>
    *
-   * <code>bool finish_write = 9;</code>
+   * <code>bool finish_write = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The finishWrite.
    */
@@ -314,10 +320,13 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -327,10 +336,13 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -340,10 +352,13 @@ public interface BidiWriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 

@@ -96,13 +96,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * The etag of the object.
+   * Optional. The etag of the object.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object.
    * </pre>
    *
-   * <code>string etag = 27;</code>
+   * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The etag.
    */
@@ -112,13 +112,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * The etag of the object.
+   * Optional. The etag of the object.
    * If included in the metadata of an update or delete request message, the
    * operation will only be performed if the etag matches that of the live
    * object.
    * </pre>
    *
-   * <code>string etag = 27;</code>
+   * <code>string etag = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for etag.
    */
@@ -203,10 +203,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Storage class of the object.
+   * Optional. Storage class of the object.
    * </pre>
    *
-   * <code>string storage_class = 5;</code>
+   * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The storageClass.
    */
@@ -216,10 +216,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Storage class of the object.
+   * Optional. Storage class of the object.
    * </pre>
    *
-   * <code>string storage_class = 5;</code>
+   * <code>string storage_class = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for storageClass.
    */
@@ -243,11 +243,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Encoding of the object data, matching
+   * Optional. Content-Encoding of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
    * </pre>
    *
-   * <code>string content_encoding = 7;</code>
+   * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentEncoding.
    */
@@ -257,11 +257,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Encoding of the object data, matching
+   * Optional. Content-Encoding of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
    * </pre>
    *
-   * <code>string content_encoding = 7;</code>
+   * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentEncoding.
    */
@@ -271,11 +271,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Disposition of the object data, matching
+   * Optional. Content-Disposition of the object data, matching
    * [https://tools.ietf.org/html/rfc6266][RFC 6266].
    * </pre>
    *
-   * <code>string content_disposition = 8;</code>
+   * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentDisposition.
    */
@@ -285,11 +285,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Disposition of the object data, matching
+   * Optional. Content-Disposition of the object data, matching
    * [https://tools.ietf.org/html/rfc6266][RFC 6266].
    * </pre>
    *
-   * <code>string content_disposition = 8;</code>
+   * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentDisposition.
    */
@@ -299,13 +299,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Cache-Control directive for the object data, matching
+   * Optional. Cache-Control directive for the object data, matching
    * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
    * If omitted, and the object is accessible to all anonymous users, the
    * default will be `public, max-age=3600`.
    * </pre>
    *
-   * <code>string cache_control = 9;</code>
+   * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The cacheControl.
    */
@@ -315,13 +315,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Cache-Control directive for the object data, matching
+   * Optional. Cache-Control directive for the object data, matching
    * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
    * If omitted, and the object is accessible to all anonymous users, the
    * default will be `public, max-age=3600`.
    * </pre>
    *
-   * <code>string cache_control = 9;</code>
+   * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for cacheControl.
    */
@@ -331,12 +331,14 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.ObjectAccessControl> getAclList();
 
@@ -344,12 +346,14 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectAccessControl getAcl(int index);
 
@@ -357,12 +361,14 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getAclCount();
 
@@ -370,12 +376,14 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
       getAclOrBuilderList();
@@ -384,12 +392,14 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Access controls on the object.
+   * Optional. Access controls on the object.
    * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl acl = 10;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl acl = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectAccessControlOrBuilder getAclOrBuilder(int index);
 
@@ -397,11 +407,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Language of the object data, matching
+   * Optional. Content-Language of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
    * </pre>
    *
-   * <code>string content_language = 11;</code>
+   * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentLanguage.
    */
@@ -411,11 +421,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Language of the object data, matching
+   * Optional. Content-Language of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
    * </pre>
    *
-   * <code>string content_language = 11;</code>
+   * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentLanguage.
    */
@@ -511,13 +521,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Type of the object data, matching
+   * Optional. Content-Type of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
    *
-   * <code>string content_type = 13;</code>
+   * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The contentType.
    */
@@ -527,13 +537,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Content-Type of the object data, matching
+   * Optional. Content-Type of the object data, matching
    * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
    *
-   * <code>string content_type = 13;</code>
+   * <code>string content_type = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for contentType.
    */
@@ -707,11 +717,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-   * such a key.
+   * Optional. Cloud KMS Key used to encrypt this object, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The kmsKey.
    */
@@ -721,11 +733,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Cloud KMS Key used to encrypt this object, if the object is encrypted by
-   * such a key.
+   * Optional. Cloud KMS Key used to encrypt this object, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>string kms_key = 18 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string kms_key = 18 [(.google.api.field_behavior) = OPTIONAL, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for kmsKey.
    */
@@ -781,14 +795,15 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Whether an object is under temporary hold. While this flag is set to true,
-   * the object is protected against deletion and overwrites.  A common use case
-   * of this flag is regulatory investigations where objects need to be retained
-   * while the investigation is ongoing. Note that unlike event-based hold,
-   * temporary hold does not impact retention expiration time of an object.
+   * Optional. Whether an object is under temporary hold. While this flag is set
+   * to true, the object is protected against deletion and overwrites.  A common
+   * use case of this flag is regulatory investigations where objects need to be
+   * retained while the investigation is ongoing. Note that unlike event-based
+   * hold, temporary hold does not impact retention expiration time of an
+   * object.
    * </pre>
    *
-   * <code>bool temporary_hold = 20;</code>
+   * <code>bool temporary_hold = 20 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The temporaryHold.
    */
@@ -798,16 +813,17 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the retentionExpireTime field is set.
    */
@@ -817,16 +833,17 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The retentionExpireTime.
    */
@@ -836,16 +853,17 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A server-determined value that specifies the earliest time that the
-   * object's retention period expires.
-   * Note 1: This field is not provided for objects with an active event-based
-   * hold, since retention expiration is unknown until the hold is removed.
-   * Note 2: This value can be provided even when temporary hold is set (so that
-   * the user can reason about policy without having to first unset the
-   * temporary hold).
+   * Optional. A server-determined value that specifies the earliest time that
+   * the object's retention period expires. Note 1: This field is not provided
+   * for objects with an active event-based hold, since retention expiration is
+   * unknown until the hold is removed. Note 2: This value can be provided even
+   * when temporary hold is set (so that the user can reason about policy
+   * without having to first unset the temporary hold).
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp retention_expire_time = 21;</code>
+   * <code>
+   * .google.protobuf.Timestamp retention_expire_time = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.protobuf.TimestampOrBuilder getRetentionExpireTimeOrBuilder();
 
@@ -853,10 +871,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   int getMetadataCount();
 
@@ -864,10 +882,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   boolean containsMetadata(java.lang.String key);
 
@@ -879,10 +897,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   java.util.Map<java.lang.String, java.lang.String> getMetadataMap();
 
@@ -890,10 +908,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   /* nullable */
   java.lang.String getMetadataOrDefault(
@@ -905,10 +923,10 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * User-provided metadata, in key/value pairs.
+   * Optional. User-provided metadata, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; metadata = 22;</code>
+   * <code>map&lt;string, string&gt; metadata = 22 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   java.lang.String getMetadataOrThrow(java.lang.String key);
 
@@ -1002,11 +1020,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customerEncryption field is set.
    */
@@ -1016,11 +1036,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customerEncryption.
    */
@@ -1030,11 +1052,13 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
-   * such a key.
+   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * encrypted by such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
+   * <code>
+   * .google.storage.v2.CustomerEncryption customer_encryption = 25 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder();
 
@@ -1042,10 +1066,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customTime field is set.
    */
@@ -1055,10 +1080,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customTime.
    */
@@ -1068,10 +1094,11 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * A user-specified timestamp set on an object.
+   * Optional. A user-specified timestamp set on an object.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp custom_time = 26;</code>
+   * <code>.google.protobuf.Timestamp custom_time = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.protobuf.TimestampOrBuilder getCustomTimeOrBuilder();
 
@@ -1178,4 +1205,50 @@ public interface ObjectOrBuilder
    * </code>
    */
   com.google.protobuf.TimestampOrBuilder getHardDeleteTimeOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the retention field is set.
+   */
+  boolean hasRetention();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The retention.
+   */
+  com.google.storage.v2.Object.Retention getRetention();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Retention configuration of this object.
+   * May only be configured if the bucket has object retention enabled.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Object.Retention retention = 30 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.Object.RetentionOrBuilder getRetentionOrBuilder();
 }

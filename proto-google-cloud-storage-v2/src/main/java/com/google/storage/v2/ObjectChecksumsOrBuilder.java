@@ -60,7 +60,7 @@ public interface ObjectChecksumsOrBuilder
    *
    *
    * <pre>
-   * 128 bit MD5 hash of the object data.
+   * Optional. 128 bit MD5 hash of the object data.
    * For more information about using the MD5 hash, see
    * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
    * ETags: Best Practices].
@@ -69,7 +69,7 @@ public interface ObjectChecksumsOrBuilder
    * object.txt | openssl md5 -binary`
    * </pre>
    *
-   * <code>bytes md5_hash = 2;</code>
+   * <code>bytes md5_hash = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The md5Hash.
    */

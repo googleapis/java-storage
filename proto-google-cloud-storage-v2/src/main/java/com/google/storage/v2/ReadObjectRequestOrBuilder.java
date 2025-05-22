@@ -84,11 +84,11 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If present, selects a specific revision of this object (as opposed
-   * to the latest version, the default).
+   * Optional. If present, selects a specific revision of this object (as
+   * opposed to the latest version, the default).
    * </pre>
    *
-   * <code>int64 generation = 3;</code>
+   * <code>int64 generation = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The generation.
    */
@@ -98,8 +98,8 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The offset for the first byte to return in the read, relative to the start
-   * of the object.
+   * Optional. The offset for the first byte to return in the read, relative to
+   * the start of the object.
    *
    * A negative `read_offset` value will be interpreted as the number of bytes
    * back from the end of the object to be returned. For example, if an object's
@@ -109,7 +109,7 @@ public interface ReadObjectRequestOrBuilder
    * return the entire object.
    * </pre>
    *
-   * <code>int64 read_offset = 4;</code>
+   * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The readOffset.
    */
@@ -119,16 +119,17 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The maximum number of `data` bytes the server is allowed to return in the
-   * sum of all `Object` messages. A `read_limit` of zero indicates that there
-   * is no limit, and a negative `read_limit` will cause an error.
+   * Optional. The maximum number of `data` bytes the server is allowed to
+   * return in the sum of all `Object` messages. A `read_limit` of zero
+   * indicates that there is no limit, and a negative `read_limit` will cause an
+   * error.
    *
    * If the stream returns fewer bytes than allowed by the `read_limit` and no
    * error occurred, the stream includes all data from the `read_offset` to the
    * end of the resource.
    * </pre>
    *
-   * <code>int64 read_limit = 5;</code>
+   * <code>int64 read_limit = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The readLimit.
    */
@@ -256,10 +257,13 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -269,10 +273,13 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -282,10 +289,13 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 

@@ -28,11 +28,11 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket.
+   * Identifier. The name of the bucket.
    * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
-   * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
    *
    * @return The name.
    */
@@ -42,11 +42,11 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket.
+   * Identifier. The name of the bucket.
    * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
-   * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>string name = 1 [(.google.api.field_behavior) = IDENTIFIER];</code>
    *
    * @return The bytes for name.
    */
@@ -119,6 +119,7 @@ public interface BucketOrBuilder
    * Immutable. The project which owns this bucket, in the format of
    * "projects/{projectIdentifier}".
    * {projectIdentifier} can be the project ID or project number.
+   * Output values will always be in project number format.
    * </pre>
    *
    * <code>
@@ -136,6 +137,7 @@ public interface BucketOrBuilder
    * Immutable. The project which owns this bucket, in the format of
    * "projects/{projectIdentifier}".
    * {projectIdentifier} can be the project ID or project number.
+   * Output values will always be in project number format.
    * </pre>
    *
    * <code>
@@ -227,15 +229,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's default storage class, used whenever no storageClass is
-   * specified for a newly-created object. This defines how objects in the
+   * Optional. The bucket's default storage class, used whenever no storageClass
+   * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
    * If this value is not specified when the bucket is created, it will default
    * to `STANDARD`. For more information, see
    * https://developers.google.com/storage/docs/storage-classes.
    * </pre>
    *
-   * <code>string storage_class = 7;</code>
+   * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The storageClass.
    */
@@ -245,15 +247,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's default storage class, used whenever no storageClass is
-   * specified for a newly-created object. This defines how objects in the
+   * Optional. The bucket's default storage class, used whenever no storageClass
+   * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
    * If this value is not specified when the bucket is created, it will default
    * to `STANDARD`. For more information, see
    * https://developers.google.com/storage/docs/storage-classes.
    * </pre>
    *
-   * <code>string storage_class = 7;</code>
+   * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for storageClass.
    */
@@ -263,15 +265,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The recovery point objective for cross-region replication of the bucket.
-   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-   * buckets only. If rpo is not specified when the bucket is created, it
-   * defaults to "DEFAULT". For more information, see
+   * Optional. The recovery point objective for cross-region replication of the
+   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * dual-region buckets only. If rpo is not specified when the bucket is
+   * created, it defaults to "DEFAULT". For more information, see
    * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
-   * <code>string rpo = 27;</code>
+   * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The rpo.
    */
@@ -281,15 +283,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The recovery point objective for cross-region replication of the bucket.
-   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
-   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
-   * buckets only. If rpo is not specified when the bucket is created, it
-   * defaults to "DEFAULT". For more information, see
+   * Optional. The recovery point objective for cross-region replication of the
+   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
+   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * dual-region buckets only. If rpo is not specified when the bucket is
+   * created, it defaults to "DEFAULT". For more information, see
    * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
-   * <code>string rpo = 27;</code>
+   * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for rpo.
    */
@@ -299,12 +301,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.BucketAccessControl> getAclList();
 
@@ -312,12 +316,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.BucketAccessControl getAcl(int index);
 
@@ -325,12 +331,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getAclCount();
 
@@ -338,12 +346,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.BucketAccessControlOrBuilder>
       getAclOrBuilderList();
@@ -352,12 +362,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Access controls on the bucket.
+   * Optional. Access controls on the bucket.
    * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.BucketAccessControl acl = 8;</code>
+   * <code>
+   * repeated .google.storage.v2.BucketAccessControl acl = 8 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.BucketAccessControlOrBuilder getAclOrBuilder(int index);
 
@@ -365,12 +377,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.ObjectAccessControl> getDefaultObjectAclList();
 
@@ -378,12 +392,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectAccessControl getDefaultObjectAcl(int index);
 
@@ -391,12 +407,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getDefaultObjectAclCount();
 
@@ -404,12 +422,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.ObjectAccessControlOrBuilder>
       getDefaultObjectAclOrBuilderList();
@@ -418,12 +438,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Default access controls to apply to new objects when no ACL is provided.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
-   * requests to set, read, or modify acl is an error.
+   * Optional. Default access controls to apply to new objects when no ACL is
+   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9;</code>
+   * <code>
+   * repeated .google.storage.v2.ObjectAccessControl default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectAccessControlOrBuilder getDefaultObjectAclOrBuilder(int index);
 
@@ -431,12 +453,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the lifecycle field is set.
    */
@@ -446,12 +470,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The lifecycle.
    */
@@ -461,12 +487,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's lifecycle config. See
+   * Optional. The bucket's lifecycle config. See
    * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
    * for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Lifecycle lifecycle = 10;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Lifecycle lifecycle = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.LifecycleOrBuilder getLifecycleOrBuilder();
 
@@ -514,11 +542,13 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<com.google.storage.v2.Bucket.Cors> getCorsList();
 
@@ -526,11 +556,13 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.Cors getCors(int index);
 
@@ -538,11 +570,13 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   int getCorsCount();
 
@@ -550,11 +584,13 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   java.util.List<? extends com.google.storage.v2.Bucket.CorsOrBuilder> getCorsOrBuilderList();
 
@@ -562,11 +598,13 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource Sharing]
-   * (CORS) config.
+   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
+   * Sharing] (CORS) config.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Bucket.Cors cors = 12;</code>
+   * <code>
+   * repeated .google.storage.v2.Bucket.Cors cors = 12 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.CorsOrBuilder getCorsOrBuilder(int index);
 
@@ -614,22 +652,22 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The default value for event-based hold on newly created objects in this
-   * bucket.  Event-based hold is a way to retain objects indefinitely until an
-   * event occurs, signified by the
-   * hold's release. After being released, such objects will be subject to
-   * bucket-level retention (if any).  One sample use case of this flag is for
-   * banks to hold loan documents for at least 3 years after loan is paid in
-   * full. Here, bucket-level retention is 3 years and the event is loan being
-   * paid in full. In this example, these objects will be held intact for any
-   * number of years until the event has occurred (event-based hold on the
-   * object is released) and then 3 more years after that. That means retention
-   * duration of the objects begins from the moment event-based hold
-   * transitioned from true to false.  Objects under event-based hold cannot be
-   * deleted, overwritten or archived until the hold is removed.
+   * Optional. The default value for event-based hold on newly created objects
+   * in this bucket.  Event-based hold is a way to retain objects indefinitely
+   * until an event occurs, signified by the hold's release. After being
+   * released, such objects will be subject to bucket-level retention (if any).
+   * One sample use case of this flag is for banks to hold loan documents for at
+   * least 3 years after loan is paid in full. Here, bucket-level retention is 3
+   * years and the event is loan being paid in full. In this example, these
+   * objects will be held intact for any number of years until the event has
+   * occurred (event-based hold on the object is released) and then 3 more years
+   * after that. That means retention duration of the objects begins from the
+   * moment event-based hold transitioned from true to false.  Objects under
+   * event-based hold cannot be deleted, overwritten or archived until the hold
+   * is removed.
    * </pre>
    *
-   * <code>bool default_event_based_hold = 14;</code>
+   * <code>bool default_event_based_hold = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The defaultEventBasedHold.
    */
@@ -639,10 +677,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   int getLabelsCount();
 
@@ -650,10 +688,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   boolean containsLabels(java.lang.String key);
 
@@ -665,10 +703,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   java.util.Map<java.lang.String, java.lang.String> getLabelsMap();
 
@@ -676,10 +714,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   /* nullable */
   java.lang.String getLabelsOrDefault(
@@ -691,10 +729,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * User-provided labels, in key/value pairs.
+   * Optional. User-provided labels, in key/value pairs.
    * </pre>
    *
-   * <code>map&lt;string, string&gt; labels = 15;</code>
+   * <code>map&lt;string, string&gt; labels = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   java.lang.String getLabelsOrThrow(java.lang.String key);
 
@@ -702,13 +740,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the website field is set.
    */
@@ -718,13 +757,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The website.
    */
@@ -734,13 +774,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's website config, controlling how the service behaves
+   * Optional. The bucket's website config, controlling how the service behaves
    * when accessing bucket contents as a web site. See the
    * [https://cloud.google.com/storage/docs/static-website][Static Website
    * Examples] for more information.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Website website = 16;</code>
+   * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.WebsiteOrBuilder getWebsiteOrBuilder();
 
@@ -748,10 +789,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the versioning field is set.
    */
@@ -761,10 +804,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The versioning.
    */
@@ -774,10 +819,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's versioning config.
+   * Optional. The bucket's versioning config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Versioning versioning = 17;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Versioning versioning = 17 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.VersioningOrBuilder getVersioningOrBuilder();
 
@@ -785,11 +832,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the logging field is set.
    */
@@ -799,11 +847,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The logging.
    */
@@ -813,11 +862,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's logging config, which defines the destination bucket
+   * Optional. The bucket's logging config, which defines the destination bucket
    * and name prefix (if any) for the current bucket's logs.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Logging logging = 18;</code>
+   * <code>.google.storage.v2.Bucket.Logging logging = 18 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.LoggingOrBuilder getLoggingOrBuilder();
 
@@ -865,10 +915,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the encryption field is set.
    */
@@ -878,10 +930,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The encryption.
    */
@@ -891,10 +945,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Encryption config for a bucket.
+   * Optional. Encryption config for a bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Encryption encryption = 20;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Encryption encryption = 20 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.EncryptionOrBuilder getEncryptionOrBuilder();
 
@@ -902,10 +958,11 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the billing field is set.
    */
@@ -915,10 +972,11 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The billing.
    */
@@ -928,10 +986,11 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's billing config.
+   * Optional. The bucket's billing config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Billing billing = 21;</code>
+   * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.BillingOrBuilder getBillingOrBuilder();
 
@@ -939,18 +998,20 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the retentionPolicy field is set.
    */
@@ -960,18 +1021,20 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The retentionPolicy.
    */
@@ -981,18 +1044,20 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's retention policy. The retention policy enforces a minimum
-   * retention time for all objects contained in the bucket, based on their
-   * creation time. Any attempt to overwrite or delete objects younger than the
-   * retention period will result in a PERMISSION_DENIED error.  An unlocked
-   * retention policy can be modified or removed from the bucket via a
+   * Optional. The bucket's retention policy. The retention policy enforces a
+   * minimum retention time for all objects contained in the bucket, based on
+   * their creation time. Any attempt to overwrite or delete objects younger
+   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
    * Attempting to remove or decrease period of a locked retention policy will
    * result in a PERMISSION_DENIED error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.RetentionPolicy retention_policy = 22;</code>
+   * <code>
+   * .google.storage.v2.Bucket.RetentionPolicy retention_policy = 22 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.RetentionPolicyOrBuilder getRetentionPolicyOrBuilder();
 
@@ -1000,10 +1065,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the iamConfig field is set.
    */
@@ -1013,10 +1080,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The iamConfig.
    */
@@ -1026,10 +1095,12 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's IAM config.
+   * Optional. The bucket's IAM config.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.IamConfig iam_config = 23;</code>
+   * <code>
+   * .google.storage.v2.Bucket.IamConfig iam_config = 23 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.IamConfigOrBuilder getIamConfigOrBuilder();
 
@@ -1037,10 +1108,10 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Reserved for future use.
+   * Optional. Reserved for future use.
    * </pre>
    *
-   * <code>bool satisfies_pzs = 25;</code>
+   * <code>bool satisfies_pzs = 25 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The satisfiesPzs.
    */
@@ -1050,12 +1121,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the customPlacementConfig field is set.
    */
@@ -1065,12 +1139,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The customPlacementConfig.
    */
@@ -1080,12 +1157,15 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a
+   * Optional. Configuration that, if present, specifies the data placement for
+   * a
    * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
    * dual-region].
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>
+   * .google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder getCustomPlacementConfigOrBuilder();
 
@@ -1093,11 +1173,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the autoclass field is set.
    */
@@ -1107,11 +1190,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The autoclass.
    */
@@ -1121,11 +1207,14 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * The bucket's Autoclass configuration. If there is no configuration, the
-   * Autoclass feature will be disabled and have no effect on the bucket.
+   * Optional. The bucket's Autoclass configuration. If there is no
+   * configuration, the Autoclass feature will be disabled and have no effect on
+   * the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
+   * <code>
+   * .google.storage.v2.Bucket.Autoclass autoclass = 28 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder();
 
@@ -1223,4 +1312,47 @@ public interface BucketOrBuilder
    * </code>
    */
   com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder getSoftDeletePolicyOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the ipFilter field is set.
+   */
+  boolean hasIpFilter();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The ipFilter.
+   */
+  com.google.storage.v2.Bucket.IpFilter getIpFilter();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's IP filter configuration.
+   * </pre>
+   *
+   * <code>
+   * optional .google.storage.v2.Bucket.IpFilter ip_filter = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.Bucket.IpFilterOrBuilder getIpFilterOrBuilder();
 }

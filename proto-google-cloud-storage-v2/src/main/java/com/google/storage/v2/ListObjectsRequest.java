@@ -135,13 +135,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Maximum number of `items` plus `prefixes` to return
+   * Optional. Maximum number of `items` plus `prefixes` to return
    * in a single page of responses. As duplicate `prefixes` are
    * omitted, fewer total results may be returned than requested. The service
    * will use this parameter or 1,000 items, whichever is smaller.
    * </pre>
    *
-   * <code>int32 page_size = 2;</code>
+   * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageSize.
    */
@@ -159,11 +159,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * A previously-returned page token representing part of the larger set of
-   * results to view.
+   * Optional. A previously-returned page token representing part of the larger
+   * set of results to view.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The pageToken.
    */
@@ -184,11 +184,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * A previously-returned page token representing part of the larger set of
-   * results to view.
+   * Optional. A previously-returned page token representing part of the larger
+   * set of results to view.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for pageToken.
    */
@@ -214,15 +214,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If set, returns results in a directory-like mode. `items` will contain
-   * only objects whose names, aside from the `prefix`, do not
-   * contain `delimiter`. Objects whose names, aside from the
-   * `prefix`, contain `delimiter` will have their name,
-   * truncated after the `delimiter`, returned in
-   * `prefixes`. Duplicate `prefixes` are omitted.
+   * Optional. If set, returns results in a directory-like mode. `items` will
+   * contain only objects whose names, aside from the `prefix`, do not contain
+   * `delimiter`. Objects whose names, aside from the `prefix`, contain
+   * `delimiter` will have their name, truncated after the `delimiter`, returned
+   * in `prefixes`. Duplicate `prefixes` are omitted.
    * </pre>
    *
-   * <code>string delimiter = 4;</code>
+   * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The delimiter.
    */
@@ -243,15 +242,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If set, returns results in a directory-like mode. `items` will contain
-   * only objects whose names, aside from the `prefix`, do not
-   * contain `delimiter`. Objects whose names, aside from the
-   * `prefix`, contain `delimiter` will have their name,
-   * truncated after the `delimiter`, returned in
-   * `prefixes`. Duplicate `prefixes` are omitted.
+   * Optional. If set, returns results in a directory-like mode. `items` will
+   * contain only objects whose names, aside from the `prefix`, do not contain
+   * `delimiter`. Objects whose names, aside from the `prefix`, contain
+   * `delimiter` will have their name, truncated after the `delimiter`, returned
+   * in `prefixes`. Duplicate `prefixes` are omitted.
    * </pre>
    *
-   * <code>string delimiter = 4;</code>
+   * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for delimiter.
    */
@@ -275,12 +273,12 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If true, objects that end in exactly one instance of `delimiter`
+   * Optional. If true, objects that end in exactly one instance of `delimiter`
    * will have their metadata included in `items` in addition to
    * `prefixes`.
    * </pre>
    *
-   * <code>bool include_trailing_delimiter = 5;</code>
+   * <code>bool include_trailing_delimiter = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The includeTrailingDelimiter.
    */
@@ -298,10 +296,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names begin with this prefix.
+   * Optional. Filter results to objects whose names begin with this prefix.
    * </pre>
    *
-   * <code>string prefix = 6;</code>
+   * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The prefix.
    */
@@ -322,10 +320,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names begin with this prefix.
+   * Optional. Filter results to objects whose names begin with this prefix.
    * </pre>
    *
-   * <code>string prefix = 6;</code>
+   * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for prefix.
    */
@@ -349,13 +347,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If `true`, lists all versions of an object as distinct results.
+   * Optional. If `true`, lists all versions of an object as distinct results.
    * For more information, see
    * [Object
    * Versioning](https://cloud.google.com/storage/docs/object-versioning).
    * </pre>
    *
-   * <code>bool versions = 7;</code>
+   * <code>bool versions = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The versions.
    */
@@ -1404,13 +1402,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Maximum number of `items` plus `prefixes` to return
+     * Optional. Maximum number of `items` plus `prefixes` to return
      * in a single page of responses. As duplicate `prefixes` are
      * omitted, fewer total results may be returned than requested. The service
      * will use this parameter or 1,000 items, whichever is smaller.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
+     * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The pageSize.
      */
@@ -1423,13 +1421,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Maximum number of `items` plus `prefixes` to return
+     * Optional. Maximum number of `items` plus `prefixes` to return
      * in a single page of responses. As duplicate `prefixes` are
      * omitted, fewer total results may be returned than requested. The service
      * will use this parameter or 1,000 items, whichever is smaller.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
+     * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The pageSize to set.
      * @return This builder for chaining.
@@ -1446,13 +1444,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Maximum number of `items` plus `prefixes` to return
+     * Optional. Maximum number of `items` plus `prefixes` to return
      * in a single page of responses. As duplicate `prefixes` are
      * omitted, fewer total results may be returned than requested. The service
      * will use this parameter or 1,000 items, whichever is smaller.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
+     * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1469,11 +1467,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A previously-returned page token representing part of the larger set of
-     * results to view.
+     * Optional. A previously-returned page token representing part of the larger
+     * set of results to view.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
+     * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The pageToken.
      */
@@ -1493,11 +1491,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A previously-returned page token representing part of the larger set of
-     * results to view.
+     * Optional. A previously-returned page token representing part of the larger
+     * set of results to view.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
+     * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for pageToken.
      */
@@ -1517,11 +1515,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A previously-returned page token representing part of the larger set of
-     * results to view.
+     * Optional. A previously-returned page token representing part of the larger
+     * set of results to view.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
+     * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The pageToken to set.
      * @return This builder for chaining.
@@ -1540,11 +1538,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A previously-returned page token representing part of the larger set of
-     * results to view.
+     * Optional. A previously-returned page token representing part of the larger
+     * set of results to view.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
+     * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1559,11 +1557,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A previously-returned page token representing part of the larger set of
-     * results to view.
+     * Optional. A previously-returned page token representing part of the larger
+     * set of results to view.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
+     * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for pageToken to set.
      * @return This builder for chaining.
@@ -1585,15 +1583,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If set, returns results in a directory-like mode. `items` will contain
-     * only objects whose names, aside from the `prefix`, do not
-     * contain `delimiter`. Objects whose names, aside from the
-     * `prefix`, contain `delimiter` will have their name,
-     * truncated after the `delimiter`, returned in
-     * `prefixes`. Duplicate `prefixes` are omitted.
+     * Optional. If set, returns results in a directory-like mode. `items` will
+     * contain only objects whose names, aside from the `prefix`, do not contain
+     * `delimiter`. Objects whose names, aside from the `prefix`, contain
+     * `delimiter` will have their name, truncated after the `delimiter`, returned
+     * in `prefixes`. Duplicate `prefixes` are omitted.
      * </pre>
      *
-     * <code>string delimiter = 4;</code>
+     * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The delimiter.
      */
@@ -1613,15 +1610,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If set, returns results in a directory-like mode. `items` will contain
-     * only objects whose names, aside from the `prefix`, do not
-     * contain `delimiter`. Objects whose names, aside from the
-     * `prefix`, contain `delimiter` will have their name,
-     * truncated after the `delimiter`, returned in
-     * `prefixes`. Duplicate `prefixes` are omitted.
+     * Optional. If set, returns results in a directory-like mode. `items` will
+     * contain only objects whose names, aside from the `prefix`, do not contain
+     * `delimiter`. Objects whose names, aside from the `prefix`, contain
+     * `delimiter` will have their name, truncated after the `delimiter`, returned
+     * in `prefixes`. Duplicate `prefixes` are omitted.
      * </pre>
      *
-     * <code>string delimiter = 4;</code>
+     * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for delimiter.
      */
@@ -1641,15 +1637,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If set, returns results in a directory-like mode. `items` will contain
-     * only objects whose names, aside from the `prefix`, do not
-     * contain `delimiter`. Objects whose names, aside from the
-     * `prefix`, contain `delimiter` will have their name,
-     * truncated after the `delimiter`, returned in
-     * `prefixes`. Duplicate `prefixes` are omitted.
+     * Optional. If set, returns results in a directory-like mode. `items` will
+     * contain only objects whose names, aside from the `prefix`, do not contain
+     * `delimiter`. Objects whose names, aside from the `prefix`, contain
+     * `delimiter` will have their name, truncated after the `delimiter`, returned
+     * in `prefixes`. Duplicate `prefixes` are omitted.
      * </pre>
      *
-     * <code>string delimiter = 4;</code>
+     * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The delimiter to set.
      * @return This builder for chaining.
@@ -1668,15 +1663,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If set, returns results in a directory-like mode. `items` will contain
-     * only objects whose names, aside from the `prefix`, do not
-     * contain `delimiter`. Objects whose names, aside from the
-     * `prefix`, contain `delimiter` will have their name,
-     * truncated after the `delimiter`, returned in
-     * `prefixes`. Duplicate `prefixes` are omitted.
+     * Optional. If set, returns results in a directory-like mode. `items` will
+     * contain only objects whose names, aside from the `prefix`, do not contain
+     * `delimiter`. Objects whose names, aside from the `prefix`, contain
+     * `delimiter` will have their name, truncated after the `delimiter`, returned
+     * in `prefixes`. Duplicate `prefixes` are omitted.
      * </pre>
      *
-     * <code>string delimiter = 4;</code>
+     * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1691,15 +1685,14 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If set, returns results in a directory-like mode. `items` will contain
-     * only objects whose names, aside from the `prefix`, do not
-     * contain `delimiter`. Objects whose names, aside from the
-     * `prefix`, contain `delimiter` will have their name,
-     * truncated after the `delimiter`, returned in
-     * `prefixes`. Duplicate `prefixes` are omitted.
+     * Optional. If set, returns results in a directory-like mode. `items` will
+     * contain only objects whose names, aside from the `prefix`, do not contain
+     * `delimiter`. Objects whose names, aside from the `prefix`, contain
+     * `delimiter` will have their name, truncated after the `delimiter`, returned
+     * in `prefixes`. Duplicate `prefixes` are omitted.
      * </pre>
      *
-     * <code>string delimiter = 4;</code>
+     * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for delimiter to set.
      * @return This builder for chaining.
@@ -1721,12 +1714,12 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If true, objects that end in exactly one instance of `delimiter`
+     * Optional. If true, objects that end in exactly one instance of `delimiter`
      * will have their metadata included in `items` in addition to
      * `prefixes`.
      * </pre>
      *
-     * <code>bool include_trailing_delimiter = 5;</code>
+     * <code>bool include_trailing_delimiter = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The includeTrailingDelimiter.
      */
@@ -1739,12 +1732,12 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If true, objects that end in exactly one instance of `delimiter`
+     * Optional. If true, objects that end in exactly one instance of `delimiter`
      * will have their metadata included in `items` in addition to
      * `prefixes`.
      * </pre>
      *
-     * <code>bool include_trailing_delimiter = 5;</code>
+     * <code>bool include_trailing_delimiter = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The includeTrailingDelimiter to set.
      * @return This builder for chaining.
@@ -1761,12 +1754,12 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If true, objects that end in exactly one instance of `delimiter`
+     * Optional. If true, objects that end in exactly one instance of `delimiter`
      * will have their metadata included in `items` in addition to
      * `prefixes`.
      * </pre>
      *
-     * <code>bool include_trailing_delimiter = 5;</code>
+     * <code>bool include_trailing_delimiter = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1783,10 +1776,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names begin with this prefix.
+     * Optional. Filter results to objects whose names begin with this prefix.
      * </pre>
      *
-     * <code>string prefix = 6;</code>
+     * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The prefix.
      */
@@ -1806,10 +1799,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names begin with this prefix.
+     * Optional. Filter results to objects whose names begin with this prefix.
      * </pre>
      *
-     * <code>string prefix = 6;</code>
+     * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for prefix.
      */
@@ -1829,10 +1822,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names begin with this prefix.
+     * Optional. Filter results to objects whose names begin with this prefix.
      * </pre>
      *
-     * <code>string prefix = 6;</code>
+     * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The prefix to set.
      * @return This builder for chaining.
@@ -1851,10 +1844,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names begin with this prefix.
+     * Optional. Filter results to objects whose names begin with this prefix.
      * </pre>
      *
-     * <code>string prefix = 6;</code>
+     * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -1869,10 +1862,10 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names begin with this prefix.
+     * Optional. Filter results to objects whose names begin with this prefix.
      * </pre>
      *
-     * <code>string prefix = 6;</code>
+     * <code>string prefix = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for prefix to set.
      * @return This builder for chaining.
@@ -1894,13 +1887,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If `true`, lists all versions of an object as distinct results.
+     * Optional. If `true`, lists all versions of an object as distinct results.
      * For more information, see
      * [Object
      * Versioning](https://cloud.google.com/storage/docs/object-versioning).
      * </pre>
      *
-     * <code>bool versions = 7;</code>
+     * <code>bool versions = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The versions.
      */
@@ -1913,13 +1906,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If `true`, lists all versions of an object as distinct results.
+     * Optional. If `true`, lists all versions of an object as distinct results.
      * For more information, see
      * [Object
      * Versioning](https://cloud.google.com/storage/docs/object-versioning).
      * </pre>
      *
-     * <code>bool versions = 7;</code>
+     * <code>bool versions = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The versions to set.
      * @return This builder for chaining.
@@ -1936,13 +1929,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If `true`, lists all versions of an object as distinct results.
+     * Optional. If `true`, lists all versions of an object as distinct results.
      * For more information, see
      * [Object
      * Versioning](https://cloud.google.com/storage/docs/object-versioning).
      * </pre>
      *
-     * <code>bool versions = 7;</code>
+     * <code>bool versions = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */

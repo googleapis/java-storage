@@ -71,10 +71,13 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests related to an object.
+   * Optional. A set of parameters common to Storage API requests related to an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 3 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -84,10 +87,13 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests related to an object.
+   * Optional. A set of parameters common to Storage API requests related to an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 3 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -97,10 +103,13 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests related to an object.
+   * Optional. A set of parameters common to Storage API requests related to an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 3 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 
@@ -108,14 +117,16 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This is used to validate the
-   * uploaded object. For each upload, `object_checksums` can be provided when
-   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * Optional. The checksums of the complete object. This is used to validate
+   * the uploaded object. For each upload, `object_checksums` can be provided
+   * when initiating a resumable upload with`StartResumableWriteRequest` or when
    * completing a write with `WriteObjectRequest` with
    * `finish_write` set to `true`.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 5 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the objectChecksums field is set.
    */
@@ -125,14 +136,16 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This is used to validate the
-   * uploaded object. For each upload, `object_checksums` can be provided when
-   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * Optional. The checksums of the complete object. This is used to validate
+   * the uploaded object. For each upload, `object_checksums` can be provided
+   * when initiating a resumable upload with`StartResumableWriteRequest` or when
    * completing a write with `WriteObjectRequest` with
    * `finish_write` set to `true`.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 5 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The objectChecksums.
    */
@@ -142,14 +155,16 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. This is used to validate the
-   * uploaded object. For each upload, `object_checksums` can be provided when
-   * initiating a resumable upload with`StartResumableWriteRequest` or when
+   * Optional. The checksums of the complete object. This is used to validate
+   * the uploaded object. For each upload, `object_checksums` can be provided
+   * when initiating a resumable upload with`StartResumableWriteRequest` or when
    * completing a write with `WriteObjectRequest` with
    * `finish_write` set to `true`.
    * </pre>
    *
-   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   * <code>
+   * .google.storage.v2.ObjectChecksums object_checksums = 5 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 }

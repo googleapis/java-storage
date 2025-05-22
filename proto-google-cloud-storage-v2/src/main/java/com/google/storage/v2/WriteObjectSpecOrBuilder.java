@@ -65,12 +65,12 @@ public interface WriteObjectSpecOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 7;</code>
+   * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -80,12 +80,12 @@ public interface WriteObjectSpecOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this object.
+   * Optional. Apply a predefined set of access controls to this object.
    * Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_acl = 7;</code>
+   * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */

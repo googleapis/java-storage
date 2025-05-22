@@ -28,7 +28,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong.
+   * Required. The project to which this bucket will belong. This field must
+   * either be empty or `projects/_`. The project ID that owns this bucket
+   * should be specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -43,7 +45,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong.
+   * Required. The project to which this bucket will belong. This field must
+   * either be empty or `projects/_`. The project ID that owns this bucket
+   * should be specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -58,7 +62,7 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -67,7 +71,7 @@ public interface CreateBucketRequestOrBuilder
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return Whether the bucket field is set.
    */
@@ -77,7 +81,7 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -86,7 +90,7 @@ public interface CreateBucketRequestOrBuilder
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bucket.
    */
@@ -96,7 +100,7 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Properties of the new bucket being inserted.
+   * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
    * `bucket.name` field will result in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
@@ -105,7 +109,7 @@ public interface CreateBucketRequestOrBuilder
    * field must be either empty or `projects/_`.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2;</code>
+   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
    */
   com.google.storage.v2.BucketOrBuilder getBucketOrBuilder();
 
@@ -143,12 +147,12 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 6;</code>
+   * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -158,12 +162,12 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 6;</code>
+   * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -173,12 +177,13 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 7;</code>
+   * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The predefinedDefaultObjectAcl.
    */
@@ -188,12 +193,13 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 7;</code>
+   * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The bytes for predefinedDefaultObjectAcl.
    */

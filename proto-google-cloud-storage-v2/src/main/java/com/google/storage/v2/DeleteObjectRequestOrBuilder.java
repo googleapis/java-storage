@@ -88,11 +88,11 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If present, permanently deletes a specific revision of this object (as
-   * opposed to the latest version, the default).
+   * Optional. If present, permanently deletes a specific revision of this
+   * object (as opposed to the latest version, the default).
    * </pre>
    *
-   * <code>int64 generation = 4;</code>
+   * <code>int64 generation = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The generation.
    */
@@ -220,10 +220,13 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return Whether the commonObjectRequestParams field is set.
    */
@@ -233,10 +236,13 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The commonObjectRequestParams.
    */
@@ -246,10 +252,13 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * A set of parameters common to Storage API requests concerning an object.
+   * Optional. A set of parameters common to Storage API requests concerning an
+   * object.
    * </pre>
    *
-   * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
+   * <code>
+   * .google.storage.v2.CommonObjectRequestParams common_object_request_params = 10 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 }

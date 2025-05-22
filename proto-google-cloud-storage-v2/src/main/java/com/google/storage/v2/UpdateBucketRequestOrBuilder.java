@@ -124,12 +124,12 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 8;</code>
+   * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The predefinedAcl.
    */
@@ -139,12 +139,12 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of access controls to this bucket.
+   * Optional. Apply a predefined set of access controls to this bucket.
    * Valid values are "authenticatedRead", "private", "projectPrivate",
    * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>string predefined_acl = 8;</code>
+   * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for predefinedAcl.
    */
@@ -154,12 +154,13 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 9;</code>
+   * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The predefinedDefaultObjectAcl.
    */
@@ -169,12 +170,13 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Apply a predefined set of default object access controls to this bucket.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * Optional. Apply a predefined set of default object access controls to this
+   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
    * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>string predefined_default_object_acl = 9;</code>
+   * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
    *
    * @return The bytes for predefinedDefaultObjectAcl.
    */
