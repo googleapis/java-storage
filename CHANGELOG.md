@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.53.0](https://github.com/googleapis/java-storage/compare/v2.52.3...v2.53.0) (2025-05-22)
+
+
+### Features
+
+* Add Anywhere cache control APIs ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+* Add Client Libraries Storage IntelligenceConfig ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+* Add IpFilter to Bucket ([53b6927](https://github.com/googleapis/java-storage/commit/53b6927de9e5b948e1192e6cf716b88cc872c632))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.58.0 ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+
 ## [2.52.3](https://github.com/googleapis/java-storage/compare/v2.52.2...v2.52.3) (2025-05-19)
 
 
