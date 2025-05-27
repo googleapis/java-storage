@@ -18,7 +18,7 @@ package com.google.cloud.storage.jqwik;
 
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
 
-import com.google.cloud.storage.jqwik.StorageArbitraries.ProjectID;
+import com.google.cloud.storage.jqwik.StorageArbitraries.ProjectNumber;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ProjectName;
@@ -76,7 +76,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.etag())
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.projectID().map(ProjectID::toProjectName),
+                        StorageArbitraries.projectNumber().map(ProjectNumber::toProjectName),
                         StorageArbitraries
                             .alnum() // ignored for now, tuples can't be a single element
                         )

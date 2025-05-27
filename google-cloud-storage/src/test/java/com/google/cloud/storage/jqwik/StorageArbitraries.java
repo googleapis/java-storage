@@ -138,6 +138,10 @@ public final class StorageArbitraries {
         .as((first, mid, last) -> new ProjectID(first + mid + last));
   }
 
+  public static Arbitrary<ProjectNumber> projectNumber() {
+    return Arbitraries.bigIntegers().greaterOrEqual(BigInteger.ONE).map(ProjectNumber::new);
+  }
+
   public static Arbitrary<String> kmsKey() {
     return Arbitraries.of("kms-key1", "kms-key2").injectNull(0.75);
   }
@@ -441,6 +445,23 @@ public final class StorageArbitraries {
 
     public ProjectName toProjectName() {
       return ProjectName.of(value);
+    }
+  }
+
+  public static final class ProjectNumber {
+
+    private final BigInteger value;
+
+    private ProjectNumber(BigInteger value) {
+      this.value = value;
+    }
+
+    public BigInteger get() {
+      return value;
+    }
+
+    public ProjectName toProjectName() {
+      return ProjectName.of(value.toString());
     }
   }
 

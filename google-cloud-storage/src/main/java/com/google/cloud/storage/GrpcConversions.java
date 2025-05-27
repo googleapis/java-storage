@@ -20,7 +20,7 @@ import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
-import static com.google.cloud.storage.Utils.projectNameCodec;
+import static com.google.cloud.storage.Utils.projectNumberResourceCodec;
 
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
@@ -204,7 +204,9 @@ final class GrpcConversions {
 
   private BucketInfo bucketInfoDecode(Bucket from) {
     BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
-    to.setProject(projectNameCodec.decode(from.getProject()));
+    if (!from.getProject().isEmpty()) {
+      to.setProject(projectNumberResourceCodec.decode(from.getProject()));
+    }
     to.setGeneratedId(from.getBucketId());
     maybeDecodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -304,7 +306,7 @@ final class GrpcConversions {
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
     to.setName(bucketNameCodec.encode(from.getName()));
-    ifNonNull(from.getProject(), projectNameCodec::encode, to::setProject);
+    ifNonNull(from.getProject(), projectNumberResourceCodec::encode, to::setProject);
     ifNonNull(from.getGeneratedId(), to::setBucketId);
     maybeEncodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);

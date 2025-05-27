@@ -328,7 +328,7 @@ public final class ITOptionRegressionTest {
             "website",
             "softDeletePolicy",
             "hierarchicalNamespace",
-            "website");
+            "projectNumber");
     s.get(
         b.getName(),
         BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
@@ -821,7 +821,7 @@ public final class ITOptionRegressionTest {
             "items/website",
             "items/softDeletePolicy",
             "items/hierarchicalNamespace",
-            "items/website");
+            "items/projectNumber");
     s.list(BucketListOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
