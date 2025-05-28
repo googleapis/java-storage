@@ -18,37 +18,33 @@ package com.example.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.it.BucketCleaner;
-import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.storage.control.v2.StorageLayoutName;
-import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /** Tests for quickstart sample. */
-@RunWith(JUnit4.class)
 @SuppressWarnings("checkstyle:abbreviationaswordinname")
-public class QuickstartSampleIT {
-
-  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+public class QuickstartSampleIT extends TestBase {
 
   private String bucketName;
 
   @Before
   public void setUp() {
-    bucketName = "java-storage-grpc-" + UUID.randomUUID();
+    bucketName = generator.randomBucketName();
   }
 
   @After
-  public void tearDown() throws Exception {
-    try (Storage storage = StorageOptions.getDefaultInstance().getService()) {
+  public void tearDown() {
+    Bucket bucket = storage.get(bucketName, BucketGetOption.fields(BucketField.NAME));
+    if (bucket != null) {
       BucketCleaner.doCleanup(bucketName, storage);
     }
   }
@@ -56,21 +52,21 @@ public class QuickstartSampleIT {
   @Test
   public void testQuickstart() throws Exception {
     QuickstartSample.main(bucketName);
-    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
 
   @Test
   public void testQuickstartGrpc() throws Exception {
     QuickstartGrpcSample.main(bucketName);
-    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
 
   @Test
   public void testQuickstartGrpcDp() throws Exception {
     QuickstartGrpcDpSample.main(bucketName);
-    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
 
@@ -79,7 +75,7 @@ public class QuickstartSampleIT {
     Storage storageClient = StorageOptions.getDefaultInstance().getService();
     storageClient.create(BucketInfo.of(bucketName));
     QuickstartStorageControlSample.main(bucketName);
-    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got)
         .contains(
             String.format(
@@ -90,7 +86,7 @@ public class QuickstartSampleIT {
   @Test
   public void testQuickstartOpenTelemetry() throws Exception {
     QuickstartOpenTelemetrySample.main();
-    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    String got = stdOut.getCapturedOutputAsUtf8String();
     assertThat(got).contains("Created an instance of storage with OpenTelemetry configured");
   }
 }

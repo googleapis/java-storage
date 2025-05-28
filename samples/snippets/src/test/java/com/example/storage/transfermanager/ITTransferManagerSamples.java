@@ -17,129 +17,141 @@
 
 package com.example.storage.transfermanager;
 
+import static com.example.storage.Env.GOOGLE_CLOUD_PROJECT;
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.example.storage.TestBase;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.it.BucketCleaner;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
-import com.google.cloud.testing.junit4.StdOutCaptureRule;
+import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.TmpFile;
+import com.google.cloud.storage.it.TemporaryBucket;
 import com.google.common.collect.ImmutableList;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import java.util.stream.Stream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class ITTransferManagerSamples {
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
-  private static Storage storage;
-  private static List<BlobInfo> blobs;
-  private static List<BlobInfo> bigBlob;
-  private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
-  @Rule public final TemporaryFolder tmp = new TemporaryFolder();
-  @Rule public final TemporaryFolder tmpDirectory = new TemporaryFolder();
+public class ITTransferManagerSamples extends TestBase {
 
-  @BeforeClass
-  public static void beforeClass() {
-    RemoteStorageHelper helper = RemoteStorageHelper.create();
-    storage = helper.getOptions().getService();
-    storage.create(BucketInfo.of(BUCKET));
-    blobs =
-        Arrays.asList(
-            BlobInfo.newBuilder(BUCKET, "blob1").build(),
-            BlobInfo.newBuilder(BUCKET, "blob2").build(),
-            BlobInfo.newBuilder(BUCKET, "blob3").build());
-    for (BlobInfo blob : blobs) {
-      storage.create(blob);
-    }
-  }
-
-  @AfterClass
-  public static void afterClass() throws Exception {
-    try (Storage ignore = storage) {
-      BucketCleaner.doCleanup(BUCKET, storage);
-    }
-  }
+  @Rule public final TemporaryFolder downloadDirectory = new TemporaryFolder();
+  @Rule public final TemporaryFolder uploadDirectory = new TemporaryFolder();
 
   @Test
   public void uploadFiles() throws Exception {
-    File tmpFile = File.createTempFile("file", ".txt");
-    File tmpFile2 = File.createTempFile("file2", ".txt");
-    File tmpFile3 = File.createTempFile("file3", ".txt");
-    List<Path> files = ImmutableList.of(tmpFile.toPath(), tmpFile2.toPath(), tmpFile3.toPath());
-    UploadMany.uploadManyFiles(BUCKET, files);
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("file")).isTrue();
-    assertThat(snippetOutput.contains("file2")).isTrue();
-    assertThat(snippetOutput.contains("file3")).isTrue();
-  }
-
-  @Test
-  public void uploadDirectory() throws IOException {
-    File tmpFile = tmpDirectory.newFile("fileDirUpload.txt");
-    File tmpFile2 = tmpDirectory.newFile("fileDirUpload2.txt");
-    File tmpFile3 = tmpDirectory.newFile("fileDirUpload3.txt");
-    UploadDirectory.uploadDirectoryContents(BUCKET, tmpDirectory.getRoot().toPath());
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("fileDirUpload.txt")).isTrue();
-    assertThat(snippetOutput.contains("fileDirUpload2.txt")).isTrue();
-    assertThat(snippetOutput.contains("fileDirUpload3.txt")).isTrue();
-  }
-
-  @Test
-  public void downloadBucket() {
-    String downloadFullBucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.of(downloadFullBucketName));
-    List<BlobInfo> bucketBlobs =
-        Arrays.asList(
-            BlobInfo.newBuilder(downloadFullBucketName, "bucketb1").build(),
-            BlobInfo.newBuilder(downloadFullBucketName, "bucketb2").build(),
-            BlobInfo.newBuilder(downloadFullBucketName, "bucketb3").build());
-    for (BlobInfo blob : bucketBlobs) {
-      storage.create(blob);
+    Path baseDir = uploadDirectory.getRoot().toPath();
+    try (
+        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
+        TmpFile file2 = DataGenerator.base64Characters().tempFile(baseDir, 17);
+        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)
+    ) {
+      List<Path> files = Stream.of(file1, file2, file3)
+          .map(TmpFile::getPath)
+          .collect(ImmutableList.toImmutableList());
+      UploadMany.uploadManyFiles(bucket.getName(), files);
+      String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+      assertAll(
+          () -> assertThat(snippetOutput).contains(file1.getPath().getFileName().toString()),
+          () -> assertThat(snippetOutput).contains(file2.getPath().getFileName().toString()),
+          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString())
+      );
     }
-    DownloadBucket.downloadBucketContents(
-        PROJECT_ID, downloadFullBucketName, tmp.getRoot().toPath());
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("bucketb1")).isTrue();
-    assertThat(snippetOutput.contains("bucketb2")).isTrue();
-    assertThat(snippetOutput.contains("bucketb3")).isTrue();
   }
 
   @Test
-  public void downloadFiles() {
-    DownloadMany.downloadManyBlobs(BUCKET, blobs, tmp.getRoot().toPath());
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("blob1")).isTrue();
-    assertThat(snippetOutput.contains("blob2")).isTrue();
-    assertThat(snippetOutput.contains("blob3")).isTrue();
+  public void uploadDirectory() throws Exception {
+    Path baseDir = uploadDirectory.getRoot().toPath();
+    try (
+        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
+        TmpFile file2 = DataGenerator.base64Characters().tempFile(baseDir, 17);
+        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)
+    ) {
+      UploadDirectory.uploadDirectoryContents(bucket.getName(), baseDir);
+      String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+      assertAll(
+          () -> assertThat(snippetOutput).contains(file1.getPath().getFileName().toString()),
+          () -> assertThat(snippetOutput).contains(file2.getPath().getFileName().toString()),
+          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString())
+      );
+    }
+  }
+
+  @Test
+  public void downloadBucket() throws Exception {
+    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
+        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+        .setStorage(storage)
+        .build()) {
+      BucketInfo bucket = tmpBucket.getBucket();
+      String name1 = generator.randomObjectName();
+      String name2 = generator.randomObjectName();
+      String name3 = generator.randomObjectName();
+      Stream.of(name1, name2, name3)
+          .map(name -> BlobInfo.newBuilder(bucket, name).build())
+          .forEach(info -> storage.create(info, BlobTargetOption.doesNotExist()));
+      DownloadBucket.downloadBucketContents(
+          GOOGLE_CLOUD_PROJECT, bucket.getName(), downloadDirectory.getRoot().toPath());
+      String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+      assertAll(
+          () -> assertThat(snippetOutput).contains(name1),
+          () -> assertThat(snippetOutput).contains(name2),
+          () -> assertThat(snippetOutput).contains(name3)
+      );
+    }
+  }
+
+  @Test
+  public void downloadBlobs() throws Exception {
+    String name1 = generator.randomObjectName();
+    String name2 = generator.randomObjectName();
+    String name3 = generator.randomObjectName();
+    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
+        .map(this::info)
+        .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+        .collect(ImmutableList.toImmutableList());
+    DownloadMany.downloadManyBlobs(bucket.getName(), blobs, downloadDirectory.getRoot().toPath());
+    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+    assertAll(
+        () -> assertThat(snippetOutput).contains(name1),
+        () -> assertThat(snippetOutput).contains(name2),
+        () -> assertThat(snippetOutput).contains(name3)
+    );
   }
 
   @Test
   public void uploadAllowPCU() throws IOException {
-    File tmpFile = tmpDirectory.newFile("fileDirUpload.txt");
-    AllowParallelCompositeUpload.parallelCompositeUploadAllowed(
-        BUCKET, Collections.singletonList(tmpFile.toPath()));
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("fileDirUpload.txt")).isTrue();
+    Path baseDir = uploadDirectory.getRoot().toPath();
+    try (
+        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 313 *  1024 * 1024)
+    ) {
+      AllowParallelCompositeUpload.parallelCompositeUploadAllowed(
+          bucket.getName(), ImmutableList.of(file1.getPath()));
+      String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+      assertThat(snippetOutput).contains(file1.getPath().getFileName().toString());
+    }
   }
 
   @Test
-  public void downloadAllowDivideAndConquer() {
+  public void downloadAllowDivideAndConquer() throws Exception {
+    String name1 = generator.randomObjectName();
+    String name2 = generator.randomObjectName();
+    String name3 = generator.randomObjectName();
+    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
+        .map(this::info)
+        .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+        .collect(ImmutableList.toImmutableList());
     AllowDivideAndConquerDownload.divideAndConquerDownloadAllowed(
-        blobs, BUCKET, tmp.getRoot().toPath());
-    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
-    assertThat(snippetOutput.contains("blob1")).isTrue();
-    assertThat(snippetOutput.contains("blob2")).isTrue();
-    assertThat(snippetOutput.contains("blob3")).isTrue();
+        blobs, bucket.getName(), downloadDirectory.getRoot().toPath());
+    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
+    assertAll(
+        () -> assertThat(snippetOutput).contains(name1),
+        () -> assertThat(snippetOutput).contains(name2),
+        () -> assertThat(snippetOutput).contains(name3)
+    );
   }
 }

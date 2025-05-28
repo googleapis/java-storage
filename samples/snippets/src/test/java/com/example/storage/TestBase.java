@@ -16,40 +16,39 @@
 
 package com.example.storage;
 
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.it.BucketCleaner;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.annotations.StorageFixture;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
-import org.junit.After;
-import org.junit.Before;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Rule;
+import org.junit.runner.RunWith;
 
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.PROD)
 public abstract class TestBase {
 
   @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
-  protected String bucketName;
-  protected Storage storage;
-  protected String blobName;
-  protected Bucket bucket;
-  protected Blob blob;
+  @Inject
+  @StorageFixture(Transport.HTTP)
+  public Storage storage;
+  @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
-  @Before
-  public void setUp() {
-    blobName = "blob";
-    bucketName = RemoteStorageHelper.generateBucketName();
-    storage = StorageOptions.getDefaultInstance().getService();
-    bucket = storage.create(BucketInfo.of(bucketName));
-    blob = storage.create(BlobInfo.newBuilder(bucketName, blobName).build());
+  protected BlobInfo info(@NonNull String name) {
+    return BlobInfo.newBuilder(bucket, name).build();
   }
 
-  @After
-  public void tearDown() {
-    BucketCleaner.doCleanup(bucketName, storage);
+  protected BlobInfo createEmptyObject() {
+    return storage.create(info(generator.randomObjectName()), BlobTargetOption.doesNotExist());
   }
 }

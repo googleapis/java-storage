@@ -16,44 +16,41 @@
 
 package com.example.storage.object;
 
-// [START storage_add_file_owner]
+// [START storage_print_file_acl]
 
 import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.util.List;
 
-public class AddFileOwner {
+public class PrintBlobAcl {
 
-  public static void addFileOwner(
-      String projectId, String bucketName, String userEmail, String blobName) {
-    // The ID of your GCP project
-    // String projectId = "your-project-id";
+  public static void printBlobAcl(String bucketName, String blobName) {
 
-    // The ID of your GCS bucket
+    // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // Email of the user you wish to add as a file owner
-    // String userEmail = "someuser@domain.com"
-
-    // The name of the blob/file that you wish to modify permissions on
+    // The name of the blob/file that you wish to view Acls of
     // String blobName = "your-blob-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().build().getService();
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
-    Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
+    List<Acl> blobAcls = blob.getAcl();
 
-    blob.createAcl(newOwner);
-    System.out.println(
-        "Added user "
-            + userEmail
-            + " as an owner on file "
-            + blobName
-            + " in bucket "
-            + bucketName);
+    for (Acl acl : blobAcls) {
+
+      // This will give you the role.
+      // See https://cloud.google.com/storage/docs/access-control/lists#permissions
+      String role = acl.getRole().name();
+
+      // This will give you the Entity type (i.e. User, Group, Project etc.)
+      // See https://cloud.google.com/storage/docs/access-control/lists#scopes
+      String entityType = acl.getEntity().getType().name();
+
+      System.out.printf("%s: %s %n", role, entityType);
+    }
   }
 }
-// [END storage_add_file_owner]
+// [END storage_print_file_acl]
