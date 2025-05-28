@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.Key;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -502,7 +503,7 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-    Builder setProject(String project) {
+    Builder setProject(BigInteger project) {
       infoBuilder.setProject(project);
       return this;
     }

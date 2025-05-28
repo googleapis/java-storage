@@ -62,6 +62,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
@@ -190,7 +191,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     SOFT_DELETE_POLICY(
         "softDeletePolicy",
         "soft_delete_policy",
-        com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class);
+        com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    PROJECT("projectNumber", "project", BigInteger.class);
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
     private static final Map<String, BucketField> JSON_FIELD_NAME_INDEX;

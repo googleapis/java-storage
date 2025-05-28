@@ -26,6 +26,7 @@ import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltE
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
+import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -216,15 +217,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    if (bucketInfo.getProject() == null || bucketInfo.getProject().trim().isEmpty()) {
-      bucketInfo = bucketInfo.toBuilder().setProject(getOptions().getProjectId()).build();
-    }
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     CreateBucketRequest.Builder builder =
         CreateBucketRequest.newBuilder()
             .setBucket(bucket)
             .setBucketId(bucketInfo.getName())
             .setParent("projects/_");
+    if (bucketInfo.getProject() == null) {
+      builder.getBucketBuilder().setProject(projectNameCodec.encode(getOptions().getProjectId()));
+    }
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return retrier.run(

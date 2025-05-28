@@ -98,6 +98,7 @@ public final class ITBucketReadMaskTest {
     public ImmutableList<?> parameters() {
       ImmutableList<Args<BucketField, BucketInfo>> args =
           ImmutableList.of(
+              new Args<>(BucketField.PROJECT, LazyAssertion.equal()),
               new Args<>(BucketField.ACL, LazyAssertion.equal()),
               new Args<>(BucketField.AUTOCLASS, LazyAssertion.equal()),
               new Args<>(BucketField.BILLING, LazyAssertion.equal()),

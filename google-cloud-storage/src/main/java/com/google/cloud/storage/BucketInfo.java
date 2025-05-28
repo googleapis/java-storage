@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class BucketInfo implements Serializable {
 
   private static final long serialVersionUID = 4793572058456298945L;
   private final String generatedId;
-  private final String project;
+  private final BigInteger project;
   private final String name;
   private final Acl.Entity owner;
   private final String selfLink;
@@ -1657,7 +1658,7 @@ public class BucketInfo implements Serializable {
   public abstract static class Builder {
     Builder() {}
 
-    abstract Builder setProject(String project);
+    abstract Builder setProject(BigInteger project);
 
     /** Sets the bucket's name. */
     public abstract Builder setName(String name);
@@ -1923,7 +1924,7 @@ public class BucketInfo implements Serializable {
   static final class BuilderImpl extends Builder {
 
     private String generatedId;
-    private String project;
+    private BigInteger project;
     private String name;
     private Acl.Entity owner;
     private String selfLink;
@@ -2007,7 +2008,10 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setProject(String project) {
+    Builder setProject(BigInteger project) {
+      if (!Objects.equals(this.project, project)) {
+        modifiedFields.add(BucketField.PROJECT);
+      }
       this.project = project;
       return this;
     }
@@ -2637,7 +2641,8 @@ public class BucketInfo implements Serializable {
     modifiedFields = builder.modifiedFields.build();
   }
 
-  String getProject() {
+  /** The project number of the project the bucket belongs to */
+  public BigInteger getProject() {
     return project;
   }
 
@@ -2993,6 +2998,7 @@ public class BucketInfo implements Serializable {
   public int hashCode() {
     return Objects.hash(
         generatedId,
+        project,
         name,
         owner,
         selfLink,
@@ -3022,6 +3028,7 @@ public class BucketInfo implements Serializable {
         locationType,
         objectRetention,
         softDeletePolicy,
+        customPlacementConfig,
         hierarchicalNamespace,
         logging);
   }
@@ -3036,6 +3043,7 @@ public class BucketInfo implements Serializable {
     }
     BucketInfo that = (BucketInfo) o;
     return Objects.equals(generatedId, that.generatedId)
+        && Objects.equals(project, that.project)
         && Objects.equals(name, that.name)
         && Objects.equals(owner, that.owner)
         && Objects.equals(selfLink, that.selfLink)
@@ -3063,6 +3071,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(iamConfiguration, that.iamConfiguration)
         && Objects.equals(autoclass, that.autoclass)
         && Objects.equals(locationType, that.locationType)
+        && Objects.equals(customPlacementConfig, that.customPlacementConfig)
         && Objects.equals(objectRetention, that.objectRetention)
         && Objects.equals(softDeletePolicy, that.softDeletePolicy)
         && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)

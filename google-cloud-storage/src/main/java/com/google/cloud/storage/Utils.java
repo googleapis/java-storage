@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ApiCallContext;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
@@ -33,6 +34,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ProjectName;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -172,6 +174,27 @@ final class Utils {
             } else {
               return resourceName;
             }
+          });
+
+  /**
+   * Define a Codec which encapsulates the logic necessary to handle encoding and decoding project
+   * numbers.
+   */
+  static final Codec<@NonNull BigInteger, @NonNull String> projectNumberResourceCodec =
+      Codec.of(
+          projectNumber -> {
+            requireNonNull(projectNumber, "projectNumber must be non null");
+            return ProjectName.format(projectNumber.toString());
+          },
+          projectNumberResource -> {
+            requireNonNull(projectNumberResource, "projectNumberResource must be non null");
+            Preconditions.checkArgument(
+                ProjectName.isParsableFrom(projectNumberResource),
+                "projectNumberResource '%s' is not parsable as a %s",
+                projectNumberResource,
+                ProjectName.class.getName());
+            ProjectName parse = ProjectName.parse(projectNumberResource);
+            return new BigInteger(parse.getProject());
           });
 
   static final Codec<Integer, String> crc32cCodec =
