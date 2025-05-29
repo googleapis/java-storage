@@ -118,10 +118,11 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testCopyObject() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+            .setStorage(storage)
+            .build()) {
 
       String newBucket = tmpBucket.getBucket().getName();
 
@@ -167,20 +168,24 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testDownloadPublicObject() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
-            .setIamConfiguration(IamConfiguration.newBuilder()
-                .setIsUniformBucketLevelAccessEnabled(false)
-                .build())
-            .build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(generator.randomBucketName())
+                    .setIamConfiguration(
+                        IamConfiguration.newBuilder()
+                            .setIsUniformBucketLevelAccessEnabled(false)
+                            .build())
+                    .build())
+            .setStorage(storage)
+            .build()) {
       String bucketName = tmpBucket.getBucket().getName();
 
       String publicBlob = generator.randomObjectName();
       BlobId publicBlobId = BlobId.of(bucketName, publicBlob);
-      Blob gen1 = storage.create(BlobInfo.newBuilder(publicBlobId).build(), CONTENT,
-          BlobTargetOption.doesNotExist());
+      Blob gen1 =
+          storage.create(
+              BlobInfo.newBuilder(publicBlobId).build(), CONTENT, BlobTargetOption.doesNotExist());
       storage.createAcl(gen1.getBlobId(), Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
       File tempFile = tmpDir.newFile("file.txt");
       DownloadPublicObject.downloadPublicObject(bucketName, publicBlob, tempFile.toPath());
@@ -257,14 +262,14 @@ public class ITObjectSnippets extends TestBase {
     String blob = generator.randomObjectName();
     String newBlob = generator.randomObjectName();
 
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+            .setStorage(storage)
+            .build()) {
 
       String newBucket = tmpBucket.getBucket().getName();
-      BlobInfo gen1 =
-          storage.create(BlobInfo.newBuilder(BlobId.of(newBucket, blob)).build());
+      BlobInfo gen1 = storage.create(BlobInfo.newBuilder(BlobId.of(newBucket, blob)).build());
       MoveObject.moveObject(GOOGLE_CLOUD_PROJECT, newBucket, blob, newBucket, newBlob);
       assertNotNull(storage.get(newBucket, newBlob));
       assertNull(storage.get(bucket.getName(), blob));
@@ -343,25 +348,21 @@ public class ITObjectSnippets extends TestBase {
     assertNull(storage.get(bucket.getName(), encryptedBlob).getKmsKeyName());
     CryptoKey key1 = kmsFixture.getKey1();
     ChangeObjectCsekToKms.changeObjectFromCsekToKms(
-        GOOGLE_CLOUD_PROJECT,
-        bucket.getName(),
-        encryptedBlob,
-        newEncryptionKey,
-        key1.getName());
+        GOOGLE_CLOUD_PROJECT, bucket.getName(), encryptedBlob, newEncryptionKey, key1.getName());
     assertTrue(
-        storage
-            .get(bucket.getName(), encryptedBlob)
-            .getKmsKeyName()
-            .contains(key1. getName()));
+        storage.get(bucket.getName(), encryptedBlob).getKmsKeyName().contains(key1.getName()));
   }
 
   @Test
   public void testObjectVersioningOperations() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
-            .setVersioningEnabled(true).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(generator.randomBucketName())
+                    .setVersioningEnabled(true)
+                    .build())
+            .setStorage(storage)
+            .build()) {
       String bucketName = tmpBucket.getBucket().getName();
 
       String versionedBlob = generator.randomObjectName();
@@ -387,8 +388,7 @@ public class ITObjectSnippets extends TestBase {
 
       DeleteOldVersionOfObject.deleteOldVersionOfObject(
           GOOGLE_CLOUD_PROJECT, bucketName, versionedBlob, originalBlob.getGeneration());
-      assertNull(
-          storage.get(BlobId.of(bucketName, versionedBlob, originalBlob.getGeneration())));
+      assertNull(storage.get(BlobId.of(bucketName, versionedBlob, originalBlob.getGeneration())));
       assertNotNull(storage.get(bucketName, versionedBlob));
     }
   }
@@ -522,16 +522,19 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testListSoftDeletedObjects() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
-            // This is already the default, but we set it here in case the default ever changes
-            .setSoftDeletePolicy(
-                BucketInfo.SoftDeletePolicy.newBuilder()
-                .setRetentionDuration(Duration.ofDays(7))
-                .build())
-            .build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(generator.randomBucketName())
+                    // This is already the default, but we set it here in case the default ever
+                    // changes
+                    .setSoftDeletePolicy(
+                        BucketInfo.SoftDeletePolicy.newBuilder()
+                            .setRetentionDuration(Duration.ofDays(7))
+                            .build())
+                    .build())
+            .setStorage(storage)
+            .build()) {
       String bucketName = tmpBucket.getBucket().getName();
 
       String blob = generator.randomObjectName();
@@ -548,16 +551,19 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testListSoftDeletedVersionsOfObject() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
-            // This is already the default, but we set it here in case the default ever changes
-            .setSoftDeletePolicy(
-                BucketInfo.SoftDeletePolicy.newBuilder()
-                    .setRetentionDuration(Duration.ofDays(7))
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(generator.randomBucketName())
+                    // This is already the default, but we set it here in case the default ever
+                    // changes
+                    .setSoftDeletePolicy(
+                        BucketInfo.SoftDeletePolicy.newBuilder()
+                            .setRetentionDuration(Duration.ofDays(7))
+                            .build())
                     .build())
-            .build())
-        .setStorage(storage)
-        .build()) {
+            .setStorage(storage)
+            .build()) {
       String bucketName = tmpBucket.getBucket().getName();
 
       System.out.println(storage.get(bucketName).getSoftDeletePolicy().toString());
@@ -582,16 +588,19 @@ public class ITObjectSnippets extends TestBase {
 
   @Test
   public void testRestoreSoftDeletedObject() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName())
-            // This is already the default, but we set it here in case the default ever changes
-            .setSoftDeletePolicy(
-                BucketInfo.SoftDeletePolicy.newBuilder()
-                    .setRetentionDuration(Duration.ofDays(7))
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(generator.randomBucketName())
+                    // This is already the default, but we set it here in case the default ever
+                    // changes
+                    .setSoftDeletePolicy(
+                        BucketInfo.SoftDeletePolicy.newBuilder()
+                            .setRetentionDuration(Duration.ofDays(7))
+                            .build())
                     .build())
-            .build())
-        .setStorage(storage)
-        .build()) {
+            .setStorage(storage)
+            .build()) {
       String bucketName = tmpBucket.getBucket().getName();
 
       String blob = generator.randomObjectName();

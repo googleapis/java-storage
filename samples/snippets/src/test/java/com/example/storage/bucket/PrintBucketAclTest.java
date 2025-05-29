@@ -36,10 +36,11 @@ public class PrintBucketAclTest extends TestBase {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+            .setStorage(storage)
+            .build()) {
 
       String bucketName = tmpBucket.getBucket().getName();
       storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));
@@ -53,10 +54,11 @@ public class PrintBucketAclTest extends TestBase {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+            .setStorage(storage)
+            .build()) {
 
       String bucketName = tmpBucket.getBucket().getName();
       storage.createAcl(bucketName, Acl.of(IT_SERVICE_ACCOUNT_USER, Role.READER));

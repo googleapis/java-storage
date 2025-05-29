@@ -53,7 +53,8 @@ public class ITHmacSnippets extends TestBase {
     // These samples have not materially changed since 2022-03 (as of 2025-05).
     // Additionally, we have more robust integration tests for HMAC operations in the library
     // itself.
-    assumeFalse("skipping hmac snippet tests in CI due to racy interactions",
+    assumeFalse(
+        "skipping hmac snippet tests in CI due to racy interactions",
         "samples".equals(Env.JOB_TYPE));
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
   }

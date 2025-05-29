@@ -45,31 +45,32 @@ public final class ITCleanupOldBucketsTest {
   @Inject
   @StorageFixture(Transport.HTTP)
   public Storage storage;
-  @Inject
-  public StorageControlClient ctrl;
-  @Inject
-  public BucketInfo bucket;
+
+  @Inject public StorageControlClient ctrl;
+  @Inject public BucketInfo bucket;
 
   @Test
   public void cleanupOldBuckets() {
-    Page<Bucket> page = storage.list(
-        BucketListOption.fields(BucketField.NAME, BucketField.TIME_CREATED));
+    Page<Bucket> page =
+        storage.list(BucketListOption.fields(BucketField.NAME, BucketField.TIME_CREATED));
 
     String bucketNamePrefix = bucket.getName().substring(0, UUID.randomUUID().toString().length());
 
     OffsetDateTime now = Instant.now().atOffset(ZoneOffset.UTC);
     OffsetDateTime twentyFourHoursAgo = now.minusHours(24);
 
-    ImmutableList<String> bucketsToClean = page.streamAll()
-        .map(Bucket::asBucketInfo)
-        .filter(bucket -> {
-          OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
-          String name = bucket.getName();
-          return ctime.isBefore(twentyFourHoursAgo)
-              && (name.startsWith("gcloud") || name.startsWith(bucketNamePrefix));
-        })
-        .map(BucketInfo::getName)
-        .collect(ImmutableList.toImmutableList());
+    ImmutableList<String> bucketsToClean =
+        page.streamAll()
+            .map(Bucket::asBucketInfo)
+            .filter(
+                bucket -> {
+                  OffsetDateTime ctime = bucket.getCreateTimeOffsetDateTime();
+                  String name = bucket.getName();
+                  return ctime.isBefore(twentyFourHoursAgo)
+                      && (name.startsWith("gcloud") || name.startsWith(bucketNamePrefix));
+                })
+            .map(BucketInfo::getName)
+            .collect(ImmutableList.toImmutableList());
 
     for (String bucketName : bucketsToClean) {
       BucketCleaner.doCleanup(bucketName, storage, ctrl);

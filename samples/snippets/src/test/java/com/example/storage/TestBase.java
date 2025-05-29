@@ -41,6 +41,7 @@ public abstract class TestBase {
   @Inject
   @StorageFixture(Transport.HTTP)
   public Storage storage;
+
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
 

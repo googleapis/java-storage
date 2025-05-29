@@ -45,48 +45,44 @@ public class ITTransferManagerSamples extends TestBase {
   @Test
   public void uploadFiles() throws Exception {
     Path baseDir = uploadDirectory.getRoot().toPath();
-    try (
-        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
+    try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
         TmpFile file2 = DataGenerator.base64Characters().tempFile(baseDir, 17);
-        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)
-    ) {
-      List<Path> files = Stream.of(file1, file2, file3)
-          .map(TmpFile::getPath)
-          .collect(ImmutableList.toImmutableList());
+        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)) {
+      List<Path> files =
+          Stream.of(file1, file2, file3)
+              .map(TmpFile::getPath)
+              .collect(ImmutableList.toImmutableList());
       UploadMany.uploadManyFiles(bucket.getName(), files);
       String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
       assertAll(
           () -> assertThat(snippetOutput).contains(file1.getPath().getFileName().toString()),
           () -> assertThat(snippetOutput).contains(file2.getPath().getFileName().toString()),
-          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString())
-      );
+          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString()));
     }
   }
 
   @Test
   public void uploadDirectory() throws Exception {
     Path baseDir = uploadDirectory.getRoot().toPath();
-    try (
-        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
+    try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 13);
         TmpFile file2 = DataGenerator.base64Characters().tempFile(baseDir, 17);
-        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)
-    ) {
+        TmpFile file3 = DataGenerator.base64Characters().tempFile(baseDir, 19)) {
       UploadDirectory.uploadDirectoryContents(bucket.getName(), baseDir);
       String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
       assertAll(
           () -> assertThat(snippetOutput).contains(file1.getPath().getFileName().toString()),
           () -> assertThat(snippetOutput).contains(file2.getPath().getFileName().toString()),
-          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString())
-      );
+          () -> assertThat(snippetOutput).contains(file3.getPath().getFileName().toString()));
     }
   }
 
   @Test
   public void downloadBucket() throws Exception {
-    try (TemporaryBucket tmpBucket = TemporaryBucket.newBuilder()
-        .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
-        .setStorage(storage)
-        .build()) {
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(BucketInfo.newBuilder(generator.randomBucketName()).build())
+            .setStorage(storage)
+            .build()) {
       BucketInfo bucket = tmpBucket.getBucket();
       String name1 = generator.randomObjectName();
       String name2 = generator.randomObjectName();
@@ -100,8 +96,7 @@ public class ITTransferManagerSamples extends TestBase {
       assertAll(
           () -> assertThat(snippetOutput).contains(name1),
           () -> assertThat(snippetOutput).contains(name2),
-          () -> assertThat(snippetOutput).contains(name3)
-      );
+          () -> assertThat(snippetOutput).contains(name3));
     }
   }
 
@@ -110,25 +105,23 @@ public class ITTransferManagerSamples extends TestBase {
     String name1 = generator.randomObjectName();
     String name2 = generator.randomObjectName();
     String name3 = generator.randomObjectName();
-    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
-        .map(this::info)
-        .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
-        .collect(ImmutableList.toImmutableList());
+    List<BlobInfo> blobs =
+        Stream.of(name1, name2, name3)
+            .map(this::info)
+            .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+            .collect(ImmutableList.toImmutableList());
     DownloadMany.downloadManyBlobs(bucket.getName(), blobs, downloadDirectory.getRoot().toPath());
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     assertAll(
         () -> assertThat(snippetOutput).contains(name1),
         () -> assertThat(snippetOutput).contains(name2),
-        () -> assertThat(snippetOutput).contains(name3)
-    );
+        () -> assertThat(snippetOutput).contains(name3));
   }
 
   @Test
   public void uploadAllowPCU() throws IOException {
     Path baseDir = uploadDirectory.getRoot().toPath();
-    try (
-        TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 313 *  1024 * 1024)
-    ) {
+    try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 313 * 1024 * 1024)) {
       AllowParallelCompositeUpload.parallelCompositeUploadAllowed(
           bucket.getName(), ImmutableList.of(file1.getPath()));
       String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
@@ -141,17 +134,17 @@ public class ITTransferManagerSamples extends TestBase {
     String name1 = generator.randomObjectName();
     String name2 = generator.randomObjectName();
     String name3 = generator.randomObjectName();
-    List<BlobInfo> blobs = Stream.of(name1, name2, name3)
-        .map(this::info)
-        .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
-        .collect(ImmutableList.toImmutableList());
+    List<BlobInfo> blobs =
+        Stream.of(name1, name2, name3)
+            .map(this::info)
+            .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+            .collect(ImmutableList.toImmutableList());
     AllowDivideAndConquerDownload.divideAndConquerDownloadAllowed(
         blobs, bucket.getName(), downloadDirectory.getRoot().toPath());
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     assertAll(
         () -> assertThat(snippetOutput).contains(name1),
         () -> assertThat(snippetOutput).contains(name2),
-        () -> assertThat(snippetOutput).contains(name3)
-    );
+        () -> assertThat(snippetOutput).contains(name3));
   }
 }
