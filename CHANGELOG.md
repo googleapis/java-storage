@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.53.0](https://github.com/googleapis/java-storage/compare/v2.52.3...v2.53.0) (2025-06-04)
+
+
+### Features
+
+* Expose BucketInfo.getProject as a BigInteger ([#3119](https://github.com/googleapis/java-storage/issues/3119)) ([64bbb60](https://github.com/googleapis/java-storage/commit/64bbb608033f757cb6e31e75a78740d8ed1dccab)), closes [#3023](https://github.com/googleapis/java-storage/issues/3023)
+* **storagecontrol:** Add Anywhere cache control APIs ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+* **storagecontrol:** Add Client Libraries Storage IntelligenceConfig ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.58.0 ([06572b7](https://github.com/googleapis/java-storage/commit/06572b7ced2829cdc00bf648521c024a52d93b3a))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250521-2.0.0 ([#3118](https://github.com/googleapis/java-storage/issues/3118)) ([e1be49e](https://github.com/googleapis/java-storage/commit/e1be49e6c987daccf9542c15c6ba418c007d2fb7))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250524-2.0.0 ([#3127](https://github.com/googleapis/java-storage/issues/3127)) ([2a4499d](https://github.com/googleapis/java-storage/commit/2a4499d1686e93e8495f29b5198488d166caaa06))
+* Update sdk-platform-java dependencies ([#3129](https://github.com/googleapis/java-storage/issues/3129)) ([31cd058](https://github.com/googleapis/java-storage/commit/31cd058dcaf5a891ecb7a955602b09634d912560))
+
+
+### Documentation
+
+* Add explicit Optional annotations to fields that have always been treated as optional ([53b6927](https://github.com/googleapis/java-storage/commit/53b6927de9e5b948e1192e6cf716b88cc872c632))
+* Add note that Bucket.project output format is always project number format ([53b6927](https://github.com/googleapis/java-storage/commit/53b6927de9e5b948e1192e6cf716b88cc872c632))
+* Add note that managedFolders are supported for GetIamPolicy and SetIamPolicy ([53b6927](https://github.com/googleapis/java-storage/commit/53b6927de9e5b948e1192e6cf716b88cc872c632))
+
 ## [2.52.3](https://github.com/googleapis/java-storage/compare/v2.52.2...v2.52.3) (2025-05-19)
 
 
