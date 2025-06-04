@@ -902,13 +902,14 @@ public class ITObjectTest {
     String targetBlobName = generator.randomObjectName() + "-target";
     CopyRequest req = CopyRequest.of(source, BlobId.of(bucket.getName(), targetBlobName));
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
+    Blob gen1 = copyWriter.getResult();
+    assertEquals(bucket.getName(), gen1.getBucket());
+    assertEquals(targetBlobName, gen1.getName());
+    assertEquals(CONTENT_TYPE, gen1.getContentType());
+    assertEquals(metadata, gen1.getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(gen1.getBlobId()));
   }
 
   @Test
@@ -959,14 +960,15 @@ public class ITObjectTest {
                 BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ))
             .build();
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
-    assertNotNull(copyWriter.getResult().getAcl(User.ofAllUsers()));
+    Blob gen1 = copyWriter.getResult();
+    assertEquals(bucket.getName(), gen1.getBucket());
+    assertEquals(targetBlobName, gen1.getName());
+    assertEquals(CONTENT_TYPE, gen1.getContentType());
+    assertEquals(metadata, gen1.getMetadata());
+    assertNotNull(gen1.getAcl(User.ofAllUsers()));
     assertTrue(copyWriter.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(gen1.getBlobId()));
   }
 
   @Test
@@ -987,36 +989,38 @@ public class ITObjectTest {
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
-    CopyRequest req =
+    CopyRequest req1 =
         CopyRequest.newBuilder()
             .setSource(source)
             .setTarget(target, BlobTargetOption.encryptionKey(OTHER_BASE64_KEY))
             .setSourceOptions(BlobSourceOption.decryptionKey(BASE64_KEY))
             .build();
-    CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
+    CopyWriter copyWriter1 = storage.copy(req1);
+    Blob copy1Gen1 = copyWriter1.getResult();
+    assertEquals(bucket.getName(), copy1Gen1.getBucket());
+    assertEquals(targetBlobName, copy1Gen1.getName());
+    assertEquals(CONTENT_TYPE, copy1Gen1.getContentType());
     assertArrayEquals(
         BLOB_BYTE_CONTENT,
-        copyWriter.getResult().getContent(Blob.BlobSourceOption.decryptionKey(OTHER_BASE64_KEY)));
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
-    assertTrue(copyWriter.isDone());
-    req =
+        copy1Gen1.getContent(Blob.BlobSourceOption.decryptionKey(OTHER_BASE64_KEY)));
+    assertEquals(metadata, copy1Gen1.getMetadata());
+    assertTrue(copyWriter1.isDone());
+    CopyRequest req2 =
         CopyRequest.newBuilder()
             .setSource(source)
             .setTarget(target)
             .setSourceOptions(BlobSourceOption.decryptionKey(BASE64_KEY))
             .build();
-    copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
-    assertArrayEquals(BLOB_BYTE_CONTENT, copyWriter.getResult().getContent());
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
-    assertTrue(copyWriter.isDone());
+    CopyWriter copyWriter2 = storage.copy(req2);
+    Blob copy2Gen1 = copyWriter2.getResult();
+    assertEquals(bucket.getName(), copy2Gen1.getBucket());
+    assertEquals(targetBlobName, copy2Gen1.getName());
+    assertEquals(CONTENT_TYPE, copy2Gen1.getContentType());
+    assertArrayEquals(BLOB_BYTE_CONTENT, copy2Gen1.getContent());
+    assertEquals(metadata, copy2Gen1.getMetadata());
+    assertTrue(copyWriter2.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(copy2Gen1.getBlobId()));
   }
 
   @Test
@@ -1035,13 +1039,14 @@ public class ITObjectTest {
             .build();
     CopyRequest req = CopyRequest.of(source, target);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
+    Blob gen1 = copyWriter.getResult();
+    assertEquals(bucket.getName(), gen1.getBucket());
+    assertEquals(targetBlobName, gen1.getName());
+    assertEquals(CONTENT_TYPE, gen1.getContentType());
+    assertEquals(metadata, gen1.getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(gen1.getBlobId()));
   }
 
   @Test
@@ -1059,12 +1064,13 @@ public class ITObjectTest {
         BlobInfo.newBuilder(bucket, targetBlobName).setStorageClass(StorageClass.COLDLINE).build();
     CopyRequest req = CopyRequest.of(source, targetInfo);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertEquals(StorageClass.COLDLINE, copyWriter.getResult().getStorageClass());
+    Blob gen1 = copyWriter.getResult();
+    assertEquals(bucket.getName(), gen1.getBucket());
+    assertEquals(targetBlobName, gen1.getName());
+    assertEquals(StorageClass.COLDLINE, gen1.getStorageClass());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(gen1.getBlobId()));
   }
 
   @Test
@@ -1079,15 +1085,14 @@ public class ITObjectTest {
     BlobInfo target = BlobInfo.newBuilder(bucket, targetBlobName).setMetadata(metadata).build();
     CopyRequest req = CopyRequest.of(source, target);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
-    assertEquals(targetBlobName, copyWriter.getResult().getName());
-    assertTrue(
-        copyWriter.getResult().getContentType() == null
-            || copyWriter.getResult().getContentType().isEmpty());
-    assertEquals(metadata, copyWriter.getResult().getMetadata());
+    Blob gen1 = copyWriter.getResult();
+    assertEquals(bucket.getName(), gen1.getBucket());
+    assertEquals(targetBlobName, gen1.getName());
+    assertTrue(gen1.getContentType() == null || gen1.getContentType().isEmpty());
+    assertEquals(metadata, gen1.getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucket.getName(), targetBlobName));
+    assertTrue(storage.delete(gen1.getBlobId()));
   }
 
   @Test
