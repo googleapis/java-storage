@@ -30,6 +30,7 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -41,6 +42,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -153,11 +155,14 @@ public class RemoteStorageHelper {
   public static Boolean forceDelete(
       Storage storage, String bucket, long timeout, TimeUnit unit, String userProject)
       throws InterruptedException, ExecutionException {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+    ThreadFactory threadFactory =
+        new ThreadFactoryBuilder().setDaemon(true).setNameFormat("forceDelete-%s").build();
+    ExecutorService executor = Executors.newSingleThreadExecutor(threadFactory);
     Future<Boolean> future = executor.submit(new DeleteBucketTask(storage, bucket, userProject));
     try {
       return future.get(timeout, unit);
     } catch (TimeoutException ex) {
+      future.cancel(true);
       return false;
     } finally {
       executor.shutdown();
