@@ -1317,6 +1317,52 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the objectRetention field is set.
+   */
+  boolean hasObjectRetention();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The objectRetention.
+   */
+  com.google.storage.v2.Bucket.ObjectRetention getObjectRetention();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.Bucket.ObjectRetentionOrBuilder getObjectRetentionOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Optional. The bucket's IP filter configuration.
    * </pre>
    *

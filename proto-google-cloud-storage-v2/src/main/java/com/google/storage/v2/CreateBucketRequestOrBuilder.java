@@ -204,4 +204,17 @@ public interface CreateBucketRequestOrBuilder
    * @return The bytes for predefinedDefaultObjectAcl.
    */
   com.google.protobuf.ByteString getPredefinedDefaultObjectAclBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. If true, enable object retention on the bucket.
+   * </pre>
+   *
+   * <code>bool enable_object_retention = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The enableObjectRetention.
+   */
+  boolean getEnableObjectRetention();
 }

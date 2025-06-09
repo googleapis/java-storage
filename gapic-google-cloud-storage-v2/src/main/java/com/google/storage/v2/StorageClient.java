@@ -942,6 +942,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucketId("bucketId-1603305307")
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
+   *           .setEnableObjectRetention(true)
    *           .build();
    *   Bucket response = storageClient.createBucket(request);
    * }
@@ -974,6 +975,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucketId("bucketId-1603305307")
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
+   *           .setEnableObjectRetention(true)
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.createBucketCallable().futureCall(request);
    *   // Do something.
@@ -2791,6 +2793,7 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setOverrideUnlockedRetention(true)
    *           .build();
    *   Object response = storageClient.updateObject(request);
    * }
@@ -2826,6 +2829,7 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setOverrideUnlockedRetention(true)
    *           .build();
    *   ApiFuture<Object> future = storageClient.updateObjectCallable().futureCall(request);
    *   // Do something.

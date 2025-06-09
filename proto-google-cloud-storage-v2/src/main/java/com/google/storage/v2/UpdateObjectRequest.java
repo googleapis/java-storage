@@ -473,6 +473,25 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
         : commonObjectRequestParams_;
   }
 
+  public static final int OVERRIDE_UNLOCKED_RETENTION_FIELD_NUMBER = 11;
+  private boolean overrideUnlockedRetention_ = false;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Overrides the unlocked retention config on the object.
+   * </pre>
+   *
+   * <code>bool override_unlocked_retention = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The overrideUnlockedRetention.
+   */
+  @java.lang.Override
+  public boolean getOverrideUnlockedRetention() {
+    return overrideUnlockedRetention_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -511,6 +530,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 10, predefinedAcl_);
     }
+    if (overrideUnlockedRetention_ != false) {
+      output.writeBool(11, overrideUnlockedRetention_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -545,6 +567,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, predefinedAcl_);
+    }
+    if (overrideUnlockedRetention_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, overrideUnlockedRetention_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -592,6 +617,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       if (!getCommonObjectRequestParams().equals(other.getCommonObjectRequestParams()))
         return false;
     }
+    if (getOverrideUnlockedRetention() != other.getOverrideUnlockedRetention()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -633,6 +659,8 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       hash = (37 * hash) + COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonObjectRequestParams().hashCode();
     }
+    hash = (37 * hash) + OVERRIDE_UNLOCKED_RETENTION_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getOverrideUnlockedRetention());
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -804,6 +832,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
         commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
+      overrideUnlockedRetention_ = false;
       return this;
     }
 
@@ -874,6 +903,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
                 ? commonObjectRequestParams_
                 : commonObjectRequestParamsBuilder_.build();
         to_bitField0_ |= 0x00000040;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.overrideUnlockedRetention_ = overrideUnlockedRetention_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -948,6 +980,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       }
       if (other.hasCommonObjectRequestParams()) {
         mergeCommonObjectRequestParams(other.getCommonObjectRequestParams());
+      }
+      if (other.getOverrideUnlockedRetention() != false) {
+        setOverrideUnlockedRetention(other.getOverrideUnlockedRetention());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1024,6 +1059,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
                 bitField0_ |= 0x00000020;
                 break;
               } // case 82
+            case 88:
+              {
+                overrideUnlockedRetention_ = input.readBool();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 88
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -2197,6 +2238,62 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
         commonObjectRequestParams_ = null;
       }
       return commonObjectRequestParamsBuilder_;
+    }
+
+    private boolean overrideUnlockedRetention_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Overrides the unlocked retention config on the object.
+     * </pre>
+     *
+     * <code>bool override_unlocked_retention = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The overrideUnlockedRetention.
+     */
+    @java.lang.Override
+    public boolean getOverrideUnlockedRetention() {
+      return overrideUnlockedRetention_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Overrides the unlocked retention config on the object.
+     * </pre>
+     *
+     * <code>bool override_unlocked_retention = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The overrideUnlockedRetention to set.
+     * @return This builder for chaining.
+     */
+    public Builder setOverrideUnlockedRetention(boolean value) {
+
+      overrideUnlockedRetention_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Overrides the unlocked retention config on the object.
+     * </pre>
+     *
+     * <code>bool override_unlocked_retention = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearOverrideUnlockedRetention() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      overrideUnlockedRetention_ = false;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override
