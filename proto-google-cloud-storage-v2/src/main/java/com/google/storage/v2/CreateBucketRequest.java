@@ -369,6 +369,25 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     }
   }
 
+  public static final int ENABLE_OBJECT_RETENTION_FIELD_NUMBER = 9;
+  private boolean enableObjectRetention_ = false;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. If true, enable object retention on the bucket.
+   * </pre>
+   *
+   * <code>bool enable_object_retention = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The enableObjectRetention.
+   */
+  @java.lang.Override
+  public boolean getEnableObjectRetention() {
+    return enableObjectRetention_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -398,6 +417,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedDefaultObjectAcl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, predefinedDefaultObjectAcl_);
     }
+    if (enableObjectRetention_ != false) {
+      output.writeBool(9, enableObjectRetention_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -422,6 +444,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedDefaultObjectAcl_)) {
       size +=
           com.google.protobuf.GeneratedMessageV3.computeStringSize(7, predefinedDefaultObjectAcl_);
+    }
+    if (enableObjectRetention_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, enableObjectRetention_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -448,6 +473,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     if (!getPredefinedAcl().equals(other.getPredefinedAcl())) return false;
     if (!getPredefinedDefaultObjectAcl().equals(other.getPredefinedDefaultObjectAcl()))
       return false;
+    if (getEnableObjectRetention() != other.getEnableObjectRetention()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -471,6 +497,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     hash = (53 * hash) + getPredefinedAcl().hashCode();
     hash = (37 * hash) + PREDEFINED_DEFAULT_OBJECT_ACL_FIELD_NUMBER;
     hash = (53 * hash) + getPredefinedDefaultObjectAcl().hashCode();
+    hash = (37 * hash) + ENABLE_OBJECT_RETENTION_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnableObjectRetention());
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -629,6 +657,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       bucketId_ = "";
       predefinedAcl_ = "";
       predefinedDefaultObjectAcl_ = "";
+      enableObjectRetention_ = false;
       return this;
     }
 
@@ -681,6 +710,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.predefinedDefaultObjectAcl_ = predefinedDefaultObjectAcl_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.enableObjectRetention_ = enableObjectRetention_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -753,6 +785,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
         bitField0_ |= 0x00000010;
         onChanged();
       }
+      if (other.getEnableObjectRetention() != false) {
+        setEnableObjectRetention(other.getEnableObjectRetention());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -809,6 +844,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
                 bitField0_ |= 0x00000010;
                 break;
               } // case 58
+            case 72:
+              {
+                enableObjectRetention_ = input.readBool();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 72
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1567,6 +1608,62 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       checkByteStringIsUtf8(value);
       predefinedDefaultObjectAcl_ = value;
       bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+
+    private boolean enableObjectRetention_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If true, enable object retention on the bucket.
+     * </pre>
+     *
+     * <code>bool enable_object_retention = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The enableObjectRetention.
+     */
+    @java.lang.Override
+    public boolean getEnableObjectRetention() {
+      return enableObjectRetention_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If true, enable object retention on the bucket.
+     * </pre>
+     *
+     * <code>bool enable_object_retention = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The enableObjectRetention to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEnableObjectRetention(boolean value) {
+
+      enableObjectRetention_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If true, enable object retention on the bucket.
+     * </pre>
+     *
+     * <code>bool enable_object_retention = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEnableObjectRetention() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      enableObjectRetention_ = false;
       onChanged();
       return this;
     }

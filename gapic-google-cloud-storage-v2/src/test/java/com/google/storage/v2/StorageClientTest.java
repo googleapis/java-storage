@@ -202,6 +202,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -270,6 +271,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -338,6 +340,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -412,6 +415,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -574,6 +578,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -643,6 +648,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -966,6 +972,7 @@ public class StorageClientTest {
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .setHierarchicalNamespace(Bucket.HierarchicalNamespace.newBuilder().build())
             .setSoftDeletePolicy(Bucket.SoftDeletePolicy.newBuilder().build())
+            .setObjectRetention(Bucket.ObjectRetention.newBuilder().build())
             .setIpFilter(Bucket.IpFilter.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);

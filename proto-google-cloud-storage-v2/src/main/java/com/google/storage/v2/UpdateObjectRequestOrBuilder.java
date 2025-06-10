@@ -327,4 +327,17 @@ public interface UpdateObjectRequestOrBuilder
    * </code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Overrides the unlocked retention config on the object.
+   * </pre>
+   *
+   * <code>bool override_unlocked_retention = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The overrideUnlockedRetention.
+   */
+  boolean getOverrideUnlockedRetention();
 }

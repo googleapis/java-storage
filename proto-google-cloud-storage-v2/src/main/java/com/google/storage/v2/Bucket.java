@@ -2374,6 +2374,168 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The bytes for defaultKmsKey.
      */
     com.google.protobuf.ByteString getDefaultKmsKeyBytes();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the googleManagedEncryptionEnforcementConfig field is set.
+     */
+    boolean hasGoogleManagedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The googleManagedEncryptionEnforcementConfig.
+     */
+    com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+        getGoogleManagedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfigOrBuilder
+        getGoogleManagedEncryptionEnforcementConfigOrBuilder();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the customerManagedEncryptionEnforcementConfig field is set.
+     */
+    boolean hasCustomerManagedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The customerManagedEncryptionEnforcementConfig.
+     */
+    com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+        getCustomerManagedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfigOrBuilder
+        getCustomerManagedEncryptionEnforcementConfigOrBuilder();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the customerSuppliedEncryptionEnforcementConfig field is set.
+     */
+    boolean hasCustomerSuppliedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The customerSuppliedEncryptionEnforcementConfig.
+     */
+    com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+        getCustomerSuppliedEncryptionEnforcementConfig();
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfigOrBuilder
+        getCustomerSuppliedEncryptionEnforcementConfigOrBuilder();
   }
 
   /**
@@ -2421,6 +2583,3052 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.storage.v2.Bucket.Encryption.Builder.class);
     }
 
+    public interface GoogleManagedEncryptionEnforcementConfigOrBuilder
+        extends
+        // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Google Managed Encryption (GMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using GMEK encryption.
+       * If false or unset, creation of new objects with GMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      boolean hasRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Google Managed Encryption (GMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using GMEK encryption.
+       * If false or unset, creation of new objects with GMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      boolean getRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      boolean hasEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      com.google.protobuf.Timestamp getEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Google Managed Encryption (GMEK) enforcement config of a bucket.
+     * </pre>
+     *
+     * Protobuf type {@code
+     * google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig}
+     */
+    public static final class GoogleManagedEncryptionEnforcementConfig
+        extends com.google.protobuf.GeneratedMessageV3
+        implements
+        // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+        GoogleManagedEncryptionEnforcementConfigOrBuilder {
+      private static final long serialVersionUID = 0L;
+
+      // Use GoogleManagedEncryptionEnforcementConfig.newBuilder() to construct.
+      private GoogleManagedEncryptionEnforcementConfig(
+          com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+
+      private GoogleManagedEncryptionEnforcementConfig() {}
+
+      @java.lang.Override
+      @SuppressWarnings({"unused"})
+      protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+        return new GoogleManagedEncryptionEnforcementConfig();
+      }
+
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                    .class,
+                com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                    .Builder.class);
+      }
+
+      private int bitField0_;
+      public static final int RESTRICTED_FIELD_NUMBER = 1;
+      private boolean restricted_ = false;
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Google Managed Encryption (GMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using GMEK encryption.
+       * If false or unset, creation of new objects with GMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      @java.lang.Override
+      public boolean hasRestricted() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Google Managed Encryption (GMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using GMEK encryption.
+       * If false or unset, creation of new objects with GMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      @java.lang.Override
+      public boolean getRestricted() {
+        return restricted_;
+      }
+
+      public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
+      private com.google.protobuf.Timestamp effectiveTime_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      @java.lang.Override
+      public boolean hasEffectiveTime() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      @java.lang.Override
+      public com.google.protobuf.Timestamp getEffectiveTime() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      @java.lang.Override
+      public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+        if (((bitField0_ & 0x00000001) != 0)) {
+          output.writeBool(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          output.writeMessage(2, getEffectiveTime());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+          return true;
+        }
+        if (!(obj
+            instanceof
+            com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)) {
+          return super.equals(obj);
+        }
+        com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig other =
+            (com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig) obj;
+
+        if (hasRestricted() != other.hasRestricted()) return false;
+        if (hasRestricted()) {
+          if (getRestricted() != other.getRestricted()) return false;
+        }
+        if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
+        if (hasEffectiveTime()) {
+          if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
+        }
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+        return true;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (hasRestricted()) {
+          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        }
+        if (hasEffectiveTime()) {
+          hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
+          hash = (53 * hash) + getEffectiveTime().hashCode();
+        }
+        hash = (29 * hash) + getUnknownFields().hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(java.nio.ByteBuffer data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(
+              java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.ByteString data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.ByteString data,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseDelimitedFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() {
+        return newBuilder();
+      }
+
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+
+      public static Builder newBuilder(
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+              prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Google Managed Encryption (GMEK) enforcement config of a bucket.
+       * </pre>
+       *
+       * Protobuf type {@code
+       * google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig}
+       */
+      public static final class Builder
+          extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+          implements
+          // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+          com.google.storage.v2.Bucket.Encryption
+              .GoogleManagedEncryptionEnforcementConfigOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                      .class,
+                  com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                      .Builder.class);
+        }
+
+        // Construct using
+        // com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+            getEffectiveTimeFieldBuilder();
+          }
+        }
+
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          bitField0_ = 0;
+          restricted_ = false;
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+            getDefaultInstanceForType() {
+          return com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+              .getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+            build() {
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig result =
+              buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+            buildPartial() {
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig result =
+              new com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig(
+                  this);
+          if (bitField0_ != 0) {
+            buildPartial0(result);
+          }
+          onBuilt();
+          return result;
+        }
+
+        private void buildPartial0(
+            com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                result) {
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) != 0)) {
+            result.restricted_ = restricted_;
+            to_bitField0_ |= 0x00000001;
+          }
+          if (((from_bitField0_ & 0x00000002) != 0)) {
+            result.effectiveTime_ =
+                effectiveTimeBuilder_ == null ? effectiveTime_ : effectiveTimeBuilder_.build();
+            to_bitField0_ |= 0x00000002;
+          }
+          result.bitField0_ |= to_bitField0_;
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return super.clone();
+        }
+
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.setField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return super.clearField(field);
+        }
+
+        @java.lang.Override
+        public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return super.clearOneof(oneof);
+        }
+
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index,
+            java.lang.Object value) {
+          return super.setRepeatedField(field, index, value);
+        }
+
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.addRepeatedField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other
+              instanceof
+              com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig) {
+            return mergeFrom(
+                (com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+                    other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(
+            com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                other) {
+          if (other
+              == com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()) return this;
+          if (other.hasRestricted()) {
+            setRestricted(other.getRestricted());
+          }
+          if (other.hasEffectiveTime()) {
+            mergeEffectiveTime(other.getEffectiveTime());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
+          try {
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 8:
+                  {
+                    restricted_ = input.readBool();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 8
+                case 18:
+                  {
+                    input.readMessage(
+                        getEffectiveTimeFieldBuilder().getBuilder(), extensionRegistry);
+                    bitField0_ |= 0x00000002;
+                    break;
+                  } // case 18
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.unwrapIOException();
+          } finally {
+            onChanged();
+          } // finally
+          return this;
+        }
+
+        private int bitField0_;
+
+        private boolean restricted_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Google Managed Encryption (GMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using GMEK encryption.
+         * If false or unset, creation of new objects with GMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return Whether the restricted field is set.
+         */
+        @java.lang.Override
+        public boolean hasRestricted() {
+          return ((bitField0_ & 0x00000001) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Google Managed Encryption (GMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using GMEK encryption.
+         * If false or unset, creation of new objects with GMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return The restricted.
+         */
+        @java.lang.Override
+        public boolean getRestricted() {
+          return restricted_;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Google Managed Encryption (GMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using GMEK encryption.
+         * If false or unset, creation of new objects with GMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @param value The restricted to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestricted(boolean value) {
+
+          restricted_ = value;
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Google Managed Encryption (GMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using GMEK encryption.
+         * If false or unset, creation of new objects with GMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearRestricted() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        private com.google.protobuf.Timestamp effectiveTime_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            effectiveTimeBuilder_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return Whether the effectiveTime field is set.
+         */
+        public boolean hasEffectiveTime() {
+          return ((bitField0_ & 0x00000002) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return The effectiveTime.
+         */
+        public com.google.protobuf.Timestamp getEffectiveTime() {
+          if (effectiveTimeBuilder_ == null) {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          } else {
+            return effectiveTimeBuilder_.getMessage();
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            effectiveTime_ = value;
+          } else {
+            effectiveTimeBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTime_ = builderForValue.build();
+          } else {
+            effectiveTimeBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder mergeEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) != 0)
+                && effectiveTime_ != null
+                && effectiveTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+              getEffectiveTimeBuilder().mergeFrom(value);
+            } else {
+              effectiveTime_ = value;
+            }
+          } else {
+            effectiveTimeBuilder_.mergeFrom(value);
+          }
+          if (effectiveTime_ != null) {
+            bitField0_ |= 0x00000002;
+            onChanged();
+          }
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder clearEffectiveTime() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.Timestamp.Builder getEffectiveTimeBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getEffectiveTimeFieldBuilder().getBuilder();
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+          if (effectiveTimeBuilder_ != null) {
+            return effectiveTimeBuilder_.getMessageOrBuilder();
+          } else {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            getEffectiveTimeFieldBuilder() {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTimeBuilder_ =
+                new com.google.protobuf.SingleFieldBuilderV3<
+                    com.google.protobuf.Timestamp,
+                    com.google.protobuf.Timestamp.Builder,
+                    com.google.protobuf.TimestampOrBuilder>(
+                    getEffectiveTime(), getParentForChildren(), isClean());
+            effectiveTime_ = null;
+          }
+          return effectiveTimeBuilder_;
+        }
+
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+        // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+      }
+
+      // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig)
+      private static final com.google.storage.v2.Bucket.Encryption
+              .GoogleManagedEncryptionEnforcementConfig
+          DEFAULT_INSTANCE;
+
+      static {
+        DEFAULT_INSTANCE =
+            new com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig();
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<GoogleManagedEncryptionEnforcementConfig>
+          PARSER =
+              new com.google.protobuf.AbstractParser<GoogleManagedEncryptionEnforcementConfig>() {
+                @java.lang.Override
+                public GoogleManagedEncryptionEnforcementConfig parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                  Builder builder = newBuilder();
+                  try {
+                    builder.mergeFrom(input, extensionRegistry);
+                  } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    throw e.setUnfinishedMessage(builder.buildPartial());
+                  } catch (com.google.protobuf.UninitializedMessageException e) {
+                    throw e.asInvalidProtocolBufferException()
+                        .setUnfinishedMessage(builder.buildPartial());
+                  } catch (java.io.IOException e) {
+                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                        .setUnfinishedMessage(builder.buildPartial());
+                  }
+                  return builder.buildPartial();
+                }
+              };
+
+      public static com.google.protobuf.Parser<GoogleManagedEncryptionEnforcementConfig> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<GoogleManagedEncryptionEnforcementConfig>
+          getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+    }
+
+    public interface CustomerManagedEncryptionEnforcementConfigOrBuilder
+        extends
+        // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Managed Encryption (CMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CMEK encryption.
+       * If false or unset, creation of new objects with CMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      boolean hasRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Managed Encryption (CMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CMEK encryption.
+       * If false or unset, creation of new objects with CMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      boolean getRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      boolean hasEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      com.google.protobuf.Timestamp getEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Customer Managed Encryption (CMEK) enforcement config of a bucket.
+     * </pre>
+     *
+     * Protobuf type {@code
+     * google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig}
+     */
+    public static final class CustomerManagedEncryptionEnforcementConfig
+        extends com.google.protobuf.GeneratedMessageV3
+        implements
+        // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+        CustomerManagedEncryptionEnforcementConfigOrBuilder {
+      private static final long serialVersionUID = 0L;
+
+      // Use CustomerManagedEncryptionEnforcementConfig.newBuilder() to construct.
+      private CustomerManagedEncryptionEnforcementConfig(
+          com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+
+      private CustomerManagedEncryptionEnforcementConfig() {}
+
+      @java.lang.Override
+      @SuppressWarnings({"unused"})
+      protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+        return new CustomerManagedEncryptionEnforcementConfig();
+      }
+
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                    .class,
+                com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                    .Builder.class);
+      }
+
+      private int bitField0_;
+      public static final int RESTRICTED_FIELD_NUMBER = 1;
+      private boolean restricted_ = false;
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Managed Encryption (CMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CMEK encryption.
+       * If false or unset, creation of new objects with CMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      @java.lang.Override
+      public boolean hasRestricted() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Managed Encryption (CMEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CMEK encryption.
+       * If false or unset, creation of new objects with CMEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      @java.lang.Override
+      public boolean getRestricted() {
+        return restricted_;
+      }
+
+      public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
+      private com.google.protobuf.Timestamp effectiveTime_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      @java.lang.Override
+      public boolean hasEffectiveTime() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      @java.lang.Override
+      public com.google.protobuf.Timestamp getEffectiveTime() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      @java.lang.Override
+      public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+        if (((bitField0_ & 0x00000001) != 0)) {
+          output.writeBool(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          output.writeMessage(2, getEffectiveTime());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+          return true;
+        }
+        if (!(obj
+            instanceof
+            com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)) {
+          return super.equals(obj);
+        }
+        com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig other =
+            (com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+                obj;
+
+        if (hasRestricted() != other.hasRestricted()) return false;
+        if (hasRestricted()) {
+          if (getRestricted() != other.getRestricted()) return false;
+        }
+        if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
+        if (hasEffectiveTime()) {
+          if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
+        }
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+        return true;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (hasRestricted()) {
+          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        }
+        if (hasEffectiveTime()) {
+          hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
+          hash = (53 * hash) + getEffectiveTime().hashCode();
+        }
+        hash = (29 * hash) + getUnknownFields().hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(java.nio.ByteBuffer data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(
+              java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.ByteString data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.ByteString data,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseDelimitedFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() {
+        return newBuilder();
+      }
+
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+
+      public static Builder newBuilder(
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Customer Managed Encryption (CMEK) enforcement config of a bucket.
+       * </pre>
+       *
+       * Protobuf type {@code
+       * google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig}
+       */
+      public static final class Builder
+          extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+          implements
+          // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+          com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfigOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                      .class,
+                  com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                      .Builder.class);
+        }
+
+        // Construct using
+        // com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+            getEffectiveTimeFieldBuilder();
+          }
+        }
+
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          bitField0_ = 0;
+          restricted_ = false;
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+            getDefaultInstanceForType() {
+          return com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              .getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+            build() {
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+            buildPartial() {
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              result =
+                  new com.google.storage.v2.Bucket.Encryption
+                      .CustomerManagedEncryptionEnforcementConfig(this);
+          if (bitField0_ != 0) {
+            buildPartial0(result);
+          }
+          onBuilt();
+          return result;
+        }
+
+        private void buildPartial0(
+            com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                result) {
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) != 0)) {
+            result.restricted_ = restricted_;
+            to_bitField0_ |= 0x00000001;
+          }
+          if (((from_bitField0_ & 0x00000002) != 0)) {
+            result.effectiveTime_ =
+                effectiveTimeBuilder_ == null ? effectiveTime_ : effectiveTimeBuilder_.build();
+            to_bitField0_ |= 0x00000002;
+          }
+          result.bitField0_ |= to_bitField0_;
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return super.clone();
+        }
+
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.setField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return super.clearField(field);
+        }
+
+        @java.lang.Override
+        public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return super.clearOneof(oneof);
+        }
+
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index,
+            java.lang.Object value) {
+          return super.setRepeatedField(field, index, value);
+        }
+
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.addRepeatedField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other
+              instanceof
+              com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig) {
+            return mergeFrom(
+                (com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+                    other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(
+            com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                other) {
+          if (other
+              == com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()) return this;
+          if (other.hasRestricted()) {
+            setRestricted(other.getRestricted());
+          }
+          if (other.hasEffectiveTime()) {
+            mergeEffectiveTime(other.getEffectiveTime());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
+          try {
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 8:
+                  {
+                    restricted_ = input.readBool();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 8
+                case 18:
+                  {
+                    input.readMessage(
+                        getEffectiveTimeFieldBuilder().getBuilder(), extensionRegistry);
+                    bitField0_ |= 0x00000002;
+                    break;
+                  } // case 18
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.unwrapIOException();
+          } finally {
+            onChanged();
+          } // finally
+          return this;
+        }
+
+        private int bitField0_;
+
+        private boolean restricted_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Managed Encryption (CMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CMEK encryption.
+         * If false or unset, creation of new objects with CMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return Whether the restricted field is set.
+         */
+        @java.lang.Override
+        public boolean hasRestricted() {
+          return ((bitField0_ & 0x00000001) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Managed Encryption (CMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CMEK encryption.
+         * If false or unset, creation of new objects with CMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return The restricted.
+         */
+        @java.lang.Override
+        public boolean getRestricted() {
+          return restricted_;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Managed Encryption (CMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CMEK encryption.
+         * If false or unset, creation of new objects with CMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @param value The restricted to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestricted(boolean value) {
+
+          restricted_ = value;
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Managed Encryption (CMEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CMEK encryption.
+         * If false or unset, creation of new objects with CMEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearRestricted() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        private com.google.protobuf.Timestamp effectiveTime_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            effectiveTimeBuilder_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return Whether the effectiveTime field is set.
+         */
+        public boolean hasEffectiveTime() {
+          return ((bitField0_ & 0x00000002) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return The effectiveTime.
+         */
+        public com.google.protobuf.Timestamp getEffectiveTime() {
+          if (effectiveTimeBuilder_ == null) {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          } else {
+            return effectiveTimeBuilder_.getMessage();
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            effectiveTime_ = value;
+          } else {
+            effectiveTimeBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTime_ = builderForValue.build();
+          } else {
+            effectiveTimeBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder mergeEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) != 0)
+                && effectiveTime_ != null
+                && effectiveTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+              getEffectiveTimeBuilder().mergeFrom(value);
+            } else {
+              effectiveTime_ = value;
+            }
+          } else {
+            effectiveTimeBuilder_.mergeFrom(value);
+          }
+          if (effectiveTime_ != null) {
+            bitField0_ |= 0x00000002;
+            onChanged();
+          }
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder clearEffectiveTime() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.Timestamp.Builder getEffectiveTimeBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getEffectiveTimeFieldBuilder().getBuilder();
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+          if (effectiveTimeBuilder_ != null) {
+            return effectiveTimeBuilder_.getMessageOrBuilder();
+          } else {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            getEffectiveTimeFieldBuilder() {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTimeBuilder_ =
+                new com.google.protobuf.SingleFieldBuilderV3<
+                    com.google.protobuf.Timestamp,
+                    com.google.protobuf.Timestamp.Builder,
+                    com.google.protobuf.TimestampOrBuilder>(
+                    getEffectiveTime(), getParentForChildren(), isClean());
+            effectiveTime_ = null;
+          }
+          return effectiveTimeBuilder_;
+        }
+
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+        // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+      }
+
+      // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
+      private static final com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          DEFAULT_INSTANCE;
+
+      static {
+        DEFAULT_INSTANCE =
+            new com.google.storage.v2.Bucket.Encryption
+                .CustomerManagedEncryptionEnforcementConfig();
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfig
+          getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<CustomerManagedEncryptionEnforcementConfig>
+          PARSER =
+              new com.google.protobuf.AbstractParser<CustomerManagedEncryptionEnforcementConfig>() {
+                @java.lang.Override
+                public CustomerManagedEncryptionEnforcementConfig parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                  Builder builder = newBuilder();
+                  try {
+                    builder.mergeFrom(input, extensionRegistry);
+                  } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    throw e.setUnfinishedMessage(builder.buildPartial());
+                  } catch (com.google.protobuf.UninitializedMessageException e) {
+                    throw e.asInvalidProtocolBufferException()
+                        .setUnfinishedMessage(builder.buildPartial());
+                  } catch (java.io.IOException e) {
+                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                        .setUnfinishedMessage(builder.buildPartial());
+                  }
+                  return builder.buildPartial();
+                }
+              };
+
+      public static com.google.protobuf.Parser<CustomerManagedEncryptionEnforcementConfig>
+          parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<CustomerManagedEncryptionEnforcementConfig>
+          getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+          getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+    }
+
+    public interface CustomerSuppliedEncryptionEnforcementConfigOrBuilder
+        extends
+        // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Supplied Encryption (CSEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CSEK encryption.
+       * If false or unset, creation of new objects with CSEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      boolean hasRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Supplied Encryption (CSEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CSEK encryption.
+       * If false or unset, creation of new objects with CSEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      boolean getRestricted();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      boolean hasEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      com.google.protobuf.Timestamp getEffectiveTime();
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Customer Supplied Encryption (CSEK) enforcement config of a bucket.
+     * </pre>
+     *
+     * Protobuf type {@code
+     * google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig}
+     */
+    public static final class CustomerSuppliedEncryptionEnforcementConfig
+        extends com.google.protobuf.GeneratedMessageV3
+        implements
+        // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+        CustomerSuppliedEncryptionEnforcementConfigOrBuilder {
+      private static final long serialVersionUID = 0L;
+
+      // Use CustomerSuppliedEncryptionEnforcementConfig.newBuilder() to construct.
+      private CustomerSuppliedEncryptionEnforcementConfig(
+          com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+
+      private CustomerSuppliedEncryptionEnforcementConfig() {}
+
+      @java.lang.Override
+      @SuppressWarnings({"unused"})
+      protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+        return new CustomerSuppliedEncryptionEnforcementConfig();
+      }
+
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                    .class,
+                com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                    .Builder.class);
+      }
+
+      private int bitField0_;
+      public static final int RESTRICTED_FIELD_NUMBER = 1;
+      private boolean restricted_ = false;
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Supplied Encryption (CSEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CSEK encryption.
+       * If false or unset, creation of new objects with CSEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return Whether the restricted field is set.
+       */
+      @java.lang.Override
+      public boolean hasRestricted() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether Customer Supplied Encryption (CSEK) is restricted for new
+       * objects within the bucket.
+       * If true, new objects can't be created using CSEK encryption.
+       * If false or unset, creation of new objects with CSEK encryption is
+       * allowed.
+       * </pre>
+       *
+       * <code>optional bool restricted = 1;</code>
+       *
+       * @return The restricted.
+       */
+      @java.lang.Override
+      public boolean getRestricted() {
+        return restricted_;
+      }
+
+      public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
+      private com.google.protobuf.Timestamp effectiveTime_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      @java.lang.Override
+      public boolean hasEffectiveTime() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      @java.lang.Override
+      public com.google.protobuf.Timestamp getEffectiveTime() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the config was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      @java.lang.Override
+      public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+        return effectiveTime_ == null
+            ? com.google.protobuf.Timestamp.getDefaultInstance()
+            : effectiveTime_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+        if (((bitField0_ & 0x00000001) != 0)) {
+          output.writeBool(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          output.writeMessage(2, getEffectiveTime());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+          return true;
+        }
+        if (!(obj
+            instanceof
+            com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)) {
+          return super.equals(obj);
+        }
+        com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig other =
+            (com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+                obj;
+
+        if (hasRestricted() != other.hasRestricted()) return false;
+        if (hasRestricted()) {
+          if (getRestricted() != other.getRestricted()) return false;
+        }
+        if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
+        if (hasEffectiveTime()) {
+          if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
+        }
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+        return true;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (hasRestricted()) {
+          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        }
+        if (hasEffectiveTime()) {
+          hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
+          hash = (53 * hash) + getEffectiveTime().hashCode();
+        }
+        hash = (29 * hash) + getUnknownFields().hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(java.nio.ByteBuffer data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(
+              java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.ByteString data)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.ByteString data,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseDelimitedFrom(
+              java.io.InputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          parseFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+            PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() {
+        return newBuilder();
+      }
+
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+
+      public static Builder newBuilder(
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Customer Supplied Encryption (CSEK) enforcement config of a bucket.
+       * </pre>
+       *
+       * Protobuf type {@code
+       * google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig}
+       */
+      public static final class Builder
+          extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+          implements
+          // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+          com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfigOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig.class,
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig.Builder.class);
+        }
+
+        // Construct using
+        // com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+            getEffectiveTimeFieldBuilder();
+          }
+        }
+
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          bitField0_ = 0;
+          restricted_ = false;
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+          return com.google.storage.v2.StorageProto
+              .internal_static_google_storage_v2_Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig_descriptor;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+            getDefaultInstanceForType() {
+          return com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              .getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+            build() {
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+            buildPartial() {
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              result =
+                  new com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig(this);
+          if (bitField0_ != 0) {
+            buildPartial0(result);
+          }
+          onBuilt();
+          return result;
+        }
+
+        private void buildPartial0(
+            com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                result) {
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) != 0)) {
+            result.restricted_ = restricted_;
+            to_bitField0_ |= 0x00000001;
+          }
+          if (((from_bitField0_ & 0x00000002) != 0)) {
+            result.effectiveTime_ =
+                effectiveTimeBuilder_ == null ? effectiveTime_ : effectiveTimeBuilder_.build();
+            to_bitField0_ |= 0x00000002;
+          }
+          result.bitField0_ |= to_bitField0_;
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return super.clone();
+        }
+
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.setField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return super.clearField(field);
+        }
+
+        @java.lang.Override
+        public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return super.clearOneof(oneof);
+        }
+
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index,
+            java.lang.Object value) {
+          return super.setRepeatedField(field, index, value);
+        }
+
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+          return super.addRepeatedField(field, value);
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other
+              instanceof
+              com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig) {
+            return mergeFrom(
+                (com.google.storage.v2.Bucket.Encryption
+                        .CustomerSuppliedEncryptionEnforcementConfig)
+                    other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(
+            com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                other) {
+          if (other
+              == com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .getDefaultInstance()) return this;
+          if (other.hasRestricted()) {
+            setRestricted(other.getRestricted());
+          }
+          if (other.hasEffectiveTime()) {
+            mergeEffectiveTime(other.getEffectiveTime());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
+          try {
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 8:
+                  {
+                    restricted_ = input.readBool();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 8
+                case 18:
+                  {
+                    input.readMessage(
+                        getEffectiveTimeFieldBuilder().getBuilder(), extensionRegistry);
+                    bitField0_ |= 0x00000002;
+                    break;
+                  } // case 18
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.unwrapIOException();
+          } finally {
+            onChanged();
+          } // finally
+          return this;
+        }
+
+        private int bitField0_;
+
+        private boolean restricted_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Supplied Encryption (CSEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CSEK encryption.
+         * If false or unset, creation of new objects with CSEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return Whether the restricted field is set.
+         */
+        @java.lang.Override
+        public boolean hasRestricted() {
+          return ((bitField0_ & 0x00000001) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Supplied Encryption (CSEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CSEK encryption.
+         * If false or unset, creation of new objects with CSEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return The restricted.
+         */
+        @java.lang.Override
+        public boolean getRestricted() {
+          return restricted_;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Supplied Encryption (CSEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CSEK encryption.
+         * If false or unset, creation of new objects with CSEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @param value The restricted to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestricted(boolean value) {
+
+          restricted_ = value;
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Whether Customer Supplied Encryption (CSEK) is restricted for new
+         * objects within the bucket.
+         * If true, new objects can't be created using CSEK encryption.
+         * If false or unset, creation of new objects with CSEK encryption is
+         * allowed.
+         * </pre>
+         *
+         * <code>optional bool restricted = 1;</code>
+         *
+         * @return This builder for chaining.
+         */
+        public Builder clearRestricted() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        private com.google.protobuf.Timestamp effectiveTime_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            effectiveTimeBuilder_;
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return Whether the effectiveTime field is set.
+         */
+        public boolean hasEffectiveTime() {
+          return ((bitField0_ & 0x00000002) != 0);
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         *
+         * @return The effectiveTime.
+         */
+        public com.google.protobuf.Timestamp getEffectiveTime() {
+          if (effectiveTimeBuilder_ == null) {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          } else {
+            return effectiveTimeBuilder_.getMessage();
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            effectiveTime_ = value;
+          } else {
+            effectiveTimeBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder setEffectiveTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTime_ = builderForValue.build();
+          } else {
+            effectiveTimeBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder mergeEffectiveTime(com.google.protobuf.Timestamp value) {
+          if (effectiveTimeBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) != 0)
+                && effectiveTime_ != null
+                && effectiveTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+              getEffectiveTimeBuilder().mergeFrom(value);
+            } else {
+              effectiveTime_ = value;
+            }
+          } else {
+            effectiveTimeBuilder_.mergeFrom(value);
+          }
+          if (effectiveTime_ != null) {
+            bitField0_ |= 0x00000002;
+            onChanged();
+          }
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public Builder clearEffectiveTime() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          effectiveTime_ = null;
+          if (effectiveTimeBuilder_ != null) {
+            effectiveTimeBuilder_.dispose();
+            effectiveTimeBuilder_ = null;
+          }
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.Timestamp.Builder getEffectiveTimeBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getEffectiveTimeFieldBuilder().getBuilder();
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+          if (effectiveTimeBuilder_ != null) {
+            return effectiveTimeBuilder_.getMessageOrBuilder();
+          } else {
+            return effectiveTime_ == null
+                ? com.google.protobuf.Timestamp.getDefaultInstance()
+                : effectiveTime_;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Time from which the config was effective. This is service-provided.
+         * </pre>
+         *
+         * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+                com.google.protobuf.Timestamp,
+                com.google.protobuf.Timestamp.Builder,
+                com.google.protobuf.TimestampOrBuilder>
+            getEffectiveTimeFieldBuilder() {
+          if (effectiveTimeBuilder_ == null) {
+            effectiveTimeBuilder_ =
+                new com.google.protobuf.SingleFieldBuilderV3<
+                    com.google.protobuf.Timestamp,
+                    com.google.protobuf.Timestamp.Builder,
+                    com.google.protobuf.TimestampOrBuilder>(
+                    getEffectiveTime(), getParentForChildren(), isClean());
+            effectiveTime_ = null;
+          }
+          return effectiveTimeBuilder_;
+        }
+
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+        // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+      }
+
+      // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
+      private static final com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          DEFAULT_INSTANCE;
+
+      static {
+        DEFAULT_INSTANCE =
+            new com.google.storage.v2.Bucket.Encryption
+                .CustomerSuppliedEncryptionEnforcementConfig();
+      }
+
+      public static com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfig
+          getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<CustomerSuppliedEncryptionEnforcementConfig>
+          PARSER =
+              new com.google.protobuf.AbstractParser<
+                  CustomerSuppliedEncryptionEnforcementConfig>() {
+                @java.lang.Override
+                public CustomerSuppliedEncryptionEnforcementConfig parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                  Builder builder = newBuilder();
+                  try {
+                    builder.mergeFrom(input, extensionRegistry);
+                  } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    throw e.setUnfinishedMessage(builder.buildPartial());
+                  } catch (com.google.protobuf.UninitializedMessageException e) {
+                    throw e.asInvalidProtocolBufferException()
+                        .setUnfinishedMessage(builder.buildPartial());
+                  } catch (java.io.IOException e) {
+                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                        .setUnfinishedMessage(builder.buildPartial());
+                  }
+                  return builder.buildPartial();
+                }
+              };
+
+      public static com.google.protobuf.Parser<CustomerSuppliedEncryptionEnforcementConfig>
+          parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<CustomerSuppliedEncryptionEnforcementConfig>
+          getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+          getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+    }
+
+    private int bitField0_;
     public static final int DEFAULT_KMS_KEY_FIELD_NUMBER = 1;
 
     @SuppressWarnings("serial")
@@ -2480,6 +5688,227 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
     }
 
+    public static final int GOOGLE_MANAGED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER = 2;
+    private com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+        googleManagedEncryptionEnforcementConfig_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the googleManagedEncryptionEnforcementConfig field is set.
+     */
+    @java.lang.Override
+    public boolean hasGoogleManagedEncryptionEnforcementConfig() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The googleManagedEncryptionEnforcementConfig.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+        getGoogleManagedEncryptionEnforcementConfig() {
+      return googleManagedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : googleManagedEncryptionEnforcementConfig_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with GMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfigOrBuilder
+        getGoogleManagedEncryptionEnforcementConfigOrBuilder() {
+      return googleManagedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : googleManagedEncryptionEnforcementConfig_;
+    }
+
+    public static final int CUSTOMER_MANAGED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER = 3;
+    private com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+        customerManagedEncryptionEnforcementConfig_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the customerManagedEncryptionEnforcementConfig field is set.
+     */
+    @java.lang.Override
+    public boolean hasCustomerManagedEncryptionEnforcementConfig() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The customerManagedEncryptionEnforcementConfig.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+        getCustomerManagedEncryptionEnforcementConfig() {
+      return customerManagedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : customerManagedEncryptionEnforcementConfig_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CMEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption
+            .CustomerManagedEncryptionEnforcementConfigOrBuilder
+        getCustomerManagedEncryptionEnforcementConfigOrBuilder() {
+      return customerManagedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : customerManagedEncryptionEnforcementConfig_;
+    }
+
+    public static final int CUSTOMER_SUPPLIED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER = 4;
+    private com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+        customerSuppliedEncryptionEnforcementConfig_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the customerSuppliedEncryptionEnforcementConfig field is set.
+     */
+    @java.lang.Override
+    public boolean hasCustomerSuppliedEncryptionEnforcementConfig() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The customerSuppliedEncryptionEnforcementConfig.
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+        getCustomerSuppliedEncryptionEnforcementConfig() {
+      return customerSuppliedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : customerSuppliedEncryptionEnforcementConfig_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. If omitted, then new objects with CSEK encryption-type is
+     * allowed. If set, then new objects created in this bucket must comply with
+     * enforcement config. Changing this has no effect on existing objects; it
+     * applies to new objects only.
+     * </pre>
+     *
+     * <code>
+     * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.Encryption
+            .CustomerSuppliedEncryptionEnforcementConfigOrBuilder
+        getCustomerSuppliedEncryptionEnforcementConfigOrBuilder() {
+      return customerSuppliedEncryptionEnforcementConfig_ == null
+          ? com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              .getDefaultInstance()
+          : customerSuppliedEncryptionEnforcementConfig_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -2497,6 +5926,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(defaultKmsKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, defaultKmsKey_);
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(2, getGoogleManagedEncryptionEnforcementConfig());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(3, getCustomerManagedEncryptionEnforcementConfig());
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeMessage(4, getCustomerSuppliedEncryptionEnforcementConfig());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2508,6 +5946,21 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(defaultKmsKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, defaultKmsKey_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                2, getGoogleManagedEncryptionEnforcementConfig());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                3, getCustomerManagedEncryptionEnforcementConfig());
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                4, getCustomerSuppliedEncryptionEnforcementConfig());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2525,6 +5978,24 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       com.google.storage.v2.Bucket.Encryption other = (com.google.storage.v2.Bucket.Encryption) obj;
 
       if (!getDefaultKmsKey().equals(other.getDefaultKmsKey())) return false;
+      if (hasGoogleManagedEncryptionEnforcementConfig()
+          != other.hasGoogleManagedEncryptionEnforcementConfig()) return false;
+      if (hasGoogleManagedEncryptionEnforcementConfig()) {
+        if (!getGoogleManagedEncryptionEnforcementConfig()
+            .equals(other.getGoogleManagedEncryptionEnforcementConfig())) return false;
+      }
+      if (hasCustomerManagedEncryptionEnforcementConfig()
+          != other.hasCustomerManagedEncryptionEnforcementConfig()) return false;
+      if (hasCustomerManagedEncryptionEnforcementConfig()) {
+        if (!getCustomerManagedEncryptionEnforcementConfig()
+            .equals(other.getCustomerManagedEncryptionEnforcementConfig())) return false;
+      }
+      if (hasCustomerSuppliedEncryptionEnforcementConfig()
+          != other.hasCustomerSuppliedEncryptionEnforcementConfig()) return false;
+      if (hasCustomerSuppliedEncryptionEnforcementConfig()) {
+        if (!getCustomerSuppliedEncryptionEnforcementConfig()
+            .equals(other.getCustomerSuppliedEncryptionEnforcementConfig())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2538,6 +6009,18 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DEFAULT_KMS_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getDefaultKmsKey().hashCode();
+      if (hasGoogleManagedEncryptionEnforcementConfig()) {
+        hash = (37 * hash) + GOOGLE_MANAGED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getGoogleManagedEncryptionEnforcementConfig().hashCode();
+      }
+      if (hasCustomerManagedEncryptionEnforcementConfig()) {
+        hash = (37 * hash) + CUSTOMER_MANAGED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getCustomerManagedEncryptionEnforcementConfig().hashCode();
+      }
+      if (hasCustomerSuppliedEncryptionEnforcementConfig()) {
+        hash = (37 * hash) + CUSTOMER_SUPPLIED_ENCRYPTION_ENFORCEMENT_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getCustomerSuppliedEncryptionEnforcementConfig().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2670,10 +6153,21 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       // Construct using com.google.storage.v2.Bucket.Encryption.newBuilder()
-      private Builder() {}
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
 
       private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getGoogleManagedEncryptionEnforcementConfigFieldBuilder();
+          getCustomerManagedEncryptionEnforcementConfigFieldBuilder();
+          getCustomerSuppliedEncryptionEnforcementConfigFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -2681,6 +6175,21 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         super.clear();
         bitField0_ = 0;
         defaultKmsKey_ = "";
+        googleManagedEncryptionEnforcementConfig_ = null;
+        if (googleManagedEncryptionEnforcementConfigBuilder_ != null) {
+          googleManagedEncryptionEnforcementConfigBuilder_.dispose();
+          googleManagedEncryptionEnforcementConfigBuilder_ = null;
+        }
+        customerManagedEncryptionEnforcementConfig_ = null;
+        if (customerManagedEncryptionEnforcementConfigBuilder_ != null) {
+          customerManagedEncryptionEnforcementConfigBuilder_.dispose();
+          customerManagedEncryptionEnforcementConfigBuilder_ = null;
+        }
+        customerSuppliedEncryptionEnforcementConfig_ = null;
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ != null) {
+          customerSuppliedEncryptionEnforcementConfigBuilder_.dispose();
+          customerSuppliedEncryptionEnforcementConfigBuilder_ = null;
+        }
         return this;
       }
 
@@ -2720,6 +6229,29 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.defaultKmsKey_ = defaultKmsKey_;
         }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.googleManagedEncryptionEnforcementConfig_ =
+              googleManagedEncryptionEnforcementConfigBuilder_ == null
+                  ? googleManagedEncryptionEnforcementConfig_
+                  : googleManagedEncryptionEnforcementConfigBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.customerManagedEncryptionEnforcementConfig_ =
+              customerManagedEncryptionEnforcementConfigBuilder_ == null
+                  ? customerManagedEncryptionEnforcementConfig_
+                  : customerManagedEncryptionEnforcementConfigBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.customerSuppliedEncryptionEnforcementConfig_ =
+              customerSuppliedEncryptionEnforcementConfigBuilder_ == null
+                  ? customerSuppliedEncryptionEnforcementConfig_
+                  : customerSuppliedEncryptionEnforcementConfigBuilder_.build();
+          to_bitField0_ |= 0x00000004;
+        }
+        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -2774,6 +6306,18 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           bitField0_ |= 0x00000001;
           onChanged();
         }
+        if (other.hasGoogleManagedEncryptionEnforcementConfig()) {
+          mergeGoogleManagedEncryptionEnforcementConfig(
+              other.getGoogleManagedEncryptionEnforcementConfig());
+        }
+        if (other.hasCustomerManagedEncryptionEnforcementConfig()) {
+          mergeCustomerManagedEncryptionEnforcementConfig(
+              other.getCustomerManagedEncryptionEnforcementConfig());
+        }
+        if (other.hasCustomerSuppliedEncryptionEnforcementConfig()) {
+          mergeCustomerSuppliedEncryptionEnforcementConfig(
+              other.getCustomerSuppliedEncryptionEnforcementConfig());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2806,6 +6350,30 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   bitField0_ |= 0x00000001;
                   break;
                 } // case 10
+              case 18:
+                {
+                  input.readMessage(
+                      getGoogleManagedEncryptionEnforcementConfigFieldBuilder().getBuilder(),
+                      extensionRegistry);
+                  bitField0_ |= 0x00000002;
+                  break;
+                } // case 18
+              case 26:
+                {
+                  input.readMessage(
+                      getCustomerManagedEncryptionEnforcementConfigFieldBuilder().getBuilder(),
+                      extensionRegistry);
+                  bitField0_ |= 0x00000004;
+                  break;
+                } // case 26
+              case 34:
+                {
+                  input.readMessage(
+                      getCustomerSuppliedEncryptionEnforcementConfigFieldBuilder().getBuilder(),
+                      extensionRegistry);
+                  bitField0_ |= 0x00000008;
+                  break;
+                } // case 34
               default:
                 {
                   if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -2949,6 +6517,794 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
+      }
+
+      private com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          googleManagedEncryptionEnforcementConfig_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .GoogleManagedEncryptionEnforcementConfigOrBuilder>
+          googleManagedEncryptionEnforcementConfigBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return Whether the googleManagedEncryptionEnforcementConfig field is set.
+       */
+      public boolean hasGoogleManagedEncryptionEnforcementConfig() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The googleManagedEncryptionEnforcementConfig.
+       */
+      public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+          getGoogleManagedEncryptionEnforcementConfig() {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ == null) {
+          return googleManagedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : googleManagedEncryptionEnforcementConfig_;
+        } else {
+          return googleManagedEncryptionEnforcementConfigBuilder_.getMessage();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setGoogleManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig value) {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          googleManagedEncryptionEnforcementConfig_ = value;
+        } else {
+          googleManagedEncryptionEnforcementConfigBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setGoogleManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig.Builder
+              builderForValue) {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ == null) {
+          googleManagedEncryptionEnforcementConfig_ = builderForValue.build();
+        } else {
+          googleManagedEncryptionEnforcementConfigBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder mergeGoogleManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig value) {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)
+              && googleManagedEncryptionEnforcementConfig_ != null
+              && googleManagedEncryptionEnforcementConfig_
+                  != com.google.storage.v2.Bucket.Encryption
+                      .GoogleManagedEncryptionEnforcementConfig.getDefaultInstance()) {
+            getGoogleManagedEncryptionEnforcementConfigBuilder().mergeFrom(value);
+          } else {
+            googleManagedEncryptionEnforcementConfig_ = value;
+          }
+        } else {
+          googleManagedEncryptionEnforcementConfigBuilder_.mergeFrom(value);
+        }
+        if (googleManagedEncryptionEnforcementConfig_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder clearGoogleManagedEncryptionEnforcementConfig() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        googleManagedEncryptionEnforcementConfig_ = null;
+        if (googleManagedEncryptionEnforcementConfigBuilder_ != null) {
+          googleManagedEncryptionEnforcementConfigBuilder_.dispose();
+          googleManagedEncryptionEnforcementConfigBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+              .Builder
+          getGoogleManagedEncryptionEnforcementConfigBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getGoogleManagedEncryptionEnforcementConfigFieldBuilder().getBuilder();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption
+              .GoogleManagedEncryptionEnforcementConfigOrBuilder
+          getGoogleManagedEncryptionEnforcementConfigOrBuilder() {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ != null) {
+          return googleManagedEncryptionEnforcementConfigBuilder_.getMessageOrBuilder();
+        } else {
+          return googleManagedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : googleManagedEncryptionEnforcementConfig_;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with GMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig google_managed_encryption_enforcement_config = 2 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .GoogleManagedEncryptionEnforcementConfigOrBuilder>
+          getGoogleManagedEncryptionEnforcementConfigFieldBuilder() {
+        if (googleManagedEncryptionEnforcementConfigBuilder_ == null) {
+          googleManagedEncryptionEnforcementConfigBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig,
+                  com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
+                      .Builder,
+                  com.google.storage.v2.Bucket.Encryption
+                      .GoogleManagedEncryptionEnforcementConfigOrBuilder>(
+                  getGoogleManagedEncryptionEnforcementConfig(), getParentForChildren(), isClean());
+          googleManagedEncryptionEnforcementConfig_ = null;
+        }
+        return googleManagedEncryptionEnforcementConfigBuilder_;
+      }
+
+      private com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+          customerManagedEncryptionEnforcementConfig_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .CustomerManagedEncryptionEnforcementConfigOrBuilder>
+          customerManagedEncryptionEnforcementConfigBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return Whether the customerManagedEncryptionEnforcementConfig field is set.
+       */
+      public boolean hasCustomerManagedEncryptionEnforcementConfig() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The customerManagedEncryptionEnforcementConfig.
+       */
+      public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+          getCustomerManagedEncryptionEnforcementConfig() {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ == null) {
+          return customerManagedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : customerManagedEncryptionEnforcementConfig_;
+        } else {
+          return customerManagedEncryptionEnforcementConfigBuilder_.getMessage();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setCustomerManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              value) {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          customerManagedEncryptionEnforcementConfig_ = value;
+        } else {
+          customerManagedEncryptionEnforcementConfigBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setCustomerManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig.Builder
+              builderForValue) {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ == null) {
+          customerManagedEncryptionEnforcementConfig_ = builderForValue.build();
+        } else {
+          customerManagedEncryptionEnforcementConfigBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder mergeCustomerManagedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              value) {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)
+              && customerManagedEncryptionEnforcementConfig_ != null
+              && customerManagedEncryptionEnforcementConfig_
+                  != com.google.storage.v2.Bucket.Encryption
+                      .CustomerManagedEncryptionEnforcementConfig.getDefaultInstance()) {
+            getCustomerManagedEncryptionEnforcementConfigBuilder().mergeFrom(value);
+          } else {
+            customerManagedEncryptionEnforcementConfig_ = value;
+          }
+        } else {
+          customerManagedEncryptionEnforcementConfigBuilder_.mergeFrom(value);
+        }
+        if (customerManagedEncryptionEnforcementConfig_ != null) {
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder clearCustomerManagedEncryptionEnforcementConfig() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        customerManagedEncryptionEnforcementConfig_ = null;
+        if (customerManagedEncryptionEnforcementConfigBuilder_ != null) {
+          customerManagedEncryptionEnforcementConfigBuilder_.dispose();
+          customerManagedEncryptionEnforcementConfigBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+              .Builder
+          getCustomerManagedEncryptionEnforcementConfigBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getCustomerManagedEncryptionEnforcementConfigFieldBuilder().getBuilder();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption
+              .CustomerManagedEncryptionEnforcementConfigOrBuilder
+          getCustomerManagedEncryptionEnforcementConfigOrBuilder() {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ != null) {
+          return customerManagedEncryptionEnforcementConfigBuilder_.getMessageOrBuilder();
+        } else {
+          return customerManagedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : customerManagedEncryptionEnforcementConfig_;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CMEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig customer_managed_encryption_enforcement_config = 3 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .CustomerManagedEncryptionEnforcementConfigOrBuilder>
+          getCustomerManagedEncryptionEnforcementConfigFieldBuilder() {
+        if (customerManagedEncryptionEnforcementConfigBuilder_ == null) {
+          customerManagedEncryptionEnforcementConfigBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerManagedEncryptionEnforcementConfig,
+                  com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
+                      .Builder,
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerManagedEncryptionEnforcementConfigOrBuilder>(
+                  getCustomerManagedEncryptionEnforcementConfig(),
+                  getParentForChildren(),
+                  isClean());
+          customerManagedEncryptionEnforcementConfig_ = null;
+        }
+        return customerManagedEncryptionEnforcementConfigBuilder_;
+      }
+
+      private com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+          customerSuppliedEncryptionEnforcementConfig_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .CustomerSuppliedEncryptionEnforcementConfigOrBuilder>
+          customerSuppliedEncryptionEnforcementConfigBuilder_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return Whether the customerSuppliedEncryptionEnforcementConfig field is set.
+       */
+      public boolean hasCustomerSuppliedEncryptionEnforcementConfig() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       *
+       * @return The customerSuppliedEncryptionEnforcementConfig.
+       */
+      public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+          getCustomerSuppliedEncryptionEnforcementConfig() {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ == null) {
+          return customerSuppliedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : customerSuppliedEncryptionEnforcementConfig_;
+        } else {
+          return customerSuppliedEncryptionEnforcementConfigBuilder_.getMessage();
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setCustomerSuppliedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              value) {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          customerSuppliedEncryptionEnforcementConfig_ = value;
+        } else {
+          customerSuppliedEncryptionEnforcementConfigBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder setCustomerSuppliedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .Builder
+              builderForValue) {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ == null) {
+          customerSuppliedEncryptionEnforcementConfig_ = builderForValue.build();
+        } else {
+          customerSuppliedEncryptionEnforcementConfigBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder mergeCustomerSuppliedEncryptionEnforcementConfig(
+          com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              value) {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)
+              && customerSuppliedEncryptionEnforcementConfig_ != null
+              && customerSuppliedEncryptionEnforcementConfig_
+                  != com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig.getDefaultInstance()) {
+            getCustomerSuppliedEncryptionEnforcementConfigBuilder().mergeFrom(value);
+          } else {
+            customerSuppliedEncryptionEnforcementConfig_ = value;
+          }
+        } else {
+          customerSuppliedEncryptionEnforcementConfigBuilder_.mergeFrom(value);
+        }
+        if (customerSuppliedEncryptionEnforcementConfig_ != null) {
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public Builder clearCustomerSuppliedEncryptionEnforcementConfig() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        customerSuppliedEncryptionEnforcementConfig_ = null;
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ != null) {
+          customerSuppliedEncryptionEnforcementConfigBuilder_.dispose();
+          customerSuppliedEncryptionEnforcementConfigBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+              .Builder
+          getCustomerSuppliedEncryptionEnforcementConfigBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getCustomerSuppliedEncryptionEnforcementConfigFieldBuilder().getBuilder();
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      public com.google.storage.v2.Bucket.Encryption
+              .CustomerSuppliedEncryptionEnforcementConfigOrBuilder
+          getCustomerSuppliedEncryptionEnforcementConfigOrBuilder() {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ != null) {
+          return customerSuppliedEncryptionEnforcementConfigBuilder_.getMessageOrBuilder();
+        } else {
+          return customerSuppliedEncryptionEnforcementConfig_ == null
+              ? com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .getDefaultInstance()
+              : customerSuppliedEncryptionEnforcementConfig_;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. If omitted, then new objects with CSEK encryption-type is
+       * allowed. If set, then new objects created in this bucket must comply with
+       * enforcement config. Changing this has no effect on existing objects; it
+       * applies to new objects only.
+       * </pre>
+       *
+       * <code>
+       * optional .google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig customer_supplied_encryption_enforcement_config = 4 [(.google.api.field_behavior) = OPTIONAL];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig,
+              com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
+                  .Builder,
+              com.google.storage.v2.Bucket.Encryption
+                  .CustomerSuppliedEncryptionEnforcementConfigOrBuilder>
+          getCustomerSuppliedEncryptionEnforcementConfigFieldBuilder() {
+        if (customerSuppliedEncryptionEnforcementConfigBuilder_ == null) {
+          customerSuppliedEncryptionEnforcementConfigBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig,
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfig.Builder,
+                  com.google.storage.v2.Bucket.Encryption
+                      .CustomerSuppliedEncryptionEnforcementConfigOrBuilder>(
+                  getCustomerSuppliedEncryptionEnforcementConfig(),
+                  getParentForChildren(),
+                  isClean());
+          customerSuppliedEncryptionEnforcementConfig_ = null;
+        }
+        return customerSuppliedEncryptionEnforcementConfigBuilder_;
       }
 
       @java.lang.Override
@@ -12647,6 +17003,566 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
+  public interface ObjectRetentionOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.ObjectRetention)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Output only. If true, object retention is enabled for the
+     * bucket.
+     * </pre>
+     *
+     * <code>
+     * bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return The enabled.
+     */
+    boolean getEnabled();
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Object Retention related properties of a bucket.
+   * </pre>
+   *
+   * Protobuf type {@code google.storage.v2.Bucket.ObjectRetention}
+   */
+  public static final class ObjectRetention extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.ObjectRetention)
+      ObjectRetentionOrBuilder {
+    private static final long serialVersionUID = 0L;
+
+    // Use ObjectRetention.newBuilder() to construct.
+    private ObjectRetention(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private ObjectRetention() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new ObjectRetention();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_ObjectRetention_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_ObjectRetention_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.google.storage.v2.Bucket.ObjectRetention.class,
+              com.google.storage.v2.Bucket.ObjectRetention.Builder.class);
+    }
+
+    public static final int ENABLED_FIELD_NUMBER = 1;
+    private boolean enabled_ = false;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Output only. If true, object retention is enabled for the
+     * bucket.
+     * </pre>
+     *
+     * <code>
+     * bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return The enabled.
+     */
+    @java.lang.Override
+    public boolean getEnabled() {
+      return enabled_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (enabled_ != false) {
+        output.writeBool(1, enabled_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (enabled_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, enabled_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.google.storage.v2.Bucket.ObjectRetention)) {
+        return super.equals(obj);
+      }
+      com.google.storage.v2.Bucket.ObjectRetention other =
+          (com.google.storage.v2.Bucket.ObjectRetention) obj;
+
+      if (getEnabled() != other.getEnabled()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ENABLED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnabled());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.google.storage.v2.Bucket.ObjectRetention prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Object Retention related properties of a bucket.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.ObjectRetention}
+     */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.ObjectRetention)
+        com.google.storage.v2.Bucket.ObjectRetentionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_ObjectRetention_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_ObjectRetention_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.ObjectRetention.class,
+                com.google.storage.v2.Bucket.ObjectRetention.Builder.class);
+      }
+
+      // Construct using com.google.storage.v2.Bucket.ObjectRetention.newBuilder()
+      private Builder() {}
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        enabled_ = false;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_ObjectRetention_descriptor;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.ObjectRetention getDefaultInstanceForType() {
+        return com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.ObjectRetention build() {
+        com.google.storage.v2.Bucket.ObjectRetention result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.ObjectRetention buildPartial() {
+        com.google.storage.v2.Bucket.ObjectRetention result =
+            new com.google.storage.v2.Bucket.ObjectRetention(this);
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.google.storage.v2.Bucket.ObjectRetention result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.enabled_ = enabled_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.storage.v2.Bucket.ObjectRetention) {
+          return mergeFrom((com.google.storage.v2.Bucket.ObjectRetention) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.google.storage.v2.Bucket.ObjectRetention other) {
+        if (other == com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()) return this;
+        if (other.getEnabled() != false) {
+          setEnabled(other.getEnabled());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8:
+                {
+                  enabled_ = input.readBool();
+                  bitField0_ |= 0x00000001;
+                  break;
+                } // case 8
+              default:
+                {
+                  if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                    done = true; // was an endgroup tag
+                  }
+                  break;
+                } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private int bitField0_;
+
+      private boolean enabled_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Output only. If true, object retention is enabled for the
+       * bucket.
+       * </pre>
+       *
+       * <code>
+       * bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return The enabled.
+       */
+      @java.lang.Override
+      public boolean getEnabled() {
+        return enabled_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Output only. If true, object retention is enabled for the
+       * bucket.
+       * </pre>
+       *
+       * <code>
+       * bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @param value The enabled to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEnabled(boolean value) {
+
+        enabled_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Optional. Output only. If true, object retention is enabled for the
+       * bucket.
+       * </pre>
+       *
+       * <code>
+       * bool enabled = 1 [(.google.api.field_behavior) = OPTIONAL, (.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEnabled() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        enabled_ = false;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.ObjectRetention)
+    }
+
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.ObjectRetention)
+    private static final com.google.storage.v2.Bucket.ObjectRetention DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.ObjectRetention();
+    }
+
+    public static com.google.storage.v2.Bucket.ObjectRetention getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ObjectRetention> PARSER =
+        new com.google.protobuf.AbstractParser<ObjectRetention>() {
+          @java.lang.Override
+          public ObjectRetention parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            Builder builder = newBuilder();
+            try {
+              builder.mergeFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+              throw e.setUnfinishedMessage(builder.buildPartial());
+            } catch (com.google.protobuf.UninitializedMessageException e) {
+              throw e.asInvalidProtocolBufferException()
+                  .setUnfinishedMessage(builder.buildPartial());
+            } catch (java.io.IOException e) {
+              throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                  .setUnfinishedMessage(builder.buildPartial());
+            }
+            return builder.buildPartial();
+          }
+        };
+
+    public static com.google.protobuf.Parser<ObjectRetention> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ObjectRetention> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.ObjectRetention getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface RetentionPolicyOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.RetentionPolicy)
@@ -16639,7 +21555,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Configuration for Custom Dual Regions.  It should specify precisely two
    * eligible regions within the same Multiregion. More information on regions
-   * may be found [https://cloud.google.com/storage/docs/locations][here].
+   * may be found [here](https://cloud.google.com/storage/docs/locations).
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
@@ -16922,7 +21838,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Configuration for Custom Dual Regions.  It should specify precisely two
      * eligible regions within the same Multiregion. More information on regions
-     * may be found [https://cloud.google.com/storage/docs/locations][here].
+     * may be found [here](https://cloud.google.com/storage/docs/locations).
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
@@ -19154,6 +24070,34 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The allowCrossOrgVpcs.
      */
     boolean getAllowCrossOrgVpcs();
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether or not to allow all P4SA access to the bucket. When set to true,
+     * IP filter config validation will not apply.
+     * </pre>
+     *
+     * <code>optional bool allow_all_service_agent_access = 5;</code>
+     *
+     * @return Whether the allowAllServiceAgentAccess field is set.
+     */
+    boolean hasAllowAllServiceAgentAccess();
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether or not to allow all P4SA access to the bucket. When set to true,
+     * IP filter config validation will not apply.
+     * </pre>
+     *
+     * <code>optional bool allow_all_service_agent_access = 5;</code>
+     *
+     * @return The allowAllServiceAgentAccess.
+     */
+    boolean getAllowAllServiceAgentAccess();
   }
 
   /**
@@ -21484,6 +26428,43 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return allowCrossOrgVpcs_;
     }
 
+    public static final int ALLOW_ALL_SERVICE_AGENT_ACCESS_FIELD_NUMBER = 5;
+    private boolean allowAllServiceAgentAccess_ = false;
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether or not to allow all P4SA access to the bucket. When set to true,
+     * IP filter config validation will not apply.
+     * </pre>
+     *
+     * <code>optional bool allow_all_service_agent_access = 5;</code>
+     *
+     * @return Whether the allowAllServiceAgentAccess field is set.
+     */
+    @java.lang.Override
+    public boolean hasAllowAllServiceAgentAccess() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether or not to allow all P4SA access to the bucket. When set to true,
+     * IP filter config validation will not apply.
+     * </pre>
+     *
+     * <code>optional bool allow_all_service_agent_access = 5;</code>
+     *
+     * @return The allowAllServiceAgentAccess.
+     */
+    @java.lang.Override
+    public boolean getAllowAllServiceAgentAccess() {
+      return allowAllServiceAgentAccess_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -21510,6 +26491,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (allowCrossOrgVpcs_ != false) {
         output.writeBool(4, allowCrossOrgVpcs_);
       }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeBool(5, allowAllServiceAgentAccess_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -21532,6 +26516,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (allowCrossOrgVpcs_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, allowCrossOrgVpcs_);
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeBoolSize(5, allowAllServiceAgentAccess_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -21558,6 +26546,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (!getVpcNetworkSourcesList().equals(other.getVpcNetworkSourcesList())) return false;
       if (getAllowCrossOrgVpcs() != other.getAllowCrossOrgVpcs()) return false;
+      if (hasAllowAllServiceAgentAccess() != other.hasAllowAllServiceAgentAccess()) return false;
+      if (hasAllowAllServiceAgentAccess()) {
+        if (getAllowAllServiceAgentAccess() != other.getAllowAllServiceAgentAccess()) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -21583,6 +26575,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       hash = (37 * hash) + ALLOW_CROSS_ORG_VPCS_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getAllowCrossOrgVpcs());
+      if (hasAllowAllServiceAgentAccess()) {
+        hash = (37 * hash) + ALLOW_ALL_SERVICE_AGENT_ACCESS_FIELD_NUMBER;
+        hash =
+            (53 * hash) + com.google.protobuf.Internal.hashBoolean(getAllowAllServiceAgentAccess());
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -21752,6 +26749,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         bitField0_ = (bitField0_ & ~0x00000004);
         allowCrossOrgVpcs_ = false;
+        allowAllServiceAgentAccess_ = false;
         return this;
       }
 
@@ -21815,6 +26813,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
           result.allowCrossOrgVpcs_ = allowCrossOrgVpcs_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.allowAllServiceAgentAccess_ = allowAllServiceAgentAccess_;
+          to_bitField0_ |= 0x00000004;
         }
         result.bitField0_ |= to_bitField0_;
       }
@@ -21904,6 +26906,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.getAllowCrossOrgVpcs() != false) {
           setAllowCrossOrgVpcs(other.getAllowCrossOrgVpcs());
         }
+        if (other.hasAllowAllServiceAgentAccess()) {
+          setAllowAllServiceAgentAccess(other.getAllowAllServiceAgentAccess());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -21963,6 +26968,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   bitField0_ |= 0x00000008;
                   break;
                 } // case 32
+              case 40:
+                {
+                  allowAllServiceAgentAccess_ = input.readBool();
+                  bitField0_ |= 0x00000010;
+                  break;
+                } // case 40
               default:
                 {
                   if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -22856,6 +27867,82 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public Builder clearAllowCrossOrgVpcs() {
         bitField0_ = (bitField0_ & ~0x00000008);
         allowCrossOrgVpcs_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean allowAllServiceAgentAccess_;
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether or not to allow all P4SA access to the bucket. When set to true,
+       * IP filter config validation will not apply.
+       * </pre>
+       *
+       * <code>optional bool allow_all_service_agent_access = 5;</code>
+       *
+       * @return Whether the allowAllServiceAgentAccess field is set.
+       */
+      @java.lang.Override
+      public boolean hasAllowAllServiceAgentAccess() {
+        return ((bitField0_ & 0x00000010) != 0);
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether or not to allow all P4SA access to the bucket. When set to true,
+       * IP filter config validation will not apply.
+       * </pre>
+       *
+       * <code>optional bool allow_all_service_agent_access = 5;</code>
+       *
+       * @return The allowAllServiceAgentAccess.
+       */
+      @java.lang.Override
+      public boolean getAllowAllServiceAgentAccess() {
+        return allowAllServiceAgentAccess_;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether or not to allow all P4SA access to the bucket. When set to true,
+       * IP filter config validation will not apply.
+       * </pre>
+       *
+       * <code>optional bool allow_all_service_agent_access = 5;</code>
+       *
+       * @param value The allowAllServiceAgentAccess to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAllowAllServiceAgentAccess(boolean value) {
+
+        allowAllServiceAgentAccess_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Whether or not to allow all P4SA access to the bucket. When set to true,
+       * IP filter config validation will not apply.
+       * </pre>
+       *
+       * <code>optional bool allow_all_service_agent_access = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAllowAllServiceAgentAccess() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        allowAllServiceAgentAccess_ = false;
         onChanged();
         return this;
       }
@@ -25318,6 +30405,68 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         : softDeletePolicy_;
   }
 
+  public static final int OBJECT_RETENTION_FIELD_NUMBER = 33;
+  private com.google.storage.v2.Bucket.ObjectRetention objectRetention_;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the objectRetention field is set.
+   */
+  @java.lang.Override
+  public boolean hasObjectRetention() {
+    return ((bitField0_ & 0x00008000) != 0);
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The objectRetention.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.ObjectRetention getObjectRetention() {
+    return objectRetention_ == null
+        ? com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()
+        : objectRetention_;
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's object retention configuration. Must be enabled
+   * before objects in the bucket may have retention configured.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.ObjectRetentionOrBuilder getObjectRetentionOrBuilder() {
+    return objectRetention_ == null
+        ? com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()
+        : objectRetention_;
+  }
+
   public static final int IP_FILTER_FIELD_NUMBER = 38;
   private com.google.storage.v2.Bucket.IpFilter ipFilter_;
 
@@ -25336,7 +30485,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    */
   @java.lang.Override
   public boolean hasIpFilter() {
-    return ((bitField0_ & 0x00008000) != 0);
+    return ((bitField0_ & 0x00010000) != 0);
   }
 
   /**
@@ -25481,6 +30630,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       output.writeMessage(32, getHierarchicalNamespace());
     }
     if (((bitField0_ & 0x00008000) != 0)) {
+      output.writeMessage(33, getObjectRetention());
+    }
+    if (((bitField0_ & 0x00010000) != 0)) {
       output.writeMessage(38, getIpFilter());
     }
     getUnknownFields().writeTo(output);
@@ -25592,6 +30744,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           com.google.protobuf.CodedOutputStream.computeMessageSize(32, getHierarchicalNamespace());
     }
     if (((bitField0_ & 0x00008000) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(33, getObjectRetention());
+    }
+    if (((bitField0_ & 0x00010000) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(38, getIpFilter());
     }
     size += getUnknownFields().getSerializedSize();
@@ -25683,6 +30838,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasSoftDeletePolicy() != other.hasSoftDeletePolicy()) return false;
     if (hasSoftDeletePolicy()) {
       if (!getSoftDeletePolicy().equals(other.getSoftDeletePolicy())) return false;
+    }
+    if (hasObjectRetention() != other.hasObjectRetention()) return false;
+    if (hasObjectRetention()) {
+      if (!getObjectRetention().equals(other.getObjectRetention())) return false;
     }
     if (hasIpFilter() != other.hasIpFilter()) return false;
     if (hasIpFilter()) {
@@ -25796,6 +30955,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasSoftDeletePolicy()) {
       hash = (37 * hash) + SOFT_DELETE_POLICY_FIELD_NUMBER;
       hash = (53 * hash) + getSoftDeletePolicy().hashCode();
+    }
+    if (hasObjectRetention()) {
+      hash = (37 * hash) + OBJECT_RETENTION_FIELD_NUMBER;
+      hash = (53 * hash) + getObjectRetention().hashCode();
     }
     if (hasIpFilter()) {
       hash = (37 * hash) + IP_FILTER_FIELD_NUMBER;
@@ -25979,6 +31142,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         getAutoclassFieldBuilder();
         getHierarchicalNamespaceFieldBuilder();
         getSoftDeletePolicyFieldBuilder();
+        getObjectRetentionFieldBuilder();
         getIpFilterFieldBuilder();
       }
     }
@@ -26094,6 +31258,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (softDeletePolicyBuilder_ != null) {
         softDeletePolicyBuilder_.dispose();
         softDeletePolicyBuilder_ = null;
+      }
+      objectRetention_ = null;
+      if (objectRetentionBuilder_ != null) {
+        objectRetentionBuilder_.dispose();
+        objectRetentionBuilder_ = null;
       }
       ipFilter_ = null;
       if (ipFilterBuilder_ != null) {
@@ -26272,8 +31441,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         to_bitField0_ |= 0x00004000;
       }
       if (((from_bitField0_ & 0x40000000) != 0)) {
-        result.ipFilter_ = ipFilterBuilder_ == null ? ipFilter_ : ipFilterBuilder_.build();
+        result.objectRetention_ =
+            objectRetentionBuilder_ == null ? objectRetention_ : objectRetentionBuilder_.build();
         to_bitField0_ |= 0x00008000;
+      }
+      if (((from_bitField0_ & 0x80000000) != 0)) {
+        result.ipFilter_ = ipFilterBuilder_ == null ? ipFilter_ : ipFilterBuilder_.build();
+        to_bitField0_ |= 0x00010000;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -26499,6 +31673,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.hasSoftDeletePolicy()) {
         mergeSoftDeletePolicy(other.getSoftDeletePolicy());
+      }
+      if (other.hasObjectRetention()) {
+        mergeObjectRetention(other.getObjectRetention());
       }
       if (other.hasIpFilter()) {
         mergeIpFilter(other.getIpFilter());
@@ -26739,10 +31916,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 bitField0_ |= 0x10000000;
                 break;
               } // case 258
+            case 266:
+              {
+                input.readMessage(getObjectRetentionFieldBuilder().getBuilder(), extensionRegistry);
+                bitField0_ |= 0x40000000;
+                break;
+              } // case 266
             case 306:
               {
                 input.readMessage(getIpFilterFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x40000000;
+                bitField0_ |= 0x80000000;
                 break;
               } // case 306
             default:
@@ -32846,6 +38029,229 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return softDeletePolicyBuilder_;
     }
 
+    private com.google.storage.v2.Bucket.ObjectRetention objectRetention_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.ObjectRetention,
+            com.google.storage.v2.Bucket.ObjectRetention.Builder,
+            com.google.storage.v2.Bucket.ObjectRetentionOrBuilder>
+        objectRetentionBuilder_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the objectRetention field is set.
+     */
+    public boolean hasObjectRetention() {
+      return ((bitField0_ & 0x40000000) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The objectRetention.
+     */
+    public com.google.storage.v2.Bucket.ObjectRetention getObjectRetention() {
+      if (objectRetentionBuilder_ == null) {
+        return objectRetention_ == null
+            ? com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()
+            : objectRetention_;
+      } else {
+        return objectRetentionBuilder_.getMessage();
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setObjectRetention(com.google.storage.v2.Bucket.ObjectRetention value) {
+      if (objectRetentionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        objectRetention_ = value;
+      } else {
+        objectRetentionBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setObjectRetention(
+        com.google.storage.v2.Bucket.ObjectRetention.Builder builderForValue) {
+      if (objectRetentionBuilder_ == null) {
+        objectRetention_ = builderForValue.build();
+      } else {
+        objectRetentionBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder mergeObjectRetention(com.google.storage.v2.Bucket.ObjectRetention value) {
+      if (objectRetentionBuilder_ == null) {
+        if (((bitField0_ & 0x40000000) != 0)
+            && objectRetention_ != null
+            && objectRetention_
+                != com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()) {
+          getObjectRetentionBuilder().mergeFrom(value);
+        } else {
+          objectRetention_ = value;
+        }
+      } else {
+        objectRetentionBuilder_.mergeFrom(value);
+      }
+      if (objectRetention_ != null) {
+        bitField0_ |= 0x40000000;
+        onChanged();
+      }
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder clearObjectRetention() {
+      bitField0_ = (bitField0_ & ~0x40000000);
+      objectRetention_ = null;
+      if (objectRetentionBuilder_ != null) {
+        objectRetentionBuilder_.dispose();
+        objectRetentionBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.ObjectRetention.Builder getObjectRetentionBuilder() {
+      bitField0_ |= 0x40000000;
+      onChanged();
+      return getObjectRetentionFieldBuilder().getBuilder();
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.ObjectRetentionOrBuilder getObjectRetentionOrBuilder() {
+      if (objectRetentionBuilder_ != null) {
+        return objectRetentionBuilder_.getMessageOrBuilder();
+      } else {
+        return objectRetention_ == null
+            ? com.google.storage.v2.Bucket.ObjectRetention.getDefaultInstance()
+            : objectRetention_;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's object retention configuration. Must be enabled
+     * before objects in the bucket may have retention configured.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.ObjectRetention object_retention = 33 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.ObjectRetention,
+            com.google.storage.v2.Bucket.ObjectRetention.Builder,
+            com.google.storage.v2.Bucket.ObjectRetentionOrBuilder>
+        getObjectRetentionFieldBuilder() {
+      if (objectRetentionBuilder_ == null) {
+        objectRetentionBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.Bucket.ObjectRetention,
+                com.google.storage.v2.Bucket.ObjectRetention.Builder,
+                com.google.storage.v2.Bucket.ObjectRetentionOrBuilder>(
+                getObjectRetention(), getParentForChildren(), isClean());
+        objectRetention_ = null;
+      }
+      return objectRetentionBuilder_;
+    }
+
     private com.google.storage.v2.Bucket.IpFilter ipFilter_;
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket.IpFilter,
@@ -32867,7 +38273,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return Whether the ipFilter field is set.
      */
     public boolean hasIpFilter() {
-      return ((bitField0_ & 0x40000000) != 0);
+      return ((bitField0_ & 0x80000000) != 0);
     }
 
     /**
@@ -32913,7 +38319,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       } else {
         ipFilterBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x40000000;
+      bitField0_ |= 0x80000000;
       onChanged();
       return this;
     }
@@ -32935,7 +38341,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       } else {
         ipFilterBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x40000000;
+      bitField0_ |= 0x80000000;
       onChanged();
       return this;
     }
@@ -32953,7 +38359,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      */
     public Builder mergeIpFilter(com.google.storage.v2.Bucket.IpFilter value) {
       if (ipFilterBuilder_ == null) {
-        if (((bitField0_ & 0x40000000) != 0)
+        if (((bitField0_ & 0x80000000) != 0)
             && ipFilter_ != null
             && ipFilter_ != com.google.storage.v2.Bucket.IpFilter.getDefaultInstance()) {
           getIpFilterBuilder().mergeFrom(value);
@@ -32964,7 +38370,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         ipFilterBuilder_.mergeFrom(value);
       }
       if (ipFilter_ != null) {
-        bitField0_ |= 0x40000000;
+        bitField0_ |= 0x80000000;
         onChanged();
       }
       return this;
@@ -32982,7 +38388,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * </code>
      */
     public Builder clearIpFilter() {
-      bitField0_ = (bitField0_ & ~0x40000000);
+      bitField0_ = (bitField0_ & ~0x80000000);
       ipFilter_ = null;
       if (ipFilterBuilder_ != null) {
         ipFilterBuilder_.dispose();
@@ -33004,7 +38410,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * </code>
      */
     public com.google.storage.v2.Bucket.IpFilter.Builder getIpFilterBuilder() {
-      bitField0_ |= 0x40000000;
+      bitField0_ |= 0x80000000;
       onChanged();
       return getIpFilterFieldBuilder().getBuilder();
     }
