@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -49,7 +50,13 @@ public final class BufferToDiskThenUploadTest {
     TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
     WriterFactory factory = btdtu.createFactory(clock);
 
-    BlobInfo blobInfo = BlobInfo.newBuilder("bucket", "object").build();
+    byte[] bytes = DataGenerator.base64Characters().genBytes(128);
+    ChecksummedTestContent testContent = ChecksummedTestContent.of(bytes);
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder("bucket", "object")
+            .setCrc32c(testContent.getCrc32cBase64())
+            .setSize((long) bytes.length)
+            .build();
     AtomicReference<byte[]> actualBytes = new AtomicReference<>(null);
     WritableByteChannelSession<?, BlobInfo> writeSession =
         factory.writeSession(
@@ -65,7 +72,6 @@ public final class BufferToDiskThenUploadTest {
             blobInfo,
             Opts.empty());
 
-    byte[] bytes = DataGenerator.base64Characters().genBytes(128);
     try (WritableByteChannel open = writeSession.open()) {
       open.write(ByteBuffer.wrap(bytes));
     }

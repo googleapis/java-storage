@@ -16,16 +16,22 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class StorageByteChannels {
@@ -70,9 +76,112 @@ final class StorageByteChannels {
       return new SynchronizedBufferedWritableByteChannel(delegate);
     }
 
+    public UnbufferedWritableByteChannel validateUploadCrc32c(
+        UnbufferedWritableByteChannel delegate, ApiFuture<Crc32cLengthKnown> crc32cGetter) {
+      return new ChecksumValidatingBufferedWritableByteChannel(delegate, crc32cGetter);
+    }
+
     public UnbufferedWritableByteChannel createSynchronized(
         UnbufferedWritableByteChannel delegate) {
       return new SynchronizedUnbufferedWritableByteChannel(delegate);
+    }
+  }
+
+  @SuppressWarnings("UnstableApiUsage")
+  private static final class ChecksumValidatingBufferedWritableByteChannel
+      implements UnbufferedWritableByteChannel {
+    private final UnbufferedWritableByteChannel delegate;
+    private final ApiFuture<Crc32cLengthKnown> crc32cGetter;
+
+    private final Hasher cumulativeCrc32c;
+    private long totalLength;
+
+    private ChecksumValidatingBufferedWritableByteChannel(
+        UnbufferedWritableByteChannel delegate, ApiFuture<Crc32cLengthKnown> crc32cGetter) {
+      this.delegate = delegate;
+      this.crc32cGetter = crc32cGetter;
+      this.cumulativeCrc32c = Hashing.crc32c().newHasher();
+      this.totalLength = 0;
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      hash(src);
+      return delegate.write(src);
+    }
+
+    @Override
+    public long write(ByteBuffer[] srcs) throws IOException {
+      return write(srcs, 0, srcs.length);
+    }
+
+    @Override
+    public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      hash(srcs, offset, length);
+      return delegate.write(srcs, offset, length);
+    }
+
+    @Override
+    public int writeAndClose(ByteBuffer src) throws IOException {
+      hash(src);
+      int i = delegate.writeAndClose(src);
+      internalClose();
+      return i;
+    }
+
+    @Override
+    public long writeAndClose(ByteBuffer[] srcs) throws IOException {
+      return writeAndClose(srcs, 0, srcs.length);
+    }
+
+    @Override
+    public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      hash(srcs, offset, length);
+      long l = delegate.writeAndClose(srcs, offset, length);
+      internalClose();
+      return l;
+    }
+
+    @Override
+    public boolean isOpen() {
+      return delegate.isOpen();
+    }
+
+    @Override
+    public void close() throws IOException {
+      if (delegate.isOpen()) {
+        delegate.close();
+        internalClose();
+      }
+    }
+
+    private void hash(ByteBuffer src) {
+      ByteBuffer buffer = src.duplicate();
+      totalLength += buffer.remaining();
+      cumulativeCrc32c.putBytes(buffer);
+    }
+
+    private void hash(ByteBuffer[] srcs, int offset, int length) {
+      for (int i = offset; i < length; i++) {
+        hash(srcs[i]);
+      }
+    }
+
+    private void internalClose() throws IOException {
+      try {
+        Crc32cLengthKnown actual = crc32cGetter.get();
+        Crc32cLengthKnown expected = Crc32cValue.of(cumulativeCrc32c.hash().asInt(), totalLength);
+        if (!expected.eqValue(actual)) {
+          throw new ClientDetectedDataLossException(actual, expected);
+        }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        InterruptedIOException interruptedIOException = new InterruptedIOException();
+        interruptedIOException.initCause(e);
+        throw interruptedIOException;
+      } catch (ExecutionException e) {
+        throw new IOException(e.getCause());
+      }
     }
   }
 

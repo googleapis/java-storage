@@ -19,12 +19,14 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 import java.util.function.LongConsumer;
@@ -118,8 +120,17 @@ final class HttpWritableByteChannelSessionBuilder {
       // fields.
       RetrierWithAlg boundRetrier = retrier;
       return (start, resultFuture) ->
-          new ApiaryUnbufferedWritableByteChannel(
-              httpClientContext, boundRetrier, start, resultFuture, committedBytesCallback);
+          StorageByteChannels.writable()
+              .validateUploadCrc32c(
+                  new ApiaryUnbufferedWritableByteChannel(
+                      httpClientContext, boundRetrier, start, resultFuture, committedBytesCallback),
+                  ApiFutures.transform(
+                      resultFuture,
+                      storageObject ->
+                          Crc32cValue.of(
+                              Utils.crc32cCodec.decode(storageObject.getCrc32c()),
+                              storageObject.getSize().longValueExact()),
+                      MoreExecutors.directExecutor()));
     }
 
     final class UnbufferedResumableUploadBuilder {

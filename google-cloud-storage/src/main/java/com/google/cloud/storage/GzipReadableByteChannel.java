@@ -91,6 +91,7 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
           delegate = source;
         }
       } catch (InterruptedException | ExecutionException e) {
+        Thread.currentThread().interrupt();
         throw new IOException(e);
       }
     } else if (leftovers != null && leftovers.hasRemaining()) {

@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
@@ -28,8 +29,10 @@ import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.ChecksummedData;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 public final class ChecksummedTestContent {
 
@@ -94,6 +97,18 @@ public final class ChecksummedTestContent {
         .setContent(ByteString.copyFrom(bytes))
         .setCrc32C(crc32c)
         .build();
+  }
+
+  public ChecksummedTestContent slice(int begin, int length) {
+    return of(bytes, begin, length);
+  }
+
+  public List<ChecksummedTestContent> chunkup(int chunkSize) {
+    List<ChecksummedTestContent> elements = new ArrayList<>();
+    for (int i = 0; i < bytes.length; i += chunkSize) {
+      elements.add(slice(i, chunkSize));
+    }
+    return ImmutableList.copyOf(elements);
   }
 
   @Override

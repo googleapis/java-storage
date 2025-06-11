@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.InternalApi;
@@ -27,10 +28,13 @@ import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ServiceConstants.Values;
@@ -43,6 +47,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class GapicWritableByteChannelSessionBuilder {
 
   private static final int DEFAULT_BUFFER_CAPACITY = ByteSizeConstants._16MiB;
+  private static final ApiFunction<WriteObjectResponse, Crc32cLengthKnown>
+      WRITE_OBJECT_RESPONSE_CRC32C_VALUE =
+          writeObjectResponse -> {
+            Object resource = writeObjectResponse.getResource();
+            return Crc32cValue.of(resource.getChecksums().getCrc32C(), resource.getSize());
+          };
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
   private Hasher hasher;
   private ByteStringStrategy byteStringStrategy;
@@ -210,11 +220,17 @@ final class GapicWritableByteChannelSessionBuilder {
         return new BufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
             lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
-                    new GapicUnbufferedDirectWritableByteChannel(
-                        resultFuture,
-                        getChunkSegmenter(),
-                        write,
-                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
+                    StorageByteChannels.writable()
+                        .validateUploadCrc32c(
+                            new GapicUnbufferedDirectWritableByteChannel(
+                                resultFuture,
+                                getChunkSegmenter(),
+                                write,
+                                new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))),
+                            ApiFutures.transform(
+                                resultFuture,
+                                WRITE_OBJECT_RESPONSE_CRC32C_VALUE,
+                                MoreExecutors.directExecutor())))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -436,16 +452,23 @@ final class GapicWritableByteChannelSessionBuilder {
         ByteStringStrategy boundStrategy = byteStringStrategy;
         Hasher boundHasher = hasher;
         return (writeCtx, resultFuture) ->
-            new SyncAndUploadUnbufferedWritableByteChannel(
-                write,
-                query,
-                resultFuture,
-                new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-                boundRetrier,
-                alg,
-                writeCtx,
-                recoveryFile,
-                recoveryBuffer);
+            StorageByteChannels.writable()
+                .validateUploadCrc32c(
+                    new SyncAndUploadUnbufferedWritableByteChannel(
+                        write,
+                        query,
+                        resultFuture,
+                        new ChunkSegmenter(
+                            boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+                        boundRetrier,
+                        alg,
+                        writeCtx,
+                        recoveryFile,
+                        recoveryBuffer),
+                    ApiFutures.transform(
+                        resultFuture,
+                        WRITE_OBJECT_RESPONSE_CRC32C_VALUE,
+                        MoreExecutors.directExecutor()));
       }
     }
   }
