@@ -33,10 +33,12 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
@@ -791,13 +793,23 @@ public final class ITJsonResumableSessionPutTaskTest {
   }
 
   @Test
-  public void jsonDeserializationOnlyAttemptedWhenContentPresent() throws Exception {
+  public void whenContentNotPresentFallBackToHeaders() throws Exception {
 
+    ChecksummedTestContent testContent = ChecksummedTestContent.of(new byte[] {'A'});
     HttpRequestHandler handler =
         req -> {
           DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
           resp.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
-          resp.headers().set("x-goog-stored-content-length", "0");
+          resp.headers().set("x-goog-generation", "3");
+          resp.headers().set("x-goog-metageneration", "7");
+          resp.headers().set("x-goog-stored-content-length", "1");
+          resp.headers().set("x-goog-stored-content-encoding", "identity");
+          resp.headers()
+              .set(
+                  "x-goog-hash",
+                  ImmutableList.of(
+                      "crc32c=" + testContent.getCrc32cBase64(),
+                      "md5=" + testContent.getMd5Base64()));
           return resp;
         };
 
@@ -810,13 +822,15 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               jsonResumableWrite(uploadUrl),
-              RewindableContent.empty(),
-              HttpContentRange.of(0));
+              RewindableContent.of(ByteBuffer.wrap(testContent.getBytes())),
+              HttpContentRange.of(1));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
-      assertThat(call).isNull();
-      assertThat(operationResult.getPersistedSize()).isEqualTo(0L);
+      assertThat(call).isNotNull();
+      assertThat(call.getCrc32c()).isEqualTo(testContent.getCrc32cBase64());
+      assertThat(call.getSize()).isEqualTo(BigInteger.ONE);
+      assertThat(operationResult.getPersistedSize()).isEqualTo(1L);
     }
   }
 
