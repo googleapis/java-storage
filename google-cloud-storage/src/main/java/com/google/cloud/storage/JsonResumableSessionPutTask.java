@@ -148,7 +148,7 @@ final class JsonResumableSessionPutTask
           response.ignore();
           actualSize = new BigInteger(storedContentLength, 10);
           success = true;
-          storageObject = null;
+          storageObject = jsonResumableWrite.storageObjectFromResponseHeaders(response);
         } else {
           response.ignore();
           StorageException se =

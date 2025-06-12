@@ -309,18 +309,28 @@ final class GapicWritableByteChannelSessionBuilder {
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  UnbufferedWritableByteChannel channel;
                   if (fsyncEvery) {
-                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
-                        result,
-                        getChunkSegmenter(),
-                        write,
-                        new WriteCtx<>(start),
-                        boundRetrier,
-                        Retrying::newCallContext);
+                    channel =
+                        new GapicUnbufferedChunkedResumableWritableByteChannel(
+                            result,
+                            getChunkSegmenter(),
+                            write,
+                            new WriteCtx<>(start),
+                            boundRetrier,
+                            Retrying::newCallContext);
                   } else {
-                    return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                    channel =
+                        new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
+                            result, getChunkSegmenter(), write, new WriteCtx<>(start));
                   }
+                  return StorageByteChannels.writable()
+                      .validateUploadCrc32c(
+                          channel,
+                          ApiFutures.transform(
+                              result,
+                              WRITE_OBJECT_RESPONSE_CRC32C_VALUE,
+                              MoreExecutors.directExecutor()));
                 })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -349,18 +359,28 @@ final class GapicWritableByteChannelSessionBuilder {
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
+                  UnbufferedWritableByteChannel channel;
                   if (fsyncEvery) {
-                    return new GapicUnbufferedChunkedResumableWritableByteChannel(
-                        result,
-                        getChunkSegmenter(),
-                        write,
-                        new WriteCtx<>(start),
-                        retrier,
-                        Retrying::newCallContext);
+                    channel =
+                        new GapicUnbufferedChunkedResumableWritableByteChannel(
+                            result,
+                            getChunkSegmenter(),
+                            write,
+                            new WriteCtx<>(start),
+                            retrier,
+                            Retrying::newCallContext);
                   } else {
-                    return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                    channel =
+                        new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
+                            result, getChunkSegmenter(), write, new WriteCtx<>(start));
                   }
+                  return StorageByteChannels.writable()
+                      .validateUploadCrc32c(
+                          channel,
+                          ApiFutures.transform(
+                              result,
+                              WRITE_OBJECT_RESPONSE_CRC32C_VALUE,
+                              MoreExecutors.directExecutor()));
                 })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));

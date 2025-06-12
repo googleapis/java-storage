@@ -33,6 +33,8 @@ import java.nio.channels.ScatteringByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class StorageByteChannels {
 
@@ -78,7 +80,7 @@ final class StorageByteChannels {
 
     public UnbufferedWritableByteChannel validateUploadCrc32c(
         UnbufferedWritableByteChannel delegate, ApiFuture<Crc32cLengthKnown> crc32cGetter) {
-      return new ChecksumValidatingBufferedWritableByteChannel(delegate, crc32cGetter);
+      return new ChecksumValidatingUnbufferedWritableByteChannel(delegate, crc32cGetter);
     }
 
     public UnbufferedWritableByteChannel createSynchronized(
@@ -88,15 +90,17 @@ final class StorageByteChannels {
   }
 
   @SuppressWarnings("UnstableApiUsage")
-  private static final class ChecksumValidatingBufferedWritableByteChannel
+  private static final class ChecksumValidatingUnbufferedWritableByteChannel
       implements UnbufferedWritableByteChannel {
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(ChecksumValidatingUnbufferedWritableByteChannel.class);
     private final UnbufferedWritableByteChannel delegate;
     private final ApiFuture<Crc32cLengthKnown> crc32cGetter;
 
     private final Hasher cumulativeCrc32c;
     private long totalLength;
 
-    private ChecksumValidatingBufferedWritableByteChannel(
+    private ChecksumValidatingUnbufferedWritableByteChannel(
         UnbufferedWritableByteChannel delegate, ApiFuture<Crc32cLengthKnown> crc32cGetter) {
       this.delegate = delegate;
       this.crc32cGetter = crc32cGetter;
@@ -106,8 +110,10 @@ final class StorageByteChannels {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
-      hash(src);
-      return delegate.write(src);
+      ByteBuffer dup = src.duplicate();
+      int written = delegate.write(src);
+      hash(dup, written);
+      return written;
     }
 
     @Override
@@ -117,16 +123,19 @@ final class StorageByteChannels {
 
     @Override
     public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
-      hash(srcs, offset, length);
-      return delegate.write(srcs, offset, length);
+      ByteBuffer[] dups = Buffers.duplicate(srcs, offset, length);
+      long written = delegate.write(srcs, offset, length);
+      hash(dups, offset, length, written);
+      return written;
     }
 
     @Override
     public int writeAndClose(ByteBuffer src) throws IOException {
-      hash(src);
-      int i = delegate.writeAndClose(src);
+      ByteBuffer dup = src.duplicate();
+      int written = delegate.writeAndClose(src);
+      hash(dup, written);
       internalClose();
-      return i;
+      return written;
     }
 
     @Override
@@ -136,10 +145,11 @@ final class StorageByteChannels {
 
     @Override
     public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
-      hash(srcs, offset, length);
-      long l = delegate.writeAndClose(srcs, offset, length);
+      ByteBuffer[] dups = Buffers.duplicate(srcs, offset, length);
+      long written = delegate.writeAndClose(srcs, offset, length);
+      hash(dups, offset, length, written);
       internalClose();
-      return l;
+      return written;
     }
 
     @Override
@@ -155,15 +165,24 @@ final class StorageByteChannels {
       }
     }
 
-    private void hash(ByteBuffer src) {
-      ByteBuffer buffer = src.duplicate();
-      totalLength += buffer.remaining();
+    private long hash(ByteBuffer src, long written) {
+      ByteBuffer buffer = src.slice();
+      int remaining = buffer.remaining();
+      int consumed = remaining;
+      if (written < remaining) {
+        int intExact = Math.toIntExact(written);
+        buffer.limit(intExact);
+        consumed = intExact;
+      }
+      totalLength += remaining;
       cumulativeCrc32c.putBytes(buffer);
+      src.position(src.position() + consumed);
+      return consumed;
     }
 
-    private void hash(ByteBuffer[] srcs, int offset, int length) {
+    private void hash(ByteBuffer[] srcs, int offset, int length, long written) {
       for (int i = offset; i < length; i++) {
-        hash(srcs[i]);
+        written -= hash(srcs[i], written);
       }
     }
 
@@ -171,6 +190,7 @@ final class StorageByteChannels {
       try {
         Crc32cLengthKnown actual = crc32cGetter.get();
         Crc32cLengthKnown expected = Crc32cValue.of(cumulativeCrc32c.hash().asInt(), totalLength);
+        LOGGER.debug("expected = {}, actual = {}", expected, actual);
         if (!expected.eqValue(actual)) {
           throw new ClientDetectedDataLossException(actual, expected);
         }

@@ -18,23 +18,36 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 import java.util.function.LongConsumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class HttpWritableByteChannelSessionBuilder {
 
   private static final int DEFAULT_BUFFER_CAPACITY = ByteSizeConstants._16MiB;
+  public static final ApiFunction<StorageObject, Crc32cLengthKnown> STORAGE_OBJECT_TO_CRC32C_VALUE =
+      storageObject -> {
+        @Nullable BigInteger size = storageObject.getSize();
+        long length = 0;
+        if (size != null) {
+          length = size.longValueExact();
+        }
+        return Crc32cValue.of(Utils.crc32cCodec.decode(storageObject.getCrc32c()), length);
+      };
   @NonNull private final HttpClientContext httpClientContext;
 
   HttpWritableByteChannelSessionBuilder(@NonNull HttpClientContext httpClientContext) {
@@ -126,10 +139,7 @@ final class HttpWritableByteChannelSessionBuilder {
                       httpClientContext, boundRetrier, start, resultFuture, committedBytesCallback),
                   ApiFutures.transform(
                       resultFuture,
-                      storageObject ->
-                          Crc32cValue.of(
-                              Utils.crc32cCodec.decode(storageObject.getCrc32c()),
-                              storageObject.getSize().longValueExact()),
+                      STORAGE_OBJECT_TO_CRC32C_VALUE,
                       MoreExecutors.directExecutor()));
     }
 

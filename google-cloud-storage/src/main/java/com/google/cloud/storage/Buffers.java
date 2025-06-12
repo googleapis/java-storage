@@ -194,4 +194,13 @@ final class Buffers {
     }
     return total;
   }
+
+  static ByteBuffer[] duplicate(ByteBuffer[] buffers, int offset, int length) {
+    ByteBuffer[] returnValue = new ByteBuffer[length - offset];
+    for (int i = offset; i < length; i++) {
+      ByteBuffer buffer = buffers[i];
+      returnValue[i] = buffer.duplicate();
+    }
+    return returnValue;
+  }
 }
