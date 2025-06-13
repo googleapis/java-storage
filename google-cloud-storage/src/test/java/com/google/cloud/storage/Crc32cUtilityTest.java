@@ -30,7 +30,7 @@ public class Crc32cUtilityTest {
     int object2_hash = 0x31AA814E;
     // length("world") -> 5
     int object2_size = 5;
-    int combined = Crc32cUtility.crc32cCombineGoogle(object1_hash, object2_hash, object2_size);
+    int combined = Crc32cUtility.concatCrc32c(object1_hash, object2_hash, object2_size);
     Assert.assertEquals(expected, combined);
   }
 
@@ -42,7 +42,7 @@ public class Crc32cUtilityTest {
     int expected = Hashing.crc32c().hashBytes(helloWorld.getBytes()).asInt();
     int object1Hash = Hashing.crc32c().hashBytes(hello.getBytes()).asInt();
     int object2Hash = Hashing.crc32c().hashBytes(world.getBytes()).asInt();
-    int combined = Crc32cUtility.crc32cCombineGoogle(object1Hash, object2Hash, world.length());
+    int combined = Crc32cUtility.concatCrc32c(object1Hash, object2Hash, world.length());
     Assert.assertEquals(expected, combined);
   }
 }
