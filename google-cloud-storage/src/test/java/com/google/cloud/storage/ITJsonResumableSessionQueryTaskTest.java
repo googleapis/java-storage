@@ -28,10 +28,12 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.common.collect.ImmutableList;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -97,12 +99,23 @@ public final class ITJsonResumableSessionQueryTaskTest {
   }
 
   @Test
-  public void successfulSession_noObject() throws Exception {
+  public void successfulSession_whenContentNotPresentFallBackToHeaders() throws Exception {
+    ChecksummedTestContent testContent = ChecksummedTestContent.of(new byte[] {'A'});
     HttpRequestHandler handler =
         req -> {
-          DefaultFullHttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), OK);
-          response.headers().set("X-Goog-Stored-Content-Length", 0);
-          return response;
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
+          resp.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
+          resp.headers().set("x-goog-generation", "3");
+          resp.headers().set("x-goog-metageneration", "7");
+          resp.headers().set("x-goog-stored-content-length", "1");
+          resp.headers().set("x-goog-stored-content-encoding", "identity");
+          resp.headers()
+              .set(
+                  "x-goog-hash",
+                  ImmutableList.of(
+                      "crc32c=" + testContent.getCrc32cBase64(),
+                      "md5=" + testContent.getMd5Base64()));
+          return resp;
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
@@ -115,8 +128,10 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       StorageObject object = result.getObject();
-      assertThat(object).isNull();
-      assertThat(result.getPersistedSize()).isEqualTo(0L);
+      assertThat(object).isNotNull();
+      assertThat(object.getCrc32c()).isEqualTo(testContent.getCrc32cBase64());
+      assertThat(object.getSize()).isEqualTo(BigInteger.ONE);
+      assertThat(result.getPersistedSize()).isEqualTo(1L);
     }
   }
 

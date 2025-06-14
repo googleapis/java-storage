@@ -21,6 +21,8 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
+import com.google.cloud.BaseServiceException;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.RecoveryFileManager.RecoveryVolumeSinkFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -28,6 +30,8 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -215,12 +219,19 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
 
         private final WritableByteChannel delegate;
 
+        private final Hasher cumulativeCrc32c;
+        private long totalLength;
+
         private Flusher(WritableByteChannel delegate) {
           this.delegate = delegate;
+          this.cumulativeCrc32c = Hashing.crc32c().newHasher();
+          this.totalLength = 0;
         }
 
         @Override
         public int write(ByteBuffer src) throws IOException {
+          totalLength += src.remaining();
+          cumulativeCrc32c.putBytes(src.duplicate());
           return delegate.write(src);
         }
 
@@ -232,6 +243,7 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
         @Override
         public void close() throws IOException {
           delegate.close();
+          Crc32cLengthKnown expected = Crc32cValue.of(cumulativeCrc32c.hash().asInt(), totalLength);
           try (RecoveryFile rf = Factory.WriteToFileThenUpload.this.rf) {
             Path path = rf.getPath();
             long size = Files.size(path);
@@ -241,11 +253,20 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
                 size,
                 () -> {
                   BlobInfo blob = storage.internalCreateFrom(path, info, opts);
+                  Crc32cLengthKnown actual =
+                      Crc32cValue.of(Utils.crc32cCodec.decode(blob.getCrc32c()), blob.getSize());
+                  if (!expected.eqValue(actual)) {
+                    throw new ClientDetectedDataLossException(actual, expected);
+                  }
                   result.set(blob);
                 });
           } catch (StorageException | IOException e) {
             result.setException(e);
             throw e;
+          } catch (ClientDetectedDataLossException e) {
+            BaseServiceException coalesce = StorageException.coalesce(e);
+            result.setException(coalesce);
+            throw coalesce;
           }
         }
       }

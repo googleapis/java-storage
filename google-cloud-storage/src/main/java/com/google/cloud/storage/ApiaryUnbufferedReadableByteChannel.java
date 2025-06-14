@@ -300,13 +300,13 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   }
 
   @SuppressWarnings("unchecked")
-  private static <T> T cast(Object o) {
+  static <T> T cast(Object o) {
     return (T) o;
   }
 
   @Nullable
   @SuppressWarnings("unchecked")
-  private static String getHeaderValue(@NonNull HttpHeaders headers, @NonNull String headerName) {
+  static String getHeaderValue(@NonNull HttpHeaders headers, @NonNull String headerName) {
     Object o = headers.get(headerName);
     if (o == null) {
       return null;
