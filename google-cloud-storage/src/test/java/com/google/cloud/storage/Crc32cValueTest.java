@@ -20,9 +20,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthUnknown;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import net.jqwik.api.Example;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class Crc32cValueTest {
 
@@ -66,5 +68,31 @@ final class Crc32cValueTest {
     assertThat(chain.getValue()).isEqualTo(expected);
     assertThat(nesting.getValue()).isEqualTo(expected);
     assertThat(mixed.getValue()).isEqualTo(expected);
+  }
+
+  @Example
+  void zeroDoesNotTransform() {
+    Crc32cLengthKnown base =
+        Hasher.enabled().hash(DataGenerator.base64Characters().genByteBuffer(64));
+
+    assertThat(base.concat(Crc32cValue.zero())).isSameInstanceAs(base);
+    assertThat(Crc32cValue.zero().concat(base)).isSameInstanceAs(base);
+  }
+
+  @Example
+  void nullSafeConcat_isAlwaysNull() {
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(2 * 1024 * 1024));
+
+    Crc32cLengthKnown actual =
+        testContent.chunkup(373).stream()
+            .map(Crc32cValueTest::toCrc32cValue)
+            .reduce(null, Hasher.enabled()::nullSafeConcat);
+
+    assertThat(actual).isNull();
+  }
+
+  private static @NonNull Crc32cLengthKnown toCrc32cValue(ChecksummedTestContent testContent) {
+    return Crc32cValue.of(testContent.getCrc32c(), testContent.getBytes().length);
   }
 }
