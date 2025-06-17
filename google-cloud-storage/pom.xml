@@ -258,6 +258,8 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-core</artifactId>
+      <!-- TODO(suztomo): Remove unce the tests JAR is back -->
+      <version>2.57.0</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
