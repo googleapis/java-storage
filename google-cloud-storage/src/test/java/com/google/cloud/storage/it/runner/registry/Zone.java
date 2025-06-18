@@ -19,8 +19,11 @@ package com.google.cloud.storage.it.runner.registry;
 import com.google.common.base.MoreObjects;
 import java.io.IOException;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Zone {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Zone.class);
 
   private final String region;
   private final String zone;
@@ -87,6 +90,7 @@ public final class Zone {
     public void start() {
       try {
         zone = MetadataService.zone().orElseGet(() -> parse("us-east1-c"));
+        LOGGER.info("Resolved zone = {}", zone);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
