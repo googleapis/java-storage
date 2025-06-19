@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.53.1](https://github.com/googleapis/java-storage/compare/v2.53.0...v2.53.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* Cancel the future in RemoteStorageHelper#forceDelete when TimeoutException happens ([#3136](https://github.com/googleapis/java-storage/issues/3136)) ([e6007d5](https://github.com/googleapis/java-storage/commit/e6007d56e8801be65209cb5761f62749369425c9))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.59.0 ([7dba9f0](https://github.com/googleapis/java-storage/commit/7dba9f09f100062cc8c04e5a2735a4349d8e7ed1))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250605-2.0.0 ([#3143](https://github.com/googleapis/java-storage/issues/3143)) ([17a80d8](https://github.com/googleapis/java-storage/commit/17a80d8b49fef65557215b310895b0f08ee25235))
+* Update sdk-platform-java dependencies ([#3152](https://github.com/googleapis/java-storage/issues/3152)) ([2f78192](https://github.com/googleapis/java-storage/commit/2f78192d97e9d3ca29c97a52a66a074777dce196))
+
 ## [2.53.0](https://github.com/googleapis/java-storage/compare/v2.52.3...v2.53.0) (2025-06-04)
 
 
