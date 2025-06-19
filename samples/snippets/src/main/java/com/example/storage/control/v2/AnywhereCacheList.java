@@ -30,9 +30,10 @@ public final class AnywhereCacheList {
   public static void anywhereCacheList(String bucketName) throws IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      ListAnywhereCachesRequest request = ListAnywhereCachesRequest.newBuilder()
-          .setParent(BucketName.format("_", bucketName))
-          .build();
+      ListAnywhereCachesRequest request =
+          ListAnywhereCachesRequest.newBuilder()
+              .setParent(BucketName.format("_", bucketName))
+              .build();
 
       ListAnywhereCachesPagedResponse page = storageControl.listAnywhereCaches(request);
       for (AnywhereCache anywhereCache : page.iterateAll()) {
@@ -40,6 +41,5 @@ public final class AnywhereCacheList {
       }
     }
   }
-
 }
 // [END storage_control_list_anywhere_cache]
