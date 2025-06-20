@@ -78,18 +78,14 @@ final class JsonResumableSessionQueryTask
           // when a signed url is used, the finalize response is empty
           response.ignore();
           actualSize = new BigInteger(storedContentLength, 10);
-          storageObject = null;
+          storageObject = jsonResumableWrite.storageObjectFromResponseHeaders(response);
         } else {
           response.ignore();
           throw ResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
               uploadId, response, null, () -> null);
         }
         if (actualSize != null) {
-          if (storageObject != null) {
-            return ResumableOperationResult.complete(storageObject, actualSize.longValue());
-          } else {
-            return ResumableOperationResult.incremental(actualSize.longValue());
-          }
+          return ResumableOperationResult.complete(storageObject, actualSize.longValue());
         } else {
           throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
               uploadId,

@@ -16,8 +16,12 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.getHeaderValue;
+import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
@@ -29,6 +33,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -118,6 +124,32 @@ final class JsonResumableWrite implements Serializable {
         .add("uploadId", uploadId)
         .add("beginOffset", beginOffset)
         .toString();
+  }
+
+  StorageObject storageObjectFromResponseHeaders(HttpResponse resp) {
+    StorageObject r = new StorageObject();
+    if (object != null) {
+      r.putAll(object);
+    }
+    HttpHeaders h = resp.getHeaders();
+    ifNonNull(getHeaderValue(h, "x-goog-generation"), Long::parseLong, r::setGeneration);
+    ifNonNull(getHeaderValue(h, "x-goog-metageneration"), Long::parseLong, r::setMetageneration);
+    ifNonNull(getHeaderValue(h, "x-goog-stored-content-length"), BigInteger::new, r::setSize);
+    ifNonNull(getHeaderValue(h, "x-goog-stored-content-encoding"), r::setContentEncoding);
+    ifNonNull(
+        h.get("x-goog-hash"),
+        ApiaryUnbufferedReadableByteChannel::cast,
+        (List<String> x) -> {
+          for (String s : x) {
+            if (s.startsWith("crc32c=")) {
+              r.setCrc32c(s.substring(7));
+            } else if (s.startsWith("md5=")) {
+              r.setMd5Hash(s.substring(5));
+            }
+          }
+        });
+
+    return r;
   }
 
   private String getObjectJson() {
