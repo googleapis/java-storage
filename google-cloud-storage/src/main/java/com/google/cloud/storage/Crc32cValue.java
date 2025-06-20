@@ -81,7 +81,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public Crc32cLengthUnknown concat(Crc32cLengthKnown other) {
-      int combined = Crc32cUtility.crc32cCombineGoogle(value, other.value, other.length);
+      int combined = Crc32cUtility.concatCrc32c(value, other.value, other.length);
       return new Crc32cLengthUnknown(combined);
     }
 
@@ -137,7 +137,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public Crc32cLengthKnown concat(Crc32cLengthKnown other) {
-      int combined = Crc32cUtility.crc32cCombineGoogle(value, other.value, other.length);
+      int combined = Crc32cUtility.concatCrc32c(value, other.value, other.length);
       return new Crc32cLengthKnown(combined, length + other.length);
     }
 
