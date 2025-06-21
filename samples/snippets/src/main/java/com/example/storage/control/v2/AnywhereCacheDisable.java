@@ -28,15 +28,13 @@ public final class AnywhereCacheDisable {
   public static void anywhereCacheDisable(String cacheName) throws IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      DisableAnywhereCacheRequest request = DisableAnywhereCacheRequest.newBuilder()
-          .setName(cacheName)
-          .build();
+      DisableAnywhereCacheRequest request =
+          DisableAnywhereCacheRequest.newBuilder().setName(cacheName).build();
 
       AnywhereCache anywhereCache = storageControl.disableAnywhereCache(request);
 
       System.out.printf("Disabled anywhere cache: %s%n", anywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_disable_anywhere_cache]

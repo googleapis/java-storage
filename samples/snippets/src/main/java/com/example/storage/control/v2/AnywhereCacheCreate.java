@@ -32,14 +32,13 @@ public final class AnywhereCacheCreate {
       throws InterruptedException, ExecutionException, IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      CreateAnywhereCacheRequest request = CreateAnywhereCacheRequest.newBuilder()
-          // Set project to "_" to signify globally scoped bucket
-          .setParent(BucketName.format("_", bucketName))
-          .setAnywhereCache(AnywhereCache.newBuilder()
-              .setName(cacheName)
-              .setZone(zoneName)
-              .build())
-          .build();
+      CreateAnywhereCacheRequest request =
+          CreateAnywhereCacheRequest.newBuilder()
+              // Set project to "_" to signify globally scoped bucket
+              .setParent(BucketName.format("_", bucketName))
+              .setAnywhereCache(
+                  AnywhereCache.newBuilder().setName(cacheName).setZone(zoneName).build())
+              .build();
 
       // Start a long-running operation (LRO).
       OperationFuture<AnywhereCache, CreateAnywhereCacheMetadata> operation =
@@ -50,6 +49,5 @@ public final class AnywhereCacheCreate {
       System.out.printf("Created anywhere cache: %s%n", anywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_create_anywhere_cache]

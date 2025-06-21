@@ -33,19 +33,14 @@ public final class AnywhereCacheUpdate {
       throws InterruptedException, ExecutionException, IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      AnywhereCache pendingUpdate = AnywhereCache.newBuilder()
-          .setName(cacheName)
-          .setAdmissionPolicy(admissionPolicy)
-          .build();
+      AnywhereCache pendingUpdate =
+          AnywhereCache.newBuilder().setName(cacheName).setAdmissionPolicy(admissionPolicy).build();
 
-      UpdateAnywhereCacheRequest request = UpdateAnywhereCacheRequest.newBuilder()
-          .setAnywhereCache(pendingUpdate)
-          .setUpdateMask(
-              FieldMask.newBuilder()
-                  .addPaths("admission_policy")
-                  .build()
-          )
-          .build();
+      UpdateAnywhereCacheRequest request =
+          UpdateAnywhereCacheRequest.newBuilder()
+              .setAnywhereCache(pendingUpdate)
+              .setUpdateMask(FieldMask.newBuilder().addPaths("admission_policy").build())
+              .build();
 
       // Start a long-running operation (LRO).
       OperationFuture<AnywhereCache, UpdateAnywhereCacheMetadata> operation =
@@ -56,6 +51,5 @@ public final class AnywhereCacheUpdate {
       System.out.printf("Updated anywhere cache: %s%n", updatedAnywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_update_anywhere_cache]
