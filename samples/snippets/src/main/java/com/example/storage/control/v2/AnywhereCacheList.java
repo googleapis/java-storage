@@ -16,7 +16,7 @@
 
 package com.example.storage.control.v2;
 
-// [START storage_control_list_anywhere_cache]
+// [START storage_control_list_anywhere_caches]
 
 import com.google.storage.control.v2.AnywhereCache;
 import com.google.storage.control.v2.BucketName;
@@ -42,4 +42,4 @@ public final class AnywhereCacheList {
   }
 
 }
-// [END storage_control_list_anywhere_cache]
+// [END storage_control_list_anywhere_caches]
