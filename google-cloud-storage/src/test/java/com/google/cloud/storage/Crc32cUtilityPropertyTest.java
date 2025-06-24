@@ -29,8 +29,7 @@ public class Crc32cUtilityPropertyTest {
     int secondPartHash = Hashing.crc32c().hashBytes(secondObject).asInt();
     int expected =
         Hashing.crc32c().newHasher().putBytes(firstObject).putBytes(secondObject).hash().asInt();
-    int actual =
-        Crc32cUtility.crc32cCombineGoogle(firstPartHash, secondPartHash, secondObject.length);
+    int actual = Crc32cUtility.concatCrc32c(firstPartHash, secondPartHash, secondObject.length);
     assertThat(actual).isEqualTo(expected);
   }
 }
