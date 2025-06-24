@@ -149,7 +149,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
     return sync;
   }
 
-  private WriteObjectRequest processSegment(ChunkSegment segment) {
+  private WriteObjectRequest processSegment(ChunkSegment segment, boolean updateCumulativeCrc32c) {
     WriteObjectRequest.Builder builder = writeCtx.newRequestBuilder();
     if (!first) {
       builder.clearUploadId().clearWriteObjectSpec().clearObjectChecksums();
@@ -162,9 +162,11 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
     int contentSize = b.size();
 
     // update ctx state that tracks overall progress
-    writeCtx
-        .getCumulativeCrc32c()
-        .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
+    if (updateCumulativeCrc32c) {
+      writeCtx
+          .getCumulativeCrc32c()
+          .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
+    }
     // resolve current offset and set next
     long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
 
@@ -202,6 +204,7 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
     return b;
   }
 
+  @SuppressWarnings("ConstantValue")
   private void doUpload(boolean closing, ChunkSegment[] segments, long goalSize) {
     AtomicBoolean recover = new AtomicBoolean(false);
     retrier.run(
@@ -211,9 +214,16 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
             sync.close();
           }
           boolean shouldRecover = recover.getAndSet(true);
+          // each ChunkSegment will always have its checksum computed, but if a retry happens, and
+          // we need to rewind and build a new ChunkSegment, we don't want to add it to the
+          // cumulativeCrc32c value because that will make it appear as the bytes are duplicated.
+          // If we send "ABCD", get an error and find only "AB" to have been persisted, we don't
+          // want to add "CD" to the cumulative crc32c as that would be equivalent to "ABCDCD".
+          boolean updateCumulativeCrc32c = !shouldRecover;
           if (!shouldRecover) {
             for (ChunkSegment segment : segments) {
-              WriteObjectRequest writeObjectRequest = processSegment(segment);
+              WriteObjectRequest writeObjectRequest =
+                  processSegment(segment, updateCumulativeCrc32c);
               stream.onNext(writeObjectRequest);
             }
 
@@ -247,17 +257,22 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
                 first = true;
                 writeCtx.getTotalSentBytes().set(persistedSize);
                 writeCtx.getConfirmedBytes().set(persistedSize);
-                writeCtx.getCumulativeCrc32c().set(null); // todo: can we rewind checksum?
+                // intentionally do not modify the cumulativeCrc32c value
+                // this will stay in the state in sync with what has been written to disk
+                // when we recover, checksum the individual message but not the cumulative
 
                 try (SeekableByteChannel reader = rf.reader()) {
                   reader.position(persistedSize);
                   ByteBuffer buf = copyBuffer.get();
+                  // clear before read, in case an error was thrown before
+                  buf.clear();
                   while (Buffers.fillFrom(buf, reader) != -1) {
                     buf.flip();
                     while (buf.hasRemaining()) {
                       ChunkSegment[] recoverySegments = chunkSegmenter.segmentBuffer(buf);
                       for (ChunkSegment segment : recoverySegments) {
-                        WriteObjectRequest writeObjectRequest = processSegment(segment);
+                        WriteObjectRequest writeObjectRequest =
+                            processSegment(segment, updateCumulativeCrc32c);
                         stream.onNext(writeObjectRequest);
                       }
                     }
@@ -280,7 +295,8 @@ final class SyncAndUploadUnbufferedWritableByteChannel implements UnbufferedWrit
             }
           }
           long newWritten = writeCtx.getTotalSentBytes().get();
-          Preconditions.checkState(newWritten == goalSize, "%s == %s", newWritten, goalSize);
+          Preconditions.checkState(
+              newWritten == goalSize, "newWritten == goalSize (%s == %s)", newWritten, goalSize);
           return null;
         },
         Decoder.identity());
