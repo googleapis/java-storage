@@ -28,15 +28,13 @@ public final class AnywhereCacheResume {
   public static void anywhereCacheResume(String cacheName) throws IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      ResumeAnywhereCacheRequest request = ResumeAnywhereCacheRequest.newBuilder()
-          .setName(cacheName)
-          .build();
+      ResumeAnywhereCacheRequest request =
+          ResumeAnywhereCacheRequest.newBuilder().setName(cacheName).build();
 
       AnywhereCache anywhereCache = storageControl.resumeAnywhereCache(request);
 
       System.out.printf("Resumed anywhere cache: %s%n", anywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_resume_anywhere_cache]
