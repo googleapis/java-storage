@@ -28,15 +28,13 @@ public final class AnywhereCacheGet {
   public static void anywhereCacheGet(String cacheName) throws IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      GetAnywhereCacheRequest request = GetAnywhereCacheRequest.newBuilder()
-          .setName(cacheName)
-          .build();
+      GetAnywhereCacheRequest request =
+          GetAnywhereCacheRequest.newBuilder().setName(cacheName).build();
 
       AnywhereCache anywhereCache = storageControl.getAnywhereCache(request);
 
       System.out.printf("Got anywhere cache: %s%n", anywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_get_anywhere_cache]

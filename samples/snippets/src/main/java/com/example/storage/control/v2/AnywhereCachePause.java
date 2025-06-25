@@ -28,15 +28,13 @@ public final class AnywhereCachePause {
   public static void anywhereCachePause(String cacheName) throws IOException {
     try (StorageControlClient storageControl = StorageControlClient.create()) {
 
-      PauseAnywhereCacheRequest request = PauseAnywhereCacheRequest.newBuilder()
-          .setName(cacheName)
-          .build();
+      PauseAnywhereCacheRequest request =
+          PauseAnywhereCacheRequest.newBuilder().setName(cacheName).build();
 
       AnywhereCache anywhereCache = storageControl.pauseAnywhereCache(request);
 
       System.out.printf("Paused anywhere cache: %s%n", anywhereCache.getName());
     }
   }
-
 }
 // [END storage_control_pause_anywhere_cache]
