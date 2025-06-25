@@ -37,7 +37,7 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
     this.requestFactory = requestFactory;
     this.totalSentBytes = new AtomicLong(0);
     this.confirmedBytes = new AtomicLong(0);
-    this.cumulativeCrc32c = new AtomicReference<>(Crc32cValue.zero());
+    this.cumulativeCrc32c = new AtomicReference<>(null);
   }
 
   public RequestFactoryT getRequestFactory() {
