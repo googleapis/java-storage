@@ -96,6 +96,10 @@ public final class ChecksummedTestContent {
         .build();
   }
 
+  public ChecksummedTestContent slice(int begin, int length) {
+    return of(bytes, begin, Math.min(length, bytes.length - begin));
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
