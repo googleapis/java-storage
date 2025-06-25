@@ -31,13 +31,22 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
 
   private final AtomicLong totalSentBytes;
   private final AtomicLong confirmedBytes;
-  private final AtomicReference<Crc32cLengthKnown> cumulativeCrc32c;
+  private final AtomicReference<@Nullable Crc32cLengthKnown> cumulativeCrc32c;
 
   WriteCtx(RequestFactoryT requestFactory) {
+    this(requestFactory, null);
+  }
+
+  /**
+   * TODO: Remove initialValue and replace with Crc32cValue.zero() once all uploads have been
+   * updated to do e2e checksumming by default.
+   */
+  @Deprecated
+  WriteCtx(RequestFactoryT requestFactory, @Nullable Crc32cLengthKnown initialValue) {
     this.requestFactory = requestFactory;
     this.totalSentBytes = new AtomicLong(0);
     this.confirmedBytes = new AtomicLong(0);
-    this.cumulativeCrc32c = new AtomicReference<>(null);
+    this.cumulativeCrc32c = new AtomicReference<>(initialValue);
   }
 
   public RequestFactoryT getRequestFactory() {
@@ -56,7 +65,7 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
     return confirmedBytes;
   }
 
-  public AtomicReference<Crc32cLengthKnown> getCumulativeCrc32c() {
+  public AtomicReference<@Nullable Crc32cLengthKnown> getCumulativeCrc32c() {
     return cumulativeCrc32c;
   }
 
