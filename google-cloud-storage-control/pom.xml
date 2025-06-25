@@ -47,10 +47,26 @@
             <groupId>com.google.api</groupId>
             <artifactId>gax</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax</artifactId>
+            <scope>test</scope>
+            <classifier>testlib</classifier>
+        </dependency>
 
         <dependency>
             <groupId>com.google.api</groupId>
             <artifactId>gax-grpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax-httpjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax-httpjson</artifactId>
+            <scope>test</scope>
+            <classifier>testlib</classifier>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
