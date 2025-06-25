@@ -87,6 +87,11 @@
             <groupId>com.google.api.grpc</groupId>
             <artifactId>grpc-google-cloud-storage-control-v2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
