@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Storage.BucketField.IP_FILTER;
 import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
 import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationSecondsCodec;
@@ -31,6 +32,7 @@ import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Billing;
 import com.google.api.services.storage.model.Bucket.Encryption;
 import com.google.api.services.storage.model.Bucket.IamConfiguration.UniformBucketLevelAccess;
+import com.google.api.services.storage.model.Bucket.IpFilter.VpcNetworkSources;
 import com.google.api.services.storage.model.Bucket.Lifecycle;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule.Action;
@@ -57,6 +59,7 @@ import com.google.cloud.storage.BlobInfo.Retention;
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
+import com.google.cloud.storage.BucketInfo.IpFilter;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
@@ -148,6 +151,14 @@ final class JsonConversions {
       Codec.of(this::bindingEncode, this::bindingDecode);
   private final Codec<com.google.cloud.Condition, com.google.api.services.storage.model.Expr>
       iamConditionCodec = Codec.of(this::conditionEncode, this::conditionDecode);
+
+  private final Codec<BucketInfo.IpFilter, Bucket.IpFilter> ipFilterCodec =
+      Codec.of(this::ipFilterEncode, this::ipFilterDecode);
+  private final Codec<BucketInfo.IpFilter.PublicNetworkSource, Bucket.IpFilter.PublicNetworkSource>
+      publicNetworkSourceCodec =
+          Codec.of(this::publicNetworkSourceEncode, this::publicNetworkSourceDecode);
+  private final Codec<BucketInfo.IpFilter.VpcNetworkSource, Bucket.IpFilter.VpcNetworkSources>
+      vpcNetworkSourceCodec = Codec.of(this::vpcNetworkSourceEncode, this::vpcNetworkSourceDecode);
 
   private JsonConversions() {}
 
@@ -466,6 +477,10 @@ final class JsonConversions {
         from.getHierarchicalNamespace(),
         this::hierarchicalNamespaceEncode,
         to::setHierarchicalNamespace);
+    ifNonNull(from.getIpFilter(), ipFilterCodec::encode, to::setIpFilter);
+    if (from.getModifiedFields().contains(IP_FILTER) && from.getIpFilter() == null) {
+      to.setIpFilter(Data.nullOf(Bucket.IpFilter.class));
+    }
     return to;
   }
 
@@ -519,6 +534,7 @@ final class JsonConversions {
         to::setHierarchicalNamespace);
     ifNonNull(from.getObjectRetention(), this::objectRetentionDecode, to::setObjectRetention);
     ifNonNull(from.getSoftDeletePolicy(), this::softDeletePolicyDecode, to::setSoftDeletePolicy);
+    ifNonNull(from.getIpFilter(), ipFilterCodec::decode, to::setIpFilter);
     return to.build();
   }
 
@@ -1004,6 +1020,64 @@ final class JsonConversions {
 
   private CustomPlacementConfig customPlacementConfigDecode(Bucket.CustomPlacementConfig from) {
     return CustomPlacementConfig.newBuilder().setDataLocations(from.getDataLocations()).build();
+  }
+
+  private Bucket.IpFilter ipFilterEncode(IpFilter from) {
+    Bucket.IpFilter to = new Bucket.IpFilter();
+    ifNonNull(from.getMode(), to::setMode);
+    ifNonNull(
+        from.getPublicNetworkSource(),
+        publicNetworkSourceCodec::encode,
+        to::setPublicNetworkSource);
+    ifNonNull(
+        from.getVpcNetworkSources(),
+        toListOf(vpcNetworkSourceCodec::encode),
+        to::setVpcNetworkSources);
+    ifNonNull(from.getAllowCrossOrgVpcs(), to::setAllowCrossOrgVpcs);
+    ifNonNull(from.getAllowAllServiceAgentAccess(), to::setAllowAllServiceAgentAccess);
+    return to;
+  }
+
+  private IpFilter ipFilterDecode(Bucket.IpFilter from) {
+    IpFilter.Builder to = IpFilter.newBuilder();
+    ifNonNull(from.getMode(), to::setMode);
+    ifNonNull(
+        from.getPublicNetworkSource(),
+        publicNetworkSourceCodec::decode,
+        to::setPublicNetworkSource);
+    ifNonNull(
+        from.getVpcNetworkSources(),
+        toListOf(vpcNetworkSourceCodec::decode),
+        to::setVpcNetworkSources);
+    ifNonNull(from.getAllowCrossOrgVpcs(), to::setAllowCrossOrgVpcs);
+    ifNonNull(from.getAllowAllServiceAgentAccess(), to::setAllowAllServiceAgentAccess);
+    return to.build();
+  }
+
+  private Bucket.IpFilter.PublicNetworkSource publicNetworkSourceEncode(
+      IpFilter.PublicNetworkSource from) {
+    Bucket.IpFilter.PublicNetworkSource to = new Bucket.IpFilter.PublicNetworkSource();
+    ifNonNull(from.getAllowedIpCidrRanges(), to::setAllowedIpCidrRanges);
+    return to;
+  }
+
+  private IpFilter.PublicNetworkSource publicNetworkSourceDecode(
+      Bucket.IpFilter.PublicNetworkSource from) {
+    return IpFilter.PublicNetworkSource.of(from.getAllowedIpCidrRanges());
+  }
+
+  private Bucket.IpFilter.VpcNetworkSources vpcNetworkSourceEncode(IpFilter.VpcNetworkSource from) {
+    VpcNetworkSources to = new VpcNetworkSources();
+    ifNonNull(from.getNetwork(), to::setNetwork);
+    ifNonNull(from.getAllowedIpCidrRanges(), to::setAllowedIpCidrRanges);
+    return to;
+  }
+
+  private IpFilter.VpcNetworkSource vpcNetworkSourceDecode(Bucket.IpFilter.VpcNetworkSources from) {
+    IpFilter.VpcNetworkSource.Builder to = IpFilter.VpcNetworkSource.newBuilder();
+    ifNonNull(from.getNetwork(), to::setNetwork);
+    ifNonNull(from.getAllowedIpCidrRanges(), to::setAllowedIpCidrRanges);
+    return to.build();
   }
 
   private static void maybeEncodeRetentionPolicy(BucketInfo from, Bucket to) {
