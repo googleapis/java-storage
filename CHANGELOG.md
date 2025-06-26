@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.53.2](https://github.com/googleapis/java-storage/compare/v2.53.1...v2.53.2) (2025-06-25)
+
+
+### Bug Fixes
+
+* Fix Journaling BlobWriteSessionConfig to properly handle multiple consecutive retries ([#3166](https://github.com/googleapis/java-storage/issues/3166)) ([895bfbd](https://github.com/googleapis/java-storage/commit/895bfbda902a77d16a33fe5238349a6b3d397c10))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud.opentelemetry:exporter-trace to v0.36.0 ([#3162](https://github.com/googleapis/java-storage/issues/3162)) ([41a1030](https://github.com/googleapis/java-storage/commit/41a1030a2e77036cf961a16d472068b07e624192))
+* Update sdk-platform-java dependencies ([#3164](https://github.com/googleapis/java-storage/issues/3164)) ([c22a131](https://github.com/googleapis/java-storage/commit/c22a1319d8e2d92beeb03abac6bf2af8d09d49ee))
+
 ## [2.53.1](https://github.com/googleapis/java-storage/compare/v2.53.0...v2.53.1) (2025-06-18)
 
 
