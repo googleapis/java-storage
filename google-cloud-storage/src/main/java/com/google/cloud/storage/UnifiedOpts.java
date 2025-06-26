@@ -1084,6 +1084,7 @@ final class UnifiedOpts {
                 BucketField.IAMCONFIGURATION.getGrpcName(),
                 BucketInfo.Builder::clearIamConfiguration)
             .put(BucketField.ID.getGrpcName(), BucketInfo.Builder::clearGeneratedId)
+            .put(BucketField.IP_FILTER.getGrpcName(), BucketInfo.Builder::clearIpFilter)
             .put(BucketField.LABELS.getGrpcName(), BucketInfo.Builder::clearLabels)
             .put(BucketField.LIFECYCLE.getGrpcName(), BucketInfo.Builder::clearLifecycleRules)
             .put(BucketField.LOCATION.getGrpcName(), BucketInfo.Builder::clearLocation)

@@ -56,6 +56,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -123,6 +124,7 @@ public class BucketInfo implements Serializable {
   private final HierarchicalNamespace hierarchicalNamespace;
 
   private final SoftDeletePolicy softDeletePolicy;
+  private final @Nullable IpFilter ipFilter;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -1654,6 +1656,432 @@ public class BucketInfo implements Serializable {
     }
   }
 
+  /**
+   * A buckets <a href="https://cloud.google.com/storage/docs/ip-filtering-overview">IP
+   * filtering</a> configuration. Specifies the network sources that can access the bucket, as well
+   * as its underlying objects.
+   *
+   * @since 2.54.0
+   */
+  @Immutable
+  public static final class IpFilter implements Serializable {
+    private static final long serialVersionUID = 3883696370256011372L;
+    private final @Nullable String mode;
+    private final @Nullable PublicNetworkSource publicNetworkSource;
+    private final @Nullable List<VpcNetworkSource> vpcNetworkSources;
+    private final @Nullable Boolean allowCrossOrgVpcs;
+    private final @Nullable Boolean allowAllServiceAgentAccess;
+
+    private IpFilter(
+        @Nullable String mode,
+        @Nullable PublicNetworkSource publicNetworkSource,
+        @Nullable List<VpcNetworkSource> vpcNetworkSources,
+        @Nullable Boolean allowCrossOrgVpcs,
+        @Nullable Boolean allowAllServiceAgentAccess) {
+      this.mode = mode;
+      this.publicNetworkSource = publicNetworkSource;
+      this.vpcNetworkSources = vpcNetworkSources;
+      this.allowCrossOrgVpcs = allowCrossOrgVpcs;
+      this.allowAllServiceAgentAccess = allowAllServiceAgentAccess;
+    }
+
+    /**
+     * The state of the IP filter configuration. Valid values are `Enabled` and `Disabled`. When set
+     * to `Enabled`, IP filtering rules are applied to a bucket and all incoming requests to the
+     * bucket are evaluated against these rules. When set to `Disabled`, IP filtering rules are not
+     * applied to a bucket.
+     *
+     * @since 2.54.0
+     * @see Builder#setMode
+     */
+    public @Nullable String getMode() {
+      return mode;
+    }
+
+    /**
+     * Optional. Public IPs allowed to operate or access the bucket.
+     *
+     * @since 2.54.0
+     * @see Builder#setPublicNetworkSource(PublicNetworkSource)
+     */
+    public @Nullable PublicNetworkSource getPublicNetworkSource() {
+      return publicNetworkSource;
+    }
+
+    /**
+     * Optional. The list of network sources that are allowed to access operations on the bucket or
+     * the underlying objects.
+     *
+     * @since 2.54.0
+     * @see Builder#setVpcNetworkSources(List)
+     */
+    public @Nullable List<VpcNetworkSource> getVpcNetworkSources() {
+      return vpcNetworkSources;
+    }
+
+    /**
+     * Optional. Whether or not to allow VPCs from orgs different than the bucket's parent org to
+     * access the bucket. When set to true, validations on the existence of the VPCs won't be
+     * performed. If set to false, each VPC network source will be checked to belong to the same org
+     * as the bucket as well as validated for existence.
+     *
+     * @since 2.54.0
+     * @see Builder#setAllowCrossOrgVpcs(Boolean)
+     */
+    public @Nullable Boolean getAllowCrossOrgVpcs() {
+      return allowCrossOrgVpcs;
+    }
+
+    /**
+     * Whether or not to allow all P4SA access to the bucket. When set to true, IP filter config
+     * validation will not apply.
+     *
+     * @since 2.54.0
+     * @see Builder#setAllowAllServiceAgentAccess(Boolean)
+     */
+    public @Nullable Boolean getAllowAllServiceAgentAccess() {
+      return allowAllServiceAgentAccess;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof IpFilter)) {
+        return false;
+      }
+      IpFilter ipFilter = (IpFilter) o;
+      return Objects.equals(mode, ipFilter.mode)
+          && Objects.equals(publicNetworkSource, ipFilter.publicNetworkSource)
+          && Objects.equals(vpcNetworkSources, ipFilter.vpcNetworkSources)
+          && Objects.equals(allowCrossOrgVpcs, ipFilter.allowCrossOrgVpcs)
+          && Objects.equals(allowAllServiceAgentAccess, ipFilter.allowAllServiceAgentAccess);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          mode,
+          publicNetworkSource,
+          vpcNetworkSources,
+          allowCrossOrgVpcs,
+          allowAllServiceAgentAccess);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("mode", mode)
+          .add("publicNetworkSource", publicNetworkSource)
+          .add("vpcNetworkSources", vpcNetworkSources)
+          .add("allowCrossOrgVpcs", allowCrossOrgVpcs)
+          .add("allowAllServiceAgentAccess", allowAllServiceAgentAccess)
+          .toString();
+    }
+
+    /**
+     * @since 2.54.0
+     */
+    public Builder toBuilder() {
+      return new Builder(this);
+    }
+
+    /**
+     * @since 2.54.0
+     */
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    /**
+     * @since 2.54.0
+     */
+    public static final class Builder {
+      private @Nullable String mode;
+      private @Nullable PublicNetworkSource publicNetworkSource;
+      private @Nullable List<VpcNetworkSource> vpcNetworkSources;
+      private @Nullable Boolean allowCrossOrgVpcs;
+      private @Nullable Boolean allowAllServiceAgentAccess;
+
+      private Builder() {}
+
+      private Builder(IpFilter ipFilter) {
+        this.mode = ipFilter.mode;
+        this.publicNetworkSource = ipFilter.publicNetworkSource;
+        this.vpcNetworkSources = ipFilter.vpcNetworkSources;
+        this.allowCrossOrgVpcs = ipFilter.allowCrossOrgVpcs;
+        this.allowAllServiceAgentAccess = ipFilter.allowAllServiceAgentAccess;
+      }
+
+      /**
+       * The state of the IP filter configuration. Valid values are `Enabled` and `Disabled`. When
+       * set to `Enabled`, IP filtering rules are applied to a bucket and all incoming requests to
+       * the bucket are evaluated against these rules. When set to `Disabled`, IP filtering rules
+       * are not applied to a bucket.
+       *
+       * @since 2.54.0
+       * @see IpFilter#getMode
+       */
+      public Builder setMode(@Nullable String mode) {
+        this.mode = mode;
+        return this;
+      }
+
+      /**
+       * Optional. Public IPs allowed to operate or access the bucket.
+       *
+       * @since 2.54.0
+       * @see IpFilter#getPublicNetworkSource()
+       */
+      public Builder setPublicNetworkSource(@Nullable PublicNetworkSource publicNetworkSource) {
+        this.publicNetworkSource = publicNetworkSource;
+        return this;
+      }
+
+      /**
+       * Optional. The list of network sources that are allowed to access operations on the bucket
+       * or the underlying objects.
+       *
+       * @since 2.54.0
+       * @see IpFilter#getVpcNetworkSources()
+       */
+      public Builder setVpcNetworkSources(@Nullable List<VpcNetworkSource> vpcNetworkSources) {
+        this.vpcNetworkSources = vpcNetworkSources;
+        return this;
+      }
+
+      /**
+       * Optional. Whether or not to allow VPCs from orgs different than the bucket's parent org to
+       * access the bucket. When set to true, validations on the existence of the VPCs won't be
+       * performed. If set to false, each VPC network source will be checked to belong to the same
+       * org as the bucket as well as validated for existence.
+       *
+       * @since 2.54.0
+       * @see IpFilter#getAllowCrossOrgVpcs()
+       */
+      public Builder setAllowCrossOrgVpcs(@Nullable Boolean allowCrossOrgVpcs) {
+        this.allowCrossOrgVpcs = allowCrossOrgVpcs;
+        return this;
+      }
+
+      /**
+       * Whether or not to allow all P4SA access to the bucket. When set to true, IP filter config
+       * validation will not apply.
+       *
+       * @since 2.54.0
+       * @see IpFilter#getAllowAllServiceAgentAccess()
+       */
+      public Builder setAllowAllServiceAgentAccess(@Nullable Boolean allowAllServiceAgentAccess) {
+        this.allowAllServiceAgentAccess = allowAllServiceAgentAccess;
+        return this;
+      }
+
+      /**
+       * @since 2.54.0
+       */
+      public IpFilter build() {
+        return new IpFilter(
+            mode,
+            publicNetworkSource,
+            vpcNetworkSources,
+            allowCrossOrgVpcs,
+            allowAllServiceAgentAccess);
+      }
+    }
+
+    /**
+     * The public network IP address ranges that can access the bucket and its data.
+     *
+     * @since 2.54.0
+     */
+    @Immutable
+    public static final class PublicNetworkSource implements Serializable {
+      private static final long serialVersionUID = -5597599591237060501L;
+
+      private final List<String> allowedIpCidrRanges;
+
+      private PublicNetworkSource(List<String> allowedIpCidrRanges) {
+        this.allowedIpCidrRanges = allowedIpCidrRanges;
+      }
+
+      /**
+       * Optional. The list of IPv4 and IPv6 cidr blocks that are allowed to operate or access the
+       * bucket and its underlying objects.
+       *
+       * @since 2.54.0
+       */
+      public List<String> getAllowedIpCidrRanges() {
+        return allowedIpCidrRanges;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof PublicNetworkSource)) {
+          return false;
+        }
+        PublicNetworkSource that = (PublicNetworkSource) o;
+        return Objects.equals(allowedIpCidrRanges, that.allowedIpCidrRanges);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hashCode(allowedIpCidrRanges);
+      }
+
+      @Override
+      public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("allowedIpCidrRanges", allowedIpCidrRanges)
+            .toString();
+      }
+
+      /**
+       * @since 2.54.0
+       */
+      public static PublicNetworkSource of(List<String> allowedIpCidrRanges) {
+        return new PublicNetworkSource(allowedIpCidrRanges);
+      }
+    }
+
+    /**
+     * The list of VPC networks that can access the bucket.
+     *
+     * @since 2.54.0
+     */
+    @Immutable
+    public static final class VpcNetworkSource implements Serializable {
+      private static final long serialVersionUID = 9075759536253054803L;
+      private final @Nullable String network;
+      private final @Nullable List<String> allowedIpCidrRanges;
+
+      private VpcNetworkSource(
+          @Nullable String network, @Nullable List<String> allowedIpCidrRanges) {
+        this.network = network;
+        this.allowedIpCidrRanges = allowedIpCidrRanges;
+      }
+
+      /**
+       * Name of the network.
+       *
+       * <p>Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+       *
+       * @since 2.54.0
+       * @see Builder#setNetwork(String)
+       */
+      public @Nullable String getNetwork() {
+        return network;
+      }
+
+      /**
+       * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that can access the
+       * bucket. In the CIDR IP address block, the specified IP address must be properly truncated,
+       * meaning all the host bits must be zero or else the input is considered malformed. For
+       * example, `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly, for IPv6,
+       * `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+       *
+       * @since 2.54.0
+       * @see Builder#setAllowedIpCidrRanges(List)
+       */
+      public @Nullable List<String> getAllowedIpCidrRanges() {
+        return allowedIpCidrRanges;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof VpcNetworkSource)) {
+          return false;
+        }
+        VpcNetworkSource that = (VpcNetworkSource) o;
+        return Objects.equals(network, that.network)
+            && Objects.equals(allowedIpCidrRanges, that.allowedIpCidrRanges);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(network, allowedIpCidrRanges);
+      }
+
+      @Override
+      public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("network", network)
+            .add("allowedIpCidrRanges", allowedIpCidrRanges)
+            .toString();
+      }
+
+      /**
+       * @since 2.54.0
+       */
+      public Builder toBuilder() {
+        return new Builder(this);
+      }
+
+      /**
+       * @since 2.54.0
+       */
+      public static Builder newBuilder() {
+        return new Builder();
+      }
+
+      /**
+       * @since 2.54.0
+       */
+      public static final class Builder {
+        private @Nullable String network;
+        private @Nullable List<String> allowedIpCidrRanges;
+
+        private Builder() {}
+
+        public Builder(VpcNetworkSource vpcNetworksource) {
+          this.network = vpcNetworksource.network;
+          this.allowedIpCidrRanges = vpcNetworksource.allowedIpCidrRanges;
+        }
+
+        /**
+         * Name of the network.
+         *
+         * <p>Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`
+         *
+         * @since 2.54.0
+         * @see VpcNetworkSource#getNetwork()
+         */
+        public Builder setNetwork(@Nullable String network) {
+          this.network = network;
+          return this;
+        }
+
+        /**
+         * Optional. The list of public or private IPv4 and IPv6 CIDR ranges that can access the
+         * bucket. In the CIDR IP address block, the specified IP address must be properly
+         * truncated, meaning all the host bits must be zero or else the input is considered
+         * malformed. For example, `192.0.2.0/24` is accepted but `192.0.2.1/24` is not. Similarly,
+         * for IPv6, `2001:db8::/32` is accepted whereas `2001:db8::1/32` is not.
+         *
+         * @since 2.54.0
+         * @see VpcNetworkSource#getAllowedIpCidrRanges()
+         */
+        public Builder setAllowedIpCidrRanges(@Nullable List<String> allowedIpCidrRanges) {
+          this.allowedIpCidrRanges = allowedIpCidrRanges;
+          return this;
+        }
+
+        /**
+         * @since 2.54.0
+         */
+        public VpcNetworkSource build() {
+          return new VpcNetworkSource(network, allowedIpCidrRanges);
+        }
+      }
+    }
+  }
+
   /** Builder for {@code BucketInfo}. */
   public abstract static class Builder {
     Builder() {}
@@ -1857,6 +2285,8 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
 
+    public abstract Builder setIpFilter(IpFilter ipFilter);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
 
@@ -1919,6 +2349,8 @@ public class BucketInfo implements Serializable {
     abstract Builder clearLogging();
 
     abstract Builder clearCustomPlacementConfig();
+
+    abstract Builder clearIpFilter();
   }
 
   static final class BuilderImpl extends Builder {
@@ -1958,6 +2390,7 @@ public class BucketInfo implements Serializable {
 
     private SoftDeletePolicy softDeletePolicy;
     private HierarchicalNamespace hierarchicalNamespace;
+    private IpFilter ipFilter;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -2405,6 +2838,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setIpFilter(IpFilter ipFilter) {
+      if (!Objects.equals(this.ipFilter, ipFilter)) {
+        modifiedFields.add(BucketField.IP_FILTER);
+      }
+      this.ipFilter = ipFilter;
+      return this;
+    }
+
+    @Override
     public BucketInfo build() {
       checkNotNull(name);
       return new BucketInfo(this);
@@ -2590,6 +3032,12 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    @Override
+    BuilderImpl clearIpFilter() {
+      this.ipFilter = null;
+      return this;
+    }
+
     private Builder clearDeleteLifecycleRules() {
       if (lifecycleRules != null && !lifecycleRules.isEmpty()) {
         ImmutableList<LifecycleRule> nonDeleteRules =
@@ -2638,6 +3086,7 @@ public class BucketInfo implements Serializable {
     objectRetention = builder.objectRetention;
     softDeletePolicy = builder.softDeletePolicy;
     hierarchicalNamespace = builder.hierarchicalNamespace;
+    ipFilter = builder.ipFilter;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -2989,6 +3438,10 @@ public class BucketInfo implements Serializable {
     return hierarchicalNamespace;
   }
 
+  public @Nullable IpFilter getIpFilter() {
+    return ipFilter;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -3030,7 +3483,8 @@ public class BucketInfo implements Serializable {
         softDeletePolicy,
         customPlacementConfig,
         hierarchicalNamespace,
-        logging);
+        logging,
+        ipFilter);
   }
 
   @Override
@@ -3075,7 +3529,8 @@ public class BucketInfo implements Serializable {
         && Objects.equals(objectRetention, that.objectRetention)
         && Objects.equals(softDeletePolicy, that.softDeletePolicy)
         && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)
-        && Objects.equals(logging, that.logging);
+        && Objects.equals(logging, that.logging)
+        && Objects.equals(ipFilter, that.ipFilter);
   }
 
   @Override

@@ -194,7 +194,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
         com.google.api.services.storage.model.Bucket.SoftDeletePolicy.class),
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    PROJECT("projectNumber", "project", BigInteger.class);
+    PROJECT("projectNumber", "project", BigInteger.class),
+    /**
+     * @since 2.54.0
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    IP_FILTER("ipFilter", "ip_filter", com.google.api.services.storage.model.Bucket.IpFilter.class),
+    ;
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
     private static final Map<String, BucketField> JSON_FIELD_NAME_INDEX;
