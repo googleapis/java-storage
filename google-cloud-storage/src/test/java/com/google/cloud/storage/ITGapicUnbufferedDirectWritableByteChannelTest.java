@@ -24,12 +24,14 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.SettableApiFuture;
+import com.google.cloud.storage.Hasher.GuavaHasher;
 import com.google.cloud.storage.ITGapicUnbufferedWritableByteChannelTest.DirectWriteService;
 import com.google.cloud.storage.WriteCtx.SimpleWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -39,14 +41,19 @@ import org.junit.Test;
 
 public final class ITGapicUnbufferedDirectWritableByteChannelTest {
 
+  public static final GuavaHasher HASHER = Hasher.enabled();
   private static final ChunkSegmenter CHUNK_SEGMENTER =
-      new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), _256KiB, _256KiB);
+      new ChunkSegmenter(HASHER, ByteStringStrategy.copy(), _256KiB, _256KiB);
 
   /** Attempting to finalize, ack equals expected */
   @Test
   public void ack_eq() throws Exception {
     WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder().setWriteOffset(_256KiB).setFinishWrite(true).build();
+        WriteObjectRequest.newBuilder()
+            .setWriteOffset(_256KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
+            .setFinishWrite(true)
+            .build();
     WriteObjectResponse resp1 =
         WriteObjectResponse.newBuilder()
             .setResource(Object.newBuilder().setName("name").setSize(_256KiB).build())
@@ -63,7 +70,7 @@ public final class ITGapicUnbufferedDirectWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       WriteCtx<SimpleWriteObjectRequestBuilderFactory> writeCtx =
-          new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(req1));
+          WriteCtx.of(WriteObjectRequestBuilderFactory.simple(req1), HASHER);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(0);
 
@@ -85,7 +92,11 @@ public final class ITGapicUnbufferedDirectWritableByteChannelTest {
   @Test
   public void ack_lt() throws Exception {
     WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder().setWriteOffset(_512KiB).setFinishWrite(true).build();
+        WriteObjectRequest.newBuilder()
+            .setWriteOffset(_512KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
+            .setFinishWrite(true)
+            .build();
     WriteObjectResponse resp1 =
         WriteObjectResponse.newBuilder()
             .setResource(Object.newBuilder().setName("name").setSize(_256KiB).build())
@@ -102,7 +113,7 @@ public final class ITGapicUnbufferedDirectWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       WriteCtx<SimpleWriteObjectRequestBuilderFactory> writeCtx =
-          new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(req1));
+          WriteCtx.of(WriteObjectRequestBuilderFactory.simple(req1), HASHER);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(0);
 
@@ -124,7 +135,11 @@ public final class ITGapicUnbufferedDirectWritableByteChannelTest {
   @Test
   public void ack_gt() throws Exception {
     WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder().setWriteOffset(_512KiB).setFinishWrite(true).build();
+        WriteObjectRequest.newBuilder()
+            .setWriteOffset(_512KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
+            .setFinishWrite(true)
+            .build();
     WriteObjectResponse resp1 =
         WriteObjectResponse.newBuilder()
             .setResource(Object.newBuilder().setName("name").setSize(_768KiB).build())
@@ -141,7 +156,7 @@ public final class ITGapicUnbufferedDirectWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       WriteCtx<SimpleWriteObjectRequestBuilderFactory> writeCtx =
-          new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(req1));
+          WriteCtx.of(WriteObjectRequestBuilderFactory.simple(req1), HASHER);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(0);
 

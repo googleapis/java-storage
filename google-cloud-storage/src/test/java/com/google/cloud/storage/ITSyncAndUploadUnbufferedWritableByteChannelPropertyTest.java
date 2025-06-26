@@ -356,7 +356,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
               // TestUtils.defaultRetrier(),
               new DefaultRetrier(UnaryOperator.identity(), defaultRetryingDeps()),
               StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
-              new WriteCtx<>(resumableWrite),
+              WriteCtx.of(resumableWrite, s.chunkSegmenter.getHasher()),
               rf,
               s.copyBuffer);
       try (BufferedWritableByteChannel w = s.buffered(syncAndUpload)) {
@@ -550,19 +550,22 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
       BlobInfo info = BlobInfo.newBuilder("b", "o").build();
       SettableApiFuture<WriteObjectResponse> resultFuture = SettableApiFuture.create();
       BufferHandle recoverBufferHandle = BufferHandle.allocate(2);
+      ChunkSegmenter chunkSegmenter =
+          new ChunkSegmenter(Hasher.enabled(), ByteStringStrategy.copy(), 2, 2);
       SyncAndUploadUnbufferedWritableByteChannel syncAndUpload =
           new SyncAndUploadUnbufferedWritableByteChannel(
               storage.storageClient.writeObjectCallable(),
               storage.storageClient.queryWriteStatusCallable(),
               resultFuture,
-              new ChunkSegmenter(Hasher.enabled(), ByteStringStrategy.copy(), 2, 2),
+              chunkSegmenter,
               new DefaultRetrier(UnaryOperator.identity(), storage.getOptions()),
               StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler(),
-              new WriteCtx<>(
+              WriteCtx.of(
                   new ResumableWrite(
                       reqStart,
                       resStart,
-                      id -> reqWrite0.toBuilder().clearWriteObjectSpec().setUploadId(id).build())),
+                      id -> reqWrite0.toBuilder().clearWriteObjectSpec().setUploadId(id).build()),
+                  chunkSegmenter.getHasher()),
               recoveryFileManager.newRecoveryFile(info),
               recoverBufferHandle);
       try (BufferedWritableByteChannel w =

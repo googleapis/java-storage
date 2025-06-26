@@ -26,13 +26,16 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.cloud.storage.Hasher.GuavaHasher;
 import com.google.cloud.storage.ITGapicUnbufferedWritableByteChannelTest.DirectWriteService;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.StorageClient;
@@ -48,8 +51,9 @@ import org.junit.Test;
 
 public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
+  public static final GuavaHasher HASHER = Hasher.enabled();
   private static final ChunkSegmenter CHUNK_SEGMENTER =
-      new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), _256KiB, _256KiB);
+      new ChunkSegmenter(HASHER, ByteStringStrategy.copy(), _256KiB, _256KiB);
 
   /**
    *
@@ -94,10 +98,8 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setChecksummedData(
-                ChecksummedData.newBuilder()
-                    .setContent(
-                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
-                    .build())
+                ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_256KiB))
+                    .asChecksummedData())
             .build();
     WriteObjectResponse resp1 =
         WriteObjectResponse.newBuilder()
@@ -115,7 +117,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
 
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       //noinspection resource
       GapicUnbufferedChunkedResumableWritableByteChannel channel =
@@ -179,6 +181,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setWriteOffset(_256KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
             .setFinishWrite(true)
             .build();
     WriteObjectResponse resp1 = WriteObjectResponse.newBuilder().setPersistedSize(_512KiB).build();
@@ -194,7 +197,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -259,6 +262,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setWriteOffset(_512KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
             .setFinishWrite(true)
             .build();
     WriteObjectResponse resp1 = WriteObjectResponse.newBuilder().setPersistedSize(_256KiB).build();
@@ -274,7 +278,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -339,6 +343,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setWriteOffset(_256KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
             .setFinishWrite(true)
             .build();
     WriteObjectResponse resp1 =
@@ -357,7 +362,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -419,6 +424,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setWriteOffset(_512KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
             .setFinishWrite(true)
             .build();
     WriteObjectResponse resp1 =
@@ -437,7 +443,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -502,6 +508,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setWriteOffset(_512KiB)
+            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(0).build())
             .setFinishWrite(true)
             .build();
     WriteObjectResponse resp1 =
@@ -520,7 +527,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_512KiB);
       writeCtx.getConfirmedBytes().set(_512KiB);
 
@@ -586,9 +593,8 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
             .setUploadId(uploadId)
             .setWriteOffset(_256KiB)
             .setChecksummedData(
-                ChecksummedData.newBuilder()
-                    .setContent(
-                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB))))
+                ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_256KiB))
+                    .asChecksummedData())
             .build();
     StorageImplBase service1 =
         new DirectWriteService(
@@ -611,7 +617,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
       writeCtx.getTotalSentBytes().set(_256KiB);
       writeCtx.getConfirmedBytes().set(_256KiB);
 
@@ -656,10 +662,8 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setChecksummedData(
-                ChecksummedData.newBuilder()
-                    .setContent(
-                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
-                    .build())
+                ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_256KiB))
+                    .asChecksummedData())
             .build();
     WriteObjectResponse resp1 = WriteObjectResponse.newBuilder().setPersistedSize(_512KiB).build();
 
@@ -674,7 +678,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
 
       //noinspection resource
       GapicUnbufferedChunkedResumableWritableByteChannel channel =
@@ -703,10 +707,8 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setChecksummedData(
-                ChecksummedData.newBuilder()
-                    .setContent(
-                        ByteString.copyFrom(DataGenerator.base64Characters().genBytes(_256KiB)))
-                    .build())
+                ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(_256KiB))
+                    .asChecksummedData())
             .build();
     WriteObjectResponse resp1 = WriteObjectResponse.newBuilder().setPersistedSize(_256KiB).build();
 
@@ -721,7 +723,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
 
       //noinspection resource
       GapicUnbufferedChunkedResumableWritableByteChannel channel =
@@ -768,7 +770,7 @@ public final class ITGapicUnbufferedChunkedResumableWritableByteChannelTest {
 
       SettableApiFuture<WriteObjectResponse> done = SettableApiFuture.create();
       ResumableWrite resumableWrite = getResumableWrite(uploadId);
-      WriteCtx<ResumableWrite> writeCtx = new WriteCtx<>(resumableWrite);
+      WriteCtx<ResumableWrite> writeCtx = WriteCtx.of(resumableWrite, HASHER);
 
       ChunkSegmenter chunkSegmenter =
           new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), _512KiB, _256KiB);

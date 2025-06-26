@@ -85,6 +85,8 @@ public final class ITObjectChecksumSupportTest {
       int _24MiB = 24 * 1024 * 1024;
 
       return ImmutableList.of(
+          // empty object content
+          ChecksummedTestContent.of(new byte[0]),
           // small, single message single stream when resumable
           ChecksummedTestContent.of(gen.genBytes(15)),
           // med, multiple messages single stream when resumable
