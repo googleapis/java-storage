@@ -23,6 +23,7 @@ import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.storage.v2.WriteObjectRequest;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
@@ -33,20 +34,16 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
   private final AtomicLong confirmedBytes;
   private final AtomicReference<@Nullable Crc32cLengthKnown> cumulativeCrc32c;
 
-  WriteCtx(RequestFactoryT requestFactory) {
-    this(requestFactory, null);
-  }
-
-  /**
-   * TODO: Remove initialValue and replace with Crc32cValue.zero() once all uploads have been
-   * updated to do e2e checksumming by default.
-   */
-  @Deprecated
-  WriteCtx(RequestFactoryT requestFactory, @Nullable Crc32cLengthKnown initialValue) {
+  private WriteCtx(RequestFactoryT requestFactory, @Nullable Crc32cLengthKnown initialValue) {
     this.requestFactory = requestFactory;
     this.totalSentBytes = new AtomicLong(0);
     this.confirmedBytes = new AtomicLong(0);
     this.cumulativeCrc32c = new AtomicReference<>(initialValue);
+  }
+
+  static <RFT extends WriteObjectRequestBuilderFactory> WriteCtx<RFT> of(
+      RFT rft, @NonNull Hasher hasher) {
+    return new WriteCtx<>(rft, hasher.initialValue());
   }
 
   public RequestFactoryT getRequestFactory() {

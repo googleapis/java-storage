@@ -76,6 +76,15 @@ interface Hasher {
   @Nullable Crc32cLengthKnown nullSafeConcat(
       @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2);
 
+  /**
+   * The initial value to use for this hasher.
+   *
+   * <p>Not ideal, really we should always start with {@link Crc32cValue#zero()} but this saves us
+   * from having to plumb the initial value along with the actual hasher to the constructor of the
+   * WriteCtx when hashing is disabled because of user provided crc32c/md5 preconditions.
+   */
+  @Nullable Crc32cLengthKnown initialValue();
+
   static NoOpHasher noop() {
     return NoOpHasher.INSTANCE;
   }
@@ -116,6 +125,11 @@ interface Hasher {
     @Override
     public @Nullable Crc32cLengthKnown nullSafeConcat(
         @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2) {
+      return null;
+    }
+
+    @Override
+    public @Nullable Crc32cLengthKnown initialValue() {
       return null;
     }
   }
@@ -184,6 +198,11 @@ interface Hasher {
       } else {
         return r1.concat(r2);
       }
+    }
+
+    @Override
+    public @NonNull Crc32cLengthKnown initialValue() {
+      return Crc32cValue.zero();
     }
   }
 

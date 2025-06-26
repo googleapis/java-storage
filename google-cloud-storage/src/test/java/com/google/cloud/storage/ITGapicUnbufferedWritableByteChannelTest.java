@@ -159,10 +159,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
       try (GapicUnbufferedDirectWritableByteChannel c =
           new GapicUnbufferedDirectWritableByteChannel(
-              result,
-              segmenter,
-              sc.writeObjectCallable(),
-              new WriteCtx<>(reqFactory, Crc32cValue.zero()))) {
+              result, segmenter, sc.writeObjectCallable(), WriteCtx.of(reqFactory, HASHER))) {
         c.write(ByteBuffer.wrap(bytes));
       }
       assertThat(result.get()).isEqualTo(resp);
@@ -188,7 +185,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              new WriteCtx<>(reqFactory, Crc32cValue.zero()),
+              WriteCtx.of(reqFactory, HASHER),
               RetrierWithAlg.attemptOnce(),
               Retrying::newCallContext);
       ArrayList<String> debugMessages = new ArrayList<>();
@@ -270,7 +267,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              new WriteCtx<>(reqFactory, Crc32cValue.zero()),
+              WriteCtx.of(reqFactory, HASHER),
               TestUtils.retrierFromStorageOptions(fake.getGrpcStorageOptions())
                   .withAlg(Retrying.alwaysRetry()),
               Retrying::newCallContext)) {
@@ -322,7 +319,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               sc.writeObjectCallable(),
-              new WriteCtx<>(reqFactory, Crc32cValue.zero()),
+              WriteCtx.of(reqFactory, HASHER),
               RetrierWithAlg.attemptOnce(),
               Retrying::newCallContext);
       try {

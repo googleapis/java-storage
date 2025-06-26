@@ -50,14 +50,14 @@ final class GapicWritableByteChannelSessionBuilder {
   GapicWritableByteChannelSessionBuilder(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
     this.write = write;
-    this.hasher = Hasher.noop();
+    this.hasher = Hasher.defaultHasher();
     this.byteStringStrategy = ByteStringStrategy.copy();
   }
 
   /**
    * Set the {@link Hasher} to apply to the bytes passing through the built session's channel.
    *
-   * <p>Default: {@link Hasher#noop()}
+   * <p>Default: {@link Hasher#defaultHasher()}
    *
    * @see Hasher#enabled()
    * @see Hasher#noop()
@@ -179,14 +179,17 @@ final class GapicWritableByteChannelSessionBuilder {
       }
 
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        ChunkSegmenter chunkSegmenter = getChunkSegmenter();
         return new UnbufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
             lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
                     new GapicUnbufferedDirectWritableByteChannel(
                         resultFuture,
-                        getChunkSegmenter(),
+                        chunkSegmenter,
                         write,
-                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
+                        WriteCtx.of(
+                            WriteObjectRequestBuilderFactory.simple(start),
+                            chunkSegmenter.getHasher())))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -207,14 +210,17 @@ final class GapicWritableByteChannelSessionBuilder {
       }
 
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        ChunkSegmenter chunkSegmenter = getChunkSegmenter();
         return new BufferedWriteSession<>(
             ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
             lift((WriteObjectRequest start, SettableApiFuture<WriteObjectResponse> resultFuture) ->
                     new GapicUnbufferedDirectWritableByteChannel(
                         resultFuture,
-                        getChunkSegmenter(),
+                        chunkSegmenter,
                         write,
-                        new WriteCtx<>(WriteObjectRequestBuilderFactory.simple(start))))
+                        WriteCtx.of(
+                            WriteObjectRequestBuilderFactory.simple(start),
+                            chunkSegmenter.getHasher())))
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -290,20 +296,24 @@ final class GapicWritableByteChannelSessionBuilder {
 
       UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
         RetrierWithAlg boundRetrier = retrier;
+        ChunkSegmenter chunkSegmenter = getChunkSegmenter();
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
                   if (fsyncEvery) {
                     return new GapicUnbufferedChunkedResumableWritableByteChannel(
                         result,
-                        getChunkSegmenter(),
+                        chunkSegmenter,
                         write,
-                        new WriteCtx<>(start),
+                        WriteCtx.of(start, chunkSegmenter.getHasher()),
                         boundRetrier,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                        result,
+                        chunkSegmenter,
+                        write,
+                        WriteCtx.of(start, chunkSegmenter.getHasher()));
                   }
                 })
                 .andThen(StorageByteChannels.writable()::createSynchronized));
@@ -330,20 +340,24 @@ final class GapicWritableByteChannelSessionBuilder {
       }
 
       BufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        ChunkSegmenter chunkSegmenter = getChunkSegmenter();
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             lift((ResumableWrite start, SettableApiFuture<WriteObjectResponse> result) -> {
                   if (fsyncEvery) {
                     return new GapicUnbufferedChunkedResumableWritableByteChannel(
                         result,
-                        getChunkSegmenter(),
+                        chunkSegmenter,
                         write,
-                        new WriteCtx<>(start),
+                        WriteCtx.of(start, chunkSegmenter.getHasher()),
                         retrier,
                         Retrying::newCallContext);
                   } else {
                     return new GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel(
-                        result, getChunkSegmenter(), write, new WriteCtx<>(start));
+                        result,
+                        chunkSegmenter,
+                        write,
+                        WriteCtx.of(start, chunkSegmenter.getHasher()));
                   }
                 })
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))

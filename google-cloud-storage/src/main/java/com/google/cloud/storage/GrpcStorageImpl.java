@@ -263,7 +263,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       GrpcCallContext grpcCallContext =
           optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
       WriteObjectRequest req = getWriteObjectRequest(blobInfo, optsWithDefaults);
-      Hasher hasher = Hasher.enabled();
+      Hasher hasher = optsWithDefaults.getHasher();
       GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
           ResumableMedia.gapic()
@@ -324,7 +324,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
                     write,
                     storageClient.queryWriteStatusCallable(),
                     rw,
-                    Hasher.noop()),
+                    opts.getHasher()),
             MoreExecutors.directExecutor());
     try {
       GrpcResumableSession got = session2.get();
@@ -365,7 +365,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .write()
             .byteChannel(
                 storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(Hasher.noop())
+            .setHasher(opts.getHasher())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
             .withRetryConfig(retrier.withAlg(retryAlgorithmManager.idempotent()))
@@ -779,7 +779,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    Hasher hasher = Hasher.noop();
+    Hasher hasher = opts.getHasher();
     // in JSON, the starting of the resumable session happens before the invocation of write can
     // happen. Emulate the same thing here.
     //  1. create the future
