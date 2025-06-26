@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -35,6 +36,26 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @SuppressWarnings("ClassEscapesDefinedScope")
 @ParametersAreNonnullByDefault
 interface Hasher {
+  final class DefaultInstanceHolder {
+    private static final Logger LOGGER = Logger.getLogger(Hasher.class.getName());
+    private static final String PROPERTY_NAME = "com.google.cloud.storage.Hasher.default";
+    private static final String PROPERTY_VALUE = System.getProperty(PROPERTY_NAME, "enabled");
+    static final Hasher DEFAULT_HASHER;
+
+    static {
+      LOGGER.fine(String.format(Locale.US, "-D%s=%s", PROPERTY_NAME, PROPERTY_VALUE));
+      if ("disabled".equalsIgnoreCase(PROPERTY_VALUE)) {
+        DEFAULT_HASHER = noop();
+      } else {
+        try {
+          Class.forName("java.util.zip.CRC32C");
+        } catch (ClassNotFoundException e) {
+          LOGGER.fine("Fast CRC32C implementation (Java 9+) is not available.");
+        }
+        DEFAULT_HASHER = enabled();
+      }
+    }
+  }
 
   @Nullable
   default Crc32cLengthKnown hash(Supplier<ByteBuffer> b) {
@@ -61,6 +82,10 @@ interface Hasher {
 
   static GuavaHasher enabled() {
     return GuavaHasher.INSTANCE;
+  }
+
+  static Hasher defaultHasher() {
+    return DefaultInstanceHolder.DEFAULT_HASHER;
   }
 
   @Immutable
