@@ -131,9 +131,6 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
 
   @InternalApi
   private static final class Factory implements WriterFactory {
-    private static final Decoder<WriteObjectResponse, BlobInfo>
-        WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER =
-            Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource);
 
     private final int chunkSize;
 
@@ -172,7 +169,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                           .setStartAsync(startResumableWrite)
                           .build();
                     })),
-            WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
+            Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource));
       } else if (s instanceof StorageImpl) {
         StorageImpl json = (StorageImpl) s;
 
