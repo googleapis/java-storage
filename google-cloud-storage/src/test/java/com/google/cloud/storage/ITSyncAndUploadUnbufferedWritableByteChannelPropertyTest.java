@@ -47,6 +47,7 @@ import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
+import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.QueryWriteStatusRequest;
@@ -63,11 +64,8 @@ import io.grpc.Status.Code;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,23 +122,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
   @AfterContainer
   static void afterContainer() throws IOException {
     if (tmpFolder != null) {
-      Files.walkFileTree(
-          tmpFolder,
-          new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                throws IOException {
-              Files.deleteIfExists(file);
-              return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                throws IOException {
-              Files.deleteIfExists(dir);
-              return FileVisitResult.CONTINUE;
-            }
-          });
+      TestUtils.rmDashRf(tmpFolder);
     }
   }
 
@@ -754,7 +736,7 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
               .toString(),
           objectName,
           objectSize,
-          new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), segmentSize, quantum),
+          new ChunkSegmenter(Hasher.enabled(), ByteStringStrategy.copy(), segmentSize, quantum),
           BufferHandle.allocate(segmentSize),
           BufferHandle.allocate(segmentSize),
           failuresQueue,
@@ -1011,6 +993,25 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
 
     @Override
     public void onNext(WriteObjectRequest writeObjectRequest) {
+      if (writeObjectRequest.hasChecksummedData()) {
+        ChecksummedData checksummedData = writeObjectRequest.getChecksummedData();
+        if (!checksummedData.hasCrc32C()) {
+          errored = true;
+          sendFailure("no crc32c value specified");
+          return;
+        }
+        if (!checksummedData.getContent().isEmpty() && checksummedData.getCrc32C() == 0) {
+          errored = true;
+          sendFailure("crc32c value of 0 with non-empty content");
+          return;
+        }
+      }
+      if (writeObjectRequest.hasObjectChecksums()
+          && !writeObjectRequest.getObjectChecksums().hasCrc32C()) {
+        errored = true;
+        sendFailure("missing object_checksums.crc32c");
+        return;
+      }
       if (ctx == null) {
         UploadId uploadId = UploadId.of(writeObjectRequest.getUploadId());
         if (data.containsKey(uploadId)) {
@@ -1052,6 +1053,11 @@ public class ITSyncAndUploadUnbufferedWritableByteChannelPropertyTest {
               .build();
       responseObserver.onNext(resp);
       responseObserver.onCompleted();
+    }
+
+    private void sendFailure(String description) {
+      responseObserver.onError(
+          Code.INVALID_ARGUMENT.toStatus().withDescription(description).asRuntimeException());
     }
   }
 

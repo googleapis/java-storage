@@ -201,7 +201,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
             ResumableMedia.gapic()
                 .write()
                 .byteChannel(write)
-                .setHasher(Hasher.noop())
+                .setHasher(opts.getHasher())
                 .setByteStringStrategy(ByteStringStrategy.copy())
                 .journaling()
                 .withRetryConfig(
