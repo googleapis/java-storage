@@ -31,6 +31,8 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.StorageOptions;
@@ -96,7 +98,7 @@ public final class ITGrpcTest {
 
   @Test
   public void listBuckets() {
-    Page<Bucket> list = storage.list();
+    Page<Bucket> list = storage.list(BucketListOption.fields(BucketField.NAME));
     ImmutableList<String> bucketNames =
         StreamSupport.stream(list.iterateAll().spliterator(), false)
             .map(Bucket::getName)
