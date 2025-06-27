@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.53.3](https://github.com/googleapis/java-storage/compare/v2.53.2...v2.53.3) (2025-06-27)
+
+
+### Bug Fixes
+
+* Fix DefaultBlobWriteSessionConfig init to work when grpc classes are excluded ([#3147](https://github.com/googleapis/java-storage/issues/3147)) ([8571ba8](https://github.com/googleapis/java-storage/commit/8571ba8eee82d055cdeb5f0b6970d5b814eaa24e))
+
 ## [2.53.2](https://github.com/googleapis/java-storage/compare/v2.53.1...v2.53.2) (2025-06-25)
 
 
