@@ -47,6 +47,8 @@ import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
@@ -550,7 +552,13 @@ final class RpcMethodMappings {
       private static void list(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(15, buckets.list)
-                .withTest((ctx, c) -> ctx.map(state -> state.consume(ctx.getStorage().list())))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.consume(
+                                    ctx.getStorage()
+                                        .list(BucketListOption.fields(BucketField.NAME)))))
                 .build());
       }
 

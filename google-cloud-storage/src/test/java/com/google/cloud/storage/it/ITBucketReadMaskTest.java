@@ -115,6 +115,7 @@ public final class ITBucketReadMaskTest {
               new Args<>(BucketField.ETAG, LazyAssertion.equal()),
               new Args<>(BucketField.IAMCONFIGURATION, LazyAssertion.equal()),
               new Args<>(BucketField.ID, LazyAssertion.equal()),
+              new Args<>(BucketField.IP_FILTER, LazyAssertion.equal()),
               new Args<>(BucketField.LABELS, LazyAssertion.equal()),
               new Args<>(BucketField.LIFECYCLE, LazyAssertion.equal()),
               new Args<>(BucketField.LOCATION, LazyAssertion.equal()),
