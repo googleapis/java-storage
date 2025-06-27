@@ -115,8 +115,7 @@ public final class ChecksummedTestContent {
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("byteCount", bytes.length)
-        .add("crc32c", crc32c)
-        .add("md5Base64", md5Base64)
+        .add("crc32c", Integer.toUnsignedString(crc32c))
         .toString();
   }
 
