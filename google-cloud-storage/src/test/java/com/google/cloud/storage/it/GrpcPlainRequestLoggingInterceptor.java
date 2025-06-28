@@ -74,6 +74,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
 
   private static final Metadata.Key<String> X_GOOG_REQUEST_PARAMS =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
+  private static final Metadata.Key<String> X_RETRY_TEST_ID =
+      Metadata.Key.of("x-retry-test-id", Metadata.ASCII_STRING_MARSHALLER);
 
   /**
    * Define a map of message types we want to try to unpack from an {@link Any}.
@@ -116,7 +118,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
     return new SimpleForwardingClientCall<ReqT, RespT>(call) {
       @Override
       public void start(Listener<RespT> responseListener, Metadata headers) {
-        if (headers.containsKey(X_GOOG_REQUEST_PARAMS)) {
+        if (headers.containsKey(X_GOOG_REQUEST_PARAMS) || headers.containsKey(X_RETRY_TEST_ID)) {
           LOGGER.atDebug().log(() -> String.format(">>> headers = %s", headers));
         }
         SimpleForwardingClientCallListener<RespT> listener =
@@ -187,10 +189,10 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
         ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
-        return b.build().toString();
+        return fmtProto((MessageOrBuilder) b.build());
       }
     }
-    return msg.toString();
+    return fmtProto((MessageOrBuilder) msg);
   }
 
   @NonNull
@@ -202,10 +204,10 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
         ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
-        return b.build().toString();
+        return fmtProto((MessageOrBuilder) b.build());
       }
     }
-    return msg.toString();
+    return fmtProto((MessageOrBuilder) msg);
   }
 
   @NonNull
@@ -217,7 +219,7 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
         ByteString trim = snipBytes(content);
         b.getChecksummedDataBuilder().setContent(trim);
 
-        return b.build().toString();
+        return fmtProto((MessageOrBuilder) b.build());
       }
     }
     return msg.toString();
@@ -243,9 +245,9 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
       }
       BidiReadObjectResponse snipped =
           msg.toBuilder().clearObjectDataRanges().addAllObjectDataRanges(snips).build();
-      return snipped.toString();
+      return fmtProto((MessageOrBuilder) snipped);
     }
-    return msg.toString();
+    return fmtProto((MessageOrBuilder) msg);
   }
 
   private static ByteString snipBytes(ByteString content) {
