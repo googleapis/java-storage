@@ -34,6 +34,7 @@ jobs:
       shell: bash
       run: |
         set -x
+        xmllint --help
         [ -z "$(git config user.email)" ] && git config --global user.email "cloud-java-bot@google.com"
         [ -z "$(git config user.name)" ] && git config --global user.name "cloud-java-bot"
         bash .github/scripts/update_generation_config.sh \
