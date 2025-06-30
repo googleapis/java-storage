@@ -1717,14 +1717,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
-    BlobInfo.Builder builder = info.toBuilder();
-    @Nullable Crc32cLengthKnown hash = opts.getHasher().hash(buf);
+    BlobInfo.Builder builder =
+        opts.blobInfoMapper().apply(info.toBuilder().clearMd5().clearCrc32c());
+    @Nullable Crc32cLengthKnown hash = opts.getHasher().hash(buf.duplicate());
     if (hash != null) {
       builder.setCrc32c(Utils.crc32cCodec.encode(hash.getValue()));
     }
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
 
-    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    BlobInfo updated = builder.build();
     final StorageObject encoded = codecs.blobInfo().encode(updated);
     ResultRetryAlgorithm<?> algorithm =
         retryAlgorithmManager.getForObjectsCreate(encoded, optionsMap);
