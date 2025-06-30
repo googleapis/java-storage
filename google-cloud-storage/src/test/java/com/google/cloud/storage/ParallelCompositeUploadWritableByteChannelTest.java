@@ -892,7 +892,8 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
               .map(Data::getCrc32c)
               .collect(ImmutableList.toImmutableList());
 
-      Crc32cLengthKnown reduce = crc32cs.stream().reduce(null, HASHER::nullSafeConcat);
+      Crc32cLengthKnown reduce =
+          crc32cs.stream().reduce(Crc32cValue.zero(), Crc32cLengthKnown::concat);
       Preconditions.checkState(reduce != null, "unable to compute crc32c for compose request");
       b.setCrc32c(Utils.crc32cCodec.encode(reduce.getValue()));
       BlobInfo gen1 = b.build();

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -56,6 +57,10 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
     return this.getValue() == other.getValue();
   }
 
+  static Crc32cLengthKnown zero() {
+    return Crc32cLengthKnown.ZERO;
+  }
+
   static Crc32cLengthUnknown of(int value) {
     return new Crc32cLengthUnknown(value);
   }
@@ -81,6 +86,9 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public Crc32cLengthUnknown concat(Crc32cLengthKnown other) {
+      if (other == Crc32cLengthKnown.ZERO) {
+        return this;
+      }
       int combined = Crc32cUtility.concatCrc32c(value, other.value, other.length);
       return new Crc32cLengthUnknown(combined);
     }
@@ -118,6 +126,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
   }
 
   static final class Crc32cLengthKnown extends Crc32cValue<Crc32cLengthKnown> {
+    private static final Crc32cLengthKnown ZERO = Hasher.enabled().hash(ByteBuffer.allocate(0));
     private final int value;
     private final long length;
 
@@ -137,6 +146,11 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public Crc32cLengthKnown concat(Crc32cLengthKnown other) {
+      if (other == ZERO) {
+        return this;
+      } else if (this == ZERO) {
+        return other;
+      }
       int combined = Crc32cUtility.concatCrc32c(value, other.value, other.length);
       return new Crc32cLengthKnown(combined, length + other.length);
     }
