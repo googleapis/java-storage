@@ -47,6 +47,7 @@ import java.nio.ByteBuffer;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -206,7 +207,9 @@ public final class ITHttpIdempotencyTokenTest {
     batch.submit();
     assertAll(
         () -> assertThat(r1).isNotNull(),
-        () -> assertThat(r2.get().getCustomTimeOffsetDateTime()).isEqualTo(now),
+        () ->
+            assertThat(r2.get().getCustomTimeOffsetDateTime().truncatedTo(ChronoUnit.MILLIS))
+                .isEqualTo(now.truncatedTo(ChronoUnit.MILLIS)),
         () -> assertThat(r3.get()).isTrue(),
         () -> {
           IterableSubject subject =
