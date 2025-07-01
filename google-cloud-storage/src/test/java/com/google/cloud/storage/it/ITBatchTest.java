@@ -48,6 +48,7 @@ import java.nio.ByteBuffer;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -238,7 +239,8 @@ public class ITBatchTest {
                 })
             .collect(Collectors.toList());
 
-    OffsetDateTime now1 = Clock.systemUTC().instant().atOffset(ZoneOffset.UTC);
+    OffsetDateTime now1 =
+        Clock.systemUTC().instant().atOffset(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS);
 
     List<Blob> update1 =
         storage.update(
@@ -246,7 +248,8 @@ public class ITBatchTest {
                 .map(id -> BlobInfo.newBuilder(id).setCustomTimeOffsetDateTime(now1).build())
                 .collect(Collectors.toList()));
 
-    OffsetDateTime now2 = Clock.systemUTC().instant().atOffset(ZoneOffset.UTC);
+    OffsetDateTime now2 =
+        Clock.systemUTC().instant().atOffset(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS);
     List<Blob> update2 =
         storage.update(
             blobs.stream()
@@ -255,7 +258,10 @@ public class ITBatchTest {
 
     assertThat(
             update2.stream()
-                .filter(b -> !now2.equals(b.getCustomTimeOffsetDateTime()))
+                .filter(
+                    b ->
+                        !now2.equals(
+                            b.getCustomTimeOffsetDateTime().truncatedTo(ChronoUnit.MILLIS)))
                 .map(BlobInfo::getBlobId)
                 .map(BlobId::toGsUtilUriWithGeneration)
                 .collect(Collectors.toList()))
