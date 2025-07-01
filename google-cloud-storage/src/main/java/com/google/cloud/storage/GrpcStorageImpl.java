@@ -804,7 +804,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     GrpcCallContext grpcCallContext =
         optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, optsWithDefaults);
-    Hasher hasher = Hasher.enabled();
+    Hasher hasher = opts.getHasher();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     RewindableContent content = RewindableContent.of(buf);
     return retrier.run(
