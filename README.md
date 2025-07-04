@@ -46,12 +46,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.53.1</version>
+  <version>2.53.2</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.53.1</version>
+  <version>2.53.2</version>
 </dependency>
 
 ```
