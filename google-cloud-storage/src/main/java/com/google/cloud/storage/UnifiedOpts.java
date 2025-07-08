@@ -1078,7 +1078,14 @@ final class UnifiedOpts {
                 BucketField.DEFAULT_EVENT_BASED_HOLD.getGrpcName(),
                 BucketInfo.Builder::clearDefaultEventBasedHold)
             .put(BucketField.DEFAULT_OBJECT_ACL.getGrpcName(), BucketInfo.Builder::clearDefaultAcl)
-            .put(BucketField.ENCRYPTION.getGrpcName(), BucketInfo.Builder::clearDefaultKmsKeyName)
+            .put(
+                BucketField.ENCRYPTION.getGrpcName(),
+                builder ->
+                    builder
+                        .clearDefaultKmsKeyName()
+                        .clearGoogleManagedEncryptionEnforcementConfig()
+                        .clearCustomerManagedEncryptionEnforcementConfig()
+                        .clearCustomerSuppliedEncryptionEnforcementConfig())
             .put(BucketField.ETAG.getGrpcName(), BucketInfo.Builder::clearEtag)
             .put(
                 BucketField.IAMCONFIGURATION.getGrpcName(),

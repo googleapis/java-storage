@@ -125,6 +125,12 @@ public class BucketInfo implements Serializable {
 
   private final SoftDeletePolicy softDeletePolicy;
   private final @Nullable IpFilter ipFilter;
+  private final @Nullable GoogleManagedEncryptionEnforcementConfig
+      googleManagedEncryptionEnforcementConfig;
+  private final @Nullable CustomerManagedEncryptionEnforcementConfig
+      customerManagedEncryptionEnforcementConfig;
+  private final @Nullable CustomerSuppliedEncryptionEnforcementConfig
+      customerSuppliedEncryptionEnforcementConfig;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -2082,6 +2088,327 @@ public class BucketInfo implements Serializable {
     }
   }
 
+  /**
+   * Google Managed Encryption (GMEK) enforcement config of a bucket.
+   *
+   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static final class GoogleManagedEncryptionEnforcementConfig {
+    @Nullable private final EncryptionEnforcementRestrictionMode restrictionMode;
+    @Nullable private final OffsetDateTime effectiveTime;
+
+    private GoogleManagedEncryptionEnforcementConfig(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      this.restrictionMode = restrictionMode;
+      this.effectiveTime = effectiveTime;
+    }
+
+    /**
+     * Restriction mode for new objects within the bucket. If {@link
+     * EncryptionEnforcementRestrictionMode#NOT_RESTRICTED NotRestricted} or {@code null}, creation
+     * of new objects with google-managed encryption is allowed. If `FullyRestricted`, new objects
+     * can not be created using google-managed encryption.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
+      return restrictionMode;
+    }
+
+    /**
+     * Output only. Time from which the config was effective.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable OffsetDateTime getEffectiveTime() {
+      return effectiveTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof GoogleManagedEncryptionEnforcementConfig)) {
+        return false;
+      }
+      GoogleManagedEncryptionEnforcementConfig that = (GoogleManagedEncryptionEnforcementConfig) o;
+      return Objects.equals(restrictionMode, that.restrictionMode)
+          && Objects.equals(effectiveTime, that.effectiveTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(restrictionMode, effectiveTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("restrictionMode", restrictionMode)
+          .add("effectiveTime", effectiveTime)
+          .toString();
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static GoogleManagedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode) {
+      return new GoogleManagedEncryptionEnforcementConfig(restrictionMode, null);
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static GoogleManagedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      return new GoogleManagedEncryptionEnforcementConfig(restrictionMode, effectiveTime);
+    }
+  }
+
+  /**
+   * Customer Managed Encryption (CMEK) enforcement config of a bucket.
+   *
+   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static final class CustomerManagedEncryptionEnforcementConfig {
+    @Nullable private final EncryptionEnforcementRestrictionMode restrictionMode;
+    @Nullable private final OffsetDateTime effectiveTime;
+
+    private CustomerManagedEncryptionEnforcementConfig(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      this.restrictionMode = restrictionMode;
+      this.effectiveTime = effectiveTime;
+    }
+
+    /**
+     * Restriction mode for new objects within the bucket. If {@link
+     * EncryptionEnforcementRestrictionMode#NOT_RESTRICTED NotRestricted} or {@code null}, creation
+     * of new objects with customer-managed encryption is allowed. If `FullyRestricted`, new objects
+     * can not be created using customer-managed encryption.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
+      return restrictionMode;
+    }
+
+    /**
+     * Output only. Time from which the config was effective.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable OffsetDateTime getEffectiveTime() {
+      return effectiveTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof CustomerManagedEncryptionEnforcementConfig)) {
+        return false;
+      }
+      CustomerManagedEncryptionEnforcementConfig that =
+          (CustomerManagedEncryptionEnforcementConfig) o;
+      return Objects.equals(restrictionMode, that.restrictionMode)
+          && Objects.equals(effectiveTime, that.effectiveTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(restrictionMode, effectiveTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("restrictionMode", restrictionMode)
+          .add("effectiveTime", effectiveTime)
+          .toString();
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static CustomerManagedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode) {
+      return new CustomerManagedEncryptionEnforcementConfig(restrictionMode, null);
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static CustomerManagedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      return new CustomerManagedEncryptionEnforcementConfig(restrictionMode, effectiveTime);
+    }
+  }
+
+  /**
+   * Customer Supplied Encryption (CSEK) enforcement config of a bucket.
+   *
+   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static final class CustomerSuppliedEncryptionEnforcementConfig {
+    @Nullable private final EncryptionEnforcementRestrictionMode restrictionMode;
+    @Nullable private final OffsetDateTime effectiveTime;
+
+    private CustomerSuppliedEncryptionEnforcementConfig(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      this.restrictionMode = restrictionMode;
+      this.effectiveTime = effectiveTime;
+    }
+
+    /**
+     * Restriction mode for new objects within the bucket. If {@link
+     * EncryptionEnforcementRestrictionMode#NOT_RESTRICTED NotRestricted} or {@code null}, creation
+     * of new objects with customer-supplied encryption is allowed. If `FullyRestricted`, new
+     * objects can not be created using customer-supplied encryption.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
+      return restrictionMode;
+    }
+
+    /**
+     * Output only. Time from which the config was effective.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public @Nullable OffsetDateTime getEffectiveTime() {
+      return effectiveTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof CustomerSuppliedEncryptionEnforcementConfig)) {
+        return false;
+      }
+      CustomerSuppliedEncryptionEnforcementConfig that =
+          (CustomerSuppliedEncryptionEnforcementConfig) o;
+      return Objects.equals(restrictionMode, that.restrictionMode)
+          && Objects.equals(effectiveTime, that.effectiveTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(restrictionMode, effectiveTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("restrictionMode", restrictionMode)
+          .add("effectiveTime", effectiveTime)
+          .toString();
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static CustomerSuppliedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode) {
+      return new CustomerSuppliedEncryptionEnforcementConfig(restrictionMode, null);
+    }
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static CustomerSuppliedEncryptionEnforcementConfig of(
+        @Nullable EncryptionEnforcementRestrictionMode restrictionMode,
+        @Nullable OffsetDateTime effectiveTime) {
+      return new CustomerSuppliedEncryptionEnforcementConfig(restrictionMode, effectiveTime);
+    }
+  }
+
+  /**
+   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public static final class EncryptionEnforcementRestrictionMode extends StringEnumValue {
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static final EncryptionEnforcementRestrictionMode NOT_RESTRICTED =
+        new EncryptionEnforcementRestrictionMode("NotRestricted");
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static final EncryptionEnforcementRestrictionMode FULLY_RESTRICTED =
+        new EncryptionEnforcementRestrictionMode("FullyRestricted");
+
+    private static final StringEnumType<EncryptionEnforcementRestrictionMode> type =
+        new StringEnumType<>(
+            EncryptionEnforcementRestrictionMode.class, EncryptionEnforcementRestrictionMode::new);
+
+    private EncryptionEnforcementRestrictionMode(String constant) {
+      super(constant);
+    }
+
+    /**
+     * Get the {@link EncryptionEnforcementRestrictionMode} for the given String constant, and throw
+     * an exception if the constant is not recognized.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static EncryptionEnforcementRestrictionMode valueOfStrict(String constant) {
+      return type.valueOfStrict(constant);
+    }
+
+    /**
+     * Get the {@link EncryptionEnforcementRestrictionMode} for the given String constant, and allow
+     * unrecognized values.
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static EncryptionEnforcementRestrictionMode valueOf(String constant) {
+      return type.valueOf(constant);
+    }
+
+    /**
+     * Return the known values
+     *
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static EncryptionEnforcementRestrictionMode[] values() {
+      return type.values();
+    }
+  }
+
   /** Builder for {@code BucketInfo}. */
   public abstract static class Builder {
     Builder() {}
@@ -2226,6 +2553,27 @@ public class BucketInfo implements Serializable {
     /** Sets the default Cloud KMS key name for this bucket. */
     public abstract Builder setDefaultKmsKeyName(String defaultKmsKeyName);
 
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public abstract Builder setGoogleManagedEncryptionEnforcementConfig(
+        GoogleManagedEncryptionEnforcementConfig config);
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public abstract Builder setCustomerManagedEncryptionEnforcementConfig(
+        CustomerManagedEncryptionEnforcementConfig config);
+
+    /**
+     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public abstract Builder setCustomerSuppliedEncryptionEnforcementConfig(
+        CustomerSuppliedEncryptionEnforcementConfig config);
+
     /** Sets the default event-based hold for this bucket. */
     @BetaApi
     public abstract Builder setDefaultEventBasedHold(Boolean defaultEventBasedHold);
@@ -2354,6 +2702,12 @@ public class BucketInfo implements Serializable {
     abstract Builder clearCustomPlacementConfig();
 
     abstract Builder clearIpFilter();
+
+    abstract Builder clearGoogleManagedEncryptionEnforcementConfig();
+
+    abstract Builder clearCustomerManagedEncryptionEnforcementConfig();
+
+    abstract Builder clearCustomerSuppliedEncryptionEnforcementConfig();
   }
 
   static final class BuilderImpl extends Builder {
@@ -2394,6 +2748,9 @@ public class BucketInfo implements Serializable {
     private SoftDeletePolicy softDeletePolicy;
     private HierarchicalNamespace hierarchicalNamespace;
     private IpFilter ipFilter;
+    private GoogleManagedEncryptionEnforcementConfig googleManagedEncryptionEnforcementConfig;
+    private CustomerManagedEncryptionEnforcementConfig customerManagedEncryptionEnforcementConfig;
+    private CustomerSuppliedEncryptionEnforcementConfig customerSuppliedEncryptionEnforcementConfig;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -2436,6 +2793,12 @@ public class BucketInfo implements Serializable {
       softDeletePolicy = bucketInfo.softDeletePolicy;
       hierarchicalNamespace = bucketInfo.hierarchicalNamespace;
       ipFilter = bucketInfo.ipFilter;
+      googleManagedEncryptionEnforcementConfig =
+          bucketInfo.googleManagedEncryptionEnforcementConfig;
+      customerManagedEncryptionEnforcementConfig =
+          bucketInfo.customerManagedEncryptionEnforcementConfig;
+      customerSuppliedEncryptionEnforcementConfig =
+          bucketInfo.customerSuppliedEncryptionEnforcementConfig;
     }
 
     @Override
@@ -2709,6 +3072,43 @@ public class BucketInfo implements Serializable {
         modifiedFields.add(BucketField.ENCRYPTION);
       }
       this.defaultKmsKeyName = tmp;
+      return this;
+    }
+
+    @Override
+    public BuilderImpl setGoogleManagedEncryptionEnforcementConfig(
+        GoogleManagedEncryptionEnforcementConfig googleManagedEncryptionEnforcementConfig) {
+      if (!Objects.equals(
+          this.googleManagedEncryptionEnforcementConfig,
+          googleManagedEncryptionEnforcementConfig)) {
+        modifiedFields.add(BucketField.ENCRYPTION);
+      }
+      this.googleManagedEncryptionEnforcementConfig = googleManagedEncryptionEnforcementConfig;
+      return this;
+    }
+
+    @Override
+    public BuilderImpl setCustomerManagedEncryptionEnforcementConfig(
+        CustomerManagedEncryptionEnforcementConfig customerManagedEncryptionEnforcementConfig) {
+      if (!Objects.equals(
+          this.customerManagedEncryptionEnforcementConfig,
+          customerManagedEncryptionEnforcementConfig)) {
+        modifiedFields.add(BucketField.ENCRYPTION);
+      }
+      this.customerManagedEncryptionEnforcementConfig = customerManagedEncryptionEnforcementConfig;
+      return this;
+    }
+
+    @Override
+    public BuilderImpl setCustomerSuppliedEncryptionEnforcementConfig(
+        CustomerSuppliedEncryptionEnforcementConfig customerSuppliedEncryptionEnforcementConfig) {
+      if (!Objects.equals(
+          this.customerSuppliedEncryptionEnforcementConfig,
+          customerSuppliedEncryptionEnforcementConfig)) {
+        modifiedFields.add(BucketField.ENCRYPTION);
+      }
+      this.customerSuppliedEncryptionEnforcementConfig =
+          customerSuppliedEncryptionEnforcementConfig;
       return this;
     }
 
@@ -3042,6 +3442,24 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    @Override
+    BuilderImpl clearGoogleManagedEncryptionEnforcementConfig() {
+      this.googleManagedEncryptionEnforcementConfig = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearCustomerManagedEncryptionEnforcementConfig() {
+      this.customerManagedEncryptionEnforcementConfig = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearCustomerSuppliedEncryptionEnforcementConfig() {
+      this.customerSuppliedEncryptionEnforcementConfig = null;
+      return this;
+    }
+
     private Builder clearDeleteLifecycleRules() {
       if (lifecycleRules != null && !lifecycleRules.isEmpty()) {
         ImmutableList<LifecycleRule> nonDeleteRules =
@@ -3091,6 +3509,10 @@ public class BucketInfo implements Serializable {
     softDeletePolicy = builder.softDeletePolicy;
     hierarchicalNamespace = builder.hierarchicalNamespace;
     ipFilter = builder.ipFilter;
+    googleManagedEncryptionEnforcementConfig = builder.googleManagedEncryptionEnforcementConfig;
+    customerManagedEncryptionEnforcementConfig = builder.customerManagedEncryptionEnforcementConfig;
+    customerSuppliedEncryptionEnforcementConfig =
+        builder.customerSuppliedEncryptionEnforcementConfig;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -3449,6 +3871,21 @@ public class BucketInfo implements Serializable {
     return ipFilter;
   }
 
+  public @Nullable GoogleManagedEncryptionEnforcementConfig
+      getGoogleManagedEncryptionEnforcementConfig() {
+    return googleManagedEncryptionEnforcementConfig;
+  }
+
+  public @Nullable CustomerManagedEncryptionEnforcementConfig
+      getCustomerManagedEncryptionEnforcementConfig() {
+    return customerManagedEncryptionEnforcementConfig;
+  }
+
+  public @Nullable CustomerSuppliedEncryptionEnforcementConfig
+      getCustomerSuppliedEncryptionEnforcementConfig() {
+    return customerSuppliedEncryptionEnforcementConfig;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -3491,7 +3928,10 @@ public class BucketInfo implements Serializable {
         customPlacementConfig,
         hierarchicalNamespace,
         logging,
-        ipFilter);
+        ipFilter,
+        googleManagedEncryptionEnforcementConfig,
+        customerManagedEncryptionEnforcementConfig,
+        customerSuppliedEncryptionEnforcementConfig);
   }
 
   @Override
@@ -3537,7 +3977,15 @@ public class BucketInfo implements Serializable {
         && Objects.equals(softDeletePolicy, that.softDeletePolicy)
         && Objects.equals(hierarchicalNamespace, that.hierarchicalNamespace)
         && Objects.equals(logging, that.logging)
-        && Objects.equals(ipFilter, that.ipFilter);
+        && Objects.equals(ipFilter, that.ipFilter)
+        && Objects.equals(
+            googleManagedEncryptionEnforcementConfig, that.googleManagedEncryptionEnforcementConfig)
+        && Objects.equals(
+            customerManagedEncryptionEnforcementConfig,
+            that.customerManagedEncryptionEnforcementConfig)
+        && Objects.equals(
+            customerSuppliedEncryptionEnforcementConfig,
+            that.customerSuppliedEncryptionEnforcementConfig);
   }
 
   @Override
