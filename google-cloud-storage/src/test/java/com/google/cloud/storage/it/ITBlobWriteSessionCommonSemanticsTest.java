@@ -19,6 +19,7 @@ package com.google.cloud.storage.it;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.cloud.storage.BlobInfo;
@@ -26,6 +27,7 @@ import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.BlobWriteSessionConfig;
 import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
@@ -177,6 +179,51 @@ public final class ITBlobWriteSessionCommonSemanticsTest {
     assertAll(
         () -> assertThat(resultSe).hasCauseThat().isInstanceOf(StorageException.class),
         () -> assertThat(((StorageException) resultSe.getCause()).getCode()).isEqualTo(412));
+  }
+
+  @Test
+  public void userProvidedCrc32cValueIsRespected() throws IOException {
+    assumeFalse("b/226975500", params.desc.startsWith("p"));
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(5 * 1024 * 1024 + 17));
+    ChecksummedTestContent missingAByte = testContent.slice(0, testContent.getBytes().length - 1);
+
+    BlobInfo info =
+        BlobInfo.newBuilder(bucket, generator.randomObjectName())
+            .setCrc32c(missingAByte.getCrc32cBase64())
+            .build();
+    BlobWriteSession session =
+        storage.blobWriteSession(
+            info, BlobWriteOption.crc32cMatch(), BlobWriteOption.doesNotExist());
+    WritableByteChannel open = session.open();
+    try {
+      open.write(ByteBuffer.wrap(testContent.getBytes()));
+    } finally {
+      StorageException se = assertThrows(StorageException.class, () -> open.close());
+      assertThat(se.getCode()).isEqualTo(400);
+    }
+  }
+
+  @Test
+  public void userProvidedMd5ValueIsRespected() throws IOException {
+    assumeFalse("b/226975500", params.desc.startsWith("p"));
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(5 * 1024 * 1024 + 17));
+    ChecksummedTestContent missingAByte = testContent.slice(0, testContent.getBytes().length - 1);
+
+    BlobInfo info =
+        BlobInfo.newBuilder(bucket, generator.randomObjectName())
+            .setMd5(missingAByte.getMd5Base64())
+            .build();
+    BlobWriteSession session =
+        storage.blobWriteSession(info, BlobWriteOption.md5Match(), BlobWriteOption.doesNotExist());
+    WritableByteChannel open = session.open();
+    try {
+      open.write(ByteBuffer.wrap(testContent.getBytes()));
+    } finally {
+      StorageException se = assertThrows(StorageException.class, () -> open.close());
+      assertThat(se.getCode()).isEqualTo(400);
+    }
   }
 
   public static final class ParamsProvider implements ParametersProvider {
