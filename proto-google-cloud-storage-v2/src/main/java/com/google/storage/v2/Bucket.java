@@ -2592,35 +2592,55 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Google Managed Encryption (GMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using GMEK encryption.
-       * If false or unset, creation of new objects with GMEK encryption is
-       * allowed.
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
-      boolean hasRestricted();
+      boolean hasRestrictionMode();
 
       /**
        *
        *
        * <pre>
-       * Whether Google Managed Encryption (GMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using GMEK encryption.
-       * If false or unset, creation of new objects with GMEK encryption is
-       * allowed.
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
-      boolean getRestricted();
+      java.lang.String getRestrictionMode();
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      com.google.protobuf.ByteString getRestrictionModeBytes();
 
       /**
        *
@@ -2683,7 +2703,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         super(builder);
       }
 
-      private GoogleManagedEncryptionEnforcementConfig() {}
+      private GoogleManagedEncryptionEnforcementConfig() {
+        restrictionMode_ = "";
+      }
 
       @java.lang.Override
       @SuppressWarnings({"unused"})
@@ -2709,26 +2731,29 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private int bitField0_;
-      public static final int RESTRICTED_FIELD_NUMBER = 1;
-      private boolean restricted_ = false;
+      public static final int RESTRICTION_MODE_FIELD_NUMBER = 3;
+
+      @SuppressWarnings("serial")
+      private volatile java.lang.Object restrictionMode_ = "";
 
       /**
        *
        *
        * <pre>
-       * Whether Google Managed Encryption (GMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using GMEK encryption.
-       * If false or unset, creation of new objects with GMEK encryption is
-       * allowed.
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
       @java.lang.Override
-      public boolean hasRestricted() {
+      public boolean hasRestrictionMode() {
         return ((bitField0_ & 0x00000001) != 0);
       }
 
@@ -2736,20 +2761,58 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Google Managed Encryption (GMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using GMEK encryption.
-       * If false or unset, creation of new objects with GMEK encryption is
-       * allowed.
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
       @java.lang.Override
-      public boolean getRestricted() {
-        return restricted_;
+      public java.lang.String getRestrictionMode() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          restrictionMode_ = s;
+          return s;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for google-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * google-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using google-managed
+       * encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRestrictionModeBytes() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          restrictionMode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
 
       public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
@@ -2819,11 +2882,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-        if (((bitField0_ & 0x00000001) != 0)) {
-          output.writeBool(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           output.writeMessage(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, restrictionMode_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -2834,11 +2897,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (size != -1) return size;
 
         size = 0;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, restrictionMode_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSize = size;
@@ -2858,9 +2921,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig other =
             (com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig) obj;
 
-        if (hasRestricted() != other.hasRestricted()) return false;
-        if (hasRestricted()) {
-          if (getRestricted() != other.getRestricted()) return false;
+        if (hasRestrictionMode() != other.hasRestrictionMode()) return false;
+        if (hasRestrictionMode()) {
+          if (!getRestrictionMode().equals(other.getRestrictionMode())) return false;
         }
         if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
         if (hasEffectiveTime()) {
@@ -2877,9 +2940,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (hasRestricted()) {
-          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
-          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        if (hasRestrictionMode()) {
+          hash = (37 * hash) + RESTRICTION_MODE_FIELD_NUMBER;
+          hash = (53 * hash) + getRestrictionMode().hashCode();
         }
         if (hasEffectiveTime()) {
           hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
@@ -3051,7 +3114,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public Builder clear() {
           super.clear();
           bitField0_ = 0;
-          restricted_ = false;
+          restrictionMode_ = "";
           effectiveTime_ = null;
           if (effectiveTimeBuilder_ != null) {
             effectiveTimeBuilder_.dispose();
@@ -3103,7 +3166,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           int from_bitField0_ = bitField0_;
           int to_bitField0_ = 0;
           if (((from_bitField0_ & 0x00000001) != 0)) {
-            result.restricted_ = restricted_;
+            result.restrictionMode_ = restrictionMode_;
             to_bitField0_ |= 0x00000001;
           }
           if (((from_bitField0_ & 0x00000002) != 0)) {
@@ -3169,8 +3232,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           if (other
               == com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig
                   .getDefaultInstance()) return this;
-          if (other.hasRestricted()) {
-            setRestricted(other.getRestricted());
+          if (other.hasRestrictionMode()) {
+            restrictionMode_ = other.restrictionMode_;
+            bitField0_ |= 0x00000001;
+            onChanged();
           }
           if (other.hasEffectiveTime()) {
             mergeEffectiveTime(other.getEffectiveTime());
@@ -3201,12 +3266,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 case 0:
                   done = true;
                   break;
-                case 8:
-                  {
-                    restricted_ = input.readBool();
-                    bitField0_ |= 0x00000001;
-                    break;
-                  } // case 8
                 case 18:
                   {
                     input.readMessage(
@@ -3214,6 +3273,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                     bitField0_ |= 0x00000002;
                     break;
                   } // case 18
+                case 26:
+                  {
+                    restrictionMode_ = input.readStringRequireUtf8();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 26
                 default:
                   {
                     if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -3233,25 +3298,25 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         private int bitField0_;
 
-        private boolean restricted_;
+        private java.lang.Object restrictionMode_ = "";
 
         /**
          *
          *
          * <pre>
-         * Whether Google Managed Encryption (GMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using GMEK encryption.
-         * If false or unset, creation of new objects with GMEK encryption is
-         * allowed.
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return Whether the restricted field is set.
+         * @return Whether the restrictionMode field is set.
          */
-        @java.lang.Override
-        public boolean hasRestricted() {
+        public boolean hasRestrictionMode() {
           return ((bitField0_ & 0x00000001) != 0);
         }
 
@@ -3259,41 +3324,80 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Google Managed Encryption (GMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using GMEK encryption.
-         * If false or unset, creation of new objects with GMEK encryption is
-         * allowed.
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return The restricted.
+         * @return The restrictionMode.
          */
-        @java.lang.Override
-        public boolean getRestricted() {
-          return restricted_;
+        public java.lang.String getRestrictionMode() {
+          java.lang.Object ref = restrictionMode_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            restrictionMode_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
         }
 
         /**
          *
          *
          * <pre>
-         * Whether Google Managed Encryption (GMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using GMEK encryption.
-         * If false or unset, creation of new objects with GMEK encryption is
-         * allowed.
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @param value The restricted to set.
+         * @return The bytes for restrictionMode.
+         */
+        public com.google.protobuf.ByteString getRestrictionModeBytes() {
+          java.lang.Object ref = restrictionMode_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+            restrictionMode_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The restrictionMode to set.
          * @return This builder for chaining.
          */
-        public Builder setRestricted(boolean value) {
-
-          restricted_ = value;
+        public Builder setRestrictionMode(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          restrictionMode_ = value;
           bitField0_ |= 0x00000001;
           onChanged();
           return this;
@@ -3303,20 +3407,49 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Google Managed Encryption (GMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using GMEK encryption.
-         * If false or unset, creation of new objects with GMEK encryption is
-         * allowed.
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
          * @return This builder for chaining.
          */
-        public Builder clearRestricted() {
+        public Builder clearRestrictionMode() {
+          restrictionMode_ = getDefaultInstance().getRestrictionMode();
           bitField0_ = (bitField0_ & ~0x00000001);
-          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for google-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * google-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using google-managed
+         * encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The bytes for restrictionMode to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestrictionModeBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          restrictionMode_ = value;
+          bitField0_ |= 0x00000001;
           onChanged();
           return this;
         }
@@ -3595,35 +3728,55 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Customer Managed Encryption (CMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CMEK encryption.
-       * If false or unset, creation of new objects with CMEK encryption is
-       * allowed.
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
-      boolean hasRestricted();
+      boolean hasRestrictionMode();
 
       /**
        *
        *
        * <pre>
-       * Whether Customer Managed Encryption (CMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CMEK encryption.
-       * If false or unset, creation of new objects with CMEK encryption is
-       * allowed.
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
-      boolean getRestricted();
+      java.lang.String getRestrictionMode();
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      com.google.protobuf.ByteString getRestrictionModeBytes();
 
       /**
        *
@@ -3686,7 +3839,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         super(builder);
       }
 
-      private CustomerManagedEncryptionEnforcementConfig() {}
+      private CustomerManagedEncryptionEnforcementConfig() {
+        restrictionMode_ = "";
+      }
 
       @java.lang.Override
       @SuppressWarnings({"unused"})
@@ -3712,26 +3867,29 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private int bitField0_;
-      public static final int RESTRICTED_FIELD_NUMBER = 1;
-      private boolean restricted_ = false;
+      public static final int RESTRICTION_MODE_FIELD_NUMBER = 3;
+
+      @SuppressWarnings("serial")
+      private volatile java.lang.Object restrictionMode_ = "";
 
       /**
        *
        *
        * <pre>
-       * Whether Customer Managed Encryption (CMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CMEK encryption.
-       * If false or unset, creation of new objects with CMEK encryption is
-       * allowed.
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
       @java.lang.Override
-      public boolean hasRestricted() {
+      public boolean hasRestrictionMode() {
         return ((bitField0_ & 0x00000001) != 0);
       }
 
@@ -3739,20 +3897,58 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Customer Managed Encryption (CMEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CMEK encryption.
-       * If false or unset, creation of new objects with CMEK encryption is
-       * allowed.
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
       @java.lang.Override
-      public boolean getRestricted() {
-        return restricted_;
+      public java.lang.String getRestrictionMode() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          restrictionMode_ = s;
+          return s;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for customer-managed encryption for new objects within
+       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-managed encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-managed encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRestrictionModeBytes() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          restrictionMode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
 
       public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
@@ -3822,11 +4018,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-        if (((bitField0_ & 0x00000001) != 0)) {
-          output.writeBool(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           output.writeMessage(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, restrictionMode_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -3837,11 +4033,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (size != -1) return size;
 
         size = 0;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, restrictionMode_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSize = size;
@@ -3862,9 +4058,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             (com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig)
                 obj;
 
-        if (hasRestricted() != other.hasRestricted()) return false;
-        if (hasRestricted()) {
-          if (getRestricted() != other.getRestricted()) return false;
+        if (hasRestrictionMode() != other.hasRestrictionMode()) return false;
+        if (hasRestrictionMode()) {
+          if (!getRestrictionMode().equals(other.getRestrictionMode())) return false;
         }
         if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
         if (hasEffectiveTime()) {
@@ -3881,9 +4077,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (hasRestricted()) {
-          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
-          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        if (hasRestrictionMode()) {
+          hash = (37 * hash) + RESTRICTION_MODE_FIELD_NUMBER;
+          hash = (53 * hash) + getRestrictionMode().hashCode();
         }
         if (hasEffectiveTime()) {
           hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
@@ -4067,7 +4263,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public Builder clear() {
           super.clear();
           bitField0_ = 0;
-          restricted_ = false;
+          restrictionMode_ = "";
           effectiveTime_ = null;
           if (effectiveTimeBuilder_ != null) {
             effectiveTimeBuilder_.dispose();
@@ -4120,7 +4316,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           int from_bitField0_ = bitField0_;
           int to_bitField0_ = 0;
           if (((from_bitField0_ & 0x00000001) != 0)) {
-            result.restricted_ = restricted_;
+            result.restrictionMode_ = restrictionMode_;
             to_bitField0_ |= 0x00000001;
           }
           if (((from_bitField0_ & 0x00000002) != 0)) {
@@ -4186,8 +4382,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           if (other
               == com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig
                   .getDefaultInstance()) return this;
-          if (other.hasRestricted()) {
-            setRestricted(other.getRestricted());
+          if (other.hasRestrictionMode()) {
+            restrictionMode_ = other.restrictionMode_;
+            bitField0_ |= 0x00000001;
+            onChanged();
           }
           if (other.hasEffectiveTime()) {
             mergeEffectiveTime(other.getEffectiveTime());
@@ -4218,12 +4416,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 case 0:
                   done = true;
                   break;
-                case 8:
-                  {
-                    restricted_ = input.readBool();
-                    bitField0_ |= 0x00000001;
-                    break;
-                  } // case 8
                 case 18:
                   {
                     input.readMessage(
@@ -4231,6 +4423,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                     bitField0_ |= 0x00000002;
                     break;
                   } // case 18
+                case 26:
+                  {
+                    restrictionMode_ = input.readStringRequireUtf8();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 26
                 default:
                   {
                     if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -4250,25 +4448,25 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         private int bitField0_;
 
-        private boolean restricted_;
+        private java.lang.Object restrictionMode_ = "";
 
         /**
          *
          *
          * <pre>
-         * Whether Customer Managed Encryption (CMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CMEK encryption.
-         * If false or unset, creation of new objects with CMEK encryption is
-         * allowed.
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return Whether the restricted field is set.
+         * @return Whether the restrictionMode field is set.
          */
-        @java.lang.Override
-        public boolean hasRestricted() {
+        public boolean hasRestrictionMode() {
           return ((bitField0_ & 0x00000001) != 0);
         }
 
@@ -4276,41 +4474,80 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Customer Managed Encryption (CMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CMEK encryption.
-         * If false or unset, creation of new objects with CMEK encryption is
-         * allowed.
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return The restricted.
+         * @return The restrictionMode.
          */
-        @java.lang.Override
-        public boolean getRestricted() {
-          return restricted_;
+        public java.lang.String getRestrictionMode() {
+          java.lang.Object ref = restrictionMode_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            restrictionMode_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
         }
 
         /**
          *
          *
          * <pre>
-         * Whether Customer Managed Encryption (CMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CMEK encryption.
-         * If false or unset, creation of new objects with CMEK encryption is
-         * allowed.
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @param value The restricted to set.
+         * @return The bytes for restrictionMode.
+         */
+        public com.google.protobuf.ByteString getRestrictionModeBytes() {
+          java.lang.Object ref = restrictionMode_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+            restrictionMode_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The restrictionMode to set.
          * @return This builder for chaining.
          */
-        public Builder setRestricted(boolean value) {
-
-          restricted_ = value;
+        public Builder setRestrictionMode(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          restrictionMode_ = value;
           bitField0_ |= 0x00000001;
           onChanged();
           return this;
@@ -4320,20 +4557,49 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Customer Managed Encryption (CMEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CMEK encryption.
-         * If false or unset, creation of new objects with CMEK encryption is
-         * allowed.
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
          * @return This builder for chaining.
          */
-        public Builder clearRestricted() {
+        public Builder clearRestrictionMode() {
+          restrictionMode_ = getDefaultInstance().getRestrictionMode();
           bitField0_ = (bitField0_ & ~0x00000001);
-          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for customer-managed encryption for new objects within
+         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-managed encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-managed encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The bytes for restrictionMode to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestrictionModeBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          restrictionMode_ = value;
+          bitField0_ |= 0x00000001;
           onChanged();
           return this;
         }
@@ -4615,35 +4881,58 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Customer Supplied Encryption (CSEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CSEK encryption.
-       * If false or unset, creation of new objects with CSEK encryption is
-       * allowed.
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
-      boolean hasRestricted();
+      boolean hasRestrictionMode();
 
       /**
        *
        *
        * <pre>
-       * Whether Customer Supplied Encryption (CSEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CSEK encryption.
-       * If false or unset, creation of new objects with CSEK encryption is
-       * allowed.
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
-      boolean getRestricted();
+      java.lang.String getRestrictionMode();
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      com.google.protobuf.ByteString getRestrictionModeBytes();
 
       /**
        *
@@ -4706,7 +4995,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         super(builder);
       }
 
-      private CustomerSuppliedEncryptionEnforcementConfig() {}
+      private CustomerSuppliedEncryptionEnforcementConfig() {
+        restrictionMode_ = "";
+      }
 
       @java.lang.Override
       @SuppressWarnings({"unused"})
@@ -4732,26 +5023,30 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       private int bitField0_;
-      public static final int RESTRICTED_FIELD_NUMBER = 1;
-      private boolean restricted_ = false;
+      public static final int RESTRICTION_MODE_FIELD_NUMBER = 3;
+
+      @SuppressWarnings("serial")
+      private volatile java.lang.Object restrictionMode_ = "";
 
       /**
        *
        *
        * <pre>
-       * Whether Customer Supplied Encryption (CSEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CSEK encryption.
-       * If false or unset, creation of new objects with CSEK encryption is
-       * allowed.
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return Whether the restricted field is set.
+       * @return Whether the restrictionMode field is set.
        */
       @java.lang.Override
-      public boolean hasRestricted() {
+      public boolean hasRestrictionMode() {
         return ((bitField0_ & 0x00000001) != 0);
       }
 
@@ -4759,20 +5054,60 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether Customer Supplied Encryption (CSEK) is restricted for new
-       * objects within the bucket.
-       * If true, new objects can't be created using CSEK encryption.
-       * If false or unset, creation of new objects with CSEK encryption is
-       * allowed.
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
        * </pre>
        *
-       * <code>optional bool restricted = 1;</code>
+       * <code>optional string restriction_mode = 3;</code>
        *
-       * @return The restricted.
+       * @return The restrictionMode.
        */
       @java.lang.Override
-      public boolean getRestricted() {
-        return restricted_;
+      public java.lang.String getRestrictionMode() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          restrictionMode_ = s;
+          return s;
+        }
+      }
+
+      /**
+       *
+       *
+       * <pre>
+       * Restriction mode for customer-supplied encryption for new objects
+       * within the bucket. Valid values are: "NotRestricted",
+       * "FullyRestricted".
+       * If `NotRestricted` or unset, creation of new objects with
+       * customer-supplied encryption is allowed.
+       * If `FullyRestricted`, new objects can't be created using
+       * customer-supplied encryption.
+       * </pre>
+       *
+       * <code>optional string restriction_mode = 3;</code>
+       *
+       * @return The bytes for restrictionMode.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRestrictionModeBytes() {
+        java.lang.Object ref = restrictionMode_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          restrictionMode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
 
       public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
@@ -4842,11 +5177,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-        if (((bitField0_ & 0x00000001) != 0)) {
-          output.writeBool(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           output.writeMessage(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, restrictionMode_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -4857,11 +5192,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (size != -1) return size;
 
         size = 0;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, restricted_);
-        }
         if (((bitField0_ & 0x00000002) != 0)) {
           size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+        }
+        if (((bitField0_ & 0x00000001) != 0)) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, restrictionMode_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSize = size;
@@ -4882,9 +5217,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             (com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig)
                 obj;
 
-        if (hasRestricted() != other.hasRestricted()) return false;
-        if (hasRestricted()) {
-          if (getRestricted() != other.getRestricted()) return false;
+        if (hasRestrictionMode() != other.hasRestrictionMode()) return false;
+        if (hasRestrictionMode()) {
+          if (!getRestrictionMode().equals(other.getRestrictionMode())) return false;
         }
         if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
         if (hasEffectiveTime()) {
@@ -4901,9 +5236,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (hasRestricted()) {
-          hash = (37 * hash) + RESTRICTED_FIELD_NUMBER;
-          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getRestricted());
+        if (hasRestrictionMode()) {
+          hash = (37 * hash) + RESTRICTION_MODE_FIELD_NUMBER;
+          hash = (53 * hash) + getRestrictionMode().hashCode();
         }
         if (hasEffectiveTime()) {
           hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
@@ -5087,7 +5422,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         public Builder clear() {
           super.clear();
           bitField0_ = 0;
-          restricted_ = false;
+          restrictionMode_ = "";
           effectiveTime_ = null;
           if (effectiveTimeBuilder_ != null) {
             effectiveTimeBuilder_.dispose();
@@ -5140,7 +5475,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           int from_bitField0_ = bitField0_;
           int to_bitField0_ = 0;
           if (((from_bitField0_ & 0x00000001) != 0)) {
-            result.restricted_ = restricted_;
+            result.restrictionMode_ = restrictionMode_;
             to_bitField0_ |= 0x00000001;
           }
           if (((from_bitField0_ & 0x00000002) != 0)) {
@@ -5207,8 +5542,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           if (other
               == com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig
                   .getDefaultInstance()) return this;
-          if (other.hasRestricted()) {
-            setRestricted(other.getRestricted());
+          if (other.hasRestrictionMode()) {
+            restrictionMode_ = other.restrictionMode_;
+            bitField0_ |= 0x00000001;
+            onChanged();
           }
           if (other.hasEffectiveTime()) {
             mergeEffectiveTime(other.getEffectiveTime());
@@ -5239,12 +5576,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 case 0:
                   done = true;
                   break;
-                case 8:
-                  {
-                    restricted_ = input.readBool();
-                    bitField0_ |= 0x00000001;
-                    break;
-                  } // case 8
                 case 18:
                   {
                     input.readMessage(
@@ -5252,6 +5583,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                     bitField0_ |= 0x00000002;
                     break;
                   } // case 18
+                case 26:
+                  {
+                    restrictionMode_ = input.readStringRequireUtf8();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 26
                 default:
                   {
                     if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -5271,25 +5608,26 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         private int bitField0_;
 
-        private boolean restricted_;
+        private java.lang.Object restrictionMode_ = "";
 
         /**
          *
          *
          * <pre>
-         * Whether Customer Supplied Encryption (CSEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CSEK encryption.
-         * If false or unset, creation of new objects with CSEK encryption is
-         * allowed.
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return Whether the restricted field is set.
+         * @return Whether the restrictionMode field is set.
          */
-        @java.lang.Override
-        public boolean hasRestricted() {
+        public boolean hasRestrictionMode() {
           return ((bitField0_ & 0x00000001) != 0);
         }
 
@@ -5297,41 +5635,83 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Customer Supplied Encryption (CSEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CSEK encryption.
-         * If false or unset, creation of new objects with CSEK encryption is
-         * allowed.
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @return The restricted.
+         * @return The restrictionMode.
          */
-        @java.lang.Override
-        public boolean getRestricted() {
-          return restricted_;
+        public java.lang.String getRestrictionMode() {
+          java.lang.Object ref = restrictionMode_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            restrictionMode_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
         }
 
         /**
          *
          *
          * <pre>
-         * Whether Customer Supplied Encryption (CSEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CSEK encryption.
-         * If false or unset, creation of new objects with CSEK encryption is
-         * allowed.
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
-         * @param value The restricted to set.
+         * @return The bytes for restrictionMode.
+         */
+        public com.google.protobuf.ByteString getRestrictionModeBytes() {
+          java.lang.Object ref = restrictionMode_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+            restrictionMode_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The restrictionMode to set.
          * @return This builder for chaining.
          */
-        public Builder setRestricted(boolean value) {
-
-          restricted_ = value;
+        public Builder setRestrictionMode(java.lang.String value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          restrictionMode_ = value;
           bitField0_ |= 0x00000001;
           onChanged();
           return this;
@@ -5341,20 +5721,51 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Whether Customer Supplied Encryption (CSEK) is restricted for new
-         * objects within the bucket.
-         * If true, new objects can't be created using CSEK encryption.
-         * If false or unset, creation of new objects with CSEK encryption is
-         * allowed.
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
          * </pre>
          *
-         * <code>optional bool restricted = 1;</code>
+         * <code>optional string restriction_mode = 3;</code>
          *
          * @return This builder for chaining.
          */
-        public Builder clearRestricted() {
+        public Builder clearRestrictionMode() {
+          restrictionMode_ = getDefaultInstance().getRestrictionMode();
           bitField0_ = (bitField0_ & ~0x00000001);
-          restricted_ = false;
+          onChanged();
+          return this;
+        }
+
+        /**
+         *
+         *
+         * <pre>
+         * Restriction mode for customer-supplied encryption for new objects
+         * within the bucket. Valid values are: "NotRestricted",
+         * "FullyRestricted".
+         * If `NotRestricted` or unset, creation of new objects with
+         * customer-supplied encryption is allowed.
+         * If `FullyRestricted`, new objects can't be created using
+         * customer-supplied encryption.
+         * </pre>
+         *
+         * <code>optional string restriction_mode = 3;</code>
+         *
+         * @param value The bytes for restrictionMode to set.
+         * @return This builder for chaining.
+         */
+        public Builder setRestrictionModeBytes(com.google.protobuf.ByteString value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          checkByteStringIsUtf8(value);
+          restrictionMode_ = value;
+          bitField0_ |= 0x00000001;
           onChanged();
           return this;
         }
