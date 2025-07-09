@@ -26,6 +26,9 @@ import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
+import com.google.storage.v2.Bucket.IpFilter;
+import com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource;
+import com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource;
 import com.google.storage.v2.Bucket.Lifecycle.Rule.Condition;
 import com.google.storage.v2.Bucket.Logging;
 import com.google.storage.v2.Bucket.RetentionPolicy;
@@ -58,6 +61,7 @@ import net.jqwik.api.arbitraries.StringArbitrary;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.time.api.DateTimes;
 import net.jqwik.web.api.Web;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class StorageArbitraries {
 
@@ -170,6 +174,19 @@ public final class StorageArbitraries {
         .ofMinLength(0)
         .ofMaxLength(8)
         .edgeCases(config -> config.add(""));
+  }
+
+  /** Arbitrary of ipv4 and ipv6 cidr ranges */
+  public static Arbitrary<String> cidr() {
+    return Arbitraries.oneOf(cidrIpv4(), cidrIpv6());
+  }
+
+  public static Arbitrary<String> cidrIpv4() {
+    return Arbitraries.of("182.0.2.0/24");
+  }
+
+  public static Arbitrary<String> cidrIpv6() {
+    return Arbitraries.of("2001:db8::/32");
   }
 
   public static final class Buckets {
@@ -428,6 +445,66 @@ public final class StorageArbitraries {
 
     public Arbitrary<Map<String, String>> labels() {
       return objects().customMetadata();
+    }
+
+    public Arbitrary<IpFilter> ipFilter() {
+      return Combinators.combine(
+              Arbitraries.of("Enabled", "Disabled").injectNull(0.33), // mode
+              publicNetworkSource(),
+              vpcNetworkSource().list().ofMinSize(1).ofMaxSize(3).injectNull(0.5),
+              bool().injectNull(0.5), // allow_cross_org_vpcs
+              bool().injectNull(0.5) // allow_all_service_agent_access
+              )
+          .as(
+              (mode, pns, vnss, allowCrossOrgVpcs, allowAllServiceAgentAccess) -> {
+                IpFilter.Builder b = IpFilter.newBuilder();
+                ifNonNull(mode, b::setMode);
+                ifNonNull(pns, b::setPublicNetworkSource);
+                ifNonNull(vnss, b::addAllVpcNetworkSources);
+                ifNonNull(allowCrossOrgVpcs, b::setAllowCrossOrgVpcs);
+                ifNonNull(allowAllServiceAgentAccess, b::setAllowAllServiceAgentAccess);
+                return b.build();
+              });
+    }
+
+    public Arbitrary<IpFilter.PublicNetworkSource> publicNetworkSource() {
+      return Arbitraries.oneOf(cidr().list().ofMinSize(1).ofMaxSize(3).injectNull(0.5))
+          .map(
+              ranges -> {
+                PublicNetworkSource.Builder b = PublicNetworkSource.newBuilder();
+                ifNonNull(ranges, b::addAllAllowedIpCidrRanges);
+                return b.build();
+              });
+    }
+
+    public Arbitrary<IpFilter.VpcNetworkSource> vpcNetworkSource() {
+      return Combinators.combine(
+              networkResource().injectNull(0.25),
+              cidr().list().ofMinSize(1).ofMaxSize(3).injectNull(0.5))
+          .as(
+              (network, ranges) -> {
+                VpcNetworkSource.Builder b = VpcNetworkSource.newBuilder();
+                ifNonNull(network, b::setNetwork);
+                ifNonNull(ranges, b::addAllAllowedIpCidrRanges);
+                return b.build();
+              });
+    }
+
+    Arbitrary<String> networkResource() {
+      return Combinators.combine(projectID(), networkName())
+          .as(
+              (projectId, networkName) ->
+                  String.format(
+                      Locale.US, "projects/%s/global/networks/%s", projectId, networkName));
+    }
+
+    Arbitrary<@Nullable String> networkName() {
+      return Arbitraries.strings()
+          .withCharRange('a', 'z')
+          .numeric()
+          .withChars('-')
+          .ofMinLength(1)
+          .ofMaxLength(10);
     }
   }
 
