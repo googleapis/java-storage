@@ -2285,6 +2285,9 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setSoftDeletePolicy(SoftDeletePolicy softDeletePolicy);
 
+    /**
+     * @since 2.54.0
+     */
     public abstract Builder setIpFilter(IpFilter ipFilter);
 
     /** Creates a {@code BucketInfo} object. */
@@ -2432,6 +2435,7 @@ public class BucketInfo implements Serializable {
       objectRetention = bucketInfo.objectRetention;
       softDeletePolicy = bucketInfo.softDeletePolicy;
       hierarchicalNamespace = bucketInfo.hierarchicalNamespace;
+      ipFilter = bucketInfo.ipFilter;
     }
 
     @Override
@@ -3438,6 +3442,9 @@ public class BucketInfo implements Serializable {
     return hierarchicalNamespace;
   }
 
+  /**
+   * @since 2.54.0
+   */
   public @Nullable IpFilter getIpFilter() {
     return ipFilter;
   }
