@@ -26,10 +26,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.example.storage.object.AtomicMoveObject;
 import com.example.storage.object.BatchSetObjectMetadata;
 import com.example.storage.object.ChangeObjectCsekToKms;
 import com.example.storage.object.ChangeObjectStorageClass;
 import com.example.storage.object.ComposeObject;
+import com.example.storage.object.CopyDeleteObject;
 import com.example.storage.object.CopyObject;
 import com.example.storage.object.CopyOldVersionOfObject;
 import com.example.storage.object.DeleteObject;
@@ -48,7 +50,6 @@ import com.example.storage.object.ListObjectsWithPrefix;
 import com.example.storage.object.ListSoftDeletedObjects;
 import com.example.storage.object.ListSoftDeletedVersionsOfObject;
 import com.example.storage.object.MakeObjectPublic;
-import com.example.storage.object.MoveObject;
 import com.example.storage.object.RestoreSoftDeletedObject;
 import com.example.storage.object.RotateObjectEncryptionKey;
 import com.example.storage.object.SetObjectMetadata;
@@ -258,7 +259,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testMoveObject() throws Exception {
+  public void testCopyDeleteObject() throws Exception {
     String blob = generator.randomObjectName();
     String newBlob = generator.randomObjectName();
 
@@ -270,10 +271,23 @@ public class ITObjectSnippets extends TestBase {
 
       String newBucket = tmpBucket.getBucket().getName();
       BlobInfo gen1 = storage.create(BlobInfo.newBuilder(BlobId.of(newBucket, blob)).build());
-      MoveObject.moveObject(GOOGLE_CLOUD_PROJECT, newBucket, blob, newBucket, newBlob);
+      CopyDeleteObject.copyDeleteObject(GOOGLE_CLOUD_PROJECT, newBucket, blob, newBucket, newBlob);
       assertNotNull(storage.get(newBucket, newBlob));
       assertNull(storage.get(bucket.getName(), blob));
     }
+  }
+
+  @Test
+  public void testAtomicMoveObject() {
+    String blob1 = generator.randomObjectName();
+    String blob2 = generator.randomObjectName();
+
+    String bucketName = bucket.getName();
+    BlobInfo gen1 = storage.create(BlobInfo.newBuilder(BlobId.of(bucketName, blob1)).build());
+    AtomicMoveObject.moveObject(GOOGLE_CLOUD_PROJECT, bucketName, blob1, blob2);
+    assertThat(storage.get(bucketName, blob1)).isNull();
+    assertThat(storage.get(bucketName, blob2)).isNotNull();
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Moved object");
   }
 
   @Test
