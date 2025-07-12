@@ -358,4 +358,34 @@ public interface ListObjectsRequestOrBuilder
    * @return The bytes for matchGlob.
    */
   com.google.protobuf.ByteString getMatchGlobBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter the returned objects. Currently only supported for the
+   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+   * from this filter.
+   * </pre>
+   *
+   * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The filter.
+   */
+  java.lang.String getFilter();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter the returned objects. Currently only supported for the
+   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+   * from this filter.
+   * </pre>
+   *
+   * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for filter.
+   */
+  com.google.protobuf.ByteString getFilterBytes();
 }
