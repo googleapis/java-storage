@@ -3096,6 +3096,7 @@ public class StorageClient implements BackgroundResource {
    *           .setSoftDeleted(true)
    *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
+   *           .setFilter("filter-1274492040")
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -3145,6 +3146,7 @@ public class StorageClient implements BackgroundResource {
    *           .setSoftDeleted(true)
    *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
+   *           .setFilter("filter-1274492040")
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
    *   // Do something.
@@ -3194,6 +3196,7 @@ public class StorageClient implements BackgroundResource {
    *           .setSoftDeleted(true)
    *           .setIncludeFoldersAsPrefixes(true)
    *           .setMatchGlob("matchGlob613636317")
+   *           .setFilter("filter-1274492040")
    *           .build();
    *   while (true) {
    *     ListObjectsResponse response = storageClient.listObjectsCallable().call(request);

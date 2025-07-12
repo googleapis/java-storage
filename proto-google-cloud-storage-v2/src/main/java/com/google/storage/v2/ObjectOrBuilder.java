@@ -934,6 +934,55 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
+   * Optional. User-defined or system-defined object contexts. Each object
+   * context is a key-payload pair, where the key provides the identification
+   * and the payload holds the associated value and additional metadata.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.ObjectContexts contexts = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the contexts field is set.
+   */
+  boolean hasContexts();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. User-defined or system-defined object contexts. Each object
+   * context is a key-payload pair, where the key provides the identification
+   * and the payload holds the associated value and additional metadata.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.ObjectContexts contexts = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The contexts.
+   */
+  com.google.storage.v2.ObjectContexts getContexts();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. User-defined or system-defined object contexts. Each object
+   * context is a key-payload pair, where the key provides the identification
+   * and the payload holds the associated value and additional metadata.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.ObjectContexts contexts = 38 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.ObjectContextsOrBuilder getContextsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Whether an object is under event-based hold.
    * An event-based hold is a way to force the retention of an object until
    * after some event occurs. Once the hold is released by explicitly setting
