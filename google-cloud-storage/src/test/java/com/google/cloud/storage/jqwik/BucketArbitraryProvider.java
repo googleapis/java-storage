@@ -77,9 +77,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                     .as(Tuple::of),
                 Combinators.combine(
                         StorageArbitraries.projectNumber().map(ProjectNumber::toProjectName),
-                        StorageArbitraries
-                            .alnum() // ignored for now, tuples can't be a single element
-                        )
+                        StorageArbitraries.buckets().ipFilter().injectNull(0.75))
                     .as(Tuple::of))
             .as(
                 (t1, t2, t3, t4) -> {
@@ -109,6 +107,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                   ifNonNull(t3.get7(), b::putAllLabels);
                   ifNonNull(t3.get8(), b::setEtag);
                   ifNonNull(t4.get1(), ProjectName::toString, b::setProject);
+                  ifNonNull(t4.get2(), b::setIpFilter);
                   // TODO: add CustomPlacementConfig
                   return b.build();
                 });

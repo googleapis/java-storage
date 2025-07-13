@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
@@ -298,7 +299,7 @@ public final class ITOptionRegressionTest {
   @Test
   public void storage_BucketGetOption_fields_BucketField() {
     Set<String> expected =
-        ImmutableSet.of(
+        treeSet(
             "acl",
             "autoclass",
             "billing",
@@ -310,6 +311,7 @@ public final class ITOptionRegressionTest {
             "etag",
             "iamConfiguration",
             "id",
+            "ipFilter",
             "labels",
             "lifecycle",
             "location",
@@ -705,7 +707,7 @@ public final class ITOptionRegressionTest {
   @Test
   public void storage_BlobGetOption_fields_BlobField() {
     Set<String> expected =
-        ImmutableSet.of(
+        treeSet(
             "acl",
             "bucket",
             "cacheControl",
@@ -790,7 +792,7 @@ public final class ITOptionRegressionTest {
   @Test
   public void storage_BucketListOption_fields_BucketField() {
     Set<String> expected =
-        ImmutableSet.of(
+        treeSet(
             "nextPageToken",
             "items/acl",
             "items/autoclass",
@@ -803,6 +805,7 @@ public final class ITOptionRegressionTest {
             "items/etag",
             "items/iamConfiguration",
             "items/id",
+            "items/ipFilter",
             "items/labels",
             "items/lifecycle",
             "items/location",
@@ -883,7 +886,7 @@ public final class ITOptionRegressionTest {
   @Test
   public void storage_BlobListOption_fields_BlobField() {
     Set<String> expected =
-        ImmutableSet.of(
+        treeSet(
             "nextPageToken",
             "prefixes",
             "items/acl",
@@ -1194,6 +1197,15 @@ public final class ITOptionRegressionTest {
   }
 
   private static Function<String, Set<String>> splitOnCommaToSet() {
-    return s -> ImmutableSet.copyOf(s.split(","));
+    return s -> treeSet(s.split(","));
+  }
+
+  /**
+   * Util method to make a TreeSet easily. This makes failed assertions easier to read by sorting
+   * the values.
+   */
+  @SafeVarargs
+  private static <T extends Comparable<T>> Set<T> treeSet(T... ts) {
+    return new TreeSet<>(ImmutableSet.copyOf(ts));
   }
 }
