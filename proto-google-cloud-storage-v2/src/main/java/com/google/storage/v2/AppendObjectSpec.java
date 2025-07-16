@@ -205,6 +205,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * Makes the operation conditional on whether the object's current
    * metageneration matches the given value.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional int64 if_metageneration_match = 4;</code>
@@ -222,6 +225,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * Makes the operation conditional on whether the object's current
    * metageneration matches the given value.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional int64 if_metageneration_match = 4;</code>
@@ -242,6 +248,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * Makes the operation conditional on whether the object's current
    * metageneration does not match the given value.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -259,6 +268,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * Makes the operation conditional on whether the object's current
    * metageneration does not match the given value.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -351,6 +363,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * An optional write handle returned from a previous BidiWriteObjectResponse
    * message or a BidiWriteObjectRedirectedError error.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -368,6 +383,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * An optional write handle returned from a previous BidiWriteObjectResponse
    * message or a BidiWriteObjectRedirectedError error.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -387,6 +405,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
    * <pre>
    * An optional write handle returned from a previous BidiWriteObjectResponse
    * message or a BidiWriteObjectRedirectedError error.
+   *
+   * Note that metageneration preconditions are only checked if `write_handle`
+   * is empty.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1211,6 +1232,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration matches the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 4;</code>
@@ -1228,6 +1252,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration matches the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 4;</code>
@@ -1245,6 +1272,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration matches the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 4;</code>
@@ -1266,6 +1296,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration matches the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 4;</code>
@@ -1287,6 +1320,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration does not match the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -1304,6 +1340,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration does not match the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -1321,6 +1360,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration does not match the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -1342,6 +1384,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * Makes the operation conditional on whether the object's current
      * metageneration does not match the given value.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 5;</code>
@@ -1500,6 +1545,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1516,6 +1564,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1538,6 +1589,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1562,6 +1616,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1583,6 +1640,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1612,6 +1672,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1633,6 +1696,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1649,6 +1715,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>
@@ -1669,6 +1738,9 @@ public final class AppendObjectSpec extends com.google.protobuf.GeneratedMessage
      * <pre>
      * An optional write handle returned from a previous BidiWriteObjectResponse
      * message or a BidiWriteObjectRedirectedError error.
+     *
+     * Note that metageneration preconditions are only checked if `write_handle`
+     * is empty.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 7;</code>

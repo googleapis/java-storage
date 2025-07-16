@@ -16,6 +16,37 @@
     <className>com/google/storage/v2/*OrBuilder</className>
     <method>boolean has*(*)</method>
   </difference>
+  <!-- allow message fields to be removed -->
+  <!--
+  these messages are used by the google-cloud-storage module and would break compilation,
+  if there is an actual break.
+  -->
+  <difference>
+    <differenceType>6011</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <field>*_FIELD_NUMBER</field>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* clear*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* get*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* has*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/**</className>
+    <method>* set*(*)</method>
+  </difference>
+
   <!-- The following 7006 exemptions are related to Protobuf 4.27.4 upgrade -->
   <difference>
     <differenceType>7006</differenceType>

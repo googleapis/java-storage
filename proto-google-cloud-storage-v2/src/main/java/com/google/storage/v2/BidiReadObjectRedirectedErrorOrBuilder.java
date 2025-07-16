@@ -28,8 +28,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. The client can use this for the
-   * subsequent open.
+   * The read handle for the redirected read. If set, the client may use this in
+   * the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -42,8 +42,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. The client can use this for the
-   * subsequent open.
+   * The read handle for the redirected read. If set, the client may use this in
+   * the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -56,8 +56,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. The client can use this for the
-   * subsequent open.
+   * The read handle for the redirected read. If set, the client may use this in
+   * the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -68,7 +68,9 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the read stream.
+   * The routing token the client must use when retrying the read stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 2;</code>
@@ -81,7 +83,9 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the read stream.
+   * The routing token the client must use when retrying the read stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 2;</code>
@@ -94,7 +98,9 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the read stream.
+   * The routing token the client must use when retrying the read stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 2;</code>

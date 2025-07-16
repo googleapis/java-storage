@@ -23,8 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Error proto containing details for a redirected write. This error is only
- * returned on initial open in case of a redirect.
+ * Error proto containing details for a redirected write. This error may be
+ * attached as details for an ABORTED response to BidiWriteObject.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.BidiWriteObjectRedirectedError}
@@ -76,7 +76,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the write stream.
+   * The routing token the client must use when retrying the write stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 1;</code>
@@ -92,7 +94,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the write stream.
+   * The routing token the client must use when retrying the write stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 1;</code>
@@ -116,7 +120,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The routing token that should be used when reopening the write stream.
+   * The routing token the client must use when retrying the write stream.
+   * This value must be provided in the header `x-goog-request-params`, with key
+   * `routing_token` and this string verbatim as the value.
    * </pre>
    *
    * <code>optional string routing_token = 1;</code>
@@ -143,7 +149,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * Opaque value describing a previous write.
+   * Opaque value describing a previous write. If set, the client must use this
+   * in an AppendObjectSpec first_message when retrying the write stream. If not
+   * set, clients may retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -159,7 +167,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * Opaque value describing a previous write.
+   * Opaque value describing a previous write. If set, the client must use this
+   * in an AppendObjectSpec first_message when retrying the write stream. If not
+   * set, clients may retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -177,7 +187,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * Opaque value describing a previous write.
+   * Opaque value describing a previous write. If set, the client must use this
+   * in an AppendObjectSpec first_message when retrying the write stream. If not
+   * set, clients may retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -196,10 +208,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect.
-   * Note that if this error was returned as part of an appendable object
-   * create, this object generation is now successfully created and
-   * append_object_spec should be used when reconnecting.
+   * The generation of the object that triggered the redirect. This will be set
+   * iff write_handle is set. If set, the client must use this in an
+   * AppendObjectSpec first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>
@@ -215,10 +226,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect.
-   * Note that if this error was returned as part of an appendable object
-   * create, this object generation is now successfully created and
-   * append_object_spec should be used when reconnecting.
+   * The generation of the object that triggered the redirect. This will be set
+   * iff write_handle is set. If set, the client must use this in an
+   * AppendObjectSpec first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>
@@ -427,8 +437,8 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * Error proto containing details for a redirected write. This error is only
-   * returned on initial open in case of a redirect.
+   * Error proto containing details for a redirected write. This error may be
+   * attached as details for an ABORTED response to BidiWriteObject.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.BidiWriteObjectRedirectedError}
@@ -658,7 +668,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -673,7 +685,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -696,7 +710,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -719,7 +735,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -741,7 +759,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -759,7 +779,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The routing token that should be used when reopening the write stream.
+     * The routing token the client must use when retrying the write stream.
+     * This value must be provided in the header `x-goog-request-params`, with key
+     * `routing_token` and this string verbatim as the value.
      * </pre>
      *
      * <code>optional string routing_token = 1;</code>
@@ -789,7 +811,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -804,7 +828,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -825,7 +851,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -848,7 +876,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -868,7 +898,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -896,7 +928,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -916,7 +950,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -931,7 +967,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -950,7 +988,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * Opaque value describing a previous write.
+     * Opaque value describing a previous write. If set, the client must use this
+     * in an AppendObjectSpec first_message when retrying the write stream. If not
+     * set, clients may retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -978,10 +1018,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect.
-     * Note that if this error was returned as part of an appendable object
-     * create, this object generation is now successfully created and
-     * append_object_spec should be used when reconnecting.
+     * The generation of the object that triggered the redirect. This will be set
+     * iff write_handle is set. If set, the client must use this in an
+     * AppendObjectSpec first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -997,10 +1036,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect.
-     * Note that if this error was returned as part of an appendable object
-     * create, this object generation is now successfully created and
-     * append_object_spec should be used when reconnecting.
+     * The generation of the object that triggered the redirect. This will be set
+     * iff write_handle is set. If set, the client must use this in an
+     * AppendObjectSpec first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -1016,10 +1054,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect.
-     * Note that if this error was returned as part of an appendable object
-     * create, this object generation is now successfully created and
-     * append_object_spec should be used when reconnecting.
+     * The generation of the object that triggered the redirect. This will be set
+     * iff write_handle is set. If set, the client must use this in an
+     * AppendObjectSpec first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -1039,10 +1076,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect.
-     * Note that if this error was returned as part of an appendable object
-     * create, this object generation is now successfully created and
-     * append_object_spec should be used when reconnecting.
+     * The generation of the object that triggered the redirect. This will be set
+     * iff write_handle is set. If set, the client must use this in an
+     * AppendObjectSpec first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
