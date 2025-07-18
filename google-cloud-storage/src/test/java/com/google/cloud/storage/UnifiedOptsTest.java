@@ -20,6 +20,10 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
+import com.google.cloud.storage.UnifiedOpts.Crc32cMatch;
+import com.google.cloud.storage.UnifiedOpts.DefaultHasherSelector;
+import com.google.cloud.storage.UnifiedOpts.HasherSelector;
+import com.google.cloud.storage.UnifiedOpts.Md5Match;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opt;
@@ -147,6 +151,27 @@ public final class UnifiedOptsTest {
   }
 
   @Test
+  public void getHasher_selectsLastValue() {
+    DefaultHasherSelector first = UnifiedOpts.defaultHasherSelector();
+    Md5Match second = UnifiedOpts.md5Match("asdf");
+    Crc32cMatch third = UnifiedOpts.crc32cMatch(3);
+    Opts<HasherSelector> hasherOpts = Opts.from(first, second, third);
+
+    HasherSelector actual = hasherOpts.getHasherSelector();
+    assertThat(actual).isSameInstanceAs(third);
+  }
+
+  @Test
+  public void hasher_md5Match_noop() {
+    assertThat(UnifiedOpts.md5Match("xyz").getHasher()).isEqualTo(Hasher.noop());
+  }
+
+  @Test
+  public void hasher_crc32cMatch_noop() {
+    assertThat(UnifiedOpts.crc32cMatch(77).getHasher()).isEqualTo(Hasher.noop());
+  }
+
+  @Test
   public void transformTo() {
     SecretKey key =
         new SecretKey() {
@@ -172,8 +197,8 @@ public final class UnifiedOptsTest {
             UnifiedOpts.encryptionKey(key),
             // userProject implements both target and source
             UnifiedOpts.userProject("user-project"),
-            // crc32c is not a source opt or a ProjectToSource opt, it should be excluded
-            UnifiedOpts.crc32cMatch(1));
+            // contentType is not a source opt or a ProjectToSource opt, it should be excluded
+            UnifiedOpts.setContentType("application/octet-stream"));
     Opts<ObjectSourceOpt> sourceOpts = targetOpts.transformTo(ObjectSourceOpt.class);
 
     Opts<ObjectSourceOpt> expected =

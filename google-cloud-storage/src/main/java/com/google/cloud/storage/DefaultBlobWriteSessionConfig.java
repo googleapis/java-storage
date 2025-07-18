@@ -160,7 +160,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                               grpc.storageClient
                                   .writeObjectCallable()
                                   .withDefaultCallContext(grpcCallContext))
-                          .setHasher(Hasher.noop())
+                          .setHasher(opts.getHasher())
                           .setByteStringStrategy(ByteStringStrategy.copy())
                           .resumable()
                           .withRetryConfig(

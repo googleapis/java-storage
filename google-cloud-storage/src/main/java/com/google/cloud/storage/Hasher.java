@@ -27,11 +27,35 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+@SuppressWarnings("ClassEscapesDefinedScope")
+@ParametersAreNonnullByDefault
 interface Hasher {
+  final class DefaultInstanceHolder {
+    private static final Logger LOGGER = Logger.getLogger(Hasher.class.getName());
+    private static final String PROPERTY_NAME = "com.google.cloud.storage.Hasher.default";
+    private static final String PROPERTY_VALUE = System.getProperty(PROPERTY_NAME, "enabled");
+    static final Hasher DEFAULT_HASHER;
+
+    static {
+      LOGGER.fine(String.format(Locale.US, "-D%s=%s", PROPERTY_NAME, PROPERTY_VALUE));
+      if ("disabled".equalsIgnoreCase(PROPERTY_VALUE)) {
+        DEFAULT_HASHER = noop();
+      } else {
+        try {
+          Class.forName("java.util.zip.CRC32C");
+        } catch (ClassNotFoundException e) {
+          LOGGER.fine("Fast CRC32C implementation (Java 9+) is not available.");
+        }
+        DEFAULT_HASHER = enabled();
+      }
+    }
+  }
 
   @Nullable
   default Crc32cLengthKnown hash(Supplier<ByteBuffer> b) {
@@ -49,14 +73,28 @@ interface Hasher {
   void validateUnchecked(Crc32cValue<?> expected, ByteString byteString)
       throws UncheckedChecksumMismatchException;
 
-  @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
+  @Nullable Crc32cLengthKnown nullSafeConcat(
+      @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2);
 
-  static Hasher noop() {
+  /**
+   * The initial value to use for this hasher.
+   *
+   * <p>Not ideal, really we should always start with {@link Crc32cValue#zero()} but this saves us
+   * from having to plumb the initial value along with the actual hasher to the constructor of the
+   * WriteCtx when hashing is disabled because of user provided crc32c/md5 preconditions.
+   */
+  @Nullable Crc32cLengthKnown initialValue();
+
+  static NoOpHasher noop() {
     return NoOpHasher.INSTANCE;
   }
 
-  static Hasher enabled() {
+  static GuavaHasher enabled() {
     return GuavaHasher.INSTANCE;
+  }
+
+  static Hasher defaultHasher() {
+    return DefaultInstanceHolder.DEFAULT_HASHER;
   }
 
   @Immutable
@@ -85,7 +123,13 @@ interface Hasher {
     public void validateUnchecked(Crc32cValue<?> expected, ByteString byteString) {}
 
     @Override
-    public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
+    public @Nullable Crc32cLengthKnown nullSafeConcat(
+        @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2) {
+      return null;
+    }
+
+    @Override
+    public @Nullable Crc32cLengthKnown initialValue() {
       return null;
     }
   }
@@ -107,7 +151,7 @@ interface Hasher {
       return Crc32cValue.of(Hashing.crc32c().hashBytes(b).asInt(), remaining);
     }
 
-    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    @SuppressWarnings({"UnstableApiUsage"})
     @Override
     public @NonNull Crc32cLengthKnown hash(ByteString byteString) {
       List<ByteBuffer> buffers = byteString.asReadOnlyByteBufferList();
@@ -118,7 +162,6 @@ interface Hasher {
       return Crc32cValue.of(crc32c.hash().asInt(), byteString.size());
     }
 
-    @SuppressWarnings({"ConstantConditions"})
     @Override
     public void validate(Crc32cValue<?> expected, ByteString byteString)
         throws ChecksumMismatchException {
@@ -137,7 +180,6 @@ interface Hasher {
       }
     }
 
-    @SuppressWarnings({"ConstantConditions"})
     @Override
     public void validateUnchecked(Crc32cValue<?> expected, ByteString byteString)
         throws UncheckedChecksumMismatchException {
@@ -149,12 +191,18 @@ interface Hasher {
 
     @Override
     @Nullable
-    public Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
+    public Crc32cLengthKnown nullSafeConcat(
+        @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2) {
       if (r1 == null) {
-        return r2;
+        return null;
       } else {
         return r1.concat(r2);
       }
+    }
+
+    @Override
+    public @NonNull Crc32cLengthKnown initialValue() {
+      return Crc32cValue.zero();
     }
   }
 
