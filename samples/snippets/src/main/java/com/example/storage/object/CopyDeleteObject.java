@@ -20,11 +20,12 @@ package com.example.storage.object;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class MoveObject {
-  public static void moveObject(
+public class CopyDeleteObject {
+  public static void copyDeleteObject(
       String projectId,
       String sourceBucketName,
       String sourceObjectName,
@@ -34,7 +35,7 @@ public class MoveObject {
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
-    // String bucketName = "your-unique-bucket-name";
+    // String sourceBucketName = "your-unique-bucket-name";
 
     // The ID of your GCS object
     // String sourceObjectName = "your-object-name";
@@ -53,7 +54,8 @@ public class MoveObject {
     // conditions and data corruptions. The request returns a 412 error if the
     // preconditions are not met.
     Storage.BlobTargetOption precondition;
-    if (storage.get(targetBucketName, targetObjectName) == null) {
+    BlobInfo existingTarget = storage.get(targetBucketName, targetObjectName);
+    if (existingTarget == null) {
       // For a target object that does not yet exist, set the DoesNotExist precondition.
       // This will cause the request to fail if the object is created before the request runs.
       precondition = Storage.BlobTargetOption.doesNotExist();
@@ -61,9 +63,7 @@ public class MoveObject {
       // If the destination already exists in your bucket, instead set a generation-match
       // precondition. This will cause the request to fail if the existing object's generation
       // changes before the request runs.
-      precondition =
-          Storage.BlobTargetOption.generationMatch(
-              storage.get(targetBucketName, targetObjectName).getGeneration());
+      precondition = Storage.BlobTargetOption.generationMatch(existingTarget.getGeneration());
     }
 
     // Copy source object to target object
