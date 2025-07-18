@@ -325,6 +325,18 @@ public final class StorageProto {
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_google_storage_v2_ObjectChecksums_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_google_storage_v2_ObjectCustomContextPayload_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_google_storage_v2_ObjectCustomContextPayload_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_google_storage_v2_ObjectContexts_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_google_storage_v2_ObjectContexts_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_google_storage_v2_ObjectContexts_CustomEntry_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_google_storage_v2_ObjectContexts_CustomEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
       internal_static_google_storage_v2_CustomerEncryption_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_google_storage_v2_CustomerEncryption_fieldAccessorTable;
@@ -666,7 +678,7 @@ public final class StorageProto {
           + "\014write_handle\030\003"
           + " \001(\0132\".google.storage.v2.BidiWriteHandleH\001\210\001\001B\016\n"
           + "\014write_statusB\017\n\r"
-          + "_write_handle\"\313\003\n"
+          + "_write_handle\"\340\003\n"
           + "\022ListObjectsRequest\0225\n"
           + "\006parent\030\001 \001(\tB%\340A\002\372A\037\n"
           + "\035storage.googleapis.com/Bucket\022\026\n"
@@ -683,12 +695,13 @@ public final class StorageProto {
           + "\014soft_deleted\030\014 \001(\010B\003\340A\001\022(\n"
           + "\033include_folders_as_prefixes\030\r"
           + " \001(\010B\003\340A\001\022\027\n\n"
-          + "match_glob\030\016 \001(\tB\003\340A\001B\014\n\n"
+          + "match_glob\030\016 \001(\tB\003\340A\001\022\023\n"
+          + "\006filter\030\017 \001(\tB\003\340A\001B\014\n\n"
           + "_read_mask\"\212\001\n"
           + "\027QueryWriteStatusRequest\022\026\n"
           + "\tupload_id\030\001 \001(\tB\003\340A\002\022W\n"
-          + "\034common_object_request_params\030\002 \001(\0132,.goo"
-          + "gle.storage.v2.CommonObjectRequestParamsB\003\340A\001\"s\n"
+          + "\034common_object_request_params\030\002"
+          + " \001(\0132,.google.storage.v2.CommonObjectRequestParamsB\003\340A\001\"s\n"
           + "\030QueryWriteStatusResponse\022\030\n"
           + "\016persisted_size\030\001 \001(\003H\000\022-\n"
           + "\010resource\030\002 \001(\0132\031.google.storage.v2.ObjectH\000B\016\n"
@@ -699,7 +712,8 @@ public final class StorageProto {
           + "\035storage.googleapis.com/Bucket\022F\n"
           + "\023destination_kms_key\030\033 \001(\tB)\340A\001\372A#\n"
           + "!cloudkms.googleapis.com/CryptoKey\0223\n"
-          + "\013destination\030\001 \001(\0132\031.google.storage.v2.ObjectB\003\340A\001\022<\n\r"
+          + "\013destination\030\001 \001(\0132\031.google.storage.v2.ObjectB\003\340A\001\022<\n"
+          + "\r"
           + "source_bucket\030\002 \001(\tB%\340A\002\372A\037\n"
           + "\035storage.googleapis.com/Bucket\022\032\n\r"
           + "source_object\030\003 \001(\tB\003\340A\002\022\036\n"
@@ -720,8 +734,8 @@ public final class StorageProto {
           + " copy_source_encryption_algorithm\030\020 \001(\tB\003\340A\001\022-\n"
           + " copy_source_encryption_key_bytes\030\025 \001(\014B\003\340A\001\0224\n"
           + "\'copy_source_encryption_key_sha256_bytes\030\026 \001(\014B\003\340A\001\022W\n"
-          + "\034common_object_request_params\030\023"
-          + " \001(\0132,.google.storage.v2.CommonObjectRequestParamsB\003\340A\001\022A\n"
+          + "\034common_object_request_params\030\023 \001(\0132,.google.s"
+          + "torage.v2.CommonObjectRequestParamsB\003\340A\001\022A\n"
           + "\020object_checksums\030\035"
           + " \001(\0132\".google.storage.v2.ObjectChecksumsB\003\340A\001B\026\n"
           + "\024_if_generation_matchB\032\n"
@@ -767,8 +781,8 @@ public final class StorageProto {
           + "\032StartResumableWriteRequest\022B\n"
           + "\021write_object_spec\030\001"
           + " \001(\0132\".google.storage.v2.WriteObjectSpecB\003\340A\002\022W\n"
-          + "\034common_object_request_params\030\003 \001(\0132,.google"
-          + ".storage.v2.CommonObjectRequestParamsB\003\340A\001\022A\n"
+          + "\034common_object_request_params\030\003"
+          + " \001(\0132,.google.storage.v2.CommonObjectRequestParamsB\003\340A\001\022A\n"
           + "\020object_checksums\030\005"
           + " \001(\0132\".google.storage.v2.ObjectChecksumsB\003\340A\001\"0\n"
           + "\033StartResumableWriteResponse\022\021\n"
@@ -825,8 +839,8 @@ public final class StorageProto {
           + "storage_class\030\007 \001(\tB\003\340A\001\022\020\n"
           + "\003rpo\030\033 \001(\tB\003\340A\001\0228\n"
           + "\003acl\030\010 \003(\0132&.google.storage.v2.BucketAccessControlB\003\340A\001\022G\n"
-          + "\022default_object_acl\030\t \003(\0132&"
-          + ".google.storage.v2.ObjectAccessControlB\003\340A\001\022;\n"
+          + "\022default_object_acl\030\t"
+          + " \003(\0132&.google.storage.v2.ObjectAccessControlB\003\340A\001\022;\n"
           + "\tlifecycle\030\n"
           + " \001(\0132#.google.storage.v2.Bucket.LifecycleB\003\340A\001\0224\n"
           + "\013create_time\030\013 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\0221\n"
@@ -834,34 +848,34 @@ public final class StorageProto {
           + "\013update_time\030\r"
           + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003\022%\n"
           + "\030default_event_based_hold\030\016 \001(\010B\003\340A\001\022:\n"
-          + "\006labels\030\017 \003(\0132%"
-          + ".google.storage.v2.Bucket.LabelsEntryB\003\340A\001\0227\n"
-          + "\007website\030\020"
-          + " \001(\0132!.google.storage.v2.Bucket.WebsiteB\003\340A\001\022=\n\n"
-          + "versioning\030\021 \001(\0132"
-          + "$.google.storage.v2.Bucket.VersioningB\003\340A\001\0227\n"
+          + "\006labels\030\017"
+          + " \003(\0132%.google.storage.v2.Bucket.LabelsEntryB\003\340A\001\0227\n"
+          + "\007website\030\020 \001(\013"
+          + "2!.google.storage.v2.Bucket.WebsiteB\003\340A\001\022=\n\n"
+          + "versioning\030\021"
+          + " \001(\0132$.google.storage.v2.Bucket.VersioningB\003\340A\001\0227\n"
           + "\007logging\030\022 \001(\0132!.google.storage.v2.Bucket.LoggingB\003\340A\001\022,\n"
           + "\005owner\030\023 \001(\0132\030.google.storage.v2.OwnerB\003\340A\003\022=\n\n"
           + "encryption\030\024"
           + " \001(\0132$.google.storage.v2.Bucket.EncryptionB\003\340A\001\0227\n"
           + "\007billing\030\025 \001(\0132!.google.storage.v2.Bucket.BillingB\003\340A\001\022H\n"
-          + "\020retention_policy\030\026"
-          + " \001(\0132).google.storage.v2.Bucket.RetentionPolicyB\003\340A\001\022<\n\n"
-          + "iam_config\030\027 \001(\0132"
-          + "#.google.storage.v2.Bucket.IamConfigB\003\340A\001\022\032\n\r"
+          + "\020retention_policy\030\026 \001(\0132).googl"
+          + "e.storage.v2.Bucket.RetentionPolicyB\003\340A\001\022<\n\n"
+          + "iam_config\030\027"
+          + " \001(\0132#.google.storage.v2.Bucket.IamConfigB\003\340A\001\022\032\n\r"
           + "satisfies_pzs\030\031 \001(\010B\003\340A\001\022U\n"
-          + "\027custom_placement_config\030\032"
-          + " \001(\0132/.google.storage.v2.Bucket.CustomPlacementConfigB\003\340A\001\022;\n"
-          + "\tautoclass\030\034"
-          + " \001(\0132#.google.storage.v2.Bucket.AutoclassB\003\340A\001\022T\n"
-          + "\026hierarchical_namespace\030 "
-          + " \001(\0132/.google.storage.v2.Bucket.HierarchicalNamespaceB\003\340A\001\022K\n"
-          + "\022soft_delete_policy\030\037"
-          + " \001(\0132*.google.storage.v2.Bucket.SoftDeletePolicyB\003\340A\001\022H\n"
+          + "\027custom_placement_config\030\032 "
+          + "\001(\0132/.google.storage.v2.Bucket.CustomPlacementConfigB\003\340A\001\022;\n"
+          + "\tautoclass\030\034 \001(\0132#.g"
+          + "oogle.storage.v2.Bucket.AutoclassB\003\340A\001\022T\n"
+          + "\026hierarchical_namespace\030  \001(\0132/.google."
+          + "storage.v2.Bucket.HierarchicalNamespaceB\003\340A\001\022K\n"
+          + "\022soft_delete_policy\030\037 \001(\0132*.googl"
+          + "e.storage.v2.Bucket.SoftDeletePolicyB\003\340A\001\022H\n"
           + "\020object_retention\030!"
           + " \001(\0132).google.storage.v2.Bucket.ObjectRetentionB\003\340A\001\022?\n"
-          + "\tip_filter\030& \001(\0132\".goog"
-          + "le.storage.v2.Bucket.IpFilterB\003\340A\001H\000\210\001\001\032&\n"
+          + "\tip_filter\030&"
+          + " \001(\0132\".google.storage.v2.Bucket.IpFilterB\003\340A\001H\000\210\001\001\032&\n"
           + "\007Billing\022\033\n"
           + "\016requester_pays\030\001 \001(\010B\003\340A\001\032l\n"
           + "\004Cors\022\023\n"
@@ -872,14 +886,16 @@ public final class StorageProto {
           + "Encryption\022B\n"
           + "\017default_kms_key\030\001 \001(\tB)\340A\001\372A#\n"
           + "!cloudkms.googleapis.com/CryptoKey\022\215\001\n"
-          + ",google_managed_encryption_enforcement_config\030\002"
-          + " \001(\0132M.google.storage.v2.Bucket.Encry"
-          + "ption.GoogleManagedEncryptionEnforcementConfigB\003\340A\001H\000\210\001\001\022\221\001\n"
-          + ".customer_managed_en",
-      "cryption_enforcement_config\030\003 \001(\0132O.google.storage.v2.Bucket.Encryption.Customer"
-          + "ManagedEncryptionEnforcementConfigB\003\340A\001H\001\210\001\001\022\223\001\n"
-          + "/customer_supplied_encryption_enforcement_config\030\004 \001(\0132P.google.storage."
-          + "v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfigB\003\340A\001H\002\210\001\001\032\252\001\n"
+          + ",google_managed_encryption_enforcement_config\030\002 \001(\0132M.google.st"
+          + "orage.v2.Bucket.Encryption.GoogleManaged"
+          + "EncryptionEnforcementConfigB\003\340A\001H\000\210\001\001\022\221\001",
+      "\n"
+          + ".customer_managed_encryption_enforcement_config\030\003"
+          + " \001(\0132O.google.storage.v2.Bucke"
+          + "t.Encryption.CustomerManagedEncryptionEnforcementConfigB\003\340A\001H\001\210\001\001\022\223\001\n"
+          + "/customer_supplied_encryption_enforcement_config\030\004 "
+          + "\001(\0132P.google.storage.v2.Bucket.Encryptio"
+          + "n.CustomerSuppliedEncryptionEnforcementConfigB\003\340A\001H\002\210\001\001\032\252\001\n"
           + "(GoogleManagedEncryptionEnforcementConfig\022\035\n"
           + "\020restriction_mode\030\003 \001(\tH\000\210\001\001\0227\n"
           + "\016effective_time\030\002"
@@ -902,21 +918,21 @@ public final class StorageProto {
           + "/_customer_managed_encryption_enforcement_configB2\n"
           + "0_customer_supplied_encryption_enforcement_config\032\200\002\n"
           + "\tIamConfig\022f\n"
-          + "\033uniform_bucket_level_access\030\001 \001("
-          + "\0132<.google.storage.v2.Bucket.IamConfig.UniformBucketLevelAccessB\003\340A\001\022%\n"
+          + "\033uniform_bucket_level_access\030\001 \001(\0132<.google.storage."
+          + "v2.Bucket.IamConfig.UniformBucketLevelAccessB\003\340A\001\022%\n"
           + "\030public_access_prevention\030\003 \001(\tB\003\340A\001\032d\n"
           + "\030UniformBucketLevelAccess\022\024\n"
           + "\007enabled\030\001 \001(\010B\003\340A\001\0222\n"
           + "\tlock_time\030\002"
           + " \001(\0132\032.google.protobuf.TimestampB\003\340A\001\032\252\006\n"
           + "\tLifecycle\022;\n"
-          + "\004rule\030\001 \003(\0132(."
-          + "google.storage.v2.Bucket.Lifecycle.RuleB\003\340A\001\032\337\005\n"
+          + "\004rule\030\001"
+          + " \003(\0132(.google.storage.v2.Bucket.Lifecycle.RuleB\003\340A\001\032\337\005\n"
           + "\004Rule\022D\n"
-          + "\006action\030\001 \001(\0132/.google.s"
-          + "torage.v2.Bucket.Lifecycle.Rule.ActionB\003\340A\001\022J\n"
-          + "\tcondition\030\002 \001(\01322.google.storage."
-          + "v2.Bucket.Lifecycle.Rule.ConditionB\003\340A\001\0327\n"
+          + "\006action\030\001"
+          + " \001(\0132/.google.storage.v2.Bucket.Lifecycle.Rule.ActionB\003\340A\001\022J\n"
+          + "\tcondition\030\002 "
+          + "\001(\01322.google.storage.v2.Bucket.Lifecycle.Rule.ConditionB\003\340A\001\0327\n"
           + "\006Action\022\021\n"
           + "\004type\030\001 \001(\tB\003\340A\001\022\032\n\r"
           + "storage_class\030\002 \001(\tB\003\340A\001\032\213\004\n"
@@ -973,10 +989,10 @@ public final class StorageProto {
           + "#_terminal_storage_class_update_time\032\375\003\n"
           + "\010IpFilter\022\021\n"
           + "\004mode\030\001 \001(\tH\000\210\001\001\022Z\n"
-          + "\025public_network_source\030\002"
-          + " \001(\01326.google.storage.v2.Bucket.IpFilter.PublicNetworkSourceH\001\210\001\001\022U\n"
-          + "\023vpc_network_sources\030\003 \003(\01323.google.storag"
-          + "e.v2.Bucket.IpFilter.VpcNetworkSourceB\003\340A\001\022!\n"
+          + "\025public_network_source\030\002 \001(\01326.go"
+          + "ogle.storage.v2.Bucket.IpFilter.PublicNetworkSourceH\001\210\001\001\022U\n"
+          + "\023vpc_network_sources\030\003"
+          + " \003(\01323.google.storage.v2.Bucket.IpFilter.VpcNetworkSourceB\003\340A\001\022!\n"
           + "\024allow_cross_org_vpcs\030\004 \001(\010B\003\340A\001\022+\n"
           + "\036allow_all_service_agent_access\030\005 \001(\010H\002\210\001\001\032:\n"
           + "\023PublicNetworkSource\022#\n"
@@ -993,8 +1009,8 @@ public final class StorageProto {
           + "\013LabelsEntry\022\013\n"
           + "\003key\030\001 \001(\t\022\r\n"
           + "\005value\030\002 \001(\t:\0028\001:X\352AU\n"
-          + "\035storage.googleapis.com/Bucket\022#proje"
-          + "cts/{project}/buckets/{bucket}*\007buckets2\006bucketB\014\n\n"
+          + "\035storage.googlea"
+          + "pis.com/Bucket\022#projects/{project}/buckets/{bucket}*\007buckets2\006bucketB\014\n\n"
           + "_ip_filter\"\366\001\n"
           + "\023BucketAccessControl\022\021\n"
           + "\004role\030\001 \001(\tB\003\340A\001\022\017\n"
@@ -1014,16 +1030,29 @@ public final class StorageProto {
           + "\017ObjectChecksums\022\023\n"
           + "\006crc32c\030\001 \001(\007H\000\210\001\001\022\025\n"
           + "\010md5_hash\030\002 \001(\014B\003\340A\001B\t\n"
-          + "\007_crc32c\"V\n"
+          + "\007_crc32c\"\234\001\n"
+          + "\032ObjectCustomContextPayload\022\022\n"
+          + "\005value\030\001 \001(\tB\003\340A\002\0224\n"
+          + "\013create_time\030\002 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\0224\n"
+          + "\013update_time\030\003"
+          + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003\"\262\001\n"
+          + "\016ObjectContexts\022B\n"
+          + "\006custom\030\001 \003(\0132-.goo"
+          + "gle.storage.v2.ObjectContexts.CustomEntryB\003\340A\001\032\\\n"
+          + "\013CustomEntry\022\013\n"
+          + "\003key\030\001 \001(\t\022<\n"
+          + "\005value\030\002"
+          + " \001(\0132-.google.storage.v2.ObjectCustomContextPayload:\0028\001\"V\n"
           + "\022CustomerEncryption\022!\n"
           + "\024encryption_algorithm\030\001 \001(\tB\003\340A\001\022\035\n"
-          + "\020key_sha256_bytes\030\003 \001(\014B\003\340A\001\"\327\r\n"
+          + "\020key_sha256_bytes\030\003 \001(\014B\003\340A\001\"\221\016\n"
           + "\006Object\022\021\n"
           + "\004name\030\001 \001(\tB\003\340A\005\0225\n"
           + "\006bucket\030\002 \001(\tB%\340A\005\372A\037\n"
           + "\035storage.googleapis.com/Bucket\022\021\n"
           + "\004etag\030\033 \001(\tB\003\340A\001\022\027\n\n"
-          + "generation\030\003 \001(\003B\003\340A\005\022\037\n\r"
+          + "generation\030\003 \001(\003B\003\340A\005\022\037\n"
+          + "\r"
           + "restore_token\030# \001(\tB\003\340A\003H\000\210\001\001\022\033\n"
           + "\016metageneration\030\004 \001(\003B\003\340A\003\022\032\n\r"
           + "storage_class\030\005 \001(\tB\003\340A\001\022\021\n"
@@ -1053,7 +1082,8 @@ public final class StorageProto {
           + "\025retention_expire_time\030\025"
           + " \001(\0132\032.google.protobuf.TimestampB\003\340A\001\022>\n"
           + "\010metadata\030\026"
-          + " \003(\0132\'.google.storage.v2.Object.MetadataEntryB\003\340A\001\022\035\n"
+          + " \003(\0132\'.google.storage.v2.Object.MetadataEntryB\003\340A\001\0228\n"
+          + "\010contexts\030& \001(\0132!.google.storage.v2.ObjectContextsB\003\340A\001\022\035\n"
           + "\020event_based_hold\030\027 \001(\010H\001\210\001\001\022,\n"
           + "\005owner\030\030 \001(\0132\030.google.storage.v2.OwnerB\003\340A\003\022G\n"
           + "\023customer_encryption\030\031"
@@ -1061,10 +1091,10 @@ public final class StorageProto {
           + "\013custom_time\030\032 \001(\0132\032.google.protobuf.TimestampB\003\340A\001\022>\n"
           + "\020soft_delete_time\030\034"
           + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003H\002\210\001\001\022>\n"
-          + "\020hard_delete_time\030\035 \001("
-          + "\0132\032.google.protobuf.TimestampB\003\340A\003H\003\210\001\001\022;\n"
-          + "\tretention\030\036"
-          + " \001(\0132#.google.storage.v2.Object.RetentionB\003\340A\001\032\274\001\n"
+          + "\020hard_delete_time\030\035"
+          + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003H\003\210\001\001\022;\n"
+          + "\tretention\030\036 \001(\0132#."
+          + "google.storage.v2.Object.RetentionB\003\340A\001\032\274\001\n"
           + "\tRetention\022;\n"
           + "\004mode\030\001"
           + " \001(\0162(.google.storage.v2.Object.Retention.ModeB\003\340A\001\022:\n"
@@ -1107,98 +1137,96 @@ public final class StorageProto {
           + "\003end\030\002 \001(\003\022\027\n"
           + "\017complete_length\030\003 \001(\0032\237\037\n"
           + "\007Storage\022r\n"
-          + "\014DeleteBucket\022&.goo"
-          + "gle.storage.v2.DeleteBucketRequest\032\026.google.protobuf.Empty\"\"\332A\004name\212\323\344\223\002\025\022\023\n"
+          + "\014DeleteBucket\022&.google.storage.v2.Delete"
+          + "BucketRequest\032\026.google.protobuf.Empty\"\"\332A\004name\212\323\344\223\002\025\022\023\n"
           + "\004name\022\013{bucket=**}\022o\n"
-          + "\tGetBucket\022#.google.sto"
-          + "rage.v2.GetBucketRequest\032\031.google.storage.v2.Bucket\"\"\332A\004name\212\323\344\223\002\025\022\023\n"
+          + "\tGetBucket\022#.google.storage.v2.GetBucketRequ"
+          + "est\032\031.google.storage.v2.Bucket\"\"\332A\004name\212\323\344\223\002\025\022\023\n"
           + "\004name\022\013{bucket=**}\022\253\001\n"
-          + "\014CreateBucket\022&.google.storage.v2.CreateBucketRequest\032\031.google.storag"
-          + "e.v2.Bucket\"X\332A\027parent,bucket,bucket_id\212\323\344\223\0028\022\026\n"
+          + "\014CreateBucket\022&.google.storage.v2.CreateBucketRequ"
+          + "est\032\031.google.storage.v2.Bucket\"X\332A\027parent,bucket,bucket_id\212\323\344\223\0028\022\026\n"
           + "\006parent\022\014{project=**}\022\036\n"
           + "\016bucket.project\022\014{project=**}\022\205\001\n"
-          + "\013ListBuckets\022%.google.storage.v2.ListBucketsRequest\032&.g"
-          + "oogle.storage.v2.ListBucketsResponse\"\'\332A\006parent\212\323\344\223\002\030\022\026\n"
+          + "\013ListBuckets\022%.google.storage.v2.Lis"
+          + "tBucketsRequest\032&.google.storage.v2.ListBucketsResponse\"\'\332A\006parent\212\323\344\223\002\030\022\026\n"
           + "\006parent\022\014{project=**}\022\223\001\n"
-          + "\031LockBucketRetentionPolicy\0223.google.storage.v2.LockBucketRetentionPolicyRequest"
-          + "\032\031.google.storage.v2.Bucket\"&\332A\006bucket\212\323\344\223\002\027\022\025\n"
+          + "\031LockBucketRetentionPolicy\0223.google.storage.v2.LockBucketRet"
+          + "entionPolicyRequest\032\031.google.storage.v2.Bucket\"&\332A\006bucket\212\323\344\223\002\027\022\025\n"
           + "\006bucket\022\013{bucket=**}\022\243\001\n"
-          + "\014GetIamPolicy\022\".google.iam.v1.GetIamPolicyRequest"
-          + "\032\025.google.iam.v1.Policy\"X\332A\010resource\212\323\344\223\002G\022\027\n"
+          + "\014GetIamPolicy\022\".google.iam.v1."
+          + "GetIamPolicyRequest\032\025.google.iam.v1.Policy\"X\332A\010resource\212\323\344\223\002G\022\027\n"
           + "\010resource\022\013{bucket=**}\022,\n"
           + "\010resource\022 {bucket=projects/*/buckets/*}/**\022\252\001\n"
-          + "\014SetIamPolicy\022\".google.iam.v1.SetIamPolicyR"
-          + "equest\032\025.google.iam.v1.Policy\"_\332A\017resource,policy\212\323\344\223\002G\022\027\n"
+          + "\014SetIamPolicy\022\".google.i"
+          + "am.v1.SetIamPolicyRequest\032\025.google.iam.v1.Policy\"_\332A\017resource,policy\212\323\344\223\002G\022\027\n"
           + "\010resource\022\013{bucket=**}\022,\n"
           + "\010resource\022 {bucket=projects/*/buckets/*}/**\022\226\002\n"
-          + "\022TestIamPermissions\022(.google.iam.v1.TestIamPermissionsRequest\032).google"
-          + ".iam.v1.TestIamPermissionsResponse\"\252\001\332A\024resource,permissions\212\323\344\223\002\214\001\022\027\n"
+          + "\022TestIamPermissions\022(.google.iam.v1.TestIamPermissi"
+          + "onsRequest\032).google.iam.v1.TestIamPermis"
+          + "sionsResponse\"\252\001\332A\024resource,permissions\212\323\344\223\002\214\001\022\027\n"
           + "\010resource\022\013{bucket=**}\0224\n"
           + "\010resource\022({bucket=projects/*/buckets/*}/objects/**\022;\n"
           + "\010resource\022/{bucket=projects/*/buckets/*}/managedFolders/**\022\212\001\n"
-          + "\014UpdateBucket\022&.google.storage.v2.UpdateBucketRequest\032\031.google.storag"
-          + "e.v2.Bucket\"7\332A\022bucket,update_mask\212\323\344\223\002\034\022\032\n"
+          + "\014UpdateBucket\022&.google.storage.v2.UpdateBucketRequ"
+          + "est\032\031.google.storage.v2.Bucket\"7\332A\022bucket,update_mask\212\323\344\223\002\034\022\032\n"
           + "\013bucket.name\022\013{bucket=**}\022~\n\r"
-          + "ComposeObject\022\'.google.storage.v2.ComposeObjectR"
-          + "equest\032\031.google.storage.v2.Object\")\212\323\344\223\002#\022!\n"
+          + "ComposeObject\022\'.google.storag"
+          + "e.v2.ComposeObjectRequest\032\031.google.storage.v2.Object\")\212\323\344\223\002#\022!\n"
           + "\022destination.bucket\022\013{bucket=**}\022\230\001\n"
-          + "\014DeleteObject\022&.google.storage.v2.Delete"
-          + "ObjectRequest\032\026.google.protobuf.Empty\"H\332A\r"
+          + "\014DeleteObject\022&.googl"
+          + "e.storage.v2.DeleteObjectRequest\032\026.google.protobuf.Empty\"H\332A\r"
           + "bucket,object\332A\030bucket,object,generation\212\323\344\223\002\027\022\025\n"
           + "\006bucket\022\013{bucket=**}\022\215\001\n\r"
-          + "RestoreObject\022\'.google.storage.v2.RestoreObj"
-          + "ectRequest\032\031.google.storage.v2.Object\"8\332A\030bucket,object,generation\212\323\344\223\002\027\022\025\n"
+          + "RestoreObject\022\'.google.storage.v2.RestoreObjectRequest\032\031.google.s"
+          + "torage.v2.Object\"8\332A\030bucket,object,generation\212\323\344\223\002\027\022\025\n"
           + "\006bucket\022\013{bucket=**}\022\272\001\n"
-          + "\024CancelResumableWrite\022..google.storage.v2.CancelResumableWrit"
-          + "eRequest\032/.google.storage.v2.CancelResumableWriteResponse\"A\332A"
-          + "\tupload_id\212\323\344\223\002/\022-\n"
+          + "\024CancelResumableWrite\022..google.storage.v2."
+          + "CancelResumableWriteRequest\032/.google.sto"
+          + "rage.v2.CancelResumableWriteResponse\"A\332A\tupload_id\212\323\344\223\002/\022-\n"
           + "\tupload_id\022 {bucket=projects/*/buckets/*}/**\022\225\001\n"
-          + "\tGetObject\022#.google.storage.v2.G"
-          + "etObjectRequest\032\031.google.storage.v2.Object\"H\332A\r"
+          + "\tGetObject\022#."
+          + "google.storage.v2.GetObjectRequest\032\031.google.storage.v2.Object\"H\332A\r"
           + "bucket,object\332A\030bucket,object,generation\212\323\344\223\002\027\022\025\n"
-          + "\006bucket\022\013{bucket=**}\022\245\001\n"
-          + "\n"
-          + "ReadObject\022$.google.storage.v2.ReadObje"
-          + "ctRequest\032%.google.storage.v2.ReadObjectResponse\"H\332A\r"
+          + "\006bucket\022\013{bucket=**}\022\245\001\n\n"
+          + "ReadObject\022$.google."
+          + "storage.v2.ReadObjectRequest\032%.google.storage.v2.ReadObjectResponse\"H\332A\r"
           + "bucket,object\332A\030bucket,object,generation\212\323\344\223\002\027\022\025\n"
           + "\006bucket\022\013{bucket=**}0\001\022\231\001\n"
-          + "\016BidiReadObject\022(.google.storage"
-          + ".v2.BidiReadObjectRequest\032).google.storage.v2.BidiReadObjectResponse\".\212\323\344\223\002(\022&\n"
+          + "\016BidiReadObject\022(.google.storage.v2.BidiReadObjectReq"
+          + "uest\032).google.storage.v2.BidiReadObjectResponse\".\212\323\344\223\002(\022&\n"
           + "\027read_object_spec.bucket\022\013{bucket=**}(\0010\001\022\214\001\n"
-          + "\014UpdateObject\022&.google.storage.v2.Up"
-          + "dateObjectRequest\032\031.google.storage.v2.Object\"9\332A\022object,update_mask\212\323\344\223\002\036\022\034\n\r"
+          + "\014UpdateObject\022&.google.storage.v2.UpdateObjectRequest\032\031.g"
+          + "oogle.storage.v2.Object\"9\332A\022object,update_mask\212\323\344\223\002\036\022\034\n\r"
           + "object.bucket\022\013{bucket=**}\022`\n"
-          + "\013WriteObject\022%.google.storage.v2.WriteObjectRequest\032&."
-          + "google.storage.v2.WriteObjectResponse\"\000(\001\022n\n"
-          + "\017BidiWriteObject\022).google.storage.v2"
-          + ".BidiWriteObjectRequest\032*.google.storage.v2.BidiWriteObjectResponse\"\000(\0010\001\022\204\001\n"
-          + "\013ListObjects\022%.google.storage.v2.ListObject"
-          + "sRequest\032&.google.storage.v2.ListObjectsResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
+          + "\013WriteObject\022%.google.storage.v2.Wr"
+          + "iteObjectRequest\032&.google.storage.v2.WriteObjectResponse\"\000(\001\022n\n"
+          + "\017BidiWriteObject\022).google.storage.v2.BidiWriteObjectReque"
+          + "st\032*.google.storage.v2.BidiWriteObjectResponse\"\000(\0010\001\022\204\001\n"
+          + "\013ListObjects\022%.google.storage.v2.ListObjectsRequest\032&.google.sto"
+          + "rage.v2.ListObjectsResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\230\001\n\r"
-          + "RewriteObject\022\'.google.stor"
-          + "age.v2.RewriteObjectRequest\032\".google.storage.v2.RewriteResponse\":\212\323\344\223\0024\022\017\n\r"
+          + "RewriteObject\022\'.google.storage.v2.RewriteObjectR"
+          + "equest\032\".google.storage.v2.RewriteResponse\":\212\323\344\223\0024\022\017\n\r"
           + "source_bucket\022!\n"
           + "\022destination_bucket\022\013{bucket=**}\022\256\001\n"
-          + "\023StartResumableWrite\022-.google.storage.v2.StartResumableWriteRequest\032..goo"
-          + "gle.storage.v2.StartResumableWriteResponse\"8\212\323\344\223\0022\0220\n"
+          + "\023StartResumableWrite\022-.google.storage.v2.StartResumabl"
+          + "eWriteRequest\032..google.storage.v2.StartResumableWriteResponse\"8\212\323\344\223\0022\0220\n"
           + "!write_object_spec.resource.bucket\022\013{bucket=**}\022\256\001\n"
-          + "\020QueryWriteStatus\022*.google.storage.v2.QueryWriteStatusRe"
-          + "quest\032+.google.storage.v2.QueryWriteStatusResponse\"A\332A"
+          + "\020QueryWriteStatus\022*.google.storage.v2"
+          + ".QueryWriteStatusRequest\032+.google.storage.v2.QueryWriteStatusResponse\"A\332A"
           + "\tupload_id\212\323\344\223\002/\022-\n"
           + "\tupload_id\022 {bucket=projects/*/buckets/*}/**\022\226\001\n\n"
-          + "MoveObject\022$.google.storage.v2.MoveObj"
-          + "ectRequest\032\031.google.storage.v2.Object\"G\332"
-          + "A\'bucket,source_object,destination_object\212\323\344\223\002\027\022\025\n"
-          + "\006bucket\022\013{bucket=**}\032\247\002\312A\026stor"
-          + "age.googleapis.com\322A\212\002https://www.google"
-          + "apis.com/auth/cloud-platform,https://www.googleapis.com/auth/cloud-platform.read"
-          + "-only,https://www.googleapis.com/auth/devstorage.full_control,https://www.google"
-          + "apis.com/auth/devstorage.read_only,https"
-          + "://www.googleapis.com/auth/devstorage.read_writeB\342\001\n"
-          + "\025com.google.storage.v2B\014Stor"
-          + "ageProtoP\001Z>cloud.google.com/go/storage/internal/apiv2/storagepb;storagepb\352Ax\n"
-          + "!cloudkms.googleapis.com/CryptoKey\022Sprojects/{project}/locations/{location}/keyRin"
-          + "gs/{key_ring}/cryptoKeys/{crypto_key}b\006proto3"
+          + "MoveObject\022$.google.storage.v2.MoveObjectRequest\032\031.google.s"
+          + "torage.v2.Object\"G\332A\'bucket,source_object,destination_object\212\323\344\223\002\027\022\025\n"
+          + "\006bucket\022\013{bucket=**}\032\247\002\312A\026storage.googleapis.com\322A\212"
+          + "\002https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/"
+          + "cloud-platform.read-only,https://www.googleapis.com/auth/devstorage.full_control"
+          + ",https://www.googleapis.com/auth/devstor"
+          + "age.read_only,https://www.googleapis.com/auth/devstorage.read_writeB\342\001\n"
+          + "\025com.google.storage.v2B\014StorageProtoP\001Z>cloud.goo"
+          + "gle.com/go/storage/internal/apiv2/storagepb;storagepb\352Ax\n"
+          + "!cloudkms.googleapis.com/CryptoKey\022Sprojects/{project}/location"
+          + "s/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1603,6 +1631,7 @@ public final class StorageProto {
               "SoftDeleted",
               "IncludeFoldersAsPrefixes",
               "MatchGlob",
+              "Filter",
             });
     internal_static_google_storage_v2_QueryWriteStatusRequest_descriptor =
         getDescriptor().getMessageTypes().get(33);
@@ -2009,15 +2038,39 @@ public final class StorageProto {
             new java.lang.String[] {
               "Crc32C", "Md5Hash",
             });
-    internal_static_google_storage_v2_CustomerEncryption_descriptor =
+    internal_static_google_storage_v2_ObjectCustomContextPayload_descriptor =
         getDescriptor().getMessageTypes().get(47);
+    internal_static_google_storage_v2_ObjectCustomContextPayload_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_google_storage_v2_ObjectCustomContextPayload_descriptor,
+            new java.lang.String[] {
+              "Value", "CreateTime", "UpdateTime",
+            });
+    internal_static_google_storage_v2_ObjectContexts_descriptor =
+        getDescriptor().getMessageTypes().get(48);
+    internal_static_google_storage_v2_ObjectContexts_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_google_storage_v2_ObjectContexts_descriptor,
+            new java.lang.String[] {
+              "Custom",
+            });
+    internal_static_google_storage_v2_ObjectContexts_CustomEntry_descriptor =
+        internal_static_google_storage_v2_ObjectContexts_descriptor.getNestedTypes().get(0);
+    internal_static_google_storage_v2_ObjectContexts_CustomEntry_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_google_storage_v2_ObjectContexts_CustomEntry_descriptor,
+            new java.lang.String[] {
+              "Key", "Value",
+            });
+    internal_static_google_storage_v2_CustomerEncryption_descriptor =
+        getDescriptor().getMessageTypes().get(49);
     internal_static_google_storage_v2_CustomerEncryption_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_CustomerEncryption_descriptor,
             new java.lang.String[] {
               "EncryptionAlgorithm", "KeySha256Bytes",
             });
-    internal_static_google_storage_v2_Object_descriptor = getDescriptor().getMessageTypes().get(48);
+    internal_static_google_storage_v2_Object_descriptor = getDescriptor().getMessageTypes().get(50);
     internal_static_google_storage_v2_Object_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Object_descriptor,
@@ -2047,6 +2100,7 @@ public final class StorageProto {
               "TemporaryHold",
               "RetentionExpireTime",
               "Metadata",
+              "Contexts",
               "EventBasedHold",
               "Owner",
               "CustomerEncryption",
@@ -2072,7 +2126,7 @@ public final class StorageProto {
               "Key", "Value",
             });
     internal_static_google_storage_v2_ObjectAccessControl_descriptor =
-        getDescriptor().getMessageTypes().get(49);
+        getDescriptor().getMessageTypes().get(51);
     internal_static_google_storage_v2_ObjectAccessControl_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ObjectAccessControl_descriptor,
@@ -2088,7 +2142,7 @@ public final class StorageProto {
               "ProjectTeam",
             });
     internal_static_google_storage_v2_ListObjectsResponse_descriptor =
-        getDescriptor().getMessageTypes().get(50);
+        getDescriptor().getMessageTypes().get(52);
     internal_static_google_storage_v2_ListObjectsResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ListObjectsResponse_descriptor,
@@ -2096,14 +2150,14 @@ public final class StorageProto {
               "Objects", "Prefixes", "NextPageToken",
             });
     internal_static_google_storage_v2_ProjectTeam_descriptor =
-        getDescriptor().getMessageTypes().get(51);
+        getDescriptor().getMessageTypes().get(53);
     internal_static_google_storage_v2_ProjectTeam_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ProjectTeam_descriptor,
             new java.lang.String[] {
               "ProjectNumber", "Team",
             });
-    internal_static_google_storage_v2_Owner_descriptor = getDescriptor().getMessageTypes().get(52);
+    internal_static_google_storage_v2_Owner_descriptor = getDescriptor().getMessageTypes().get(54);
     internal_static_google_storage_v2_Owner_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Owner_descriptor,
@@ -2111,7 +2165,7 @@ public final class StorageProto {
               "Entity", "EntityId",
             });
     internal_static_google_storage_v2_ContentRange_descriptor =
-        getDescriptor().getMessageTypes().get(53);
+        getDescriptor().getMessageTypes().get(55);
     internal_static_google_storage_v2_ContentRange_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ContentRange_descriptor,

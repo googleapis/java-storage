@@ -47,6 +47,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     lexicographicStart_ = "";
     lexicographicEnd_ = "";
     matchGlob_ = "";
+    filter_ = "";
   }
 
   @java.lang.Override
@@ -637,6 +638,63 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     }
   }
 
+  public static final int FILTER_FIELD_NUMBER = 15;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object filter_ = "";
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter the returned objects. Currently only supported for the
+   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+   * from this filter.
+   * </pre>
+   *
+   * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The filter.
+   */
+  @java.lang.Override
+  public java.lang.String getFilter() {
+    java.lang.Object ref = filter_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      filter_ = s;
+      return s;
+    }
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter the returned objects. Currently only supported for the
+   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+   * from this filter.
+   * </pre>
+   *
+   * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for filter.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getFilterBytes() {
+    java.lang.Object ref = filter_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      filter_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -690,6 +748,9 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(matchGlob_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 14, matchGlob_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(filter_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 15, filter_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -738,6 +799,9 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(matchGlob_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, matchGlob_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(filter_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, filter_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -769,6 +833,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     if (getSoftDeleted() != other.getSoftDeleted()) return false;
     if (getIncludeFoldersAsPrefixes() != other.getIncludeFoldersAsPrefixes()) return false;
     if (!getMatchGlob().equals(other.getMatchGlob())) return false;
+    if (!getFilter().equals(other.getFilter())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -808,6 +873,8 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIncludeFoldersAsPrefixes());
     hash = (37 * hash) + MATCH_GLOB_FIELD_NUMBER;
     hash = (53 * hash) + getMatchGlob().hashCode();
+    hash = (37 * hash) + FILTER_FIELD_NUMBER;
+    hash = (53 * hash) + getFilter().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -974,6 +1041,7 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       softDeleted_ = false;
       includeFoldersAsPrefixes_ = false;
       matchGlob_ = "";
+      filter_ = "";
       return this;
     }
 
@@ -1050,6 +1118,9 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       }
       if (((from_bitField0_ & 0x00001000) != 0)) {
         result.matchGlob_ = matchGlob_;
+      }
+      if (((from_bitField0_ & 0x00002000) != 0)) {
+        result.filter_ = filter_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -1150,6 +1221,11 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       if (!other.getMatchGlob().isEmpty()) {
         matchGlob_ = other.matchGlob_;
         bitField0_ |= 0x00001000;
+        onChanged();
+      }
+      if (!other.getFilter().isEmpty()) {
+        filter_ = other.filter_;
+        bitField0_ |= 0x00002000;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -1256,6 +1332,12 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
                 bitField0_ |= 0x00001000;
                 break;
               } // case 114
+            case 122:
+              {
+                filter_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00002000;
+                break;
+              } // case 122
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -2655,6 +2737,127 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
       checkByteStringIsUtf8(value);
       matchGlob_ = value;
       bitField0_ |= 0x00001000;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object filter_ = "";
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Filter the returned objects. Currently only supported for the
+     * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+     * from this filter.
+     * </pre>
+     *
+     * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The filter.
+     */
+    public java.lang.String getFilter() {
+      java.lang.Object ref = filter_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        filter_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Filter the returned objects. Currently only supported for the
+     * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+     * from this filter.
+     * </pre>
+     *
+     * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The bytes for filter.
+     */
+    public com.google.protobuf.ByteString getFilterBytes() {
+      java.lang.Object ref = filter_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        filter_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Filter the returned objects. Currently only supported for the
+     * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+     * from this filter.
+     * </pre>
+     *
+     * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The filter to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFilter(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      filter_ = value;
+      bitField0_ |= 0x00002000;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Filter the returned objects. Currently only supported for the
+     * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+     * from this filter.
+     * </pre>
+     *
+     * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearFilter() {
+      filter_ = getDefaultInstance().getFilter();
+      bitField0_ = (bitField0_ & ~0x00002000);
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Filter the returned objects. Currently only supported for the
+     * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
+     * from this filter.
+     * </pre>
+     *
+     * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The bytes for filter to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFilterBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+      filter_ = value;
+      bitField0_ |= 0x00002000;
       onChanged();
       return this;
     }
