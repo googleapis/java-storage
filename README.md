@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.63.0</version>
+      <version>26.64.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -46,12 +46,12 @@ If you are using Maven without the BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.53.2</version>
+  <version>2.53.3</version>
 </dependency>
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-control</artifactId>
-  <version>2.53.2</version>
+  <version>2.53.3</version>
 </dependency>
 
 ```
