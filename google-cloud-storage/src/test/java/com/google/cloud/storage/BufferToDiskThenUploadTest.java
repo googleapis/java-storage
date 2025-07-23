@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -72,5 +73,102 @@ public final class BufferToDiskThenUploadTest {
     String xxdActual = xxd(actualBytes.get());
     String xxdExpected = xxd(bytes);
     assertThat(xxdActual).isEqualTo(xxdExpected);
+  }
+
+  @Test
+  public void crc32c_default() throws IOException {
+    Path tempDir = temporaryFolder.newFolder(testName.getMethodName()).toPath();
+
+    BufferToDiskThenUpload btdtu = BlobWriteSessionConfigs.bufferToDiskThenUpload(tempDir);
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    WriterFactory factory = btdtu.createFactory(clock);
+
+    BlobInfo blobInfo = BlobInfo.newBuilder("bucket", "object").build();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(128));
+    WritableByteChannelSession<?, BlobInfo> writeSession =
+        factory.writeSession(
+            new StorageInternal() {
+              @Override
+              public BlobInfo internalCreateFrom(
+                  Path path, BlobInfo info, Opts<ObjectTargetOpt> opts) {
+                assertThat(info.getCrc32c()).isEqualTo(testContent.getCrc32cBase64());
+                assertThat(opts)
+                    .isEqualTo(Opts.from(UnifiedOpts.crc32cMatch(testContent.getCrc32c())));
+                return info;
+              }
+            },
+            blobInfo,
+            Opts.empty());
+
+    try (WritableByteChannel open = writeSession.open()) {
+      open.write(ByteBuffer.wrap(testContent.getBytes()));
+    }
+  }
+
+  @Test
+  public void userProvidedCrc32cTakesPriority() throws IOException {
+    Path tempDir = temporaryFolder.newFolder(testName.getMethodName()).toPath();
+
+    BufferToDiskThenUpload btdtu = BlobWriteSessionConfigs.bufferToDiskThenUpload(tempDir);
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    WriterFactory factory = btdtu.createFactory(clock);
+
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder("bucket", "object")
+            .setCrc32c(Utils.crc32cCodec.encode(737))
+            .setMd5("something")
+            .build();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(128));
+    Opts<ObjectTargetOpt> origOpts = Opts.from(UnifiedOpts.crc32cMatch(737));
+    WritableByteChannelSession<?, BlobInfo> writeSession =
+        factory.writeSession(
+            new StorageInternal() {
+              @Override
+              public BlobInfo internalCreateFrom(
+                  Path path, BlobInfo info, Opts<ObjectTargetOpt> opts) {
+                assertThat(Utils.crc32cCodec.decode(info.getCrc32c())).isEqualTo(737);
+                assertThat(opts).isEqualTo(origOpts);
+                return info;
+              }
+            },
+            blobInfo,
+            origOpts);
+
+    try (WritableByteChannel open = writeSession.open()) {
+      open.write(ByteBuffer.wrap(testContent.getBytes()));
+    }
+  }
+
+  @Test
+  public void userProvidedMd5TakesPriority() throws IOException {
+    Path tempDir = temporaryFolder.newFolder(testName.getMethodName()).toPath();
+
+    BufferToDiskThenUpload btdtu = BlobWriteSessionConfigs.bufferToDiskThenUpload(tempDir);
+    TestClock clock = TestClock.tickBy(Instant.EPOCH, Duration.ofSeconds(1));
+    WriterFactory factory = btdtu.createFactory(clock);
+
+    BlobInfo blobInfo = BlobInfo.newBuilder("bucket", "object").setMd5("something").build();
+    ChecksummedTestContent testContent =
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(128));
+    Opts<ObjectTargetOpt> origOpts = Opts.from(UnifiedOpts.md5Match("something"));
+    WritableByteChannelSession<?, BlobInfo> writeSession =
+        factory.writeSession(
+            new StorageInternal() {
+              @Override
+              public BlobInfo internalCreateFrom(
+                  Path path, BlobInfo info, Opts<ObjectTargetOpt> opts) {
+                assertThat(info.getMd5()).isEqualTo("something");
+                assertThat(opts).isEqualTo(origOpts);
+                return info;
+              }
+            },
+            blobInfo,
+            origOpts);
+
+    try (WritableByteChannel open = writeSession.open()) {
+      open.write(ByteBuffer.wrap(testContent.getBytes()));
+    }
   }
 }

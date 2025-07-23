@@ -41,6 +41,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -55,7 +56,6 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -63,10 +63,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
-import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,7 +95,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class StorageImpl extends BaseService<StorageOptions> implements Storage, StorageInternal {
@@ -152,46 +149,23 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public Blob create(BlobInfo blobInfo, BlobTargetOption... options) {
-    BlobInfo updatedInfo =
-        blobInfo.toBuilder()
-            .setMd5(EMPTY_BYTE_ARRAY_MD5)
-            .setCrc32c(EMPTY_BYTE_ARRAY_CRC32C)
-            .build();
-    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
-    return internalCreate(updatedInfo, EMPTY_BYTE_ARRAY, 0, 0, objectTargetOptOpts);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    return internalDirectUpload(blobInfo, opts, Buffers.allocate(0)).asBlob(this);
   }
 
   @Override
   public Blob create(BlobInfo blobInfo, byte[] content, BlobTargetOption... options) {
     content = firstNonNull(content, EMPTY_BYTE_ARRAY);
-    BlobInfo updatedInfo =
-        blobInfo.toBuilder()
-            .setMd5(BaseEncoding.base64().encode(Hashing.md5().hashBytes(content).asBytes()))
-            .setCrc32c(
-                BaseEncoding.base64()
-                    .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(content).asInt())))
-            .build();
-    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
-    return internalCreate(updatedInfo, content, 0, content.length, objectTargetOptOpts);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content)).asBlob(this);
   }
 
   @Override
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
-    content = firstNonNull(content, EMPTY_BYTE_ARRAY);
-    BlobInfo updatedInfo =
-        blobInfo.toBuilder()
-            .setMd5(
-                BaseEncoding.base64()
-                    .encode(Hashing.md5().hashBytes(content, offset, length).asBytes()))
-            .setCrc32c(
-                BaseEncoding.base64()
-                    .encode(
-                        Ints.toByteArray(
-                            Hashing.crc32c().hashBytes(content, offset, length).asInt())))
-            .build();
-    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
-    return internalCreate(updatedInfo, content, offset, length, objectTargetOptOpts);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
+        .asBlob(this);
   }
 
   @Override
@@ -210,30 +184,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             .blobInfo()
             .decode(storageRpc.create(blobPb, inputStreamParam, optionsMap));
     return info.asBlob(this);
-  }
-
-  private Blob internalCreate(
-      BlobInfo info,
-      final byte @NonNull [] content,
-      final int offset,
-      final int length,
-      Opts<ObjectTargetOpt> opts) {
-    Preconditions.checkNotNull(content);
-    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-
-    BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
-    final StorageObject blobPb = codecs.blobInfo().encode(updated);
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsCreate(blobPb, optionsMap);
-    return run(
-        algorithm,
-        () ->
-            storageRpc.create(
-                blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
-        (x) -> {
-          BlobInfo info1 = Conversions.json().blobInfo().decode(x);
-          return info1.asBlob(this);
-        });
   }
 
   @Override
@@ -1731,7 +1681,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     }
     long size = Files.size(path);
     if (size == 0L) {
-      return internalCreate(info, EMPTY_BYTE_ARRAY, 0, 0, opts);
+      return internalDirectUpload(info, opts, ByteBuffer.allocate(0));
     }
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     BlobInfo.Builder builder = info.toBuilder().setMd5(null).setCrc32c(null);
@@ -1767,17 +1717,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   @Override
   public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
-
     BlobInfo.Builder builder =
-        info.toBuilder()
-            .setMd5(
-                BaseEncoding.base64().encode(Hashing.md5().hashBytes(buf.duplicate()).asBytes()))
-            .setCrc32c(
-                BaseEncoding.base64()
-                    .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(buf.duplicate()).asInt())));
+        opts.blobInfoMapper().apply(info.toBuilder().clearMd5().clearCrc32c());
+    @Nullable Crc32cLengthKnown hash = opts.getHasher().hash(buf.duplicate());
+    if (hash != null) {
+      builder.setCrc32c(Utils.crc32cCodec.encode(hash.getValue()));
+    }
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
 
-    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    BlobInfo updated = builder.build();
     final StorageObject encoded = codecs.blobInfo().encode(updated);
     ResultRetryAlgorithm<?> algorithm =
         retryAlgorithmManager.getForObjectsCreate(encoded, optionsMap);

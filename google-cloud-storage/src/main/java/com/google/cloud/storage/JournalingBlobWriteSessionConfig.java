@@ -192,7 +192,8 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
             grpcStorage.startResumableWrite(
                 grpcCallContext, grpcStorage.getWriteObjectRequest(info, opts), opts);
         ApiFuture<WriteCtx<ResumableWrite>> start =
-            ApiFutures.transform(f, WriteCtx::new, MoreExecutors.directExecutor());
+            ApiFutures.transform(
+                f, s -> WriteCtx.of(s, opts.getHasher()), MoreExecutors.directExecutor());
 
         ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
             grpcStorage.storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
@@ -200,7 +201,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
             ResumableMedia.gapic()
                 .write()
                 .byteChannel(write)
-                .setHasher(Hasher.noop())
+                .setHasher(opts.getHasher())
                 .setByteStringStrategy(ByteStringStrategy.copy())
                 .journaling()
                 .withRetryConfig(
