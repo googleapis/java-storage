@@ -760,6 +760,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setIpFilter(IpFilter ipFilter) {
+      infoBuilder.setIpFilter(ipFilter);
+      return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
@@ -941,6 +947,12 @@ public class Bucket extends BucketInfo {
     @Override
     Builder clearCustomPlacementConfig() {
       infoBuilder.clearCustomPlacementConfig();
+      return this;
+    }
+
+    @Override
+    Builder clearIpFilter() {
+      infoBuilder.clearIpFilter();
       return this;
     }
   }
