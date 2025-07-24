@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.54.0](https://github.com/googleapis/java-storage/compare/v2.53.3...v2.54.0) (2025-07-24)
+
+
+### Features
+
+* Add BucketInfo.IpFilter ([#3177](https://github.com/googleapis/java-storage/issues/3177)) ([14a91ec](https://github.com/googleapis/java-storage/commit/14a91ec208067e6afc55923cffda5f69aa33d8b4))
+* Add default end-to-end checksumming for JournalingBlobWriteSessionConfig [#3180](https://github.com/googleapis/java-storage/issues/3180) ([fa0f6a0](https://github.com/googleapis/java-storage/commit/fa0f6a03380af78e239bd0079267649ba4138f38))
+* Add default end-to-end crc32c checksumming for several upload methods via grpc transport [#3176](https://github.com/googleapis/java-storage/issues/3176) ([fa0f6a0](https://github.com/googleapis/java-storage/commit/fa0f6a03380af78e239bd0079267649ba4138f38))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.60.2 ([bd1f199](https://github.com/googleapis/java-storage/commit/bd1f199cf57c2b8039c303586d5beac64aeca0ba))
+* Give user provided checksum precondition priority for Storage#create methods that accept byte[] [#3182](https://github.com/googleapis/java-storage/issues/3182) ([fa0f6a0](https://github.com/googleapis/java-storage/commit/fa0f6a03380af78e239bd0079267649ba4138f38))
+* Move crc32c computation before writing to disk for BufferToDiskThenUpload BlobWriteSession config [#3187](https://github.com/googleapis/java-storage/issues/3187) ([fa0f6a0](https://github.com/googleapis/java-storage/commit/fa0f6a03380af78e239bd0079267649ba4138f38))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250718-2.0.0 ([#3203](https://github.com/googleapis/java-storage/issues/3203)) ([18978e4](https://github.com/googleapis/java-storage/commit/18978e4ec54790df2939490ef76fc19b9f72eb04))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.50.2 ([#3201](https://github.com/googleapis/java-storage/issues/3201)) ([782c3c4](https://github.com/googleapis/java-storage/commit/782c3c416583704a196b17f23e9c12c33659f67d))
+* Update googleapis/sdk-platform-java action to v2.60.1 ([#3196](https://github.com/googleapis/java-storage/issues/3196)) ([6ba56e5](https://github.com/googleapis/java-storage/commit/6ba56e5a4b86a75a9f48beccf79ff6d5fdd3e19f))
+
 ## [2.53.3](https://github.com/googleapis/java-storage/compare/v2.53.2...v2.53.3) (2025-07-09)
 
 
