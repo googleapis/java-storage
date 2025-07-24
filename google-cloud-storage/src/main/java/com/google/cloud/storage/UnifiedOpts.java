@@ -281,6 +281,10 @@ final class UnifiedOpts {
     O asSource();
   }
 
+  interface HasherSelector extends BucketObjectHmacKeyAllOpt {
+    Hasher getHasher();
+  }
+
   /**
    * This class extends off {@link ObjectSourceOpt} and {@link ObjectTargetOpt} in order to satisfy
    * some the shimming constraints of the subclasses of {@link OptionShim}.
@@ -589,7 +593,11 @@ final class UnifiedOpts {
     return new Headers(extraHeaders);
   }
 
-  static final class Crc32cMatch implements ObjectTargetOpt {
+  static DefaultHasherSelector defaultHasherSelector() {
+    return DefaultHasherSelector.INSTANCE;
+  }
+
+  static final class Crc32cMatch implements ObjectTargetOpt, HasherSelector {
     private static final long serialVersionUID = 8172282701777561769L;
     private final int val;
 
@@ -628,6 +636,11 @@ final class UnifiedOpts {
         b.getObjectChecksumsBuilder().setCrc32C(val);
         return b;
       };
+    }
+
+    @Override
+    public Hasher getHasher() {
+      return Hasher.noop();
     }
 
     @Override
@@ -1084,6 +1097,7 @@ final class UnifiedOpts {
                 BucketField.IAMCONFIGURATION.getGrpcName(),
                 BucketInfo.Builder::clearIamConfiguration)
             .put(BucketField.ID.getGrpcName(), BucketInfo.Builder::clearGeneratedId)
+            .put(BucketField.IP_FILTER.getGrpcName(), BucketInfo.Builder::clearIpFilter)
             .put(BucketField.LABELS.getGrpcName(), BucketInfo.Builder::clearLabels)
             .put(BucketField.LIFECYCLE.getGrpcName(), BucketInfo.Builder::clearLifecycleRules)
             .put(BucketField.LOCATION.getGrpcName(), BucketInfo.Builder::clearLocation)
@@ -1315,7 +1329,7 @@ final class UnifiedOpts {
   }
 
   @Deprecated
-  static final class Md5Match implements ObjectTargetOpt {
+  static final class Md5Match implements ObjectTargetOpt, HasherSelector {
     private static final long serialVersionUID = 5237207911268363887L;
     private final String val;
 
@@ -1356,6 +1370,11 @@ final class UnifiedOpts {
             .setMd5Hash(ByteString.copyFrom(BaseEncoding.base64().decode(val)));
         return b;
       };
+    }
+
+    @Override
+    public Hasher getHasher() {
+      return Hasher.noop();
     }
 
     @Override
@@ -1983,8 +2002,8 @@ final class UnifiedOpts {
     }
   }
 
-  static final class UserProject extends RpcOptVal<String>
-      implements BucketSourceOpt,
+  interface BucketObjectHmacKeyAllOpt
+      extends BucketSourceOpt,
           BucketTargetOpt,
           BucketListOpt,
           ObjectSourceOpt,
@@ -1993,6 +2012,18 @@ final class UnifiedOpts {
           HmacKeySourceOpt,
           HmacKeyTargetOpt,
           HmacKeyListOpt {
+    @Override
+    default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    default Mapper<MoveObjectRequest.Builder> moveObject() {
+      return Mapper.identity();
+    }
+  }
+
+  static final class UserProject extends RpcOptVal<String> implements BucketObjectHmacKeyAllOpt {
     private static final long serialVersionUID = 3962499996741180460L;
 
     private UserProject(String val) {
@@ -2004,28 +2035,10 @@ final class UnifiedOpts {
       return ctx ->
           ctx.withExtraHeaders(ImmutableMap.of("X-Goog-User-Project", ImmutableList.of(val)));
     }
-
-    @Override
-    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
-    }
-
-    @Override
-    public Mapper<MoveObjectRequest.Builder> moveObject() {
-      return Mapper.identity();
-    }
   }
 
   static final class Headers extends RpcOptVal<ImmutableMap<String, String>>
-      implements BucketSourceOpt,
-          BucketTargetOpt,
-          BucketListOpt,
-          ObjectSourceOpt,
-          ObjectTargetOpt,
-          ObjectListOpt,
-          HmacKeySourceOpt,
-          HmacKeyTargetOpt,
-          HmacKeyListOpt {
+      implements BucketObjectHmacKeyAllOpt {
 
     /**
      * The set of header names which are blocked from being able to be provided for an instance of
@@ -2180,16 +2193,6 @@ final class UnifiedOpts {
           b.put(key, e.getValue());
         }
       }
-    }
-
-    @Override
-    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
-    }
-
-    @Override
-    public Mapper<MoveObjectRequest.Builder> moveObject() {
-      return Mapper.identity();
     }
   }
 
@@ -2606,6 +2609,17 @@ final class UnifiedOpts {
     }
   }
 
+  static final class DefaultHasherSelector implements HasherSelector, Opt {
+    private static final DefaultHasherSelector INSTANCE = new DefaultHasherSelector();
+
+    private DefaultHasherSelector() {}
+
+    @Override
+    public Hasher getHasher() {
+      return Hasher.defaultHasher();
+    }
+  }
+
   /**
    * Internal "collection" class to represent a set of {@link Opt}s, and to provide useful
    * transformations to individual mappers or to resolve any extractors providing a new instance
@@ -2702,6 +2716,22 @@ final class UnifiedOpts {
       return Utils.mapBuild(builder);
     }
 
+    @VisibleForTesting
+    HasherSelector getHasherSelector() {
+      HasherSelector search = defaultHasherSelector();
+      Predicate<Opt> p = isInstanceOf(HasherSelector.class);
+      for (T opt : opts) {
+        if (p.test(opt)) {
+          search = (HasherSelector) opt;
+        }
+      }
+      return search;
+    }
+
+    Hasher getHasher() {
+      return getHasherSelector().getHasher();
+    }
+
     Mapper<GrpcCallContext> grpcMetadataMapper() {
       return fuseMappers(GrpcMetadataMapper.class, GrpcMetadataMapper::getGrpcMetadataMapper);
     }
@@ -2754,7 +2784,7 @@ final class UnifiedOpts {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::readObject);
     }
 
-    public Mapper<BidiReadObjectRequest.Builder> bidiReadObjectRequest() {
+    Mapper<BidiReadObjectRequest.Builder> bidiReadObjectRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::bidiReadObject);
     }
 

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Storage.BucketField.IP_FILTER;
 import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
@@ -30,6 +31,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
+import com.google.cloud.storage.BucketInfo.IpFilter;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.Logging;
@@ -44,6 +46,8 @@ import com.google.protobuf.ProtocolStringList;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource;
+import com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.CryptoKeyName;
@@ -106,6 +110,14 @@ final class GrpcConversions {
   private final Codec<BucketInfo.HierarchicalNamespace, Bucket.HierarchicalNamespace>
       hierarchicalNamespaceCodec =
           Codec.of(this::hierarchicalNamespaceEncode, this::hierarchicalNamespaceDecode);
+
+  private final Codec<BucketInfo.IpFilter, Bucket.IpFilter> ipFilterCodec =
+      Codec.of(this::ipFilterEncode, this::ipFilterDecode);
+  private final Codec<BucketInfo.IpFilter.PublicNetworkSource, Bucket.IpFilter.PublicNetworkSource>
+      publicNetworkSourceCodec =
+          Codec.of(this::publicNetworkSourceEncode, this::publicNetworkSourceDecode);
+  private final Codec<BucketInfo.IpFilter.VpcNetworkSource, Bucket.IpFilter.VpcNetworkSource>
+      vpcNetworkSourceCodec = Codec.of(this::vpcNetworkSourceEncode, this::vpcNetworkSourceDecode);
 
   private final Codec<ByteString, String> byteStringB64StringCodec =
       Codec.of(
@@ -296,7 +308,9 @@ final class GrpcConversions {
       to.setHierarchicalNamespace(
           hierarchicalNamespaceCodec.decode(from.getHierarchicalNamespace()));
     }
-    // TODO(frankyn): Add SelfLink when the field is available
+    if (from.hasIpFilter()) {
+      to.setIpFilter(ipFilterCodec.decode(from.getIpFilter()));
+    }
     if (!from.getEtag().isEmpty()) {
       to.setEtag(from.getEtag());
     }
@@ -390,7 +404,10 @@ final class GrpcConversions {
         from.getHierarchicalNamespace(),
         hierarchicalNamespaceCodec::encode,
         to::setHierarchicalNamespace);
-    // TODO(frankyn): Add SelfLink when the field is available
+    ifNonNull(from.getIpFilter(), ipFilterCodec::encode, to::setIpFilter);
+    if (from.getModifiedFields().contains(IP_FILTER) && from.getIpFilter() == null) {
+      to.clearIpFilter();
+    }
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
   }
@@ -1037,8 +1054,68 @@ final class GrpcConversions {
     return from;
   }
 
-  private static <T> T todo() {
-    throw new IllegalStateException("Not yet implemented");
+  private Bucket.IpFilter ipFilterEncode(IpFilter from) {
+    Bucket.IpFilter.Builder to = Bucket.IpFilter.newBuilder();
+    ifNonNull(from.getMode(), to::setMode);
+    ifNonNull(
+        from.getPublicNetworkSource(),
+        publicNetworkSourceCodec::encode,
+        to::setPublicNetworkSource);
+    ifNonNull(
+        from.getVpcNetworkSources(),
+        toImmutableListOf(vpcNetworkSourceCodec::encode),
+        to::addAllVpcNetworkSources);
+    ifNonNull(from.getAllowCrossOrgVpcs(), to::setAllowCrossOrgVpcs);
+    ifNonNull(from.getAllowAllServiceAgentAccess(), to::setAllowAllServiceAgentAccess);
+    return to.build();
+  }
+
+  private IpFilter ipFilterDecode(Bucket.IpFilter from) {
+    IpFilter.Builder to = IpFilter.newBuilder();
+    if (!from.getMode().isEmpty()) {
+      to.setMode(from.getMode());
+    }
+    ifNonNull(
+        from.getPublicNetworkSource(),
+        publicNetworkSourceCodec::decode,
+        to::setPublicNetworkSource);
+    ifNonNull(
+        from.getVpcNetworkSourcesList(),
+        toImmutableListOf(vpcNetworkSourceCodec::decode),
+        to::setVpcNetworkSources);
+    ifNonNull(from.getAllowCrossOrgVpcs(), to::setAllowCrossOrgVpcs);
+    if (from.hasAllowAllServiceAgentAccess()) {
+      to.setAllowAllServiceAgentAccess(from.getAllowAllServiceAgentAccess());
+    }
+    return to.build();
+  }
+
+  private PublicNetworkSource publicNetworkSourceEncode(IpFilter.PublicNetworkSource from) {
+    PublicNetworkSource.Builder to = PublicNetworkSource.newBuilder();
+    ifNonNull(from.getAllowedIpCidrRanges(), to::addAllAllowedIpCidrRanges);
+    return to.build();
+  }
+
+  private IpFilter.PublicNetworkSource publicNetworkSourceDecode(PublicNetworkSource from) {
+    return IpFilter.PublicNetworkSource.of(from.getAllowedIpCidrRangesList());
+  }
+
+  private VpcNetworkSource vpcNetworkSourceEncode(IpFilter.VpcNetworkSource from) {
+    VpcNetworkSource.Builder to = VpcNetworkSource.newBuilder();
+    ifNonNull(from.getNetwork(), to::setNetwork);
+    ifNonNull(from.getAllowedIpCidrRanges(), to::addAllAllowedIpCidrRanges);
+    return to.build();
+  }
+
+  private IpFilter.VpcNetworkSource vpcNetworkSourceDecode(VpcNetworkSource from) {
+    IpFilter.VpcNetworkSource.Builder to = IpFilter.VpcNetworkSource.newBuilder();
+    if (from.hasNetwork()) {
+      to.setNetwork(from.getNetwork());
+    }
+    if (!from.getAllowedIpCidrRangesList().isEmpty()) {
+      to.setAllowedIpCidrRanges(from.getAllowedIpCidrRangesList());
+    }
+    return to.build();
   }
 
   /**

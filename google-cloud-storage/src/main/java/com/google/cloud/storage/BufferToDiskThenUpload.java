@@ -28,6 +28,8 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,6 +44,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collector;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -63,6 +66,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 @TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
     implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
+
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**
@@ -211,41 +215,78 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
         return result;
       }
 
+      @SuppressWarnings("UnstableApiUsage")
       private final class Flusher implements WritableByteChannel {
 
         private final WritableByteChannel delegate;
+        private final Hasher cumulativeCrc32c;
+        private final ReentrantLock lock;
 
         private Flusher(WritableByteChannel delegate) {
           this.delegate = delegate;
+          this.cumulativeCrc32c =
+              opts.getHasher().initialValue() == null ? null : Hashing.crc32c().newHasher();
+          this.lock = new ReentrantLock();
         }
 
         @Override
         public int write(ByteBuffer src) throws IOException {
-          return delegate.write(src);
+          lock.lock();
+          try {
+            if (cumulativeCrc32c != null) {
+              cumulativeCrc32c.putBytes(src.duplicate());
+            }
+            return delegate.write(src);
+          } finally {
+            lock.unlock();
+          }
         }
 
         @Override
         public boolean isOpen() {
-          return delegate.isOpen();
+          lock.lock();
+          try {
+            return delegate.isOpen();
+          } finally {
+            lock.unlock();
+          }
         }
 
         @Override
         public void close() throws IOException {
-          delegate.close();
-          try (RecoveryFile rf = Factory.WriteToFileThenUpload.this.rf) {
-            Path path = rf.getPath();
-            long size = Files.size(path);
-            ThroughputSink.computeThroughput(
-                clock,
-                gcs,
-                size,
-                () -> {
-                  BlobInfo blob = storage.internalCreateFrom(path, info, opts);
-                  result.set(blob);
-                });
-          } catch (StorageException | IOException e) {
-            result.setException(e);
-            throw e;
+          lock.lock();
+          try {
+
+            delegate.close();
+            try (RecoveryFile rf = Factory.WriteToFileThenUpload.this.rf) {
+              Path path = rf.getPath();
+              long size = Files.size(path);
+              ThroughputSink.computeThroughput(
+                  clock,
+                  gcs,
+                  size,
+                  () -> {
+                    BlobInfo pendingInfo = info;
+                    Opts<ObjectTargetOpt> pendingOpts = opts;
+                    if (cumulativeCrc32c != null) {
+                      int hashCodeInt = cumulativeCrc32c.hash().asInt();
+                      pendingInfo =
+                          pendingInfo.toBuilder()
+                              .clearMd5()
+                              .clearCrc32c()
+                              .setCrc32c(Utils.crc32cCodec.encode(hashCodeInt))
+                              .build();
+                      pendingOpts = opts.prepend(Opts.from(UnifiedOpts.crc32cMatch(hashCodeInt)));
+                    }
+                    BlobInfo blob = storage.internalCreateFrom(path, pendingInfo, pendingOpts);
+                    result.set(blob);
+                  });
+            } catch (StorageException | IOException e) {
+              result.setException(e);
+              throw e;
+            }
+          } finally {
+            lock.unlock();
           }
         }
       }
