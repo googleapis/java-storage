@@ -766,6 +766,30 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setGoogleManagedEncryptionEnforcementConfig(
+        GoogleManagedEncryptionEnforcementConfig googleManagedEncryptionEnforcementConfig) {
+      infoBuilder.setGoogleManagedEncryptionEnforcementConfig(
+          googleManagedEncryptionEnforcementConfig);
+      return this;
+    }
+
+    @Override
+    public Builder setCustomerManagedEncryptionEnforcementConfig(
+        CustomerManagedEncryptionEnforcementConfig customerManagedEncryptionEnforcementConfig) {
+      infoBuilder.setCustomerManagedEncryptionEnforcementConfig(
+          customerManagedEncryptionEnforcementConfig);
+      return this;
+    }
+
+    @Override
+    public Builder setCustomerSuppliedEncryptionEnforcementConfig(
+        CustomerSuppliedEncryptionEnforcementConfig customerSuppliedEncryptionEnforcementConfig) {
+      infoBuilder.setCustomerSuppliedEncryptionEnforcementConfig(
+          customerSuppliedEncryptionEnforcementConfig);
+      return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
@@ -953,6 +977,24 @@ public class Bucket extends BucketInfo {
     @Override
     Builder clearIpFilter() {
       infoBuilder.clearIpFilter();
+      return this;
+    }
+
+    @Override
+    public Builder clearGoogleManagedEncryptionEnforcementConfig() {
+      infoBuilder.clearGoogleManagedEncryptionEnforcementConfig();
+      return this;
+    }
+
+    @Override
+    public Builder clearCustomerManagedEncryptionEnforcementConfig() {
+      infoBuilder.clearCustomerManagedEncryptionEnforcementConfig();
+      return this;
+    }
+
+    @Override
+    public Builder clearCustomerSuppliedEncryptionEnforcementConfig() {
+      infoBuilder.clearCustomerSuppliedEncryptionEnforcementConfig();
       return this;
     }
   }

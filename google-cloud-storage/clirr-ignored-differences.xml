@@ -145,4 +145,20 @@
     <method>com.google.cloud.storage.BucketInfo$Builder setIpFilter(com.google.cloud.storage.BucketInfo$IpFilter)</method>
   </difference>
 
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setCustomerManagedEncryptionEnforcementConfig(com.google.cloud.storage.BucketInfo$CustomerManagedEncryptionEnforcementConfig)</method>
+  </difference>
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setCustomerSuppliedEncryptionEnforcementConfig(com.google.cloud.storage.BucketInfo$CustomerSuppliedEncryptionEnforcementConfig)</method>
+  </difference>
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setGoogleManagedEncryptionEnforcementConfig(com.google.cloud.storage.BucketInfo$GoogleManagedEncryptionEnforcementConfig)</method>
+  </difference>
+
 </differences>

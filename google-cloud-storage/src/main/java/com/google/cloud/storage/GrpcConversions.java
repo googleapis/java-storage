@@ -31,6 +31,10 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
+import com.google.cloud.storage.BucketInfo.CustomerManagedEncryptionEnforcementConfig;
+import com.google.cloud.storage.BucketInfo.CustomerSuppliedEncryptionEnforcementConfig;
+import com.google.cloud.storage.BucketInfo.EncryptionEnforcementRestrictionMode;
+import com.google.cloud.storage.BucketInfo.GoogleManagedEncryptionEnforcementConfig;
 import com.google.cloud.storage.BucketInfo.IpFilter;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
@@ -46,6 +50,7 @@ import com.google.protobuf.ProtocolStringList;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource;
 import com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource;
 import com.google.storage.v2.Bucket.Website;
@@ -68,7 +73,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -164,6 +172,93 @@ final class GrpcConversions {
                   .atStartOfDay()
                   .atOffset(ZoneOffset.UTC));
 
+  private final Codec<EncryptionEnforcementRestrictionMode, String>
+      encryptionEnforcementRestrictionModeCodec =
+          Codec.of(
+              EncryptionEnforcementRestrictionMode::toString,
+              EncryptionEnforcementRestrictionMode::valueOf);
+  private final Codec<
+          GoogleManagedEncryptionEnforcementConfig,
+          Encryption.GoogleManagedEncryptionEnforcementConfig>
+      googleManagedEncryptionEnforcementConfigCodec =
+          Codec.of(
+              from -> {
+                Encryption.GoogleManagedEncryptionEnforcementConfig.Builder to =
+                    Encryption.GoogleManagedEncryptionEnforcementConfig.newBuilder();
+                ifNonNull(
+                    from.getRestrictionMode(),
+                    encryptionEnforcementRestrictionModeCodec::encode,
+                    to::setRestrictionMode);
+                ifNonNull(from.getEffectiveTime(), timestampCodec::encode, to::setEffectiveTime);
+                return to.build();
+              },
+              from -> {
+                @Nullable EncryptionEnforcementRestrictionMode mode = null;
+                if (from.hasRestrictionMode()) {
+                  mode =
+                      encryptionEnforcementRestrictionModeCodec.decode(from.getRestrictionMode());
+                }
+                if (from.hasEffectiveTime()) {
+                  return GoogleManagedEncryptionEnforcementConfig.of(
+                      mode, timestampCodec.decode(from.getEffectiveTime()));
+                }
+                return GoogleManagedEncryptionEnforcementConfig.of(mode);
+              });
+  private final Codec<
+          CustomerManagedEncryptionEnforcementConfig,
+          Encryption.CustomerManagedEncryptionEnforcementConfig>
+      customerManagedEncryptionEnforcementConfigCodec =
+          Codec.of(
+              from -> {
+                Encryption.CustomerManagedEncryptionEnforcementConfig.Builder to =
+                    Encryption.CustomerManagedEncryptionEnforcementConfig.newBuilder();
+                ifNonNull(
+                    from.getRestrictionMode(),
+                    encryptionEnforcementRestrictionModeCodec::encode,
+                    to::setRestrictionMode);
+                ifNonNull(from.getEffectiveTime(), timestampCodec::encode, to::setEffectiveTime);
+                return to.build();
+              },
+              from -> {
+                @Nullable EncryptionEnforcementRestrictionMode mode = null;
+                if (from.hasRestrictionMode()) {
+                  mode =
+                      encryptionEnforcementRestrictionModeCodec.decode(from.getRestrictionMode());
+                }
+                if (from.hasEffectiveTime()) {
+                  return CustomerManagedEncryptionEnforcementConfig.of(
+                      mode, timestampCodec.decode(from.getEffectiveTime()));
+                }
+                return CustomerManagedEncryptionEnforcementConfig.of(mode);
+              });
+  private final Codec<
+          CustomerSuppliedEncryptionEnforcementConfig,
+          Encryption.CustomerSuppliedEncryptionEnforcementConfig>
+      customerSuppliedEncryptionEnforcementConfigCodec =
+          Codec.of(
+              from -> {
+                Encryption.CustomerSuppliedEncryptionEnforcementConfig.Builder to =
+                    Encryption.CustomerSuppliedEncryptionEnforcementConfig.newBuilder();
+                ifNonNull(
+                    from.getRestrictionMode(),
+                    encryptionEnforcementRestrictionModeCodec::encode,
+                    to::setRestrictionMode);
+                ifNonNull(from.getEffectiveTime(), timestampCodec::encode, to::setEffectiveTime);
+                return to.build();
+              },
+              from -> {
+                @Nullable EncryptionEnforcementRestrictionMode mode = null;
+                if (from.hasRestrictionMode()) {
+                  mode =
+                      encryptionEnforcementRestrictionModeCodec.decode(from.getRestrictionMode());
+                }
+                if (from.hasEffectiveTime()) {
+                  return CustomerSuppliedEncryptionEnforcementConfig.of(
+                      mode, timestampCodec.decode(from.getEffectiveTime()));
+                }
+                return CustomerSuppliedEncryptionEnforcementConfig.of(mode);
+              });
+
   private GrpcConversions() {}
 
   Codec<Acl.Entity, String> entity() {
@@ -235,7 +330,25 @@ final class GrpcConversions {
       to.setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
     }
     if (from.hasEncryption()) {
-      to.setDefaultKmsKeyName(from.getEncryption().getDefaultKmsKey());
+      Encryption e = from.getEncryption();
+      if (!e.getDefaultKmsKey().isEmpty()) {
+        to.setDefaultKmsKeyName(e.getDefaultKmsKey());
+      }
+      if (e.hasGoogleManagedEncryptionEnforcementConfig()) {
+        to.setGoogleManagedEncryptionEnforcementConfig(
+            googleManagedEncryptionEnforcementConfigCodec.decode(
+                e.getGoogleManagedEncryptionEnforcementConfig()));
+      }
+      if (e.hasCustomerManagedEncryptionEnforcementConfig()) {
+        to.setCustomerManagedEncryptionEnforcementConfig(
+            customerManagedEncryptionEnforcementConfigCodec.decode(
+                e.getCustomerManagedEncryptionEnforcementConfig()));
+      }
+      if (e.hasCustomerSuppliedEncryptionEnforcementConfig()) {
+        to.setCustomerSuppliedEncryptionEnforcementConfig(
+            customerSuppliedEncryptionEnforcementConfigCodec.decode(
+                e.getCustomerSuppliedEncryptionEnforcementConfig()));
+      }
     }
     if (!from.getRpo().isEmpty()) {
       to.setRpo(Rpo.valueOf(from.getRpo()));
@@ -333,9 +446,26 @@ final class GrpcConversions {
     }
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
-    if (from.getDefaultKmsKeyName() != null) {
+    if (Stream.of(
+            from.getDefaultKmsKeyName(),
+            from.getGoogleManagedEncryptionEnforcementConfig(),
+            from.getCustomerManagedEncryptionEnforcementConfig(),
+            from.getCustomerSuppliedEncryptionEnforcementConfig())
+        .anyMatch(Objects::nonNull)) {
       Bucket.Encryption.Builder encryptionBuilder = Bucket.Encryption.newBuilder();
       ifNonNull(from.getDefaultKmsKeyName(), encryptionBuilder::setDefaultKmsKey);
+      ifNonNull(
+          from.getGoogleManagedEncryptionEnforcementConfig(),
+          googleManagedEncryptionEnforcementConfigCodec::encode,
+          encryptionBuilder::setGoogleManagedEncryptionEnforcementConfig);
+      ifNonNull(
+          from.getCustomerManagedEncryptionEnforcementConfig(),
+          customerManagedEncryptionEnforcementConfigCodec::encode,
+          encryptionBuilder::setCustomerManagedEncryptionEnforcementConfig);
+      ifNonNull(
+          from.getCustomerSuppliedEncryptionEnforcementConfig(),
+          customerSuppliedEncryptionEnforcementConfigCodec::encode,
+          encryptionBuilder::setCustomerSuppliedEncryptionEnforcementConfig);
       to.setEncryption(encryptionBuilder.build());
     }
     if (from.getIndexPage() != null || from.getNotFoundPage() != null) {

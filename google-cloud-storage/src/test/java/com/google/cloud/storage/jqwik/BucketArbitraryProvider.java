@@ -61,7 +61,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.bool(),
                         StorageArbitraries.buckets().rpo(),
                         StorageArbitraries.buckets().billing().injectNull(0.01),
-                        StorageArbitraries.buckets().encryption().injectNull(0.9),
+                        StorageArbitraries.buckets().encryption(),
                         StorageArbitraries.buckets().retentionPolicy().injectNull(0.5),
                         StorageArbitraries.buckets().lifecycle().injectNull(0.5))
                     .as(Tuple::of),

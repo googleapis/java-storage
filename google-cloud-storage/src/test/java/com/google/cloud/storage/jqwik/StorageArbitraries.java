@@ -26,6 +26,9 @@ import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
+import com.google.storage.v2.Bucket.Encryption.CustomerManagedEncryptionEnforcementConfig;
+import com.google.storage.v2.Bucket.Encryption.CustomerSuppliedEncryptionEnforcementConfig;
+import com.google.storage.v2.Bucket.Encryption.GoogleManagedEncryptionEnforcementConfig;
 import com.google.storage.v2.Bucket.IpFilter;
 import com.google.storage.v2.Bucket.IpFilter.PublicNetworkSource;
 import com.google.storage.v2.Bucket.IpFilter.VpcNetworkSource;
@@ -49,6 +52,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -404,11 +408,23 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.Encryption> encryption() {
-      return Arbitraries.strings()
-          .all()
-          .ofMinLength(1)
-          .ofMaxLength(1024)
-          .map(s -> Encryption.newBuilder().setDefaultKmsKey(s).build());
+      return Combinators.combine(
+              Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024).injectNull(0.9),
+              googleManagedEncryptionEnforcementConfig(),
+              customerManagedEncryptionEnforcementConfig(),
+              customerSuppliedEncryptionEnforcementConfig())
+          .flatAs(
+              (kmsKey, gmek, cmek, csek) -> {
+                if (Stream.of(kmsKey, gmek, cmek, csek).allMatch(java.util.Objects::isNull)) {
+                  return Arbitraries.just(null);
+                }
+                Encryption.Builder b = Encryption.newBuilder();
+                ifNonNull(kmsKey, b::setDefaultKmsKey);
+                ifNonNull(gmek, b::setGoogleManagedEncryptionEnforcementConfig);
+                ifNonNull(cmek, b::setCustomerManagedEncryptionEnforcementConfig);
+                ifNonNull(csek, b::setCustomerSuppliedEncryptionEnforcementConfig);
+                return Arbitraries.just(b.build());
+              });
     }
 
     public Arbitrary<Bucket.RetentionPolicy> retentionPolicy() {
@@ -505,6 +521,80 @@ public final class StorageArbitraries {
           .withChars('-')
           .ofMinLength(1)
           .ofMaxLength(10);
+    }
+
+    public Arbitrary<String> encryptionEnforcementRestrictionMode() {
+      return Arbitraries.of("NotRestricted", "FullyRestricted", "NOT_YET_DEFINED");
+    }
+
+    public Arbitrary<String> encryptionEnforcementRestrictionModeWithoutEdgeCases() {
+      return Arbitraries.of("NotRestricted", "FullyRestricted");
+    }
+
+    public Arbitrary<GoogleManagedEncryptionEnforcementConfig>
+        googleManagedEncryptionEnforcementConfig() {
+      return encryptionEnforcementRestrictionMode()
+          .injectNull(0.9)
+          .flatMap(
+              mode -> {
+                if (mode == null) {
+                  return Arbitraries.just(null);
+                }
+                return StorageArbitraries.timestamp()
+                    .injectNull(0.5)
+                    .map(
+                        time -> {
+                          GoogleManagedEncryptionEnforcementConfig.Builder b =
+                              GoogleManagedEncryptionEnforcementConfig.newBuilder();
+                          ifNonNull(time, b::setEffectiveTime);
+                          b.setRestrictionMode(mode);
+                          return b.build();
+                        });
+              });
+    }
+
+    public Arbitrary<CustomerManagedEncryptionEnforcementConfig>
+        customerManagedEncryptionEnforcementConfig() {
+      return encryptionEnforcementRestrictionMode()
+          .injectNull(0.9)
+          .flatMap(
+              mode -> {
+                if (mode == null) {
+                  return Arbitraries.just(null);
+                }
+                return StorageArbitraries.timestamp()
+                    .injectNull(0.5)
+                    .map(
+                        time -> {
+                          CustomerManagedEncryptionEnforcementConfig.Builder b =
+                              CustomerManagedEncryptionEnforcementConfig.newBuilder();
+                          ifNonNull(time, b::setEffectiveTime);
+                          b.setRestrictionMode(mode);
+                          return b.build();
+                        });
+              });
+    }
+
+    public Arbitrary<CustomerSuppliedEncryptionEnforcementConfig>
+        customerSuppliedEncryptionEnforcementConfig() {
+      return encryptionEnforcementRestrictionMode()
+          .injectNull(0.9)
+          .flatMap(
+              mode -> {
+                if (mode == null) {
+                  return Arbitraries.just(null);
+                }
+                return StorageArbitraries.timestamp()
+                    .injectNull(0.5)
+                    .map(
+                        time -> {
+                          CustomerSuppliedEncryptionEnforcementConfig.Builder b =
+                              CustomerSuppliedEncryptionEnforcementConfig.newBuilder();
+                          ifNonNull(time, b::setEffectiveTime);
+                          b.setRestrictionMode(mode);
+                          return b.build();
+                        });
+              });
     }
   }
 
