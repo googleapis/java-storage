@@ -23,6 +23,7 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratedReadChannel;
 import com.google.cloud.storage.OtelStorageDecorator.OtelDecoratedWriteChannel;
 import com.google.common.collect.ImmutableList;
+import com.google.protobuf.MessageOrBuilder;
 import com.google.storage.v2.StorageClient;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -133,5 +134,9 @@ public final class PackagePrivateMethodWorkarounds {
 
   public static BlobInfo noAcl(BlobInfo bi) {
     return bi.toBuilder().setOwner(null).setAcl(ImmutableList.of()).build();
+  }
+
+  public static String fmtProto(Object msg, Function<MessageOrBuilder, String> fmt) {
+    return StorageV2ProtoUtils.fmtProtoWithFmt(msg, fmt::apply);
   }
 }
