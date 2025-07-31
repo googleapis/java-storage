@@ -161,4 +161,21 @@
     <method>com.google.cloud.storage.BucketInfo$Builder setGoogleManagedEncryptionEnforcementConfig(com.google.cloud.storage.BucketInfo$GoogleManagedEncryptionEnforcementConfig)</method>
   </difference>
 
+  <!-- make beta api constructors private, they still retain their factory methods. -->
+  <difference>
+    <differenceType>7004</differenceType>
+    <className>com/google/cloud/storage/FlushPolicy$MinFlushSizeFlushPolicy</className>
+    <method>FlushPolicy$MinFlushSizeFlushPolicy(int)</method>
+  </difference>
+  <difference>
+    <differenceType>7009</differenceType>
+    <className>com/google/cloud/storage/FlushPolicy$MinFlushSizeFlushPolicy</className>
+    <method>FlushPolicy$MinFlushSizeFlushPolicy(int)</method>
+  </difference>
+  <difference>
+    <differenceType>7009</differenceType>
+    <className>com/google/cloud/storage/FlushPolicy$MaxFlushSizeFlushPolicy</className>
+    <method>FlushPolicy$MaxFlushSizeFlushPolicy(int)</method>
+  </difference>
+
 </differences>

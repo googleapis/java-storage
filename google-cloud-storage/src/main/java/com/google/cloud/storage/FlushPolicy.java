@@ -114,7 +114,7 @@ public abstract class FlushPolicy {
 
     private final int maxFlushSize;
 
-    public MaxFlushSizeFlushPolicy(int maxFlushSize) {
+    private MaxFlushSizeFlushPolicy(int maxFlushSize) {
       this.maxFlushSize = maxFlushSize;
     }
 
@@ -195,7 +195,7 @@ public abstract class FlushPolicy {
 
     private final int minFlushSize;
 
-    public MinFlushSizeFlushPolicy(int minFlushSize) {
+    private MinFlushSizeFlushPolicy(int minFlushSize) {
       this.minFlushSize = minFlushSize;
     }
 
