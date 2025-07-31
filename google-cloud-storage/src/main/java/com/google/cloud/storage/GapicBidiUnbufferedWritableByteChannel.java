@@ -290,7 +290,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
           ok(value);
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
+              UploadFailureScenario.SCENARIO_7.toStorageException(
                   nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else if (finalizing && value.hasResource()) {
@@ -301,16 +301,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
           ok(value);
         } else if (finalSize < totalSentBytes) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+              UploadFailureScenario.SCENARIO_4_1.toStorageException(
                   nullSafeList(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+              UploadFailureScenario.SCENARIO_4_2.toStorageException(
                   nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else if (!finalizing && value.hasResource()) {
         clientDetectedError(
-            ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
+            UploadFailureScenario.SCENARIO_1.toStorageException(
                 nullSafeList(lastWrittenRequest), value, context, null));
       } else if (finalizing && value.hasPersistedSize()) {
         long totalSentBytes = writeCtx.getTotalSentBytes().get();
@@ -322,16 +322,16 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
           writeCtx.getConfirmedBytes().set(persistedSize);
         } else if (persistedSize < totalSentBytes) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
+              UploadFailureScenario.SCENARIO_3.toStorageException(
                   nullSafeList(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
+              UploadFailureScenario.SCENARIO_2.toStorageException(
                   nullSafeList(lastWrittenRequest), value, context, null));
         }
       } else {
         clientDetectedError(
-            ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+            UploadFailureScenario.SCENARIO_0.toStorageException(
                 nullSafeList(lastWrittenRequest), value, context, null));
       }
     }
@@ -345,7 +345,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
             && ed.getErrorInfo() != null
             && ed.getErrorInfo().getReason().equals("GRPC_MISMATCHED_UPLOAD_SIZE"))) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+              UploadFailureScenario.SCENARIO_5.toStorageException(
                   nullSafeList(lastWrittenRequest), null, context, oore));
           return;
         }
@@ -357,7 +357,7 @@ final class GapicBidiUnbufferedWritableByteChannel implements UnbufferedWritable
         // unusual case, and it should not cause a significant overhead given its rarity.
         StorageException tmp = StorageException.asStorageException((ApiException) t);
         previousError =
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),

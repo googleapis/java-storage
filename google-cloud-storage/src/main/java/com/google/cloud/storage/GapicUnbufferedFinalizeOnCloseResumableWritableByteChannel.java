@@ -226,7 +226,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
         // unusual case, and it should not cause a significant overhead given its rarity.
         StorageException tmp = StorageException.asStorageException((ApiException) t);
         StorageException storageException =
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),
@@ -247,7 +247,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
       boolean finalizing = lastWrittenRequest.getFinishWrite();
       if (last == null) {
         clientDetectedError(
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 0,
                 "onComplete without preceding onNext, unable to determine success.",
                 "invalid",
@@ -262,16 +262,16 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
           ok(finalSize);
         } else if (finalSize < totalSentBytes) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+              UploadFailureScenario.SCENARIO_4_1.toStorageException(
                   nullSafeList(lastWrittenRequest), last, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+              UploadFailureScenario.SCENARIO_4_2.toStorageException(
                   nullSafeList(lastWrittenRequest), last, context, null));
         }
       } else if (!finalizing || last.hasPersistedSize()) { // unexpected incremental response
         clientDetectedError(
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 0,
                 "Unexpected incremental response for finalizing request.",
                 "invalid",
@@ -281,7 +281,7 @@ final class GapicUnbufferedFinalizeOnCloseResumableWritableByteChannel
                 null));
       } else {
         clientDetectedError(
-            ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+            UploadFailureScenario.SCENARIO_0.toStorageException(
                 nullSafeList(lastWrittenRequest), last, context, null));
       }
     }
