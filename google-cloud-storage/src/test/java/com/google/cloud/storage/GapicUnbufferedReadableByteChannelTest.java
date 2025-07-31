@@ -23,7 +23,6 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.ServerStreamingCallable;
-import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.it.ChecksummedTestContent;
@@ -56,7 +55,7 @@ public final class GapicUnbufferedReadableByteChannelTest {
                       ReadObjectRequest request,
                       ResponseObserver<ReadObjectResponse> respond,
                       ApiCallContext context) {
-                    respond.onStart(new NullStreamController());
+                    respond.onStart(TestUtils.nullStreamController());
                     respond.onResponse(
                         ReadObjectResponse.newBuilder()
                             .setChecksummedData(testContent.asChecksummedData())
@@ -75,17 +74,5 @@ public final class GapicUnbufferedReadableByteChannelTest {
       assertThat(xxd(buffer)).isEqualTo(xxd(testContent.getBytes()));
       assertThat(close.get()).isTrue();
     }
-  }
-
-  private static class NullStreamController implements StreamController {
-
-    @Override
-    public void cancel() {}
-
-    @Override
-    public void disableAutoInboundFlowControl() {}
-
-    @Override
-    public void request(int count) {}
   }
 }
