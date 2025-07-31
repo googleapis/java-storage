@@ -42,10 +42,12 @@ import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.WriteObjectRequest;
+import io.grpc.Metadata;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBufUtil;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
+import io.grpc.protobuf.ProtoUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +82,11 @@ import org.junit.function.ThrowingRunnable;
 import org.junit.runners.model.MultipleFailureException;
 
 public final class TestUtils {
+
+  public static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
+      Metadata.Key.of(
+          "grpc-status-details-bin",
+          ProtoUtils.metadataMarshaller(com.google.rpc.Status.getDefaultInstance()));
 
   private TestUtils() {}
 
