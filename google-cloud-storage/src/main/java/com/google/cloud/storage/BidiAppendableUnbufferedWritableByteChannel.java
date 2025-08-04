@@ -17,8 +17,8 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.BaseServiceException;
-import com.google.cloud.storage.BlobAppendableUploadImpl.AppendableUnbufferedWritableByteChannel;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
+import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
@@ -27,8 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-final class BidiAppendableUnbufferedWritableByteChannel
-    implements AppendableUnbufferedWritableByteChannel {
+final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
 
   private final BidiUploadStreamingStream stream;
   private final ChunkSegmenter chunkSegmenter;

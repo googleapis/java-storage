@@ -1502,12 +1502,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     BidiWriteObjectRequest req =
         takeOver
             ? getBidiWriteObjectRequestForTakeover(info, opts)
-            : getBidiWriteObjectRequest(info, opts);
+            : getBidiWriteObjectRequest(info, opts, true);
     AppendableUploadState state;
     if (takeOver) {
-      Crc32cLengthKnown initialCrc32c = opts.getHasher().initialValue();
-      if (false && initialCrc32c != null) {
-        // TODO: doesn't accessing checksum require the encryption key?
+      Crc32cLengthKnown initialCrc32c = null;
+      if (initialCrc32c != null) {
+        // TODO: doesn't accessing checksum require the dencryption key?
         Opts<ObjectSourceOpt> filter =
             opts.transformTo(ObjectSourceOpt.class)
                 .prepend(
@@ -1784,7 +1784,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
-  BidiWriteObjectRequest getBidiWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
+  BidiWriteObjectRequest getBidiWriteObjectRequest(
+      BlobInfo info, Opts<ObjectTargetOpt> opts, boolean appendable) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object.toBuilder()
@@ -1797,6 +1798,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .clearCreateTime()
             .clearUpdateTime();
     WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
+    if (appendable) {
+      specBuilder.setAppendable(true);
+    }
 
     BidiWriteObjectRequest.Builder requestBuilder =
         BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
