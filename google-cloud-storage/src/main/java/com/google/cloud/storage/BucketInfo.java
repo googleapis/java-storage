@@ -2091,7 +2091,7 @@ public class BucketInfo implements Serializable {
   /**
    * Google Managed Encryption (GMEK) enforcement config of a bucket.
    *
-   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.55.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class GoogleManagedEncryptionEnforcementConfig {
@@ -2111,7 +2111,7 @@ public class BucketInfo implements Serializable {
      * of new objects with google-managed encryption is allowed. If `FullyRestricted`, new objects
      * can not be created using google-managed encryption.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
@@ -2121,7 +2121,7 @@ public class BucketInfo implements Serializable {
     /**
      * Output only. Time from which the config was effective.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable OffsetDateTime getEffectiveTime() {
@@ -2155,7 +2155,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static GoogleManagedEncryptionEnforcementConfig of(
@@ -2164,7 +2164,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static GoogleManagedEncryptionEnforcementConfig of(
@@ -2177,7 +2177,7 @@ public class BucketInfo implements Serializable {
   /**
    * Customer Managed Encryption (CMEK) enforcement config of a bucket.
    *
-   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.55.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class CustomerManagedEncryptionEnforcementConfig {
@@ -2197,7 +2197,7 @@ public class BucketInfo implements Serializable {
      * of new objects with customer-managed encryption is allowed. If `FullyRestricted`, new objects
      * can not be created using customer-managed encryption.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
@@ -2207,7 +2207,7 @@ public class BucketInfo implements Serializable {
     /**
      * Output only. Time from which the config was effective.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable OffsetDateTime getEffectiveTime() {
@@ -2242,7 +2242,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static CustomerManagedEncryptionEnforcementConfig of(
@@ -2251,7 +2251,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static CustomerManagedEncryptionEnforcementConfig of(
@@ -2264,7 +2264,7 @@ public class BucketInfo implements Serializable {
   /**
    * Customer Supplied Encryption (CSEK) enforcement config of a bucket.
    *
-   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.55.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class CustomerSuppliedEncryptionEnforcementConfig {
@@ -2284,7 +2284,7 @@ public class BucketInfo implements Serializable {
      * of new objects with customer-supplied encryption is allowed. If `FullyRestricted`, new
      * objects can not be created using customer-supplied encryption.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable EncryptionEnforcementRestrictionMode getRestrictionMode() {
@@ -2294,7 +2294,7 @@ public class BucketInfo implements Serializable {
     /**
      * Output only. Time from which the config was effective.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public @Nullable OffsetDateTime getEffectiveTime() {
@@ -2329,7 +2329,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static CustomerSuppliedEncryptionEnforcementConfig of(
@@ -2338,7 +2338,7 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static CustomerSuppliedEncryptionEnforcementConfig of(
@@ -2349,20 +2349,20 @@ public class BucketInfo implements Serializable {
   }
 
   /**
-   * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.55.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class EncryptionEnforcementRestrictionMode extends StringEnumValue {
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static final EncryptionEnforcementRestrictionMode NOT_RESTRICTED =
         new EncryptionEnforcementRestrictionMode("NotRestricted");
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static final EncryptionEnforcementRestrictionMode FULLY_RESTRICTED =
@@ -2380,7 +2380,7 @@ public class BucketInfo implements Serializable {
      * Get the {@link EncryptionEnforcementRestrictionMode} for the given String constant, and throw
      * an exception if the constant is not recognized.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static EncryptionEnforcementRestrictionMode valueOfStrict(String constant) {
@@ -2391,7 +2391,7 @@ public class BucketInfo implements Serializable {
      * Get the {@link EncryptionEnforcementRestrictionMode} for the given String constant, and allow
      * unrecognized values.
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static EncryptionEnforcementRestrictionMode valueOf(String constant) {
@@ -2401,7 +2401,7 @@ public class BucketInfo implements Serializable {
     /**
      * Return the known values
      *
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static EncryptionEnforcementRestrictionMode[] values() {
@@ -2554,21 +2554,21 @@ public class BucketInfo implements Serializable {
     public abstract Builder setDefaultKmsKeyName(String defaultKmsKeyName);
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public abstract Builder setGoogleManagedEncryptionEnforcementConfig(
         GoogleManagedEncryptionEnforcementConfig config);
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public abstract Builder setCustomerManagedEncryptionEnforcementConfig(
         CustomerManagedEncryptionEnforcementConfig config);
 
     /**
-     * @since 2.54.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.55.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public abstract Builder setCustomerSuppliedEncryptionEnforcementConfig(
