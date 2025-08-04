@@ -39,9 +39,16 @@ class ChannelSession<StartT, ResultT, ChannelT> {
 
   ChannelSession(
       ApiFuture<StartT> startFuture, BiFunction<StartT, SettableApiFuture<ResultT>, ChannelT> f) {
+    this(startFuture, f, SettableApiFuture.create());
+  }
+
+  ChannelSession(
+      ApiFuture<StartT> startFuture,
+      BiFunction<StartT, SettableApiFuture<ResultT>, ChannelT> f,
+      SettableApiFuture<ResultT> resultFuture) {
     this.startFuture = startFuture;
-    this.resultFuture = SettableApiFuture.create();
-    this.f = (s) -> f.apply(s, resultFuture);
+    this.resultFuture = resultFuture;
+    this.f = (s) -> f.apply(s, this.resultFuture);
   }
 
   public ApiFuture<ChannelT> openAsync() {

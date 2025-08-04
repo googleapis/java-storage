@@ -252,7 +252,7 @@ final class GapicBidiWritableByteChannelSessionBuilder {
                         c.startAppendableTakeoverStream();
                       }
                       return new AppendableObjectBufferedWritableByteChannel(
-                          flushPolicy.createBufferedChannel(c), c, boundFinalizeOnClose);
+                          flushPolicy.createBufferedChannel(c), c, boundFinalizeOnClose, false);
                     }));
       }
     }
