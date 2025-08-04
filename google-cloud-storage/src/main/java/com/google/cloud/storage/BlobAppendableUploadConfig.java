@@ -19,21 +19,28 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.rpc.AbortedException;
 import com.google.api.gax.rpc.ApiException;
+import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
+import com.google.cloud.storage.BidiUploadState.TakeoverAppendableUploadState;
 import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.common.base.MoreObjects;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ServiceConstants.Values;
+import java.util.function.BiFunction;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -53,17 +60,20 @@ public final class BlobAppendableUploadConfig {
       new BlobAppendableUploadConfig(
           FlushPolicy.minFlushSize(_256KiB),
           Hasher.enabled(),
-          CloseAction.CLOSE_WITHOUT_FINALIZING);
+          CloseAction.CLOSE_WITHOUT_FINALIZING,
+          false);
 
   private final FlushPolicy flushPolicy;
   private final Hasher hasher;
   private final CloseAction closeAction;
+  private final boolean newImpl;
 
   private BlobAppendableUploadConfig(
-      FlushPolicy flushPolicy, Hasher hasher, CloseAction closeAction) {
+      FlushPolicy flushPolicy, Hasher hasher, CloseAction closeAction, boolean newImpl) {
     this.flushPolicy = flushPolicy;
     this.hasher = hasher;
     this.closeAction = closeAction;
+    this.newImpl = newImpl;
   }
 
   /**
@@ -94,7 +104,7 @@ public final class BlobAppendableUploadConfig {
     if (this.flushPolicy.equals(flushPolicy)) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction);
+    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction, newImpl);
   }
 
   /**
@@ -124,7 +134,7 @@ public final class BlobAppendableUploadConfig {
     if (this.closeAction == closeAction) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction);
+    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction, newImpl);
   }
 
   /**
@@ -156,13 +166,25 @@ public final class BlobAppendableUploadConfig {
       return this;
     }
     return new BlobAppendableUploadConfig(
-        flushPolicy, enabled ? Hasher.enabled() : Hasher.noop(), closeAction);
+        flushPolicy, enabled ? Hasher.enabled() : Hasher.noop(), closeAction, newImpl);
   }
 
   /** Never to be made public until {@link Hasher} is public */
   @InternalApi
   Hasher getHasher() {
     return hasher;
+  }
+
+  BlobAppendableUploadConfig useNewImpl() {
+    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction, true);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("closeAction", closeAction)
+        .add("flushPolicy", flushPolicy)
+        .toString();
   }
 
   /**
@@ -217,55 +239,127 @@ public final class BlobAppendableUploadConfig {
   }
 
   BlobAppendableUpload create(GrpcStorageImpl storage, BlobInfo info, Opts<ObjectTargetOpt> opts) {
-    boolean takeOver = info.getGeneration() != null;
-    BidiWriteObjectRequest req =
-        takeOver
-            ? storage.getBidiWriteObjectRequestForTakeover(info, opts)
-            : storage.getBidiWriteObjectRequest(info, opts);
+    if (newImpl) {
+      // TODO: make configurable
+      int maxRedirectsAllowed = 3;
 
-    BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
+      long maxPendingBytes = this.getFlushPolicy().getMaxPendingBytes();
+      AppendableUploadState state = storage.getAppendableState(info, opts, maxPendingBytes);
+      WritableByteChannelSession<
+              AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse>
+          build =
+              new AppendableSession(
+                  ApiFutures.immediateFuture(state),
+                  (start, resultFuture) -> {
+                    BidiUploadStreamingStream stream =
+                        new BidiUploadStreamingStream(
+                            start,
+                            storage.storageDataClient.executor,
+                            storage.storageClient.bidiWriteObjectCallable(),
+                            maxRedirectsAllowed,
+                            storage.storageDataClient.retryContextProvider.create());
+                    ChunkSegmenter chunkSegmenter =
+                        new ChunkSegmenter(
+                            Hasher.enabled(),
+                            ByteStringStrategy.copy(),
+                            Math.min(
+                                Values.MAX_WRITE_CHUNK_BYTES_VALUE,
+                                Math.toIntExact(maxPendingBytes)),
+                            /* blockSize= */ 1);
+                    BidiAppendableUnbufferedWritableByteChannel c;
+                    if (state instanceof TakeoverAppendableUploadState) {
+                      // start the takeover reconciliation
+                      stream.awaitTakeoverStateReconciliation();
+                      c =
+                          new BidiAppendableUnbufferedWritableByteChannel(
+                              stream, chunkSegmenter, state.getConfirmedBytes());
+                    } else {
+                      c =
+                          new BidiAppendableUnbufferedWritableByteChannel(
+                              stream, chunkSegmenter, 0);
+                    }
+                    return new AppendableObjectBufferedWritableByteChannel(
+                        flushPolicy.createBufferedChannel(c),
+                        c,
+                        this.closeAction == CloseAction.FINALIZE_WHEN_CLOSING,
+                        newImpl);
+                  },
+                  state.getResultFuture());
 
-    WritableByteChannelSession<AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse>
-        build =
-            ResumableMedia.gapic()
-                .write()
-                .bidiByteChannel(storage.storageClient.bidiWriteObjectCallable())
-                .setHasher(this.getHasher())
-                .setByteStringStrategy(ByteStringStrategy.copy())
-                .appendable()
-                .withRetryConfig(
-                    storage.retrier.withAlg(
-                        new BasicResultRetryAlgorithm<Object>() {
-                          @Override
-                          public boolean shouldRetry(
-                              Throwable previousThrowable, Object previousResponse) {
-                            // TODO: remove this later once the redirects are not handled by the
-                            // retry loop
-                            ApiException apiEx = null;
-                            if (previousThrowable instanceof StorageException) {
-                              StorageException se = (StorageException) previousThrowable;
-                              Throwable cause = se.getCause();
-                              if (cause instanceof ApiException) {
-                                apiEx = (ApiException) cause;
+      return new BlobAppendableUploadImpl(
+          new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
+              build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER));
+    } else {
+      boolean takeOver = info.getGeneration() != null;
+      BidiWriteObjectRequest req =
+          takeOver
+              ? storage.getBidiWriteObjectRequestForTakeover(info, opts)
+              : storage.getBidiWriteObjectRequest(info, opts);
+
+      BidiAppendableWrite baw = new BidiAppendableWrite(req, takeOver);
+
+      WritableByteChannelSession<
+              AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse>
+          build =
+              ResumableMedia.gapic()
+                  .write()
+                  .bidiByteChannel(storage.storageClient.bidiWriteObjectCallable())
+                  .setHasher(this.getHasher())
+                  .setByteStringStrategy(ByteStringStrategy.copy())
+                  .appendable()
+                  .withRetryConfig(
+                      storage.retrier.withAlg(
+                          new BasicResultRetryAlgorithm<Object>() {
+                            @Override
+                            public boolean shouldRetry(
+                                Throwable previousThrowable, Object previousResponse) {
+                              // TODO: remove this later once the redirects are not handled by the
+                              // retry loop
+                              ApiException apiEx = null;
+                              if (previousThrowable instanceof StorageException) {
+                                StorageException se = (StorageException) previousThrowable;
+                                Throwable cause = se.getCause();
+                                if (cause instanceof ApiException) {
+                                  apiEx = (ApiException) cause;
+                                }
                               }
+                              if (apiEx instanceof AbortedException) {
+                                return true;
+                              }
+                              return storage
+                                  .retryAlgorithmManager
+                                  .idempotent()
+                                  .shouldRetry(previousThrowable, null);
                             }
-                            if (apiEx instanceof AbortedException) {
-                              return true;
-                            }
-                            return storage
-                                .retryAlgorithmManager
-                                .idempotent()
-                                .shouldRetry(previousThrowable, null);
-                          }
-                        }))
-                .buffered(this.getFlushPolicy())
-                .setStartAsync(ApiFutures.immediateFuture(baw))
-                .setGetCallable(storage.storageClient.getObjectCallable())
-                .setFinalizeOnClose(this.closeAction == CloseAction.FINALIZE_WHEN_CLOSING)
-                .build();
+                          }))
+                  .buffered(this.getFlushPolicy())
+                  .setStartAsync(ApiFutures.immediateFuture(baw))
+                  .setGetCallable(storage.storageClient.getObjectCallable())
+                  .setFinalizeOnClose(this.closeAction == CloseAction.FINALIZE_WHEN_CLOSING)
+                  .build();
 
-    return new BlobAppendableUploadImpl(
-        new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
-            build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER));
+      return new BlobAppendableUploadImpl(
+          new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
+              build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER));
+    }
+  }
+
+  private static final class AppendableSession
+      extends ChannelSession<
+          AppendableUploadState,
+          BidiWriteObjectResponse,
+          AppendableObjectBufferedWritableByteChannel>
+      implements WritableByteChannelSession<
+          AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse> {
+    private AppendableSession(
+        ApiFuture<AppendableUploadState> startFuture,
+        BiFunction<
+                AppendableUploadState,
+                SettableApiFuture<BidiWriteObjectResponse>,
+                AppendableObjectBufferedWritableByteChannel>
+            f,
+        SettableApiFuture<BidiWriteObjectResponse> resultFuture) {
+      super(startFuture, f, resultFuture);
+    }
   }
 }
