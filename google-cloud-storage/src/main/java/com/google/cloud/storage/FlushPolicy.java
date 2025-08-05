@@ -108,6 +108,9 @@ public abstract class FlushPolicy {
    *
    * <p>Instances of this class are immutable and thread safe.
    *
+   * <p>Instead of this, strategy use {@link FlushPolicy#minFlushSize()}{@code .}{@link
+   * MinFlushSizeFlushPolicy#withMaxPendingBytes(long) withMaxPendingBytes(long)}
+   *
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @Immutable
