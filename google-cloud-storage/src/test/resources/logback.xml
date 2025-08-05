@@ -87,6 +87,7 @@
   <logger name="com.google.cloud.storage" level="info"/>
   <logger name="com.google.cloud.storage.it" level="warn"/>
   <logger name="com.google.cloud.storage.it.runner.registry.Zone" level="info"/>
+  <logger name="com.google.cloud.storage.it.runner.registry.TestBench" level="info"/>
 
   <root level="info">
     <appender-ref ref="STDOUT"/>
