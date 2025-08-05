@@ -235,7 +235,7 @@ interface RetryContext {
 
     @Override
     public void execute(Runnable command) {
-      throw new UnsupportedOperationException();
+      command.run();
     }
 
     // </editor-fold>

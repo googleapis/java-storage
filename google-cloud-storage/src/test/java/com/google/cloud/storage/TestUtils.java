@@ -25,6 +25,7 @@ import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
+import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
@@ -403,5 +404,24 @@ public final class TestUtils {
             return FileVisitResult.CONTINUE;
           }
         });
+  }
+
+  public static StreamController nullStreamController() {
+    return NullStreamController.INSTANCE;
+  }
+
+  static class NullStreamController implements StreamController {
+    private static final NullStreamController INSTANCE = new NullStreamController();
+
+    private NullStreamController() {}
+
+    @Override
+    public void cancel() {}
+
+    @Override
+    public void disableAutoInboundFlowControl() {}
+
+    @Override
+    public void request(int count) {}
   }
 }

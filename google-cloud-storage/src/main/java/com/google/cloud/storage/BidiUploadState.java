@@ -74,6 +74,17 @@ abstract class BidiUploadState {
   // seal this class to extension
   private BidiUploadState() {}
 
+  @VisibleForTesting
+  BidiUploadState(String testName) {
+    // some runtime enforcement that this constructor is only called from a test
+    // if we had java9+ we could seal this all the way without this hack
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    boolean isJunitTest =
+        Arrays.stream(stackTrace).anyMatch(ste -> ste.getClassName().startsWith("org.junit"));
+
+    checkState(isJunitTest, "not a junit test", testName);
+  }
+
   protected final StorageException err(
       UploadFailureScenario scenario, BidiWriteObjectResponse response) {
     BidiWriteObjectRequest t = peekLast();
