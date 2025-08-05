@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.55.0](https://github.com/googleapis/java-storage/compare/v2.54.0...v2.55.0) (2025-08-05)
+
+
+### Features
+
+* Add new preview Bucket encryption policy configuration ([#3204](https://github.com/googleapis/java-storage/issues/3204)) ([7b250dd](https://github.com/googleapis/java-storage/commit/7b250dd53cfa29bbb6a0a4cb4a345aeb2dab5c86))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.61.0 ([f98b686](https://github.com/googleapis/java-storage/commit/f98b686ef940879458acb1e56339adf869400b94))
+* Enable ALTS bound token (for DirectPath) in the grpc channel provider ([#2919](https://github.com/googleapis/java-storage/issues/2919)) ([38d248d](https://github.com/googleapis/java-storage/commit/38d248d9511e808e88c1bac0b6bb2ba54897830d))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.51.0 ([#3213](https://github.com/googleapis/java-storage/issues/3213)) ([86ff697](https://github.com/googleapis/java-storage/commit/86ff69788b30d8f82b6b95d010df507093852889))
+
 ## [2.54.0](https://github.com/googleapis/java-storage/compare/v2.53.3...v2.54.0) (2025-07-24)
 
 
