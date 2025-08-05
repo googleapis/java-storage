@@ -417,11 +417,11 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
         } else if (persistedSize < totalSentBytes) {
           writeCtx.getConfirmedBytes().set(persistedSize);
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_9.toStorageException(
+              UploadFailureScenario.SCENARIO_9.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
+              UploadFailureScenario.SCENARIO_7.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
       } else if (finalizing && value.hasResource()) {
@@ -432,11 +432,11 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
           ok(value);
         } else if (finalSize < totalSentBytes) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+              UploadFailureScenario.SCENARIO_4_1.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+              UploadFailureScenario.SCENARIO_4_2.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
       } else if (finalizing && value.hasPersistedSize()) {
@@ -449,16 +449,16 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
           writeCtx.getConfirmedBytes().set(persistedSize);
         } else if (persistedSize < totalSentBytes) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
+              UploadFailureScenario.SCENARIO_3.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         } else {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
+              UploadFailureScenario.SCENARIO_2.toStorageException(
                   ImmutableList.of(lastWrittenRequest), value, context, null));
         }
       } else {
         clientDetectedError(
-            ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+            UploadFailureScenario.SCENARIO_0.toStorageException(
                 ImmutableList.of(lastWrittenRequest), value, context, null));
       }
     }
@@ -472,7 +472,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
             && ed.getErrorInfo() != null
             && ed.getErrorInfo().getReason().equals("GRPC_MISMATCHED_UPLOAD_SIZE"))) {
           clientDetectedError(
-              ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+              UploadFailureScenario.SCENARIO_5.toStorageException(
                   ImmutableList.of(lastWrittenRequest), null, context, oore));
           return;
         }
@@ -484,7 +484,7 @@ final class GapicBidiUnbufferedAppendableWritableByteChannel
         // unusual case, and it should not cause a significant overhead given its rarity.
         StorageException tmp = StorageException.asStorageException((ApiException) t);
         previousError =
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 tmp.getCode(),
                 tmp.getMessage(),
                 tmp.getReason(),
