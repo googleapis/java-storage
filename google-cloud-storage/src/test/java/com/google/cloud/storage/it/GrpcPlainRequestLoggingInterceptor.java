@@ -17,22 +17,16 @@
 package com.google.cloud.storage.it;
 
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
+import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Any;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.UnsafeByteOperations;
 import com.google.rpc.DebugInfo;
 import com.google.rpc.ErrorInfo;
-import com.google.storage.v2.BidiReadObjectResponse;
-import com.google.storage.v2.BidiWriteObjectRequest;
-import com.google.storage.v2.ObjectRangeData;
-import com.google.storage.v2.ReadObjectResponse;
-import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
@@ -43,7 +37,6 @@ import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -159,101 +152,8 @@ public final class GrpcPlainRequestLoggingInterceptor implements ClientIntercept
   }
 
   @NonNull
-  static String fmtProto(@NonNull Object obj) {
-    if (obj instanceof WriteObjectRequest) {
-      return fmtProto((WriteObjectRequest) obj);
-    } else if (obj instanceof BidiWriteObjectRequest) {
-      return fmtProto((BidiWriteObjectRequest) obj);
-    } else if (obj instanceof ReadObjectResponse) {
-      return fmtProto((ReadObjectResponse) obj);
-    } else if (obj instanceof BidiReadObjectResponse) {
-      return fmtProto((BidiReadObjectResponse) obj);
-    } else if (obj instanceof MessageOrBuilder) {
-      return fmtProto((MessageOrBuilder) obj);
-    } else {
-      return obj.toString();
-    }
-  }
-
-  @NonNull
-  static String fmtProto(@NonNull final MessageOrBuilder msg) {
-    return TextFormat.printer().printToString(msg);
-  }
-
-  @NonNull
-  static String fmtProto(@NonNull WriteObjectRequest msg) {
-    if (msg.hasChecksummedData()) {
-      ByteString content = msg.getChecksummedData().getContent();
-      if (content.size() > 20) {
-        WriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString trim = snipBytes(content);
-        b.getChecksummedDataBuilder().setContent(trim);
-
-        return fmtProto((MessageOrBuilder) b.build());
-      }
-    }
-    return fmtProto((MessageOrBuilder) msg);
-  }
-
-  @NonNull
-  static String fmtProto(@NonNull BidiWriteObjectRequest msg) {
-    if (msg.hasChecksummedData()) {
-      ByteString content = msg.getChecksummedData().getContent();
-      if (content.size() > 20) {
-        BidiWriteObjectRequest.Builder b = msg.toBuilder();
-        ByteString trim = snipBytes(content);
-        b.getChecksummedDataBuilder().setContent(trim);
-
-        return fmtProto((MessageOrBuilder) b.build());
-      }
-    }
-    return fmtProto((MessageOrBuilder) msg);
-  }
-
-  @NonNull
-  static String fmtProto(@NonNull ReadObjectResponse msg) {
-    if (msg.hasChecksummedData()) {
-      ByteString content = msg.getChecksummedData().getContent();
-      if (content.size() > 20) {
-        ReadObjectResponse.Builder b = msg.toBuilder();
-        ByteString trim = snipBytes(content);
-        b.getChecksummedDataBuilder().setContent(trim);
-
-        return fmtProto((MessageOrBuilder) b.build());
-      }
-    }
-    return msg.toString();
-  }
-
-  @NonNull
-  public static String fmtProto(@NonNull BidiReadObjectResponse msg) {
-    List<ObjectRangeData> rangeData = msg.getObjectDataRangesList();
-    if (!rangeData.isEmpty()) {
-      List<ObjectRangeData> snips = new ArrayList<>();
-      for (ObjectRangeData rd : rangeData) {
-        if (rd.hasChecksummedData()) {
-          ByteString content = rd.getChecksummedData().getContent();
-          if (content.size() > 20) {
-            ObjectRangeData.Builder b = rd.toBuilder();
-            ByteString trim = snipBytes(content);
-            b.getChecksummedDataBuilder().setContent(trim);
-            snips.add(b.build());
-          } else {
-            snips.add(rd);
-          }
-        }
-      }
-      BidiReadObjectResponse snipped =
-          msg.toBuilder().clearObjectDataRanges().addAllObjectDataRanges(snips).build();
-      return fmtProto((MessageOrBuilder) snipped);
-    }
-    return fmtProto((MessageOrBuilder) msg);
-  }
-
-  private static ByteString snipBytes(ByteString content) {
-    ByteString snip =
-        ByteString.copyFromUtf8(String.format(Locale.US, "<snip (%d)>", content.size()));
-    return content.substring(0, 20).concat(snip);
+  public static String fmtProto(@NonNull Object obj) {
+    return PackagePrivateMethodWorkarounds.fmtProto(obj, TextFormat.printer()::printToString);
   }
 
   // Suppress DataFlowIssue warnings for this method.
