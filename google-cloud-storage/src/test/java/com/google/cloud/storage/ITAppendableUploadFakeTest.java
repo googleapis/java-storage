@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.TestUtils.GRPC_STATUS_DETAILS_KEY;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
@@ -48,7 +49,6 @@ import com.google.storage.v2.WriteObjectSpec;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.time.Duration;
@@ -63,11 +63,6 @@ import org.junit.Test;
 
 public class ITAppendableUploadFakeTest {
   private static final byte[] ALL_OBJECT_BYTES = DataGenerator.base64Characters().genBytes(64);
-
-  private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of(
-          "grpc-status-details-bin",
-          ProtoUtils.metadataMarshaller(com.google.rpc.Status.getDefaultInstance()));
 
   private static final Object METADATA =
       Object.newBuilder()
