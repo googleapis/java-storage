@@ -23,6 +23,7 @@ import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.TimeUnit;
 
@@ -90,6 +91,8 @@ public interface BlobAppendableUpload extends BlobWriteSession {
    * <p>This interface allows writing bytes to an Appendable Upload, and provides methods to close
    * this channel -- optionally finalizing the upload.
    *
+   * <p>The {@link #write(ByteBuffer)} method of this channel is non-blocking.
+   *
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
@@ -97,7 +100,29 @@ public interface BlobAppendableUpload extends BlobWriteSession {
   interface AppendableUploadWriteableByteChannel extends WritableByteChannel {
 
     /**
-     * Finalize the upload and close this instance to further {@link #write(ByteBuffer)}ing. This
+     * <b>This method is non-blocking</b>
+     *
+     * <p>Consume as many bytes as can fit in the underlying outbound queue. The size of the
+     * outbound queue is determined from {@link BlobAppendableUploadConfig#getFlushPolicy()}{@code
+     * .}{@link FlushPolicy#getMaxPendingBytes() getMaxPendingBytes()}. If the outbound queue is
+     * full, and can not fit more bytes, this method will return 0.
+     *
+     * <p>This method may be invoked at any time. If another thread has already initiated a write
+     * operation upon this channel, however, then an invocation of this method will block until the
+     * first operation is complete.
+     *
+     * @param src The buffer from which bytes are to be retrieved
+     * @return The number of bytes written, possibly zero
+     * @throws ClosedChannelException If this channel is closed
+     * @throws IOException If some other I/O error occurs
+     */
+    @Override
+    int write(ByteBuffer src) throws IOException;
+
+    /**
+     * <b>This method is blocking</b>
+     *
+     * <p>Finalize the upload and close this instance to further {@link #write(ByteBuffer)}ing. This
      * will close any underlying stream and release any releasable resources once out of scope.
      *
      * <p>Once this method is called, and returns no more writes to the object will be allowed by
@@ -116,8 +141,11 @@ public interface BlobAppendableUpload extends BlobWriteSession {
     void finalizeAndClose() throws IOException;
 
     /**
-     * Close this instance to further {@link #write(ByteBuffer)}ing without finalizing the upload.
-     * This will close any underlying stream and release any releasable resources once out of scope.
+     * <b>This method is blocking</b>
+     *
+     * <p>Close this instance to further {@link #write(ByteBuffer)}ing without finalizing the
+     * upload. This will close any underlying stream and release any releasable resources once out
+     * of scope.
      *
      * <p>This method, {@link AppendableUploadWriteableByteChannel#finalizeAndClose()} and {@link
      * AppendableUploadWriteableByteChannel#close()} are mutually exclusive. If one of the other
@@ -133,7 +161,9 @@ public interface BlobAppendableUpload extends BlobWriteSession {
     void closeWithoutFinalizing() throws IOException;
 
     /**
-     * Close this instance to further {@link #write(ByteBuffer)}ing.
+     * <b>This method is blocking</b>
+     *
+     * <p>Close this instance to further {@link #write(ByteBuffer)}ing.
      *
      * <p>Whether the upload is finalized during this depends on the {@link
      * BlobAppendableUploadConfig#getCloseAction()} provided to create the {@link
