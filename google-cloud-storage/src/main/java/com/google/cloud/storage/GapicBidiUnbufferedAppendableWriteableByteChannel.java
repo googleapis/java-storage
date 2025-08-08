@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.BlobAppendableUploadImpl.AppendableUnbufferedWritableByteChannel;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
@@ -63,7 +64,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GapicBidiUnbufferedAppendableWritableByteChannel
-    implements UnbufferedWritableByteChannel {
+    implements UnbufferedWritableByteChannel, AppendableUnbufferedWritableByteChannel {
   private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
   private final UnaryCallable<GetObjectRequest, Object> get;
   private final RetrierWithAlg retrier;
