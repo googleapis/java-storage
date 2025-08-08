@@ -1516,15 +1516,13 @@ final class OtelStorageDecorator implements Storage {
     try (Scope ignore = span.makeCurrent()) {
 
       return new OtelDecoratingBlobAppendableUpload(
-          delegate.blobAppendableUpload(blobInfo, uploadConfig, options));
+          delegate.blobAppendableUpload(blobInfo, uploadConfig, options), span);
 
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
       span.end();
       throw t;
-    } finally {
-      span.end();
     }
   }
 
@@ -2110,10 +2108,12 @@ final class OtelStorageDecorator implements Storage {
 
   final class OtelDecoratingBlobAppendableUpload implements BlobAppendableUpload {
     private final BlobAppendableUpload delegate;
+    private final Span uploadSpan;
     private final Tracer tracer;
 
-    private OtelDecoratingBlobAppendableUpload(BlobAppendableUpload delegate) {
+    private OtelDecoratingBlobAppendableUpload(BlobAppendableUpload delegate, Span uploadSpan) {
       this.delegate = delegate;
+      this.uploadSpan = uploadSpan;
       this.tracer =
           TracerDecorator.decorate(
               Context.current(),
@@ -2159,9 +2159,12 @@ final class OtelStorageDecorator implements Storage {
         } catch (IOException | RuntimeException e) {
           openSpan.recordException(e);
           openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          uploadSpan.recordException(e);
+          uploadSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
           throw e;
         } finally {
           openSpan.end();
+          uploadSpan.end();
         }
       }
 
@@ -2173,9 +2176,12 @@ final class OtelStorageDecorator implements Storage {
         } catch (IOException | RuntimeException e) {
           openSpan.recordException(e);
           openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          uploadSpan.recordException(e);
+          uploadSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
           throw e;
         } finally {
           openSpan.end();
+          uploadSpan.end();
         }
       }
 
@@ -2187,9 +2193,12 @@ final class OtelStorageDecorator implements Storage {
         } catch (IOException | RuntimeException e) {
           openSpan.recordException(e);
           openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          uploadSpan.recordException(e);
+          uploadSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
           throw e;
         } finally {
           openSpan.end();
+          uploadSpan.end();
         }
       }
 
