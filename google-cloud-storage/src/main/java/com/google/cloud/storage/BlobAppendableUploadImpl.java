@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -64,21 +63,18 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
       implements BufferedWritableByteChannel,
           BlobAppendableUpload.AppendableUploadWriteableByteChannel {
     private final BufferedWritableByteChannel buffered;
-    private final AppendableUnbufferedWritableByteChannel unbuffered;
+    private final BidiAppendableUnbufferedWritableByteChannel unbuffered;
     private final boolean finalizeOnClose;
     private final ReentrantLock lock;
-    private final boolean newImpl;
 
     AppendableObjectBufferedWritableByteChannel(
         BufferedWritableByteChannel buffered,
-        AppendableUnbufferedWritableByteChannel unbuffered,
-        boolean finalizeOnClose,
-        boolean newImpl) {
+        BidiAppendableUnbufferedWritableByteChannel unbuffered,
+        boolean finalizeOnClose) {
       this.buffered = buffered;
       this.unbuffered = unbuffered;
       this.finalizeOnClose = finalizeOnClose;
-      this.newImpl = newImpl;
-      lock = new ReentrantLock();
+      this.lock = new ReentrantLock();
     }
 
     @Override
@@ -115,17 +111,9 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
     public void finalizeAndClose() throws IOException {
       lock.lock();
       try {
-        if (newImpl) {
-          if (buffered.isOpen()) {
-            unbuffered.nextWriteShouldFinalize();
-            buffered.close();
-          }
-        } else {
-          if (buffered.isOpen()) {
-            buffered.flush();
-            unbuffered.finalizeWrite();
-            buffered.close();
-          }
+        if (buffered.isOpen()) {
+          unbuffered.nextWriteShouldFinalize();
+          buffered.close();
         }
       } finally {
         lock.unlock();
@@ -152,12 +140,5 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
         closeWithoutFinalizing();
       }
     }
-  }
-
-  /** Temporary shim to allow selective implementation */
-  interface AppendableUnbufferedWritableByteChannel extends UnbufferedWritableByteChannel {
-    default void nextWriteShouldFinalize() {}
-
-    default void finalizeWrite() throws IOException {}
   }
 }
