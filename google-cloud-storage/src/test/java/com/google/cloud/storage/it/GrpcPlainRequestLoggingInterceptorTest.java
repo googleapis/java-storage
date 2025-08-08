@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.GRPC_STATUS_DETAILS_KEY;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.common.io.Resources;
@@ -29,7 +30,6 @@ import com.google.storage.v2.ReadRange;
 import com.google.storage.v2.ReadRangeError;
 import io.grpc.Metadata;
 import io.grpc.Status;
-import io.grpc.protobuf.ProtoUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -39,10 +39,6 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 public final class GrpcPlainRequestLoggingInterceptorTest {
-  private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of(
-          "grpc-status-details-bin",
-          ProtoUtils.metadataMarshaller(com.google.rpc.Status.getDefaultInstance()));
 
   @Test
   public void lazyOnCloseLogStringGolden() throws IOException {

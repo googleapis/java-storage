@@ -267,8 +267,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
             && ed.getErrorInfo() != null
             && ed.getErrorInfo().getReason().equals("GRPC_MISMATCHED_UPLOAD_SIZE"))) {
           StorageException storageException =
-              ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
-                  segments, null, context, oore);
+              UploadFailureScenario.SCENARIO_5.toStorageException(segments, null, context, oore);
           invocationHandle.setException(storageException);
           return;
         }
@@ -280,7 +279,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
         // unusual case, and it should not cause a significant overhead given its rarity.
         StorageException tmp = StorageException.asStorageException((ApiException) t);
         StorageException storageException =
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 tmp.getCode(), tmp.getMessage(), tmp.getReason(), segments, null, context, t);
         invocationHandle.setException(storageException);
       }
@@ -305,7 +304,7 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
             writeCtx.getTotalSentBytes().set(persistedSize);
             writeCtx.getConfirmedBytes().set(persistedSize);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_7.toStorageException(
+            throw UploadFailureScenario.SCENARIO_7.toStorageException(
                 segments, last, context, null);
           }
         } else if (finalizing && last.hasResource()) {
@@ -315,28 +314,26 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
             writeCtx.getConfirmedBytes().set(finalSize);
             resultFuture.set(last);
           } else if (finalSize < totalSentBytes) {
-            throw ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+            throw UploadFailureScenario.SCENARIO_4_1.toStorageException(
                 segments, last, context, null);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+            throw UploadFailureScenario.SCENARIO_4_2.toStorageException(
                 segments, last, context, null);
           }
         } else if (!finalizing && last.hasResource()) {
-          throw ResumableSessionFailureScenario.SCENARIO_1.toStorageException(
-              segments, last, context, null);
+          throw UploadFailureScenario.SCENARIO_1.toStorageException(segments, last, context, null);
         } else if (finalizing && last.hasPersistedSize()) {
           long totalSentBytes = writeCtx.getTotalSentBytes().get();
           long persistedSize = last.getPersistedSize();
           if (persistedSize < totalSentBytes) {
-            throw ResumableSessionFailureScenario.SCENARIO_3.toStorageException(
+            throw UploadFailureScenario.SCENARIO_3.toStorageException(
                 segments, last, context, null);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_2.toStorageException(
+            throw UploadFailureScenario.SCENARIO_2.toStorageException(
                 segments, last, context, null);
           }
         } else {
-          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
-              segments, last, context, null);
+          throw UploadFailureScenario.SCENARIO_0.toStorageException(segments, last, context, null);
         }
       } catch (Throwable se) {
         open = false;

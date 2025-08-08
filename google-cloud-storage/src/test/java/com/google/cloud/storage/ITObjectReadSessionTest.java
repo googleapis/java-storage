@@ -325,10 +325,11 @@ public final class ITObjectReadSessionTest {
   @Test
   public void outOfRange()
       throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    int objectSize = 4 * 1024 * 1024;
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(4));
-    BlobInfo obj512KiB = create(testContent);
-    BlobId blobId = obj512KiB.getBlobId();
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(objectSize));
+    BlobInfo gen1 = create(testContent);
+    BlobId blobId = gen1.getBlobId();
 
     try (BlobReadSession blobReadSession =
         storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
@@ -338,14 +339,15 @@ public final class ITObjectReadSessionTest {
 
       ReadAsFutureBytes cfg = ReadProjectionConfigs.asFutureBytes();
 
-      ApiFuture<byte[]> f2 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.beginAt(5)));
+      ApiFuture<byte[]> f2 =
+          blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.beginAt(objectSize + 1)));
       ExecutionException ee =
           assertThrows(ExecutionException.class, () -> f2.get(30, TimeUnit.SECONDS));
       assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(OutOfRangeException.class);
 
       ApiFuture<byte[]> f1 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.all()));
       byte[] bytes1 = f1.get(30, TimeUnit.SECONDS);
-      assertThat(bytes1.length).isEqualTo(4);
+      assertThat(bytes1.length).isEqualTo(objectSize);
     }
   }
 
@@ -356,8 +358,8 @@ public final class ITObjectReadSessionTest {
     BlobAppendableUpload upload =
         storage.blobAppendableUpload(
             info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist());
-    try (AppendableUploadWriteableByteChannel channel = upload.open(); ) {
-      channel.write(ByteBuffer.wrap(content.getBytes()));
+    try (AppendableUploadWriteableByteChannel channel = upload.open()) {
+      Buffers.emptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.finalizeAndClose();
     }
     return upload.getResult().get(5, TimeUnit.SECONDS);

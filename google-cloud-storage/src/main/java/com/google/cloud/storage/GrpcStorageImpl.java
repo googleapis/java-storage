@@ -33,6 +33,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
+import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
@@ -47,9 +48,11 @@ import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -1493,6 +1496,45 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     }
   }
 
+  public AppendableUploadState getAppendableState(
+      BlobInfo info, Opts<ObjectTargetOpt> opts, long maxPendingBytes) {
+    boolean takeOver = info.getGeneration() != null;
+    BidiWriteObjectRequest req =
+        takeOver
+            ? getBidiWriteObjectRequestForTakeover(info, opts)
+            : getBidiWriteObjectRequest(info, opts, true);
+    AppendableUploadState state;
+    if (takeOver) {
+      Crc32cLengthKnown initialCrc32c = null;
+      if (initialCrc32c != null) {
+        // TODO: doesn't accessing checksum require the dencryption key?
+        Opts<ObjectSourceOpt> filter =
+            opts.transformTo(ObjectSourceOpt.class)
+                .prepend(
+                    Opts.from(
+                        UnifiedOpts.fields(ImmutableSet.of(BlobField.SIZE, BlobField.CRC32C))));
+        BlobInfo blob = internalObjectGet(info.getBlobId(), filter);
+        initialCrc32c = Crc32cValue.of(Utils.crc32cCodec.decode(blob.getCrc32c()), blob.getSize());
+      }
+      state =
+          BidiUploadState.appendableTakeover(
+              req,
+              Retrying::newCallContext,
+              maxPendingBytes,
+              SettableApiFuture.create(),
+              initialCrc32c);
+    } else {
+      state =
+          BidiUploadState.appendableNew(
+              req,
+              Retrying::newCallContext,
+              maxPendingBytes,
+              SettableApiFuture.create(),
+              opts.getHasher().initialValue());
+    }
+    return state;
+  }
+
   /** Bind some decoders for our "Syntax" classes to this instance of GrpcStorageImpl */
   private final class SyntaxDecoders {
 
@@ -1742,7 +1784,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
-  BidiWriteObjectRequest getBidiWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
+  BidiWriteObjectRequest getBidiWriteObjectRequest(
+      BlobInfo info, Opts<ObjectTargetOpt> opts, boolean appendable) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object.toBuilder()
@@ -1755,6 +1798,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .clearCreateTime()
             .clearUpdateTime();
     WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
+    if (appendable) {
+      specBuilder.setAppendable(true);
+    }
 
     BidiWriteObjectRequest.Builder requestBuilder =
         BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
