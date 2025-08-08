@@ -173,6 +173,21 @@ final class Buffers {
     return total;
   }
 
+  static int emptyTo(ByteBuffer buf, WritableByteChannel c) throws IOException {
+    int total = 0;
+    while (buf.hasRemaining()) {
+      int written = c.write(buf);
+      if (written != -1) {
+        total += written;
+      } else if (total == 0) {
+        return -1;
+      } else {
+        break;
+      }
+    }
+    return total;
+  }
+
   static long totalRemaining(ByteBuffer[] buffers, int offset, int length) {
     long totalRemaning = 0;
     for (int i = offset; i < length; i++) {
