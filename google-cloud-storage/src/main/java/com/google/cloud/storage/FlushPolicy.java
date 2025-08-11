@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 
 import com.google.api.core.BetaApi;
@@ -87,6 +88,8 @@ public abstract class FlushPolicy {
   abstract BufferedWritableByteChannel createBufferedChannel(
       UnbufferedWritableByteChannel unbuffered);
 
+  abstract long getMaxPendingBytes();
+
   @Override
   public abstract boolean equals(Object obj);
 
@@ -155,6 +158,11 @@ public abstract class FlushPolicy {
     }
 
     @Override
+    long getMaxPendingBytes() {
+      return maxFlushSize;
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -191,12 +199,15 @@ public abstract class FlushPolicy {
   @Immutable
   @BetaApi
   public static final class MinFlushSizeFlushPolicy extends FlushPolicy {
-    private static final MinFlushSizeFlushPolicy INSTANCE = new MinFlushSizeFlushPolicy(_2MiB);
+    private static final MinFlushSizeFlushPolicy INSTANCE =
+        new MinFlushSizeFlushPolicy(_2MiB, _16MiB);
 
     private final int minFlushSize;
+    private final long maxPendingBytes;
 
-    private MinFlushSizeFlushPolicy(int minFlushSize) {
+    private MinFlushSizeFlushPolicy(int minFlushSize, long maxPendingBytes) {
       this.minFlushSize = minFlushSize;
+      this.maxPendingBytes = maxPendingBytes;
     }
 
     /**
@@ -226,13 +237,33 @@ public abstract class FlushPolicy {
       if (this.minFlushSize == minFlushSize) {
         return this;
       }
-      return new MinFlushSizeFlushPolicy(minFlushSize);
+      return new MinFlushSizeFlushPolicy(minFlushSize, maxPendingBytes);
+    }
+
+    @BetaApi
+    public long getMaxPendingBytes() {
+      return maxPendingBytes;
+    }
+
+    @BetaApi
+    public MinFlushSizeFlushPolicy withMaxPendingBytes(long maxPendingBytes) {
+      Preconditions.checkArgument(
+          maxPendingBytes >= 0, "maxPendingBytes >= 0 (%s >= 0)", maxPendingBytes);
+      Preconditions.checkArgument(
+          maxPendingBytes >= minFlushSize,
+          "maxPendingBytes >= minFlushSize (%s >= %s",
+          maxPendingBytes,
+          minFlushSize);
+      if (this.maxPendingBytes == maxPendingBytes) {
+        return this;
+      }
+      return new MinFlushSizeFlushPolicy(minFlushSize, maxPendingBytes);
     }
 
     @Override
     BufferedWritableByteChannel createBufferedChannel(UnbufferedWritableByteChannel unbuffered) {
       return new MinFlushBufferedWritableByteChannel(
-          BufferHandle.allocate(minFlushSize), unbuffered);
+          BufferHandle.allocate(minFlushSize), unbuffered, false);
     }
 
     @Override
@@ -244,17 +275,20 @@ public abstract class FlushPolicy {
         return false;
       }
       MinFlushSizeFlushPolicy that = (MinFlushSizeFlushPolicy) o;
-      return minFlushSize == that.minFlushSize;
+      return minFlushSize == that.minFlushSize && maxPendingBytes == that.maxPendingBytes;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hashCode(minFlushSize);
+      return Objects.hash(minFlushSize, maxPendingBytes);
     }
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this).add("minFlushSize", minFlushSize).toString();
+      return MoreObjects.toStringHelper(this)
+          .add("minFlushSize", minFlushSize)
+          .add("maxPendingBytes", maxPendingBytes)
+          .toString();
     }
   }
 }
