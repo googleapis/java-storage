@@ -18,9 +18,14 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BidiUploadState.appendableNew;
 import static com.google.cloud.storage.BidiUploadTestUtils.finishAt;
+import static com.google.cloud.storage.BidiUploadTestUtils.makeRedirect;
+import static com.google.cloud.storage.BidiUploadTestUtils.packRedirectIntoAbortedException;
 import static com.google.cloud.storage.BidiUploadTestUtils.timestampNow;
 import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
+import static com.google.cloud.storage.TestUtils.GRPC_STATUS_DETAILS_KEY;
 import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.defaultRetryingDeps;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static java.lang.String.format;
@@ -30,18 +35,36 @@ import static org.junit.Assert.fail;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.AbortedException;
+import com.google.api.gax.rpc.ApiCallContext;
+import com.google.api.gax.rpc.ApiExceptionFactory;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStream;
+import com.google.api.gax.rpc.ClientStreamReadyObserver;
+import com.google.api.gax.rpc.ErrorDetails;
+import com.google.api.gax.rpc.ResponseObserver;
+import com.google.api.gax.rpc.StreamController;
+import com.google.cloud.storage.Backoff.Jitterer;
 import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
+import com.google.cloud.storage.BidiUploadState.BaseUploadState;
 import com.google.cloud.storage.BidiUploadState.State;
+import com.google.cloud.storage.BidiUploadStreamingStream.RedirectHandlingResponseObserver;
+import com.google.cloud.storage.BidiUploadStreamingStream.StreamRetryContextDecorator;
+import com.google.cloud.storage.BidiUploadStreamingStream.StreamingResponseObserver;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.ITAppendableUploadFakeTest.FakeStorage;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
+import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
+import com.google.rpc.Code;
 import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiWriteHandle;
 import com.google.storage.v2.BidiWriteObjectRedirectedError;
@@ -50,8 +73,26 @@ import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.WriteObjectSpec;
+import io.grpc.Metadata;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -60,8 +101,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -69,9 +112,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Enclosed.class)
 @SuppressWarnings({"unused", "UnnecessaryLocalVariable", "SameParameterValue"})
 public final class BidiUploadTest {
-  static final Collector<CharSequence, ?, String> joiner =
-      // Collectors.joining(",\n  ", "[\n  ", "\n]");
-      joiner(1);
+  static final Collector<CharSequence, ?, String> joiner = joiner(1);
 
   private static Collector<CharSequence, ?, String> joiner(int indentation) {
     String i0 = "  ";
@@ -1035,6 +1076,1133 @@ public final class BidiUploadTest {
 
     private Range<Integer> range(int min, int maxExclusive) {
       return Range.range(min, BoundType.CLOSED, maxExclusive, BoundType.OPEN);
+    }
+  }
+
+  public static final class StreamingStreamTest {
+
+    public static final int MAX_REDIRECTS_ALLOWED = 3;
+    @Rule public final TestName name = new TestName();
+
+    @Test
+    public void simple() throws InterruptedException {
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture = SettableApiFuture.create();
+      BidiUploadState state =
+          BidiUploadState.appendableNew(
+              appendRequestNew,
+              GrpcCallContext::createDefault,
+              2 * 1024 * 1024,
+              SettableApiFuture.create(),
+              Crc32cValue.zero());
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(
+                  respond ->
+                      request -> {
+                        long writeOffset = request.getWriteOffset();
+                        ByteString content = request.getChecksummedData().getContent();
+                        respond.onResponse(
+                            BidiWriteObjectResponse.newBuilder()
+                                .setPersistedSize(writeOffset + content.size())
+                                .build());
+                      }),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      ChecksummedTestContent content =
+          ChecksummedTestContent.of(
+              DataGenerator.base64Characters().genBytes(4 * 1024 * 1024 + 17));
+      List<ChecksummedTestContent> chunked = content.chunkup(2 * 1024 * 1024);
+
+      for (ChecksummedTestContent checksummedTestContent : chunked) {
+        int attemptCounter = 0;
+        boolean accepted;
+        do {
+          attemptCounter++;
+          accepted =
+              stream.append(
+                  BidiUploadTestUtils.createSegment(checksummedTestContent.asChecksummedData()));
+          if (!accepted) {
+            if (attemptCounter == 3) {
+              fail();
+            }
+            Thread.sleep(300);
+          }
+        } while (!accepted);
+      }
+    }
+
+    @Test
+    public void finishWrite_emptyObject()
+        throws InterruptedException, ExecutionException, TimeoutException {
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture = SettableApiFuture.create();
+      AppendableUploadState state =
+          BidiUploadState.appendableNew(
+              appendRequestNew,
+              GrpcCallContext::createDefault,
+              2 * 1024 * 1024,
+              SettableApiFuture.create(),
+              Crc32cValue.zero());
+
+      ObjectChecksums expectedObjectChecksums =
+          ObjectChecksums.newBuilder().setCrc32C(Crc32cValue.zero().getValue()).build();
+
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(
+                  respond ->
+                      request -> {
+                        if (request.equals(appendRequestNew)) {
+                          respond.onResponse(BidiUploadTestUtils.incremental(0));
+                        } else {
+                          assertThat(request.getFinishWrite()).isTrue();
+                          long writeOffset = request.getWriteOffset();
+                          assertThat(writeOffset).isEqualTo(0);
+                          ObjectChecksums objectChecksums = request.getObjectChecksums();
+                          assertThat(objectChecksums).isEqualTo(expectedObjectChecksums);
+                          respond.onResponse(
+                              BidiWriteObjectResponse.newBuilder()
+                                  .setResource(
+                                      appendRequestNew
+                                          .getWriteObjectSpec()
+                                          .getResource()
+                                          .toBuilder()
+                                          .setGeneration(1)
+                                          .setChecksums(objectChecksums)
+                                          .setFinalizeTime(timestampNow())
+                                          .build())
+                                  .build());
+                          respond.onComplete();
+                        }
+                      }),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      stream.finishWrite(0);
+      BidiWriteObjectResponse response = stream.getResultFuture().get(3, TimeUnit.SECONDS);
+
+      assertThat(response.hasResource()).isTrue();
+      Object resource = response.getResource();
+      assertThat(resource.getSize()).isEqualTo(0);
+      assertThat(resource.getChecksums()).isEqualTo(expectedObjectChecksums);
+      assertThat(resource.getGeneration()).isGreaterThan(0);
+      assertThat(state.peekLast()).isNull();
+    }
+
+    @Test
+    public void finishWrite_2MessageObject()
+        throws InterruptedException, ExecutionException, TimeoutException {
+      AppendableUploadState state =
+          BidiUploadState.appendableNew(
+              appendRequestNew,
+              GrpcCallContext::createDefault,
+              2 * 1024 * 1024,
+              SettableApiFuture.create(),
+              Crc32cValue.zero());
+
+      ObjectChecksums expectedObjectChecksums =
+          ObjectChecksums.newBuilder()
+              .setCrc32C(content.slice(0, 20).asChecksummedData().getCrc32C())
+              .build();
+
+      BidiWriteObjectRequest baseWith00 =
+          appendRequestNew.toBuilder().mergeFrom(onlyBytes_00).build();
+      BidiWriteObjectRequest expectedFinish =
+          BidiWriteObjectRequest.newBuilder()
+              .setFinishWrite(true)
+              .setWriteOffset(20)
+              .setObjectChecksums(
+                  ObjectChecksums.newBuilder().setCrc32C(content.slice(0, 20).getCrc32c()).build())
+              .build();
+
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(
+                  respond ->
+                      request -> {
+                        if (request.equals(baseWith00)) {
+                          respond.onResponse(BidiUploadTestUtils.incremental(10));
+                        } else if (request.equals(onlyBytes_10)) {
+                          respond.onResponse(BidiUploadTestUtils.incremental(20));
+                        } else if (request.equals(expectedFinish)) {
+                          respond.onResponse(
+                              BidiWriteObjectResponse.newBuilder()
+                                  .setResource(
+                                      appendRequestNew
+                                          .getWriteObjectSpec()
+                                          .getResource()
+                                          .toBuilder()
+                                          .setSize(20)
+                                          .setGeneration(1)
+                                          .setChecksums(expectedFinish.getObjectChecksums())
+                                          .setFinalizeTime(timestampNow())
+                                          .build())
+                                  .build());
+                          // respond.onComplete();
+                        } else {
+                          respond.onError(
+                              FakeStorage.unexpectedRequest(
+                                  request,
+                                  ImmutableList.of(baseWith00, onlyBytes_10, expectedFinish)));
+                        }
+                      }),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(
+              stream.append(
+                  BidiUploadTestUtils.createSegment(content.slice(0, 10).asChecksummedData())))
+          .isTrue();
+      assertThat(state.getTotalSentBytes()).isEqualTo(10);
+      assertThat(
+              stream.append(
+                  BidiUploadTestUtils.createSegment(content.slice(10, 10).asChecksummedData())))
+          .isTrue();
+      assertThat(state.getTotalSentBytes()).isEqualTo(20);
+      assertThat(stream.finishWrite(20)).isTrue();
+      BidiWriteObjectResponse response = stream.getResultFuture().get(3, TimeUnit.SECONDS);
+
+      assertThat(response.hasResource()).isTrue();
+      Object resource = response.getResource();
+      assertThat(resource.getSize()).isEqualTo(20);
+      assertThat(resource.getChecksums()).isEqualTo(expectedObjectChecksums);
+      assertThat(resource.getGeneration()).isGreaterThan(0);
+      assertThat(state.peekFirst()).isNull();
+      assertThat(state.peekLast()).isNull();
+    }
+
+    @Test
+    public void appendDoesNotSendWhenStateDoesNotAcceptOffer() {
+      BidiUploadState state =
+          new BidiUploadState(name.getMethodName()) {
+            @Override
+            public boolean offer(@NonNull ChunkSegment data) {
+              return false;
+            }
+          };
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              alwaysErrorBidiStreamingCallable(Status.UNIMPLEMENTED),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(stream.append(BidiUploadTestUtils.createSegment(content.asChecksummedData())))
+          .isFalse();
+    }
+
+    @Test
+    public void finishWriteDoesNotSendWhenStateDoesNotAcceptOffer() {
+      BidiUploadState state =
+          new BidiUploadState(name.getMethodName()) {
+            @Override
+            public boolean offer(@NonNull BidiWriteObjectRequest e) {
+              return false;
+            }
+
+            @Override
+            Crc32cValue.@Nullable Crc32cLengthKnown getCumulativeCrc32c() {
+              return Crc32cValue.zero();
+            }
+
+            @Override
+            boolean isFinalizing() {
+              return false;
+            }
+
+            @Override
+            long getTotalSentBytes() {
+              return 0;
+            }
+          };
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              alwaysErrorBidiStreamingCallable(Status.UNIMPLEMENTED),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(stream.finishWrite(0)).isFalse();
+    }
+
+    @Test
+    public void available() {
+      AtomicLong available = new AtomicLong(2 * 1024 * 1024);
+      BidiUploadState state =
+          new BidiUploadState(name.getMethodName()) {
+            @Override
+            public long availableCapacity() {
+              return available.get();
+            }
+          };
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              alwaysErrorBidiStreamingCallable(Status.UNIMPLEMENTED),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(stream.availableCapacity()).isEqualTo(2 * 1024 * 1024);
+      available.set(MAX_REDIRECTS_ALLOWED);
+      assertThat(stream.availableCapacity()).isEqualTo(MAX_REDIRECTS_ALLOWED);
+    }
+
+    @Test
+    public void redirect() throws ExecutionException, InterruptedException, TimeoutException {
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture = SettableApiFuture.create();
+      BaseUploadState state =
+          BidiUploadState.appendableNew(
+              appendRequestNew,
+              GrpcCallContext::createDefault,
+              20,
+              SettableApiFuture.create(),
+              Crc32cValue.zero());
+      BidiWriteObjectRequest expectedRedirectRequest1 =
+          BidiWriteObjectRequest.newBuilder()
+              .setAppendObjectSpec(
+                  AppendObjectSpec.newBuilder()
+                      .setBucket("projects/_/buckets/b")
+                      .setObject("o")
+                      .setGeneration(1)
+                      .setRoutingToken("token")
+                      .setWriteHandle(
+                          BidiWriteHandle.newBuilder()
+                              .setHandle(ByteString.copyFromUtf8("handle"))
+                              .build())
+                      .build())
+              .setStateLookup(true)
+              .build();
+      BidiWriteObjectRequest baseWith00 =
+          appendRequestNew.toBuilder().mergeFrom(onlyBytes_00).build();
+      BidiWriteObjectRequest finish_20 =
+          BidiWriteObjectRequest.newBuilder()
+              .setWriteOffset(20)
+              .setFinishWrite(true)
+              .setObjectChecksums(
+                  ObjectChecksums.newBuilder().setCrc32C(content.slice(0, 20).getCrc32c()).build())
+              .build();
+      BidiWriteObjectRequest finish_20with10 =
+          finish_20.toBuilder().mergeFrom(onlyBytes_10).build();
+      AtomicInteger bytes10SeenCount = new AtomicInteger(0);
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(
+                  respond ->
+                      request -> {
+                        if (request.equals(baseWith00)) {
+                          respond.onResponse(BidiUploadTestUtils.incremental(10));
+                        } else if (request.equals(onlyBytes_10)) {
+                          int i = bytes10SeenCount.getAndIncrement();
+                          if (i == 0) {
+                            BidiWriteObjectRedirectedError redirect =
+                                BidiWriteObjectRedirectedError.newBuilder()
+                                    .setWriteHandle(
+                                        BidiWriteHandle.newBuilder()
+                                            .setHandle(ByteString.copyFromUtf8("handle"))
+                                            .build())
+                                    .setRoutingToken("token")
+                                    .setGeneration(1)
+                                    .build();
+
+                            com.google.rpc.Status grpcStatusDetails =
+                                com.google.rpc.Status.newBuilder()
+                                    .setCode(Code.ABORTED_VALUE)
+                                    .setMessage("redirect")
+                                    .addDetails(Any.pack(redirect))
+                                    .build();
+
+                            Metadata trailers = new Metadata();
+                            trailers.put(GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+                            StatusRuntimeException statusRuntimeException =
+                                Status.ABORTED
+                                    .withDescription("redirect")
+                                    .asRuntimeException(trailers);
+                            respond.onError(
+                                ApiExceptionFactory.createException(
+                                    statusRuntimeException,
+                                    GrpcStatusCode.of(Status.Code.ABORTED),
+                                    true,
+                                    ErrorDetails.builder()
+                                        .setRawErrorMessages(grpcStatusDetails.getDetailsList())
+                                        .build()));
+                          } else {
+                            respond.onResponse(BidiUploadTestUtils.incremental(10));
+                          }
+                        } else if (request.equals(expectedRedirectRequest1)) {
+                          respond.onResponse(BidiUploadTestUtils.incremental(10));
+                        } else if (request.equals(finish_20) || request.equals(finish_20with10)) {
+                          respond.onResponse(
+                              BidiWriteObjectResponse.newBuilder()
+                                  .setResource(
+                                      Object.newBuilder()
+                                          .setBucket("projects/_/buckets/b")
+                                          .setName("o")
+                                          .setGeneration(1)
+                                          .setSize(20)
+                                          .setFinalizeTime(timestampNow())
+                                          .build())
+                                  .build());
+                          respond.onComplete();
+                        } else {
+                          respond.onError(
+                              FakeStorage.unexpectedRequest(
+                                  request,
+                                  ImmutableList.of(
+                                      baseWith00,
+                                      onlyBytes_10,
+                                      expectedRedirectRequest1,
+                                      finish_20,
+                                      finish_20with10)));
+                        }
+                      }),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(
+              stream.append(BidiUploadTestUtils.createSegment(onlyBytes_00.getChecksummedData())))
+          .isTrue();
+      assertThat(
+              stream.append(BidiUploadTestUtils.createSegment(onlyBytes_10.getChecksummedData())))
+          .isTrue();
+      assertThat(stream.finishWrite(20)).isTrue();
+      BidiWriteObjectResponse response = stream.getResultFuture().get(1_500, TimeUnit.MILLISECONDS);
+      assertThat(response.hasResource()).isTrue();
+      assertThat(response.getResource().getSize()).isEqualTo(20);
+    }
+
+    @Test
+    public void canNotOpenStreamAfterFirstOpenButCanEnqueueForBackgroundRetry() {
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture = SettableApiFuture.create();
+      AtomicInteger streamOpenCounter = new AtomicInteger();
+      BidiUploadState state =
+          appendableNew(
+              appendRequestNew,
+              GrpcCallContext::createDefault,
+              20,
+              SettableApiFuture.create(),
+              Crc32cValue.zero());
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              state,
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(
+                  respond -> {
+                    streamOpenCounter.getAndIncrement();
+                    return request -> {};
+                  }),
+              MAX_REDIRECTS_ALLOWED,
+              RetryContext.neverRetry());
+
+      assertThat(
+              stream.append(BidiUploadTestUtils.createSegment(onlyBytes_00.getChecksummedData())))
+          .isTrue();
+      assertThat(state.getTotalSentBytes()).isEqualTo(10);
+      // TODO: remove when state reconciliation is better
+      state.updateStateFromResponse(BidiUploadTestUtils.incremental(0));
+      stream.reset();
+      assertThat(
+              stream.append(BidiUploadTestUtils.createSegment(onlyBytes_10.getChecksummedData())))
+          .isTrue();
+      assertThat(state.getTotalSentBytes()).isEqualTo(20);
+      assertThat(stream.finishWrite(20)).isTrue();
+      assertThat(streamOpenCounter.get()).isEqualTo(1);
+    }
+
+    @Test
+    public void reset_forwardsAnyUncaughtThrowableToRetryContext() {
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                void pendingRetry() {
+                  //noinspection DataFlowIssue
+                  checkState(false, "bad state");
+                }
+
+                @Override
+                long getTotalSentBytes() {
+                  return 0;
+                }
+
+                @Override
+                boolean offer(@NonNull BidiWriteObjectRequest e) {
+                  return true;
+                }
+
+                @Override
+                State getState() {
+                  return State.INITIALIZING;
+                }
+
+                @Override
+                @NonNull GrpcCallContext enqueueFirstMessageAndGetGrpcCallContext() {
+                  return GrpcCallContext.createDefault();
+                }
+
+                @Override
+                void sendVia(Consumer<BidiWriteObjectRequest> consumer) {}
+              },
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(respond -> request -> {}),
+              /* maxRedirectsAllowed= */ 3,
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {}
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  assertThat(t).isInstanceOf(IllegalStateException.class);
+                  recordErrorCalled.set(true);
+                }
+              });
+
+      stream.flush();
+      stream.reset();
+
+      assertThat(recordErrorCalled.get()).isTrue();
+    }
+
+    @Test
+    public void restart_reconciliationErrorPropagation_failure() throws Exception {
+      SettableApiFuture<Void> beginReconciliation = SettableApiFuture.create();
+      RuntimeException boomBoom = new RuntimeException("boom boom");
+
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      AtomicInteger sendViaCallCount = new AtomicInteger(0);
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                void retrying() {}
+
+                @Override
+                ApiFuture<Void> beginReconciliation() {
+                  return beginReconciliation;
+                }
+
+                @Override
+                State getState() {
+                  return State.INITIALIZING;
+                }
+
+                @Override
+                void pendingRetry() {}
+
+                @Override
+                @NonNull GrpcCallContext enqueueFirstMessageAndGetGrpcCallContext() {
+                  return GrpcCallContext.createDefault();
+                }
+
+                @Override
+                void sendVia(Consumer<BidiWriteObjectRequest> consumer) {
+                  sendViaCallCount.getAndIncrement();
+                }
+              },
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(respond -> request -> {}),
+              /* maxRedirectsAllowed= */ 3,
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {}
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  assertThat(t).isSameInstanceAs(boomBoom);
+                  recordErrorCalled.set(true);
+                }
+              });
+
+      stream.restart();
+      beginReconciliation.setException(boomBoom);
+
+      assertAll(
+          () -> assertThat(recordErrorCalled.get()).isTrue(),
+          () -> assertThat(sendViaCallCount.get()).isEqualTo(1));
+    }
+
+    @Test
+    public void restart_reconciliationErrorPropagation_success() throws Exception {
+      SettableApiFuture<Void> beginReconciliation = SettableApiFuture.create();
+
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      AtomicInteger sendViaCallCount = new AtomicInteger(0);
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                void retrying() {}
+
+                @Override
+                ApiFuture<Void> beginReconciliation() {
+                  return beginReconciliation;
+                }
+
+                @Override
+                State getState() {
+                  return State.INITIALIZING;
+                }
+
+                @Override
+                @NonNull GrpcCallContext enqueueFirstMessageAndGetGrpcCallContext() {
+                  return GrpcCallContext.createDefault();
+                }
+
+                @Override
+                void sendVia(Consumer<BidiWriteObjectRequest> consumer) {
+                  sendViaCallCount.getAndIncrement();
+                }
+              },
+              RetryContext.directScheduledExecutorService(),
+              adaptOnlySend(respond -> request -> {}),
+              /* maxRedirectsAllowed= */ 3,
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {}
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  fail("unexpected recordError call");
+                }
+              });
+
+      stream.restart();
+      beginReconciliation.set(null);
+
+      assertAll(() -> assertThat(sendViaCallCount.get()).isEqualTo(2));
+    }
+
+    /**
+     * imagine a reconciliation that happens across multiple retries or redirects. The stream would
+     * attempt to register its reconciliation callback. Make sure it's only actually registered
+     * once.
+     */
+    @Test
+    public void longRunningReconciliationFailureOnlyReportsToRetryContextOnce() throws Exception {
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture = SettableApiFuture.create();
+
+      BidiWriteObjectRequest flush3 = flushOffset(3);
+      List<Throwable> recordedErrors = Collections.synchronizedList(new ArrayList<>());
+      AtomicInteger sendViaCallCount = new AtomicInteger(0);
+      AtomicInteger redirectCount = new AtomicInteger(0);
+      ScheduledExecutorService exec1 = Executors.newSingleThreadScheduledExecutor();
+      ExecutorService exec2 = Executors.newCachedThreadPool();
+      ScheduledExecutorService exec3 = Executors.newSingleThreadScheduledExecutor();
+      RetryContext retryContext =
+          RetryContext.of(exec3, defaultRetryingDeps(), Retrying.neverRetry(), Jitterer.noJitter());
+      CountDownLatch cdl = new CountDownLatch(2);
+      BidiUploadStreamingStream stream =
+          new BidiUploadStreamingStream(
+              appendableNew(
+                  appendRequestNew,
+                  GrpcCallContext::createDefault,
+                  15,
+                  resultFuture,
+                  Crc32cValue.zero()),
+              exec1,
+              adaptOnlySend(
+                  respond ->
+                      request ->
+                          exec2.execute(
+                              () ->
+                                  respond.onError(
+                                      packRedirectIntoAbortedException(
+                                          makeRedirect(
+                                              String.format(
+                                                  "{redirect_%02d}",
+                                                  redirectCount.incrementAndGet())))))),
+              /* maxRedirectsAllowed= */ 3,
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return retryContext.inBackoff();
+                }
+
+                @Override
+                public void reset() {
+                  retryContext.reset();
+                }
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  recordedErrors.add(t);
+                  retryContext.recordError(t, onSuccess, onFailure);
+                  cdl.countDown();
+                }
+              });
+
+      try {
+        stream.flush();
+        assertThat(cdl.await(3, TimeUnit.SECONDS)).isTrue();
+        ExecutionException ee =
+            assertThrows(
+                ExecutionException.class, () -> stream.getResultFuture().get(3, TimeUnit.SECONDS));
+        assertThat(ee).hasCauseThat().isInstanceOf(StorageException.class);
+        assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(AbortedException.class);
+
+        ImmutableList<Throwable> errorsForAssertion = ImmutableList.copyOf(recordedErrors);
+
+        assertAll(
+            () -> assertThat(redirectCount.get()).isEqualTo(4),
+            () -> assertThat(errorsForAssertion).hasSize(2),
+            () ->
+                assertThat(
+                        errorsForAssertion.stream()
+                            .filter(t -> t instanceof AbortedException)
+                            .count())
+                    .isEqualTo(1),
+            () ->
+                assertThat(
+                        errorsForAssertion.stream()
+                            .filter(t -> t instanceof CancellationException)
+                            .count())
+                    .isEqualTo(1));
+      } finally {
+        exec3.shutdownNow();
+        exec2.shutdownNow();
+        exec1.shutdownNow();
+      }
+    }
+
+    private static BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+        alwaysErrorBidiStreamingCallable(Status status) {
+      return adaptOnlySend(respond -> request -> respond.onError(status.asRuntimeException()));
+    }
+
+    private static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adaptOnlySend(
+        Function<ResponseObserver<ResT>, OnlySendClientStream<ReqT>> func) {
+      return adapt(func::apply);
+    }
+
+    private static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
+        Function<ResponseObserver<ResT>, ClientStream<ReqT>> func) {
+      return adapt(
+          (respond, onReady, context) -> {
+            ClientStream<ReqT> clientStream = func.apply(respond);
+            StreamController controller = TestUtils.nullStreamController();
+            respond.onStart(controller);
+            return clientStream;
+          });
+    }
+
+    /**
+     * BidiStreamingCallable isn't functional even though it's a single abstract method.
+     *
+     * <p>Define a method that can adapt a TriFunc as the required implementation of {@link
+     * BidiStreamingCallable#internalCall(ResponseObserver, ClientStreamReadyObserver,
+     * ApiCallContext)}.
+     *
+     * <p>Saves several lines of boilerplate in each test.
+     */
+    private static <ReqT, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
+        StreamingStreamTest.TriFunc<
+                ResponseObserver<ResT>,
+                ClientStreamReadyObserver<ReqT>,
+                ApiCallContext,
+                ClientStream<ReqT>>
+            func) {
+      return new BidiStreamingCallable<ReqT, ResT>() {
+        @Override
+        public ClientStream<ReqT> internalCall(
+            ResponseObserver<ResT> respond,
+            ClientStreamReadyObserver<ReqT> onReady,
+            ApiCallContext context) {
+          return func.apply(respond, onReady, context);
+        }
+      };
+    }
+
+    @FunctionalInterface
+    interface TriFunc<A, B, C, R> {
+      R apply(A a, B b, C c);
+    }
+  }
+
+  public static final class BidiUploadStreamingStreamResponseObserverTest {
+    @Rule public final TestName name = new TestName();
+
+    @Test
+    public void onError() {
+      RetryContext retryContext = RetryContext.neverRetry();
+      AtomicReference<Throwable> failure = new AtomicReference<>();
+      @NonNull BidiUploadState state =
+          new BidiUploadStreamingStreamResponseObserverTest.TestState(
+              BidiUploadStreamingStreamResponseObserverTest.Flag.NOT_FINALIZING);
+      StreamingResponseObserver obs =
+          new StreamingResponseObserver(
+              state, retryContext, RetryContextTest.failOnSuccess(), failure::set);
+      obs.onStart(TestUtils.nullStreamController());
+
+      RuntimeException t = new RuntimeException("Kablamo~~~");
+      obs.onError(t);
+
+      assertThat(failure.get()).isSameInstanceAs(t);
+    }
+
+    enum Flag {
+      FINALIZING,
+      NOT_FINALIZING
+    }
+
+    private class TestState extends BidiUploadState {
+      private final BidiUploadStreamingStreamResponseObserverTest.Flag flag;
+
+      private TestState(BidiUploadStreamingStreamResponseObserverTest.Flag flag) {
+        super(name.getMethodName());
+        this.flag = flag;
+      }
+
+      @Override
+      public boolean isFinalizing() {
+        return flag == BidiUploadStreamingStreamResponseObserverTest.Flag.FINALIZING;
+      }
+
+      @Override
+      @Nullable BidiWriteObjectRequest peekLast() {
+        return BidiWriteObjectRequest.newBuilder()
+            .setChecksummedData(
+                ChecksummedTestContent.gen(Math.toIntExact(getTotalSentBytes()))
+                    .asChecksummedData())
+            .build();
+      }
+
+      @Override
+      void updateStateFromResponse(BidiWriteObjectResponse response) {
+        fail("unexpected call to setConfirmedBytesOffset(" + response + ")");
+      }
+
+      @Override
+      long getTotalSentBytes() {
+        return 10;
+      }
+    }
+  }
+
+  public static final class RedirectHandlingResponseObserverTest {
+    @Rule public final TestName name = new TestName();
+
+    @Test
+    public void tombstoned_noop() throws Exception {
+      RedirectHandlingResponseObserver obs =
+          new RedirectHandlingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {},
+              new TestResponseObserver(),
+              new AtomicInteger(0),
+              3,
+              () -> fail("beforeRedirect()"),
+              () -> fail("onRedirect"));
+      obs.flagTombstoned();
+      assertAll(
+          () -> obs.onStart(TestUtils.nullStreamController()),
+          () -> obs.onResponse(BidiUploadTestUtils.incremental(10)),
+          obs::onComplete,
+          () -> obs.onError(new RuntimeException("should not cause error")));
+    }
+
+    @Test
+    public void onError_shouldNotDelegateWhenARedirectErrorIsSpecified() {
+      BidiWriteObjectRedirectedError redirect = BidiUploadTestUtils.makeRedirect("routing-token");
+
+      AbortedException abortedException =
+          BidiUploadTestUtils.packRedirectIntoAbortedException(redirect);
+
+      AtomicBoolean beforeRedirectCalled = new AtomicBoolean(false);
+      AtomicBoolean onRedirectCalled = new AtomicBoolean(false);
+      AtomicBoolean updateFromRedirectCalled = new AtomicBoolean(false);
+
+      RedirectHandlingResponseObserver obs =
+          new RedirectHandlingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                void updateFromRedirect(@NonNull BidiWriteObjectRedirectedError r) {
+                  assertThat(beforeRedirectCalled.get()).isTrue();
+                  assertThat(r).isEqualTo(redirect);
+                  updateFromRedirectCalled.set(true);
+                }
+              },
+              new TestResponseObserver(),
+              new AtomicInteger(0),
+              3,
+              () -> beforeRedirectCalled.set(true),
+              () -> {
+                assertThat(beforeRedirectCalled.get()).isTrue();
+                onRedirectCalled.set(true);
+              });
+
+      obs.onError(abortedException);
+
+      assertThat(updateFromRedirectCalled.get()).isTrue();
+      assertThat(onRedirectCalled.get()).isTrue();
+    }
+
+    @Test
+    public void onError_shouldDelegateWhenNoRedirectErrorIsSpecified() throws Exception {
+
+      AbortedException abortedException = BidiUploadTestUtils.newAbortedException("{aborted}");
+
+      AtomicBoolean delegateOnErrorCalled = new AtomicBoolean(false);
+
+      RedirectHandlingResponseObserver obs =
+          new RedirectHandlingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {},
+              new TestResponseObserver() {
+                @Override
+                public void onError(Throwable t) {
+                  assertThat(t).isEqualTo(abortedException);
+                  delegateOnErrorCalled.set(true);
+                }
+              },
+              new AtomicInteger(0),
+              3,
+              () -> fail("beforeRedirect()"),
+              () -> fail("onRedirect"));
+
+      obs.onError(abortedException);
+
+      assertThat(delegateOnErrorCalled.get()).isTrue();
+    }
+
+    @Test
+    public void onError_shouldDelegateWhenMaxRedirectsExceeded() throws Exception {
+
+      BidiWriteObjectRedirectedError redirect1 = BidiUploadTestUtils.makeRedirect("{token 1}");
+      BidiWriteObjectRedirectedError redirect2 = BidiUploadTestUtils.makeRedirect("{token 2}");
+      BidiWriteObjectRedirectedError redirect3 = BidiUploadTestUtils.makeRedirect("{token 3}");
+      BidiWriteObjectRedirectedError redirect4 = BidiUploadTestUtils.makeRedirect("{token 4}");
+      AbortedException abortedException1 =
+          BidiUploadTestUtils.packRedirectIntoAbortedException(redirect1);
+      AbortedException abortedException2 =
+          BidiUploadTestUtils.packRedirectIntoAbortedException(redirect2);
+      AbortedException abortedException3 =
+          BidiUploadTestUtils.packRedirectIntoAbortedException(redirect3);
+      AbortedException abortedException4 =
+          BidiUploadTestUtils.packRedirectIntoAbortedException(redirect4);
+
+      AtomicInteger beforeRedirectCalled = new AtomicInteger(0);
+      AtomicInteger onRedirectCalled = new AtomicInteger(0);
+      AtomicInteger onErrorCalled = new AtomicInteger(0);
+
+      int maxRedirectsAllowed = 3;
+      // the closure passed to the constructor of obs needs to do things with the obs instance
+      // but obs hasn't finished initializing yet. make an indirect reference to it which can be
+      // accessed in the closure.
+      AtomicReference<RedirectHandlingResponseObserver> lifecycleIsDifficult =
+          new AtomicReference<>();
+      List<BidiWriteObjectRedirectedError> redirects = new ArrayList<>();
+      RedirectHandlingResponseObserver obs =
+          new RedirectHandlingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                void updateFromRedirect(@NonNull BidiWriteObjectRedirectedError redirect) {
+                  redirects.add(redirect);
+                }
+              },
+              new TestResponseObserver() {
+                @Override
+                public void onError(Throwable t) {
+                  assertThat(t).isEqualTo(abortedException4);
+                  assertThat(t.getSuppressed()).hasLength(1);
+                  assertThat(t.getSuppressed()[0])
+                      .isInstanceOf(MaxRedirectsExceededException.class);
+                  onErrorCalled.getAndIncrement();
+                }
+              },
+              new AtomicInteger(0),
+              maxRedirectsAllowed,
+              beforeRedirectCalled::getAndIncrement,
+              () -> {
+                int i = onRedirectCalled.getAndIncrement();
+                switch (i) {
+                  case 0:
+                    lifecycleIsDifficult.get().onError(abortedException2);
+                    break;
+                  case 1:
+                    lifecycleIsDifficult.get().onError(abortedException3);
+                    break;
+                  case 2:
+                    lifecycleIsDifficult.get().onError(abortedException4);
+                    break;
+                  default:
+                    fail("invocation: " + i);
+                    break;
+                }
+              });
+      lifecycleIsDifficult.set(obs);
+
+      obs.onError(abortedException1);
+
+      assertAll(
+          () -> assertThat(beforeRedirectCalled.get()).isEqualTo(maxRedirectsAllowed),
+          () -> assertThat(onRedirectCalled.get()).isEqualTo(maxRedirectsAllowed),
+          () -> assertThat(onErrorCalled.get()).isEqualTo(1),
+          () -> assertThat(redirects).isEqualTo(ImmutableList.of(redirect1, redirect2, redirect3)));
+    }
+
+    private static class TestResponseObserver implements ResponseObserver<BidiWriteObjectResponse> {
+
+      @Override
+      public void onStart(StreamController controller) {
+        fail("onStart(" + controller + ")");
+      }
+
+      @Override
+      public void onResponse(BidiWriteObjectResponse response) {
+        fail("onResponse(" + fmtProto(response) + ")");
+      }
+
+      @Override
+      public void onError(Throwable t) {
+        fail("onError(" + t.getMessage() + ")");
+      }
+
+      @Override
+      public void onComplete() {
+        fail("onComplete()");
+      }
+    }
+  }
+
+  public static final class StreamRetryContextDecoratorTest {
+    @Test
+    public void onRecordError_calledBeforeRecordError() {
+      AtomicBoolean onRecordErrorCalled = new AtomicBoolean(false);
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      RetryContext ctx =
+          new RetryContext() {
+            @Override
+            public boolean inBackoff() {
+              return false;
+            }
+
+            @Override
+            public void reset() {}
+
+            @Override
+            public <T extends Throwable> void recordError(
+                T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+              assertThat(onRecordErrorCalled.get()).isTrue();
+              recordErrorCalled.set(true);
+            }
+          };
+      StreamRetryContextDecorator dec =
+          new StreamRetryContextDecorator(
+              ctx, new ReentrantLock(), () -> onRecordErrorCalled.set(true));
+
+      dec.recordError(
+          new RuntimeException("blamo"),
+          RetryContextTest.failOnSuccess(),
+          RetryContextTest.failOnFailure());
+      assertThat(recordErrorCalled.get()).isTrue();
+    }
+  }
+
+  public static final class StreamingResponseObserverTest {
+    @Rule public final TestName name = new TestName();
+
+    @Test
+    public void onResponse_stateErrorForwardedToRetryContext() {
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      StreamingResponseObserver obs =
+          new StreamingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                StorageException onResponse(BidiWriteObjectResponse response) {
+                  return new StorageException(0, "test-error", null);
+                }
+              },
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {}
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  assertThat(t).isInstanceOf(StorageException.class);
+                  assertThat(((StorageException) t).getCode()).isEqualTo(0);
+                  recordErrorCalled.set(true);
+                }
+              },
+              RetryContextTest.failOnSuccess(),
+              RetryContextTest.failOnFailure());
+
+      obs.onStart(TestUtils.nullStreamController());
+      obs.onResponse(resourceWithSize(0));
+
+      assertThat(recordErrorCalled.get()).isTrue();
+    }
+
+    @Test
+    public void onResponse_exceptionFromStateOnResponseForwardedToRetryContext() {
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      StreamingResponseObserver obs =
+          new StreamingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                StorageException onResponse(BidiWriteObjectResponse response) {
+                  //noinspection DataFlowIssue
+                  checkState(false, "kblamo");
+                  return null;
+                }
+              },
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {}
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  assertThat(t).isInstanceOf(IllegalStateException.class);
+                  assertThat(t).hasMessageThat().contains("kblamo");
+                  recordErrorCalled.set(true);
+                }
+              },
+              RetryContextTest.failOnSuccess(),
+              RetryContextTest.failOnFailure());
+
+      obs.onStart(TestUtils.nullStreamController());
+      obs.onResponse(resourceWithSize(0));
+
+      assertThat(recordErrorCalled.get()).isTrue();
     }
   }
 

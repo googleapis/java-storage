@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
 import static com.google.cloud.storage.TestUtils.GRPC_STATUS_DETAILS_KEY;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -32,7 +33,10 @@ import com.google.common.collect.Maps;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
+import com.google.protobuf.Message;
+import com.google.protobuf.TextFormat;
 import com.google.rpc.Code;
+import com.google.rpc.DebugInfo;
 import com.google.storage.v2.AppendObjectSpec;
 import com.google.storage.v2.BidiWriteHandle;
 import com.google.storage.v2.BidiWriteObjectRedirectedError;
@@ -52,6 +56,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -59,6 +64,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Test;
 
 public class ITAppendableUploadFakeTest {
@@ -1701,8 +1708,7 @@ public class ITAppendableUploadFakeTest {
           responseObserver.onCompleted();
         }
       } else {
-        responseObserver.onError(
-            TestUtils.apiException(Status.Code.UNIMPLEMENTED, "Unexpected request"));
+        responseObserver.onError(unexpectedRequest(request, getdb.keySet()));
       }
     }
 
@@ -1715,11 +1721,36 @@ public class ITAppendableUploadFakeTest {
           if (db.containsKey(req)) {
             db.get(req).accept(respond);
           } else {
-            respond.onError(
-                TestUtils.apiException(Status.Code.UNIMPLEMENTED, "Unexpected request"));
+            respond.onError(unexpectedRequest(req, db.keySet()));
           }
         }
       };
+    }
+
+    @SuppressWarnings("StringBufferReplaceableByString")
+    static @NonNull StatusRuntimeException unexpectedRequest(
+        Message req, Collection<? extends Message> messages) {
+      DebugInfo details =
+          DebugInfo.newBuilder().setDetail(TextFormat.printer().shortDebugString(req)).build();
+
+      com.google.rpc.Status grpcStatusDetails =
+          com.google.rpc.Status.newBuilder()
+              .setCode(Code.UNIMPLEMENTED_VALUE)
+              .setMessage("details")
+              .addDetails(Any.pack(details))
+              .build();
+
+      Metadata trailers = new Metadata();
+      trailers.put(TestUtils.GRPC_STATUS_DETAILS_KEY, grpcStatusDetails);
+      StringBuilder sb = new StringBuilder();
+      sb.append("Unexpected request.").append("\n");
+      sb.append("  actual: ").append("\n    ").append(fmtProto(req)).append("\n");
+      sb.append("  expected one of: ");
+      sb.append(
+          messages.stream()
+              .map(StorageV2ProtoUtils::fmtProto)
+              .collect(Collectors.joining(",\n    ", "[\n    ", "\n  ]")));
+      return Status.UNIMPLEMENTED.withDescription(sb.toString()).asRuntimeException(trailers);
     }
 
     static FakeStorage of(
