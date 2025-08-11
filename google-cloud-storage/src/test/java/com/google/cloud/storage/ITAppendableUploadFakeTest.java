@@ -809,57 +809,6 @@ public class ITAppendableUploadFakeTest {
     }
   }
 
-  /**
-   * We get a retryable error in our first flush. We don't have a generation so we do a metadata
-   * lookup, but we get an ObjectNotFound, which means that GCS never received the WriteObjectSpec
-   * and never created the object. Thus, we just send the WriteObjectSpec again
-   */
-  @Test
-  @Ignore("TODO: does this need to be implemented?")
-  public void retryableError_ObjectNotFound() throws Exception {
-
-    ChecksummedTestContent abcde = content.slice(0, 5);
-    ChecksummedTestContent fghij = content.slice(5, 5);
-
-    BidiWriteObjectRequest req1 =
-        REQ_OPEN.toBuilder()
-            .setFlush(true)
-            .setStateLookup(true)
-            .setChecksummedData(abcde.asChecksummedData())
-            .build();
-
-    BidiWriteObjectRequest req2 =
-        BidiWriteObjectRequest.newBuilder()
-            .setWriteOffset(5)
-            .setChecksummedData(fghij.asChecksummedData())
-            .setFinishWrite(true)
-            .build();
-    BidiWriteObjectResponse res = BidiUploadTest.resourceFor(content);
-
-    Map<BidiWriteObjectRequest, Integer> map = new ConcurrentHashMap<>();
-    FakeStorage fake =
-        FakeStorage.of(
-            ImmutableMap.of(
-                req1, retryableErrorOnce(req1, res, map, 2),
-                req2, maxRetries(req2, res, map, 1)),
-            ImmutableMap.of(get_generation_mask, Object.getDefaultInstance()));
-
-    try (FakeServer fakeServer = FakeServer.of(fake);
-        Storage storage = fakeServer.getGrpcStorageOptions().getService()) {
-
-      BlobId id = BlobId.of("b", "o");
-      BlobAppendableUpload b =
-          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
-      try (AppendableUploadWriteableByteChannel channel = b.open()) {
-        channel.write(ByteBuffer.wrap(content.getBytes()));
-      }
-      BlobInfo bi = b.getResult().get(5, TimeUnit.SECONDS);
-      assertThat(bi.getSize()).isEqualTo(5);
-
-      assertThat(map).isEqualTo(ImmutableMap.of(req1, 2, req2, 1));
-    }
-  }
-
   @Test
   public void crc32cWorks() throws Exception {
     byte[] b = new byte[25];

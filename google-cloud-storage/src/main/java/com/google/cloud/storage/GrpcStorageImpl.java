@@ -52,7 +52,6 @@ import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
-import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -1502,27 +1501,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     BidiWriteObjectRequest req =
         takeOver
             ? getBidiWriteObjectRequestForTakeover(info, opts)
-            : getBidiWriteObjectRequest(info, opts, true);
+            : getBidiWriteObjectRequest(info, opts, /* appendable= */ true);
     AppendableUploadState state;
     if (takeOver) {
-      Crc32cLengthKnown initialCrc32c = null;
-      if (initialCrc32c != null) {
-        // TODO: doesn't accessing checksum require the dencryption key?
-        Opts<ObjectSourceOpt> filter =
-            opts.transformTo(ObjectSourceOpt.class)
-                .prepend(
-                    Opts.from(
-                        UnifiedOpts.fields(ImmutableSet.of(BlobField.SIZE, BlobField.CRC32C))));
-        BlobInfo blob = internalObjectGet(info.getBlobId(), filter);
-        initialCrc32c = Crc32cValue.of(Utils.crc32cCodec.decode(blob.getCrc32c()), blob.getSize());
-      }
       state =
           BidiUploadState.appendableTakeover(
               req,
               Retrying::newCallContext,
               maxPendingBytes,
               SettableApiFuture.create(),
-              initialCrc32c);
+              /* initialCrc32c= */ null);
     } else {
       state =
           BidiUploadState.appendableNew(
@@ -1789,9 +1777,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object.toBuilder()
-            // required if the data is changing
+            // clear out the checksums, if a crc32cMatch is specified it'll come back via opts
             .clearChecksums()
-            // trimmed to shave payload size
             .clearGeneration()
             .clearMetageneration()
             .clearSize()
