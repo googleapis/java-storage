@@ -22,7 +22,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
-import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
 import com.google.cloud.storage.BidiUploadState.TakeoverAppendableUploadState;
@@ -53,18 +52,13 @@ public final class BlobAppendableUploadConfig {
 
   private static final BlobAppendableUploadConfig INSTANCE =
       new BlobAppendableUploadConfig(
-          FlushPolicy.minFlushSize(_256KiB),
-          Hasher.enabled(),
-          CloseAction.CLOSE_WITHOUT_FINALIZING);
+          FlushPolicy.minFlushSize(_256KiB), CloseAction.CLOSE_WITHOUT_FINALIZING);
 
   private final FlushPolicy flushPolicy;
-  private final Hasher hasher;
   private final CloseAction closeAction;
 
-  private BlobAppendableUploadConfig(
-      FlushPolicy flushPolicy, Hasher hasher, CloseAction closeAction) {
+  private BlobAppendableUploadConfig(FlushPolicy flushPolicy, CloseAction closeAction) {
     this.flushPolicy = flushPolicy;
-    this.hasher = hasher;
     this.closeAction = closeAction;
   }
 
@@ -96,7 +90,7 @@ public final class BlobAppendableUploadConfig {
     if (this.flushPolicy.equals(flushPolicy)) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction);
+    return new BlobAppendableUploadConfig(flushPolicy, closeAction);
   }
 
   /**
@@ -126,45 +120,7 @@ public final class BlobAppendableUploadConfig {
     if (this.closeAction == closeAction) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, hasher, closeAction);
-  }
-
-  /**
-   * Whether crc32c validation will be performed for bytes returned by Google Cloud Storage
-   *
-   * <p><i>Default:</i> {@code true}
-   *
-   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
-   */
-  @BetaApi
-  boolean getCrc32cValidationEnabled() {
-    return Hasher.enabled().equals(hasher);
-  }
-
-  /**
-   * Return an instance with crc32c validation enabled based on {@code enabled}.
-   *
-   * <p><i>Default:</i> {@code true}
-   *
-   * @param enabled Whether crc32c validation will be performed for bytes returned by Google Cloud
-   *     Storage
-   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
-   */
-  @BetaApi
-  BlobAppendableUploadConfig withCrc32cValidationEnabled(boolean enabled) {
-    if (enabled && Hasher.enabled().equals(hasher)) {
-      return this;
-    } else if (!enabled && Hasher.noop().equals(hasher)) {
-      return this;
-    }
-    return new BlobAppendableUploadConfig(
-        flushPolicy, enabled ? Hasher.enabled() : Hasher.noop(), closeAction);
-  }
-
-  /** Never to be made public until {@link Hasher} is public */
-  @InternalApi
-  Hasher getHasher() {
-    return hasher;
+    return new BlobAppendableUploadConfig(flushPolicy, closeAction);
   }
 
   @Override
