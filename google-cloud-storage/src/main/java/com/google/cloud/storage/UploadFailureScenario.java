@@ -44,22 +44,22 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @ParametersAreNonnullByDefault
-enum ResumableSessionFailureScenario {
+enum UploadFailureScenario {
   // TODO: send more bytes than are in the Content-Range header
   SCENARIO_0(BaseServiceException.UNKNOWN_CODE, null, "Unknown Error"),
   SCENARIO_0_1(BaseServiceException.UNKNOWN_CODE, null, "Response not application/json."),
   SCENARIO_1(
       BaseServiceException.UNKNOWN_CODE,
       "invalid",
-      "Attempt to append to already finalized resumable session."),
+      "Attempt to append to already finalized upload session."),
   SCENARIO_2(
       BaseServiceException.UNKNOWN_CODE,
       "invalid",
-      "Attempt to finalize resumable session with fewer bytes than the backend has received."),
+      "Attempt to finalize upload session with fewer bytes than the backend has received."),
   SCENARIO_3(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Attempt to finalize resumable session with more bytes than the backend has received."),
+      "Attempt to finalize upload session with more bytes than the backend has received."),
   SCENARIO_4(200, "ok", "Attempt to finalize an already finalized session with same object size"),
   SCENARIO_4_1(
       BaseServiceException.UNKNOWN_CODE,
@@ -72,7 +72,7 @@ enum ResumableSessionFailureScenario {
   SCENARIO_5(
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
-      "Client side data loss detected. Attempt to append to a resumable session with an offset"
+      "Client side data loss detected. Attempt to append to a upload session with an offset"
           + " higher than the backend has"),
   SCENARIO_7(
       BaseServiceException.UNKNOWN_CODE,
@@ -103,10 +103,14 @@ enum ResumableSessionFailureScenario {
   @Nullable private final String reason;
   private final String message;
 
-  ResumableSessionFailureScenario(int code, @Nullable String reason, String message) {
+  UploadFailureScenario(int code, @Nullable String reason, String message) {
     this.code = code;
     this.reason = reason;
     this.message = message;
+  }
+
+  String getMessage() {
+    return message;
   }
 
   StorageException toStorageException(String uploadId, HttpResponse resp) {
@@ -132,10 +136,8 @@ enum ResumableSessionFailureScenario {
     return toStorageException(code, message, reason, uploadId, resp, cause, contentCallable);
   }
 
-  StorageException toStorageException(
-      /*In java List<WriteObjectRequest> is not a sub-type of List<Message> despite WriteObjectRequest being a Message.
-       * intentionally only define List so the compiler doesn't complain */
-      @SuppressWarnings("rawtypes") @NonNull List reqs,
+  <M extends Message> StorageException toStorageException(
+      @NonNull List<M> reqs,
       @Nullable Message resp,
       @NonNull GrpcCallContext context,
       @Nullable Throwable cause) {
@@ -146,7 +148,7 @@ enum ResumableSessionFailureScenario {
       HttpResponse response, HttpResponseException cause, String uploadId) {
     String statusMessage = cause.getStatusMessage();
     StorageException se =
-        ResumableSessionFailureScenario.toStorageException(
+        UploadFailureScenario.toStorageException(
             cause.getStatusCode(),
             String.format(
                 Locale.US,
@@ -161,11 +163,11 @@ enum ResumableSessionFailureScenario {
     return se;
   }
 
-  static StorageException toStorageException(
+  static <M extends Message> StorageException toStorageException(
       int code,
       String message,
       @Nullable String reason,
-      @NonNull List reqs,
+      @NonNull List<M> reqs,
       @Nullable Message resp,
       @NonNull GrpcCallContext context,
       @Nullable Throwable cause) {
@@ -184,7 +186,7 @@ enum ResumableSessionFailureScenario {
       } else {
         sb.append(",");
       }
-      Message req = (Message) reqs.get(i);
+      Message req = reqs.get(i);
       fmt(req, PREFIX_O, Indentation.T1, sb);
       sb.append("\n").append(PREFIX_O).append("\t}");
       if (i == length - 1) {
@@ -380,7 +382,7 @@ enum ResumableSessionFailureScenario {
               writeOffset,
               writeOffset + checksummedData.getContent().size()));
       if (checksummedData.hasCrc32C()) {
-        sb.append(", crc32c: ").append(checksummedData.getCrc32C());
+        sb.append(", crc32c: ").append(Integer.toUnsignedString(checksummedData.getCrc32C()));
       }
       sb.append("}");
     } else {
@@ -416,7 +418,7 @@ enum ResumableSessionFailureScenario {
               writeOffset,
               writeOffset + checksummedData.getContent().size()));
       if (checksummedData.hasCrc32C()) {
-        sb.append(", crc32c: ").append(checksummedData.getCrc32C());
+        sb.append(", crc32c: ").append(Integer.toUnsignedString(checksummedData.getCrc32C()));
       }
       sb.append("}");
     } else {

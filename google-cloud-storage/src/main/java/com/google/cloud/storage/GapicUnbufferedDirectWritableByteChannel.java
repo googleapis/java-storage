@@ -222,7 +222,7 @@ final class GapicUnbufferedDirectWritableByteChannel implements UnbufferedWritab
         // unusual case, and it should not cause a significant overhead given its rarity.
         StorageException tmp = StorageException.asStorageException((ApiException) t);
         StorageException storageException =
-            ResumableSessionFailureScenario.toStorageException(
+            UploadFailureScenario.toStorageException(
                 tmp.getCode(), tmp.getMessage(), tmp.getReason(), getRequests(), null, context, t);
         invocationHandle.setException(storageException);
       } else {
@@ -243,14 +243,14 @@ final class GapicUnbufferedDirectWritableByteChannel implements UnbufferedWritab
             writeCtx.getConfirmedBytes().set(finalSize);
             resultFuture.set(last);
           } else if (finalSize < totalSentBytes) {
-            throw ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+            throw UploadFailureScenario.SCENARIO_4_1.toStorageException(
                 getRequests(), last, context, null);
           } else {
-            throw ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+            throw UploadFailureScenario.SCENARIO_4_2.toStorageException(
                 getRequests(), last, context, null);
           }
         } else {
-          throw ResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+          throw UploadFailureScenario.SCENARIO_0.toStorageException(
               getRequests(), last, context, null);
         }
       } catch (Throwable se) {

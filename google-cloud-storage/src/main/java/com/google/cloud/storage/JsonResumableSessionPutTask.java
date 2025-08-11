@@ -108,7 +108,7 @@ final class JsonResumableSessionPutTask
 
       int code = response.getStatusCode();
 
-      if (!finalizing && ResumableSessionFailureScenario.isContinue(code)) {
+      if (!finalizing && UploadFailureScenario.isContinue(code)) {
         long effectiveEnd = ((HttpContentRange.HasRange<?>) contentRange).range().endOffset();
         @Nullable String range = response.getHeaders().getRange();
         ByteRangeSpec ackRange = ByteRangeSpec.parse(range);
@@ -121,11 +121,11 @@ final class JsonResumableSessionPutTask
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else {
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_7.toStorageException(uploadId, response);
+              UploadFailureScenario.SCENARIO_7.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
-      } else if (finalizing && ResumableSessionFailureScenario.isOk(code)) {
+      } else if (finalizing && UploadFailureScenario.isOk(code)) {
         @Nullable StorageObject storageObject;
         BigInteger actualSize = BigInteger.ZERO;
 
@@ -152,7 +152,7 @@ final class JsonResumableSessionPutTask
         } else {
           response.ignore();
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_0_1.toStorageException(
+              UploadFailureScenario.SCENARIO_0_1.toStorageException(
                   uploadId, response, null, () -> null);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
@@ -165,35 +165,35 @@ final class JsonResumableSessionPutTask
           return ResumableOperationResult.complete(storageObject, actualSize.longValue());
         } else if (compare > 0) {
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
+              UploadFailureScenario.SCENARIO_4_1.toStorageException(
                   uploadId, response, null, toString(storageObject));
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         } else {
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_4_2.toStorageException(
+              UploadFailureScenario.SCENARIO_4_2.toStorageException(
                   uploadId, response, null, toString(storageObject));
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
-      } else if (!finalizing && ResumableSessionFailureScenario.isOk(code)) {
+      } else if (!finalizing && UploadFailureScenario.isOk(code)) {
         StorageException se =
-            ResumableSessionFailureScenario.SCENARIO_1.toStorageException(uploadId, response);
+            UploadFailureScenario.SCENARIO_1.toStorageException(uploadId, response);
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
-      } else if (finalizing && ResumableSessionFailureScenario.isContinue(code)) {
+      } else if (finalizing && UploadFailureScenario.isContinue(code)) {
         // in order to finalize the content range must have a size, cast down to read it
         HttpContentRange.HasSize size = (HttpContentRange.HasSize) contentRange;
 
         ByteRangeSpec range = ByteRangeSpec.parse(response.getHeaders().getRange());
         if (range.endOffsetInclusive() < size.getSize()) {
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_3.toStorageException(uploadId, response);
+              UploadFailureScenario.SCENARIO_3.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         } else {
           StorageException se =
-              ResumableSessionFailureScenario.SCENARIO_2.toStorageException(uploadId, response);
+              UploadFailureScenario.SCENARIO_2.toStorageException(uploadId, response);
           span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
           throw se;
         }
@@ -205,8 +205,7 @@ final class JsonResumableSessionPutTask
         // a 503 with plain text content
         // Attempt to detect this very loosely as to minimize impact of modified error message
         // This is accurate circa 2023-06
-        if ((!ResumableSessionFailureScenario.isOk(code)
-                && !ResumableSessionFailureScenario.isContinue(code))
+        if ((!UploadFailureScenario.isOk(code) && !UploadFailureScenario.isContinue(code))
             && contentType != null
             && contentType.startsWith("text/plain")
             && contentLength != null
@@ -215,14 +214,13 @@ final class JsonResumableSessionPutTask
           if (errorMessage.contains("content-range")
               && !errorMessage.contains("earlier")) { // TODO: exclude "earlier request"
             StorageException se =
-                ResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                UploadFailureScenario.SCENARIO_5.toStorageException(
                     uploadId, response, cause, cause::getContent);
             span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
             throw se;
           }
         }
-        StorageException se =
-            ResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
+        StorageException se = UploadFailureScenario.toStorageException(response, cause, uploadId);
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
       }
@@ -235,7 +233,7 @@ final class JsonResumableSessionPutTask
       throw e;
     } catch (Exception e) {
       StorageException se =
-          ResumableSessionFailureScenario.SCENARIO_0.toStorageException(uploadId, response, e);
+          UploadFailureScenario.SCENARIO_0.toStorageException(uploadId, response, e);
       span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
       throw se;
     } finally {

@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.io.IOException;
@@ -55,10 +57,17 @@ final class MinFlushBufferedWritableByteChannel implements BufferedWritableByteC
   private final BufferHandle handle;
 
   private final UnbufferedWritableByteChannel channel;
+  private final boolean blocking;
 
   MinFlushBufferedWritableByteChannel(BufferHandle handle, UnbufferedWritableByteChannel channel) {
+    this(handle, channel, true);
+  }
+
+  MinFlushBufferedWritableByteChannel(
+      BufferHandle handle, UnbufferedWritableByteChannel channel, boolean blocking) {
     this.handle = handle;
     this.channel = channel;
+    this.blocking = blocking;
   }
 
   @Override
@@ -81,27 +90,43 @@ final class MinFlushBufferedWritableByteChannel implements BufferedWritableByteC
       }
 
       int capacity = handle.capacity();
+      int position = handle.position();
       int bufferPending = capacity - bufferRemaining;
       int totalPending = Math.addExact(srcRemaining, bufferPending);
-      if (totalPending >= capacity) {
-        ByteBuffer[] srcs;
-        if (enqueuedBytes()) {
-          ByteBuffer buffer = handle.get();
-          Buffers.flip(buffer);
-          srcs = new ByteBuffer[] {buffer, src};
-        } else {
-          srcs = new ByteBuffer[] {src};
-        }
-        long write = channel.write(srcs);
-        if (enqueuedBytes()) {
-          // we didn't write enough bytes to consume the whole buffer.
-          Buffers.compact(handle.get());
-        } else if (handle.position() == handle.capacity()) {
+      ByteBuffer[] srcs;
+      boolean usingBuffer = false;
+      if (enqueuedBytes()) {
+        usingBuffer = true;
+        ByteBuffer buffer = handle.get();
+        Buffers.flip(buffer);
+        srcs = new ByteBuffer[] {buffer, src};
+      } else {
+        srcs = new ByteBuffer[] {src};
+      }
+      long written = channel.write(srcs);
+      checkState(written >= 0, "written >= 0 (%s > 0)", written);
+      if (usingBuffer) {
+        if (written >= bufferPending) {
           // we wrote enough to consume the buffer
           Buffers.clear(handle.get());
+        } else if (written > 0) {
+          // we didn't write enough bytes to consume the whole buffer.
+          Buffers.compact(handle.get());
+        } else /*if (written == 0)*/ {
+          // if none of the buffer was consumed, flip it back so we retain all bytes
+          Buffers.position(handle.get(), position);
+          Buffers.limit(handle.get(), capacity);
         }
-        int srcConsumed = Math.toIntExact(write) - bufferPending;
-        bytesConsumed += srcConsumed;
+      }
+
+      int srcConsumed = Math.max(0, Math.toIntExact(written) - bufferPending);
+      bytesConsumed += srcConsumed;
+
+      if (!blocking && written != totalPending) {
+        // we're configured in non-blocking mode, and we weren't able to make any progress on our
+        // call, break out to allow more bytes to be written to us or to allow underlying space
+        // to clear.
+        break;
       }
     }
     return bytesConsumed;
