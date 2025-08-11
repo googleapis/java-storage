@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.55.1](https://github.com/googleapis/java-storage/compare/v2.55.0...v2.55.1) (2025-08-11)
+
+
+### Dependencies
+
+* Update actions/checkout action to v5 ([#3239](https://github.com/googleapis/java-storage/issues/3239)) ([33f024b](https://github.com/googleapis/java-storage/commit/33f024b1ae094bf3e3605e1a835cb55eb5c9e750))
+
 ## [2.55.0](https://github.com/googleapis/java-storage/compare/v2.54.0...v2.55.0) (2025-08-05)
 
 
