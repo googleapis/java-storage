@@ -159,33 +159,11 @@ final class Buffers {
   }
 
   static int fillFrom(ByteBuffer buf, ReadableByteChannel c) throws IOException {
-    int total = 0;
-    while (buf.hasRemaining()) {
-      int read = c.read(buf);
-      if (read != -1) {
-        total += read;
-      } else if (total == 0) {
-        return -1;
-      } else {
-        break;
-      }
-    }
-    return total;
+    return StorageNonBlockingChannelUtils.blockingFillFrom(buf, c);
   }
 
   static int emptyTo(ByteBuffer buf, WritableByteChannel c) throws IOException {
-    int total = 0;
-    while (buf.hasRemaining()) {
-      int written = c.write(buf);
-      if (written != -1) {
-        total += written;
-      } else if (total == 0) {
-        return -1;
-      } else {
-        break;
-      }
-    }
-    return total;
+    return StorageNonBlockingChannelUtils.blockingEmptyTo(buf, c);
   }
 
   static long totalRemaining(ByteBuffer[] buffers, int offset, int length) {

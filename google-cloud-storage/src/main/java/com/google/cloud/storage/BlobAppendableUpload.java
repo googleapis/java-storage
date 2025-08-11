@@ -111,6 +111,16 @@ public interface BlobAppendableUpload extends BlobWriteSession {
      * operation upon this channel, however, then an invocation of this method will block until the
      * first operation is complete.
      *
+     * <p>If your application needs to empty its ByteBuffer before progressing, use our helper
+     * method {@link StorageNonBlockingChannelUtils#blockingEmptyTo(ByteBuffer,
+     * WritableByteChannel)} like so:
+     *
+     * <pre>{@code
+     * try (AppendableUploadWriteableByteChannel channel = session.open()) {
+     *   int written = StorageNonBlockingChannelUtils.blockingEmptyTo(byteBuffer, channel);
+     * }
+     * }</pre>
+     *
      * @param src The buffer from which bytes are to be retrieved
      * @return The number of bytes written, possibly zero
      * @throws ClosedChannelException If this channel is closed
