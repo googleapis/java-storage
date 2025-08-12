@@ -89,7 +89,10 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
-      lock.lock();
+      boolean locked = lock.tryLock();
+      if (!locked) {
+        return 0;
+      }
       try {
         return buffered.write(src);
       } finally {
@@ -99,7 +102,6 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
 
     @Override
     public boolean isOpen() {
-      lock.lock();
       try {
         return buffered.isOpen();
       } finally {

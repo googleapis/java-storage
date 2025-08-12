@@ -107,10 +107,6 @@ public interface BlobAppendableUpload extends BlobWriteSession {
      * .}{@link FlushPolicy#getMaxPendingBytes() getMaxPendingBytes()}. If the outbound queue is
      * full, and can not fit more bytes, this method will return 0.
      *
-     * <p>This method may be invoked at any time. If another thread has already initiated a write
-     * operation upon this channel, however, then an invocation of this method will block until the
-     * first operation is complete.
-     *
      * <p>If your application needs to empty its ByteBuffer before progressing, use our helper
      * method {@link StorageNonBlockingChannelUtils#blockingEmptyTo(ByteBuffer,
      * WritableByteChannel)} like so:
