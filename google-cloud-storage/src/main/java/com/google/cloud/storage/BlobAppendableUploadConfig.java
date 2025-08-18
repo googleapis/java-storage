@@ -32,8 +32,10 @@ import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.ServiceConstants.Values;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import javax.annotation.concurrent.Immutable;
 
@@ -52,14 +54,17 @@ public final class BlobAppendableUploadConfig {
 
   private static final BlobAppendableUploadConfig INSTANCE =
       new BlobAppendableUploadConfig(
-          FlushPolicy.minFlushSize(_256KiB), CloseAction.CLOSE_WITHOUT_FINALIZING);
+          FlushPolicy.minFlushSize(_256KiB), CloseAction.CLOSE_WITHOUT_FINALIZING, 3);
 
   private final FlushPolicy flushPolicy;
   private final CloseAction closeAction;
+  private final int maxRedirectsAllowed;
 
-  private BlobAppendableUploadConfig(FlushPolicy flushPolicy, CloseAction closeAction) {
+  private BlobAppendableUploadConfig(
+      FlushPolicy flushPolicy, CloseAction closeAction, int maxRedirectsAllowed) {
     this.flushPolicy = flushPolicy;
     this.closeAction = closeAction;
+    this.maxRedirectsAllowed = maxRedirectsAllowed;
   }
 
   /**
@@ -90,7 +95,7 @@ public final class BlobAppendableUploadConfig {
     if (this.flushPolicy.equals(flushPolicy)) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, closeAction);
+    return new BlobAppendableUploadConfig(flushPolicy, closeAction, maxRedirectsAllowed);
   }
 
   /**
@@ -108,8 +113,9 @@ public final class BlobAppendableUploadConfig {
   }
 
   /**
-   * Return an instance with the {@code CloseAction} set to be the specified value. <i>Default:</i>
-   * {@link CloseAction#CLOSE_WITHOUT_FINALIZING}
+   * Return an instance with the {@code CloseAction} set to be the specified value.
+   *
+   * <p><i>Default:</i> {@link CloseAction#CLOSE_WITHOUT_FINALIZING}
    *
    * @see #getCloseAction()
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
@@ -120,14 +126,65 @@ public final class BlobAppendableUploadConfig {
     if (this.closeAction == closeAction) {
       return this;
     }
-    return new BlobAppendableUploadConfig(flushPolicy, closeAction);
+    return new BlobAppendableUploadConfig(flushPolicy, closeAction, maxRedirectsAllowed);
+  }
+
+  /**
+   * The {@code maxRedirectsAllowed} set to be the specified value.
+   *
+   * <p><i>Default:</i> 3
+   *
+   * @see #withMaxRedirectsAllowed(int)
+   * @since 2.56.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  int getMaxRedirectsAllowed() {
+    return maxRedirectsAllowed;
+  }
+
+  /**
+   * Return an instance with the {@code maxRedirectsAllowed} set to be the specified value.
+   *
+   * <p><i>Default:</i> 3
+   *
+   * @see #getMaxRedirectsAllowed()
+   * @since 2.56.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  BlobAppendableUploadConfig withMaxRedirectsAllowed(int maxRedirectsAllowed) {
+    Preconditions.checkArgument(
+        maxRedirectsAllowed >= 0, "maxRedirectsAllowed >= 0 (%s >= 0)", maxRedirectsAllowed);
+    if (this.maxRedirectsAllowed == maxRedirectsAllowed) {
+      return this;
+    }
+    return new BlobAppendableUploadConfig(flushPolicy, closeAction, maxRedirectsAllowed);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof BlobAppendableUploadConfig)) {
+      return false;
+    }
+    BlobAppendableUploadConfig that = (BlobAppendableUploadConfig) o;
+    return maxRedirectsAllowed == that.maxRedirectsAllowed
+        && Objects.equals(flushPolicy, that.flushPolicy)
+        && closeAction == that.closeAction;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(flushPolicy, closeAction, maxRedirectsAllowed);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("closeAction", closeAction)
         .add("flushPolicy", flushPolicy)
+        .add("closeAction", closeAction)
+        .add("maxRedirectsAllowed", maxRedirectsAllowed)
         .toString();
   }
 
@@ -183,9 +240,6 @@ public final class BlobAppendableUploadConfig {
   }
 
   BlobAppendableUpload create(GrpcStorageImpl storage, BlobInfo info, Opts<ObjectTargetOpt> opts) {
-    // TODO: make configurable
-    int maxRedirectsAllowed = 3;
-
     long maxPendingBytes = this.getFlushPolicy().getMaxPendingBytes();
     AppendableUploadState state = storage.getAppendableState(info, opts, maxPendingBytes);
     WritableByteChannelSession<AppendableObjectBufferedWritableByteChannel, BidiWriteObjectResponse>
