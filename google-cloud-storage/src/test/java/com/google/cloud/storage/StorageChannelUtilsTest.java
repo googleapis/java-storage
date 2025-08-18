@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.StorageNonBlockingChannelUtils.blockingEmptyTo;
-import static com.google.cloud.storage.StorageNonBlockingChannelUtils.blockingFillFrom;
+import static com.google.cloud.storage.StorageChannelUtils.blockingEmptyTo;
+import static com.google.cloud.storage.StorageChannelUtils.blockingFillFrom;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
@@ -30,7 +30,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
-public final class StorageNonBlockingChannelUtilsTest {
+public final class StorageChannelUtilsTest {
 
   @Test
   public void emptyTo_fullyConsumed() throws Exception {

@@ -26,9 +26,9 @@ import java.nio.channels.WritableByteChannel;
  *
  * @since 2.56.0
  */
-public final class StorageNonBlockingChannelUtils {
+public final class StorageChannelUtils {
 
-  private StorageNonBlockingChannelUtils() {}
+  private StorageChannelUtils() {}
 
   /**
    * Attempt to fill {@code buf} from {@code c}, blocking the invoking thread if necessary in order

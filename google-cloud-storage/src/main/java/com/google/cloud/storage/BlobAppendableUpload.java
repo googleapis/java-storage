@@ -108,12 +108,11 @@ public interface BlobAppendableUpload extends BlobWriteSession {
      * full, and can not fit more bytes, this method will return 0.
      *
      * <p>If your application needs to empty its ByteBuffer before progressing, use our helper
-     * method {@link StorageNonBlockingChannelUtils#blockingEmptyTo(ByteBuffer,
-     * WritableByteChannel)} like so:
+     * method {@link StorageChannelUtils#blockingEmptyTo(ByteBuffer, WritableByteChannel)} like so:
      *
      * <pre>{@code
      * try (AppendableUploadWriteableByteChannel channel = session.open()) {
-     *   int written = StorageNonBlockingChannelUtils.blockingEmptyTo(byteBuffer, channel);
+     *   int written = StorageChannelUtils.blockingEmptyTo(byteBuffer, channel);
      * }
      * }</pre>
      *

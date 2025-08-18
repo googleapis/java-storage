@@ -159,11 +159,11 @@ final class Buffers {
   }
 
   static int fillFrom(ByteBuffer buf, ReadableByteChannel c) throws IOException {
-    return StorageNonBlockingChannelUtils.blockingFillFrom(buf, c);
+    return StorageChannelUtils.blockingFillFrom(buf, c);
   }
 
   static int emptyTo(ByteBuffer buf, WritableByteChannel c) throws IOException {
-    return StorageNonBlockingChannelUtils.blockingEmptyTo(buf, c);
+    return StorageChannelUtils.blockingEmptyTo(buf, c);
   }
 
   static long totalRemaining(ByteBuffer[] buffers, int offset, int length) {

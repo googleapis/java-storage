@@ -58,6 +58,9 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
   @Override
   public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
     long totalRemaining = Buffers.totalRemaining(srcs, offset, length);
+    // internalWrite is non-blocking, but close is blocking.
+    // loop here to ensure all the bytes we need flush are enqueued before we transition to trying
+    // to close.
     long written = 0;
     do {
       written += internalWrite(srcs, offset, length);
