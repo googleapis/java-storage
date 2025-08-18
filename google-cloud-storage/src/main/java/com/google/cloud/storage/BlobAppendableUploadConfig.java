@@ -272,7 +272,7 @@ public final class BlobAppendableUploadConfig {
                     c = new BidiAppendableUnbufferedWritableByteChannel(stream, chunkSegmenter, 0);
                   }
                   return new AppendableObjectBufferedWritableByteChannel(
-                      flushPolicy.createBufferedChannel(c),
+                      flushPolicy.createBufferedChannel(c, /* blocking= */ false),
                       c,
                       this.closeAction == CloseAction.FINALIZE_WHEN_CLOSING);
                 },

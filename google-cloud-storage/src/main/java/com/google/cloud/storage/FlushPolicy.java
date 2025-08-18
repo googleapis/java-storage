@@ -86,7 +86,7 @@ public abstract class FlushPolicy {
   }
 
   abstract BufferedWritableByteChannel createBufferedChannel(
-      UnbufferedWritableByteChannel unbuffered);
+      UnbufferedWritableByteChannel unbuffered, boolean blocking);
 
   abstract long getMaxPendingBytes();
 
@@ -155,9 +155,10 @@ public abstract class FlushPolicy {
     }
 
     @Override
-    BufferedWritableByteChannel createBufferedChannel(UnbufferedWritableByteChannel unbuffered) {
+    BufferedWritableByteChannel createBufferedChannel(
+        UnbufferedWritableByteChannel unbuffered, boolean blocking) {
       return new DefaultBufferedWritableByteChannel(
-          BufferHandle.allocate(maxFlushSize), unbuffered);
+          BufferHandle.allocate(maxFlushSize), unbuffered, blocking);
     }
 
     @Override
@@ -264,9 +265,10 @@ public abstract class FlushPolicy {
     }
 
     @Override
-    BufferedWritableByteChannel createBufferedChannel(UnbufferedWritableByteChannel unbuffered) {
+    BufferedWritableByteChannel createBufferedChannel(
+        UnbufferedWritableByteChannel unbuffered, boolean blocking) {
       return new MinFlushBufferedWritableByteChannel(
-          BufferHandle.allocate(minFlushSize), unbuffered, false);
+          BufferHandle.allocate(minFlushSize), unbuffered, blocking);
     }
 
     @Override

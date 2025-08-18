@@ -491,7 +491,7 @@ public class ITAppendableUploadFakeTest {
               smallSegmenter,
               0);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
-      channel.write(ByteBuffer.wrap(content.getBytes()));
+      StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.nextWriteShouldFinalize();
       channel.close();
       assertThat(done.get(777, TimeUnit.MILLISECONDS).getResource().getSize()).isEqualTo(10);
@@ -641,8 +641,8 @@ public class ITAppendableUploadFakeTest {
               0);
       ChecksummedTestContent content1 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       ChecksummedTestContent content2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
-      channel.write(ByteBuffer.wrap(content1.getBytes()));
-      channel.write(ByteBuffer.wrap(content2.getBytes()));
+      StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content1.getBytes()), channel);
+      StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content2.getBytes()), channel);
       channel.nextWriteShouldFinalize();
       channel.close();
       assertThat(done.get(777, TimeUnit.MILLISECONDS).getResource().getSize()).isEqualTo(20);
@@ -793,7 +793,7 @@ public class ITAppendableUploadFakeTest {
       BidiAppendableUnbufferedWritableByteChannel channel =
           new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 0);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
-      channel.write(ByteBuffer.wrap(content.getBytes()));
+      StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.nextWriteShouldFinalize();
       channel.close();
       assertThat(stream.getResultFuture().get(777, TimeUnit.MILLISECONDS).getResource().getSize())
@@ -912,7 +912,7 @@ public class ITAppendableUploadFakeTest {
       BlobAppendableUpload upload =
           storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), config);
       try (AppendableUploadWriteableByteChannel channel = upload.open()) {
-        channel.write(ByteBuffer.wrap(b));
+        StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(b), channel);
       }
       ApiFuture<BlobInfo> result = upload.getResult();
       result.get(5, TimeUnit.SECONDS);
@@ -1050,7 +1050,7 @@ public class ITAppendableUploadFakeTest {
               storage.storageDataClient.retryContextProvider.create());
       BidiAppendableUnbufferedWritableByteChannel channel =
           new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 0);
-      channel.write(ByteBuffer.wrap(content.getBytes()));
+      StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.nextWriteShouldFinalize();
       channel.close();
       BidiWriteObjectResponse response = stream.getResultFuture().get(777, TimeUnit.MILLISECONDS);

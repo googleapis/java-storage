@@ -26,6 +26,8 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.FlushPolicy.MaxFlushSizeFlushPolicy;
+import com.google.cloud.storage.FlushPolicy.MinFlushSizeFlushPolicy;
 import com.google.cloud.storage.ITAppendableUploadTest.UploadConfigParameters;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -103,11 +105,7 @@ public final class ITAppendableUploadTest {
   @Test
   public void appendableUpload_bytes()
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
-    if (p.uploadConfig.getCloseAction() == CloseAction.FINALIZE_WHEN_CLOSING) {
-      assumeTrue(
-          "testbench broken https://github.com/googleapis/storage-testbench/issues/733",
-          p.content.length() > 1_000);
-    }
+    checkTestbenchIssue733();
 
     BlobAppendableUpload upload =
         storage.blobAppendableUpload(
@@ -177,11 +175,7 @@ public final class ITAppendableUploadTest {
 
   @Test
   public void testUploadFileUsingAppendable() throws Exception {
-    if (p.uploadConfig.getCloseAction() == CloseAction.FINALIZE_WHEN_CLOSING) {
-      assumeTrue(
-          "testbench broken https://github.com/googleapis/storage-testbench/issues/733",
-          p.content.length() > 1_000);
-    }
+    checkTestbenchIssue733();
 
     String objectName = UUID.randomUUID().toString();
     String fileName =
@@ -240,6 +234,26 @@ public final class ITAppendableUploadTest {
         () -> assertThat(done2.getCrc32c()).isNotNull());
   }
 
+  private void checkTestbenchIssue733() {
+    if (p.uploadConfig.getCloseAction() == CloseAction.FINALIZE_WHEN_CLOSING) {
+      int estimatedMessageCount = 0;
+      FlushPolicy flushPolicy = p.uploadConfig.getFlushPolicy();
+      if (flushPolicy instanceof MinFlushSizeFlushPolicy) {
+        MinFlushSizeFlushPolicy min = (MinFlushSizeFlushPolicy) flushPolicy;
+        estimatedMessageCount = p.content.length() / min.getMinFlushSize();
+      } else if (flushPolicy instanceof MaxFlushSizeFlushPolicy) {
+        MaxFlushSizeFlushPolicy max = (MaxFlushSizeFlushPolicy) flushPolicy;
+        estimatedMessageCount = p.content.length() / max.getMaxFlushSize();
+      }
+      // if our int division results in a partial message, ensure we are counting at least one
+      // message. We have a separate test specifically for empty objects.
+      estimatedMessageCount = Math.max(estimatedMessageCount, 1);
+      assumeTrue(
+          "testbench broken https://github.com/googleapis/storage-testbench/issues/733",
+          estimatedMessageCount > 1);
+    }
+  }
+
   private byte[] readAllBytes(BlobInfo actual)
       throws IOException, InterruptedException, ExecutionException, TimeoutException {
     ApiFuture<BlobReadSession> blobReadSessionFuture = storage.blobReadSession(actual.getBlobId());
@@ -254,7 +268,9 @@ public final class ITAppendableUploadTest {
     private static final ImmutableList<FlushPolicy> flushPolicies =
         ImmutableList.of(
             FlushPolicy.minFlushSize(1_000),
-            FlushPolicy.minFlushSize(1_000).withMaxPendingBytes(5_000));
+            FlushPolicy.minFlushSize(1_000).withMaxPendingBytes(5_000),
+            FlushPolicy.maxFlushSize(1_000),
+            FlushPolicy.maxFlushSize(500_000));
     private static final ImmutableList<CloseAction> closeActions =
         ImmutableList.copyOf(CloseAction.values());
     public static final ImmutableList<Integer> objectSizes =

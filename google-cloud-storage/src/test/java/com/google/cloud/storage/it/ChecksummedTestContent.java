@@ -30,6 +30,7 @@ import com.google.protobuf.UnsafeByteOperations;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ChecksummedData;
 import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,6 +127,10 @@ public final class ChecksummedTestContent {
 
   public BidiWriteObjectRequest.Builder asBidiWrite() {
     return BidiWriteObjectRequest.newBuilder().setChecksummedData(asChecksummedData());
+  }
+
+  public ByteBuffer asByteBuffer() {
+    return ByteBuffer.wrap(bytes);
   }
 
   @Override

@@ -28,6 +28,7 @@ import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.AuditingB
 import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.CountingWritableByteChannelAdapter;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.it.ChecksummedTestContent;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -661,16 +662,20 @@ public final class MinFlushBufferedWritableByteChannelTest {
     }
   }
 
-  private static final class OnlyConsumeNBytes implements UnbufferedWritableByteChannel {
+  static final class OnlyConsumeNBytes implements UnbufferedWritableByteChannel {
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlyConsumeNBytes.class);
     private final long bytesToConsume;
     private final int consumptionIncrement;
     private long bytesConsumed;
 
-    private OnlyConsumeNBytes(int bytesToConsume, int consumptionIncrement) {
+    OnlyConsumeNBytes(int bytesToConsume, int consumptionIncrement) {
       this.bytesToConsume = bytesToConsume;
       this.consumptionIncrement = consumptionIncrement;
       this.bytesConsumed = 0;
+    }
+
+    long getBytesConsumed() {
+      return bytesConsumed;
     }
 
     @Override
@@ -706,5 +711,14 @@ public final class MinFlushBufferedWritableByteChannelTest {
 
     @Override
     public void close() {}
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("bytesToConsume", bytesToConsume)
+          .add("consumptionIncrement", consumptionIncrement)
+          .add("bytesConsumed", bytesConsumed)
+          .toString();
+    }
   }
 }
