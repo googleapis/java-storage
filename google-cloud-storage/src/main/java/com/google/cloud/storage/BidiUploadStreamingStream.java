@@ -382,7 +382,7 @@ final class BidiUploadStreamingStream {
     public void onStart(StreamController controller) {
       this.controller = controller;
       controller.disableAutoInboundFlowControl();
-      controller.request(2);
+      controller.request(1);
     }
 
     @RequiresNonNull("controller")
