@@ -47,6 +47,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
+/**
+ * A class that helps tie together a {@link BidiUploadState}, {@link RetryContext} and underlying
+ * gRPC bidi stream.
+ *
+ * <p>This class helps transparently handle retries in the event an error is observed, and will
+ * handle redirect(s) if they occur, all without the need for the caller of this class to know about
+ * those things and the state need to worry about how retries will happen.
+ */
 final class BidiUploadStreamingStream {
 
   private final BidiUploadState state;
