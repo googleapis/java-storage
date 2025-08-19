@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
@@ -54,7 +53,7 @@ public final class BlobAppendableUploadConfig {
 
   private static final BlobAppendableUploadConfig INSTANCE =
       new BlobAppendableUploadConfig(
-          FlushPolicy.minFlushSize(_256KiB), CloseAction.CLOSE_WITHOUT_FINALIZING, 3);
+          FlushPolicy.minFlushSize(), CloseAction.CLOSE_WITHOUT_FINALIZING, 3);
 
   private final FlushPolicy flushPolicy;
   private final CloseAction closeAction;
@@ -71,7 +70,7 @@ public final class BlobAppendableUploadConfig {
    * The {@link FlushPolicy} which will be used to determine when and how many bytes to flush to
    * GCS.
    *
-   * <p><i>Default:</i> {@link FlushPolicy#minFlushSize(int) FlushPolicy.minFlushSize(256 * 1024)}
+   * <p><i>Default:</i> {@link FlushPolicy#minFlushSize()}
    *
    * @see #withFlushPolicy(FlushPolicy)
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
@@ -84,7 +83,7 @@ public final class BlobAppendableUploadConfig {
   /**
    * Return an instance with the {@code FlushPolicy} set to be the specified value.
    *
-   * <p><i>Default:</i> {@link FlushPolicy#minFlushSize(int) FlushPolicy.minFlushSize(256 * 1024)}
+   * <p><i>Default:</i> {@link FlushPolicy#minFlushSize()}
    *
    * @see #getFlushPolicy()
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.

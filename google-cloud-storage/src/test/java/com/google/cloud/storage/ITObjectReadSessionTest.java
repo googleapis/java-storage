@@ -28,6 +28,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.FlushPolicy.MinFlushSizeFlushPolicy;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -76,6 +77,8 @@ public final class ITObjectReadSessionTest {
   public BucketInfo bucket;
 
   @Inject public Generator generator;
+
+  @Inject public Backend backend;
 
   @Test
   public void bytes()
@@ -355,9 +358,15 @@ public final class ITObjectReadSessionTest {
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
+    BlobAppendableUploadConfig config = BlobAppendableUploadConfig.of();
+    if (backend == Backend.TEST_BENCH) {
+      // workaround for https://github.com/googleapis/storage-testbench/issues/733
+      MinFlushSizeFlushPolicy flushPolicy =
+          FlushPolicy.minFlushSize(256 * 1024).withMaxPendingBytes(4 * 1024 * 1024);
+      config = config.withFlushPolicy(flushPolicy);
+    }
     BlobAppendableUpload upload =
-        storage.blobAppendableUpload(
-            info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist());
+        storage.blobAppendableUpload(info, config, BlobWriteOption.doesNotExist());
     try (AppendableUploadWriteableByteChannel channel = upload.open()) {
       Buffers.emptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.finalizeAndClose();

@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
+import static com.google.cloud.storage.ByteSizeConstants._4MiB;
 
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
@@ -66,6 +67,13 @@ public abstract class FlushPolicy {
 
   /**
    * Default instance factory method for {@link MinFlushSizeFlushPolicy}.
+   *
+   * <p><i>Default:</i> logically equivalent to the following:
+   *
+   * <pre>
+   * {@link #minFlushSize(int) FlushPolicy.minFlushSize}(4 * 1024 * 1024)
+   *     .{@link MinFlushSizeFlushPolicy#withMaxPendingBytes(long) withMaxPendingBytes}(16 * 1024 * 1024)
+   * </pre>
    *
    * @since 2.51.0 This new api is in preview and is subject to breaking changes.
    */
@@ -204,7 +212,7 @@ public abstract class FlushPolicy {
   @BetaApi
   public static final class MinFlushSizeFlushPolicy extends FlushPolicy {
     private static final MinFlushSizeFlushPolicy INSTANCE =
-        new MinFlushSizeFlushPolicy(_2MiB, _16MiB);
+        new MinFlushSizeFlushPolicy(_4MiB, _16MiB);
 
     private final int minFlushSize;
     private final long maxPendingBytes;
@@ -217,7 +225,7 @@ public abstract class FlushPolicy {
     /**
      * The minimum number of bytes to include in each automatic flush
      *
-     * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+     * <p><i>Default:</i> {@code 4194304 (4 MiB)}
      *
      * @see #withMinFlushSize(int)
      */
@@ -229,7 +237,7 @@ public abstract class FlushPolicy {
     /**
      * Return an instance with the {@code minFlushSize} set to the specified value.
      *
-     * <p><i>Default:</i> {@code 2097152 (2 MiB)}
+     * <p><i>Default:</i> {@code 4194304 (4 MiB)}
      *
      * @param minFlushSize The number of bytes to buffer before flushing.
      * @return The new instance

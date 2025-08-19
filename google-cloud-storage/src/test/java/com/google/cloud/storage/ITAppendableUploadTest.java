@@ -269,8 +269,9 @@ public final class ITAppendableUploadTest {
         ImmutableList.of(
             FlushPolicy.minFlushSize(1_000),
             FlushPolicy.minFlushSize(1_000).withMaxPendingBytes(5_000),
-            FlushPolicy.maxFlushSize(1_000),
-            FlushPolicy.maxFlushSize(500_000));
+            FlushPolicy.maxFlushSize(500_000),
+            FlushPolicy.minFlushSize(),
+            FlushPolicy.maxFlushSize());
     private static final ImmutableList<CloseAction> closeActions =
         ImmutableList.copyOf(CloseAction.values());
     public static final ImmutableList<Integer> objectSizes =
