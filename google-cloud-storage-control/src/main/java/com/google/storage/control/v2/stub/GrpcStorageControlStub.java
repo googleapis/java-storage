@@ -88,6 +88,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
           .setFullMethodName("google.storage.control.v2.StorageControl/CreateFolder")
           .setRequestMarshaller(ProtoUtils.marshaller(CreateFolderRequest.getDefaultInstance()))
           .setResponseMarshaller(ProtoUtils.marshaller(Folder.getDefaultInstance()))
+          .setSampledToLocalTracing(true)
           .build();
 
   private static final MethodDescriptor<DeleteFolderRequest, Empty> deleteFolderMethodDescriptor =
@@ -96,6 +97,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
           .setFullMethodName("google.storage.control.v2.StorageControl/DeleteFolder")
           .setRequestMarshaller(ProtoUtils.marshaller(DeleteFolderRequest.getDefaultInstance()))
           .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
+          .setSampledToLocalTracing(true)
           .build();
 
   private static final MethodDescriptor<GetFolderRequest, Folder> getFolderMethodDescriptor =
@@ -104,6 +106,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
           .setFullMethodName("google.storage.control.v2.StorageControl/GetFolder")
           .setRequestMarshaller(ProtoUtils.marshaller(GetFolderRequest.getDefaultInstance()))
           .setResponseMarshaller(ProtoUtils.marshaller(Folder.getDefaultInstance()))
+          .setSampledToLocalTracing(true)
           .build();
 
   private static final MethodDescriptor<ListFoldersRequest, ListFoldersResponse>
@@ -114,6 +117,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(ProtoUtils.marshaller(ListFoldersRequest.getDefaultInstance()))
               .setResponseMarshaller(
                   ProtoUtils.marshaller(ListFoldersResponse.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<RenameFolderRequest, Operation>
@@ -123,6 +127,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setFullMethodName("google.storage.control.v2.StorageControl/RenameFolder")
               .setRequestMarshaller(ProtoUtils.marshaller(RenameFolderRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<GetStorageLayoutRequest, StorageLayout>
@@ -133,6 +138,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(GetStorageLayoutRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(StorageLayout.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<CreateManagedFolderRequest, ManagedFolder>
@@ -143,6 +149,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(CreateManagedFolderRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(ManagedFolder.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<DeleteManagedFolderRequest, Empty>
@@ -153,6 +160,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(DeleteManagedFolderRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<GetManagedFolderRequest, ManagedFolder>
@@ -163,6 +171,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(GetManagedFolderRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(ManagedFolder.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<ListManagedFoldersRequest, ListManagedFoldersResponse>
@@ -174,6 +183,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(ListManagedFoldersRequest.getDefaultInstance()))
               .setResponseMarshaller(
                   ProtoUtils.marshaller(ListManagedFoldersResponse.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<CreateAnywhereCacheRequest, Operation>
@@ -184,6 +194,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(CreateAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<UpdateAnywhereCacheRequest, Operation>
@@ -194,6 +205,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(UpdateAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<DisableAnywhereCacheRequest, AnywhereCache>
@@ -204,6 +216,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(DisableAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<PauseAnywhereCacheRequest, AnywhereCache>
@@ -214,6 +227,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(PauseAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<ResumeAnywhereCacheRequest, AnywhereCache>
@@ -224,6 +238,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(ResumeAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<GetAnywhereCacheRequest, AnywhereCache>
@@ -234,6 +249,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(GetAnywhereCacheRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(AnywhereCache.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<ListAnywhereCachesRequest, ListAnywhereCachesResponse>
@@ -245,6 +261,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(ListAnywhereCachesRequest.getDefaultInstance()))
               .setResponseMarshaller(
                   ProtoUtils.marshaller(ListAnywhereCachesResponse.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<GetProjectIntelligenceConfigRequest, IntelligenceConfig>
@@ -256,6 +273,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(GetProjectIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<UpdateProjectIntelligenceConfigRequest, IntelligenceConfig>
@@ -268,6 +286,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(
                       UpdateProjectIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<GetFolderIntelligenceConfigRequest, IntelligenceConfig>
@@ -279,6 +298,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(GetFolderIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<UpdateFolderIntelligenceConfigRequest, IntelligenceConfig>
@@ -290,6 +310,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setRequestMarshaller(
                   ProtoUtils.marshaller(UpdateFolderIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<
@@ -304,6 +325,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(
                       GetOrganizationIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private static final MethodDescriptor<
@@ -318,6 +340,7 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   ProtoUtils.marshaller(
                       UpdateOrganizationIntelligenceConfigRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(IntelligenceConfig.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
               .build();
 
   private final UnaryCallable<CreateFolderRequest, Folder> createFolderCallable;
