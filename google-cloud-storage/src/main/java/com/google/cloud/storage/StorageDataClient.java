@@ -36,11 +36,11 @@ import java.util.concurrent.TimeUnit;
 @InternalApi
 final class StorageDataClient implements AutoCloseable {
 
-  private final ScheduledExecutorService executor;
+  final ScheduledExecutorService executor;
   private final Duration terminationAwaitDuration;
   private final ZeroCopyBidiStreamingCallable<BidiReadObjectRequest, BidiReadObjectResponse>
       bidiReadObject;
-  private final RetryContextProvider retryContextProvider;
+  final RetryContextProvider retryContextProvider;
   private final IOAutoCloseable onClose;
 
   private StorageDataClient(

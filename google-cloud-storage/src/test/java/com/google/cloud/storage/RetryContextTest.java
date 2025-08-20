@@ -441,7 +441,9 @@ public final class RetryContextTest {
   static <T extends Throwable> OnFailure<T> failOnFailure() {
     InvocationTracer invocationTracer = new InvocationTracer("Unexpected onFailure invocation");
     return t -> {
-      invocationTracer.addSuppressed(t);
+      if (t != invocationTracer) {
+        invocationTracer.addSuppressed(t);
+      }
       throw invocationTracer;
     };
   }

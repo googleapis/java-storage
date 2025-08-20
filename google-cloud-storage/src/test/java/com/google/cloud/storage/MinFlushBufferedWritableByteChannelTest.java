@@ -27,6 +27,8 @@ import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWrita
 import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.AuditingBufferHandle;
 import com.google.cloud.storage.DefaultBufferedWritableByteChannelTest.CountingWritableByteChannelAdapter;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.it.ChecksummedTestContent;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,12 +54,91 @@ import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import net.jqwik.api.providers.TypeUsage;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public final class MinFlushBufferedWritableByteChannelTest {
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(MinFlushBufferedWritableByteChannelTest.class);
+  private static final Marker TRACE_ENTER = MarkerFactory.getMarker("enter");
+  private static final Marker TRACE_EXIT = MarkerFactory.getMarker("exit");
 
   @Example
   void edgeCases() {
     JqwikTest.report(TypeUsage.of(WriteOps.class), arbitraryWriteOps());
+  }
+
+  @Example
+  void nonBlockingWrite0DoesNotBlock() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(5);
+    MinFlushBufferedWritableByteChannel c =
+        new MinFlushBufferedWritableByteChannel(handle, new OnlyConsumeNBytes(0, 1), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_8_3 = ByteBuffer.wrap(all.slice(0, 3).getBytes());
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(0);
+    assertThat(s_4_4.remaining()).isEqualTo(4);
+
+    int written3 = c.write(s_8_3);
+    assertThat(written3).isEqualTo(0);
+    assertThat(s_8_3.remaining()).isEqualTo(3);
+
+    assertThat(handle.remaining()).isEqualTo(1);
+  }
+
+  @Example
+  void nonBlockingWritePartialDoesNotBlock() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(5);
+    MinFlushBufferedWritableByteChannel c =
+        new MinFlushBufferedWritableByteChannel(handle, new OnlyConsumeNBytes(6, 5), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(1);
+
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(1);
+    assertThat(s_4_4.remaining()).isEqualTo(3);
+    assertThat(handle.remaining()).isEqualTo(5);
+  }
+
+  @Example
+  void illegalStateExceptionIfWrittenLt0() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(4);
+    MinFlushBufferedWritableByteChannel c =
+        new MinFlushBufferedWritableByteChannel(
+            handle,
+            new UnbufferedWritableByteChannel() {
+              @Override
+              public long write(ByteBuffer[] srcs, int offset, int length) {
+                return -1;
+              }
+
+              @Override
+              public boolean isOpen() {
+                return true;
+              }
+
+              @Override
+              public void close() {}
+            });
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    assertThrows(IllegalStateException.class, () -> c.write(s_0_4));
   }
 
   @Property
@@ -578,6 +659,66 @@ public final class MinFlushBufferedWritableByteChannelTest {
           ImmutableList.copyOf(writes),
           ImmutableList.copyOf(expectedFlushes),
           dbgExpectedWriteSizes);
+    }
+  }
+
+  static final class OnlyConsumeNBytes implements UnbufferedWritableByteChannel {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlyConsumeNBytes.class);
+    private final long bytesToConsume;
+    private final int consumptionIncrement;
+    private long bytesConsumed;
+
+    OnlyConsumeNBytes(int bytesToConsume, int consumptionIncrement) {
+      this.bytesToConsume = bytesToConsume;
+      this.consumptionIncrement = consumptionIncrement;
+      this.bytesConsumed = 0;
+    }
+
+    long getBytesConsumed() {
+      return bytesConsumed;
+    }
+
+    @Override
+    public long write(ByteBuffer[] srcs, int offset, int length) {
+      LOGGER.info(TRACE_ENTER, "write(srcs : {}, offset : {}, length : {})", srcs, offset, length);
+      try {
+        if (bytesConsumed >= bytesToConsume) {
+          return 0;
+        }
+
+        long consumed = 0;
+        int toConsume = consumptionIncrement;
+        for (int i = offset; i < length && toConsume > 0; i++) {
+          ByteBuffer src = srcs[i];
+          int remaining = src.remaining();
+          int position = src.position();
+          int consumable = Math.min(toConsume, remaining);
+          toConsume -= consumable;
+          consumed += consumable;
+          src.position(position + consumable);
+        }
+        bytesConsumed += consumed;
+        return consumed;
+      } finally {
+        LOGGER.info(TRACE_EXIT, "write(srcs : {}, offset : {}, length : {})", srcs, offset, length);
+      }
+    }
+
+    @Override
+    public boolean isOpen() {
+      return true;
+    }
+
+    @Override
+    public void close() {}
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("bytesToConsume", bytesToConsume)
+          .add("consumptionIncrement", consumptionIncrement)
+          .add("bytesConsumed", bytesConsumed)
+          .toString();
     }
   }
 }

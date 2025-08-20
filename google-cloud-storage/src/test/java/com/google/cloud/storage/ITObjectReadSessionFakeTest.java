@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.maybeGetStorageDataClient;
+import static com.google.cloud.storage.TestUtils.GRPC_STATUS_DETAILS_KEY;
 import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
@@ -76,7 +77,6 @@ import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
-import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.StreamObserver;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -108,10 +108,6 @@ import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 
 public final class ITObjectReadSessionFakeTest {
-  private static final Metadata.Key<com.google.rpc.Status> GRPC_STATUS_DETAILS_KEY =
-      Metadata.Key.of(
-          "grpc-status-details-bin",
-          ProtoUtils.metadataMarshaller(com.google.rpc.Status.getDefaultInstance()));
 
   private static final Object METADATA =
       Object.newBuilder()

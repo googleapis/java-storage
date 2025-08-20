@@ -19,6 +19,7 @@ package com.google.cloud.storage.it;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 
+import com.google.cloud.storage.DataGenerator;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
@@ -26,8 +27,10 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
+import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.ChecksummedData;
 import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +51,10 @@ public final class ChecksummedTestContent {
 
   public byte[] getBytes() {
     return bytes;
+  }
+
+  public int length() {
+    return bytes.length;
   }
 
   public byte[] getBytes(int beginIndex) {
@@ -88,6 +95,13 @@ public final class ChecksummedTestContent {
     return newBytes;
   }
 
+  public ChecksummedTestContent concat(ChecksummedTestContent ctc) {
+    byte[] newBytes = new byte[this.length() + ctc.length()];
+    System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
+    System.arraycopy(ctc.bytes, 0, newBytes, bytes.length, ctc.length());
+    return ChecksummedTestContent.of(newBytes);
+  }
+
   public ByteArrayInputStream bytesAsInputStream() {
     return new ByteArrayInputStream(bytes);
   }
@@ -111,6 +125,14 @@ public final class ChecksummedTestContent {
     return ImmutableList.copyOf(elements);
   }
 
+  public BidiWriteObjectRequest.Builder asBidiWrite() {
+    return BidiWriteObjectRequest.newBuilder().setChecksummedData(asChecksummedData());
+  }
+
+  public ByteBuffer asByteBuffer() {
+    return ByteBuffer.wrap(bytes);
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -122,6 +144,11 @@ public final class ChecksummedTestContent {
   public static ChecksummedTestContent of(String content) {
     byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
     return of(bytes);
+  }
+
+  public static ChecksummedTestContent gen(int length) {
+    byte[] bytes1 = DataGenerator.base64Characters().genBytes(length);
+    return of(bytes1);
   }
 
   public static ChecksummedTestContent of(byte[] bytes) {

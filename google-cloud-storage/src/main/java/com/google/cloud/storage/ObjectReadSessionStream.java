@@ -257,7 +257,7 @@ final class ObjectReadSessionStream
     public void onStart(StreamController controller) {
       ObjectReadSessionStream.this.controller = controller;
       controller.disableAutoInboundFlowControl();
-      controller.request(2);
+      controller.request(1);
     }
 
     @SuppressWarnings("rawtypes")

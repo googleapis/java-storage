@@ -111,7 +111,8 @@ public final class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
                       GrpcStorageImpl grpc = (GrpcStorageImpl) s;
                       GrpcCallContext grpcCallContext =
                           opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-                      BidiWriteObjectRequest req = grpc.getBidiWriteObjectRequest(info, opts);
+                      BidiWriteObjectRequest req =
+                          grpc.getBidiWriteObjectRequest(info, opts, false);
 
                       ApiFuture<BidiResumableWrite> startResumableWrite =
                           grpc.startResumableWrite(grpcCallContext, req, opts);

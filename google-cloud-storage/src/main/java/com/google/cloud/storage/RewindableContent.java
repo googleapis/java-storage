@@ -48,6 +48,8 @@ abstract class RewindableContent extends AbstractHttpContent {
 
   abstract long writeTo(GatheringByteChannel gbc) throws IOException;
 
+  abstract void flagDirty();
+
   @Override
   public final boolean retrySupported() {
     return false;
@@ -106,6 +108,9 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     protected void rewindTo(long offset) {}
+
+    @Override
+    void flagDirty() {}
   }
 
   private static final class PathRewindableContent extends RewindableContent {
@@ -157,6 +162,9 @@ abstract class RewindableContent extends AbstractHttpContent {
         return ByteStreams.copy(in, gbc);
       }
     }
+
+    @Override
+    void flagDirty() {}
   }
 
   private static final class ByteBufferContent extends RewindableContent {
@@ -246,6 +254,11 @@ abstract class RewindableContent extends AbstractHttpContent {
         }
       }
       this.offset = offset;
+    }
+
+    @Override
+    void flagDirty() {
+      this.dirty = true;
     }
   }
 }

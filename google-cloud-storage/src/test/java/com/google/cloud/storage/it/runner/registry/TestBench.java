@@ -106,6 +106,8 @@ public final class TestBench implements ManagedLifecycle {
   private Path outPath;
   private Path errPath;
 
+  private boolean runningOutsideAlready;
+
   private TestBench(
       boolean ignorePullError,
       String baseUri,
@@ -199,6 +201,14 @@ public final class TestBench implements ManagedLifecycle {
 
   @Override
   public void start() {
+    try {
+      listRetryTests();
+      LOGGER.info("Using testbench running outside test suite.");
+      runningOutsideAlready = true;
+      return;
+    } catch (IOException ignore) {
+      // expected when the server isn't running already
+    }
     try {
       tempDirectory = Files.createTempDirectory(containerName);
       outPath = tempDirectory.resolve("stdout");
@@ -308,6 +318,10 @@ public final class TestBench implements ManagedLifecycle {
 
   @Override
   public void stop() {
+    if (runningOutsideAlready) {
+      // if the server was running outside the tests already simply return
+      return;
+    }
     try {
       process.destroy();
       process.waitFor(2, TimeUnit.SECONDS);

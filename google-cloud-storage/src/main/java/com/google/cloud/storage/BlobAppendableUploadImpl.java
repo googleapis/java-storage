@@ -63,18 +63,18 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
       implements BufferedWritableByteChannel,
           BlobAppendableUpload.AppendableUploadWriteableByteChannel {
     private final BufferedWritableByteChannel buffered;
-    private final GapicBidiUnbufferedAppendableWritableByteChannel unbuffered;
+    private final BidiAppendableUnbufferedWritableByteChannel unbuffered;
     private final boolean finalizeOnClose;
     private final ReentrantLock lock;
 
     AppendableObjectBufferedWritableByteChannel(
         BufferedWritableByteChannel buffered,
-        GapicBidiUnbufferedAppendableWritableByteChannel unbuffered,
+        BidiAppendableUnbufferedWritableByteChannel unbuffered,
         boolean finalizeOnClose) {
       this.buffered = buffered;
       this.unbuffered = unbuffered;
       this.finalizeOnClose = finalizeOnClose;
-      lock = new ReentrantLock();
+      this.lock = new ReentrantLock();
     }
 
     @Override
@@ -89,7 +89,10 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
-      lock.lock();
+      boolean locked = lock.tryLock();
+      if (!locked) {
+        return 0;
+      }
       try {
         return buffered.write(src);
       } finally {
@@ -99,7 +102,6 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
 
     @Override
     public boolean isOpen() {
-      lock.lock();
       try {
         return buffered.isOpen();
       } finally {
@@ -112,8 +114,7 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
       lock.lock();
       try {
         if (buffered.isOpen()) {
-          buffered.flush();
-          unbuffered.finalizeWrite();
+          unbuffered.nextWriteShouldFinalize();
           buffered.close();
         }
       } finally {

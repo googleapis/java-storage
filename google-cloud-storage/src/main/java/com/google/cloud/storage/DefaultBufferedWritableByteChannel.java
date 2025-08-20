@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.io.IOException;
@@ -59,10 +61,17 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
   private final BufferHandle handle;
 
   private final UnbufferedWritableByteChannel channel;
+  private final boolean blocking;
 
   DefaultBufferedWritableByteChannel(BufferHandle handle, UnbufferedWritableByteChannel channel) {
+    this(handle, channel, true);
+  }
+
+  DefaultBufferedWritableByteChannel(
+      BufferHandle handle, UnbufferedWritableByteChannel channel, boolean blocking) {
     this.handle = handle;
     this.channel = channel;
+    this.blocking = blocking;
   }
 
   @SuppressWarnings("UnnecessaryLocalVariable")
@@ -110,6 +119,7 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
         Buffers.flip(buffer);
         ByteBuffer[] srcs = {buffer, buf};
         long write = channel.write(srcs);
+        checkState(write >= 0, "write >= 0 (%s > 0)", write);
         if (write == capacity) {
           // we successfully wrote all the bytes we wanted to
           Buffers.clear(buffer);
@@ -131,6 +141,10 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
             Buffers.position(src, srcPosition + sliceWritten);
             bytesConsumed += sliceWritten;
           }
+
+          if (!blocking) {
+            break;
+          }
         }
       } else {
         // no enqueued data and src is at least as large as our buffer, see if we can simply write
@@ -138,16 +152,25 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
         if (bufferRemaining == srcRemaining) {
           // the capacity of buffer and the bytes remaining in src are the same, directly
           // write src
-          bytesConsumed += channel.write(src);
+          int write = channel.write(src);
+          checkState(write >= 0, "write >= 0 (%s > 0)", write);
+          bytesConsumed += write;
+          if (write < srcRemaining && !blocking) {
+            break;
+          }
         } else {
           // the src provided is larger than our buffer. rather than copying into the buffer, simply
           // write a slice
           ByteBuffer slice = src.slice();
           Buffers.limit(slice, bufferRemaining);
           int write = channel.write(slice);
+          checkState(write >= 0, "write >= 0 (%s > 0)", write);
           int newPosition = srcPosition + write;
           Buffers.position(src, newPosition);
           bytesConsumed += write;
+          if (write < bufferRemaining && !blocking) {
+            break;
+          }
         }
       }
     }

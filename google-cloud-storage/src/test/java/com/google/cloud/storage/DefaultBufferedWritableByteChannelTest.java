@@ -24,7 +24,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.MinFlushBufferedWritableByteChannelTest.OnlyConsumeNBytes;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -401,6 +403,200 @@ public final class DefaultBufferedWritableByteChannelTest {
     assertThat(closed.get()).isTrue();
   }
 
+  @Example
+  void nonBlockingWrite0DoesNotBlock() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(5);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, new OnlyConsumeNBytes(0, 1), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_8_3 = ByteBuffer.wrap(all.slice(0, 3).getBytes());
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(0);
+    assertThat(s_4_4.remaining()).isEqualTo(4);
+
+    int written3 = c.write(s_8_3);
+    assertThat(written3).isEqualTo(0);
+    assertThat(s_8_3.remaining()).isEqualTo(3);
+
+    assertThat(handle.remaining()).isEqualTo(1);
+  }
+
+  @Example
+  void nonBlockingWritePartialDoesNotBlock_withoutBuffering() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(4);
+    OnlyConsumeNBytes channel = new OnlyConsumeNBytes(4, 4);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, channel, false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(13);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(4, 4).getBytes());
+
+    // write all 4 bytes
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(4);
+    assertThat(channel.getBytesConsumed()).isEqualTo(4);
+
+    // Attempt to write 4 bytes, but 0 will be consumed, break out without consuming any
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(0);
+    assertThat(s_4_4.remaining()).isEqualTo(4);
+    assertThat(handle.remaining()).isEqualTo(4);
+    assertThat(channel.getBytesConsumed()).isEqualTo(4);
+  }
+
+  @Example
+  void nonBlockingWritePartialDoesNotBlock_withoutBuffering_oversized() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(2);
+    OnlyConsumeNBytes channel = new OnlyConsumeNBytes(4, 2);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, channel, false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(13);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(4, 4).getBytes());
+
+    // write all 4 bytes
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(2);
+    assertThat(channel.getBytesConsumed()).isEqualTo(4);
+
+    // Attempt to write 4 bytes, but 0 will be consumed, break out without consuming any
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(0);
+    assertThat(s_4_4.remaining()).isEqualTo(4);
+    assertThat(handle.remaining()).isEqualTo(2);
+    assertThat(channel.getBytesConsumed()).isEqualTo(4);
+  }
+
+  @Example
+  void nonBlockingWritePartialDoesNotBlock_withBuffering() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(5);
+    OnlyConsumeNBytes channel = new OnlyConsumeNBytes(5, 5);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, channel, false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(13);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(4, 4).getBytes());
+    ByteBuffer s_8_12 = ByteBuffer.wrap(all.slice(8, 4).getBytes());
+
+    // write all 4 bytes
+    int written1 = c.write(s_0_4);
+    assertThat(written1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(1);
+    assertThat(channel.getBytesConsumed()).isEqualTo(0);
+
+    //
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(4);
+    assertThat(s_4_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(2);
+    assertThat(channel.getBytesConsumed()).isEqualTo(5);
+
+    int written3 = c.write(s_8_12);
+    assertThat(written3).isEqualTo(0);
+    assertThat(s_8_12.remaining()).isEqualTo(4);
+    assertThat(handle.remaining()).isEqualTo(2);
+    assertThat(channel.getBytesConsumed()).isEqualTo(5);
+  }
+
+  @Example
+  void nonBlockingWritePartialDoesNotBlock_withBuffering_oversized() throws IOException {
+    BufferHandle handle = BufferHandle.allocate(3);
+    OnlyConsumeNBytes channel = new OnlyConsumeNBytes(6, 3);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, channel, false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(13);
+    ByteBuffer s_0_4 = ByteBuffer.wrap(all.slice(0, 4).getBytes());
+    ByteBuffer s_4_4 = ByteBuffer.wrap(all.slice(4, 4).getBytes());
+    ByteBuffer s_8_12 = ByteBuffer.wrap(all.slice(8, 4).getBytes());
+
+    // slice 3 bytes and consume them, then enqueue the remaining 1 byte
+    int written1_1 = c.write(s_0_4);
+    assertThat(written1_1).isEqualTo(4);
+    assertThat(s_0_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(2);
+    assertThat(channel.getBytesConsumed()).isEqualTo(3);
+
+    // write 1 buffered byte and 2 sliced bytes, enqueue 2 remaining
+    int written2 = c.write(s_4_4);
+    assertThat(written2).isEqualTo(4);
+    assertThat(s_4_4.remaining()).isEqualTo(0);
+    assertThat(handle.remaining()).isEqualTo(1);
+    assertThat(channel.getBytesConsumed()).isEqualTo(6);
+
+    // attempt to write 4 bytes, non will be consumed and the buffer should remain the same
+    int written3 = c.write(s_8_12);
+    assertThat(written3).isEqualTo(0);
+    assertThat(s_8_12.remaining()).isEqualTo(4);
+    assertThat(handle.remaining()).isEqualTo(1);
+    assertThat(channel.getBytesConsumed()).isEqualTo(6);
+  }
+
+  @Example
+  void illegalStateExceptionIfWrittenLt0_slice_eqBuffer() {
+    BufferHandle handle = BufferHandle.allocate(4);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, new NegativeOneWritableByteChannel(), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    IllegalStateException ise =
+        assertThrows(IllegalStateException.class, () -> c.write(all.slice(0, 4).asByteBuffer()));
+    ise.printStackTrace(System.out);
+  }
+
+  @Example
+  void illegalStateExceptionIfWrittenLt0_slice_gtBuffer() {
+    BufferHandle handle = BufferHandle.allocate(4);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, new NegativeOneWritableByteChannel(), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    IllegalStateException ise =
+        assertThrows(IllegalStateException.class, () -> c.write(all.slice(0, 5).asByteBuffer()));
+    ise.printStackTrace(System.out);
+  }
+
+  @Example
+  void illegalStateExceptionIfWrittenLt0_slice_ltBuffer() {
+    BufferHandle handle = BufferHandle.allocate(4);
+    DefaultBufferedWritableByteChannel c =
+        new DefaultBufferedWritableByteChannel(handle, new NegativeOneWritableByteChannel(), false);
+
+    ChecksummedTestContent all = ChecksummedTestContent.gen(11);
+    IllegalStateException ise =
+        assertThrows(
+            IllegalStateException.class,
+            () -> {
+              int written1 = c.write(all.slice(0, 3).asByteBuffer());
+              assertThat(written1).isEqualTo(3);
+              c.write(all.slice(3, 3).asByteBuffer());
+              fail("should have errored in previous write call");
+            });
+    ise.printStackTrace(System.out);
+  }
+
+  @Example
+  void test() {
+    illegalStateExceptionIfWrittenLt0_slice_eqBuffer();
+    illegalStateExceptionIfWrittenLt0_slice_gtBuffer();
+    illegalStateExceptionIfWrittenLt0_slice_ltBuffer();
+  }
+
   @Property
   void bufferAllocationShouldOnlyHappenWhenNeeded(@ForAll("BufferSizes") WriteOps writeOps)
       throws IOException {
@@ -696,5 +892,21 @@ public final class DefaultBufferedWritableByteChannelTest {
       getCallCount++;
       return delegate.get();
     }
+  }
+
+  private static class NegativeOneWritableByteChannel implements UnbufferedWritableByteChannel {
+
+    @Override
+    public long write(ByteBuffer[] srcs, int offset, int length) {
+      return -1;
+    }
+
+    @Override
+    public boolean isOpen() {
+      return true;
+    }
+
+    @Override
+    public void close() {}
   }
 }

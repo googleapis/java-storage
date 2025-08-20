@@ -28,6 +28,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.FlushPolicy.MinFlushSizeFlushPolicy;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.ZeroCopySupport.DisposableByteString;
@@ -76,6 +77,8 @@ public final class ITObjectReadSessionTest {
   public BucketInfo bucket;
 
   @Inject public Generator generator;
+
+  @Inject public Backend backend;
 
   @Test
   public void bytes()
@@ -325,10 +328,11 @@ public final class ITObjectReadSessionTest {
   @Test
   public void outOfRange()
       throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    int objectSize = 4 * 1024 * 1024;
     ChecksummedTestContent testContent =
-        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(4));
-    BlobInfo obj512KiB = create(testContent);
-    BlobId blobId = obj512KiB.getBlobId();
+        ChecksummedTestContent.of(DataGenerator.base64Characters().genBytes(objectSize));
+    BlobInfo gen1 = create(testContent);
+    BlobId blobId = gen1.getBlobId();
 
     try (BlobReadSession blobReadSession =
         storage.blobReadSession(blobId).get(30, TimeUnit.SECONDS)) {
@@ -338,14 +342,15 @@ public final class ITObjectReadSessionTest {
 
       ReadAsFutureBytes cfg = ReadProjectionConfigs.asFutureBytes();
 
-      ApiFuture<byte[]> f2 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.beginAt(5)));
+      ApiFuture<byte[]> f2 =
+          blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.beginAt(objectSize + 1)));
       ExecutionException ee =
           assertThrows(ExecutionException.class, () -> f2.get(30, TimeUnit.SECONDS));
       assertThat(ee).hasCauseThat().hasCauseThat().isInstanceOf(OutOfRangeException.class);
 
       ApiFuture<byte[]> f1 = blobReadSession.readAs(cfg.withRangeSpec(RangeSpec.all()));
       byte[] bytes1 = f1.get(30, TimeUnit.SECONDS);
-      assertThat(bytes1.length).isEqualTo(4);
+      assertThat(bytes1.length).isEqualTo(objectSize);
     }
   }
 
@@ -353,11 +358,17 @@ public final class ITObjectReadSessionTest {
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
+    BlobAppendableUploadConfig config = BlobAppendableUploadConfig.of();
+    if (backend == Backend.TEST_BENCH) {
+      // workaround for https://github.com/googleapis/storage-testbench/issues/733
+      MinFlushSizeFlushPolicy flushPolicy =
+          FlushPolicy.minFlushSize(256 * 1024).withMaxPendingBytes(4 * 1024 * 1024);
+      config = config.withFlushPolicy(flushPolicy);
+    }
     BlobAppendableUpload upload =
-        storage.blobAppendableUpload(
-            info, BlobAppendableUploadConfig.of(), BlobWriteOption.doesNotExist());
-    try (AppendableUploadWriteableByteChannel channel = upload.open(); ) {
-      channel.write(ByteBuffer.wrap(content.getBytes()));
+        storage.blobAppendableUpload(info, config, BlobWriteOption.doesNotExist());
+    try (AppendableUploadWriteableByteChannel channel = upload.open()) {
+      Buffers.emptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.finalizeAndClose();
     }
     return upload.getResult().get(5, TimeUnit.SECONDS);
