@@ -122,6 +122,9 @@ final class GapicUnbufferedChunkedResumableWritableByteChannel
     if (data.length == 0) {
       return 0;
     }
+    // we consumed some bytes from srcs, flag our content as dirty since we aren't writing
+    // those bytes to implicitly flag as dirty.
+    content.flagDirty();
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 

@@ -142,14 +142,17 @@ final class BidiUploadStreamingStream {
   public void flush() {
     lock.lock();
     try {
-      // TODO: debounce this to happen only every 8MiB or so.
-      //   we want to avoid flush: true, state_lookup: true for every single message
       BidiWriteObjectRequest flush =
           BidiWriteObjectRequest.newBuilder()
               .setWriteOffset(state.getTotalSentBytes())
               .setFlush(true)
               .setStateLookup(true)
               .build();
+      // if our flush is already enqueued, simply tick to make sure things are sent
+      if (flush.equals(state.peekLast())) {
+        internalSend();
+        return;
+      }
       boolean offered = state.offer(flush);
       if (offered) {
         internalSend();

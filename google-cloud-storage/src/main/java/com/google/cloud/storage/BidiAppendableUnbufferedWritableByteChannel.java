@@ -128,6 +128,9 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
     if (data.length == 0) {
       return 0;
     }
+    // we consumed some bytes from srcs, flag our content as dirty since we aren't writing
+    // those bytes to implicitly flag as dirty.
+    rewindableContent.flagDirty();
 
     long bytesConsumed = 0;
     for (int i = 0, len = data.length, lastIdx = len - 1; i < len; i++) {

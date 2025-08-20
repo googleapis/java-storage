@@ -1552,6 +1552,11 @@ public final class BidiUploadTest {
                 }
 
                 @Override
+                @Nullable BidiWriteObjectRequest peekLast() {
+                  return null;
+                }
+
+                @Override
                 void sendVia(Consumer<BidiWriteObjectRequest> consumer) {}
               },
               RetryContext.directScheduledExecutorService(),
