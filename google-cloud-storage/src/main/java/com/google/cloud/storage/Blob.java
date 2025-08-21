@@ -551,6 +551,12 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    public Builder setContexts(ObjectContexts contexts) {
+      infoBuilder.setContexts(contexts);
+      return this;
+    }
+
+    @Override
     public Blob build() {
       return new Blob(storage, infoBuilder);
     }
@@ -737,6 +743,12 @@ public class Blob extends BlobInfo {
     @Override
     Builder clearRetentionExpirationTime() {
       infoBuilder.clearRetentionExpirationTime();
+      return this;
+    }
+
+    @Override
+    Builder clearContexts() {
+      infoBuilder.clearContexts();
       return this;
     }
   }

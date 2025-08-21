@@ -339,7 +339,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     HARD_DELETE_TIME(
-        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class);
+        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    OBJECT_CONTEXTS(
+        "contexts", "contexts", com.google.api.services.storage.model.StorageObject.Contexts.class);
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
     private static final Map<String, BlobField> JSON_FIELD_NAME_INDEX;
@@ -2741,6 +2745,62 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption softDeleted(boolean softDeleted) {
       return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
+    }
+
+    /**
+     * Returns an option to filter list results to objects that have a context with the specified
+     * key and value.
+     *
+     * @param key The context key to match.
+     * @param value The context value to match.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption withContext(@NonNull String key, @NonNull String value) {
+      requireNonNull(key, "Key must be non null");
+      requireNonNull(value, "Value must be non null");
+      String filter = String.format("contexts.\"%s\"=\"%s\"", key, value);
+      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
+    }
+
+    /**
+     * Returns an option to filter list results to objects that DO NOT have a context with the
+     * specified key and value.
+     *
+     * @param key The context key to check.
+     * @param value The context value to check.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption withoutContext(@NonNull String key, @NonNull String value) {
+      requireNonNull(key, "Key must be non null");
+      requireNonNull(value, "Value must be non null");
+      String filter = String.format("NOT contexts.\"%s\"=\"%s\"", key, value);
+      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
+    }
+
+    /**
+     * Returns an option to filter list results to objects that have a context with the specified
+     * key, regardless of its value.
+     *
+     * @param key The context key to check for presence.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption withContextKey(@NonNull String key) {
+      requireNonNull(key, "Key must be non null");
+      String filter = String.format("contexts.\"%s\":*", key);
+      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
+    }
+
+    /**
+     * Returns an option to filter list results to objects that DO NOT have a context with the
+     * specified key.
+     *
+     * @param key The context key to check for absence.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption withoutContextKey(@NonNull String key) {
+      requireNonNull(key, "Key must be non null");
+      String filter = String.format("NOT contexts.\"%s\":*", key);
+      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
     }
 
     /**
