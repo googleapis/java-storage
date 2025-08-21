@@ -64,7 +64,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SuppressWarnings("DuplicatedCode")
-public final class OtelStorageDecorator implements Storage {
+final class OtelStorageDecorator implements Storage {
 
   /** Becomes the {@code otel.scope.name} attribute in a span */
   private static final String OTEL_SCOPE_NAME = "cloud.google.com/java/storage";
@@ -1561,7 +1561,7 @@ public final class OtelStorageDecorator implements Storage {
     return String.format(Locale.US, "gs://%s/", bucket);
   }
 
-  public static final class TracerDecorator implements Tracer {
+  private static final class TracerDecorator implements Tracer {
     @Nullable private final Context parentContextOverride;
     private final Tracer delegate;
     private final Attributes baseAttributes;
@@ -1578,7 +1578,7 @@ public final class OtelStorageDecorator implements Storage {
       this.spanNamePrefix = spanNamePrefix;
     }
 
-    public static TracerDecorator decorate(
+    private static TracerDecorator decorate(
         @Nullable Context parentContextOverride,
         OpenTelemetry otel,
         Attributes baseAttributes,
