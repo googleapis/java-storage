@@ -23,7 +23,10 @@ import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNumberResourceCodec;
 
+import com.google.api.client.util.Data;
 import com.google.api.pathtemplate.PathTemplate;
+import com.google.api.services.storage.model.StorageObject.Contexts;
+import com.google.storage.v2.ObjectCustomContextPayload;
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
 import com.google.cloud.Policy;
@@ -59,6 +62,7 @@ import com.google.storage.v2.CryptoKeyName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.ObjectContexts;
 import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import com.google.type.Expr;
@@ -75,6 +79,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -131,6 +136,12 @@ final class GrpcConversions {
       Codec.of(
           bs -> Base64.getEncoder().encodeToString(bs.toByteArray()),
           s -> ByteString.copyFrom(Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8))));
+
+  private final Codec<BlobInfo.ObjectContexts, ObjectContexts> objectContextsCodec = Codec.of(
+      this::objectContextsEncode,
+      this::objectContextsDecode);
+  private final Codec<BlobInfo.ObjectCustomContextPayload, ObjectCustomContextPayload> customContextPayloadCodec = Codec
+      .of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode);
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
@@ -1007,6 +1018,7 @@ final class GrpcConversions {
     }
     ifNonNull(from.getMetadata(), this::removeNullValues, toBuilder::putAllMetadata);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), toBuilder::addAllAcl);
+    ifNonNull(from.getContexts(), objectContextsCodec::encode, toBuilder::setContexts);
     return toBuilder.build();
   }
 
@@ -1085,7 +1097,18 @@ final class GrpcConversions {
     if (!from.getEtag().isEmpty()) {
       toBuilder.setEtag(from.getEtag());
     }
-    ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
+    // ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
+    if (from.getAclCount() > 0) {
+        List<Acl> decodedAcls = from.getAclList().stream()
+            .map(objectAclCodec::decode)
+            .collect(Collectors.toList());
+        toBuilder.setAcl(decodedAcls);
+    } else {
+        toBuilder.setAcl(null);
+    }
+    if (from.hasContexts()) {
+      toBuilder.setContexts(objectContextsCodec.decode(from.getContexts()));
+    }
     return toBuilder.build();
   }
 
@@ -1244,6 +1267,56 @@ final class GrpcConversions {
     }
     if (!from.getAllowedIpCidrRangesList().isEmpty()) {
       to.setAllowedIpCidrRanges(from.getAllowedIpCidrRangesList());
+    }
+    return to.build();
+  }
+
+  private ObjectContexts objectContextsEncode(BlobInfo.ObjectContexts from) {
+    if (from == null) {
+      return null;
+    }
+    ObjectContexts.Builder to = ObjectContexts.newBuilder();
+    if (from != null && from.getCustom() != null) {
+      for (Map.Entry<String, BlobInfo.ObjectCustomContextPayload> entry : from.getCustom().entrySet()) {
+        to.putCustom(entry.getKey(), customContextPayloadCodec.encode(entry.getValue()));
+      }
+    }
+    return to.build();
+  }
+
+  private BlobInfo.ObjectContexts objectContextsDecode(ObjectContexts from) {
+    if (from == null) {
+      return null;
+    }
+    BlobInfo.ObjectContexts.Builder to = BlobInfo.ObjectContexts.newBuilder();
+    Map<String, BlobInfo.ObjectCustomContextPayload> customContexts = new java.util.HashMap<>();
+    if (from.getCustomMap() != null) {
+      for (Map.Entry<String, ObjectCustomContextPayload> entry : from.getCustomMap().entrySet()) {
+        customContexts.put(entry.getKey(), customContextPayloadCodec.decode(entry.getValue()));
+      }
+    }
+    to.setCustom(customContexts);
+    return to.build();
+  }
+
+  private ObjectCustomContextPayload objectCustomContextPayloadEncode(BlobInfo.ObjectCustomContextPayload from) {
+    ObjectCustomContextPayload.Builder to = ObjectCustomContextPayload.newBuilder();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), t -> to.setCreateTime(timestampCodec.encode(t)));
+    ifNonNull(from.getUpdateTime(), t -> to.setUpdateTime(timestampCodec.encode(t)));
+    return to.build();
+  }
+
+  private BlobInfo.ObjectCustomContextPayload objectCustomContextPayloadDecode(
+      ObjectCustomContextPayload from) {
+    BlobInfo.ObjectCustomContextPayload.Builder to = BlobInfo.ObjectCustomContextPayload.newBuilder();
+    to.setValue(from.getValue());
+
+    if (from.hasCreateTime()) {
+      to.setCreateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasUpdateTime()) {
+      to.setUpdateTime(timestampCodec.decode(from.getUpdateTime()));
     }
     return to.build();
   }

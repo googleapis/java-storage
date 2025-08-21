@@ -42,6 +42,8 @@ import com.google.api.services.storage.model.Bucket.Versioning;
 import com.google.api.services.storage.model.Bucket.Website;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
+import com.google.api.services.storage.model.ObjectCustomContextPayload;
+import com.google.api.services.storage.model.StorageObject.Contexts;
 import com.google.api.services.storage.model.Policy.Bindings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.StorageObject.Owner;
@@ -252,6 +254,11 @@ final class JsonConversions {
                 }
                 return CustomerSuppliedEncryptionEnforcementConfig.of(mode);
               });
+    private final Codec<BlobInfo.ObjectContexts, Contexts> objectContextsCodec =
+      Codec.of(this::objectContextsEncode, this::objectContextsDecode);
+
+    private final Codec<BlobInfo.ObjectCustomContextPayload, ObjectCustomContextPayload> objectCustomContextPayloadCodec =
+      Codec.of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode);
 
   private JsonConversions() {}
 
@@ -391,6 +398,10 @@ final class JsonConversions {
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
     to.setSelfLink(from.getSelfLink());
+    ifNonNull(from.getContexts(), objectContextsCodec::encode, to::setContexts);
+    if (from.getModifiedFields().contains(Storage.BlobField.OBJECT_CONTEXTS) && from.getContexts() == null) {
+      to.setContexts(Data.nullOf(Contexts.class));
+    }
     return to;
   }
 
@@ -437,6 +448,7 @@ final class JsonConversions {
     ifNonNull(from.getRetention(), this::retentionDecode, to::setRetention);
     ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::decode, to::setSoftDeleteTime);
     ifNonNull(from.getHardDeleteTime(), dateTimeCodec::decode, to::setHardDeleteTime);
+    ifNonNull(from.getContexts(), objectContextsCodec::decode, to::setContexts);
     return to.build();
   }
 
@@ -1241,6 +1253,52 @@ final class JsonConversions {
           to::setRetentionPeriodDuration);
     }
   }
+
+  private Contexts objectContextsEncode(BlobInfo.ObjectContexts from) {
+    if (from == null) {
+      return null;
+    }
+    Contexts to = new Contexts();
+    if (from.getCustom() != null) {
+        java.util.Map<String, ObjectCustomContextPayload> customMap = new java.util.HashMap<>();
+        for (java.util.Map.Entry<String, BlobInfo.ObjectCustomContextPayload> entry : from.getCustom().entrySet()) {
+            customMap.put(entry.getKey(), objectCustomContextPayloadCodec.encode(entry.getValue()));
+        }
+        to.setCustom(customMap);
+    }
+    return to;
+}
+
+private BlobInfo.ObjectContexts objectContextsDecode(Contexts from) {
+    if (from == null) {
+        return null;
+    }
+    BlobInfo.ObjectContexts.Builder to = BlobInfo.ObjectContexts.newBuilder();
+    java.util.Map<String, BlobInfo.ObjectCustomContextPayload> customContexts = new java.util.HashMap<>();
+    if (from.getCustom() != null) {
+      for (java.util.Map.Entry<String, ObjectCustomContextPayload> entry : from.getCustom().entrySet()) {
+          customContexts.put(entry.getKey(), objectCustomContextPayloadCodec.decode(entry.getValue()));
+      }
+    }
+    to.setCustom(customContexts);
+    return to.build();
+}
+
+private ObjectCustomContextPayload objectCustomContextPayloadEncode(BlobInfo.ObjectCustomContextPayload from) {
+    ObjectCustomContextPayload to = new ObjectCustomContextPayload();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), t -> to.setCreateTime(Utils.dateTimeCodec.encode(t)));
+    ifNonNull(from.getUpdateTime(), t -> to.setUpdateTime(Utils.dateTimeCodec.encode(t)));
+    return to;
+}
+
+private BlobInfo.ObjectCustomContextPayload objectCustomContextPayloadDecode(ObjectCustomContextPayload from) {
+    BlobInfo.ObjectCustomContextPayload.Builder to = BlobInfo.ObjectCustomContextPayload.newBuilder();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), Utils.dateTimeCodec::decode, to::setCreateTime);         
+    ifNonNull(from.getUpdateTime(), Utils.dateTimeCodec::decode, to::setUpdateTime);
+    return to.build();
+}
 
   private static Map<String, String> replaceDataNullValuesWithNull(Map<String, String> labels) {
     boolean anyDataNull = labels.values().stream().anyMatch(Data::isNull);

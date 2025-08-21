@@ -36,6 +36,8 @@ import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.BlobInfo.BuilderImpl;
+import com.google.cloud.storage.BlobInfo.ObjectContexts;
+import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,6 +46,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.Key;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -92,6 +95,11 @@ public class BlobTest {
   private static final Boolean EVENT_BASED_HOLD = true;
   private static final Boolean TEMPORARY_HOLD = true;
   private static final Long RETENTION_EXPIRATION_TIME = 10L;
+  private static final ObjectCustomContextPayload payload = ObjectCustomContextPayload.newBuilder().setValue("contextValue").build();
+  private static final Map<String, ObjectCustomContextPayload> customContexts = Collections.singletonMap("contextKey", payload);
+  private static final ObjectContexts OBJECT_CONTEXTS = ObjectContexts.newBuilder()
+            .setCustom(customContexts)
+            .build();
   private static final BlobInfo FULL_BLOB_INFO =
       BlobInfo.newBuilder("b", "n", GENERATION)
           .setAcl(ACLS)
@@ -122,6 +130,7 @@ public class BlobTest {
           .setEventBasedHold(EVENT_BASED_HOLD)
           .setTemporaryHold(TEMPORARY_HOLD)
           .setRetentionExpirationTime(RETENTION_EXPIRATION_TIME)
+          .setContexts(OBJECT_CONTEXTS)
           .build();
   private static final BlobInfo BLOB_INFO =
       BlobInfo.newBuilder("b", "n", 12345678L).setMetageneration(42L).build();

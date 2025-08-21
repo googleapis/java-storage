@@ -31,6 +31,7 @@ import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
@@ -112,6 +113,7 @@ public class BlobInfo implements Serializable {
   private final Retention retention;
   private final OffsetDateTime softDeleteTime;
   private final OffsetDateTime hardDeleteTime;
+  private ObjectContexts contexts;
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
@@ -285,6 +287,169 @@ public class BlobInfo implements Serializable {
 
       public static Mode[] values() {
         return type.values();
+      }
+    }
+  }
+
+  public static final class ObjectContexts implements Serializable {
+
+    // private static final long serialVersionUID = -5993852233545224424L; //need to confirm
+
+    private final ImmutableMap<String, ObjectCustomContextPayload> custom;
+
+    ObjectContexts(Builder builder) {
+      this.custom = builder.custom;
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    /**
+     * Returns the map of user-defined object contexts.
+     */
+    public Map<String, ObjectCustomContextPayload> getCustom() {
+      return custom;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(custom);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+      final ObjectContexts other = (ObjectContexts) obj;
+      return Objects.equals(this.custom, other.custom);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("custom", custom)
+          .toString();
+    }
+
+    public static final class Builder {
+
+      private ImmutableMap<String, ObjectCustomContextPayload> custom;
+
+      private Builder() {
+      }
+
+      public Builder setCustom(Map<String, ObjectCustomContextPayload> custom) {
+        this.custom = custom == null ? ImmutableMap.of() : ImmutableMap.copyOf(custom);
+        return this;
+      }
+
+      public ObjectContexts build() {
+        return new ObjectContexts(this);
+      }
+    }
+  }
+
+  /**
+   * Represents the payload of a user-defined object context.
+   * This class is immutable.
+   */
+  public static final class ObjectCustomContextPayload implements Serializable {
+
+    // private static final long serialVersionUID = 557621132294323214L;
+
+    private final String value;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
+
+    ObjectCustomContextPayload(Builder builder) {
+      this.value = builder.value;
+      this.createTime = builder.createTime;
+      this.updateTime = builder.updateTime;
+    }
+
+    public static Builder newBuilder(String value) {
+      return new Builder().setValue(value);
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public OffsetDateTime getCreateTime() {
+      return createTime;
+    }
+
+    public OffsetDateTime getUpdateTime() {
+      return updateTime;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value, createTime, updateTime);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+      ObjectCustomContextPayload other = (ObjectCustomContextPayload) obj;
+      return Objects.equals(value, other.value)
+          && Objects.equals(createTime, other.createTime)
+          && Objects.equals(updateTime, other.updateTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("value", value)
+          .add("createTime", createTime)
+          .add("updateTime", updateTime)
+          .toString();
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public static final class Builder {
+
+      private String value;
+      private OffsetDateTime createTime;
+      private OffsetDateTime updateTime;
+
+      private Builder() {
+      }
+
+      public Builder(String value) {
+        setValue(value);
+      }
+
+      public Builder setValue(String value) {
+        this.value = value;
+        return this;
+      }
+
+      public Builder setCreateTime(OffsetDateTime createTime) {
+        this.createTime = createTime;
+        return this;
+      }
+
+      public Builder setUpdateTime(OffsetDateTime updateTime) {
+        this.updateTime = updateTime;
+        return this;
+      }
+
+      public ObjectCustomContextPayload build() {
+        return new ObjectCustomContextPayload(this);
       }
     }
   }
@@ -543,6 +708,10 @@ public class BlobInfo implements Serializable {
 
     public abstract Builder setRetention(Retention retention);
 
+    public Builder setContexts(ObjectContexts contexts) {
+      throw new UnsupportedOperationException("Override setContexts with your own implementation.");
+    }
+
     /** Creates a {@code BlobInfo} object. */
     public abstract BlobInfo build();
 
@@ -607,6 +776,8 @@ public class BlobInfo implements Serializable {
     abstract Builder clearTemporaryHold();
 
     abstract Builder clearRetentionExpirationTime();
+
+    abstract Builder clearContexts();
   }
 
   static final class BuilderImpl extends Builder {
@@ -644,6 +815,7 @@ public class BlobInfo implements Serializable {
     private Retention retention;
     private OffsetDateTime softDeleteTime;
     private OffsetDateTime hardDeleteTime;
+    private ObjectContexts contexts;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
@@ -684,6 +856,7 @@ public class BlobInfo implements Serializable {
       retention = blobInfo.retention;
       softDeleteTime = blobInfo.softDeleteTime;
       hardDeleteTime = blobInfo.hardDeleteTime;
+      contexts = blobInfo.contexts;
     }
 
     @Override
@@ -1096,6 +1269,13 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
+    public Builder setContexts(ObjectContexts contexts) {
+      this.contexts = contexts;
+      modifiedFields.add(BlobField.OBJECT_CONTEXTS);
+      return this;
+    }
+
+    @Override
     public BlobInfo build() {
       checkNotNull(blobId);
       return new BlobInfo(this);
@@ -1285,6 +1465,13 @@ public class BlobInfo implements Serializable {
       this.retentionExpirationTime = null;
       return this;
     }
+
+    @Override
+    Builder clearContexts() {
+      this.contexts = null;
+      modifiedFields.add(BlobField.OBJECT_CONTEXTS);
+      return this;
+    }
   }
 
   BlobInfo(BuilderImpl builder) {
@@ -1321,6 +1508,7 @@ public class BlobInfo implements Serializable {
     retention = builder.retention;
     softDeleteTime = builder.softDeleteTime;
     hardDeleteTime = builder.hardDeleteTime;
+    contexts = builder.contexts;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -1731,6 +1919,11 @@ public class BlobInfo implements Serializable {
     return retention;
   }
 
+  /** Returns the object's contexts */
+  public ObjectContexts getContexts() {
+    return contexts;
+  }
+
   /** Returns a builder for the current blob. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -1745,6 +1938,7 @@ public class BlobInfo implements Serializable {
         .add("size", getSize())
         .add("content-type", getContentType())
         .add("metadata", getMetadata())
+        .add("contexts", getContexts())
         .toString();
   }
 
@@ -1783,7 +1977,8 @@ public class BlobInfo implements Serializable {
         retention,
         retentionExpirationTime,
         softDeleteTime,
-        hardDeleteTime);
+        hardDeleteTime,
+        contexts);
   }
 
   @Override
@@ -1827,7 +2022,8 @@ public class BlobInfo implements Serializable {
         && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime)
         && Objects.equals(retention, blobInfo.retention)
         && Objects.equals(softDeleteTime, blobInfo.softDeleteTime)
-        && Objects.equals(hardDeleteTime, blobInfo.hardDeleteTime);
+        && Objects.equals(hardDeleteTime, blobInfo.hardDeleteTime)
+        && Objects.equals(contexts, blobInfo.contexts);
   }
 
   ImmutableSet<NamedField> getModifiedFields() {

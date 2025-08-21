@@ -82,7 +82,10 @@ public final class ITBlobReadMaskTest {
     BlobInfo blobJson = getBlob(sh);
     BlobInfo blobGrpc = getBlob(sg);
 
+    System.out.println("blobjson"+blobJson);
+    System.out.println("blobgrpc"+blobGrpc);
     assertion.validate(blobJson, blobGrpc);
+    System.out.println("validation complete");
   }
 
   @Test
@@ -202,6 +205,7 @@ public final class ITBlobReadMaskTest {
               new Args<>(
                   BlobField.RETENTION,
                   LazyAssertion.skip("TODO: jesse fill in buganizer bug here")),
+                  new Args<>(BlobField.OBJECT_CONTEXTS, LazyAssertion.equal()),
               new Args<>(BlobField.SOFT_DELETE_TIME, LazyAssertion.equal()),
               new Args<>(BlobField.HARD_DELETE_TIME, LazyAssertion.equal()));
       List<String> argsDefined =
