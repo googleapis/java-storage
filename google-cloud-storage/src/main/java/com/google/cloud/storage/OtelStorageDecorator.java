@@ -69,6 +69,8 @@ final class OtelStorageDecorator implements Storage {
   /** Becomes the {@code otel.scope.name} attribute in a span */
   private static final String OTEL_SCOPE_NAME = "cloud.google.com/java/storage";
 
+  private static final String BLOB_READ_SESSION = "blobReadSession";
+
   @VisibleForTesting final Storage delegate;
   private final OpenTelemetry otel;
   private final Attributes baseAttributes;
@@ -1434,13 +1436,11 @@ final class OtelStorageDecorator implements Storage {
             .startSpan();
     try (Scope ignore = sessionSpan.makeCurrent()) {
       BlobWriteSession session = delegate.blobWriteSession(blobInfo, options);
-      return new OtelDecoratedBlobWriteSession(session);
+      return new OtelDecoratedBlobWriteSession(session, sessionSpan);
     } catch (Throwable t) {
       sessionSpan.recordException(t);
       sessionSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
       throw t;
-    } finally {
-      sessionSpan.end();
     }
   }
 
@@ -1467,12 +1467,12 @@ final class OtelStorageDecorator implements Storage {
   public ApiFuture<BlobReadSession> blobReadSession(BlobId id, BlobSourceOption... options) {
     Span blobReadSessionSpan =
         tracer
-            .spanBuilder("blobReadSession")
+            .spanBuilder(BLOB_READ_SESSION)
             .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
             .startSpan();
     try (Scope ignore1 = blobReadSessionSpan.makeCurrent()) {
       Context blobReadSessionContext = Context.current();
-      Span ready = tracer.spanBuilder("blobReadSession/ready").startSpan();
+      Span ready = tracer.spanBuilder(BLOB_READ_SESSION + "/ready").startSpan();
       ApiFuture<BlobReadSession> blobReadSessionApiFuture = delegate.blobReadSession(id, options);
       ApiFuture<BlobReadSession> futureDecorated =
           ApiFutures.transform(
@@ -1608,6 +1608,8 @@ final class OtelStorageDecorator implements Storage {
     @VisibleForTesting final ReadChannel reader;
     private final Span span;
 
+    private volatile Scope scope;
+
     private OtelDecoratedReadChannel(ReadChannel reader, Span span) {
       this.reader = reader;
       this.span = span;
@@ -1615,6 +1617,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public void seek(long position) throws IOException {
+      clearScope();
       reader.seek(position);
     }
 
@@ -1630,6 +1633,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public ReadChannel limit(long limit) {
+      clearScope();
       return reader.limit(limit);
     }
 
@@ -1640,6 +1644,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public int read(ByteBuffer dst) throws IOException {
+      setScope();
       return reader.read(dst);
     }
 
@@ -1650,21 +1655,38 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public void close() {
+      setScope();
       try {
         reader.close();
       } finally {
         span.end();
+        clearScope();
       }
+    }
+
+    private void clearScope() {
+      try (Scope ignore = scope) {
+        scope = null;
+      }
+    }
+
+    public void setScope() {
+      if (scope != null) {
+        clearScope();
+      }
+      scope = span.makeCurrent();
     }
   }
 
   private final class OtelDecoratedBlobWriteSession implements BlobWriteSession {
 
     private final BlobWriteSession delegate;
+    private final Span sessionSpan;
     private final Tracer tracer;
 
-    public OtelDecoratedBlobWriteSession(BlobWriteSession delegate) {
+    public OtelDecoratedBlobWriteSession(BlobWriteSession delegate, Span sessionSpan) {
       this.delegate = delegate;
+      this.sessionSpan = sessionSpan;
       this.tracer =
           TracerDecorator.decorate(
               Context.current(),
@@ -1696,6 +1718,8 @@ final class OtelStorageDecorator implements Storage {
       private final WritableByteChannel delegate;
       private final Span openSpan;
 
+      private Scope scope;
+
       private OtelDecoratingWritableByteChannel(WritableByteChannel delegate, Span openSpan) {
         this.delegate = delegate;
         this.openSpan = openSpan;
@@ -1703,6 +1727,7 @@ final class OtelStorageDecorator implements Storage {
 
       @Override
       public int write(ByteBuffer src) throws IOException {
+        setScope();
         return delegate.write(src);
       }
 
@@ -1713,15 +1738,33 @@ final class OtelStorageDecorator implements Storage {
 
       @Override
       public void close() throws IOException {
+        setScope();
         try {
           delegate.close();
         } catch (IOException | RuntimeException e) {
           openSpan.recordException(e);
           openSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
+          sessionSpan.recordException(e);
+          sessionSpan.setStatus(StatusCode.ERROR, e.getClass().getSimpleName());
           throw e;
         } finally {
           openSpan.end();
+          sessionSpan.end();
+          clearScope();
         }
+      }
+
+      private void clearScope() {
+        try (Scope ignore = scope) {
+          scope = null;
+        }
+      }
+
+      public void setScope() {
+        if (scope != null) {
+          clearScope();
+        }
+        scope = openSpan.makeCurrent();
       }
     }
   }
@@ -1730,6 +1773,8 @@ final class OtelStorageDecorator implements Storage {
   static final class OtelDecoratedWriteChannel implements WriteChannel {
     @VisibleForTesting final WriteChannel delegate;
     private final Span openSpan;
+
+    private Scope scope;
 
     private OtelDecoratedWriteChannel(WriteChannel delegate, Span openSpan) {
       this.delegate = delegate;
@@ -1748,6 +1793,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
+      setScope();
       return delegate.write(src);
     }
 
@@ -1758,6 +1804,7 @@ final class OtelStorageDecorator implements Storage {
 
     @Override
     public void close() throws IOException {
+      setScope();
       try {
         delegate.close();
       } catch (IOException | RuntimeException e) {
@@ -1766,7 +1813,21 @@ final class OtelStorageDecorator implements Storage {
         throw e;
       } finally {
         openSpan.end();
+        clearScope();
       }
+    }
+
+    private void clearScope() {
+      try (Scope ignore = scope) {
+        scope = null;
+      }
+    }
+
+    public void setScope() {
+      if (scope != null) {
+        clearScope();
+      }
+      scope = openSpan.makeCurrent();
     }
   }
 
@@ -1962,7 +2023,7 @@ final class OtelStorageDecorator implements Storage {
     public <Projection> Projection readAs(ReadProjectionConfig<Projection> config) {
       Span readRangeSpan =
           tracer
-              .spanBuilder("readAs")
+              .spanBuilder(BLOB_READ_SESSION + "/readAs")
               .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
               .setParent(blobReadSessionContext)
               .startSpan();
@@ -2145,6 +2206,8 @@ final class OtelStorageDecorator implements Storage {
       private final AppendableUploadWriteableByteChannel delegate;
       private final Span openSpan;
 
+      private volatile Scope scope;
+
       private OtelDecoratingAppendableUploadWriteableByteChannel(
           AppendableUploadWriteableByteChannel delegate, Span openSpan) {
         this.delegate = delegate;
@@ -2165,6 +2228,7 @@ final class OtelStorageDecorator implements Storage {
         } finally {
           openSpan.end();
           uploadSpan.end();
+          clearScope();
         }
       }
 
@@ -2182,12 +2246,14 @@ final class OtelStorageDecorator implements Storage {
         } finally {
           openSpan.end();
           uploadSpan.end();
+          clearScope();
         }
       }
 
       @Override
       @BetaApi
       public void close() throws IOException {
+        setScope();
         try {
           delegate.close();
         } catch (IOException | RuntimeException e) {
@@ -2199,17 +2265,32 @@ final class OtelStorageDecorator implements Storage {
         } finally {
           openSpan.end();
           uploadSpan.end();
+          clearScope();
         }
       }
 
       @Override
       public int write(ByteBuffer src) throws IOException {
+        setScope();
         return delegate.write(src);
       }
 
       @Override
       public boolean isOpen() {
         return delegate.isOpen();
+      }
+
+      private void clearScope() {
+        try (Scope ignore = scope) {
+          scope = null;
+        }
+      }
+
+      public void setScope() {
+        if (scope != null) {
+          clearScope();
+        }
+        scope = openSpan.makeCurrent();
       }
     }
   }
