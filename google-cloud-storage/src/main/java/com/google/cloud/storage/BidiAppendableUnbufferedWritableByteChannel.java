@@ -106,6 +106,11 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
     this.nextWriteShouldFinalize = true;
   }
 
+  void flush() throws InterruptedException {
+    stream.flush();
+    stream.awaitAckOf(writeOffset);
+  }
+
   private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
     if (!open) {
       throw new ClosedChannelException();

@@ -254,6 +254,10 @@ abstract class BidiUploadState {
     unimplemented();
   }
 
+  public void awaitAck(long writeOffset) throws InterruptedException {
+    unimplemented();
+  }
+
   enum State {
     INITIALIZING,
     TAKEOVER,
@@ -286,6 +290,7 @@ abstract class BidiUploadState {
     protected final Supplier<GrpcCallContext> baseCallContext;
     protected final ReentrantLock lock;
     protected final Condition stateUpdated;
+    protected final Condition confirmedBytesUpdated;
 
     /** The maximum number of bytes allowed to be enqueued in {@link #queue} across all messages. */
     protected final long maxBytes;
@@ -345,6 +350,7 @@ abstract class BidiUploadState {
       this.enqueuedBytes = 0;
       this.lock = new ReentrantLock();
       this.stateUpdated = lock.newCondition();
+      this.confirmedBytesUpdated = lock.newCondition();
       this.lastSentRequestIndex = -1;
       this.minByteOffset = 0;
       this.totalSentBytes = 0;
@@ -501,6 +507,11 @@ abstract class BidiUploadState {
       }
     }
 
+    protected void setConfirmedBytes(long newConfirmedBytes) {
+      this.confirmedBytes = newConfirmedBytes;
+      this.confirmedBytesUpdated.signalAll();
+    }
+
     @Override
     final void updateStateFromResponse(BidiWriteObjectResponse response) {
       lock.lock();
@@ -525,7 +536,7 @@ abstract class BidiUploadState {
         // todo: test more permutations where this might be true
         //   1. retry, object not yet created
         if (state == State.INITIALIZING) {
-          confirmedBytes = persistedSize;
+          setConfirmedBytes(persistedSize);
           totalSentBytes = Math.max(totalSentBytes, persistedSize);
         }
         if (state == State.INITIALIZING || state == State.RETRYING) {
@@ -541,7 +552,7 @@ abstract class BidiUploadState {
             long endOffset = peek.getWriteOffset() + size;
             if (endOffset <= persistedSize) {
               poll();
-              confirmedBytes = endOffset;
+              setConfirmedBytes(endOffset);
               enqueuedBytes -= size;
               minByteOffset = peek.getWriteOffset();
             } else {
@@ -551,11 +562,11 @@ abstract class BidiUploadState {
             poll();
           } else if (peek.getFlush()) {
             if (finalFlushSent && persistedSize == totalSentBytes) {
-              confirmedBytes = persistedSize;
+              setConfirmedBytes(persistedSize);
               signalTerminalSuccess = true;
               poll();
             } else if (persistedSize >= peek.getWriteOffset()) {
-              confirmedBytes = persistedSize;
+              setConfirmedBytes(persistedSize);
               poll();
             } else {
               break;
@@ -565,7 +576,7 @@ abstract class BidiUploadState {
                 enqueuedBytes == 0,
                 "attempting to evict finish_write: true while bytes are still enqueued");
             if (response.hasResource() && persistedSize == totalSentBytes) {
-              confirmedBytes = persistedSize;
+              setConfirmedBytes(persistedSize);
               if (response.getResource().hasFinalizeTime()) {
                 signalTerminalSuccess = true;
                 poll();
@@ -883,6 +894,21 @@ abstract class BidiUploadState {
         throw StorageException.coalesce(e);
       }
     }
+
+    @Override
+    public void awaitAck(long writeOffset) throws InterruptedException {
+      lock.lock();
+      try {
+        while (confirmedBytes < writeOffset
+            && !confirmedBytesUpdated.await(5, TimeUnit.MILLISECONDS)) {
+          if (resultFuture.isDone()) {
+            return;
+          }
+        }
+      } finally {
+        lock.unlock();
+      }
+    }
   }
 
   abstract static class AppendableUploadState extends BaseUploadState {
@@ -950,7 +976,7 @@ abstract class BidiUploadState {
         checkState(persistedSize > -1, "persistedSize > -1 (%s > -1)", persistedSize);
         if (state == State.TAKEOVER || stateToReturnToAfterRetry == State.TAKEOVER) {
           totalSentBytes = persistedSize;
-          confirmedBytes = persistedSize;
+          setConfirmedBytes(persistedSize);
           if (response.hasResource()
               && response.getResource().hasChecksums()
               && response.getResource().getChecksums().hasCrc32C()) {

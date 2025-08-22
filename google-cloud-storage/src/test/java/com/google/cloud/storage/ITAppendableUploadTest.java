@@ -135,6 +135,34 @@ public final class ITAppendableUploadTest {
   }
 
   @Test
+  public void explicitFlush()
+      throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    checkTestbenchIssue733();
+
+    BlobAppendableUpload upload =
+        storage.blobAppendableUpload(
+            BlobInfo.newBuilder(bucket, UUID.randomUUID().toString()).build(), p.uploadConfig);
+
+    try (AppendableUploadWriteableByteChannel channel = upload.open()) {
+      ByteBuffer src = p.content.asByteBuffer();
+      ByteBuffer zed = src.slice();
+      zed.limit(zed.position() + 1);
+      src.position(src.position() + 1);
+
+      int written = channel.write(zed);
+      assertThat(written).isEqualTo(1);
+      channel.flush();
+
+      written = StorageChannelUtils.blockingEmptyTo(src, channel);
+      assertThat(written).isEqualTo(p.content.length() - 1);
+    }
+
+    BlobInfo gen1 = upload.getResult().get(3, TimeUnit.SECONDS);
+    assertThat(gen1.getSize()).isEqualTo(p.content.length());
+    assertThat(gen1.getCrc32c()).isEqualTo(Utils.crc32cCodec.encode(p.content.getCrc32c()));
+  }
+
+  @Test
   // Pending work in testbench: https://github.com/googleapis/storage-testbench/issues/723
   // manually verified internally on 2025-03-25
   @CrossRun.Ignore(backends = {Backend.TEST_BENCH})
