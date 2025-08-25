@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.56.0](https://github.com/googleapis/java-storage/compare/v2.55.0...v2.56.0) (2025-08-25)
+
+
+### Features
+
+* *breaking behavior* rewrite Storage.blobAppendableUpload to be non-blocking and have improved throughput ([#3231](https://github.com/googleapis/java-storage/issues/3231)) ([7bd73d3](https://github.com/googleapis/java-storage/commit/7bd73d3104f5c47299f5a9c8d68dec82933eeda5))
+* Add AppendableUploadWriteableByteChannel#flush() ([#3261](https://github.com/googleapis/java-storage/issues/3261)) ([950c56f](https://github.com/googleapis/java-storage/commit/950c56f0e622d75faff51257d5cbc9f3ddc7e1ce))
+* Add MinFlushSizeFlushPolicy#withMaxPendingBytes(long) ([#3231](https://github.com/googleapis/java-storage/issues/3231)) ([7bd73d3](https://github.com/googleapis/java-storage/commit/7bd73d3104f5c47299f5a9c8d68dec82933eeda5))
+* Add StorageChannelUtils to provide helper methods to perform blocking read/write to/from non-blocking channels ([#3231](https://github.com/googleapis/java-storage/issues/3231)) ([7bd73d3](https://github.com/googleapis/java-storage/commit/7bd73d3104f5c47299f5a9c8d68dec82933eeda5))
+
+
+### Bug Fixes
+
+* Make FlushPolicy${Min,Max}FlushSizeFlushPolicy constructors private ([#3217](https://github.com/googleapis/java-storage/issues/3217)) ([7bd73d3](https://github.com/googleapis/java-storage/commit/7bd73d3104f5c47299f5a9c8d68dec82933eeda5))
+* Update BlobAppendableUploadConfig and FlushPolicy.MinFlushSizeFlushPolicy to default to 4MiB minFlushSize and 16MiB maxPendingBytes ([#3249](https://github.com/googleapis/java-storage/issues/3249)) ([7bd73d3](https://github.com/googleapis/java-storage/commit/7bd73d3104f5c47299f5a9c8d68dec82933eeda5))
+* Update otel integration to properly activate span context for lazy RPCs such as reads & writes ([#3255](https://github.com/googleapis/java-storage/issues/3255)) ([d6587f4](https://github.com/googleapis/java-storage/commit/d6587f42b65a586a2e3f30e0559975801726a812))
+
+
+### Dependencies
+
+* Update actions/checkout action to v5 ([#3239](https://github.com/googleapis/java-storage/issues/3239)) ([33f024b](https://github.com/googleapis/java-storage/commit/33f024b1ae094bf3e3605e1a835cb55eb5c9e750))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20250815-2.0.0 ([#3245](https://github.com/googleapis/java-storage/issues/3245)) ([87afe1a](https://github.com/googleapis/java-storage/commit/87afe1ac5f500053e4c0639d5b824304d03796f4))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.52.0 ([#3250](https://github.com/googleapis/java-storage/issues/3250)) ([0782e62](https://github.com/googleapis/java-storage/commit/0782e62fc9534e3cecfaaa4d78b58904ecf699d6))
+
 ## [2.55.0](https://github.com/googleapis/java-storage/compare/v2.54.0...v2.55.0) (2025-08-05)
 
 
