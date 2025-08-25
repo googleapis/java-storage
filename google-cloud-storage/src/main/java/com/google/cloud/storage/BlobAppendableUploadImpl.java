@@ -21,6 +21,7 @@ import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -82,6 +83,14 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
       lock.lock();
       try {
         buffered.flush();
+        try {
+          unbuffered.flush();
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          InterruptedIOException interruptedIOException = new InterruptedIOException();
+          interruptedIOException.initCause(e);
+          throw interruptedIOException;
+        }
       } finally {
         lock.unlock();
       }

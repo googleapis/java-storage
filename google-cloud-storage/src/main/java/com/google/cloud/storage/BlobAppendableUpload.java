@@ -127,6 +127,19 @@ public interface BlobAppendableUpload extends BlobWriteSession {
     /**
      * <b>This method is blocking</b>
      *
+     * <p>Block the invoking thread, waiting until the number of bytes written so far has been
+     * acknowledged by Google Cloud Storage.
+     *
+     * @throws IOException if an error happens while waiting for the flush to complete
+     * @throws java.io.InterruptedIOException if the current thread is interrupted while waiting
+     * @since 2.56.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    void flush() throws IOException;
+
+    /**
+     * <b>This method is blocking</b>
+     *
      * <p>Finalize the upload and close this instance to further {@link #write(ByteBuffer)}ing. This
      * will close any underlying stream and release any releasable resources once out of scope.
      *

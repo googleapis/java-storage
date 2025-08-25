@@ -17,7 +17,9 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BidiUploadState.appendableNew;
+import static com.google.cloud.storage.BidiUploadTestUtils.createSegment;
 import static com.google.cloud.storage.BidiUploadTestUtils.finishAt;
+import static com.google.cloud.storage.BidiUploadTestUtils.incremental;
 import static com.google.cloud.storage.BidiUploadTestUtils.makeRedirect;
 import static com.google.cloud.storage.BidiUploadTestUtils.packRedirectIntoAbortedException;
 import static com.google.cloud.storage.BidiUploadTestUtils.timestampNow;
@@ -84,6 +86,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -478,6 +481,45 @@ public final class BidiUploadTest {
           },
           () -> assertThat(actualCtx).isNotEqualTo(baseContext),
           () -> assertThat(actualCtx.getExtraHeaders()).isEqualTo(expectedHeaders));
+    }
+
+    @Test
+    public void awaitAck_alreadyThere() throws InterruptedException {
+      BidiUploadState state = factory.createInitialized(17);
+
+      assertThat(state.offer(createSegment(2))).isTrue();
+      assertThat(state.onResponse(incremental(2))).isNull();
+
+      state.awaitAck(2);
+    }
+
+    @Test
+    public void awaitAck_multipleResponses()
+        throws InterruptedException, ExecutionException, TimeoutException {
+      BidiUploadState state = factory.createInitialized(17);
+
+      assertThat(state.offer(createSegment(4))).isTrue();
+      ExecutorService exec = Executors.newSingleThreadExecutor();
+      try {
+        Future<Integer> f =
+            exec.submit(
+                () -> {
+                  try {
+                    Thread.sleep(10);
+                    assertThat(state.onResponse(incremental(2))).isNull();
+                    Thread.sleep(10);
+                    assertThat(state.onResponse(incremental(4))).isNull();
+                    return 3;
+                  } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+        state.awaitAck(4);
+        assertThat(f.get(3, TimeUnit.SECONDS)).isEqualTo(3);
+      } finally {
+        exec.shutdownNow();
+      }
     }
 
     private abstract static class BidiUploadStateFactory {

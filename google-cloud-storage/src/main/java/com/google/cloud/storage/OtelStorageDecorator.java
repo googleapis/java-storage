@@ -2217,6 +2217,7 @@ final class OtelStorageDecorator implements Storage {
       @Override
       @BetaApi
       public void finalizeAndClose() throws IOException {
+        setScope();
         try {
           delegate.finalizeAndClose();
         } catch (IOException | RuntimeException e) {
@@ -2235,6 +2236,7 @@ final class OtelStorageDecorator implements Storage {
       @Override
       @BetaApi
       public void closeWithoutFinalizing() throws IOException {
+        setScope();
         try {
           delegate.closeWithoutFinalizing();
         } catch (IOException | RuntimeException e) {
@@ -2267,6 +2269,12 @@ final class OtelStorageDecorator implements Storage {
           uploadSpan.end();
           clearScope();
         }
+      }
+
+      @Override
+      public void flush() throws IOException {
+        setScope();
+        delegate.flush();
       }
 
       @Override

@@ -184,4 +184,12 @@
     <method>int write(java.nio.ByteBuffer)</method>
   </difference>
 
+  <!-- @InternalExtensionOnly -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/BlobAppendableUpload$AppendableUploadWriteableByteChannel</className>
+    <method>void flush()</method>
+  </difference>
+
+
 </differences>
