@@ -22,6 +22,7 @@ import static com.google.cloud.storage.it.runner.registry.RegistryApplicabilityP
 import static com.google.cloud.storage.it.runner.registry.RegistryApplicabilityPredicate.transportAndBackendAre;
 
 import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
@@ -41,6 +42,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.storage.control.v2.StorageControlClient;
 import com.google.storage.control.v2.StorageControlSettings;
 import com.google.storage.control.v2.stub.StorageControlStubSettings;
+import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
@@ -148,19 +150,23 @@ final class BackendResources implements ManagedLifecycle {
               StorageControlSettings.Builder builder;
               switch (backend) {
                 case TEST_BENCH:
-                  String baseUri = Registry.getInstance().testBench().getBaseUri();
+                  String baseUri = Registry.getInstance().testBench().getGRPCBaseUri();
                   URI uri = URI.create(baseUri);
                   String endpoint = String.format(Locale.US, "%s:%d", uri.getHost(), uri.getPort());
+                  InstantiatingGrpcChannelProvider.Builder b =
+                      StorageControlStubSettings.defaultGrpcTransportProviderBuilder()
+                          .setInterceptorProvider(
+                              GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
+                          .setEndpoint(endpoint);
+                  if (uri.getScheme().equals("http")) {
+                    b.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
+                  }
+                  InstantiatingGrpcChannelProvider instantiatingGrpcChannelProvider = b.build();
                   builder =
                       StorageControlSettings.newBuilder()
                           .setCredentialsProvider(NoCredentialsProvider.create())
                           .setEndpoint(endpoint)
-                          .setTransportChannelProvider(
-                              StorageControlStubSettings.defaultGrpcTransportProviderBuilder()
-                                  .setInterceptorProvider(
-                                      GrpcPlainRequestLoggingInterceptor.getInterceptorProvider())
-                                  .setEndpoint(endpoint)
-                                  .build());
+                          .setTransportChannelProvider(instantiatingGrpcChannelProvider);
                   break;
                 default: // PROD, java8 doesn't have exhaustive checking for enum switch
                   builder =
