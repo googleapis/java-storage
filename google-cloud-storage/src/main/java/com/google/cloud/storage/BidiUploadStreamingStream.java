@@ -218,6 +218,10 @@ final class BidiUploadStreamingStream {
     state.awaitTakeoverStateReconciliation(this::restart);
   }
 
+  void awaitAckOf(long writeOffset) throws InterruptedException {
+    state.awaitAck(writeOffset);
+  }
+
   /**
    * It is possible for this value to change after reading, however it is guaranteed that the amount
    * of available capacity will only ever increase.

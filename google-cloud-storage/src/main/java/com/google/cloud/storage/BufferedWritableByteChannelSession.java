@@ -24,6 +24,8 @@ interface BufferedWritableByteChannelSession<ResultT>
     extends WritableByteChannelSession<BufferedWritableByteChannel, ResultT> {
 
   interface BufferedWritableByteChannel extends WritableByteChannel {
+
+    /** Block the invoking thread until all written bytes are accepted by the lower layer */
     void flush() throws IOException;
   }
 }

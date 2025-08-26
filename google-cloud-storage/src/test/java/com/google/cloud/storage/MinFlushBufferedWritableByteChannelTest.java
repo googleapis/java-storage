@@ -338,7 +338,7 @@ public final class MinFlushBufferedWritableByteChannelTest {
 
       assertWithMessage("Unexpected total flushed length")
           .that(adapter.writeEndPoints)
-          .isEqualTo(ImmutableList.of(3L, 5L, 12L));
+          .isEqualTo(ImmutableList.of(3L, 5L, 6L, 12L));
       assertThat(baos.toByteArray()).isEqualTo(allData);
     }
   }

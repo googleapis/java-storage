@@ -200,7 +200,7 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
 
   @Override
   public void flush() throws IOException {
-    if (enqueuedBytes()) {
+    while (enqueuedBytes()) {
       ByteBuffer buffer = handle.get();
       Buffers.flip(buffer);
       channel.write(buffer);
