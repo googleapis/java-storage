@@ -80,7 +80,7 @@ public interface StorageRpc extends ServiceRpc {
     INCLUDE_FOLDERS_AS_PREFIXES("includeFoldersAsPrefixes"),
     INCLUDE_TRAILING_DELIMITER("includeTrailingDelimiter"),
     X_UPLOAD_CONTENT_LENGTH("x-upload-content-length"),
-    OBJECT_CONTEXTS_FILTER("objectContextsFilter"),
+    OBJECT_FILTER("objectFilter"),
     /**
      * An {@link com.google.common.collect.ImmutableMap ImmutableMap&lt;String, String>} of values
      * which will be set as additional headers on the request.

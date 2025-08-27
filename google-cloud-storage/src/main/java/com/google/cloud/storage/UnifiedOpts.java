@@ -581,8 +581,8 @@ final class UnifiedOpts {
     return Md5MatchExtractor.INSTANCE;
   }
 
-  static ObjectContextsFilter objectContextsFilter(String filter) {
-    return new ObjectContextsFilter(filter);
+  static ObjectFilter objectFilter(String filter) {
+    return new ObjectFilter(filter);
   }
 
   static Headers extraHeaders(ImmutableMap<String, String> extraHeaders) {
@@ -2506,11 +2506,11 @@ final class UnifiedOpts {
     }
   }
 
-  static final class ObjectContextsFilter extends RpcOptVal<String> implements ObjectListOpt {
+  static final class ObjectFilter extends RpcOptVal<String> implements ObjectListOpt {
     private static final long serialVersionUID = -892748218491324843L;
 
-    private ObjectContextsFilter(String val) {
-      super(StorageRpc.Option.OBJECT_CONTEXTS_FILTER, val);
+    private ObjectFilter(String val) {
+      super(StorageRpc.Option.OBJECT_FILTER, val);
     }
 
     @Override

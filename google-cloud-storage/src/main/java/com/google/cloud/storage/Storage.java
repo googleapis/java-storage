@@ -2748,59 +2748,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option to filter list results to objects that have a context with the specified
-     * key and value.
+     * Returns an option to filter list results based on object attributes, such as object contexts.
      *
-     * @param key The context key to match.
-     * @param value The context value to match.
+     * @param filter The filter string.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption withContext(@NonNull String key, @NonNull String value) {
-      requireNonNull(key, "Key must be non null");
-      requireNonNull(value, "Value must be non null");
-      String filter = String.format("contexts.\"%s\"=\"%s\"", key, value);
-      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
-    }
-
-    /**
-     * Returns an option to filter list results to objects that DO NOT have a context with the
-     * specified key and value.
-     *
-     * @param key The context key to check.
-     * @param value The context value to check.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption withoutContext(@NonNull String key, @NonNull String value) {
-      requireNonNull(key, "Key must be non null");
-      requireNonNull(value, "Value must be non null");
-      String filter = String.format("NOT contexts.\"%s\"=\"%s\"", key, value);
-      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
-    }
-
-    /**
-     * Returns an option to filter list results to objects that have a context with the specified
-     * key, regardless of its value.
-     *
-     * @param key The context key to check for presence.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption withContextKey(@NonNull String key) {
-      requireNonNull(key, "Key must be non null");
-      String filter = String.format("contexts.\"%s\":*", key);
-      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
-    }
-
-    /**
-     * Returns an option to filter list results to objects that DO NOT have a context with the
-     * specified key.
-     *
-     * @param key The context key to check for absence.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption withoutContextKey(@NonNull String key) {
-      requireNonNull(key, "Key must be non null");
-      String filter = String.format("NOT contexts.\"%s\":*", key);
-      return new BlobListOption(UnifiedOpts.objectContextsFilter(filter));
+    public static BlobListOption filter(String filter) {
+      return new BlobListOption(UnifiedOpts.objectFilter(filter));
     }
 
     /**
