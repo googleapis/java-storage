@@ -581,6 +581,10 @@ final class UnifiedOpts {
     return Md5MatchExtractor.INSTANCE;
   }
 
+  static ObjectFilter objectFilter(String filter) {
+    return new ObjectFilter(filter);
+  }
+
   static Headers extraHeaders(ImmutableMap<String, String> extraHeaders) {
     requireNonNull(extraHeaders, "extraHeaders must be non null");
     String blockedHeaders =
@@ -2499,6 +2503,19 @@ final class UnifiedOpts {
     /** prevent java serialization from using a new instance */
     private Object readResolve() {
       return INSTANCE;
+    }
+  }
+
+  static final class ObjectFilter extends RpcOptVal<String> implements ObjectListOpt {
+    private static final long serialVersionUID = -892748218491324843L;
+
+    private ObjectFilter(String val) {
+      super(StorageRpc.Option.OBJECT_FILTER, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setFilter(val);
     }
   }
 

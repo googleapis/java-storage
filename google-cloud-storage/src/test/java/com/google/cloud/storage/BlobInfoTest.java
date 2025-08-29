@@ -28,9 +28,12 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BlobInfo.ObjectContexts;
+import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -79,6 +82,12 @@ public class BlobInfoTest {
   private static final Boolean EVENT_BASED_HOLD = true;
   private static final Boolean TEMPORARY_HOLD = true;
   private static final Long RETENTION_EXPIRATION_TIME = 10L;
+  private static final ObjectCustomContextPayload payload =
+      ObjectCustomContextPayload.newBuilder().setValue("contextValue").build();
+  private static final Map<String, ObjectCustomContextPayload> customContexts =
+      Collections.singletonMap("contextKey", payload);
+  private static final ObjectContexts OBJECT_CONTEXTS =
+      ObjectContexts.newBuilder().setCustom(customContexts).build();
 
   private static final BlobInfo BLOB_INFO =
       BlobInfo.newBuilder("b", "n", GENERATION)
@@ -110,6 +119,7 @@ public class BlobInfoTest {
           .setEventBasedHold(EVENT_BASED_HOLD)
           .setTemporaryHold(TEMPORARY_HOLD)
           .setRetentionExpirationTime(RETENTION_EXPIRATION_TIME)
+          .setContexts(OBJECT_CONTEXTS)
           .build();
   private static final BlobInfo DIRECTORY_INFO =
       BlobInfo.newBuilder("b", "n/").setSize(0L).setIsDirectory(true).build();

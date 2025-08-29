@@ -202,6 +202,7 @@ public final class ITBlobReadMaskTest {
               new Args<>(
                   BlobField.RETENTION,
                   LazyAssertion.skip("TODO: jesse fill in buganizer bug here")),
+              new Args<>(BlobField.OBJECT_CONTEXTS, LazyAssertion.equal()),
               new Args<>(BlobField.SOFT_DELETE_TIME, LazyAssertion.equal()),
               new Args<>(BlobField.HARD_DELETE_TIME, LazyAssertion.equal()));
       List<String> argsDefined =

@@ -42,6 +42,8 @@ import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.ObjectContexts;
+import com.google.storage.v2.ObjectCustomContextPayload;
 import com.google.storage.v2.Owner;
 import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ProjectTeam;
@@ -708,6 +710,35 @@ public final class StorageArbitraries {
 
     public ListArbitrary<ObjectAccessControl> objectAccessControl() {
       return buckets().objectAccessControl();
+    }
+
+    public Arbitrary<ObjectCustomContextPayload> objectCustomContextPayload() {
+      return Combinators.combine(
+              randomString().ofMinLength(1).ofMaxLength(128),
+              timestamp().injectNull(0.5),
+              timestamp().injectNull(0.5))
+          .as(
+              (value, createTime, updateTime) -> {
+                ObjectCustomContextPayload.Builder builder =
+                    ObjectCustomContextPayload.newBuilder().setValue(value);
+                if (createTime != null) {
+                  builder.setCreateTime(createTime);
+                }
+                if (updateTime != null) {
+                  builder.setUpdateTime(updateTime);
+                }
+                return builder.build();
+              });
+    }
+
+    public Arbitrary<ObjectContexts> objectContexts() {
+      Arbitrary<String> key = alphaString().ofMinLength(1).ofMaxLength(32);
+      Arbitrary<Map<String, ObjectCustomContextPayload>> customMap =
+          Arbitraries.maps(key, objectCustomContextPayload()).ofMinSize(0).ofMaxSize(5);
+
+      return customMap
+          .map(c -> ObjectContexts.newBuilder().putAllCustom(c).build())
+          .injectNull(0.5);
     }
   }
 

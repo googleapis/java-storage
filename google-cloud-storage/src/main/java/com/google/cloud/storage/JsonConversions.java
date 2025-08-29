@@ -42,8 +42,10 @@ import com.google.api.services.storage.model.Bucket.Versioning;
 import com.google.api.services.storage.model.Bucket.Website;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
+import com.google.api.services.storage.model.ObjectCustomContextPayload;
 import com.google.api.services.storage.model.Policy.Bindings;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.api.services.storage.model.StorageObject.Contexts;
 import com.google.api.services.storage.model.StorageObject.Owner;
 import com.google.cloud.Binding;
 import com.google.cloud.Policy;
@@ -86,6 +88,7 @@ import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -252,6 +255,12 @@ final class JsonConversions {
                 }
                 return CustomerSuppliedEncryptionEnforcementConfig.of(mode);
               });
+  private final Codec<BlobInfo.ObjectContexts, Contexts> objectContextsCodec =
+      Codec.of(this::objectContextsEncode, this::objectContextsDecode);
+
+  private final Codec<BlobInfo.ObjectCustomContextPayload, ObjectCustomContextPayload>
+      objectCustomContextPayloadCodec =
+          Codec.of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode);
 
   private JsonConversions() {}
 
@@ -391,6 +400,7 @@ final class JsonConversions {
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
     to.setSelfLink(from.getSelfLink());
+    ifNonNull(from.getContexts(), objectContextsCodec::encode, to::setContexts);
     return to;
   }
 
@@ -437,6 +447,7 @@ final class JsonConversions {
     ifNonNull(from.getRetention(), this::retentionDecode, to::setRetention);
     ifNonNull(from.getSoftDeleteTime(), dateTimeCodec::decode, to::setSoftDeleteTime);
     ifNonNull(from.getHardDeleteTime(), dateTimeCodec::decode, to::setHardDeleteTime);
+    ifNonNull(from.getContexts(), objectContextsCodec::decode, to::setContexts);
     return to.build();
   }
 
@@ -1240,6 +1251,49 @@ final class JsonConversions {
           durationSecondsCodec::decode,
           to::setRetentionPeriodDuration);
     }
+  }
+
+  private Contexts objectContextsEncode(BlobInfo.ObjectContexts from) {
+    if (from == null) {
+      return null;
+    }
+    Contexts to = new Contexts();
+    ifNonNull(
+        from.getCustom(),
+        m -> new HashMap<>(Maps.transformValues(m, objectCustomContextPayloadCodec::encode)),
+        to::setCustom);
+    return to;
+  }
+
+  private BlobInfo.ObjectContexts objectContextsDecode(Contexts from) {
+    if (from == null) {
+      return null;
+    }
+    BlobInfo.ObjectContexts.Builder to = BlobInfo.ObjectContexts.newBuilder();
+    ifNonNull(
+        from.getCustom(),
+        m -> new HashMap<>(Maps.transformValues(m, objectCustomContextPayloadCodec::decode)),
+        to::setCustom);
+    return to.build();
+  }
+
+  private ObjectCustomContextPayload objectCustomContextPayloadEncode(
+      BlobInfo.ObjectCustomContextPayload from) {
+    ObjectCustomContextPayload to = new ObjectCustomContextPayload();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), Utils.dateTimeCodec::encode, to::setCreateTime);
+    ifNonNull(from.getUpdateTime(), Utils.dateTimeCodec::encode, to::setUpdateTime);
+    return to;
+  }
+
+  private BlobInfo.ObjectCustomContextPayload objectCustomContextPayloadDecode(
+      ObjectCustomContextPayload from) {
+    BlobInfo.ObjectCustomContextPayload.Builder to =
+        BlobInfo.ObjectCustomContextPayload.newBuilder();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), Utils.dateTimeCodec::decode, to::setCreateTime);
+    ifNonNull(from.getUpdateTime(), Utils.dateTimeCodec::decode, to::setUpdateTime);
+    return to.build();
   }
 
   private static Map<String, String> replaceDataNullValuesWithNull(Map<String, String> labels) {

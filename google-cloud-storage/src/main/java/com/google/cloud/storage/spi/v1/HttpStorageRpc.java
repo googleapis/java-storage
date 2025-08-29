@@ -497,7 +497,8 @@ public class HttpStorageRpc implements StorageRpc {
               .setUserProject(Option.USER_PROJECT.getString(options))
               .setSoftDeleted(Option.SOFT_DELETED.getBoolean(options))
               .setIncludeFoldersAsPrefixes(Option.INCLUDE_FOLDERS_AS_PREFIXES.getBoolean(options))
-              .setIncludeTrailingDelimiter(Option.INCLUDE_TRAILING_DELIMITER.getBoolean(options));
+              .setIncludeTrailingDelimiter(Option.INCLUDE_TRAILING_DELIMITER.getBoolean(options))
+              .setFilter(Option.OBJECT_FILTER.getString(options));
       setExtraHeaders(list, options);
       Objects objects = list.execute();
       Iterable<StorageObject> storageObjects =
