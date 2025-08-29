@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.57.0](https://github.com/googleapis/java-storage/compare/v2.56.0...v2.57.0) (2025-08-29)
+
+
+### Features
+
+* Add BlobInfo.ObjectContexts ([#3259](https://github.com/googleapis/java-storage/issues/3259)) ([485aefd](https://github.com/googleapis/java-storage/commit/485aefd3047c52c98d8bd913033c8aee1473e988))
+
 ## [2.56.0](https://github.com/googleapis/java-storage/compare/v2.55.0...v2.56.0) (2025-08-25)
 
 
