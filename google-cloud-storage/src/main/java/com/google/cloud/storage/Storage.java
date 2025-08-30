@@ -339,7 +339,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     HARD_DELETE_TIME(
-        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class);
+        "hardDeleteTime", "hard_delete_time", com.google.api.client.util.DateTime.class),
+
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    OBJECT_CONTEXTS(
+        "contexts", "contexts", com.google.api.services.storage.model.StorageObject.Contexts.class);
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
     private static final Map<String, BlobField> JSON_FIELD_NAME_INDEX;
@@ -2741,6 +2745,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption softDeleted(boolean softDeleted) {
       return new BlobListOption(UnifiedOpts.softDeleted(softDeleted));
+    }
+
+    /**
+     * Returns an option to filter list results based on object attributes, such as object contexts.
+     *
+     * @param filter The filter string.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobListOption filter(String filter) {
+      return new BlobListOption(UnifiedOpts.objectFilter(filter));
     }
 
     /**

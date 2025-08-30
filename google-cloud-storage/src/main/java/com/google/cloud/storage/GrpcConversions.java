@@ -44,6 +44,7 @@ import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -59,6 +60,8 @@ import com.google.storage.v2.CryptoKeyName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.ObjectContexts;
+import com.google.storage.v2.ObjectCustomContextPayload;
 import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import com.google.type.Expr;
@@ -131,6 +134,12 @@ final class GrpcConversions {
       Codec.of(
           bs -> Base64.getEncoder().encodeToString(bs.toByteArray()),
           s -> ByteString.copyFrom(Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8))));
+
+  private final Codec<BlobInfo.ObjectContexts, ObjectContexts> objectContextsCodec =
+      Codec.of(this::objectContextsEncode, this::objectContextsDecode);
+  private final Codec<BlobInfo.ObjectCustomContextPayload, ObjectCustomContextPayload>
+      customContextPayloadCodec =
+          Codec.of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode);
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
@@ -1007,6 +1016,7 @@ final class GrpcConversions {
     }
     ifNonNull(from.getMetadata(), this::removeNullValues, toBuilder::putAllMetadata);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), toBuilder::addAllAcl);
+    ifNonNull(from.getContexts(), objectContextsCodec::encode, toBuilder::setContexts);
     return toBuilder.build();
   }
 
@@ -1086,6 +1096,9 @@ final class GrpcConversions {
       toBuilder.setEtag(from.getEtag());
     }
     ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
+    if (from.hasContexts()) {
+      toBuilder.setContexts(objectContextsCodec.decode(from.getContexts()));
+    }
     return toBuilder.build();
   }
 
@@ -1244,6 +1257,50 @@ final class GrpcConversions {
     }
     if (!from.getAllowedIpCidrRangesList().isEmpty()) {
       to.setAllowedIpCidrRanges(from.getAllowedIpCidrRangesList());
+    }
+    return to.build();
+  }
+
+  private ObjectContexts objectContextsEncode(BlobInfo.ObjectContexts from) {
+    if (from == null) {
+      return null;
+    }
+    ObjectContexts.Builder to = ObjectContexts.newBuilder();
+    if (from.getCustom() != null) {
+      to.putAllCustom(
+          Maps.transformValues(
+              Maps.filterValues(from.getCustom(), Objects::nonNull),
+              customContextPayloadCodec::encode));
+    }
+    return to.build();
+  }
+
+  private BlobInfo.ObjectContexts objectContextsDecode(ObjectContexts from) {
+    return BlobInfo.ObjectContexts.newBuilder()
+        .setCustom(Maps.transformValues(from.getCustomMap(), customContextPayloadCodec::decode))
+        .build();
+  }
+
+  private ObjectCustomContextPayload objectCustomContextPayloadEncode(
+      BlobInfo.ObjectCustomContextPayload from) {
+    ObjectCustomContextPayload.Builder to = ObjectCustomContextPayload.newBuilder();
+    ifNonNull(from.getValue(), to::setValue);
+    ifNonNull(from.getCreateTime(), timestampCodec::encode, to::setCreateTime);
+    ifNonNull(from.getUpdateTime(), timestampCodec::encode, to::setUpdateTime);
+    return to.build();
+  }
+
+  private BlobInfo.ObjectCustomContextPayload objectCustomContextPayloadDecode(
+      ObjectCustomContextPayload from) {
+    BlobInfo.ObjectCustomContextPayload.Builder to =
+        BlobInfo.ObjectCustomContextPayload.newBuilder();
+    to.setValue(from.getValue());
+
+    if (from.hasCreateTime()) {
+      to.setCreateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasUpdateTime()) {
+      to.setUpdateTime(timestampCodec.decode(from.getUpdateTime()));
     }
     return to.build();
   }
