@@ -29,6 +29,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
@@ -42,8 +43,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -276,34 +280,59 @@ final class Utils {
   /**
    * Diff two maps, and append each differing key to {@code sink} with the parent of {{@code parent}
    */
-  @SuppressWarnings("ConstantValue")
+  static void diffMaps(
+      NamedField parent, Map<String, ?> left, Map<String, ?> right, Consumer<NamedField> sink) {
+    diffMaps(parent, left, right, Function.identity(), sink);
+  }
+
+  /**
+   * Diff two maps, and append each differing key to {@code sink} with the parent of {{@code
+   * parent}. Conditionally apply {@code dec} if deeper qualification is necessary.
+   */
   static void diffMaps(
       NamedField parent,
-      Map<String, String> left,
-      Map<String, String> right,
+      Map<String, ?> left,
+      Map<String, ?> right,
+      Function<NamedField, NamedField> dec,
       Consumer<NamedField> sink) {
-    final Stream<String> keys;
+    final Stream<NamedField> keys;
     if (left != null && right == null) {
-      keys = left.keySet().stream();
+      keys = left.keySet().stream().map(NamedField::literal);
     } else if (left == null && right != null) {
-      keys = right.keySet().stream();
+      keys = right.keySet().stream().map(NamedField::literal).map(dec);
     } else if (left != null && right != null) {
-      MapDifference<String, String> difference = Maps.difference(left, right);
+      MapDifference<String, ?> difference = Maps.difference(left, right);
       keys =
           Stream.of(
                   // keys with modified values
-                  difference.entriesDiffering().keySet().stream(),
+                  difference.entriesDiffering().entrySet().stream()
+                      .map(
+                          e -> {
+                            String key = e.getKey();
+                            NamedField literal = NamedField.literal(key);
+                            ValueDifference<?> diff = e.getValue();
+
+                            if (diff.leftValue() != null && diff.rightValue() == null) {
+                              return literal;
+                            } else if (diff.leftValue() == null && diff.rightValue() != null) {
+                              return literal;
+                            } else {
+                              return dec.apply(literal);
+                            }
+                          }),
                   // Only include keys to remove if ALL keys were removed
                   right.isEmpty()
-                      ? difference.entriesOnlyOnLeft().keySet().stream()
-                      : Stream.<String>empty(),
+                      ? difference.entriesOnlyOnLeft().keySet().stream().map(NamedField::literal)
+                      : Stream.<NamedField>empty(),
                   // new keys
-                  difference.entriesOnlyOnRight().keySet().stream())
+                  difference.entriesOnlyOnRight().keySet().stream()
+                      .map(NamedField::literal)
+                      .map(dec))
               .flatMap(x -> x);
     } else {
       keys = Stream.empty();
     }
-    keys.map(NamedField::literal).map(k -> NamedField.nested(parent, k)).forEach(sink);
+    keys.map(k -> NamedField.nested(parent, k)).forEach(sink);
   }
 
   static <T> T[] subArray(T[] ts, int offset, int length) {
@@ -347,5 +376,15 @@ final class Utils {
 
   static String headerNameToLowerCase(String headerName) {
     return headerName.toLowerCase(Locale.US);
+  }
+
+  static <K, V> Map<@NonNull K, @Nullable V> setToMap(
+      Set<@NonNull K> s, Function<@NonNull K, @Nullable V> valueFunction) {
+    // use hashmap so we can have null values
+    HashMap<@NonNull K, @Nullable V> m = new HashMap<>();
+    for (@NonNull K k : s) {
+      m.put(k, valueFunction.apply(k));
+    }
+    return Collections.unmodifiableMap(m);
   }
 }
