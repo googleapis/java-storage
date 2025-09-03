@@ -327,9 +327,9 @@ abstract class BidiUploadState {
     protected @NonNull State state;
     protected @MonotonicNonNull BidiWriteObjectResponse lastResponseWithResource;
     protected @Nullable State stateToReturnToAfterRetry;
-    protected boolean finalFlushSignaled;
+    protected long finalFlushOffset;
     protected boolean finalFlushSent;
-    protected boolean finishWriteSignaled;
+    protected long finishWriteOffset;
     protected boolean finishWriteSent;
     protected @MonotonicNonNull OpenArguments lastOpenArguments;
     protected @Nullable SettableApiFuture<Void> pendingReconciliation;
@@ -356,6 +356,8 @@ abstract class BidiUploadState {
       this.totalSentBytes = 0;
       this.confirmedBytes = -1;
       this.state = startingState;
+      this.finalFlushOffset = -1;
+      this.finishWriteOffset = -1;
     }
 
     @Override
@@ -463,17 +465,17 @@ abstract class BidiUploadState {
 
         BidiWriteObjectRequest currentLast = peekLast();
         boolean equals = flush.equals(currentLast);
-        if (equals && finalFlushSignaled) {
+        if (equals && finalFlushOffset == totalLength) {
           return true;
         } else if (equals && lastSentRequestIndex == queue.size() - 1) {
-          finalFlushSignaled = true;
+          finalFlushOffset = totalLength;
           finalFlushSent = true;
           return true;
         }
 
         boolean offered = internalOffer(flush);
         if (offered) {
-          finalFlushSignaled = true;
+          finalFlushOffset = totalLength;
         }
         return offered;
       } finally {
@@ -561,7 +563,9 @@ abstract class BidiUploadState {
           } else if (peek.hasOneof(FIRST_MESSAGE_DESCRIPTOR)) {
             poll();
           } else if (peek.getFlush()) {
-            if (finalFlushSent && persistedSize == totalSentBytes) {
+            if (finalFlushSent
+                && persistedSize == totalSentBytes
+                && persistedSize == finalFlushOffset) {
               setConfirmedBytes(persistedSize);
               signalTerminalSuccess = true;
               poll();
@@ -575,7 +579,9 @@ abstract class BidiUploadState {
             checkState(
                 enqueuedBytes == 0,
                 "attempting to evict finish_write: true while bytes are still enqueued");
-            if (response.hasResource() && persistedSize == totalSentBytes) {
+            if (response.hasResource()
+                && persistedSize == totalSentBytes
+                && persistedSize == finishWriteOffset) {
               setConfirmedBytes(persistedSize);
               if (response.getResource().hasFinalizeTime()) {
                 signalTerminalSuccess = true;
@@ -697,7 +703,7 @@ abstract class BidiUploadState {
     final boolean isFinalizing() {
       lock.lock();
       try {
-        return finishWriteSignaled && finishWriteSent;
+        return finishWriteOffset >= 0 && finishWriteSent;
       } finally {
         lock.unlock();
       }
@@ -753,7 +759,7 @@ abstract class BidiUploadState {
         if (prev != null) {
           if (prev.getFinishWrite()) {
             finishWriteSent = true;
-          } else if (prev.getFlush() && prev.getStateLookup() && finalFlushSignaled) {
+          } else if (prev.getFlush() && prev.getStateLookup() && finalFlushOffset > -1) {
             finalFlushSent = true;
           }
           consumer.accept(prev);
@@ -823,7 +829,7 @@ abstract class BidiUploadState {
 
     private void checkNotFinalizing() {
       checkState(
-          !finishWriteSignaled,
+          finishWriteOffset == -1,
           "Attempting to append bytes even though finalization has previously been signaled.");
     }
 
@@ -835,23 +841,26 @@ abstract class BidiUploadState {
         }
         add = this::prepend;
       }
-      if (e.getFinishWrite()) {
-        finishWriteSignaled = true;
-      }
 
-      if (e.hasChecksummedData() && !finishWriteSignaled) {
+      boolean appended = false;
+      if (e.hasChecksummedData() && finishWriteOffset == -1) {
         ChecksummedData checksummedData = e.getChecksummedData();
         int size = checksummedData.getContent().size();
         if (size <= availableCapacity()) {
           totalSentBytes += size;
           add.accept(e);
-          return true;
+          appended = true;
         }
-        return false;
       } else {
         add.accept(e);
-        return true;
+        appended = true;
       }
+
+      if (e.getFinishWrite()) {
+        finishWriteOffset = totalSentBytes;
+      }
+
+      return appended;
     }
 
     @Nullable

@@ -26,6 +26,7 @@ import com.google.cloud.storage.BidiUploadState.AppendableUploadState;
 import com.google.cloud.storage.BidiUploadState.TakeoverAppendableUploadState;
 import com.google.cloud.storage.BlobAppendableUpload.AppendableUploadWriteableByteChannel;
 import com.google.cloud.storage.BlobAppendableUploadImpl.AppendableObjectBufferedWritableByteChannel;
+import com.google.cloud.storage.FlushPolicy.MinFlushSizeFlushPolicy;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
@@ -266,9 +267,14 @@ public final class BlobAppendableUploadConfig {
                     stream.awaitTakeoverStateReconciliation();
                     c =
                         new BidiAppendableUnbufferedWritableByteChannel(
-                            stream, chunkSegmenter, state.getConfirmedBytes());
+                            stream,
+                            chunkSegmenter,
+                            flushInterval(flushPolicy),
+                            state.getConfirmedBytes());
                   } else {
-                    c = new BidiAppendableUnbufferedWritableByteChannel(stream, chunkSegmenter, 0);
+                    c =
+                        new BidiAppendableUnbufferedWritableByteChannel(
+                            stream, chunkSegmenter, flushInterval(flushPolicy), 0);
                   }
                   return new AppendableObjectBufferedWritableByteChannel(
                       flushPolicy.createBufferedChannel(c, /* blocking= */ false),
@@ -280,6 +286,15 @@ public final class BlobAppendableUploadConfig {
     return new BlobAppendableUploadImpl(
         new DefaultBlobWriteSessionConfig.DecoratedWritableByteChannelSession<>(
             build, BidiBlobWriteSessionConfig.Factory.WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER));
+  }
+
+  private static long flushInterval(FlushPolicy fp) {
+    if (fp instanceof MinFlushSizeFlushPolicy) {
+      MinFlushSizeFlushPolicy min = (MinFlushSizeFlushPolicy) fp;
+      return min.getMinFlushSize();
+    } else {
+      return fp.getMaxPendingBytes();
+    }
   }
 
   private static final class AppendableSession
