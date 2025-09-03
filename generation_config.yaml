@@ -1,5 +1,5 @@
 gapic_generator_version: 2.62.0
-googleapis_commitish: b49565973e491aad49612bafd5b473a3ead19a8b
+googleapis_commitish: 65afc22de9b311ccdc38e737cc2e3739608706dd
 libraries_bom_version: 26.67.0
 libraries:
   - api_shortname: storage
