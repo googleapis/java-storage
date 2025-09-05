@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.math.IntMath;
 import com.google.common.primitives.Ints;
@@ -164,7 +165,7 @@ final class ChunkSegmenter {
         }
 
         int numBytesConsumable;
-        if (remaining >= blockSize) {
+        if (remaining >= blockSize && currentBlockPending == blockSize) {
           int blockCount = IntMath.divide(remaining, blockSize, RoundingMode.DOWN);
           numBytesConsumable = blockCount * blockSize;
         } else {
@@ -175,9 +176,10 @@ final class ChunkSegmenter {
         }
 
         int consumed = consumeBytes(data, numBytesConsumable, buffer);
-        currentBlockPending -= consumed;
-        if (currentBlockPending <= 0) {
-          currentBlockPending = blockSize - currentBlockPending;
+        int currentBlockPendingLessConsumed = currentBlockPending - consumed;
+        currentBlockPending = currentBlockPendingLessConsumed % blockSize;
+        if (currentBlockPending == 0) {
+          currentBlockPending = blockSize;
         }
         consumedSoFar += consumed;
       }
@@ -248,6 +250,15 @@ final class ChunkSegmenter {
 
     public boolean isOnlyFullBlocks() {
       return onlyFullBlocks;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("crc32c", crc32c)
+          .add("onlyFullBlocks", onlyFullBlocks)
+          .add("b", b)
+          .toString();
     }
   }
 }

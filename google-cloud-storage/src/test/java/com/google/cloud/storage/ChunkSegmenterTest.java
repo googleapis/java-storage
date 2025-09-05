@@ -223,6 +223,28 @@ final class ChunkSegmenterTest {
     assertThat(actual).isEqualTo(expected);
   }
 
+  @Example
+  void alignedConsumeForLargeBuffersOnlyConsumesAligned() throws Exception {
+
+    ChecksummedTestContent ctc = ChecksummedTestContent.gen(2048 + 13);
+
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 2048, 256);
+
+    ChecksummedTestContent slice = ctc.slice(0, 2048);
+    List<ByteString> expected =
+        slice.chunkup(2048).stream()
+            .map(ChecksummedTestContent::asByteBuffer)
+            .map(ByteStringStrategy.noCopy())
+            .collect(Collectors.toList());
+
+    ByteBuffer buf = ctc.asByteBuffer();
+    ChunkSegment[] segments = segmenter.segmentBuffers(new ByteBuffer[] {buf}, 0, 1, false);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertThat(actual).isEqualTo(expected);
+  }
+
   @Provide("TestData")
   static Arbitrary<TestData> arbitraryTestData() {
     return Arbitraries.lazyOf(
