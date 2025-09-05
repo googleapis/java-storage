@@ -557,14 +557,16 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
               // instance that only contains the contexts
               StorageObject storageObject = new StorageObject();
               storageObject.setContexts(tmp.getContexts());
-              StorageObject outputJson = JsonUtils.getOutputJson(storageObject, subFields);
+              StorageObject outputJson =
+                  JsonUtils.getOutputJsonWithSelectedFields(storageObject, subFields);
               pb.setContexts(outputJson.getContexts());
             } else if (topLevelField == BlobField.METADATA) {
               // our field names are from the root of the storage object, create a temporary
               // instance that only contains the metadata
               StorageObject storageObject = new StorageObject();
               storageObject.setMetadata(tmp.getMetadata());
-              StorageObject outputJson = JsonUtils.getOutputJson(storageObject, subFields);
+              StorageObject outputJson =
+                  JsonUtils.getOutputJsonWithSelectedFields(storageObject, subFields);
               pb.setMetadata(outputJson.getMetadata());
             } else {
               checkState(subFields.size() <= 1, "unexpected nested field(s) %s", subFields);

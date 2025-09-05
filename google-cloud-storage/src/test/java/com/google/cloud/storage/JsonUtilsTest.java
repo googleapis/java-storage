@@ -61,7 +61,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public final class JsonUtilsTest {
 
   @Example
-  public void getOutputJson_metadata() throws IOException {
+  public void getOutputJson_WithSelectedFields_metadata() throws IOException {
     StorageObject src = jop.parseAndClose(new StringReader(jsonString), StorageObject.class);
     StorageObject expected =
         new StorageObject()
@@ -79,13 +79,13 @@ public final class JsonUtilsTest {
             .flatMap(s -> s)
             .collect(ImmutableSet.toImmutableSet());
 
-    StorageObject dst = JsonUtils.getOutputJson(src, modifiedFields);
+    StorageObject dst = JsonUtils.getOutputJsonWithSelectedFields(src, modifiedFields);
 
     assertThat(dst).isEqualTo(expected);
   }
 
   @Example
-  public void getOutputJson_contexts() throws IOException {
+  public void getOutputJson_WithSelectedFields_contexts() throws IOException {
     StorageObject src = jop.parseAndClose(new StringReader(jsonString), StorageObject.class);
     StorageObject expected =
         new StorageObject()
@@ -105,13 +105,13 @@ public final class JsonUtilsTest {
             .collect(ImmutableSet.toImmutableSet());
     NamedField custom = nested.getParent();
 
-    StorageObject dst = JsonUtils.getOutputJson(src, modifiedFields);
+    StorageObject dst = JsonUtils.getOutputJsonWithSelectedFields(src, modifiedFields);
 
     assertThat(dst).isEqualTo(expected);
   }
 
   @Property(tries = 10_000)
-  void getOutputJson_works(@ForAll("jts") JsonTrimmingScenario s) {
+  void getOutputJson_WithSelectedFields_works(@ForAll("jts") JsonTrimmingScenario s) {
     JsonObject actual = JsonUtils.getOutputJson(s.original, s.fieldsToRetain);
 
     assertThat(actual).isEqualTo(s.expected);

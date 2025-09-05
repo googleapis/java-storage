@@ -63,7 +63,8 @@ final class JsonUtils {
    * with a specified name, that value will be used. If the field does not exist in {@code src} it
    * will be set to {@code null}.
    */
-  static <T extends GenericJson> T getOutputJson(T src, Set<NamedField> fieldsForOutput) {
+  static <T extends GenericJson> T getOutputJsonWithSelectedFields(
+      T src, Set<NamedField> fieldsForOutput) {
     Set<String> fieldPaths =
         fieldsForOutput.stream()
             .map(NamedField::getApiaryName)
