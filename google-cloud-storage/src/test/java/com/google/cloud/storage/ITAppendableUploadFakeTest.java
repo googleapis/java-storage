@@ -489,6 +489,7 @@ public class ITAppendableUploadFakeTest {
                   3,
                   storage.storageDataClient.retryContextProvider.create()),
               smallSegmenter,
+              3,
               0);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
@@ -638,6 +639,7 @@ public class ITAppendableUploadFakeTest {
                   3,
                   storage.storageDataClient.retryContextProvider.create()),
               smallSegmenter,
+              3,
               0);
       ChecksummedTestContent content1 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       ChecksummedTestContent content2 = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 10, 10);
@@ -791,7 +793,7 @@ public class ITAppendableUploadFakeTest {
               3,
               storage.storageDataClient.retryContextProvider.create());
       BidiAppendableUnbufferedWritableByteChannel channel =
-          new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 0);
+          new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 3, 0);
       ChecksummedTestContent content = ChecksummedTestContent.of(ALL_OBJECT_BYTES, 0, 10);
       StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.nextWriteShouldFinalize();
@@ -1049,7 +1051,7 @@ public class ITAppendableUploadFakeTest {
               3,
               storage.storageDataClient.retryContextProvider.create());
       BidiAppendableUnbufferedWritableByteChannel channel =
-          new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 0);
+          new BidiAppendableUnbufferedWritableByteChannel(stream, smallSegmenter, 32, 0);
       StorageChannelUtils.blockingEmptyTo(ByteBuffer.wrap(content.getBytes()), channel);
       channel.nextWriteShouldFinalize();
       channel.close();

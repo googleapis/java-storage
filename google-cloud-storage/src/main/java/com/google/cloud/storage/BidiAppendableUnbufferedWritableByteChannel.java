@@ -31,23 +31,30 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
 
   private final BidiUploadStreamingStream stream;
   private final ChunkSegmenter chunkSegmenter;
+  private final long flushInterval;
 
   private boolean open;
   private long writeOffset;
   private volatile boolean nextWriteShouldFinalize;
   private boolean writeCalledAtLeastOnce;
+  private long lastFlushOffset;
 
   /** If write throws an error, don't attempt to finalize things when {@link #close()} is called. */
   private boolean writeThrewError;
 
   BidiAppendableUnbufferedWritableByteChannel(
-      BidiUploadStreamingStream stream, ChunkSegmenter chunkSegmenter, long writeOffset) {
+      BidiUploadStreamingStream stream,
+      ChunkSegmenter chunkSegmenter,
+      long flushInterval,
+      long writeOffset) {
     this.stream = stream;
     this.chunkSegmenter = chunkSegmenter;
+    this.flushInterval = flushInterval;
     this.open = true;
     this.writeOffset = writeOffset;
     this.nextWriteShouldFinalize = false;
     this.writeThrewError = false;
+    this.lastFlushOffset = writeOffset;
   }
 
   @Override
@@ -141,8 +148,9 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
     for (int i = 0, len = data.length, lastIdx = len - 1; i < len; i++) {
       ChunkSegment datum = data[i];
       int size = datum.getB().size();
+      boolean shouldFlush = writeOffset + size >= lastFlushOffset + flushInterval;
       boolean appended;
-      if (i < lastIdx) {
+      if (i < lastIdx && !shouldFlush) {
         appended = stream.append(datum);
       } else if (i == lastIdx && nextWriteShouldFinalize) {
         appended = stream.appendAndFinalize(datum);
@@ -152,6 +160,9 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
       if (appended) {
         bytesConsumed += size;
         writeOffset += size;
+        if (shouldFlush) {
+          lastFlushOffset = writeOffset;
+        }
       } else {
         // if we weren't able to trigger a flush by reaching the end of the array and calling
         // appendAndFlush, explicitly call flush here so that some progress can be made.
@@ -171,6 +182,7 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
 
   private void awaitResultFuture() throws IOException {
     try {
+      stream.awaitAckOf(writeOffset);
       stream.getResultFuture().get(10_717, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
