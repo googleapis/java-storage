@@ -110,7 +110,7 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @Test
-  public void testCreateBucketPubSubNotification() {
+  public void testCreateBucketPubSubNotification() throws Exception {
     CreateBucketPubSubNotification.createBucketPubSubNotification(
         bucketName,
         topic,
@@ -122,7 +122,7 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @Test
-  public void testDeleteBucketPubSubNotification() {
+  public void testDeleteBucketPubSubNotification() throws Exception {
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     DeleteBucketPubSubNotification.deleteBucketPubSubNotification(
         bucketName, notification.getNotificationId());
@@ -131,7 +131,7 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @Test
-  public void testNotificationNotFound() {
+  public void testNotificationNotFound() throws Exception {
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     // Do a delete first.
     storage.deleteNotification(bucketName, notification.getNotificationId());
@@ -142,14 +142,14 @@ public class PubSubNotificationTest extends TestBase {
   }
 
   @Test
-  public void testListBucketPubSubNotification() {
+  public void testListBucketPubSubNotification() throws Exception {
     storage.createNotification(bucketName, notificationInfo);
     ListPubSubNotifications.listPubSubNotifications(bucketName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(topic);
   }
 
   @Test
-  public void testPrintBucketPubSubNotification() {
+  public void testPrintBucketPubSubNotification() throws Exception {
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     PrintPubSubNotification.printPubSubNotification(bucketName, notification.getNotificationId());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(topic);
