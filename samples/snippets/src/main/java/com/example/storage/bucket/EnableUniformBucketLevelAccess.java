@@ -33,23 +33,26 @@ public class EnableUniformBucketLevelAccess {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    // first look up the bucket, so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
+      // first look up the bucket, so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
 
-    BucketInfo.IamConfiguration iamConfiguration =
-        BucketInfo.IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build();
+      BucketInfo.IamConfiguration iamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder()
+              .setIsUniformBucketLevelAccessEnabled(true)
+              .build();
 
-    storage.update(
-        bucket.toBuilder()
-            .setIamConfiguration(iamConfiguration)
-            .setAcl(null)
-            .setDefaultAcl(null)
-            .build(),
-        BucketTargetOption.metagenerationMatch());
+      storage.update(
+          bucket.toBuilder()
+              .setIamConfiguration(iamConfiguration)
+              .setAcl(null)
+              .setDefaultAcl(null)
+              .build(),
+          BucketTargetOption.metagenerationMatch());
 
-    System.out.println("Uniform bucket-level access was enabled for " + bucketName);
+      System.out.println("Uniform bucket-level access was enabled for " + bucketName);
     }
   }
 }

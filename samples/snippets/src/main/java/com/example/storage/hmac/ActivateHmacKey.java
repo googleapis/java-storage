@@ -31,7 +31,8 @@ public class ActivateHmacKey {
     // The ID of the project to which the service account belongs.
     // String projectId = "project-id";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       HmacKey.HmacKeyMetadata metadata =
           storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));

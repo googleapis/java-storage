@@ -37,7 +37,8 @@ public class AddBucketIamMember {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       Policy originalPolicy =
           storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
@@ -45,7 +46,8 @@ public class AddBucketIamMember {
       String role = "roles/storage.objectViewer";
       String member = "group:example@google.com";
 
-      // getBindingsList() returns an ImmutableList and copying over to an ArrayList so it's mutable.
+      // getBindingsList() returns an ImmutableList and copying over to an ArrayList so it's
+      // mutable.
       List<Binding> bindings = new ArrayList(originalPolicy.getBindingsList());
 
       // Create a new binding using role and member

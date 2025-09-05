@@ -31,17 +31,18 @@ public class GetDefaultEventBasedHold {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket =
-        storage.get(
-            bucketName,
-            Storage.BucketGetOption.fields(Storage.BucketField.DEFAULT_EVENT_BASED_HOLD));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket =
+          storage.get(
+              bucketName,
+              Storage.BucketGetOption.fields(Storage.BucketField.DEFAULT_EVENT_BASED_HOLD));
 
-    if (bucket.getDefaultEventBasedHold() != null && bucket.getDefaultEventBasedHold()) {
-      System.out.println("Default event-based hold is enabled for " + bucketName);
-    } else {
-      System.out.println("Default event-based hold is not enabled for " + bucketName);
-    }
+      if (bucket.getDefaultEventBasedHold() != null && bucket.getDefaultEventBasedHold()) {
+        System.out.println("Default event-based hold is enabled for " + bucketName);
+      } else {
+        System.out.println("Default event-based hold is not enabled for " + bucketName);
+      }
     }
   }
 }

@@ -30,9 +30,8 @@ class AllowParallelCompositeUpload {
 
   public static void parallelCompositeUploadAllowed(String bucketName, List<Path> files)
       throws Exception {
-    TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder()
-        .setAllowParallelCompositeUpload(true)
-        .build();
+    TransferManagerConfig transferManagerConfig =
+        TransferManagerConfig.newBuilder().setAllowParallelCompositeUpload(true).build();
     try (TransferManager transferManager = transferManagerConfig.getService()) {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();

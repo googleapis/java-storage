@@ -38,37 +38,39 @@ public class SetObjectRetentionPolicy {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    Blob blob = storage.get(blobId);
-    if (blob == null) {
-      System.out.println("The object " + objectName + " was not found in " + bucketName);
-      return;
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      Blob blob = storage.get(blobId);
+      if (blob == null) {
+        System.out.println("The object " + objectName + " was not found in " + bucketName);
+        return;
+      }
+
+      Blob updated =
+          blob.toBuilder()
+              .setRetention(
+                  Retention.newBuilder()
+                      .setMode(Retention.Mode.UNLOCKED)
+                      .setRetainUntilTime(now().plusDays(10))
+                      .build())
+              .build()
+              .update();
+
+      System.out.println("Retention policy for object " + objectName + " was set to:");
+      System.out.println(updated.getRetention().toString());
+
+      // To modify an existing policy on an Unlocked object, pass in the override parameter
+      blob.toBuilder()
+          .setRetention(
+              updated.getRetention().toBuilder().setRetainUntilTime(now().plusDays(9)).build())
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+
+      System.out.println("Retention policy for object " + objectName + " was updated to:");
+      System.out.println(storage.get(blobId).getRetention().toString());
     }
-
-    Blob updated =
-        blob.toBuilder()
-            .setRetention(
-                Retention.newBuilder()
-                    .setMode(Retention.Mode.UNLOCKED)
-                    .setRetainUntilTime(now().plusDays(10))
-                    .build())
-            .build()
-            .update();
-
-    System.out.println("Retention policy for object " + objectName + " was set to:");
-    System.out.println(updated.getRetention().toString());
-
-    // To modify an existing policy on an Unlocked object, pass in the override parameter
-    blob.toBuilder()
-        .setRetention(
-            updated.getRetention().toBuilder().setRetainUntilTime(now().plusDays(9)).build())
-        .build()
-        .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
-
-    System.out.println("Retention policy for object " + objectName + " was updated to:");
-    System.out.println(storage.get(blobId).getRetention().toString());
   }
-}}
+}
 
 // [END storage_set_object_retention_policy]

@@ -34,25 +34,28 @@ public class DeleteObject {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Blob blob = storage.get(bucketName, objectName);
-    if (blob == null) {
-      System.out.println("The object " + objectName + " wasn't found in " + bucketName);
-      return;
-    }
-    BlobId idWithGeneration = blob.getBlobId();
-    // Deletes the blob specified by its id. When the generation is present and non-null it will be
-    // specified in the request.
-    // If versioning is enabled on the bucket and the generation is present in the delete request,
-    // only the version of the object with the matching generation will be deleted.
-    // If instead you want to delete the current version, the generation should be dropped by
-    // performing the following.
-    // BlobId idWithoutGeneration =
-    //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
-    // storage.delete(idWithoutGeneration);
-    storage.delete(idWithGeneration);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Blob blob = storage.get(bucketName, objectName);
+      if (blob == null) {
+        System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+        return;
+      }
+      BlobId idWithGeneration = blob.getBlobId();
+      // Deletes the blob specified by its id. When the generation is present and non-null it will
+      // be
+      // specified in the request.
+      // If versioning is enabled on the bucket and the generation is present in the delete request,
+      // only the version of the object with the matching generation will be deleted.
+      // If instead you want to delete the current version, the generation should be dropped by
+      // performing the following.
+      // BlobId idWithoutGeneration =
+      //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
+      // storage.delete(idWithoutGeneration);
+      storage.delete(idWithGeneration);
 
-    System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
+      System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
+    }
   }
-}}
+}
 // [END storage_delete_file]

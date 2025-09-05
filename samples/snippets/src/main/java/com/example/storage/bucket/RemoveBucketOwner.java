@@ -37,16 +37,17 @@ public class RemoveBucketOwner {
     // Email of the user you wish to remove as an owner
     // String userEmail = "someuser@domain.com"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    User ownerToRemove = new User(userEmail);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      User ownerToRemove = new User(userEmail);
 
-    boolean success = bucket.deleteAcl(ownerToRemove);
-    if (success) {
-      System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
-    } else {
-      System.out.println("User " + userEmail + " was not found");
-    }
+      boolean success = bucket.deleteAcl(ownerToRemove);
+      if (success) {
+        System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
+      } else {
+        System.out.println("User " + userEmail + " was not found");
+      }
     }
   }
 }

@@ -33,21 +33,22 @@ public class GetUniformBucketLevelAccess {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket =
-        storage.get(
-            bucketName, Storage.BucketGetOption.fields(Storage.BucketField.IAMCONFIGURATION));
-    BucketInfo.IamConfiguration iamConfiguration = bucket.getIamConfiguration();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket =
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(Storage.BucketField.IAMCONFIGURATION));
+      BucketInfo.IamConfiguration iamConfiguration = bucket.getIamConfiguration();
 
-    Boolean enabled = iamConfiguration.isUniformBucketLevelAccessEnabled();
-    Date lockedTime = new Date(iamConfiguration.getUniformBucketLevelAccessLockedTime());
+      Boolean enabled = iamConfiguration.isUniformBucketLevelAccessEnabled();
+      Date lockedTime = new Date(iamConfiguration.getUniformBucketLevelAccessLockedTime());
 
-    if (enabled != null && enabled) {
-      System.out.println("Uniform bucket-level access is enabled for " + bucketName);
-      System.out.println("Bucket will be locked on " + lockedTime);
-    } else {
-      System.out.println("Uniform bucket-level access is disabled for " + bucketName);
-    }
+      if (enabled != null && enabled) {
+        System.out.println("Uniform bucket-level access is enabled for " + bucketName);
+        System.out.println("Bucket will be locked on " + lockedTime);
+      } else {
+        System.out.println("Uniform bucket-level access is disabled for " + bucketName);
+      }
     }
   }
 }

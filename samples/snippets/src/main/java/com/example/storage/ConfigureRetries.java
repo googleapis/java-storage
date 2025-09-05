@@ -60,8 +60,8 @@ public final class ConfigureRetries {
       boolean success = storage.delete(blobId);
 
       System.out.printf(
-          "Deletion of Blob %s completed %s.%n", blobId,
-          success ? "successfully" : "unsuccessfully");
+          "Deletion of Blob %s completed %s.%n",
+          blobId, success ? "successfully" : "unsuccessfully");
     }
   }
 }

@@ -35,11 +35,12 @@ class DownloadBucket {
     StorageOptions storageOptions = StorageOptions.newBuilder().setProjectId(projectId).build();
     List<BlobInfo> blobs;
     try (Storage storage = storageOptions.getService()) {
-      blobs = storage
-          .list(bucketName)
-          .streamAll()
-          .map(blob -> blob.asBlobInfo())
-          .collect(Collectors.toList());
+      blobs =
+          storage
+              .list(bucketName)
+              .streamAll()
+              .map(blob -> blob.asBlobInfo())
+              .collect(Collectors.toList());
     }
 
     TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder().build();

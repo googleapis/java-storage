@@ -42,7 +42,8 @@ public class AddBlobOwner {
     // The name of the blob/file that you wish to modify permissions on
     // String blobName = "your-blob-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
       Blob blob = storage.get(BlobId.of(bucketName, blobName));
       Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
 
@@ -54,6 +55,7 @@ public class AddBlobOwner {
               + blobName
               + " in bucket "
               + bucketName);
-    }}
+    }
+  }
 }
 // [END storage_add_file_owner]

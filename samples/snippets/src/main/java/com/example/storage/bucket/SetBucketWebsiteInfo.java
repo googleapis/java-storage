@@ -36,18 +36,19 @@ public class SetBucketWebsiteInfo {
     // The 404 page for a static website bucket
     // String notFoundPage = "404.html";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().setIndexPage(indexPage).setNotFoundPage(notFoundPage).build().update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder().setIndexPage(indexPage).setNotFoundPage(notFoundPage).build().update();
 
-    System.out.println(
-        "Static website bucket "
-            + bucketName
-            + " is set up to use "
-            + indexPage
-            + " as the index page and "
-            + notFoundPage
-            + " as the 404 page");
+      System.out.println(
+          "Static website bucket "
+              + bucketName
+              + " is set up to use "
+              + indexPage
+              + " as the index page and "
+              + notFoundPage
+              + " as the 404 page");
     }
   }
 }

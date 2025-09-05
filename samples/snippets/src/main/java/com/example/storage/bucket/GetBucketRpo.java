@@ -29,11 +29,12 @@ public class GetBucketRpo {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    String rpo = bucket.getRpo().toString();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      String rpo = bucket.getRpo().toString();
 
-    System.out.println("The RPO setting of bucket " + bucketName + " is " + rpo);
+      System.out.println("The RPO setting of bucket " + bucketName + " is " + rpo);
     }
   }
 }

@@ -40,22 +40,24 @@ public class RemoveBlobOwner {
     // The name of the blob/file that you wish to modify permissions on
     // String blobName = "your-blob-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Blob blob = storage.get(BlobId.of(bucketName, blobName));
-    User ownerToRemove = new User(userEmail);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Blob blob = storage.get(BlobId.of(bucketName, blobName));
+      User ownerToRemove = new User(userEmail);
 
-    boolean success = blob.deleteAcl(ownerToRemove);
-    if (success) {
-      System.out.println(
-          "Removed user "
-              + userEmail
-              + " as an owner on file "
-              + blobName
-              + " in bucket "
-              + bucketName);
-    } else {
-      System.out.println("User " + userEmail + " was not found");
+      boolean success = blob.deleteAcl(ownerToRemove);
+      if (success) {
+        System.out.println(
+            "Removed user "
+                + userEmail
+                + " as an owner on file "
+                + blobName
+                + " in bucket "
+                + bucketName);
+      } else {
+        System.out.println("User " + userEmail + " was not found");
+      }
     }
   }
-}}
+}
 // [END storage_remove_file_owner]

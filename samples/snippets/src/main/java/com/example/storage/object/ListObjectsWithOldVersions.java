@@ -31,13 +31,15 @@ public class ListObjectsWithOldVersions {
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    Page<Blob> blobs = bucket.list(Storage.BlobListOption.versions(true));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      Page<Blob> blobs = bucket.list(Storage.BlobListOption.versions(true));
 
-    for (Blob blob : blobs.iterateAll()) {
-      System.out.println(blob.getName() + "," + blob.getGeneration());
+      for (Blob blob : blobs.iterateAll()) {
+        System.out.println(blob.getName() + "," + blob.getGeneration());
+      }
     }
   }
-}}
+}
 // [END storage_list_file_archived_generations]

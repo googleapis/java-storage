@@ -33,7 +33,8 @@ public class CreateBucketPubSubNotification {
       Map<String, String> customAttributes,
       EventType[] eventTypes,
       String objectNamePrefix,
-      PayloadFormat payloadFormat) throws Exception {
+      PayloadFormat payloadFormat)
+      throws Exception {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 

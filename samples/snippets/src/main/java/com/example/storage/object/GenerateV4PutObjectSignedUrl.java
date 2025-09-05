@@ -45,31 +45,33 @@ public class GenerateV4PutObjectSignedUrl {
     // String bucketName = "my-bucket";
     // String objectName = "my-object";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    // Define Resource
-    BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(bucketName, objectName)).build();
+      // Define Resource
+      BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(bucketName, objectName)).build();
 
-    // Generate Signed URL
-    Map<String, String> extensionHeaders = new HashMap<>();
-    extensionHeaders.put("Content-Type", "application/octet-stream");
+      // Generate Signed URL
+      Map<String, String> extensionHeaders = new HashMap<>();
+      extensionHeaders.put("Content-Type", "application/octet-stream");
 
-    URL url =
-        storage.signUrl(
-            blobInfo,
-            15,
-            TimeUnit.MINUTES,
-            Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
-            Storage.SignUrlOption.withExtHeaders(extensionHeaders),
-            Storage.SignUrlOption.withV4Signature());
+      URL url =
+          storage.signUrl(
+              blobInfo,
+              15,
+              TimeUnit.MINUTES,
+              Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
+              Storage.SignUrlOption.withExtHeaders(extensionHeaders),
+              Storage.SignUrlOption.withV4Signature());
 
-    System.out.println("Generated PUT signed URL:");
-    System.out.println(url);
-    System.out.println("You can use this URL with any user agent, for example:");
-    System.out.println(
-        "curl -X PUT -H 'Content-Type: application/octet-stream' --upload-file my-file '"
-            + url
-            + "'");
+      System.out.println("Generated PUT signed URL:");
+      System.out.println(url);
+      System.out.println("You can use this URL with any user agent, for example:");
+      System.out.println(
+          "curl -X PUT -H 'Content-Type: application/octet-stream' --upload-file my-file '"
+              + url
+              + "'");
+    }
   }
-}}
+}
 // [END storage_generate_upload_signed_url_v4]

@@ -34,36 +34,39 @@ public class ListObjectsWithPrefix {
     // The directory prefix to search for
     // String directoryPrefix = "myDirectory/"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    /**
-     * Using the Storage.BlobListOption.currentDirectory() option here causes the results to display
-     * in a "directory-like" mode, showing what objects are in the directory you've specified, as
-     * well as what other directories exist in that directory. For example, given these blobs:
-     *
-     * <p>a/1.txt a/b/2.txt a/b/3.txt
-     *
-     * <p>If you specify prefix = "a/" and don't use Storage.BlobListOption.currentDirectory(),
-     * you'll get back:
-     *
-     * <p>a/1.txt a/b/2.txt a/b/3.txt
-     *
-     * <p>However, if you specify prefix = "a/" and do use
-     * Storage.BlobListOption.currentDirectory(), you'll get back:
-     *
-     * <p>a/1.txt a/b/
-     *
-     * <p>Because a/1.txt is the only file in the a/ directory and a/b/ is a directory inside the
-     * /a/ directory.
-     */
-    Page<Blob> blobs =
-        storage.list(
-            bucketName,
-            Storage.BlobListOption.prefix(directoryPrefix),
-            Storage.BlobListOption.currentDirectory());
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      /**
+       * Using the Storage.BlobListOption.currentDirectory() option here causes the results to
+       * display in a "directory-like" mode, showing what objects are in the directory you've
+       * specified, as well as what other directories exist in that directory. For example, given
+       * these blobs:
+       *
+       * <p>a/1.txt a/b/2.txt a/b/3.txt
+       *
+       * <p>If you specify prefix = "a/" and don't use Storage.BlobListOption.currentDirectory(),
+       * you'll get back:
+       *
+       * <p>a/1.txt a/b/2.txt a/b/3.txt
+       *
+       * <p>However, if you specify prefix = "a/" and do use
+       * Storage.BlobListOption.currentDirectory(), you'll get back:
+       *
+       * <p>a/1.txt a/b/
+       *
+       * <p>Because a/1.txt is the only file in the a/ directory and a/b/ is a directory inside the
+       * /a/ directory.
+       */
+      Page<Blob> blobs =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.prefix(directoryPrefix),
+              Storage.BlobListOption.currentDirectory());
 
-    for (Blob blob : blobs.iterateAll()) {
-      System.out.println(blob.getName());
+      for (Blob blob : blobs.iterateAll()) {
+        System.out.println(blob.getName());
+      }
     }
   }
-}}
+}
 // [END storage_list_files_with_prefix]

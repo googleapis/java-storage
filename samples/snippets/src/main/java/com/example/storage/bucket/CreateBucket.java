@@ -30,7 +30,8 @@ public class CreateBucket {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
 

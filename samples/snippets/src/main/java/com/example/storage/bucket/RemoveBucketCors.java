@@ -33,19 +33,20 @@ public class RemoveBucketCors {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket =
-        storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.CORS));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket =
+          storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.CORS));
 
-    // getCors() returns the List and copying over to an ArrayList so it's mutable.
-    List<Cors> cors = new ArrayList<>(bucket.getCors());
+      // getCors() returns the List and copying over to an ArrayList so it's mutable.
+      List<Cors> cors = new ArrayList<>(bucket.getCors());
 
-    // Clear bucket CORS configuration.
-    cors.clear();
+      // Clear bucket CORS configuration.
+      cors.clear();
 
-    // Update bucket to remove CORS.
-    bucket.toBuilder().setCors(cors).build().update();
-    System.out.println("Removed CORS configuration from bucket " + bucketName);
+      // Update bucket to remove CORS.
+      bucket.toBuilder().setCors(cors).build().update();
+      System.out.println("Removed CORS configuration from bucket " + bucketName);
     }
   }
 }

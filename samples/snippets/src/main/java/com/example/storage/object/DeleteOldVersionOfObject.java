@@ -37,16 +37,18 @@ public class DeleteOldVersionOfObject {
     // The generation of objectName to delete
     // long generationToDelete = 1579287380533984;
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    storage.delete(BlobId.of(bucketName, objectName, generationToDelete));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      storage.delete(BlobId.of(bucketName, objectName, generationToDelete));
 
-    System.out.println(
-        "Generation "
-            + generationToDelete
-            + " of object "
-            + objectName
-            + " was deleted from "
-            + bucketName);
+      System.out.println(
+          "Generation "
+              + generationToDelete
+              + " of object "
+              + objectName
+              + " was deleted from "
+              + bucketName);
+    }
   }
-}}
+}
 // [END storage_delete_file_archived_generation]

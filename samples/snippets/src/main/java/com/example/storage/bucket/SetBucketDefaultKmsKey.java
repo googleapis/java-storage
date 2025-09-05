@@ -36,20 +36,21 @@ public class SetBucketDefaultKmsKey {
     // String kmsKeyName =
     // "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    // first look up the bucket, so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      // first look up the bucket, so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
 
-    Bucket updated =
-        storage.update(
-            bucket.toBuilder().setDefaultKmsKeyName(kmsKeyName).build(),
-            BucketTargetOption.metagenerationMatch());
+      Bucket updated =
+          storage.update(
+              bucket.toBuilder().setDefaultKmsKeyName(kmsKeyName).build(),
+              BucketTargetOption.metagenerationMatch());
 
-    System.out.println(
-        "KMS Key "
-            + updated.getDefaultKmsKeyName()
-            + "was set to default for bucket "
-            + bucketName);
+      System.out.println(
+          "KMS Key "
+              + updated.getDefaultKmsKeyName()
+              + "was set to default for bucket "
+              + bucketName);
     }
   }
 }

@@ -30,15 +30,16 @@ public class GetSoftDeletePolicy {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    SoftDeletePolicy policy = storage.get(bucketName).getSoftDeletePolicy();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      SoftDeletePolicy policy = storage.get(bucketName).getSoftDeletePolicy();
 
-    if (Duration.ofSeconds(0).equals(policy.getRetentionDuration())) {
-      System.out.println("Soft delete is disabled for " + bucketName);
-    } else {
-      System.out.println("The soft delete policy for " + bucketName + " is:");
-      System.out.println(policy);
-    }
+      if (Duration.ofSeconds(0).equals(policy.getRetentionDuration())) {
+        System.out.println("Soft delete is disabled for " + bucketName);
+      } else {
+        System.out.println("The soft delete policy for " + bucketName + " is:");
+        System.out.println(policy);
+      }
     }
   }
 }

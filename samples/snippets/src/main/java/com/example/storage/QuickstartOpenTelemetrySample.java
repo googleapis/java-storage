@@ -51,7 +51,8 @@ public class QuickstartOpenTelemetrySample {
                     .build())
             .build();
     StorageOptions options = StorageOptions.newBuilder().setOpenTelemetry(openTelemetry).build();
-    try (OpenTelemetrySdk otel = openTelemetry; Storage storage = options.getService()) {
+    try (OpenTelemetrySdk otel = openTelemetry;
+        Storage storage = options.getService()) {
       System.out.println("Created an instance of storage with OpenTelemetry configured");
     }
   }

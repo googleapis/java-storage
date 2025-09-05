@@ -32,8 +32,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BatchSetObjectMetadata {
-  public static void batchSetObjectMetadata(
-      String projectId, String bucketName, String pathPrefix) throws Exception {
+  public static void batchSetObjectMetadata(String projectId, String bucketName, String pathPrefix)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -44,54 +44,56 @@ public class BatchSetObjectMetadata {
     // updated
     // String pathPrefix = "yourPath/";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Map<String, String> newMetadata = new HashMap<>();
-    newMetadata.put("keyToAddOrUpdate", "value");
-    Page<Blob> blobs =
-        storage.list(
-            bucketName,
-            Storage.BlobListOption.prefix(pathPrefix),
-            Storage.BlobListOption.delimiter("/"));
-    StorageBatch batchRequest = storage.batch();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Map<String, String> newMetadata = new HashMap<>();
+      newMetadata.put("keyToAddOrUpdate", "value");
+      Page<Blob> blobs =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.prefix(pathPrefix),
+              Storage.BlobListOption.delimiter("/"));
+      StorageBatch batchRequest = storage.batch();
 
-    // Add all blobs with the given prefix to the batch request
-    List<StorageBatchResult<Blob>> batchResults =
-        blobs
-            .streamAll()
-            .map(blob -> batchRequest.update(blob.toBuilder().setMetadata(newMetadata).build()))
-            .collect(Collectors.toList());
+      // Add all blobs with the given prefix to the batch request
+      List<StorageBatchResult<Blob>> batchResults =
+          blobs
+              .streamAll()
+              .map(blob -> batchRequest.update(blob.toBuilder().setMetadata(newMetadata).build()))
+              .collect(Collectors.toList());
 
-    // Execute the batch request
-    batchRequest.submit();
-    List<StorageException> failures =
-        batchResults.stream()
-            .map(
-                r -> {
-                  try {
-                    BlobInfo blob = r.get();
-                    return null;
-                  } catch (StorageException e) {
-                    return e;
-                  }
-                })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+      // Execute the batch request
+      batchRequest.submit();
+      List<StorageException> failures =
+          batchResults.stream()
+              .map(
+                  r -> {
+                    try {
+                      BlobInfo blob = r.get();
+                      return null;
+                    } catch (StorageException e) {
+                      return e;
+                    }
+                  })
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
 
-    System.out.println(
-        (batchResults.size() - failures.size())
-            + " blobs in bucket "
-            + bucketName
-            + " with prefix '"
-            + pathPrefix
-            + "' had their metadata updated successfully.");
+      System.out.println(
+          (batchResults.size() - failures.size())
+              + " blobs in bucket "
+              + bucketName
+              + " with prefix '"
+              + pathPrefix
+              + "' had their metadata updated successfully.");
 
-    if (!failures.isEmpty()) {
-      System.out.println("While processing, there were " + failures.size() + " failures");
+      if (!failures.isEmpty()) {
+        System.out.println("While processing, there were " + failures.size() + " failures");
 
-      for (StorageException failure : failures) {
-        failure.printStackTrace(System.out);
+        for (StorageException failure : failures) {
+          failure.printStackTrace(System.out);
+        }
       }
     }
   }
-}}
+}
 // [END storage_batch_request]

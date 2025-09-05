@@ -32,23 +32,24 @@ public class ListBucketIamMembers {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    Policy policy =
-        storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
+      Policy policy =
+          storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
 
-    // Print binding information
-    for (Binding binding : policy.getBindingsList()) {
-      System.out.printf("Role: %s Members: %s\n", binding.getRole(), binding.getMembers());
+      // Print binding information
+      for (Binding binding : policy.getBindingsList()) {
+        System.out.printf("Role: %s Members: %s\n", binding.getRole(), binding.getMembers());
 
-      // Print condition if one is set
-      boolean bindingIsConditional = binding.getCondition() != null;
-      if (bindingIsConditional) {
-        System.out.printf("Condition Title: %s\n", binding.getCondition().getTitle());
-        System.out.printf("Condition Description: %s\n", binding.getCondition().getDescription());
-        System.out.printf("Condition Expression: %s\n", binding.getCondition().getExpression());
+        // Print condition if one is set
+        boolean bindingIsConditional = binding.getCondition() != null;
+        if (bindingIsConditional) {
+          System.out.printf("Condition Title: %s\n", binding.getCondition().getTitle());
+          System.out.printf("Condition Description: %s\n", binding.getCondition().getDescription());
+          System.out.printf("Condition Expression: %s\n", binding.getCondition().getExpression());
+        }
       }
-    }
     }
   }
 }

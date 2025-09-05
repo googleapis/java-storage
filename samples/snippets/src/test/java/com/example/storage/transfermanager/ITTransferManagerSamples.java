@@ -29,7 +29,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.it.TemporaryBucket;
 import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;

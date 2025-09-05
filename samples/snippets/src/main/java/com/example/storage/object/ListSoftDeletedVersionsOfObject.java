@@ -35,17 +35,19 @@ public class ListSoftDeletedVersionsOfObject {
     // The name of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Page<Blob> blobs =
-        storage.list(
-            bucketName,
-            Storage.BlobListOption.softDeleted(true),
-            // See https://cloud.google.com/storage/docs/json_api/v1/objects/list#matchGlob
-            Storage.BlobListOption.matchGlob(objectName));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Page<Blob> blobs =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.softDeleted(true),
+              // See https://cloud.google.com/storage/docs/json_api/v1/objects/list#matchGlob
+              Storage.BlobListOption.matchGlob(objectName));
 
-    for (Blob blob : blobs.iterateAll()) {
-      System.out.println(blob.getName());
+      for (Blob blob : blobs.iterateAll()) {
+        System.out.println(blob.getName());
+      }
     }
   }
-}}
+}
 // [END storage_list_soft_deleted_object_versions]

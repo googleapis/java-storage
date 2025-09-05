@@ -47,6 +47,7 @@ public class DownloadPublicObject {
               + bucketName
               + " to "
               + destFilePath);
-    }}
+    }
+  }
 }
 // [END storage_download_public_file]

@@ -31,21 +31,21 @@ public class GetPublicAccessPrevention {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // Gets Bucket Metadata and prints publicAccessPrevention value (either 'inherited' or
-    // 'enforced').
-    BucketInfo.PublicAccessPrevention publicAccessPrevention =
-        bucket.getIamConfiguration().getPublicAccessPrevention();
+      // Gets Bucket Metadata and prints publicAccessPrevention value (either 'inherited' or
+      // 'enforced').
+      BucketInfo.PublicAccessPrevention publicAccessPrevention =
+          bucket.getIamConfiguration().getPublicAccessPrevention();
 
-    System.out.println(
-        "Public access prevention is set to "
-            + publicAccessPrevention.getValue()
-            + " for "
-            + bucketName);
+      System.out.println(
+          "Public access prevention is set to "
+              + publicAccessPrevention.getValue()
+              + " for "
+              + bucketName);
+    }
   }
-  }
-
 }
 // [END storage_get_public_access_prevention]

@@ -29,11 +29,12 @@ public class EnableRequesterPays {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().setRequesterPays(true).build().update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder().setRequesterPays(true).build().update();
 
-    System.out.println("Requester pays enabled for bucket " + bucketName);
+      System.out.println("Requester pays enabled for bucket " + bucketName);
     }
   }
 }

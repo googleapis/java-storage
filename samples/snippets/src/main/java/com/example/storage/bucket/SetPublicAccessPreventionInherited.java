@@ -31,19 +31,20 @@ public class SetPublicAccessPreventionInherited {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // Sets public access prevention to 'inherited' for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                .build())
-        .build()
-        .update();
+      // Sets public access prevention to 'inherited' for the bucket
+      bucket.toBuilder()
+          .setIamConfiguration(
+              BucketInfo.IamConfiguration.newBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
+                  .build())
+          .build()
+          .update();
 
-    System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
+      System.out.println("Public access prevention is set to 'inherited' for " + bucketName);
     }
   }
 }

@@ -35,22 +35,24 @@ public class SetTemporaryHold {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    Blob blob = storage.get(blobId);
-    if (blob == null) {
-      System.out.println("The object " + objectName + " was not found in " + bucketName);
-      return;
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      Blob blob = storage.get(blobId);
+      if (blob == null) {
+        System.out.println("The object " + objectName + " was not found in " + bucketName);
+        return;
+      }
+
+      // Optional: set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request to upload returns a 412 error if
+      // the object's generation number does not match your precondition.
+      Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+      blob.toBuilder().setTemporaryHold(true).build().update(precondition);
+
+      System.out.println("Temporary hold was set for " + objectName);
     }
-
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request to upload returns a 412 error if
-    // the object's generation number does not match your precondition.
-    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
-
-    blob.toBuilder().setTemporaryHold(true).build().update(precondition);
-
-    System.out.println("Temporary hold was set for " + objectName);
   }
-}}
+}
 // [END storage_set_temporary_hold]

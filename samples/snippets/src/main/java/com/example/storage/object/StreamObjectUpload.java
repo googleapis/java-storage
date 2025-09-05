@@ -42,16 +42,18 @@ public class StreamObjectUpload {
     // The string of contents you wish to upload
     // String contents = "Hello world!";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    byte[] content = contents.getBytes(StandardCharsets.UTF_8);
-    try (WriteChannel writer = storage.writer(blobInfo)) {
-      writer.write(ByteBuffer.wrap(content));
-      System.out.println(
-          "Wrote to " + objectName + " in bucket " + bucketName + " using a WriteChannel.");
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+      byte[] content = contents.getBytes(StandardCharsets.UTF_8);
+      try (WriteChannel writer = storage.writer(blobInfo)) {
+        writer.write(ByteBuffer.wrap(content));
+        System.out.println(
+            "Wrote to " + objectName + " in bucket " + bucketName + " using a WriteChannel.");
+      }
     }
   }
-}}
+}
 
 // [END storage_stream_file_upload]

@@ -55,19 +55,21 @@ public class DownloadByteRange {
     // The path to which the file should be downloaded
     // String destFileName = '/local/path/to/file.txt';
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId blobId = BlobId.of(bucketName, blobName);
-    try (ReadChannel from = storage.reader(blobId);
-        FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
-      from.seek(startByte);
-      from.limit(endBytes);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, blobName);
+      try (ReadChannel from = storage.reader(blobId);
+          FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
+        from.seek(startByte);
+        from.limit(endBytes);
 
-      ByteStreams.copy(from, to);
+        ByteStreams.copy(from, to);
 
-      System.out.printf(
-          "%s downloaded to %s from byte %d to byte %d%n",
-          blobId.toGsUtilUri(), destFileName, startByte, endBytes);
+        System.out.printf(
+            "%s downloaded to %s from byte %d to byte %d%n",
+            blobId.toGsUtilUri(), destFileName, startByte, endBytes);
+      }
     }
   }
-}}
+}
 // [END storage_download_byte_range]

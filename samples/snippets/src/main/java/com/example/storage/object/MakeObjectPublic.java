@@ -28,12 +28,14 @@ public class MakeObjectPublic {
     // String projectId = "your-project-id";
     // String bucketName = "your-bucket-name";
     // String objectName = "your-object-name";
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
 
-    System.out.println(
-        "Object " + objectName + " in bucket " + bucketName + " was made publicly readable");
+      System.out.println(
+          "Object " + objectName + " in bucket " + bucketName + " was made publicly readable");
+    }
   }
-}}
+}
 // [END storage_make_public]

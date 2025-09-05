@@ -40,38 +40,40 @@ public class UploadKmsEncryptedObject {
     // The name of the KMS key to encrypt with
     // String kmsKeyName = "projects/my-project/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    byte[] data = "Hello, World!".getBytes(UTF_8);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      byte[] data = "Hello, World!".getBytes(UTF_8);
 
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
 
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request returns a 412 error if the
-    // preconditions are not met.
-    Storage.BlobTargetOption precondition;
-    if (storage.get(bucketName, objectName) == null) {
-      // For a target object that does not yet exist, set the DoesNotExist precondition.
-      // This will cause the request to fail if the object is created before the request runs.
-      precondition = Storage.BlobTargetOption.doesNotExist();
-    } else {
-      // If the destination already exists in your bucket, instead set a generation-match
-      // precondition. This will cause the request to fail if the existing object's generation
-      // changes before the request runs.
-      precondition =
-          Storage.BlobTargetOption.generationMatch(
-              storage.get(bucketName, objectName).getGeneration());
+      // Optional: set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request returns a 412 error if the
+      // preconditions are not met.
+      Storage.BlobTargetOption precondition;
+      if (storage.get(bucketName, objectName) == null) {
+        // For a target object that does not yet exist, set the DoesNotExist precondition.
+        // This will cause the request to fail if the object is created before the request runs.
+        precondition = Storage.BlobTargetOption.doesNotExist();
+      } else {
+        // If the destination already exists in your bucket, instead set a generation-match
+        // precondition. This will cause the request to fail if the existing object's generation
+        // changes before the request runs.
+        precondition =
+            Storage.BlobTargetOption.generationMatch(
+                storage.get(bucketName, objectName).getGeneration());
+      }
+
+      storage.create(blobInfo, data, Storage.BlobTargetOption.kmsKeyName(kmsKeyName), precondition);
+
+      System.out.println(
+          "Uploaded object "
+              + objectName
+              + " in bucket "
+              + bucketName
+              + " encrypted with "
+              + kmsKeyName);
     }
-
-    storage.create(blobInfo, data, Storage.BlobTargetOption.kmsKeyName(kmsKeyName), precondition);
-
-    System.out.println(
-        "Uploaded object "
-            + objectName
-            + " in bucket "
-            + bucketName
-            + " encrypted with "
-            + kmsKeyName);
   }
-}}
+}
 // [END storage_upload_with_kms_key]

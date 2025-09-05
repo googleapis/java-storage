@@ -28,7 +28,8 @@ public class ListHmacKeys {
     // The ID of the project to which the service account belongs.
     // String projectId = "project-id";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       Page<HmacKey.HmacKeyMetadata> page =
           storage.listHmacKeys(Storage.ListHmacKeysOption.projectId(projectId));
@@ -37,6 +38,7 @@ public class ListHmacKeys {
         System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
         System.out.println("Access ID: " + metadata.getAccessId());
       }
-    }}
+    }
+  }
 }
 // [END storage_list_hmac_keys]

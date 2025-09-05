@@ -34,10 +34,12 @@ public class RestoreSoftDeletedObject {
     // The name of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Blob blob = storage.restore(BlobId.of(bucketName, objectName, generation));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Blob blob = storage.restore(BlobId.of(bucketName, objectName, generation));
 
-    System.out.println("Restored previously soft-deleted object " + blob.getName());
+      System.out.println("Restored previously soft-deleted object " + blob.getName());
+    }
   }
-}}
+}
 // [END storage_restore_object]

@@ -28,11 +28,8 @@ import java.util.Arrays;
 public class CreateBucketDualRegion {
 
   public static void createBucketDualRegion(
-      String projectId,
-      String bucketName,
-      String location,
-      String firstRegion,
-      String secondRegion) throws Exception {
+      String projectId, String bucketName, String location, String firstRegion, String secondRegion)
+      throws Exception {
     // The ID of your GCP project.
     // String projectId = "your-project-id";
 
@@ -51,7 +48,8 @@ public class CreateBucketDualRegion {
     // See this documentation for other valid locations and regions:
     // https://cloud.google.com/storage/docs/locations
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       CustomPlacementConfig config =
           CustomPlacementConfig.newBuilder()

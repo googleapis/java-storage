@@ -29,11 +29,12 @@ public class DisableBucketVersioning {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().setVersioningEnabled(false).build().update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder().setVersioningEnabled(false).build().update();
 
-    System.out.println("Versioning is now disabled for bucket " + bucketName);
+      System.out.println("Versioning is now disabled for bucket " + bucketName);
     }
   }
 }

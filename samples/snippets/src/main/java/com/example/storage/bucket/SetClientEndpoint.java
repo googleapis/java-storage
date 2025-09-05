@@ -30,8 +30,12 @@ public class SetClientEndpoint {
     // The endpoint you wish to target
     // String endpoint = "https://storage.googleapis.com"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).setHost(endpoint)
-        .build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder()
+            .setProjectId(projectId)
+            .setHost(endpoint)
+            .build()
+            .getService()) {
 
       System.out.println(
           "Storage Client initialized with endpoint " + storage.getOptions().getHost());

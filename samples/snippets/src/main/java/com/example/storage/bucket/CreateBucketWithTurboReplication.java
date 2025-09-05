@@ -35,22 +35,23 @@ public class CreateBucketWithTurboReplication {
     // The dual-region location to create your bucket in
     // String location = "NAM4"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation(location)
-                .setRpo(Rpo.ASYNC_TURBO)
-                .build());
+      Bucket bucket =
+          storage.create(
+              BucketInfo.newBuilder(bucketName)
+                  .setLocation(location)
+                  .setRpo(Rpo.ASYNC_TURBO)
+                  .build());
 
-    System.out.println(
-        "Created bucket "
-            + bucket.getName()
-            + " in "
-            + bucket.getLocation()
-            + " with RPO setting"
-            + bucket.getRpo());
+      System.out.println(
+          "Created bucket "
+              + bucket.getName()
+              + " in "
+              + bucket.getLocation()
+              + " with RPO setting"
+              + bucket.getRpo());
     }
   }
 }

@@ -24,23 +24,24 @@ import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 
 public class LockRetentionPolicy {
-  public static void lockRetentionPolicy(String projectId, String bucketName)
-      throws Exception {
+  public static void lockRetentionPolicy(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket =
-        storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.METAGENERATION));
-    Bucket lockedBucket =
-        bucket.lockRetentionPolicy(Storage.BucketTargetOption.metagenerationMatch());
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket =
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(Storage.BucketField.METAGENERATION));
+      Bucket lockedBucket =
+          bucket.lockRetentionPolicy(Storage.BucketTargetOption.metagenerationMatch());
 
-    System.out.println("Retention period for " + bucketName + " is now locked");
-    System.out.println(
-        "Retention policy effective as of " + new Date(lockedBucket.getRetentionEffectiveTime()));
+      System.out.println("Retention period for " + bucketName + " is now locked");
+      System.out.println(
+          "Retention policy effective as of " + new Date(lockedBucket.getRetentionEffectiveTime()));
     }
   }
 }

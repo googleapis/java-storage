@@ -36,22 +36,23 @@ public class SetRetentionPolicy {
     // The retention period for objects in bucket
     // Long retentionPeriodSeconds = 3600L; // 1 hour in seconds
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    // first look up the bucket so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
-    Bucket bucketWithRetentionPolicy =
-        storage.update(
-            bucket.toBuilder()
-                .setRetentionPeriodDuration(Duration.ofSeconds(retentionPeriodSeconds))
-                .build(),
-            BucketTargetOption.metagenerationMatch());
+      // first look up the bucket so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
+      Bucket bucketWithRetentionPolicy =
+          storage.update(
+              bucket.toBuilder()
+                  .setRetentionPeriodDuration(Duration.ofSeconds(retentionPeriodSeconds))
+                  .build(),
+              BucketTargetOption.metagenerationMatch());
 
-    System.out.println(
-        "Retention period for "
-            + bucketName
-            + " is now "
-            + bucketWithRetentionPolicy.getRetentionPeriodDuration());
+      System.out.println(
+          "Retention period for "
+              + bucketName
+              + " is now "
+              + bucketWithRetentionPolicy.getRetentionPeriodDuration());
     }
   }
 }

@@ -39,7 +39,8 @@ public class AddBucketIamConditionalBinding {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       Policy originalPolicy =
           storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));

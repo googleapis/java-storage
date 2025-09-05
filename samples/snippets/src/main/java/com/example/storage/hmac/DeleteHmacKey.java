@@ -31,7 +31,8 @@ public class DeleteHmacKey {
     // The ID of the project to which the service account belongs.
     // String projectId = "project-id";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       HmacKey.HmacKeyMetadata metadata =
           storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
@@ -40,6 +41,7 @@ public class DeleteHmacKey {
       System.out.println(
           "The key is deleted, though it will still appear in "
               + "getHmacKeys() results if called with showDeletedKey.");
-    }}
+    }
+  }
 }
 // [END storage_delete_hmac_key]

@@ -29,11 +29,12 @@ public class DeleteBucket {
     // The ID of the bucket to delete
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.delete();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.delete();
 
-    System.out.println("Bucket " + bucket.getName() + " was deleted");
+      System.out.println("Bucket " + bucket.getName() + " was deleted");
     }
   }
 }

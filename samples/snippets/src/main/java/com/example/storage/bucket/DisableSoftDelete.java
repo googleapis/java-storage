@@ -31,18 +31,19 @@ public class DisableSoftDelete {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder()
-        .setSoftDeletePolicy(
-            // Setting the retention duration to 0 disables Soft Delete.
-            BucketInfo.SoftDeletePolicy.newBuilder()
-                .setRetentionDuration(Duration.ofSeconds(0))
-                .build())
-        .build()
-        .update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder()
+          .setSoftDeletePolicy(
+              // Setting the retention duration to 0 disables Soft Delete.
+              BucketInfo.SoftDeletePolicy.newBuilder()
+                  .setRetentionDuration(Duration.ofSeconds(0))
+                  .build())
+          .build()
+          .update();
 
-    System.out.println("Soft delete for " + bucketName + " was disabled");
+      System.out.println("Soft delete for " + bucketName + " was disabled");
     }
   }
 }

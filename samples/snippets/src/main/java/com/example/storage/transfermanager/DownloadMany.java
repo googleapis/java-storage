@@ -31,8 +31,7 @@ class DownloadMany {
       String bucketName, List<BlobInfo> blobs, Path destinationDirectory) throws Exception {
 
     TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder().build();
-    try (TransferManager transferManager =
-        transferManagerConfig.getService()) {
+    try (TransferManager transferManager = transferManagerConfig.getService()) {
       ParallelDownloadConfig parallelDownloadConfig =
           ParallelDownloadConfig.newBuilder()
               .setBucketName(bucketName)

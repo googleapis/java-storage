@@ -31,19 +31,20 @@ public class SetSoftDeletePolicy {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder()
-        .setSoftDeletePolicy(
-            BucketInfo.SoftDeletePolicy.newBuilder()
-                .setRetentionDuration(Duration.ofDays(10))
-                .build())
-        .build()
-        .update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder()
+          .setSoftDeletePolicy(
+              BucketInfo.SoftDeletePolicy.newBuilder()
+                  .setRetentionDuration(Duration.ofDays(10))
+                  .build())
+          .build()
+          .update();
 
-    System.out.println(
-        "Soft delete policy for " + bucketName + " was set to a 10-day retention period");
-  }
+      System.out.println(
+          "Soft delete policy for " + bucketName + " was set to a 10-day retention period");
+    }
   }
 }
 // [END storage_set_soft_delete_policy]

@@ -30,12 +30,14 @@ public class ListSoftDeletedObjects {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Page<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.softDeleted(true));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Page<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.softDeleted(true));
 
-    for (Blob blob : blobs.iterateAll()) {
-      System.out.println(blob.getName());
+      for (Blob blob : blobs.iterateAll()) {
+        System.out.println(blob.getName());
+      }
     }
   }
-}}
+}
 // [END storage_list_soft_deleted_objects]

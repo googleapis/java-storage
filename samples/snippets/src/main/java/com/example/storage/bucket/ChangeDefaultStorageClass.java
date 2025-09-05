@@ -35,7 +35,8 @@ public class ChangeDefaultStorageClass {
     // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/StorageClass.html
     StorageClass storageClass = StorageClass.COLDLINE;
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
       Bucket bucket = storage.get(bucketName);
       bucket = bucket.toBuilder().setStorageClass(storageClass).build().update();
 

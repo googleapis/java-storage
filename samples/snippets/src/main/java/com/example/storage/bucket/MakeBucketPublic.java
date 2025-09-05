@@ -31,15 +31,16 @@ public class MakeBucketPublic {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Policy originalPolicy = storage.getIamPolicy(bucketName);
-    storage.setIamPolicy(
-        bucketName,
-        originalPolicy.toBuilder()
-            .addIdentity(StorageRoles.objectViewer(), Identity.allUsers()) // All users can view
-            .build());
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Policy originalPolicy = storage.getIamPolicy(bucketName);
+      storage.setIamPolicy(
+          bucketName,
+          originalPolicy.toBuilder()
+              .addIdentity(StorageRoles.objectViewer(), Identity.allUsers()) // All users can view
+              .build());
 
-    System.out.println("Bucket " + bucketName + " is now publicly readable");
+      System.out.println("Bucket " + bucketName + " is now publicly readable");
     }
   }
 }

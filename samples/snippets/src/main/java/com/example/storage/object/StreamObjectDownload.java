@@ -31,8 +31,7 @@ import java.nio.file.StandardOpenOption;
 public class StreamObjectDownload {
 
   public static void streamObjectDownload(
-      String projectId, String bucketName, String objectName, String targetFile)
-      throws Exception {
+      String projectId, String bucketName, String objectName, String targetFile) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -46,22 +45,24 @@ public class StreamObjectDownload {
     // String targetFile = "path/to/your/file";
     Path targetFilePath = Paths.get(targetFile);
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    try (ReadChannel reader = storage.reader(BlobId.of(bucketName, objectName));
-        FileChannel targetFileChannel =
-            FileChannel.open(targetFilePath, StandardOpenOption.WRITE)) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      try (ReadChannel reader = storage.reader(BlobId.of(bucketName, objectName));
+          FileChannel targetFileChannel =
+              FileChannel.open(targetFilePath, StandardOpenOption.WRITE)) {
 
-      ByteStreams.copy(reader, targetFileChannel);
+        ByteStreams.copy(reader, targetFileChannel);
 
-      System.out.println(
-          "Downloaded object "
-              + objectName
-              + " from bucket "
-              + bucketName
-              + " to "
-              + targetFile
-              + " using a ReadChannel.");
+        System.out.println(
+            "Downloaded object "
+                + objectName
+                + " from bucket "
+                + bucketName
+                + " to "
+                + targetFile
+                + " using a ReadChannel.");
+      }
     }
   }
-}}
+}
 // [END storage_stream_file_download]

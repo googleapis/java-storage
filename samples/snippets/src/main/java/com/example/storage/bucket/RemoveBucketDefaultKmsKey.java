@@ -31,14 +31,15 @@ public class RemoveBucketDefaultKmsKey {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    // first look up the bucket, so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
-    storage.update(
-        bucket.toBuilder().setDefaultKmsKeyName(null).build(),
-        BucketTargetOption.metagenerationMatch());
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      // first look up the bucket, so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
+      storage.update(
+          bucket.toBuilder().setDefaultKmsKeyName(null).build(),
+          BucketTargetOption.metagenerationMatch());
 
-    System.out.println("Default KMS key was removed from " + bucketName);
+      System.out.println("Default KMS key was removed from " + bucketName);
     }
   }
 }

@@ -38,7 +38,8 @@ public class AddBucketOwner {
     // Email of the user you wish to add as an owner
     // String userEmail = "someuser@domain.com"
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
       Bucket bucket = storage.get(bucketName);
       Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
 

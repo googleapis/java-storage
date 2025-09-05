@@ -27,12 +27,13 @@ public class ListBuckets {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Page<Bucket> buckets = storage.list();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Page<Bucket> buckets = storage.list();
 
-    for (Bucket bucket : buckets.iterateAll()) {
-      System.out.println(bucket.getName());
-    }
+      for (Bucket bucket : buckets.iterateAll()) {
+        System.out.println(bucket.getName());
+      }
     }
   }
 }

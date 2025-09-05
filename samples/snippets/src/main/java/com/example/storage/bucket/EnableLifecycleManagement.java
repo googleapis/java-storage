@@ -35,22 +35,24 @@ public class EnableLifecycleManagement {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // See the LifecycleRule documentation for additional info on what you can do with lifecycle
-    // management rules. This one deletes objects that are over 100 days old.
-    // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
-    bucket.toBuilder()
-        .setLifecycleRules(
-            ImmutableList.of(
-                new LifecycleRule(
-                    LifecycleAction.newDeleteAction(),
-                    LifecycleCondition.newBuilder().setAge(100).build())))
-        .build()
-        .update();
+      // See the LifecycleRule documentation for additional info on what you can do with lifecycle
+      // management rules. This one deletes objects that are over 100 days old.
+      // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
+      bucket.toBuilder()
+          .setLifecycleRules(
+              ImmutableList.of(
+                  new LifecycleRule(
+                      LifecycleAction.newDeleteAction(),
+                      LifecycleCondition.newBuilder().setAge(100).build())))
+          .build()
+          .update();
 
-    System.out.println("Lifecycle management was enabled and configured for bucket " + bucketName);
+      System.out.println(
+          "Lifecycle management was enabled and configured for bucket " + bucketName);
     }
   }
 }

@@ -42,40 +42,42 @@ public final class AtomicMoveObject {
     // The ID of your GCS object
     // String targetObjectName = "your-new-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    BlobId source = BlobId.of(bucketName, sourceObjectName);
-    BlobId target = BlobId.of(bucketName, targetObjectName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId source = BlobId.of(bucketName, sourceObjectName);
+      BlobId target = BlobId.of(bucketName, targetObjectName);
 
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request returns a 412 error if the
-    // preconditions are not met.
-    Storage.BlobTargetOption precondition;
-    BlobInfo existingTarget = storage.get(target);
-    if (existingTarget == null) {
-      // For a target object that does not yet exist, set the DoesNotExist precondition.
-      // This will cause the request to fail if the object is created before the request runs.
-      precondition = Storage.BlobTargetOption.doesNotExist();
-    } else {
-      // If the destination already exists in your bucket, instead set a generation-match
-      // precondition. This will cause the request to fail if the existing object's generation
-      // changes before the request runs.
-      precondition = Storage.BlobTargetOption.generationMatch(existingTarget.getGeneration());
+      // Optional: set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request returns a 412 error if the
+      // preconditions are not met.
+      Storage.BlobTargetOption precondition;
+      BlobInfo existingTarget = storage.get(target);
+      if (existingTarget == null) {
+        // For a target object that does not yet exist, set the DoesNotExist precondition.
+        // This will cause the request to fail if the object is created before the request runs.
+        precondition = Storage.BlobTargetOption.doesNotExist();
+      } else {
+        // If the destination already exists in your bucket, instead set a generation-match
+        // precondition. This will cause the request to fail if the existing object's generation
+        // changes before the request runs.
+        precondition = Storage.BlobTargetOption.generationMatch(existingTarget.getGeneration());
+      }
+
+      // Atomically move source object to target object within the bucket
+      MoveBlobRequest moveBlobRequest =
+          MoveBlobRequest.newBuilder()
+              .setSource(source)
+              .setTarget(target)
+              .setTargetOptions(precondition)
+              .build();
+      BlobInfo movedBlob = storage.moveBlob(moveBlobRequest);
+
+      System.out.println(
+          "Moved object "
+              + source.toGsUtilUri()
+              + " to "
+              + movedBlob.getBlobId().toGsUtilUriWithGeneration());
     }
-
-    // Atomically move source object to target object within the bucket
-    MoveBlobRequest moveBlobRequest =
-        MoveBlobRequest.newBuilder()
-            .setSource(source)
-            .setTarget(target)
-            .setTargetOptions(precondition)
-            .build();
-    BlobInfo movedBlob = storage.moveBlob(moveBlobRequest);
-
-    System.out.println(
-        "Moved object "
-            + source.toGsUtilUri()
-            + " to "
-            + movedBlob.getBlobId().toGsUtilUriWithGeneration());
   }
-}}
+}
 // [END storage_move_object]

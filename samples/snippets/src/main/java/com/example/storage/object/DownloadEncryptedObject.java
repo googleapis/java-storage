@@ -48,19 +48,21 @@ public class DownloadEncryptedObject {
     // the object
     // String decryptionKey = "TIbv/fjexq+VmtXzAlc63J4z5kFmWJ6NdAPQulQBT7g=";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    Blob blob = storage.get(bucketName, objectName);
-    blob.downloadTo(destFilePath, Blob.BlobSourceOption.decryptionKey(decryptionKey));
+      Blob blob = storage.get(bucketName, objectName);
+      blob.downloadTo(destFilePath, Blob.BlobSourceOption.decryptionKey(decryptionKey));
 
-    System.out.println(
-        "Downloaded object "
-            + objectName
-            + " from bucket name "
-            + bucketName
-            + " to "
-            + destFilePath
-            + " using customer-supplied encryption key");
+      System.out.println(
+          "Downloaded object "
+              + objectName
+              + " from bucket name "
+              + bucketName
+              + " to "
+              + destFilePath
+              + " using customer-supplied encryption key");
+    }
   }
-}}
+}
 // [END storage_download_encrypted_file]

@@ -31,19 +31,20 @@ public class SetPublicAccessPreventionEnforced {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // Enforces public access prevention for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                .build())
-        .build()
-        .update();
+      // Enforces public access prevention for the bucket
+      bucket.toBuilder()
+          .setIamConfiguration(
+              BucketInfo.IamConfiguration.newBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                  .build())
+          .build()
+          .update();
 
-    System.out.println("Public access prevention is set to enforced for " + bucketName);
+      System.out.println("Public access prevention is set to enforced for " + bucketName);
     }
   }
 }

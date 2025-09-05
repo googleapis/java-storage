@@ -38,28 +38,31 @@ public class SetObjectMetadata {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Map<String, String> newMetadata = new HashMap<>();
-    newMetadata.put("keyToAddOrUpdate", "value");
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    Blob blob = storage.get(blobId);
-    if (blob == null) {
-      System.out.println("The object " + objectName + " was not found in " + bucketName);
-      return;
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Map<String, String> newMetadata = new HashMap<>();
+      newMetadata.put("keyToAddOrUpdate", "value");
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      Blob blob = storage.get(blobId);
+      if (blob == null) {
+        System.out.println("The object " + objectName + " was not found in " + bucketName);
+        return;
+      }
+
+      // Optional: set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request to upload returns a 412 error if
+      // the object's generation number does not match your precondition.
+      Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+      // Does an upsert operation, if the key already exists it's replaced by the new value,
+      // otherwise
+      // it's added.
+      BlobInfo pendingUpdate = blob.toBuilder().setMetadata(newMetadata).build();
+      storage.update(pendingUpdate, precondition);
+
+      System.out.println(
+          "Updated custom metadata for object " + objectName + " in bucket " + bucketName);
     }
-
-    // Optional: set a generation-match precondition to avoid potential race
-    // conditions and data corruptions. The request to upload returns a 412 error if
-    // the object's generation number does not match your precondition.
-    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
-
-    // Does an upsert operation, if the key already exists it's replaced by the new value, otherwise
-    // it's added.
-    BlobInfo pendingUpdate = blob.toBuilder().setMetadata(newMetadata).build();
-    storage.update(pendingUpdate, precondition);
-
-    System.out.println(
-        "Updated custom metadata for object " + objectName + " in bucket " + bucketName);
   }
-}}
+}
 // [END storage_set_metadata]

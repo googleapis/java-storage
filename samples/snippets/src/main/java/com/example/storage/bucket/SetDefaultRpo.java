@@ -30,12 +30,13 @@ public class SetDefaultRpo {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
+      bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
 
-    System.out.println("Replication was set to default for " + bucketName);
+      System.out.println("Replication was set to default for " + bucketName);
     }
   }
 }

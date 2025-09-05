@@ -31,7 +31,8 @@ public class GetHmacKey {
     // The ID of the project to which the service account belongs.
     // String projectId = "project-id";
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       HmacKey.HmacKeyMetadata metadata =
           storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
@@ -45,6 +46,7 @@ public class GetHmacKey {
       System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
       System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
       System.out.println("ETag: " + metadata.getEtag());
-    }}
+    }
+  }
 }
 // [END storage_get_hmac_key]

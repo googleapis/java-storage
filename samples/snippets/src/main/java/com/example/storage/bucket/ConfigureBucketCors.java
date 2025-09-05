@@ -30,7 +30,8 @@ public class ConfigureBucketCors {
       String bucketName,
       String origin,
       String responseHeader,
-      Integer maxAgeSeconds) throws Exception {
+      Integer maxAgeSeconds)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -47,7 +48,8 @@ public class ConfigureBucketCors {
     // requests
     // Integer maxAgeSeconds = 3600;
 
-    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
       Bucket bucket = storage.get(bucketName);
 
       // See the HttpMethod documentation for other HTTP methods available:

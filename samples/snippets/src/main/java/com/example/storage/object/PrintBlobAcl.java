@@ -51,6 +51,7 @@ public class PrintBlobAcl {
 
         System.out.printf("%s: %s %n", role, entityType);
       }
-    }}
+    }
+  }
 }
 // [END storage_print_file_acl]
