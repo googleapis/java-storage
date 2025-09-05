@@ -23,7 +23,8 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class DeleteObject {
-  public static void deleteObject(String projectId, String bucketName, String objectName) {
+  public static void deleteObject(String projectId, String bucketName, String objectName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -33,7 +34,7 @@ public class DeleteObject {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Blob blob = storage.get(bucketName, objectName);
     if (blob == null) {
       System.out.println("The object " + objectName + " wasn't found in " + bucketName);
@@ -53,5 +54,5 @@ public class DeleteObject {
 
     System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
   }
-}
+}}
 // [END storage_delete_file]

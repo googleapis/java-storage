@@ -20,19 +20,18 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class RemoveRetentionPolicy {
   public static void removeRetentionPolicy(String projectId, String bucketName)
-      throws StorageException, IllegalArgumentException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Bucket bucket =
         storage.get(
@@ -45,6 +44,7 @@ public class RemoveRetentionPolicy {
     bucket.toBuilder().setRetentionPeriod(null).build().update();
 
     System.out.println("Retention policy for " + bucketName + " has been removed");
+    }
   }
 }
 // [END storage_remove_retention_policy]

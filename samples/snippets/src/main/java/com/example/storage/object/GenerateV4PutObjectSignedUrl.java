@@ -22,7 +22,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.net.URL;
 import java.util.HashMap;
@@ -41,12 +40,12 @@ public class GenerateV4PutObjectSignedUrl {
    * details.
    */
   public static void generateV4PutObjectSignedUrl(
-      String projectId, String bucketName, String objectName) throws StorageException {
+      String projectId, String bucketName, String objectName) throws Exception {
     // String projectId = "my-project-id";
     // String bucketName = "my-bucket";
     // String objectName = "my-object";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // Define Resource
     BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(bucketName, objectName)).build();
@@ -72,5 +71,5 @@ public class GenerateV4PutObjectSignedUrl {
             + url
             + "'");
   }
-}
+}}
 // [END storage_generate_upload_signed_url_v4]

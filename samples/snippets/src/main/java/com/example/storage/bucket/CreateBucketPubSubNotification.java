@@ -33,7 +33,7 @@ public class CreateBucketPubSubNotification {
       Map<String, String> customAttributes,
       EventType[] eventTypes,
       String objectNamePrefix,
-      PayloadFormat payloadFormat) {
+      PayloadFormat payloadFormat) throws Exception {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
@@ -49,17 +49,18 @@ public class CreateBucketPubSubNotification {
     // Desired content of the Payload
     // PayloadFormat payloadFormat = PayloadFormat.JSON_API_V1.JSON_API_V1;
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    NotificationInfo notificationInfo =
-        NotificationInfo.newBuilder(topicName)
-            .setCustomAttributes(customAttributes)
-            .setEventTypes(eventTypes)
-            .setObjectNamePrefix(objectNamePrefix)
-            .setPayloadFormat(payloadFormat)
-            .build();
-    Notification notification = storage.createNotification(bucketName, notificationInfo);
-    String topic = notification.getTopic();
-    System.out.println("Successfully created notification for topic " + topic);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      NotificationInfo notificationInfo =
+          NotificationInfo.newBuilder(topicName)
+              .setCustomAttributes(customAttributes)
+              .setEventTypes(eventTypes)
+              .setObjectNamePrefix(objectNamePrefix)
+              .setPayloadFormat(payloadFormat)
+              .build();
+      Notification notification = storage.createNotification(bucketName, notificationInfo);
+      String topic = notification.getTopic();
+      System.out.println("Successfully created notification for topic " + topic);
+    }
   }
 }
 // [END storage_create_bucket_notifications]

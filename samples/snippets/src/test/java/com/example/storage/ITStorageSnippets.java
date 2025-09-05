@@ -70,7 +70,7 @@ public class ITStorageSnippets {
   }
 
   @Test
-  public void testGetServiceAccount() {
+  public void testGetServiceAccount() throws Exception {
     GetServiceAccount.getServiceAccount(PROJECT_ID);
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
 

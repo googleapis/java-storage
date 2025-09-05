@@ -25,14 +25,14 @@ import com.google.cloud.storage.StorageOptions;
 import java.util.Map;
 
 public class GetBucketMetadata {
-  public static void getBucketMetadata(String projectId, String bucketName) {
+  public static void getBucketMetadata(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // Select all fields. Fields can be selected individually e.g. Storage.BucketField.NAME
     Bucket bucket =
@@ -68,6 +68,7 @@ public class GetBucketMetadata {
       for (BucketInfo.LifecycleRule rule : bucket.getLifecycleRules()) {
         System.out.println(rule);
       }
+    }
     }
   }
 }

@@ -18,33 +18,33 @@
 package com.example.storage.transfermanager;
 
 // [START storage_transfer_manager_upload_chunks_concurrently]
+
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import com.google.cloud.storage.transfermanager.UploadResult;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 class AllowParallelCompositeUpload {
 
   public static void parallelCompositeUploadAllowed(String bucketName, List<Path> files)
-      throws IOException {
-    TransferManager transferManager =
-        TransferManagerConfig.newBuilder()
-            .setAllowParallelCompositeUpload(true)
-            .build()
-            .getService();
-    ParallelUploadConfig parallelUploadConfig =
-        ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
-    List<UploadResult> results =
-        transferManager.uploadFiles(files, parallelUploadConfig).getUploadResults();
-    for (UploadResult result : results) {
-      System.out.println(
-          "Upload for "
-              + result.getInput().getName()
-              + " completed with status "
-              + result.getStatus());
+      throws Exception {
+    TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder()
+        .setAllowParallelCompositeUpload(true)
+        .build();
+    try (TransferManager transferManager = transferManagerConfig.getService()) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      List<UploadResult> results =
+          transferManager.uploadFiles(files, parallelUploadConfig).getUploadResults();
+      for (UploadResult result : results) {
+        System.out.println(
+            "Upload for "
+                + result.getInput().getName()
+                + " completed with status "
+                + result.getStatus());
+      }
     }
   }
 }

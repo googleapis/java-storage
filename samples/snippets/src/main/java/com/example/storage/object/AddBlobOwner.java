@@ -29,7 +29,7 @@ import com.google.cloud.storage.StorageOptions;
 public class AddBlobOwner {
 
   public static void addBlobOwner(
-      String projectId, String bucketName, String userEmail, String blobName) {
+      String projectId, String bucketName, String userEmail, String blobName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -42,18 +42,18 @@ public class AddBlobOwner {
     // The name of the blob/file that you wish to modify permissions on
     // String blobName = "your-blob-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Blob blob = storage.get(BlobId.of(bucketName, blobName));
-    Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Blob blob = storage.get(BlobId.of(bucketName, blobName));
+      Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
 
-    blob.createAcl(newOwner);
-    System.out.println(
-        "Added user "
-            + userEmail
-            + " as an owner on blob "
-            + blobName
-            + " in bucket "
-            + bucketName);
-  }
+      blob.createAcl(newOwner);
+      System.out.println(
+          "Added user "
+              + userEmail
+              + " as an owner on blob "
+              + blobName
+              + " in bucket "
+              + bucketName);
+    }}
 }
 // [END storage_add_file_owner]

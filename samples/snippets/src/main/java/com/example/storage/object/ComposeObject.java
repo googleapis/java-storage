@@ -28,7 +28,7 @@ public class ComposeObject {
       String firstObjectName,
       String secondObjectName,
       String targetObjectName,
-      String projectId) {
+      String projectId) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -44,7 +44,7 @@ public class ComposeObject {
     // The ID to give the new composite object
     // String targetObjectName = "new-composite-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // Optional: set a generation-match precondition to avoid potential race
     // conditions and data corruptions. The request returns a 412 error if the
@@ -82,5 +82,5 @@ public class ComposeObject {
             + " and "
             + secondObjectName);
   }
-}
+}}
 // [END storage_compose_file]

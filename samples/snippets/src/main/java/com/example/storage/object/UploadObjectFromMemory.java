@@ -22,12 +22,11 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class UploadObjectFromMemory {
   public static void uploadObjectFromMemory(
-      String projectId, String bucketName, String objectName, String contents) throws IOException {
+      String projectId, String bucketName, String objectName, String contents) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -40,7 +39,7 @@ public class UploadObjectFromMemory {
     // The string of contents you wish to upload
     // String contents = "Hello world!";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     byte[] content = contents.getBytes(StandardCharsets.UTF_8);
@@ -72,5 +71,5 @@ public class UploadObjectFromMemory {
             + " with contents "
             + contents);
   }
-}
+}}
 // [END storage_file_upload_from_memory]

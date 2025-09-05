@@ -21,20 +21,19 @@ package com.example.storage.bucket;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 
 public class GetUniformBucketLevelAccess {
   public static void getUniformBucketLevelAccess(String projectId, String bucketName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket =
         storage.get(
             bucketName, Storage.BucketGetOption.fields(Storage.BucketField.IAMCONFIGURATION));
@@ -48,6 +47,7 @@ public class GetUniformBucketLevelAccess {
       System.out.println("Bucket will be locked on " + lockedTime);
     } else {
       System.out.println("Uniform bucket-level access is disabled for " + bucketName);
+    }
     }
   }
 }

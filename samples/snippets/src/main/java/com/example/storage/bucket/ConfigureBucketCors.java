@@ -30,7 +30,7 @@ public class ConfigureBucketCors {
       String bucketName,
       String origin,
       String responseHeader,
-      Integer maxAgeSeconds) {
+      Integer maxAgeSeconds) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -47,31 +47,32 @@ public class ConfigureBucketCors {
     // requests
     // Integer maxAgeSeconds = 3600;
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // See the HttpMethod documentation for other HTTP methods available:
-    // https://cloud.google.com/appengine/docs/standard/java/javadoc/com/google/appengine/api/urlfetch/HTTPMethod
-    HttpMethod method = HttpMethod.GET;
+      // See the HttpMethod documentation for other HTTP methods available:
+      // https://cloud.google.com/appengine/docs/standard/java/javadoc/com/google/appengine/api/urlfetch/HTTPMethod
+      HttpMethod method = HttpMethod.GET;
 
-    Cors cors =
-        Cors.newBuilder()
-            .setOrigins(ImmutableList.of(Cors.Origin.of(origin)))
-            .setMethods(ImmutableList.of(method))
-            .setResponseHeaders(ImmutableList.of(responseHeader))
-            .setMaxAgeSeconds(maxAgeSeconds)
-            .build();
+      Cors cors =
+          Cors.newBuilder()
+              .setOrigins(ImmutableList.of(Cors.Origin.of(origin)))
+              .setMethods(ImmutableList.of(method))
+              .setResponseHeaders(ImmutableList.of(responseHeader))
+              .setMaxAgeSeconds(maxAgeSeconds)
+              .build();
 
-    bucket.toBuilder().setCors(ImmutableList.of(cors)).build().update();
+      bucket.toBuilder().setCors(ImmutableList.of(cors)).build().update();
 
-    System.out.println(
-        "Bucket "
-            + bucketName
-            + " was updated with a CORS config to allow GET requests from "
-            + origin
-            + " sharing "
-            + responseHeader
-            + " responses across origins");
+      System.out.println(
+          "Bucket "
+              + bucketName
+              + " was updated with a CORS config to allow GET requests from "
+              + origin
+              + " sharing "
+              + responseHeader
+              + " responses across origins");
+    }
   }
 }
 // [END storage_cors_configuration]

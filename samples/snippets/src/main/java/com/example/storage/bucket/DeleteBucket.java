@@ -22,18 +22,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class DeleteBucket {
-  public static void deleteBucket(String projectId, String bucketName) {
+  public static void deleteBucket(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of the bucket to delete
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
     bucket.delete();
 
     System.out.println("Bucket " + bucket.getName() + " was deleted");
+    }
   }
 }
 // [END storage_delete_bucket]

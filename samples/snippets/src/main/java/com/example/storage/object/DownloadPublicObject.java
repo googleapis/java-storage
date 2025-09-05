@@ -25,7 +25,7 @@ import java.nio.file.Path;
 
 public class DownloadPublicObject {
   public static void downloadPublicObject(
-      String bucketName, String publicObjectName, Path destFilePath) {
+      String bucketName, String publicObjectName, Path destFilePath) throws Exception {
     // The name of the bucket to access
     // String bucketName = "my-bucket";
 
@@ -36,17 +36,17 @@ public class DownloadPublicObject {
     // Path destFilePath = Paths.get("/local/path/to/file.txt");
 
     // Instantiate an anonymous Google Cloud Storage client, which can only access public files
-    Storage storage = StorageOptions.getUnauthenticatedInstance().getService();
+    try (Storage storage = StorageOptions.getUnauthenticatedInstance().getService()) {
 
-    storage.downloadTo(BlobId.of(bucketName, publicObjectName), destFilePath);
+      storage.downloadTo(BlobId.of(bucketName, publicObjectName), destFilePath);
 
-    System.out.println(
-        "Downloaded public object "
-            + publicObjectName
-            + " from bucket name "
-            + bucketName
-            + " to "
-            + destFilePath);
-  }
+      System.out.println(
+          "Downloaded public object "
+              + publicObjectName
+              + " from bucket name "
+              + bucketName
+              + " to "
+              + destFilePath);
+    }}
 }
 // [END storage_download_public_file]

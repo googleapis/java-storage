@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RemoveBucketLabel {
-  public static void removeBucketLabel(String projectId, String bucketName, String labelKey) {
+  public static void removeBucketLabel(String projectId, String bucketName, String labelKey)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -35,7 +36,7 @@ public class RemoveBucketLabel {
     // The key of the label to remove from the bucket
     // String labelKey = "label-key-to-remove";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Map<String, String> labelsToRemove = new HashMap<>();
     labelsToRemove.put(labelKey, null);
@@ -51,6 +52,7 @@ public class RemoveBucketLabel {
     bucket.toBuilder().setLabels(labels).build().update();
 
     System.out.println("Removed label " + labelKey + " from bucket " + bucketName);
+  }
   }
 }
 // [END storage_remove_bucket_label]

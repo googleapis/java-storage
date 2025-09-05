@@ -27,7 +27,8 @@ import com.google.cloud.storage.StorageOptions;
 public final class AtomicMoveObject {
 
   public static void moveObject(
-      String projectId, String bucketName, String sourceObjectName, String targetObjectName) {
+      String projectId, String bucketName, String sourceObjectName, String targetObjectName)
+      throws Exception {
 
     // The ID of your GCP project
     // String projectId = "your-project-id";
@@ -41,7 +42,7 @@ public final class AtomicMoveObject {
     // The ID of your GCS object
     // String targetObjectName = "your-new-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId source = BlobId.of(bucketName, sourceObjectName);
     BlobId target = BlobId.of(bucketName, targetObjectName);
 
@@ -76,5 +77,5 @@ public final class AtomicMoveObject {
             + " to "
             + movedBlob.getBlobId().toGsUtilUriWithGeneration());
   }
-}
+}}
 // [END storage_move_object]

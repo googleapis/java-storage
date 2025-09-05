@@ -29,26 +29,26 @@ import java.util.List;
 class AllowDivideAndConquerDownload {
 
   public static void divideAndConquerDownloadAllowed(
-      List<BlobInfo> blobs, String bucketName, Path destinationDirectory) {
-    TransferManager transferManager =
-        TransferManagerConfig.newBuilder()
-            .setAllowDivideAndConquerDownload(true)
-            .build()
-            .getService();
-    ParallelDownloadConfig parallelDownloadConfig =
-        ParallelDownloadConfig.newBuilder()
-            .setBucketName(bucketName)
-            .setDownloadDirectory(destinationDirectory)
-            .build();
-    List<DownloadResult> results =
-        transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
+      List<BlobInfo> blobs, String bucketName, Path destinationDirectory) throws Exception {
+    TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder()
+        .setAllowDivideAndConquerDownload(true)
+        .build();
+    try (TransferManager transferManager = transferManagerConfig.getService()) {
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(destinationDirectory)
+              .build();
+      List<DownloadResult> results =
+          transferManager.downloadBlobs(blobs, parallelDownloadConfig).getDownloadResults();
 
-    for (DownloadResult result : results) {
-      System.out.println(
-          "Download of "
-              + result.getInput().getName()
-              + " completed with status "
-              + result.getStatus());
+      for (DownloadResult result : results) {
+        System.out.println(
+            "Download of "
+                + result.getInput().getName()
+                + " completed with status "
+                + result.getStatus());
+      }
     }
   }
 }

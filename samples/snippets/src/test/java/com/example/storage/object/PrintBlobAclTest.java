@@ -33,7 +33,7 @@ public class PrintBlobAclTest extends TestBase {
   public static final String IT_SERVICE_ACCOUNT_EMAIL = Env.IT_SERVICE_ACCOUNT_EMAIL;
 
   @Test
-  public void testPrintBlobAcls() {
+  public void testPrintBlobAcls() throws Exception {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 

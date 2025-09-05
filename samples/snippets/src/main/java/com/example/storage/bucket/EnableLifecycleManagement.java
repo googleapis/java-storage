@@ -27,14 +27,15 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 
 public class EnableLifecycleManagement {
-  public static void enableLifecycleManagement(String projectId, String bucketName) {
+  public static void enableLifecycleManagement(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
 
     // See the LifecycleRule documentation for additional info on what you can do with lifecycle
@@ -50,6 +51,7 @@ public class EnableLifecycleManagement {
         .update();
 
     System.out.println("Lifecycle management was enabled and configured for bucket " + bucketName);
+    }
   }
 }
 // [END storage_enable_bucket_lifecycle_management]

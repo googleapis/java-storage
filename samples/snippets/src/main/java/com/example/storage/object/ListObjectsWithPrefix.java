@@ -24,7 +24,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class ListObjectsWithPrefix {
   public static void listObjectsWithPrefix(
-      String projectId, String bucketName, String directoryPrefix) {
+      String projectId, String bucketName, String directoryPrefix) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -34,7 +34,7 @@ public class ListObjectsWithPrefix {
     // The directory prefix to search for
     // String directoryPrefix = "myDirectory/"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     /**
      * Using the Storage.BlobListOption.currentDirectory() option here causes the results to display
      * in a "directory-like" mode, showing what objects are in the directory you've specified, as
@@ -65,5 +65,5 @@ public class ListObjectsWithPrefix {
       System.out.println(blob.getName());
     }
   }
-}
+}}
 // [END storage_list_files_with_prefix]

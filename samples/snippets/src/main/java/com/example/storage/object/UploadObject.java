@@ -22,12 +22,11 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.IOException;
 import java.nio.file.Paths;
 
 public class UploadObject {
   public static void uploadObject(
-      String projectId, String bucketName, String objectName, String filePath) throws IOException {
+      String projectId, String bucketName, String objectName, String filePath) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -40,7 +39,7 @@ public class UploadObject {
     // The path to your file to upload
     // String filePath = "path/to/your/file"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
@@ -65,5 +64,5 @@ public class UploadObject {
     System.out.println(
         "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
   }
-}
+}}
 // [END storage_upload_file]

@@ -25,7 +25,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class CreateBucketWithTurboReplication {
   public static void createBucketWithTurboReplication(
-      String projectId, String bucketName, String location) {
+      String projectId, String bucketName, String location) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -35,7 +35,7 @@ public class CreateBucketWithTurboReplication {
     // The dual-region location to create your bucket in
     // String location = "NAM4"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Bucket bucket =
         storage.create(
@@ -51,6 +51,7 @@ public class CreateBucketWithTurboReplication {
             + bucket.getLocation()
             + " with RPO setting"
             + bucket.getRpo());
+    }
   }
 }
 // [END storage_create_bucket_turbo_replication]

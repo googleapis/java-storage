@@ -26,13 +26,13 @@ import com.google.cloud.storage.StorageRetryStrategy;
 import org.threeten.bp.Duration;
 
 public final class ConfigureRetries {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     String bucketName = "my-bucket";
     String blobName = "blob/to/delete";
     deleteBlob(bucketName, blobName);
   }
 
-  static void deleteBlob(String bucketName, String blobName) {
+  static void deleteBlob(String bucketName, String blobName) throws Exception {
     // Customize retry behavior
     RetrySettings retrySettings =
         StorageOptions.getDefaultRetrySettings().toBuilder()
@@ -53,14 +53,16 @@ public final class ConfigureRetries {
             .build();
 
     // Instantiate a client
-    Storage storage = alwaysRetryStorageOptions.getService();
+    try (Storage storage = alwaysRetryStorageOptions.getService()) {
 
-    // Delete the blob
-    BlobId blobId = BlobId.of(bucketName, blobName);
-    boolean success = storage.delete(blobId);
+      // Delete the blob
+      BlobId blobId = BlobId.of(bucketName, blobName);
+      boolean success = storage.delete(blobId);
 
-    System.out.printf(
-        "Deletion of Blob %s completed %s.%n", blobId, success ? "successfully" : "unsuccessfully");
+      System.out.printf(
+          "Deletion of Blob %s completed %s.%n", blobId,
+          success ? "successfully" : "unsuccessfully");
+    }
   }
 }
 // [END storage_configure_retries]

@@ -29,7 +29,8 @@ import java.util.List;
 
 public class RemoveBucketIamConditionalBinding {
   /** Example of removing a conditional binding to the Bucket-level IAM */
-  public static void removeBucketIamConditionalBinding(String projectId, String bucketName) {
+  public static void removeBucketIamConditionalBinding(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -38,7 +39,7 @@ public class RemoveBucketIamConditionalBinding {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Policy originalPolicy =
         storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
@@ -74,6 +75,7 @@ public class RemoveBucketIamConditionalBinding {
     Policy updatedPolicy = storage.setIamPolicy(bucketName, updatedPolicyBuilder.build());
 
     System.out.println("Conditional Binding was removed.");
+    }
   }
 }
 // [END storage_remove_bucket_conditional_iam_binding]

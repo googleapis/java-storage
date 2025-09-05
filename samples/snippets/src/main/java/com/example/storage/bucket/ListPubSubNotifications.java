@@ -24,15 +24,16 @@ import java.util.List;
 
 public class ListPubSubNotifications {
 
-  public static void listPubSubNotifications(String bucketName) {
+  public static void listPubSubNotifications(String bucketName) throws Exception {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    List<Notification> notificationList = storage.listNotifications(bucketName);
-    for (Notification notification : notificationList) {
-      System.out.println(
-          "Found notification " + notification.getTopic() + " for bucket " + bucketName);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      List<Notification> notificationList = storage.listNotifications(bucketName);
+      for (Notification notification : notificationList) {
+        System.out.println(
+            "Found notification " + notification.getTopic() + " for bucket " + bucketName);
+      }
     }
   }
 }

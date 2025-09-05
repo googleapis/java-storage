@@ -27,7 +27,7 @@ import com.google.cloud.storage.StorageOptions;
 public class RemoveBlobOwner {
 
   public static void removeBlobOwner(
-      String projectId, String bucketName, String userEmail, String blobName) {
+      String projectId, String bucketName, String userEmail, String blobName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -40,7 +40,7 @@ public class RemoveBlobOwner {
     // The name of the blob/file that you wish to modify permissions on
     // String blobName = "your-blob-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
     User ownerToRemove = new User(userEmail);
 
@@ -57,5 +57,5 @@ public class RemoveBlobOwner {
       System.out.println("User " + userEmail + " was not found");
     }
   }
-}
+}}
 // [END storage_remove_file_owner]

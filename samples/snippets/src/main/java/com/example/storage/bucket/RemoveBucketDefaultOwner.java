@@ -25,7 +25,8 @@ import com.google.cloud.storage.StorageOptions;
 
 public class RemoveBucketDefaultOwner {
 
-  public static void removeBucketDefaultOwner(String bucketName, String userEmail) {
+  public static void removeBucketDefaultOwner(String bucketName, String userEmail)
+      throws Exception {
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
@@ -33,15 +34,16 @@ public class RemoveBucketDefaultOwner {
     // The email of the user you wish to remove as a default owner
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    Bucket bucket = storage.get(bucketName);
-    User userToRemove = new User(userEmail);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      User userToRemove = new User(userEmail);
 
-    boolean success = bucket.deleteDefaultAcl(userToRemove);
-    if (success) {
-      System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
-    } else {
-      System.out.println("User " + userEmail + " was not found");
+      boolean success = bucket.deleteDefaultAcl(userToRemove);
+      if (success) {
+        System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
+      } else {
+        System.out.println("User " + userEmail + " was not found");
+      }
     }
   }
 }

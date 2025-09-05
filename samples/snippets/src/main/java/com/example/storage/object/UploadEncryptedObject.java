@@ -22,14 +22,13 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class UploadEncryptedObject {
   public static void uploadEncryptedObject(
       String projectId, String bucketName, String objectName, String filePath, String encryptionKey)
-      throws IOException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -45,7 +44,7 @@ public class UploadEncryptedObject {
     // The key to encrypt the object with
     // String encryptionKey = "TIbv/fjexq+VmtXzAlc63J4z5kFmWJ6NdAPQulQBT7g=";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
@@ -81,5 +80,5 @@ public class UploadEncryptedObject {
             + objectName
             + " with supplied encryption key");
   }
-}
+}}
 // [END storage_upload_encrypted_file]

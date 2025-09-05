@@ -26,15 +26,16 @@ import com.google.cloud.storage.StorageOptions;
 public class QuickstartSample {
   public static void main(String... args) throws Exception {
     // Instantiates a client
-    Storage storage = StorageOptions.getDefaultInstance().getService();
+    try (Storage storage = StorageOptions.getDefaultInstance().getService()) {
 
-    // The name for the new bucket
-    String bucketName = args[0]; // "my-new-bucket";
+      // The name for the new bucket
+      String bucketName = args[0]; // "my-new-bucket";
 
-    // Creates the new bucket
-    Bucket bucket = storage.create(BucketInfo.of(bucketName));
+      // Creates the new bucket
+      Bucket bucket = storage.create(BucketInfo.of(bucketName));
 
-    System.out.printf("Bucket %s created.%n", bucket.getName());
+      System.out.printf("Bucket %s created.%n", bucket.getName());
+    }
   }
 }
 // [END storage_quickstart]

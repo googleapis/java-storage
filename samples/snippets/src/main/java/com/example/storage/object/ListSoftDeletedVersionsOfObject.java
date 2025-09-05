@@ -25,7 +25,7 @@ import com.google.cloud.storage.StorageOptions;
 public class ListSoftDeletedVersionsOfObject {
 
   public static void listSoftDeletedVersionOfObject(
-      String projectId, String bucketName, String objectName) {
+      String projectId, String bucketName, String objectName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -35,7 +35,7 @@ public class ListSoftDeletedVersionsOfObject {
     // The name of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Page<Blob> blobs =
         storage.list(
             bucketName,
@@ -47,5 +47,5 @@ public class ListSoftDeletedVersionsOfObject {
       System.out.println(blob.getName());
     }
   }
-}
+}}
 // [END storage_list_soft_deleted_object_versions]

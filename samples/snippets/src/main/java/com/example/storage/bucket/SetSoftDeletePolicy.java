@@ -24,14 +24,14 @@ import com.google.cloud.storage.StorageOptions;
 import java.time.Duration;
 
 public class SetSoftDeletePolicy {
-  public static void setSoftDeletePolicy(String projectId, String bucketName) {
+  public static void setSoftDeletePolicy(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
     bucket.toBuilder()
         .setSoftDeletePolicy(
@@ -43,6 +43,7 @@ public class SetSoftDeletePolicy {
 
     System.out.println(
         "Soft delete policy for " + bucketName + " was set to a 10-day retention period");
+  }
   }
 }
 // [END storage_set_soft_delete_policy]

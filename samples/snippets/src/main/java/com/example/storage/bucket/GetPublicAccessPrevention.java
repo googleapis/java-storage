@@ -23,14 +23,15 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class GetPublicAccessPrevention {
-  public static void getPublicAccessPrevention(String projectId, String bucketName) {
+  public static void getPublicAccessPrevention(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
 
     // Gets Bucket Metadata and prints publicAccessPrevention value (either 'inherited' or
@@ -44,5 +45,7 @@ public class GetPublicAccessPrevention {
             + " for "
             + bucketName);
   }
+  }
+
 }
 // [END storage_get_public_access_prevention]

@@ -23,7 +23,8 @@ import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
 
 public class ChangeDefaultStorageClass {
-  public static void changeDefaultStorageClass(String projectId, String bucketName) {
+  public static void changeDefaultStorageClass(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -34,15 +35,16 @@ public class ChangeDefaultStorageClass {
     // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/StorageClass.html
     StorageClass storageClass = StorageClass.COLDLINE;
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
-    bucket = bucket.toBuilder().setStorageClass(storageClass).build().update();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket = bucket.toBuilder().setStorageClass(storageClass).build().update();
 
-    System.out.println(
-        "Default storage class for bucket "
-            + bucketName
-            + " has been set to "
-            + bucket.getStorageClass());
+      System.out.println(
+          "Default storage class for bucket "
+              + bucketName
+              + " has been set to "
+              + bucket.getStorageClass());
+    }
   }
 }
 // [END storage_change_default_storage_class]

@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SetObjectMetadata {
-  public static void setObjectMetadata(String projectId, String bucketName, String objectName) {
+  public static void setObjectMetadata(String projectId, String bucketName, String objectName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -37,7 +38,7 @@ public class SetObjectMetadata {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Map<String, String> newMetadata = new HashMap<>();
     newMetadata.put("keyToAddOrUpdate", "value");
     BlobId blobId = BlobId.of(bucketName, objectName);
@@ -60,5 +61,5 @@ public class SetObjectMetadata {
     System.out.println(
         "Updated custom metadata for object " + objectName + " in bucket " + bucketName);
   }
-}
+}}
 // [END storage_set_metadata]

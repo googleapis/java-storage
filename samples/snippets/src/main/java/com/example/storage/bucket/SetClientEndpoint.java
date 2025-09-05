@@ -23,18 +23,19 @@ import com.google.cloud.storage.StorageOptions;
 
 public class SetClientEndpoint {
 
-  public static void setClientEndpoint(String projectId, String endpoint) {
+  public static void setClientEndpoint(String projectId, String endpoint) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The endpoint you wish to target
     // String endpoint = "https://storage.googleapis.com"
 
-    Storage storage =
-        StorageOptions.newBuilder().setProjectId(projectId).setHost(endpoint).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).setHost(endpoint)
+        .build().getService()) {
 
-    System.out.println(
-        "Storage Client initialized with endpoint " + storage.getOptions().getHost());
+      System.out.println(
+          "Storage Client initialized with endpoint " + storage.getOptions().getHost());
+    }
   }
 }
 

@@ -119,7 +119,7 @@ public class ITTransferManagerSamples extends TestBase {
   }
 
   @Test
-  public void uploadAllowPCU() throws IOException {
+  public void uploadAllowPCU() throws Exception {
     Path baseDir = uploadDirectory.getRoot().toPath();
     try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 313 * 1024 * 1024)) {
       AllowParallelCompositeUpload.parallelCompositeUploadAllowed(

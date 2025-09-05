@@ -24,13 +24,14 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class ListObjectsWithOldVersions {
-  public static void listObjectsWithOldVersions(String projectId, String bucketName) {
+  public static void listObjectsWithOldVersions(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
     Page<Blob> blobs = bucket.list(Storage.BlobListOption.versions(true));
 
@@ -38,5 +39,5 @@ public class ListObjectsWithOldVersions {
       System.out.println(blob.getName() + "," + blob.getGeneration());
     }
   }
-}
+}}
 // [END storage_list_file_archived_generations]

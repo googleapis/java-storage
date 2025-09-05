@@ -20,20 +20,19 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 
 public class LockRetentionPolicy {
   public static void lockRetentionPolicy(String projectId, String bucketName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket =
         storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.METAGENERATION));
     Bucket lockedBucket =
@@ -42,6 +41,7 @@ public class LockRetentionPolicy {
     System.out.println("Retention period for " + bucketName + " is now locked");
     System.out.println(
         "Retention policy effective as of " + new Date(lockedBucket.getRetentionEffectiveTime()));
+    }
   }
 }
 // [END storage_lock_retention_policy]

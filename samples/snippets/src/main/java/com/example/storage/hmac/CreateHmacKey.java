@@ -21,13 +21,12 @@ package com.example.storage.hmac;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 
 public class CreateHmacKey {
   public static void createHmacKey(String serviceAccountEmail, String projectId)
-      throws StorageException {
+      throws Exception {
 
     // The service account email for which the new HMAC key will be created.
     // String serviceAccountEmail = "service-account@iam.gserviceaccount.com";
@@ -35,7 +34,7 @@ public class CreateHmacKey {
     // The ID of the project to which the service account belongs.
     // String projectId = "project-id";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()){
 
     ServiceAccount account = ServiceAccount.of(serviceAccountEmail);
     HmacKey hmacKey =
@@ -55,6 +54,6 @@ public class CreateHmacKey {
     System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
     System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
     System.out.println("ETag: " + metadata.getEtag());
-  }
+  }}
 }
 // [END storage_create_hmac_key]

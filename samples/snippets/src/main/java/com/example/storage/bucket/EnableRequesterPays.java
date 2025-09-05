@@ -22,18 +22,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class EnableRequesterPays {
-  public static void enableRequesterPays(String projectId, String bucketName) {
+  public static void enableRequesterPays(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
     bucket.toBuilder().setRequesterPays(true).build().update();
 
     System.out.println("Requester pays enabled for bucket " + bucketName);
+    }
   }
 }
 // [END storage_enable_requester_pays]

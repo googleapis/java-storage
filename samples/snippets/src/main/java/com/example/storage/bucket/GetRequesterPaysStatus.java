@@ -20,23 +20,23 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class GetRequesterPaysStatus {
   public static void getRequesterPaysStatus(String projectId, String bucketName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket =
         storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.BILLING));
 
     System.out.println("Requester pays status : " + bucket.requesterPays());
+    }
   }
 }
 // [END storage_get_requester_pays_status]

@@ -28,7 +28,7 @@ public class RotateObjectEncryptionKey {
       String bucketName,
       String objectName,
       String oldEncryptionKey,
-      String newEncryptionKey) {
+      String newEncryptionKey) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -47,7 +47,7 @@ public class RotateObjectEncryptionKey {
     // The new encryption key to use
     // String newEncryptionKey = "0mMWhFvQOdS4AmxRpo8SJxXn5MjFhbz7DkKBUdUIef8="
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(blobId);
     if (blob == null) {
@@ -74,5 +74,5 @@ public class RotateObjectEncryptionKey {
     System.out.println(
         "Rotated encryption key for object " + objectName + "in bucket " + bucketName);
   }
-}
+}}
 // [END storage_rotate_encryption_key]

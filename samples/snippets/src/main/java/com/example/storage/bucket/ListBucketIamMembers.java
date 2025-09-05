@@ -23,7 +23,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class ListBucketIamMembers {
-  public static void listBucketIamMembers(String projectId, String bucketName) {
+  public static void listBucketIamMembers(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -32,7 +32,7 @@ public class ListBucketIamMembers {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Policy policy =
         storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
@@ -48,6 +48,7 @@ public class ListBucketIamMembers {
         System.out.printf("Condition Description: %s\n", binding.getCondition().getDescription());
         System.out.printf("Condition Expression: %s\n", binding.getCondition().getExpression());
       }
+    }
     }
   }
 }

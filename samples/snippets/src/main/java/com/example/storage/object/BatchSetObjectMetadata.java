@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class BatchSetObjectMetadata {
   public static void batchSetObjectMetadata(
-      String projectId, String bucketName, String pathPrefix) {
+      String projectId, String bucketName, String pathPrefix) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -44,7 +44,7 @@ public class BatchSetObjectMetadata {
     // updated
     // String pathPrefix = "yourPath/";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Map<String, String> newMetadata = new HashMap<>();
     newMetadata.put("keyToAddOrUpdate", "value");
     Page<Blob> blobs =
@@ -93,5 +93,5 @@ public class BatchSetObjectMetadata {
       }
     }
   }
-}
+}}
 // [END storage_batch_request]

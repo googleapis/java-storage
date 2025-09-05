@@ -20,20 +20,19 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 
 public class GetRetentionPolicy {
   public static void getRetentionPolicy(String projectId, String bucketName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket =
         storage.get(
             bucketName, Storage.BucketGetOption.fields(Storage.BucketField.RETENTION_POLICY));
@@ -45,6 +44,7 @@ public class GetRetentionPolicy {
     }
     if (bucket.getRetentionEffectiveTime() != null) {
       System.out.println("Effective Time: " + new Date(bucket.getRetentionEffectiveTime()));
+    }
     }
   }
 }

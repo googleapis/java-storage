@@ -20,14 +20,13 @@ package com.example.storage.object;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Date;
 import java.util.Map;
 
 public class GetObjectMetadata {
   public static void getObjectMetadata(String projectId, String bucketName, String blobName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -37,7 +36,7 @@ public class GetObjectMetadata {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // Select all fields
     // Fields can be selected individually e.g. Storage.BlobField.CACHE_CONTROL
@@ -84,5 +83,5 @@ public class GetObjectMetadata {
       }
     }
   }
-}
+}}
 // [END storage_get_metadata]

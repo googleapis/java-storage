@@ -23,18 +23,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class CreateBucket {
-  public static void createBucket(String projectId, String bucketName) {
+  public static void createBucket(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
+      Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
 
-    System.out.println("Created bucket " + bucket.getName());
+      System.out.println("Created bucket " + bucket.getName());
+    }
   }
 }
 // [END storage_create_bucket]

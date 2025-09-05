@@ -23,7 +23,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +32,7 @@ public class StreamObjectDownload {
 
   public static void streamObjectDownload(
       String projectId, String bucketName, String objectName, String targetFile)
-      throws IOException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -47,7 +46,7 @@ public class StreamObjectDownload {
     // String targetFile = "path/to/your/file";
     Path targetFilePath = Paths.get(targetFile);
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     try (ReadChannel reader = storage.reader(BlobId.of(bucketName, objectName));
         FileChannel targetFileChannel =
             FileChannel.open(targetFilePath, StandardOpenOption.WRITE)) {
@@ -64,5 +63,5 @@ public class StreamObjectDownload {
               + " using a ReadChannel.");
     }
   }
-}
+}}
 // [END storage_stream_file_download]

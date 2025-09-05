@@ -21,12 +21,11 @@ package com.example.storage.bucket;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketTargetOption;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetBucketDefaultKmsKey {
   public static void setBucketDefaultKmsKey(String projectId, String bucketName, String kmsKeyName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -37,7 +36,7 @@ public class SetBucketDefaultKmsKey {
     // String kmsKeyName =
     // "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     // first look up the bucket, so we will have its metageneration
     Bucket bucket = storage.get(bucketName);
 
@@ -51,6 +50,7 @@ public class SetBucketDefaultKmsKey {
             + updated.getDefaultKmsKeyName()
             + "was set to default for bucket "
             + bucketName);
+    }
   }
 }
 // [END storage_set_bucket_default_kms_key]

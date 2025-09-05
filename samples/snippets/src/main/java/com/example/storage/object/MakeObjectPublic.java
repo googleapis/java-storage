@@ -23,16 +23,17 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class MakeObjectPublic {
-  public static void makeObjectPublic(String projectId, String bucketName, String objectName) {
+  public static void makeObjectPublic(String projectId, String bucketName, String objectName)
+      throws Exception {
     // String projectId = "your-project-id";
     // String bucketName = "your-bucket-name";
     // String objectName = "your-object-name";
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
 
     System.out.println(
         "Object " + objectName + " in bucket " + bucketName + " was made publicly readable");
   }
-}
+}}
 // [END storage_make_public]

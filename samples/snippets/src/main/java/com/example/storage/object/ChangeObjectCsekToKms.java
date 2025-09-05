@@ -28,7 +28,7 @@ public class ChangeObjectCsekToKms {
       String bucketName,
       String objectName,
       String decryptionKey,
-      String kmsKeyName) {
+      String kmsKeyName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -46,7 +46,7 @@ public class ChangeObjectCsekToKms {
     // String kmsKeyName =
     // "projects/your-project-id/locations/global/keyRings/your-key-ring/cryptoKeys/your-key";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(blobId);
     if (blob == null) {
@@ -77,5 +77,5 @@ public class ChangeObjectCsekToKms {
             + kmsKeyName
             + " instead of a customer-supplied encryption key");
   }
-}
+}}
 // [END storage_object_csek_to_cmek]

@@ -21,12 +21,11 @@ package com.example.storage.object;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetTemporaryHold {
   public static void setTemporaryHold(String projectId, String bucketName, String objectName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,7 +35,7 @@ public class SetTemporaryHold {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(blobId);
     if (blob == null) {
@@ -53,5 +52,5 @@ public class SetTemporaryHold {
 
     System.out.println("Temporary hold was set for " + objectName);
   }
-}
+}}
 // [END storage_set_temporary_hold]

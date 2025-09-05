@@ -111,7 +111,7 @@ public class ITHmacSnippets extends TestBase {
   }
 
   @Test
-  public void testDeleteHmacKey() {
+  public void testDeleteHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
     HmacKeyMetadata metadata =
         storage.updateHmacKeyState(hmacKey.getMetadata(), HmacKeyState.INACTIVE);
@@ -121,7 +121,7 @@ public class ITHmacSnippets extends TestBase {
   }
 
   @Test
-  public void testListHmacKeys() {
+  public void testListHmacKeys() throws Exception {
     // Create 2 HMAC keys
     final HmacKey one =
         storage.createHmacKey(

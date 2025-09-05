@@ -23,19 +23,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class ListSoftDeletedObjects {
-  public static void listSoftDeletedObjects(String projectId, String bucketName) {
+  public static void listSoftDeletedObjects(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Page<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.softDeleted(true));
 
     for (Blob blob : blobs.iterateAll()) {
       System.out.println(blob.getName());
     }
   }
-}
+}}
 // [END storage_list_soft_deleted_objects]

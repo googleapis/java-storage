@@ -30,7 +30,7 @@ public class CopyDeleteObject {
       String sourceBucketName,
       String sourceObjectName,
       String targetBucketName,
-      String targetObjectName) {
+      String targetObjectName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -46,7 +46,7 @@ public class CopyDeleteObject {
     // The ID of your GCS object
     // String targetObjectName = "your-new-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId source = BlobId.of(sourceBucketName, sourceObjectName);
     BlobId target = BlobId.of(targetBucketName, targetObjectName);
 
@@ -84,5 +84,5 @@ public class CopyDeleteObject {
             + " in bucket "
             + copiedObject.getBucket());
   }
-}
+}}
 // [END storage_move_file]

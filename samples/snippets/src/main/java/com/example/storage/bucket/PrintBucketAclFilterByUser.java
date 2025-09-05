@@ -26,7 +26,8 @@ import com.google.cloud.storage.StorageOptions;
 
 public class PrintBucketAclFilterByUser {
 
-  public static void printBucketAclFilterByUser(String bucketName, String userEmail) {
+  public static void printBucketAclFilterByUser(String bucketName, String userEmail)
+      throws Exception {
 
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
@@ -34,12 +35,13 @@ public class PrintBucketAclFilterByUser {
     // The email of the user whose acl is being retrieved.
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    Acl userAcl = bucket.getAcl(new User(userEmail));
-    String userRole = userAcl.getRole().name();
-    System.out.println("User " + userEmail + " has role " + userRole);
+      Acl userAcl = bucket.getAcl(new User(userEmail));
+      String userRole = userAcl.getRole().name();
+      System.out.println("User " + userEmail + " has role " + userRole);
+    }
   }
 }
 

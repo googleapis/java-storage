@@ -23,7 +23,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -37,7 +36,7 @@ public class DownloadByteRange {
       long startByte,
       long endBytes,
       String destFileName)
-      throws IOException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -56,7 +55,7 @@ public class DownloadByteRange {
     // The path to which the file should be downloaded
     // String destFileName = '/local/path/to/file.txt';
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, blobName);
     try (ReadChannel from = storage.reader(blobId);
         FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
@@ -70,5 +69,5 @@ public class DownloadByteRange {
           blobId.toGsUtilUri(), destFileName, startByte, endBytes);
     }
   }
-}
+}}
 // [END storage_download_byte_range]

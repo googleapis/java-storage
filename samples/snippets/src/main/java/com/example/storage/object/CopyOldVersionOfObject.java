@@ -27,7 +27,7 @@ public class CopyOldVersionOfObject {
       String bucketName,
       String objectToCopy,
       long generationToCopy,
-      String newObjectName) {
+      String newObjectName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -43,7 +43,7 @@ public class CopyOldVersionOfObject {
     // What to name the new object with the old data from objectToCopy
     // String newObjectName = "your-new-object";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // Optional: set a generation-match precondition to avoid potential race
     // conditions and data corruptions. The request returns a 412 error if the
@@ -79,5 +79,5 @@ public class CopyOldVersionOfObject {
             + " was copied to "
             + newObjectName);
   }
-}
+}}
 // [END storage_copy_file_archived_generation]

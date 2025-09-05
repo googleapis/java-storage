@@ -26,7 +26,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class ChangeObjectStorageClass {
   public static void changeObjectStorageClass(
-      String projectId, String bucketName, String objectName) {
+      String projectId, String bucketName, String objectName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,7 +36,7 @@ public class ChangeObjectStorageClass {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob sourceBlob = storage.get(blobId);
     if (sourceBlob == null) {
@@ -75,5 +75,5 @@ public class ChangeObjectStorageClass {
             + " had its storage class set to "
             + updatedBlob.getStorageClass().name());
   }
-}
+}}
 // [END storage_change_file_storage_class]

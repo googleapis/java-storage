@@ -22,19 +22,21 @@ import com.google.cloud.storage.StorageOptions;
 
 public class DeleteBucketPubSubNotification {
 
-  public static void deleteBucketPubSubNotification(String bucketName, String notificationId) {
+  public static void deleteBucketPubSubNotification(String bucketName, String notificationId)
+      throws Exception {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
     // The NotificationId for the notification you would like to delete
     // String notificationId = "your-unique-notification-id"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    boolean success = storage.deleteNotification(bucketName, notificationId);
-    if (success) {
-      System.out.println("Successfully deleted notification");
-    } else {
-      System.out.println("Failed to find notification");
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      boolean success = storage.deleteNotification(bucketName, notificationId);
+      if (success) {
+        System.out.println("Successfully deleted notification");
+      } else {
+        System.out.println("Failed to find notification");
+      }
     }
   }
 }

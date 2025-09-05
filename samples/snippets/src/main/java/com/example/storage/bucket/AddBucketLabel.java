@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class AddBucketLabel {
   public static void addBucketLabel(
-      String projectId, String bucketName, String labelKey, String labelValue) {
+      String projectId, String bucketName, String labelKey, String labelValue) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -42,16 +42,18 @@ public class AddBucketLabel {
     Map<String, String> newLabels = new HashMap<>();
     newLabels.put(labelKey, labelValue);
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
-    Map<String, String> labels = bucket.getLabels();
-    if (labels != null) {
-      newLabels.putAll(labels);
-    }
-    bucket.toBuilder().setLabels(newLabels).build().update();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      Map<String, String> labels = bucket.getLabels();
+      if (labels != null) {
+        newLabels.putAll(labels);
+      }
+      bucket.toBuilder().setLabels(newLabels).build().update();
 
-    System.out.println(
-        "Added label " + labelKey + " with value " + labelValue + " to bucket " + bucketName + ".");
+      System.out.println(
+          "Added label " + labelKey + " with value " + labelValue + " to bucket " + bucketName
+              + ".");
+    }
   }
 }
 // [END storage_add_bucket_label]

@@ -27,7 +27,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class UploadKmsEncryptedObject {
   public static void uploadKmsEncryptedObject(
-      String projectId, String bucketName, String objectName, String kmsKeyName) {
+      String projectId, String bucketName, String objectName, String kmsKeyName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -40,7 +40,7 @@ public class UploadKmsEncryptedObject {
     // The name of the KMS key to encrypt with
     // String kmsKeyName = "projects/my-project/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     byte[] data = "Hello, World!".getBytes(UTF_8);
 
     BlobId blobId = BlobId.of(bucketName, objectName);
@@ -73,5 +73,5 @@ public class UploadKmsEncryptedObject {
             + " encrypted with "
             + kmsKeyName);
   }
-}
+}}
 // [END storage_upload_with_kms_key]

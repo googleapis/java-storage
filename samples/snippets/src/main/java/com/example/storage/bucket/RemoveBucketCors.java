@@ -26,14 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RemoveBucketCors {
-  public static void removeBucketCors(String projectId, String bucketName) {
+  public static void removeBucketCors(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket =
         storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.CORS));
 
@@ -46,6 +46,7 @@ public class RemoveBucketCors {
     // Update bucket to remove CORS.
     bucket.toBuilder().setCors(cors).build().update();
     System.out.println("Removed CORS configuration from bucket " + bucketName);
+    }
   }
 }
 // [END storage_remove_cors_configuration]

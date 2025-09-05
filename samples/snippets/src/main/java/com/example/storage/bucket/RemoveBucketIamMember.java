@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RemoveBucketIamMember {
-  public static void removeBucketIamMember(String projectId, String bucketName) {
+  public static void removeBucketIamMember(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -35,7 +35,7 @@ public class RemoveBucketIamMember {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     Policy originalPolicy =
         storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
@@ -65,6 +65,7 @@ public class RemoveBucketIamMember {
     Policy updatedPolicy = storage.setIamPolicy(bucketName, updatedPolicyBuilder.build());
 
     System.out.printf("Removed %s with role %s from %s\n", member, role, bucketName);
+  }
   }
 }
 // [END storage_remove_bucket_iam_member]

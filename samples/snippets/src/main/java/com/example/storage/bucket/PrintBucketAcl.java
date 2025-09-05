@@ -26,11 +26,11 @@ import java.util.List;
 
 public class PrintBucketAcl {
 
-  public static void printBucketAcl(String projectId, String bucketName) {
+  public static void printBucketAcl(String projectId, String bucketName) throws Exception {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     Bucket bucket = storage.get(bucketName);
     List<Acl> bucketAcls = bucket.getAcl();
 
@@ -45,6 +45,7 @@ public class PrintBucketAcl {
       String entityType = acl.getEntity().getType().name();
 
       System.out.printf("%s: %s \n", role, entityType);
+    }
     }
   }
 }

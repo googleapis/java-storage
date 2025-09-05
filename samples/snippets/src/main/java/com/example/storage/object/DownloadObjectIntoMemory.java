@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 
 public class DownloadObjectIntoMemory {
   public static void downloadObjectIntoMemory(
-      String projectId, String bucketName, String objectName) {
+      String projectId, String bucketName, String objectName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -34,7 +34,7 @@ public class DownloadObjectIntoMemory {
     // The ID of your GCS object
     // String objectName = "your-object-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
     byte[] content = storage.readAllBytes(bucketName, objectName);
     System.out.println(
         "The contents of "
@@ -44,5 +44,5 @@ public class DownloadObjectIntoMemory {
             + " are: "
             + new String(content, StandardCharsets.UTF_8));
   }
-}
+}}
 // [END storage_file_download_into_memory]

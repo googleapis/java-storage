@@ -32,7 +32,7 @@ public class CreateBucketDualRegion {
       String bucketName,
       String location,
       String firstRegion,
-      String secondRegion) {
+      String secondRegion) throws Exception {
     // The ID of your GCP project.
     // String projectId = "your-project-id";
 
@@ -51,30 +51,31 @@ public class CreateBucketDualRegion {
     // See this documentation for other valid locations and regions:
     // https://cloud.google.com/storage/docs/locations
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    CustomPlacementConfig config =
-        CustomPlacementConfig.newBuilder()
-            .setDataLocations(Arrays.asList(firstRegion, secondRegion))
-            .build();
+      CustomPlacementConfig config =
+          CustomPlacementConfig.newBuilder()
+              .setDataLocations(Arrays.asList(firstRegion, secondRegion))
+              .build();
 
-    BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName)
-            .setLocation(location)
-            .setCustomPlacementConfig(config)
-            .build();
+      BucketInfo bucketInfo =
+          BucketInfo.newBuilder(bucketName)
+              .setLocation(location)
+              .setCustomPlacementConfig(config)
+              .build();
 
-    Bucket bucket = storage.create(bucketInfo);
+      Bucket bucket = storage.create(bucketInfo);
 
-    System.out.println(
-        "Created bucket "
-            + bucket.getName()
-            + " in location "
-            + bucket.getLocation()
-            + " with location type "
-            + bucket.getLocationType()
-            + " with Custom Placement Config "
-            + bucket.getCustomPlacementConfig().toString());
+      System.out.println(
+          "Created bucket "
+              + bucket.getName()
+              + " in location "
+              + bucket.getLocation()
+              + " with location type "
+              + bucket.getLocationType()
+              + " with Custom Placement Config "
+              + bucket.getCustomPlacementConfig().toString());
+    }
   }
 }
 // [END storage_create_bucket_dual_region]

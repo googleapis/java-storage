@@ -21,13 +21,12 @@ package com.example.storage.bucket;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketTargetOption;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import java.time.Duration;
 
 public class SetRetentionPolicy {
   public static void setRetentionPolicy(
-      String projectId, String bucketName, Long retentionPeriodSeconds) throws StorageException {
+      String projectId, String bucketName, Long retentionPeriodSeconds) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -37,7 +36,7 @@ public class SetRetentionPolicy {
     // The retention period for objects in bucket
     // Long retentionPeriodSeconds = 3600L; // 1 hour in seconds
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // first look up the bucket so we will have its metageneration
     Bucket bucket = storage.get(bucketName);
@@ -53,6 +52,7 @@ public class SetRetentionPolicy {
             + bucketName
             + " is now "
             + bucketWithRetentionPolicy.getRetentionPeriodDuration());
+    }
   }
 }
 // [END storage_set_retention_policy]

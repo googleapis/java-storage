@@ -24,14 +24,15 @@ import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
 
 public class CreateBucketWithStorageClassAndLocation {
-  public static void createBucketWithStorageClassAndLocation(String projectId, String bucketName) {
+  public static void createBucketWithStorageClassAndLocation(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
     // See the StorageClass documentation for other valid storage classes:
     // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/StorageClass.html
@@ -55,6 +56,7 @@ public class CreateBucketWithStorageClassAndLocation {
             + bucket.getLocation()
             + " with storage class "
             + bucket.getStorageClass());
+    }
   }
 }
 // [END storage_create_bucket_class_location]
