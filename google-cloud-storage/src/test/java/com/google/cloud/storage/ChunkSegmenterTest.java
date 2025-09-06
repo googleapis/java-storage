@@ -21,6 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -170,6 +171,78 @@ final class ChunkSegmenterTest {
         () -> assertThat(buf1.remaining()).isEqualTo(0),
         () -> assertThat(buf2.remaining()).isEqualTo(1),
         () -> assertThat(actual).isEqualTo(expected));
+  }
+
+  @Example
+  void maxBytesToConsume_unaligned() throws Exception {
+
+    ChecksummedTestContent ctc = ChecksummedTestContent.gen(64);
+
+    ChunkSegmenter segmenter = new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 6, 3);
+
+    List<ChecksummedTestContent> chunks = ctc.chunkup(4);
+    ByteBuffer[] buffers =
+        chunks.stream().map(ChecksummedTestContent::asByteBuffer).toArray(ByteBuffer[]::new);
+    buffers[1].position(1);
+
+    ChecksummedTestContent slice = ctc.slice(5, 37);
+    List<ByteString> expected =
+        slice.chunkup(6).stream()
+            .map(ChecksummedTestContent::asByteBuffer)
+            .map(ByteStringStrategy.noCopy())
+            .collect(Collectors.toList());
+
+    ChunkSegment[] segments = segmenter.segmentBuffers(buffers, 1, buffers.length - 2, true, 37);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Example
+  void maxBytesToConsume_aligned() throws Exception {
+
+    ChecksummedTestContent ctc = ChecksummedTestContent.gen(64);
+
+    ChunkSegmenter segmenter = new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 6, 3);
+
+    List<ChecksummedTestContent> chunks = ctc.chunkup(4);
+    ByteBuffer[] buffers =
+        chunks.stream().map(ChecksummedTestContent::asByteBuffer).toArray(ByteBuffer[]::new);
+    buffers[1].position(1);
+
+    ChecksummedTestContent slice = ctc.slice(5, 36);
+    List<ByteString> expected =
+        slice.chunkup(6).stream()
+            .map(ChecksummedTestContent::asByteBuffer)
+            .map(ByteStringStrategy.noCopy())
+            .collect(Collectors.toList());
+
+    ChunkSegment[] segments = segmenter.segmentBuffers(buffers, 1, buffers.length - 2, false, 37);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Example
+  void alignedConsumeForLargeBuffersOnlyConsumesAligned() throws Exception {
+
+    ChecksummedTestContent ctc = ChecksummedTestContent.gen(2048 + 13);
+
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), 2048, 256);
+
+    ChecksummedTestContent slice = ctc.slice(0, 2048);
+    List<ByteString> expected =
+        slice.chunkup(2048).stream()
+            .map(ChecksummedTestContent::asByteBuffer)
+            .map(ByteStringStrategy.noCopy())
+            .collect(Collectors.toList());
+
+    ByteBuffer buf = ctc.asByteBuffer();
+    ChunkSegment[] segments = segmenter.segmentBuffers(new ByteBuffer[] {buf}, 0, 1, false);
+    List<ByteString> actual =
+        Arrays.stream(segments).map(ChunkSegment::getB).collect(Collectors.toList());
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Provide("TestData")

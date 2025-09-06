@@ -18,8 +18,10 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.math.IntMath;
+import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import java.math.RoundingMode;
 import java.nio.ByteBuffer;
@@ -97,66 +99,96 @@ final class ChunkSegmenter {
     // turn this into a single branch, rather than multiple that would need to be checked each
     // element of the iteration
     if (allowUnalignedBlocks) {
-      return segmentWithUnaligned(bbs, offset, length);
+      return segmentWithUnaligned(bbs, offset, length, Long.MAX_VALUE);
     } else {
-      return segmentWithoutUnaligned(bbs, offset, length);
+      return segmentWithoutUnaligned(bbs, offset, length, Long.MAX_VALUE);
     }
   }
 
-  private ChunkSegment[] segmentWithUnaligned(ByteBuffer[] bbs, int offset, int length) {
+  ChunkSegment[] segmentBuffers(
+      ByteBuffer[] bbs,
+      int offset,
+      int length,
+      boolean allowUnalignedBlocks,
+      long maxBytesToConsume) {
+    // turn this into a single branch, rather than multiple that would need to be checked each
+    // element of the iteration
+    if (allowUnalignedBlocks) {
+      return segmentWithUnaligned(bbs, offset, length, maxBytesToConsume);
+    } else {
+      long misaligned = maxBytesToConsume % blockSize;
+      long alignedMaxBytesToConsume = maxBytesToConsume - misaligned;
+      return segmentWithoutUnaligned(bbs, offset, length, alignedMaxBytesToConsume);
+    }
+  }
+
+  private ChunkSegment[] segmentWithUnaligned(
+      ByteBuffer[] bbs, int offset, int length, long maxBytesToConsume) {
     Deque<ChunkSegment> data = new ArrayDeque<>();
 
+    long consumed = 0;
     for (int i = offset; i < length; i++) {
       ByteBuffer buffer = bbs[i];
       int remaining;
-      while ((remaining = buffer.remaining()) > 0) {
-        consumeBytes(data, remaining, buffer);
+      while ((remaining = buffer.remaining()) > 0 && consumed < maxBytesToConsume) {
+        long remainingConsumable = maxBytesToConsume - consumed;
+        int toConsume = remaining;
+        if (remainingConsumable < remaining) {
+          toConsume = Math.toIntExact(remainingConsumable);
+        }
+        long consumeBytes = consumeBytes(data, toConsume, buffer);
+        consumed += consumeBytes;
       }
     }
 
     return data.toArray(new ChunkSegment[0]);
   }
 
-  private ChunkSegment[] segmentWithoutUnaligned(ByteBuffer[] bbs, int offset, int length) {
+  private ChunkSegment[] segmentWithoutUnaligned(
+      ByteBuffer[] bbs, int offset, int length, long maxBytesToConsume) {
     Deque<ChunkSegment> data = new ArrayDeque<>();
 
-    final long totalRemaining = Buffers.totalRemaining(bbs, offset, length);
+    long buffersTotalRemaining = Buffers.totalRemaining(bbs, offset, length);
+    final long totalRemaining = Math.min(maxBytesToConsume, buffersTotalRemaining);
     long consumedSoFar = 0;
 
     int currentBlockPending = blockSize;
 
+    outerloop:
     for (int i = offset; i < length; i++) {
       ByteBuffer buffer = bbs[i];
       int remaining;
       while ((remaining = buffer.remaining()) > 0) {
         long overallRemaining = totalRemaining - consumedSoFar;
         if (overallRemaining < blockSize && currentBlockPending == blockSize) {
-          break;
+          break outerloop;
         }
 
         int numBytesConsumable;
-        if (remaining >= blockSize) {
+        if (remaining >= blockSize && currentBlockPending == blockSize) {
           int blockCount = IntMath.divide(remaining, blockSize, RoundingMode.DOWN);
           numBytesConsumable = blockCount * blockSize;
-        } else if (currentBlockPending < blockSize) {
-          numBytesConsumable = currentBlockPending;
-          currentBlockPending = blockSize;
         } else {
-          numBytesConsumable = remaining;
-          currentBlockPending = currentBlockPending - remaining;
+          numBytesConsumable = Math.min(remaining, currentBlockPending);
         }
         if (numBytesConsumable <= 0) {
-          continue;
+          break outerloop;
         }
 
-        consumedSoFar += consumeBytes(data, numBytesConsumable, buffer);
+        int consumed = consumeBytes(data, numBytesConsumable, buffer);
+        int currentBlockPendingLessConsumed = currentBlockPending - consumed;
+        currentBlockPending = currentBlockPendingLessConsumed % blockSize;
+        if (currentBlockPending == 0) {
+          currentBlockPending = blockSize;
+        }
+        consumedSoFar += consumed;
       }
     }
 
     return data.toArray(new ChunkSegment[0]);
   }
 
-  private long consumeBytes(Deque<ChunkSegment> data, int numBytesConsumable, ByteBuffer buffer) {
+  private int consumeBytes(Deque<ChunkSegment> data, int numBytesConsumable, ByteBuffer buffer) {
     // either no chunk or most recent chunk is full, start a new one
     ChunkSegment peekLast = data.peekLast();
     if (peekLast == null || peekLast.b.size() == maxSegmentSize) {
@@ -167,7 +199,8 @@ final class ChunkSegmenter {
     } else {
       ChunkSegment chunkSoFar = data.pollLast();
       //noinspection ConstantConditions -- covered by peekLast check above
-      int limit = Math.min(numBytesConsumable, maxSegmentSize - chunkSoFar.b.size());
+      int limit =
+          Ints.min(buffer.remaining(), numBytesConsumable, maxSegmentSize - chunkSoFar.b.size());
       ChunkSegment datum = newSegment(buffer, limit);
       ChunkSegment plus = chunkSoFar.concat(datum);
       data.addLast(plus);
@@ -217,6 +250,15 @@ final class ChunkSegmenter {
 
     public boolean isOnlyFullBlocks() {
       return onlyFullBlocks;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("crc32c", crc32c)
+          .add("onlyFullBlocks", onlyFullBlocks)
+          .add("b", b)
+          .toString();
     }
   }
 }

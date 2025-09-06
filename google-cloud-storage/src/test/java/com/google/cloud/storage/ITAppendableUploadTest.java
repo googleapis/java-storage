@@ -263,7 +263,8 @@ public final class ITAppendableUploadTest {
   }
 
   private void checkTestbenchIssue733() {
-    if (p.uploadConfig.getCloseAction() == CloseAction.FINALIZE_WHEN_CLOSING) {
+    if (backend == Backend.TEST_BENCH
+        && p.uploadConfig.getCloseAction() == CloseAction.FINALIZE_WHEN_CLOSING) {
       int estimatedMessageCount = 0;
       FlushPolicy flushPolicy = p.uploadConfig.getFlushPolicy();
       if (flushPolicy instanceof MinFlushSizeFlushPolicy) {

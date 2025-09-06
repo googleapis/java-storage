@@ -136,7 +136,8 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
     RewindableContent rewindableContent = RewindableContent.of(srcs, srcsOffset, srcsLength);
     long totalBufferRemaining = rewindableContent.getLength();
 
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, true);
+    ChunkSegment[] data =
+        chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength, true, availableCapacity);
     if (data.length == 0) {
       return 0;
     }
