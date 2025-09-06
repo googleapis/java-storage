@@ -3059,6 +3059,15 @@ final class UnifiedOpts {
     static NamedField nested(NamedField parent, NamedField child) {
       return new NestedNamedField(parent, child);
     }
+
+    static NamedField root(NamedField f) {
+      if (f instanceof NestedNamedField) {
+        NestedNamedField nested = (NestedNamedField) f;
+        return root(nested.getParent());
+      } else {
+        return f;
+      }
+    }
   }
 
   private static CommonObjectRequestParams.Builder customerSuppliedKey(

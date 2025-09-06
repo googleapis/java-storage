@@ -260,7 +260,8 @@ final class JsonConversions {
 
   private final Codec<BlobInfo.ObjectCustomContextPayload, ObjectCustomContextPayload>
       objectCustomContextPayloadCodec =
-          Codec.of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode);
+          Codec.of(this::objectCustomContextPayloadEncode, this::objectCustomContextPayloadDecode)
+              .nullable();
 
   private JsonConversions() {}
 

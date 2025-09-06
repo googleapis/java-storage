@@ -22,6 +22,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BlobInfo.ObjectContexts;
+import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
@@ -39,6 +41,7 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersPr
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -133,6 +136,66 @@ public final class ITNestedUpdateMaskTest {
     assertThat(gen2.getMetadata()).isEqualTo(param.expected);
   }
 
+  @Test
+  public void testBlobContexts() {
+    ObjectContexts initial = contextsFromMap(param.initial);
+    ObjectContexts update = contextsFromMap(param.update);
+    ObjectContexts expected = contextsFromMap(param.expected);
+
+    String blobName = generator.randomObjectName();
+    BlobInfo.Builder builder = BlobInfo.newBuilder(bucket, blobName);
+    if (initial != null) {
+      builder.setContexts(initial);
+    }
+    BlobInfo info = builder.build();
+    Blob gen1 = storage.create(info, BlobTargetOption.doesNotExist());
+
+    BlobInfo modified = gen1.toBuilder().setContexts(update).build();
+    Blob gen2 = storage.update(modified, BlobTargetOption.metagenerationMatch());
+    assertContextsWithEqualValues(gen2.getContexts(), expected);
+  }
+
+  @Test
+  public void testBlob_metadataAndContext() {
+    ObjectContexts initial = contextsFromMap(param.initial);
+    ObjectContexts update = contextsFromMap(param.update);
+    ObjectContexts expected = contextsFromMap(param.expected);
+
+    String blobName = generator.randomObjectName();
+    BlobInfo.Builder builder = BlobInfo.newBuilder(bucket, blobName);
+    if (initial != null) {
+      builder.setContexts(initial);
+    }
+    if (param.initial != null) {
+      builder.setMetadata(param.initial);
+    }
+
+    BlobInfo info = builder.build();
+    Blob gen1 = storage.create(info, BlobTargetOption.doesNotExist());
+
+    BlobInfo modified = gen1.toBuilder().setContexts(update).setMetadata(param.update).build();
+    Blob gen2 = storage.update(modified, BlobTargetOption.metagenerationMatch());
+    assertContextsWithEqualValues(gen2.getContexts(), expected);
+    assertThat(gen2.getMetadata()).isEqualTo(param.expected);
+  }
+
+  private static void assertContextsWithEqualValues(
+      @Nullable ObjectContexts actual, @Nullable ObjectContexts expected) {
+    if (expected != null && !expected.getCustom().isEmpty() && actual != null) {
+      Map<String, ObjectCustomContextPayload> actualCustom = actual.getCustom();
+      Map<String, ObjectCustomContextPayload> expectedCustom = expected.getCustom();
+
+      Map<String, String> actualValues =
+          Maps.transformValues(actualCustom, ObjectCustomContextPayload::getValue);
+      Map<String, String> expectedValues =
+          Maps.transformValues(expectedCustom, ObjectCustomContextPayload::getValue);
+
+      assertThat(actualValues).isEqualTo(expectedValues);
+    } else {
+      assertThat(actual).isEqualTo(expected);
+    }
+  }
+
   private BlobInfo newBlobInfo(Map<String, String> metadata) {
     String blobName = generator.randomObjectName();
     BlobInfo.Builder builder = BlobInfo.newBuilder(bucket, blobName);
@@ -148,6 +211,17 @@ public final class ITNestedUpdateMaskTest {
       builder.setLabels(metadata);
     }
     return builder.build();
+  }
+
+  private @Nullable ObjectContexts contextsFromMap(
+      @Nullable Map<@NonNull String, @Nullable String> m) {
+    if (m == null) {
+      return null;
+    }
+    Map<@NonNull String, ObjectCustomContextPayload> transformed =
+        Maps.transformValues(
+            m, v -> v == null ? null : ObjectCustomContextPayload.newBuilder().setValue(v).build());
+    return ObjectContexts.newBuilder().setCustom(transformed).build();
   }
 
   private static final class Param {

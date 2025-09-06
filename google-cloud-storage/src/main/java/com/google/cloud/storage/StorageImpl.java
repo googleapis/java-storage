@@ -85,6 +85,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -527,31 +528,59 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     } else {
       StorageObject tmp = codecs.blobInfo().encode(updated);
       StorageObject pb = new StorageObject();
-      Stream.of(
-              modifiedFields.stream(),
-              BlobField.REQUIRED_FIELDS.stream(),
-              Stream.of(BlobField.GENERATION))
-          .flatMap(s -> s) // .flatten()
-          .map(
-              f -> {
-                if (f instanceof NestedNamedField) {
-                  return ((NestedNamedField) f).getParent();
-                } else {
-                  return f;
+      ImmutableSet<NamedField> fields =
+          Stream.of(
+                  modifiedFields.stream(),
+                  BlobField.REQUIRED_FIELDS.stream(),
+                  Stream.of(BlobField.GENERATION))
+              .flatMap(s -> s)
+              .collect(ImmutableSet.toImmutableSet());
+
+      Map<NamedField, Set<NamedField>> fieldsByRoot = new HashMap<>();
+      {
+        for (NamedField f : fields) {
+          Set<NamedField> fieldSet =
+              fieldsByRoot.computeIfAbsent(NamedField.root(f), v -> new HashSet<>());
+          fieldSet.add(f);
+        }
+      }
+
+      fieldsByRoot.forEach(
+          (topLevelField, subFields) -> {
+            // only do the deep diffing for select fields, most fields simply use their top level
+            // name and don't have to worry about nesting.
+            // The following ifs are the same shape, but, they can not be collapsed. The iteration
+            // is per top-level field, and if you attempt to do the other at the same time you will
+            // potentially override its values.
+            if (topLevelField == BlobField.OBJECT_CONTEXTS) {
+              // our field names are from the root of the storage object, create a temporary
+              // instance that only contains the contexts
+              StorageObject storageObject = new StorageObject();
+              storageObject.setContexts(tmp.getContexts());
+              StorageObject outputJson =
+                  JsonUtils.getOutputJsonWithSelectedFields(storageObject, subFields);
+              pb.setContexts(outputJson.getContexts());
+            } else if (topLevelField == BlobField.METADATA) {
+              // our field names are from the root of the storage object, create a temporary
+              // instance that only contains the metadata
+              StorageObject storageObject = new StorageObject();
+              storageObject.setMetadata(tmp.getMetadata());
+              StorageObject outputJson =
+                  JsonUtils.getOutputJsonWithSelectedFields(storageObject, subFields);
+              pb.setMetadata(outputJson.getMetadata());
+            } else {
+              checkState(subFields.size() <= 1, "unexpected nested field(s) %s", subFields);
+              String jsonName = topLevelField.getApiaryName();
+              if (tmp.containsKey(jsonName)) {
+                pb.put(jsonName, tmp.get(jsonName));
+              } else {
+                BlobField lookup = BlobField.lookup(topLevelField);
+                if (lookup != null) {
+                  pb.put(jsonName, Data.nullOf(lookup.getJsonClass()));
                 }
-              })
-          .forEach(
-              field -> {
-                String jsonName = field.getApiaryName();
-                if (tmp.containsKey(jsonName)) {
-                  pb.put(jsonName, tmp.get(jsonName));
-                } else {
-                  BlobField lookup = BlobField.lookup(field);
-                  if (lookup != null) {
-                    pb.put(jsonName, Data.nullOf(lookup.getJsonClass()));
-                  }
-                }
-              });
+              }
+            }
+          });
 
       ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsUpdate(pb, optionsMap);
       return run(

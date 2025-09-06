@@ -33,6 +33,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -113,7 +114,7 @@ public class BlobInfo implements Serializable {
   private final Retention retention;
   private final OffsetDateTime softDeleteTime;
   private final OffsetDateTime hardDeleteTime;
-  private ObjectContexts contexts;
+  private final ObjectContexts contexts;
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
@@ -295,7 +296,7 @@ public class BlobInfo implements Serializable {
 
     private static final long serialVersionUID = -5993852233545224424L;
 
-    private final ImmutableMap<String, ObjectCustomContextPayload> custom;
+    private final Map<String, ObjectCustomContextPayload> custom;
 
     private ObjectContexts(Builder builder) {
       this.custom = builder.custom;
@@ -338,12 +339,13 @@ public class BlobInfo implements Serializable {
 
     public static final class Builder {
 
-      private ImmutableMap<String, ObjectCustomContextPayload> custom;
+      private Map<String, ObjectCustomContextPayload> custom;
 
       private Builder() {}
 
       public Builder setCustom(Map<String, ObjectCustomContextPayload> custom) {
-        this.custom = custom == null ? ImmutableMap.of() : ImmutableMap.copyOf(custom);
+        this.custom =
+            custom == null ? ImmutableMap.of() : Collections.unmodifiableMap(new HashMap<>(custom));
         return this;
       }
 
@@ -778,6 +780,7 @@ public class BlobInfo implements Serializable {
 
   static final class BuilderImpl extends Builder {
     private static final String hexDecimalValues = "0123456789abcdef";
+    public static final NamedField NAMED_FIELD_LITERAL_VALUE = NamedField.literal("value");
     private BlobId blobId;
     private String generatedId;
     private String contentType;
@@ -1266,9 +1269,44 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setContexts(ObjectContexts contexts) {
-      modifiedFields.add(BlobField.OBJECT_CONTEXTS);
-      this.contexts = contexts;
+      // Maps.difference uses object equality to determine if a value is the same. We don't care
+      // about the timestamps when determining if a value needs to be patched. Create a new map
+      // where we remove the timestamps so equals is usable.
+      Map<String, ObjectCustomContextPayload> left =
+          this.contexts == null
+              ? null
+              : ignoreCustomContextPayloadTimestamps(this.contexts.getCustom());
+      Map<String, ObjectCustomContextPayload> right =
+          contexts == null ? null : ignoreCustomContextPayloadTimestamps(contexts.getCustom());
+      if (!Objects.equals(left, right)) {
+        if (right != null) {
+          diffMaps(
+              NamedField.nested(BlobField.OBJECT_CONTEXTS, NamedField.literal("custom")),
+              left,
+              right,
+              f -> NamedField.nested(f, NAMED_FIELD_LITERAL_VALUE),
+              modifiedFields::add);
+          this.contexts = contexts;
+        } else {
+          modifiedFields.add(BlobField.OBJECT_CONTEXTS);
+          this.contexts = null;
+        }
+      }
       return this;
+    }
+
+    private static @Nullable Map<@NonNull String, @Nullable ObjectCustomContextPayload>
+        ignoreCustomContextPayloadTimestamps(
+            @Nullable Map<@NonNull String, @Nullable ObjectCustomContextPayload> orig) {
+      if (orig == null) {
+        return null;
+      }
+      return Maps.transformValues(
+          orig,
+          v ->
+              v == null
+                  ? null
+                  : ObjectCustomContextPayload.newBuilder().setValue(v.getValue()).build());
     }
 
     @Override
