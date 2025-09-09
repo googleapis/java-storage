@@ -16,19 +16,59 @@
 
 package com.google.cloud.storage.multipartuploader.data;
 
+import com.google.common.base.MoreObjects;
+import java.util.Objects;
+
 public class CreateMultipartUploadResponse {
 
-  int uploadId;
+  private final String uploadId;
 
-  public CreateMultipartUploadResponse(int uploadId) {
-    this.uploadId = uploadId;
+  private CreateMultipartUploadResponse(Builder builder) {
+    this.uploadId = builder.uploadId;
   }
 
-  public int getUploadId() {
+  public String getUploadId() {
     return uploadId;
   }
 
-  public void setUploadId(int uploadId) {
-    this.uploadId = uploadId;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CreateMultipartUploadResponse)) {
+      return false;
+    }
+    CreateMultipartUploadResponse that = (CreateMultipartUploadResponse) o;
+    return Objects.equals(uploadId, that.uploadId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(uploadId);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("uploadId", uploadId).toString();
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+    private String uploadId;
+
+    private Builder() {}
+
+    public Builder setUploadId(String uploadId) {
+      this.uploadId = uploadId;
+      return this;
+    }
+
+    public CreateMultipartUploadResponse build() {
+      return new CreateMultipartUploadResponse(this);
+    }
   }
 }

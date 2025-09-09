@@ -16,11 +16,103 @@
 
 package com.google.cloud.storage.multipartuploader.data;
 
+import com.google.common.base.MoreObjects;
+import java.util.Objects;
+
 public class CompleteMultipartRequest {
 
-  public String getUploadId() {
+  private final String bucket;
+  private final String key;
+  private final String uploadId;
+  private final CompletedMultipartUpload completedMultipartUpload;
+
+  private CompleteMultipartRequest(Builder builder) {
+    this.bucket = builder.bucket;
+    this.key = builder.key;
+    this.uploadId = builder.uploadId;
+    this.completedMultipartUpload = builder.completedMultipartUpload;
   }
 
-  public CompletedPart[] getCompletedParts() {
+  public String getBucket() {
+    return bucket;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public String getUploadId() {
+    return uploadId;
+  }
+
+  public CompletedMultipartUpload getCompletedMultipartUpload() {
+    return completedMultipartUpload;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CompleteMultipartRequest)) {
+      return false;
+    }
+    CompleteMultipartRequest that = (CompleteMultipartRequest) o;
+    return Objects.equals(bucket, that.bucket)
+        && Objects.equals(key, that.key)
+        && Objects.equals(uploadId, that.uploadId)
+        && Objects.equals(completedMultipartUpload, that.completedMultipartUpload);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(bucket, key, uploadId, completedMultipartUpload);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("bucket", bucket)
+        .add("key", key)
+        .add("uploadId", uploadId)
+        .add("completedMultipartUpload", completedMultipartUpload)
+        .toString();
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+    private String bucket;
+    private String key;
+    private String uploadId;
+    private CompletedMultipartUpload completedMultipartUpload;
+
+    private Builder() {}
+
+    public Builder setBucket(String bucket) {
+      this.bucket = bucket;
+      return this;
+    }
+
+    public Builder setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public Builder setUploadId(String uploadId) {
+      this.uploadId = uploadId;
+      return this;
+    }
+
+    public Builder setCompletedMultipartUpload(CompletedMultipartUpload completedMultipartUpload) {
+      this.completedMultipartUpload = completedMultipartUpload;
+      return this;
+    }
+
+    public CompleteMultipartRequest build() {
+      return new CompleteMultipartRequest(this);
+    }
   }
 }

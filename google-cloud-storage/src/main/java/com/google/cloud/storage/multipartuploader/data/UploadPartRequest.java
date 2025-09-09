@@ -16,11 +16,103 @@
 
 package com.google.cloud.storage.multipartuploader.data;
 
+import com.google.common.base.MoreObjects;
+import java.util.Objects;
+
 public class UploadPartRequest {
 
-  public String getPartNumber() {
+  private final String bucket;
+  private final String key;
+  private final int partNumber;
+  private final String uploadId;
+
+  private UploadPartRequest(Builder builder) {
+    this.bucket = builder.bucket;
+    this.key = builder.key;
+    this.partNumber = builder.partNumber;
+    this.uploadId = builder.uploadId;
+  }
+
+  public String getBucket() {
+    return bucket;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public int getPartNumber() {
+    return partNumber;
   }
 
   public String getUploadId() {
+    return uploadId;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof UploadPartRequest)) {
+      return false;
+    }
+    UploadPartRequest that = (UploadPartRequest) o;
+    return partNumber == that.partNumber
+        && Objects.equals(bucket, that.bucket)
+        && Objects.equals(key, that.key)
+        && Objects.equals(uploadId, that.uploadId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(bucket, key, partNumber, uploadId);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("bucket", bucket)
+        .add("key", key)
+        .add("partNumber", partNumber)
+        .add("uploadId", uploadId)
+        .toString();
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+    private String bucket;
+    private String key;
+    private int partNumber;
+    private String uploadId;
+
+    private Builder() {}
+
+    public Builder setBucket(String bucket) {
+      this.bucket = bucket;
+      return this;
+    }
+
+    public Builder setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public Builder setPartNumber(int partNumber) {
+      this.partNumber = partNumber;
+      return this;
+    }
+
+    public Builder setUploadId(String uploadId) {
+      this.uploadId = uploadId;
+      return this;
+    }
+
+    public UploadPartRequest build() {
+      return new UploadPartRequest(this);
+    }
   }
 }

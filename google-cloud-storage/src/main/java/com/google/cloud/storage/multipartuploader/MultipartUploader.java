@@ -37,5 +37,5 @@ public interface MultipartUploader {
       throws IOException;
 
   CompleteMultipartResponse completeMultipartUpload(CompleteMultipartRequest request)
-      throws NoSuchAlgorithmException;
+      throws NoSuchAlgorithmException, IOException;
 }

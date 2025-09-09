@@ -46,13 +46,13 @@ public class MultipartUploaderImpl implements MultipartUploader {
 
   // Add HMAC keys from GCS Settings > Interoperability
 
+
   // --- End Configuration ---
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
 
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
-    //String resourcePath = "/" + request.getBucketName() + "/" + request.getObjectName();
-    String resourcePath = "/" + BUCKET_NAME + "/" + OBJECT_NAME;
+    String resourcePath = "/" + request.getBucket() + "/" + request.getKey();
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
     String date = getRfc1123Date();
     String contentType = "application/x-www-form-urlencoded";
@@ -77,13 +77,13 @@ public class MultipartUploaderImpl implements MultipartUploader {
     String uploadIdTag = "<UploadId>";
     int start = responseBody.indexOf(uploadIdTag) + uploadIdTag.length();
     int end = responseBody.indexOf("</UploadId>");
-    int uploadId = Integer.parseInt(responseBody.substring(start, end));
-    return new CreateMultipartUploadResponse(uploadId);
+    String uploadId = responseBody.substring(start, end);
+    return CreateMultipartUploadResponse.newBuilder().setUploadId(uploadId).build();
   }
 
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody)
       throws IOException {
-    String resourcePath = "/" + BUCKET_NAME + "/" + OBJECT_NAME;
+    String resourcePath = "/" + request.getBucket() + "/" + request.getKey();
     String queryString = "?partNumber=" + request.getPartNumber() + "&uploadId=" + request.getUploadId();
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String date = getRfc1123Date();
@@ -110,17 +110,17 @@ public class MultipartUploaderImpl implements MultipartUploader {
         throw new RuntimeException("Failed to upload part " + request.getPartNumber() + ": " + connection.getResponseCode() + " " + error);
     }
     String eTag = connection.getHeaderField("ETag");
-    return new UploadPartResponse(eTag);
+    return UploadPartResponse.newBuilder().setEtag(eTag).build();
   }
 
   public CompleteMultipartResponse completeMultipartUpload(CompleteMultipartRequest request)
-      throws NoSuchAlgorithmException {
-    String resourcePath = "/" + BUCKET_NAME + "/" + OBJECT_NAME;
+      throws NoSuchAlgorithmException, IOException {
+    String resourcePath = "/" + request.getBucket() + "/" + request.getKey();
     String queryString = "?uploadId=" + request.getUploadId();
     String uri = GCS_ENDPOINT + resourcePath + queryString;
 
     StringBuilder xmlBodyBuilder = new StringBuilder("<CompleteMultipartUpload>\n");
-    for (CompletedPart part : request.getCompletedParts()) {
+    for (CompletedPart part : request.getCompletedMultipartUpload().getCompletedPartList()) {
       xmlBodyBuilder.append("  <Part>\n");
       xmlBodyBuilder.append("    <PartNumber>").append(part.getPartNumber()).append("</PartNumber>\n");
       xmlBodyBuilder.append("    <ETag>").append(part.getEtag()).append("</ETag>\n");
@@ -135,7 +135,7 @@ public class MultipartUploaderImpl implements MultipartUploader {
     String contentType = "application/xml";
 
     // GCS Signature Rule #3: The query string IS NOT included for the POST complete request.
-    String signature = signRequest("POST", contentMd5, contentType, date, resourcePath);
+    String signature = signRequest("POST", contentMd5, contentType, date, resourcePath, GOOGLE_SECRET_KEY);
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
     HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();

@@ -16,8 +16,59 @@
 
 package com.google.cloud.storage.multipartuploader.data;
 
+import com.google.common.base.MoreObjects;
+import java.util.Objects;
+
 public class UploadPartResponse {
 
-  public UploadPartResponse(String eTag) {
+  private final String etag;
+
+  private UploadPartResponse(Builder builder) {
+    this.etag = builder.etag;
+  }
+
+  public String getEtag() {
+    return etag;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof UploadPartResponse)) {
+      return false;
+    }
+    UploadPartResponse that = (UploadPartResponse) o;
+    return Objects.equals(etag, that.etag);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(etag);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("etag", etag).toString();
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+    private String etag;
+
+    private Builder() {}
+
+    public Builder setEtag(String etag) {
+      this.etag = etag;
+      return this;
+    }
+
+    public UploadPartResponse build() {
+      return new UploadPartResponse(this);
+    }
   }
 }
