@@ -28,7 +28,13 @@ import com.google.api.gax.paging.AbstractPagedListResponse;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.api.resourcenames.ResourceName;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
@@ -506,6 +512,63 @@ import javax.annotation.Generated;
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
  *           <li><p> updateOrganizationIntelligenceConfigCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> GetIamPolicy</td>
+ *      <td><p> Gets the IAM policy for a specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> getIamPolicy(GetIamPolicyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> getIamPolicy(ResourceName resource)
+ *           <li><p> getIamPolicy(String resource)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> getIamPolicyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> SetIamPolicy</td>
+ *      <td><p> Updates an IAM policy for the specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> setIamPolicy(SetIamPolicyRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> setIamPolicy(ResourceName resource, Policy policy)
+ *           <li><p> setIamPolicy(String resource, Policy policy)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> setIamPolicyCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
+ *      <td><p> TestIamPermissions</td>
+ *      <td><p> Tests a set of permissions on the given bucket, object, or managed folder to see which, if any, are held by the caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> testIamPermissions(TestIamPermissionsRequest request)
+ *      </ul>
+ *      <p>"Flattened" method variants have converted the fields of the request object into function parameters to enable multiple ways to call the same method.</p>
+ *      <ul>
+ *           <li><p> testIamPermissions(ResourceName resource, List&lt;String&gt; permissions)
+ *           <li><p> testIamPermissions(String resource, List&lt;String&gt; permissions)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> testIamPermissionsCallable()
  *      </ul>
  *       </td>
  *    </tr>
@@ -3654,6 +3717,420 @@ public class StorageControlClient implements BackgroundResource {
   public final UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
       updateOrganizationIntelligenceConfigCallable() {
     return stub.updateOrganizationIntelligenceConfigCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   Policy response = storageControlClient.getIamPolicy(resource);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy is being requested. See the
+   *     operation documentation for the appropriate value for this field.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(ResourceName resource) {
+    GetIamPolicyRequest request =
+        GetIamPolicyRequest.newBuilder()
+            .setResource(resource == null ? null : resource.toString())
+            .build();
+    return getIamPolicy(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String resource =
+   *       AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   Policy response = storageControlClient.getIamPolicy(resource);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy is being requested. See the
+   *     operation documentation for the appropriate value for this field.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(String resource) {
+    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();
+    return getIamPolicy(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = storageControlClient.getIamPolicy(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+    return getIamPolicyCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture<Policy> future = storageControlClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<GetIamPolicyRequest, Policy> getIamPolicyCallable() {
+    return stub.getIamPolicyCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   Policy policy = Policy.newBuilder().build();
+   *   Policy response = storageControlClient.setIamPolicy(resource, policy);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy is being specified. See the
+   *     operation documentation for the appropriate value for this field.
+   * @param policy REQUIRED: The complete policy to be applied to the `resource`. The size of the
+   *     policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud
+   *     Platform services (such as Projects) might reject them.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(ResourceName resource, Policy policy) {
+    SetIamPolicyRequest request =
+        SetIamPolicyRequest.newBuilder()
+            .setResource(resource == null ? null : resource.toString())
+            .setPolicy(policy)
+            .build();
+    return setIamPolicy(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String resource =
+   *       AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   Policy policy = Policy.newBuilder().build();
+   *   Policy response = storageControlClient.setIamPolicy(resource, policy);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy is being specified. See the
+   *     operation documentation for the appropriate value for this field.
+   * @param policy REQUIRED: The complete policy to be applied to the `resource`. The size of the
+   *     policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud
+   *     Platform services (such as Projects) might reject them.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(String resource, Policy policy) {
+    SetIamPolicyRequest request =
+        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();
+    return setIamPolicy(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = storageControlClient.setIamPolicy(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+    return setIamPolicyCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, or
+   * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture<Policy> future = storageControlClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<SetIamPolicyRequest, Policy> setIamPolicyCallable() {
+    return stub.setIamPolicyCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+   *   List<String> permissions = new ArrayList<>();
+   *   TestIamPermissionsResponse response =
+   *       storageControlClient.testIamPermissions(resource, permissions);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy detail is being requested. See the
+   *     operation documentation for the appropriate value for this field.
+   * @param permissions The set of permissions to check for the `resource`. Permissions with
+   *     wildcards (such as '&#42;' or 'storage.&#42;') are not allowed. For more information see
+   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(
+      ResourceName resource, List<String> permissions) {
+    TestIamPermissionsRequest request =
+        TestIamPermissionsRequest.newBuilder()
+            .setResource(resource == null ? null : resource.toString())
+            .addAllPermissions(permissions)
+            .build();
+    return testIamPermissions(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String resource =
+   *       AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString();
+   *   List<String> permissions = new ArrayList<>();
+   *   TestIamPermissionsResponse response =
+   *       storageControlClient.testIamPermissions(resource, permissions);
+   * }
+   * }</pre>
+   *
+   * @param resource REQUIRED: The resource for which the policy detail is being requested. See the
+   *     operation documentation for the appropriate value for this field.
+   * @param permissions The set of permissions to check for the `resource`. Permissions with
+   *     wildcards (such as '&#42;' or 'storage.&#42;') are not allowed. For more information see
+   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(
+      String resource, List<String> permissions) {
+    TestIamPermissionsRequest request =
+        TestIamPermissionsRequest.newBuilder()
+            .setResource(resource)
+            .addAllPermissions(permissions)
+            .build();
+    return testIamPermissions(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .addAllPermissions(new ArrayList<String>())
+   *           .build();
+   *   TestIamPermissionsResponse response = storageControlClient.testIamPermissions(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+    return testIamPermissionsCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Tests a set of permissions on the given bucket, object, or managed folder to see which, if any,
+   * are held by the caller. The `resource` field in the request should be
+   * `projects/_/buckets/{bucket}` for a bucket, `projects/_/buckets/{bucket}/objects/{object}` for
+   * an object, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed
+   * folder.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]").toString())
+   *           .addAllPermissions(new ArrayList<String>())
+   *           .build();
+   *   ApiFuture<TestIamPermissionsResponse> future =
+   *       storageControlClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<TestIamPermissionsRequest, TestIamPermissionsResponse>
+      testIamPermissionsCallable() {
+    return stub.testIamPermissionsCallable();
   }
 
   @Override

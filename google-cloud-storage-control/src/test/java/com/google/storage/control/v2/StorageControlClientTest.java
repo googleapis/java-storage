@@ -28,16 +28,26 @@ import com.google.api.gax.grpc.testing.MockServiceHelper;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
 import com.google.api.gax.rpc.InvalidArgumentException;
 import com.google.api.gax.rpc.StatusCode;
+import com.google.api.resourcenames.ResourceName;
 import com.google.common.collect.Lists;
+import com.google.iam.v1.AuditConfig;
+import com.google.iam.v1.Binding;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.Any;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Timestamp;
 import io.grpc.StatusRuntimeException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -1978,6 +1988,254 @@ public class StorageControlClientTest {
       IntelligenceConfig intelligenceConfig = IntelligenceConfig.newBuilder().build();
       FieldMask updateMask = FieldMask.newBuilder().build();
       client.updateOrganizationIntelligenceConfig(intelligenceConfig, updateMask);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getIamPolicyTest() throws Exception {
+    Policy expectedResponse =
+        Policy.newBuilder()
+            .setVersion(351608024)
+            .addAllBindings(new ArrayList<Binding>())
+            .addAllAuditConfigs(new ArrayList<AuditConfig>())
+            .setEtag(ByteString.EMPTY)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+
+    Policy actualResponse = client.getIamPolicy(resource);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetIamPolicyRequest actualRequest = ((GetIamPolicyRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource.toString(), actualRequest.getResource());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getIamPolicyExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      client.getIamPolicy(resource);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void getIamPolicyTest2() throws Exception {
+    Policy expectedResponse =
+        Policy.newBuilder()
+            .setVersion(351608024)
+            .addAllBindings(new ArrayList<Binding>())
+            .addAllAuditConfigs(new ArrayList<AuditConfig>())
+            .setEtag(ByteString.EMPTY)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String resource = "resource-341064690";
+
+    Policy actualResponse = client.getIamPolicy(resource);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    GetIamPolicyRequest actualRequest = ((GetIamPolicyRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource, actualRequest.getResource());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void getIamPolicyExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String resource = "resource-341064690";
+      client.getIamPolicy(resource);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void setIamPolicyTest() throws Exception {
+    Policy expectedResponse =
+        Policy.newBuilder()
+            .setVersion(351608024)
+            .addAllBindings(new ArrayList<Binding>())
+            .addAllAuditConfigs(new ArrayList<AuditConfig>())
+            .setEtag(ByteString.EMPTY)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+    Policy policy = Policy.newBuilder().build();
+
+    Policy actualResponse = client.setIamPolicy(resource, policy);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    SetIamPolicyRequest actualRequest = ((SetIamPolicyRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource.toString(), actualRequest.getResource());
+    Assert.assertEquals(policy, actualRequest.getPolicy());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void setIamPolicyExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      Policy policy = Policy.newBuilder().build();
+      client.setIamPolicy(resource, policy);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void setIamPolicyTest2() throws Exception {
+    Policy expectedResponse =
+        Policy.newBuilder()
+            .setVersion(351608024)
+            .addAllBindings(new ArrayList<Binding>())
+            .addAllAuditConfigs(new ArrayList<AuditConfig>())
+            .setEtag(ByteString.EMPTY)
+            .build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String resource = "resource-341064690";
+    Policy policy = Policy.newBuilder().build();
+
+    Policy actualResponse = client.setIamPolicy(resource, policy);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    SetIamPolicyRequest actualRequest = ((SetIamPolicyRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource, actualRequest.getResource());
+    Assert.assertEquals(policy, actualRequest.getPolicy());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void setIamPolicyExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String resource = "resource-341064690";
+      Policy policy = Policy.newBuilder().build();
+      client.setIamPolicy(resource, policy);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void testIamPermissionsTest() throws Exception {
+    TestIamPermissionsResponse expectedResponse =
+        TestIamPermissionsResponse.newBuilder().addAllPermissions(new ArrayList<String>()).build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+    List<String> permissions = new ArrayList<>();
+
+    TestIamPermissionsResponse actualResponse = client.testIamPermissions(resource, permissions);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    TestIamPermissionsRequest actualRequest = ((TestIamPermissionsRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource.toString(), actualRequest.getResource());
+    Assert.assertEquals(permissions, actualRequest.getPermissionsList());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void testIamPermissionsExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      ResourceName resource = AnywhereCacheName.of("[PROJECT]", "[BUCKET]", "[ANYWHERE_CACHE]");
+      List<String> permissions = new ArrayList<>();
+      client.testIamPermissions(resource, permissions);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
+  public void testIamPermissionsTest2() throws Exception {
+    TestIamPermissionsResponse expectedResponse =
+        TestIamPermissionsResponse.newBuilder().addAllPermissions(new ArrayList<String>()).build();
+    mockStorageControl.addResponse(expectedResponse);
+
+    String resource = "resource-341064690";
+    List<String> permissions = new ArrayList<>();
+
+    TestIamPermissionsResponse actualResponse = client.testIamPermissions(resource, permissions);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    TestIamPermissionsRequest actualRequest = ((TestIamPermissionsRequest) actualRequests.get(0));
+
+    Assert.assertEquals(resource, actualRequest.getResource());
+    Assert.assertEquals(permissions, actualRequest.getPermissionsList());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void testIamPermissionsExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String resource = "resource-341064690";
+      List<String> permissions = new ArrayList<>();
+      client.testIamPermissions(resource, permissions);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.

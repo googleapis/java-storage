@@ -37,6 +37,9 @@
             "GetFolderIntelligenceConfig": {
               "methods": ["getFolderIntelligenceConfig", "getFolderIntelligenceConfig", "getFolderIntelligenceConfig", "getFolderIntelligenceConfigCallable"]
             },
+            "GetIamPolicy": {
+              "methods": ["getIamPolicy", "getIamPolicy", "getIamPolicy", "getIamPolicyCallable"]
+            },
             "GetManagedFolder": {
               "methods": ["getManagedFolder", "getManagedFolder", "getManagedFolder", "getManagedFolderCallable"]
             },
@@ -66,6 +69,12 @@
             },
             "ResumeAnywhereCache": {
               "methods": ["resumeAnywhereCache", "resumeAnywhereCache", "resumeAnywhereCache", "resumeAnywhereCacheCallable"]
+            },
+            "SetIamPolicy": {
+              "methods": ["setIamPolicy", "setIamPolicy", "setIamPolicy", "setIamPolicyCallable"]
+            },
+            "TestIamPermissions": {
+              "methods": ["testIamPermissions", "testIamPermissions", "testIamPermissions", "testIamPermissionsCallable"]
             },
             "UpdateAnywhereCache": {
               "methods": ["updateAnywhereCacheAsync", "updateAnywhereCacheAsync", "updateAnywhereCacheOperationCallable", "updateAnywhereCacheCallable"]

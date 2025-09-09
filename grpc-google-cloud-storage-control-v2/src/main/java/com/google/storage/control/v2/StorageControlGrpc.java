@@ -1138,6 +1138,128 @@ public final class StorageControlGrpc {
     return getUpdateOrganizationIntelligenceConfigMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.iam.v1.GetIamPolicyRequest, com.google.iam.v1.Policy>
+      getGetIamPolicyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetIamPolicy",
+      requestType = com.google.iam.v1.GetIamPolicyRequest.class,
+      responseType = com.google.iam.v1.Policy.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.iam.v1.GetIamPolicyRequest, com.google.iam.v1.Policy>
+      getGetIamPolicyMethod() {
+    io.grpc.MethodDescriptor<com.google.iam.v1.GetIamPolicyRequest, com.google.iam.v1.Policy>
+        getGetIamPolicyMethod;
+    if ((getGetIamPolicyMethod = StorageControlGrpc.getGetIamPolicyMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getGetIamPolicyMethod = StorageControlGrpc.getGetIamPolicyMethod) == null) {
+          StorageControlGrpc.getGetIamPolicyMethod =
+              getGetIamPolicyMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.iam.v1.GetIamPolicyRequest, com.google.iam.v1.Policy>newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetIamPolicy"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.GetIamPolicyRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.Policy.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("GetIamPolicy"))
+                      .build();
+        }
+      }
+    }
+    return getGetIamPolicyMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.iam.v1.SetIamPolicyRequest, com.google.iam.v1.Policy>
+      getSetIamPolicyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SetIamPolicy",
+      requestType = com.google.iam.v1.SetIamPolicyRequest.class,
+      responseType = com.google.iam.v1.Policy.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.iam.v1.SetIamPolicyRequest, com.google.iam.v1.Policy>
+      getSetIamPolicyMethod() {
+    io.grpc.MethodDescriptor<com.google.iam.v1.SetIamPolicyRequest, com.google.iam.v1.Policy>
+        getSetIamPolicyMethod;
+    if ((getSetIamPolicyMethod = StorageControlGrpc.getSetIamPolicyMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getSetIamPolicyMethod = StorageControlGrpc.getSetIamPolicyMethod) == null) {
+          StorageControlGrpc.getSetIamPolicyMethod =
+              getSetIamPolicyMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.iam.v1.SetIamPolicyRequest, com.google.iam.v1.Policy>newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SetIamPolicy"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.SetIamPolicyRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.Policy.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("SetIamPolicy"))
+                      .build();
+        }
+      }
+    }
+    return getSetIamPolicyMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.iam.v1.TestIamPermissionsRequest, com.google.iam.v1.TestIamPermissionsResponse>
+      getTestIamPermissionsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "TestIamPermissions",
+      requestType = com.google.iam.v1.TestIamPermissionsRequest.class,
+      responseType = com.google.iam.v1.TestIamPermissionsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.iam.v1.TestIamPermissionsRequest, com.google.iam.v1.TestIamPermissionsResponse>
+      getTestIamPermissionsMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.iam.v1.TestIamPermissionsRequest,
+            com.google.iam.v1.TestIamPermissionsResponse>
+        getTestIamPermissionsMethod;
+    if ((getTestIamPermissionsMethod = StorageControlGrpc.getTestIamPermissionsMethod) == null) {
+      synchronized (StorageControlGrpc.class) {
+        if ((getTestIamPermissionsMethod = StorageControlGrpc.getTestIamPermissionsMethod)
+            == null) {
+          StorageControlGrpc.getTestIamPermissionsMethod =
+              getTestIamPermissionsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.iam.v1.TestIamPermissionsRequest,
+                          com.google.iam.v1.TestIamPermissionsResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "TestIamPermissions"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.TestIamPermissionsRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.iam.v1.TestIamPermissionsResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageControlMethodDescriptorSupplier("TestIamPermissions"))
+                      .build();
+        }
+      }
+    }
+    return getTestIamPermissionsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static StorageControlStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<StorageControlStub> factory =
@@ -1540,6 +1662,63 @@ public final class StorageControlGrpc {
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getUpdateOrganizationIntelligenceConfigMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    default void getIamPolicy(
+        com.google.iam.v1.GetIamPolicyRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.Policy> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetIamPolicyMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    default void setIamPolicy(
+        com.google.iam.v1.SetIamPolicyRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.Policy> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSetIamPolicyMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    default void testIamPermissions(
+        com.google.iam.v1.TestIamPermissionsRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.TestIamPermissionsResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getTestIamPermissionsMethod(), responseObserver);
     }
   }
 
@@ -1962,6 +2141,69 @@ public final class StorageControlGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public void getIamPolicy(
+        com.google.iam.v1.GetIamPolicyRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.Policy> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetIamPolicyMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public void setIamPolicy(
+        com.google.iam.v1.SetIamPolicyRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.Policy> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSetIamPolicyMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public void testIamPermissions(
+        com.google.iam.v1.TestIamPermissionsRequest request,
+        io.grpc.stub.StreamObserver<com.google.iam.v1.TestIamPermissionsResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getTestIamPermissionsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /**
@@ -2292,6 +2534,57 @@ public final class StorageControlGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
+        com.google.iam.v1.TestIamPermissionsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -2621,6 +2914,57 @@ public final class StorageControlGrpc {
         com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
+        com.google.iam.v1.TestIamPermissionsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
     }
   }
 
@@ -2978,6 +3322,60 @@ public final class StorageControlGrpc {
           getChannel().newCall(getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions()),
           request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Gets the IAM policy for a specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
+        getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetIamPolicyMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Updates an IAM policy for the specified bucket.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
+        setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSetIamPolicyMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Tests a set of permissions on the given bucket, object, or managed folder
+     * to see which, if any, are held by the caller.
+     * The `resource` field in the request should be
+     * `projects/_/buckets/{bucket}` for a bucket,
+     * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
+     * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
+     * for a managed folder.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.iam.v1.TestIamPermissionsResponse>
+        testIamPermissions(com.google.iam.v1.TestIamPermissionsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getTestIamPermissionsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_FOLDER = 0;
@@ -3003,6 +3401,9 @@ public final class StorageControlGrpc {
   private static final int METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG = 20;
   private static final int METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG = 21;
   private static final int METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG = 22;
+  private static final int METHODID_GET_IAM_POLICY = 23;
+  private static final int METHODID_SET_IAM_POLICY = 24;
+  private static final int METHODID_TEST_IAM_PERMISSIONS = 25;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3152,6 +3553,22 @@ public final class StorageControlGrpc {
           serviceImpl.updateOrganizationIntelligenceConfig(
               (com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest) request,
               (io.grpc.stub.StreamObserver<com.google.storage.control.v2.IntelligenceConfig>)
+                  responseObserver);
+          break;
+        case METHODID_GET_IAM_POLICY:
+          serviceImpl.getIamPolicy(
+              (com.google.iam.v1.GetIamPolicyRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.iam.v1.Policy>) responseObserver);
+          break;
+        case METHODID_SET_IAM_POLICY:
+          serviceImpl.setIamPolicy(
+              (com.google.iam.v1.SetIamPolicyRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.iam.v1.Policy>) responseObserver);
+          break;
+        case METHODID_TEST_IAM_PERMISSIONS:
+          serviceImpl.testIamPermissions(
+              (com.google.iam.v1.TestIamPermissionsRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.iam.v1.TestIamPermissionsResponse>)
                   responseObserver);
           break;
         default:
@@ -3326,6 +3743,23 @@ public final class StorageControlGrpc {
                     com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest,
                     com.google.storage.control.v2.IntelligenceConfig>(
                     service, METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG)))
+        .addMethod(
+            getGetIamPolicyMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<com.google.iam.v1.GetIamPolicyRequest, com.google.iam.v1.Policy>(
+                    service, METHODID_GET_IAM_POLICY)))
+        .addMethod(
+            getSetIamPolicyMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<com.google.iam.v1.SetIamPolicyRequest, com.google.iam.v1.Policy>(
+                    service, METHODID_SET_IAM_POLICY)))
+        .addMethod(
+            getTestIamPermissionsMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+                new MethodHandlers<
+                    com.google.iam.v1.TestIamPermissionsRequest,
+                    com.google.iam.v1.TestIamPermissionsResponse>(
+                    service, METHODID_TEST_IAM_PERMISSIONS)))
         .build();
   }
 
@@ -3400,6 +3834,9 @@ public final class StorageControlGrpc {
                       .addMethod(getUpdateFolderIntelligenceConfigMethod())
                       .addMethod(getGetOrganizationIntelligenceConfigMethod())
                       .addMethod(getUpdateOrganizationIntelligenceConfigMethod())
+                      .addMethod(getGetIamPolicyMethod())
+                      .addMethod(getSetIamPolicyMethod())
+                      .addMethod(getTestIamPermissionsMethod())
                       .build();
         }
       }

@@ -30,6 +30,11 @@ import com.google.api.gax.rpc.RequestParamsBuilder;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.common.base.Strings;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
@@ -343,6 +348,36 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setSampledToLocalTracing(true)
               .build();
 
+  private static final MethodDescriptor<GetIamPolicyRequest, Policy> getIamPolicyMethodDescriptor =
+      MethodDescriptor.<GetIamPolicyRequest, Policy>newBuilder()
+          .setType(MethodDescriptor.MethodType.UNARY)
+          .setFullMethodName("google.storage.control.v2.StorageControl/GetIamPolicy")
+          .setRequestMarshaller(ProtoUtils.marshaller(GetIamPolicyRequest.getDefaultInstance()))
+          .setResponseMarshaller(ProtoUtils.marshaller(Policy.getDefaultInstance()))
+          .setSampledToLocalTracing(true)
+          .build();
+
+  private static final MethodDescriptor<SetIamPolicyRequest, Policy> setIamPolicyMethodDescriptor =
+      MethodDescriptor.<SetIamPolicyRequest, Policy>newBuilder()
+          .setType(MethodDescriptor.MethodType.UNARY)
+          .setFullMethodName("google.storage.control.v2.StorageControl/SetIamPolicy")
+          .setRequestMarshaller(ProtoUtils.marshaller(SetIamPolicyRequest.getDefaultInstance()))
+          .setResponseMarshaller(ProtoUtils.marshaller(Policy.getDefaultInstance()))
+          .setSampledToLocalTracing(true)
+          .build();
+
+  private static final MethodDescriptor<TestIamPermissionsRequest, TestIamPermissionsResponse>
+      testIamPermissionsMethodDescriptor =
+          MethodDescriptor.<TestIamPermissionsRequest, TestIamPermissionsResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/TestIamPermissions")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(TestIamPermissionsRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(TestIamPermissionsResponse.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
+              .build();
+
   private final UnaryCallable<CreateFolderRequest, Folder> createFolderCallable;
   private final UnaryCallable<DeleteFolderRequest, Empty> deleteFolderCallable;
   private final UnaryCallable<GetFolderRequest, Folder> getFolderCallable;
@@ -391,6 +426,10 @@ public class GrpcStorageControlStub extends StorageControlStub {
       getOrganizationIntelligenceConfigCallable;
   private final UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
       updateOrganizationIntelligenceConfigCallable;
+  private final UnaryCallable<GetIamPolicyRequest, Policy> getIamPolicyCallable;
+  private final UnaryCallable<SetIamPolicyRequest, Policy> setIamPolicyCallable;
+  private final UnaryCallable<TestIamPermissionsRequest, TestIamPermissionsResponse>
+      testIamPermissionsCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -430,6 +469,20 @@ public class GrpcStorageControlStub extends StorageControlStub {
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate LIST_ANYWHERE_CACHES_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
+  private static final PathTemplate GET_IAM_POLICY_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate GET_IAM_POLICY_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate SET_IAM_POLICY_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate SET_IAM_POLICY_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
+  private static final PathTemplate TEST_IAM_PERMISSIONS_2_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/managedFolders/**");
 
   public static final GrpcStorageControlStub create(StorageControlStubSettings settings)
       throws IOException {
@@ -859,6 +912,44 @@ public class GrpcStorageControlStub extends StorageControlStub {
                       return builder.build();
                     })
                 .build();
+    GrpcCallSettings<GetIamPolicyRequest, Policy> getIamPolicyTransportSettings =
+        GrpcCallSettings.<GetIamPolicyRequest, Policy>newBuilder()
+            .setMethodDescriptor(getIamPolicyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_0_PATH_TEMPLATE);
+                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
+    GrpcCallSettings<SetIamPolicyRequest, Policy> setIamPolicyTransportSettings =
+        GrpcCallSettings.<SetIamPolicyRequest, Policy>newBuilder()
+            .setMethodDescriptor(setIamPolicyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_0_PATH_TEMPLATE);
+                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
+    GrpcCallSettings<TestIamPermissionsRequest, TestIamPermissionsResponse>
+        testIamPermissionsTransportSettings =
+            GrpcCallSettings.<TestIamPermissionsRequest, TestIamPermissionsResponse>newBuilder()
+                .setMethodDescriptor(testIamPermissionsMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getResource(), "bucket", TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE);
+                      builder.add(
+                          request.getResource(), "bucket", TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE);
+                      builder.add(
+                          request.getResource(), "bucket", TEST_IAM_PERMISSIONS_2_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .build();
 
     this.createFolderCallable =
         callableFactory.createUnaryCallable(
@@ -989,6 +1080,17 @@ public class GrpcStorageControlStub extends StorageControlStub {
         callableFactory.createUnaryCallable(
             updateOrganizationIntelligenceConfigTransportSettings,
             settings.updateOrganizationIntelligenceConfigSettings(),
+            clientContext);
+    this.getIamPolicyCallable =
+        callableFactory.createUnaryCallable(
+            getIamPolicyTransportSettings, settings.getIamPolicySettings(), clientContext);
+    this.setIamPolicyCallable =
+        callableFactory.createUnaryCallable(
+            setIamPolicyTransportSettings, settings.setIamPolicySettings(), clientContext);
+    this.testIamPermissionsCallable =
+        callableFactory.createUnaryCallable(
+            testIamPermissionsTransportSettings,
+            settings.testIamPermissionsSettings(),
             clientContext);
 
     this.backgroundResources =
@@ -1155,6 +1257,22 @@ public class GrpcStorageControlStub extends StorageControlStub {
   public UnaryCallable<UpdateOrganizationIntelligenceConfigRequest, IntelligenceConfig>
       updateOrganizationIntelligenceConfigCallable() {
     return updateOrganizationIntelligenceConfigCallable;
+  }
+
+  @Override
+  public UnaryCallable<GetIamPolicyRequest, Policy> getIamPolicyCallable() {
+    return getIamPolicyCallable;
+  }
+
+  @Override
+  public UnaryCallable<SetIamPolicyRequest, Policy> setIamPolicyCallable() {
+    return setIamPolicyCallable;
+  }
+
+  @Override
+  public UnaryCallable<TestIamPermissionsRequest, TestIamPermissionsResponse>
+      testIamPermissionsCallable() {
+    return testIamPermissionsCallable;
   }
 
   @Override
