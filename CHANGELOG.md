@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.57.0](https://github.com/googleapis/java-storage/compare/v2.56.0...v2.57.0) (2025-09-09)
+
+
+### Features
+
+* Add BlobInfo.ObjectContexts ([#3259](https://github.com/googleapis/java-storage/issues/3259)) ([485aefd](https://github.com/googleapis/java-storage/commit/485aefd3047c52c98d8bd913033c8aee1473e988))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.62.1 ([0e348db](https://github.com/googleapis/java-storage/commit/0e348dbee247e1e65713d0155e1aa29ae5c5e0e4))
+* Update BlobAppendableUpload implementation to periodically flush for large writes ([#3278](https://github.com/googleapis/java-storage/issues/3278)) ([d0ffe18](https://github.com/googleapis/java-storage/commit/d0ffe18084b32936c889bb280005294c7ae7064d))
+* Update otel integration to properly activate span context for lazy RPCs such as reads & writes pt.2 ([#3277](https://github.com/googleapis/java-storage/issues/3277)) ([3240f67](https://github.com/googleapis/java-storage/commit/3240f67c192a855c92256526aeb2fa689ea15445))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.52.1 ([#3280](https://github.com/googleapis/java-storage/issues/3280)) ([d046ea3](https://github.com/googleapis/java-storage/commit/d046ea3da19288b64c48300bdd4f94a0ebf35458))
+* Update googleapis/sdk-platform-java action to v2.62.1 ([#3281](https://github.com/googleapis/java-storage/issues/3281)) ([c9078bb](https://github.com/googleapis/java-storage/commit/c9078bb98e3999234f95ab2e4c842c9dd7191c3d))
+
 ## [2.56.0](https://github.com/googleapis/java-storage/compare/v2.55.0...v2.56.0) (2025-08-25)
 
 
