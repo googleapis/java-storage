@@ -299,7 +299,20 @@ final class Utils {
     if (left != null && right == null) {
       keys = left.keySet().stream().map(NamedField::literal);
     } else if (left == null && right != null) {
-      keys = right.keySet().stream().map(NamedField::literal).map(dec);
+      keys =
+          right.entrySet().stream()
+              .map(
+                  e -> {
+                    String key = e.getKey();
+                    Object value = e.getValue();
+                    NamedField literal = NamedField.literal(key);
+
+                    if (value == null) {
+                      return literal;
+                    } else {
+                      return dec.apply(literal);
+                    }
+                  });
     } else if (left != null && right != null) {
       MapDifference<String, ?> difference = Maps.difference(left, right);
       keys =

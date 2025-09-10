@@ -70,7 +70,7 @@ final class JsonUtils {
             .map(NamedField::getApiaryName)
             .collect(ImmutableSet.toImmutableSet());
     try {
-      // The datamodel of the apiairy json representation doesn't have a common parent for all
+      // The datamodel of the apiary json representation doesn't have a common parent for all
       // field types, rather than writing a significant amount of code to handle all of these types
       // leverage Gson.
       // 1. serialize the object to it's json string
