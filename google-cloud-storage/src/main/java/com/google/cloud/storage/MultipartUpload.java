@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartuploader;
+package com.google.cloud.storage;
 
-import com.google.cloud.storage.multipartuploader.data.CompleteMultipartRequest;
-import com.google.cloud.storage.multipartuploader.data.CompleteMultipartResponse;
-import com.google.cloud.storage.multipartuploader.data.CreateMultipartUploadRequest;
-import com.google.cloud.storage.multipartuploader.data.CreateMultipartUploadResponse;
-import com.google.cloud.storage.multipartuploader.data.RequestBody;
-import com.google.cloud.storage.multipartuploader.data.UploadPartRequest;
-import com.google.cloud.storage.multipartuploader.data.UploadPartResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartResponse;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.security.NoSuchAlgorithmException;
 
-public interface MultipartUploader {
+public interface MultipartUpload {
 
   CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException;

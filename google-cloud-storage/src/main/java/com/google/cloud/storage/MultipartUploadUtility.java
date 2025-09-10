@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.storage.multipartuploader;
+package com.google.cloud.storage;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +29,7 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class MultipartUploaderUtility {
+public class MultipartUploadUtility {
   public static String readStream(InputStream inputStream) throws IOException {
     if (inputStream == null) return "";
     StringBuilder response = new StringBuilder();

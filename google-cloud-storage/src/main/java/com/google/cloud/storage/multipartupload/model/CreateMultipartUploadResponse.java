@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartuploader.data;
+package com.google.cloud.storage.multipartupload.model;
 
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-public class UploadPartResponse {
+public class CreateMultipartUploadResponse {
 
-  private final String etag;
+  private final String uploadId;
 
-  private UploadPartResponse(Builder builder) {
-    this.etag = builder.etag;
+  private CreateMultipartUploadResponse(Builder builder) {
+    this.uploadId = builder.uploadId;
   }
 
-  public String getEtag() {
-    return etag;
+  public String getUploadId() {
+    return uploadId;
   }
 
   @Override
@@ -36,21 +36,21 @@ public class UploadPartResponse {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof UploadPartResponse)) {
+    if (!(o instanceof CreateMultipartUploadResponse)) {
       return false;
     }
-    UploadPartResponse that = (UploadPartResponse) o;
-    return Objects.equals(etag, that.etag);
+    CreateMultipartUploadResponse that = (CreateMultipartUploadResponse) o;
+    return Objects.equals(uploadId, that.uploadId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(etag);
+    return Objects.hash(uploadId);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("etag", etag).toString();
+    return MoreObjects.toStringHelper(this).add("uploadId", uploadId).toString();
   }
 
   public static Builder newBuilder() {
@@ -58,17 +58,17 @@ public class UploadPartResponse {
   }
 
   public static class Builder {
-    private String etag;
+    private String uploadId;
 
     private Builder() {}
 
-    public Builder setEtag(String etag) {
-      this.etag = etag;
+    public Builder setUploadId(String uploadId) {
+      this.uploadId = uploadId;
       return this;
     }
 
-    public UploadPartResponse build() {
-      return new UploadPartResponse(this);
+    public CreateMultipartUploadResponse build() {
+      return new CreateMultipartUploadResponse(this);
     }
   }
 }

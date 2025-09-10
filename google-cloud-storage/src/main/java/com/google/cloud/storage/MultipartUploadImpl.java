@@ -13,39 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.storage.multipartuploader;
+package com.google.cloud.storage;
 
-import static com.google.cloud.storage.multipartuploader.MultipartUploaderUtility.getRfc1123Date;
-import static com.google.cloud.storage.multipartuploader.MultipartUploaderUtility.readStream;
-import static com.google.cloud.storage.multipartuploader.MultipartUploaderUtility.signRequest;
+import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
+import static com.google.cloud.storage.MultipartUploadUtility.readStream;
+import static com.google.cloud.storage.MultipartUploadUtility.signRequest;
 
-import com.google.cloud.storage.multipartuploader.data.CompleteMultipartRequest;
-import com.google.cloud.storage.multipartuploader.data.CompleteMultipartResponse;
-import com.google.cloud.storage.multipartuploader.data.CompletedPart;
-import com.google.cloud.storage.multipartuploader.data.CreateMultipartUploadRequest;
-import com.google.cloud.storage.multipartuploader.data.CreateMultipartUploadResponse;
-import com.google.cloud.storage.multipartuploader.data.RequestBody;
-import com.google.cloud.storage.multipartuploader.data.UploadPartRequest;
-import com.google.cloud.storage.multipartuploader.data.UploadPartResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartResponse;
+import com.google.cloud.storage.multipartupload.model.CompletedPart;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class MultipartUploaderImpl implements MultipartUploader {
+public class MultipartUploadImpl implements MultipartUpload {
 
   private static final String BUCKET_NAME = "shreyassinha";
   private static final String OBJECT_NAME = "5mb"; // The name for the object in GCS
   private static final String FILE_PATH = "5mb-examplefile-com.txt"; // The local file to upload
 
   // Add HMAC keys from GCS Settings > Interoperability
-
 
   // --- End Configuration ---
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";

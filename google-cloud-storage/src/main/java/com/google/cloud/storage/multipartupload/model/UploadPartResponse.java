@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartuploader.data;
+package com.google.cloud.storage.multipartupload.model;
 
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-public class CreateMultipartUploadResponse {
+public final class UploadPartResponse {
 
-  private final String uploadId;
+  private final String etag;
 
-  private CreateMultipartUploadResponse(Builder builder) {
-    this.uploadId = builder.uploadId;
+  private UploadPartResponse(Builder builder) {
+    this.etag = builder.etag;
   }
 
-  public String getUploadId() {
-    return uploadId;
+  public String getEtag() {
+    return etag;
   }
 
   @Override
@@ -36,21 +36,21 @@ public class CreateMultipartUploadResponse {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof CreateMultipartUploadResponse)) {
+    if (!(o instanceof UploadPartResponse)) {
       return false;
     }
-    CreateMultipartUploadResponse that = (CreateMultipartUploadResponse) o;
-    return Objects.equals(uploadId, that.uploadId);
+    UploadPartResponse that = (UploadPartResponse) o;
+    return Objects.equals(etag, that.etag);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uploadId);
+    return Objects.hash(etag);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("uploadId", uploadId).toString();
+    return MoreObjects.toStringHelper(this).add("etag", etag).toString();
   }
 
   public static Builder newBuilder() {
@@ -58,17 +58,17 @@ public class CreateMultipartUploadResponse {
   }
 
   public static class Builder {
-    private String uploadId;
+    private String etag;
 
     private Builder() {}
 
-    public Builder setUploadId(String uploadId) {
-      this.uploadId = uploadId;
+    public Builder setEtag(String etag) {
+      this.etag = etag;
       return this;
     }
 
-    public CreateMultipartUploadResponse build() {
-      return new CreateMultipartUploadResponse(this);
+    public UploadPartResponse build() {
+      return new UploadPartResponse(this);
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.google.cloud.storage.multipartuploader.data;
+package com.google.cloud.storage.multipartupload.model;
 
 import com.google.common.base.MoreObjects;
+import java.util.List;
 import java.util.Objects;
 
-public class CreateMultipartUploadRequest {
-  private final String bucket;
+public class CompletedMultipartUpload {
 
-  private final String key;
+  private final List<CompletedPart> completedPartList;
 
-  private CreateMultipartUploadRequest(Builder builder) {
-    this.bucket = builder.bucket;
-    this.key = builder.key;
+  private CompletedMultipartUpload(Builder builder) {
+    this.completedPartList = builder.completedPartList;
   }
 
-  public String getBucket() {
-    return bucket;
-  }
-
-  public String getKey() {
-    return key;
+  public List<CompletedPart> getCompletedPartList() {
+    return completedPartList;
   }
 
   @Override
@@ -42,23 +36,22 @@ public class CreateMultipartUploadRequest {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof CreateMultipartUploadRequest)) {
+    if (!(o instanceof CompletedMultipartUpload)) {
       return false;
     }
-    CreateMultipartUploadRequest that = (CreateMultipartUploadRequest) o;
-    return Objects.equals(bucket, that.bucket) && Objects.equals(key, that.key);
+    CompletedMultipartUpload that = (CompletedMultipartUpload) o;
+    return Objects.equals(completedPartList, that.completedPartList);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key);
+    return Objects.hash(completedPartList);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("bucket", bucket)
-        .add("key", key)
+        .add("completedPartList", completedPartList)
         .toString();
   }
 
@@ -67,23 +60,17 @@ public class CreateMultipartUploadRequest {
   }
 
   public static class Builder {
-    private String bucket;
-    private String key;
+    private List<CompletedPart> completedPartList;
 
     private Builder() {}
 
-    public Builder setBucket(String bucket) {
-      this.bucket = bucket;
+    public Builder setCompletedPartList(List<CompletedPart> completedPartList) {
+      this.completedPartList = completedPartList;
       return this;
     }
 
-    public Builder setKey(String key) {
-      this.key = key;
-      return this;
-    }
-
-    public CreateMultipartUploadRequest build() {
-      return new CreateMultipartUploadRequest(this);
+    public CompletedMultipartUpload build() {
+      return new CompletedMultipartUpload(this);
     }
   }
 }

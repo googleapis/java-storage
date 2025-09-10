@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartuploader.data;
+package com.google.cloud.storage.multipartupload.model;
 
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-public class CompleteMultipartRequest {
+public final class UploadPartRequest {
 
   private final String bucket;
   private final String key;
+  private final int partNumber;
   private final String uploadId;
-  private final CompletedMultipartUpload completedMultipartUpload;
 
-  private CompleteMultipartRequest(Builder builder) {
+  private UploadPartRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
+    this.partNumber = builder.partNumber;
     this.uploadId = builder.uploadId;
-    this.completedMultipartUpload = builder.completedMultipartUpload;
   }
 
   public String getBucket() {
@@ -41,12 +41,12 @@ public class CompleteMultipartRequest {
     return key;
   }
 
-  public String getUploadId() {
-    return uploadId;
+  public int getPartNumber() {
+    return partNumber;
   }
 
-  public CompletedMultipartUpload getCompletedMultipartUpload() {
-    return completedMultipartUpload;
+  public String getUploadId() {
+    return uploadId;
   }
 
   @Override
@@ -54,19 +54,19 @@ public class CompleteMultipartRequest {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof CompleteMultipartRequest)) {
+    if (!(o instanceof UploadPartRequest)) {
       return false;
     }
-    CompleteMultipartRequest that = (CompleteMultipartRequest) o;
-    return Objects.equals(bucket, that.bucket)
+    UploadPartRequest that = (UploadPartRequest) o;
+    return partNumber == that.partNumber
+        && Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
-        && Objects.equals(uploadId, that.uploadId)
-        && Objects.equals(completedMultipartUpload, that.completedMultipartUpload);
+        && Objects.equals(uploadId, that.uploadId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, completedMultipartUpload);
+    return Objects.hash(bucket, key, partNumber, uploadId);
   }
 
   @Override
@@ -74,8 +74,8 @@ public class CompleteMultipartRequest {
     return MoreObjects.toStringHelper(this)
         .add("bucket", bucket)
         .add("key", key)
+        .add("partNumber", partNumber)
         .add("uploadId", uploadId)
-        .add("completedMultipartUpload", completedMultipartUpload)
         .toString();
   }
 
@@ -86,8 +86,8 @@ public class CompleteMultipartRequest {
   public static class Builder {
     private String bucket;
     private String key;
+    private int partNumber;
     private String uploadId;
-    private CompletedMultipartUpload completedMultipartUpload;
 
     private Builder() {}
 
@@ -101,18 +101,18 @@ public class CompleteMultipartRequest {
       return this;
     }
 
+    public Builder setPartNumber(int partNumber) {
+      this.partNumber = partNumber;
+      return this;
+    }
+
     public Builder setUploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
     }
 
-    public Builder setCompletedMultipartUpload(CompletedMultipartUpload completedMultipartUpload) {
-      this.completedMultipartUpload = completedMultipartUpload;
-      return this;
-    }
-
-    public CompleteMultipartRequest build() {
-      return new CompleteMultipartRequest(this);
+    public UploadPartRequest build() {
+      return new UploadPartRequest(this);
     }
   }
 }

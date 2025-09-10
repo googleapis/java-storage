@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartuploader.data;
+package com.google.cloud.storage;
 
 import java.nio.ByteBuffer;
 
-public class RequestBody {
+public final class RequestBody {
   private byte[] partDate;
 
   public static RequestBody fromByteBuffer(ByteBuffer b) {
