@@ -1284,7 +1284,6 @@ public class BlobInfo implements Serializable {
               NamedField.nested(BlobField.OBJECT_CONTEXTS, NamedField.literal("custom")),
               left,
               right,
-              f -> NamedField.nested(f, NAMED_FIELD_LITERAL_VALUE),
               modifiedFields::add);
           this.contexts = contexts;
         } else {

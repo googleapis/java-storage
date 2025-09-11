@@ -22,9 +22,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -41,7 +38,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class JsonUtils {
@@ -104,24 +100,25 @@ final class JsonUtils {
   static @NonNull JsonObject getOutputJson(JsonObject inputJson, Set<String> fieldsInOutput) {
 
     Map<String, String> l = flatten(inputJson);
-    Map<String, String> r = Utils.setToMap(fieldsInOutput, k -> null);
-
-    MapDifference<String, String> diff = Maps.difference(l, r);
 
     // use hashmap so we can have null values
     HashMap<String, String> flat = new HashMap<>();
-    Stream.of(
-            diff.entriesInCommon().entrySet().stream(),
-            diff.entriesOnlyOnRight().entrySet().stream(),
-            // if the key is present in both maps, but has a differing value select the value from
-            // the left side, as that is the value from inputJson
-            Maps.transformValues(diff.entriesDiffering(), ValueDifference::leftValue)
-                .entrySet()
-                .stream())
-        // flatten
-        .flatMap(x -> x)
-        .forEach(e -> flat.put(e.getKey(), e.getValue()));
-
+    for (String fieldToRetain : fieldsInOutput) {
+      boolean keyFound = false;
+      // Check for exact match or prefix match in the flattened source map (l)
+      for (Map.Entry<String, String> sourceEntry : l.entrySet()) {
+        String sourceKey = sourceEntry.getKey();
+        if (sourceKey.equals(fieldToRetain) || sourceKey.startsWith(fieldToRetain + ".")) {
+          flat.put(sourceKey, sourceEntry.getValue());
+          keyFound = true;
+        }
+      }
+      // If the field to retain wasn't found in the source, it means we need to add it
+      // to the output with a null value, signaling a deletion.
+      if (!keyFound) {
+        flat.put(fieldToRetain, null);
+      }
+    }
     return treeify(flat);
   }
 
