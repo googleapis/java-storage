@@ -687,4 +687,22 @@ public class StorageControlClientHttpJsonTest {
       // Expected exception.
     }
   }
+
+  @Test
+  public void getIamPolicyUnsupportedMethodTest() throws Exception {
+    // The getIamPolicy() method is not supported in REST transport.
+    // This empty test is generated for technical reasons.
+  }
+
+  @Test
+  public void setIamPolicyUnsupportedMethodTest() throws Exception {
+    // The setIamPolicy() method is not supported in REST transport.
+    // This empty test is generated for technical reasons.
+  }
+
+  @Test
+  public void testIamPermissionsUnsupportedMethodTest() throws Exception {
+    // The testIamPermissions() method is not supported in REST transport.
+    // This empty test is generated for technical reasons.
+  }
 }
