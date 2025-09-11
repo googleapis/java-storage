@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.58.0](https://github.com/googleapis/java-storage/compare/v2.57.0...v2.58.0) (2025-09-11)
+
+
+### Features
+
+* **storagecontrol:** Add GetIamPolicy, SetIamPolicy, and TestIamPermissions RPCs ([c884551](https://github.com/googleapis/java-storage/commit/c884551048a323f2a3fd7aaf4fce469d4d4f543e))
+
 ## [2.57.0](https://github.com/googleapis/java-storage/compare/v2.56.0...v2.57.0) (2025-09-09)
 
 
