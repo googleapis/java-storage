@@ -32,7 +32,7 @@ import org.junit.Test;
 public class RemoveBlobOwnerTest extends TestBase {
 
   @Test
-  public void testRemoveBlobOwner() {
+  public void testRemoveBlobOwner() throws Exception {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
@@ -50,7 +50,7 @@ public class RemoveBlobOwnerTest extends TestBase {
   }
 
   @Test
-  public void testUserNotFound() {
+  public void testUserNotFound() throws Exception {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 

@@ -23,7 +23,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class SetBucketWebsiteInfo {
   public static void setBucketWesbiteInfo(
-      String projectId, String bucketName, String indexPage, String notFoundPage) {
+      String projectId, String bucketName, String indexPage, String notFoundPage) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,18 +36,20 @@ public class SetBucketWebsiteInfo {
     // The 404 page for a static website bucket
     // String notFoundPage = "404.html";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().setIndexPage(indexPage).setNotFoundPage(notFoundPage).build().update();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      bucket.toBuilder().setIndexPage(indexPage).setNotFoundPage(notFoundPage).build().update();
 
-    System.out.println(
-        "Static website bucket "
-            + bucketName
-            + " is set up to use "
-            + indexPage
-            + " as the index page and "
-            + notFoundPage
-            + " as the 404 page");
+      System.out.println(
+          "Static website bucket "
+              + bucketName
+              + " is set up to use "
+              + indexPage
+              + " as the index page and "
+              + notFoundPage
+              + " as the 404 page");
+    }
   }
 }
 // [END storage_define_bucket_website_configuration]

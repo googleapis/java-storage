@@ -23,7 +23,8 @@ import com.google.cloud.storage.StorageOptions;
 
 public class DeleteOldVersionOfObject {
   public static void deleteOldVersionOfObject(
-      String projectId, String bucketName, String objectName, long generationToDelete) {
+      String projectId, String bucketName, String objectName, long generationToDelete)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -36,16 +37,18 @@ public class DeleteOldVersionOfObject {
     // The generation of objectName to delete
     // long generationToDelete = 1579287380533984;
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    storage.delete(BlobId.of(bucketName, objectName, generationToDelete));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      storage.delete(BlobId.of(bucketName, objectName, generationToDelete));
 
-    System.out.println(
-        "Generation "
-            + generationToDelete
-            + " of object "
-            + objectName
-            + " was deleted from "
-            + bucketName);
+      System.out.println(
+          "Generation "
+              + generationToDelete
+              + " of object "
+              + objectName
+              + " was deleted from "
+              + bucketName);
+    }
   }
 }
 // [END storage_delete_file_archived_generation]

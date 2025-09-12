@@ -29,7 +29,8 @@ import java.util.List;
 
 public class RemoveBucketIamConditionalBinding {
   /** Example of removing a conditional binding to the Bucket-level IAM */
-  public static void removeBucketIamConditionalBinding(String projectId, String bucketName) {
+  public static void removeBucketIamConditionalBinding(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -38,42 +39,45 @@ public class RemoveBucketIamConditionalBinding {
 
     // For more information please read:
     // https://cloud.google.com/storage/docs/access-control/iam
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    Policy originalPolicy =
-        storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
+      Policy originalPolicy =
+          storage.getIamPolicy(bucketName, Storage.BucketSourceOption.requestedPolicyVersion(3));
 
-    String role = "roles/storage.objectViewer";
+      String role = "roles/storage.objectViewer";
 
-    // getBindingsList() returns an ImmutableList and copying over to an ArrayList so it's mutable.
-    List<Binding> bindings = new ArrayList(originalPolicy.getBindingsList());
+      // getBindingsList() returns an ImmutableList and copying over to an ArrayList so it's
+      // mutable.
+      List<Binding> bindings = new ArrayList(originalPolicy.getBindingsList());
 
-    // Create a condition to compare against
-    Condition.Builder conditionBuilder = Condition.newBuilder();
-    conditionBuilder.setTitle("Title");
-    conditionBuilder.setDescription("Description");
-    conditionBuilder.setExpression(
-        "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")");
+      // Create a condition to compare against
+      Condition.Builder conditionBuilder = Condition.newBuilder();
+      conditionBuilder.setTitle("Title");
+      conditionBuilder.setDescription("Description");
+      conditionBuilder.setExpression(
+          "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")");
 
-    Iterator iterator = bindings.iterator();
-    while (iterator.hasNext()) {
-      Binding binding = (Binding) iterator.next();
-      boolean foundRole = binding.getRole().equals(role);
-      boolean conditionsEqual = conditionBuilder.build().equals(binding.getCondition());
+      Iterator iterator = bindings.iterator();
+      while (iterator.hasNext()) {
+        Binding binding = (Binding) iterator.next();
+        boolean foundRole = binding.getRole().equals(role);
+        boolean conditionsEqual = conditionBuilder.build().equals(binding.getCondition());
 
-      // Remove condition when the role and condition are equal
-      if (foundRole && conditionsEqual) {
-        iterator.remove();
-        break;
+        // Remove condition when the role and condition are equal
+        if (foundRole && conditionsEqual) {
+          iterator.remove();
+          break;
+        }
       }
+
+      // Update policy to remove conditional binding
+      Policy.Builder updatedPolicyBuilder = originalPolicy.toBuilder();
+      updatedPolicyBuilder.setBindings(bindings).setVersion(3);
+      Policy updatedPolicy = storage.setIamPolicy(bucketName, updatedPolicyBuilder.build());
+
+      System.out.println("Conditional Binding was removed.");
     }
-
-    // Update policy to remove conditional binding
-    Policy.Builder updatedPolicyBuilder = originalPolicy.toBuilder();
-    updatedPolicyBuilder.setBindings(bindings).setVersion(3);
-    Policy updatedPolicy = storage.setIamPolicy(bucketName, updatedPolicyBuilder.build());
-
-    System.out.println("Conditional Binding was removed.");
   }
 }
 // [END storage_remove_bucket_conditional_iam_binding]
