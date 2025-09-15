@@ -33,7 +33,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -1273,11 +1272,9 @@ public class BlobInfo implements Serializable {
       // about the timestamps when determining if a value needs to be patched. Create a new map
       // where we remove the timestamps so equals is usable.
       Map<String, ObjectCustomContextPayload> left =
-          this.contexts == null
-              ? null
-              : ignoreCustomContextPayloadTimestamps(this.contexts.getCustom());
+          this.contexts == null ? null : this.contexts.getCustom();
       Map<String, ObjectCustomContextPayload> right =
-          contexts == null ? null : ignoreCustomContextPayloadTimestamps(contexts.getCustom());
+          contexts == null ? null : contexts.getCustom();
       if (!Objects.equals(left, right)) {
         if (right != null) {
           diffMaps(
@@ -1292,20 +1289,6 @@ public class BlobInfo implements Serializable {
         }
       }
       return this;
-    }
-
-    private static @Nullable Map<@NonNull String, @Nullable ObjectCustomContextPayload>
-        ignoreCustomContextPayloadTimestamps(
-            @Nullable Map<@NonNull String, @Nullable ObjectCustomContextPayload> orig) {
-      if (orig == null) {
-        return null;
-      }
-      return Maps.transformValues(
-          orig,
-          v ->
-              v == null
-                  ? null
-                  : ObjectCustomContextPayload.newBuilder().setValue(v.getValue()).build());
     }
 
     @Override
