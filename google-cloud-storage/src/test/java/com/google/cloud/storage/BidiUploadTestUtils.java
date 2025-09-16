@@ -21,12 +21,19 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.AbortedException;
+import com.google.api.gax.rpc.ApiCallContext;
+import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.ClientStream;
+import com.google.api.gax.rpc.ClientStreamReadyObserver;
 import com.google.api.gax.rpc.ErrorDetails;
+import com.google.api.gax.rpc.ResponseObserver;
+import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import com.google.rpc.Code;
 import com.google.storage.v2.BidiWriteObjectRedirectedError;
@@ -39,7 +46,10 @@ import io.grpc.StatusRuntimeException;
 import java.nio.ByteBuffer;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class BidiUploadTestUtils {
 
@@ -121,5 +131,94 @@ final class BidiUploadTestUtils {
 
   static Timestamp timestampNow() {
     return Conversions.grpc().timestampCodec.encode(OffsetDateTime.now());
+  }
+
+  static BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      alwaysErrorBidiStreamingCallable(Status status) {
+    return adaptOnlySend(respond -> request -> respond.onError(status.asRuntimeException()));
+  }
+
+  static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adaptOnlySend(
+      Function<ResponseObserver<ResT>, OnlySendClientStream<ReqT>> func) {
+    return adapt(func::apply);
+  }
+
+  static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
+      Function<ResponseObserver<ResT>, ClientStream<ReqT>> func) {
+    return adapt(
+        (respond, onReady, context) -> {
+          ClientStream<ReqT> clientStream = func.apply(respond);
+          StreamController controller = TestUtils.nullStreamController();
+          respond.onStart(controller);
+          return clientStream;
+        });
+  }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(BidiUploadTestUtils.class);
+  /**
+   * BidiStreamingCallable isn't functional even though it's a single abstract method.
+   *
+   * <p>Define a method that can adapt a TriFunc as the required implementation of {@link
+   * BidiStreamingCallable#internalCall(ResponseObserver, ClientStreamReadyObserver,
+   * ApiCallContext)}.
+   *
+   * <p>Saves several lines of boilerplate in each test.
+   */
+  static <ReqT, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
+      TriFunc<
+          ResponseObserver<ResT>,
+          ClientStreamReadyObserver<ReqT>,
+          ApiCallContext,
+          ClientStream<ReqT>>
+          func) {
+    return new BidiStreamingCallable<ReqT, ResT>() {
+      @Override
+      public ClientStream<ReqT> internalCall(
+          ResponseObserver<ResT> respond,
+          ClientStreamReadyObserver<ReqT> onReady,
+          ApiCallContext context) {
+        return func.apply(new ResponseObserver<ResT>() {
+          @Override
+          public void onStart(StreamController controller) {
+            respond.onStart(controller);
+          }
+
+          @Override
+          public void onResponse(ResT response) {
+            LOGGER.info("response = {}", fmtProto(response));
+            respond.onResponse(response);
+          }
+
+          @Override
+          public void onError(Throwable t) {
+            respond.onError(t);
+          }
+
+          @Override
+          public void onComplete() {
+            respond.onComplete();
+          }
+        }, onReady, context);
+      }
+    };
+  }
+
+  @FunctionalInterface
+  interface TriFunc<A, B, C, R> {
+    R apply(A a, B b, C c);
+  }
+
+  @FunctionalInterface
+  interface OnlySendClientStream<ReqT> extends ClientStream<ReqT> {
+    @Override
+    default void closeSendWithError(Throwable t) {}
+
+    @Override
+    default void closeSend() {}
+
+    @Override
+    default boolean isSendReady() {
+      return true;
+    }
   }
 }

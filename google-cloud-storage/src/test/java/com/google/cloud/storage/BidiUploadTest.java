@@ -17,6 +17,8 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BidiUploadState.appendableNew;
+import static com.google.cloud.storage.BidiUploadTestUtils.adaptOnlySend;
+import static com.google.cloud.storage.BidiUploadTestUtils.alwaysErrorBidiStreamingCallable;
 import static com.google.cloud.storage.BidiUploadTestUtils.createSegment;
 import static com.google.cloud.storage.BidiUploadTestUtils.finishAt;
 import static com.google.cloud.storage.BidiUploadTestUtils.incremental;
@@ -39,11 +41,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.AbortedException;
-import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiExceptionFactory;
-import com.google.api.gax.rpc.BidiStreamingCallable;
-import com.google.api.gax.rpc.ClientStream;
-import com.google.api.gax.rpc.ClientStreamReadyObserver;
 import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
@@ -64,7 +62,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
 import com.google.rpc.Code;
 import com.google.storage.v2.AppendObjectSpec;
@@ -1841,58 +1838,6 @@ public final class BidiUploadTest {
       }
     }
 
-    private static BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
-        alwaysErrorBidiStreamingCallable(Status status) {
-      return adaptOnlySend(respond -> request -> respond.onError(status.asRuntimeException()));
-    }
-
-    private static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adaptOnlySend(
-        Function<ResponseObserver<ResT>, OnlySendClientStream<ReqT>> func) {
-      return adapt(func::apply);
-    }
-
-    private static <ReqT extends Message, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
-        Function<ResponseObserver<ResT>, ClientStream<ReqT>> func) {
-      return adapt(
-          (respond, onReady, context) -> {
-            ClientStream<ReqT> clientStream = func.apply(respond);
-            StreamController controller = TestUtils.nullStreamController();
-            respond.onStart(controller);
-            return clientStream;
-          });
-    }
-
-    /**
-     * BidiStreamingCallable isn't functional even though it's a single abstract method.
-     *
-     * <p>Define a method that can adapt a TriFunc as the required implementation of {@link
-     * BidiStreamingCallable#internalCall(ResponseObserver, ClientStreamReadyObserver,
-     * ApiCallContext)}.
-     *
-     * <p>Saves several lines of boilerplate in each test.
-     */
-    private static <ReqT, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
-        StreamingStreamTest.TriFunc<
-                ResponseObserver<ResT>,
-                ClientStreamReadyObserver<ReqT>,
-                ApiCallContext,
-                ClientStream<ReqT>>
-            func) {
-      return new BidiStreamingCallable<ReqT, ResT>() {
-        @Override
-        public ClientStream<ReqT> internalCall(
-            ResponseObserver<ResT> respond,
-            ClientStreamReadyObserver<ReqT> onReady,
-            ApiCallContext context) {
-          return func.apply(respond, onReady, context);
-        }
-      };
-    }
-
-    @FunctionalInterface
-    interface TriFunc<A, B, C, R> {
-      R apply(A a, B b, C c);
-    }
   }
 
   public static final class BidiUploadStreamingStreamResponseObserverTest {
@@ -2290,17 +2235,4 @@ public final class BidiUploadTest {
     return BidiWriteObjectResponse.newBuilder().setResource(f.apply(b)).build();
   }
 
-  @FunctionalInterface
-  private interface OnlySendClientStream<ReqT> extends ClientStream<ReqT> {
-    @Override
-    default void closeSendWithError(Throwable t) {}
-
-    @Override
-    default void closeSend() {}
-
-    @Override
-    default boolean isSendReady() {
-      return true;
-    }
-  }
 }

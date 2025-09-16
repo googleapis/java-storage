@@ -416,10 +416,10 @@ abstract class BidiUploadState {
       try {
         requireNonNull(datum, "data must be non null");
         validateCurrentStateIsOneOf(State.allNonTerminal);
-        checkNotFinalizing();
         ByteString b = datum.getB();
-        long availableCapacity = availableCapacity();
         int size = b.size();
+        checkNotFinalizing(size);
+        long availableCapacity = availableCapacity();
         if (size <= availableCapacity) {
           Crc32cLengthKnown crc32c = datum.getCrc32c();
           ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
@@ -449,7 +449,7 @@ abstract class BidiUploadState {
       lock.lock();
       try {
         validateCurrentStateIsOneOf(State.allNonTerminal);
-        checkNotFinalizing();
+        checkNotFinalizing(0);
         checkArgument(
             totalLength == totalSentBytes,
             "(totalLength == totalSentBytes) (%s == %s)",
@@ -490,7 +490,7 @@ abstract class BidiUploadState {
         requireNonNull(e, "e must be non null");
         validateCurrentStateIsOneOf(State.allNonTerminal);
         if (e.hasChecksummedData()) {
-          checkNotFinalizing();
+          checkNotFinalizing(e.getChecksummedData().getContent().size());
         }
         int size = e.getChecksummedData().getContent().size();
         long availableCapacity = availableCapacity();
@@ -827,10 +827,16 @@ abstract class BidiUploadState {
           state);
     }
 
-    private void checkNotFinalizing() {
+    private void checkNotFinalizing(int size) {
       checkState(
           finishWriteOffset == -1,
-          "Attempting to append bytes even though finalization has previously been signaled.");
+          "Attempting to append bytes even though finalization has previously been signaled."
+              + " (finishWriteOffset: %s, totalSentBytes: %s, confirmedBytes: %s, size: %s)",
+          finishWriteOffset,
+          totalSentBytes,
+          confirmedBytes,
+          size
+        );
     }
 
     protected final boolean internalOffer(BidiWriteObjectRequest e) {
