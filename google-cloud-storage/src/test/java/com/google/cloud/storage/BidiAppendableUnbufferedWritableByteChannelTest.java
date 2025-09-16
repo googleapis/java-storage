@@ -56,48 +56,49 @@ public final class BidiAppendableUnbufferedWritableByteChannelTest {
             executor,
             BidiUploadTestUtils.adaptOnlySend(
                 respond ->
-                    request ->
-                        executor.submit(
-                            () -> {
-                              switch ((int) request.getWriteOffset()) {
-                                case 0:
-                                  respond.onResponse(BidiUploadTest.resourceWithSize(0));
-                                  break;
-                                case 4:
-                                case 8:
-                                  // do not ack any bytes until we receive 16, this simulates
-                                  // latency on the bytes being ack'd.
-                                  break;
-                                case 12:
-                                  respond.onResponse(BidiUploadTestUtils.incremental(8));
-                                  break;
-                                case 16:
-                                  respond.onResponse(BidiUploadTestUtils.incremental(12));
-                                  break;
-                                case 20:
-                                  respond.onResponse(BidiUploadTestUtils.incremental(16));
-                                  break;
-                                case 24:
-                                  BidiWriteObjectResponse.Builder b =
-                                      BidiUploadTest.resourceFor(ctc).toBuilder();
-                                  b.getResourceBuilder()
-                                      .setFinalizeTime(
-                                          Conversions.grpc()
-                                              .timestampCodec
-                                              .encode(OffsetDateTime.now()));
-                                  respond.onResponse(b.build());
-                                  break;
-                                default:
-                                  respond.onError(
-                                      FakeStorage.unexpectedRequest(request, ImmutableList.of()));
-                                  break;
-                              }
-                              if (request.getFinishWrite()) {
-                                finishWriteOffset.set(
-                                    request.getWriteOffset()
-                                        + request.getChecksummedData().getContent().size());
-                              }
-                            })),
+                    request -> {
+                      if (request.getFinishWrite()) {
+                        finishWriteOffset.set(
+                            request.getWriteOffset()
+                                + request.getChecksummedData().getContent().size());
+                      }
+                      executor.submit(
+                          () -> {
+                            switch ((int) request.getWriteOffset()) {
+                              case 0:
+                                respond.onResponse(BidiUploadTest.resourceWithSize(0));
+                                break;
+                              case 4:
+                              case 8:
+                                // do not ack any bytes until we receive 16, this simulates
+                                // latency on the bytes being ack'd.
+                                break;
+                              case 12:
+                                respond.onResponse(BidiUploadTestUtils.incremental(8));
+                                break;
+                              case 16:
+                                respond.onResponse(BidiUploadTestUtils.incremental(12));
+                                break;
+                              case 20:
+                                respond.onResponse(BidiUploadTestUtils.incremental(16));
+                                break;
+                              case 24:
+                                BidiWriteObjectResponse.Builder b =
+                                    BidiUploadTest.resourceFor(ctc).toBuilder();
+                                b.getResourceBuilder()
+                                    .setFinalizeTime(
+                                        Conversions.grpc()
+                                            .timestampCodec
+                                            .encode(OffsetDateTime.now()));
+                                respond.onResponse(b.build());
+                                break;
+                              default:
+                                respond.onError(
+                                    FakeStorage.unexpectedRequest(request, ImmutableList.of()));
+                                break;
+                            }
+                          });
+                    }),
             3,
             RetryContext.neverRetry());
     ChunkSegmenter chunkSegmenter =
