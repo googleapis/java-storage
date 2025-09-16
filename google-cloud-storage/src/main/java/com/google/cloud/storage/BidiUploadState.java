@@ -835,8 +835,7 @@ abstract class BidiUploadState {
           finishWriteOffset,
           totalSentBytes,
           confirmedBytes,
-          size
-        );
+          size);
     }
 
     protected final boolean internalOffer(BidiWriteObjectRequest e) {

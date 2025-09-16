@@ -48,8 +48,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class BidiUploadTestUtils {
 
@@ -154,7 +152,6 @@ final class BidiUploadTestUtils {
         });
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(BidiUploadTestUtils.class);
   /**
    * BidiStreamingCallable isn't functional even though it's a single abstract method.
    *
@@ -166,10 +163,10 @@ final class BidiUploadTestUtils {
    */
   static <ReqT, ResT> BidiStreamingCallable<ReqT, ResT> adapt(
       TriFunc<
-          ResponseObserver<ResT>,
-          ClientStreamReadyObserver<ReqT>,
-          ApiCallContext,
-          ClientStream<ReqT>>
+              ResponseObserver<ResT>,
+              ClientStreamReadyObserver<ReqT>,
+              ApiCallContext,
+              ClientStream<ReqT>>
           func) {
     return new BidiStreamingCallable<ReqT, ResT>() {
       @Override
@@ -177,28 +174,7 @@ final class BidiUploadTestUtils {
           ResponseObserver<ResT> respond,
           ClientStreamReadyObserver<ReqT> onReady,
           ApiCallContext context) {
-        return func.apply(new ResponseObserver<ResT>() {
-          @Override
-          public void onStart(StreamController controller) {
-            respond.onStart(controller);
-          }
-
-          @Override
-          public void onResponse(ResT response) {
-            LOGGER.info("response = {}", fmtProto(response));
-            respond.onResponse(response);
-          }
-
-          @Override
-          public void onError(Throwable t) {
-            respond.onError(t);
-          }
-
-          @Override
-          public void onComplete() {
-            respond.onComplete();
-          }
-        }, onReady, context);
+        return func.apply(respond, onReady, context);
       }
     };
   }

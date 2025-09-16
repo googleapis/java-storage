@@ -1837,7 +1837,6 @@ public final class BidiUploadTest {
         exec1.shutdownNow();
       }
     }
-
   }
 
   public static final class BidiUploadStreamingStreamResponseObserverTest {
@@ -2234,5 +2233,4 @@ public final class BidiUploadTest {
     }
     return BidiWriteObjectResponse.newBuilder().setResource(f.apply(b)).build();
   }
-
 }
