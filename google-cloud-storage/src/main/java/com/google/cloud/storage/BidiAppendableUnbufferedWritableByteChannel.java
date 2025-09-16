@@ -145,6 +145,7 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
     // those bytes to implicitly flag as dirty.
     rewindableContent.flagDirty();
 
+    long remainingAfterPacking = Buffers.totalRemaining(srcs, srcsOffset, srcsLength);
     long bytesConsumed = 0;
     for (int i = 0, len = data.length, lastIdx = len - 1; i < len; i++) {
       ChunkSegment datum = data[i];
@@ -153,7 +154,7 @@ final class BidiAppendableUnbufferedWritableByteChannel implements UnbufferedWri
       boolean appended;
       if (i < lastIdx && !shouldFlush) {
         appended = stream.append(datum);
-      } else if (i == lastIdx && nextWriteShouldFinalize) {
+      } else if (i == lastIdx && remainingAfterPacking == 0 && nextWriteShouldFinalize) {
         appended = stream.appendAndFinalize(datum);
       } else {
         appended = stream.appendAndFlush(datum);
