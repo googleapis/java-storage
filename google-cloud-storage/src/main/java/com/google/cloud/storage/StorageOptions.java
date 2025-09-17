@@ -35,6 +35,10 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.HttpRetrier;
+import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 
 public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
@@ -66,6 +70,13 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
       // ignored
     }
     VERSION = tmp;
+  }
+
+  Retrier createRetrier() {
+    return new HttpRetrier(
+        new DefaultRetrier(
+            OtelStorageDecorator.retryContextDecorator(getOpenTelemetry()),
+            RetryingDependencies.simple(getClock(), getRetrySettings())));
   }
 
   /**
