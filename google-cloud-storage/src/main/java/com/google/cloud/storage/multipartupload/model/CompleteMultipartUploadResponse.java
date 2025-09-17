@@ -16,6 +16,35 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CompleteMultipartUploadResponse {
 
+    @JsonProperty("Location")
+    private String location;
+
+    @JsonProperty("Bucket")
+    private String bucket;
+
+    @JsonProperty("Key")
+    private String key;
+
+    @JsonProperty("ETag")
+    private String etag;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getEtag() {
+        return etag;
+    }
 }

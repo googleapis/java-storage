@@ -40,7 +40,7 @@ public abstract class MultipartUploadClient {
       throws IOException;
 
   public abstract UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody)
-      throws IOException;
+      throws IOException, NoSuchAlgorithmException;
 
   public abstract CompleteMultipartUploadResponse completeMultipartUpload(
       CompleteMultipartUploadRequest request)

@@ -84,7 +84,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   }
 
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody)
-      throws IOException {
+      throws IOException, NoSuchAlgorithmException {
     String encodedBucket = encode(request.bucket());
     String encodedKey = encode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
@@ -93,7 +93,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String date = getRfc1123Date();
     String contentType = "application/octet-stream";
     // GCS Signature Rule #2: The query string IS NOT included for the PUT part request.
-    String signature = signRequest("PUT", "", contentType, date, resourcePath, GOOGLE_SECRET_KEY);
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    byte[] partData = requestBody.getPartData();
+    String contentMd5 = Base64.getEncoder().encodeToString(md.digest(partData));
+    String signature = signRequest("PUT", contentMd5, contentType, date, resourcePath, GOOGLE_SECRET_KEY);
 
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
@@ -102,11 +105,12 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     connection.setRequestProperty("Date", date);
     connection.setRequestProperty("Authorization", authHeader);
     connection.setRequestProperty("Content-Type", contentType);
-    connection.setFixedLengthStreamingMode(requestBody.getPartData().length);
+    connection.setRequestProperty("Content-MD5", contentMd5);
+    connection.setFixedLengthStreamingMode(partData.length);
     connection.setDoOutput(true);
 
     try (OutputStream os = connection.getOutputStream()) {
-      os.write(requestBody.getPartData());
+      os.write(partData);
     }
 
     if (connection.getResponseCode() != 200) {
@@ -154,7 +158,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
       String error = readStream(connection.getErrorStream());
       throw new RuntimeException("Failed to complete upload: " + connection.getResponseCode() + " " + error);
     }
-    return null;
+    return xmlMapper.readValue(connection.getInputStream(), CompleteMultipartUploadResponse.class);
   }
 
   @Override
