@@ -20,11 +20,7 @@ import static com.google.cloud.storage.MultipartUploadUtility.readStream;
 import static com.google.cloud.storage.MultipartUploadUtility.signRequest;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.util.ObjectParser;
-import com.google.api.gax.grpc.GrpcStatusCode;
-import com.google.api.gax.rpc.UnimplementedException;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
@@ -34,16 +30,14 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import io.grpc.Status;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.lang.reflect.Type;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -61,7 +55,9 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
-    String resourcePath = "/" + request.bucket() + "/" + request.key();
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
     String date = getRfc1123Date();
     String contentType = "application/x-www-form-urlencoded";
@@ -89,8 +85,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody)
       throws IOException {
-    String resourcePath = "/" + request.bucket() + "/" + request.key();
-    String queryString = "?partNumber=" + request.partNumber() + "&uploadId=" + request.uploadId();
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?partNumber=" + request.partNumber() + "&uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String date = getRfc1123Date();
     String contentType = "application/octet-stream";
@@ -121,8 +119,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   public CompleteMultipartUploadResponse completeMultipartUpload(CompleteMultipartUploadRequest request)
       throws NoSuchAlgorithmException, IOException {
-    String resourcePath = "/" + request.bucket() + "/" + request.key();
-    String queryString = "?uploadId=" + request.uploadId();
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
 
     XmlMapper xmlMapper = new XmlMapper();
@@ -159,8 +159,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   @Override
   public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request) throws IOException{
-    String resourcePath = "/" + request.bucket() + "/" + request.key();
-    String queryString = "?uploadId=" + request.uploadId();
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String date = getRfc1123Date();
 
@@ -181,64 +183,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     return new AbortMultipartUploadResponse();
   }
 
-  private static final class Utf8StringRequestContent extends AbstractHttpContent {
-
-    private final byte[] xml;
-
-    private Utf8StringRequestContent(byte[] xml) {
-      // https://www.ietf.org/rfc/rfc2376.txt#:~:text=6.1%20text/xml%20with%20UTF%2D8%20Charset
-      super("text/xml;charset=utf-8");
-      this.xml = xml;
-    }
-
-    @Override
-    public long getLength() throws IOException {
-      return super.getLength();
-    }
-
-    @Override
-    public void writeTo(OutputStream out) throws IOException {
-      out.write(xml);
-    }
-
-    public static Utf8StringRequestContent of(String xml) {
-      return new Utf8StringRequestContent(xml.getBytes(StandardCharsets.UTF_8));
-    }
-  }
-
-  private static class XmlObjectParser implements ObjectParser {
-
-    @Override
-    public <T> T parseAndClose(InputStream in, Charset charset, Class<T> dataClass)
-        throws IOException {
-      try (InputStream is = in) {
-        return todo();
-      }
-    }
-
-    @Override
-    public Object parseAndClose(InputStream in, Charset charset, Type dataType) throws IOException {
-      try (InputStream is = in) {
-        return todo();
-      }
-    }
-
-    @Override
-    public <T> T parseAndClose(Reader reader, Class<T> dataClass) throws IOException {
-      try (Reader r = reader) {
-        return todo();
-      }
-    }
-
-    @Override
-    public Object parseAndClose(Reader reader, Type dataType) throws IOException {
-      try (Reader r = reader) {
-        return todo();
-      }
-    }
-
-    private static <T> T todo() {
-      throw new UnimplementedException("todo", null, GrpcStatusCode.of(Status.Code.UNIMPLEMENTED), false);
-    }
+  private String encode(String value) throws UnsupportedEncodingException {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
   }
 }
