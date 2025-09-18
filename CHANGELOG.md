@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.58.0](https://github.com/googleapis/java-storage/compare/v2.57.0...v2.58.0) (2025-09-18)
+
+
+### Features
+
+* **storagecontrol:** Add GetIamPolicy, SetIamPolicy, and TestIamPermissions RPCs ([c884551](https://github.com/googleapis/java-storage/commit/c884551048a323f2a3fd7aaf4fce469d4d4f543e))
+
+
+### Bug Fixes
+
+* Fix appendable upload finalization race condition ([#3295](https://github.com/googleapis/java-storage/issues/3295)) ([485be18](https://github.com/googleapis/java-storage/commit/485be184c08c7b857d8c9a9443f32903df879b23))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.52.2 ([#3298](https://github.com/googleapis/java-storage/issues/3298)) ([1489f3a](https://github.com/googleapis/java-storage/commit/1489f3a74c8a27f0888c40600c83adedcfd9a9ec))
+* Update googleapis/sdk-platform-java action to v2.62.2 ([#3299](https://github.com/googleapis/java-storage/issues/3299)) ([c3b05ac](https://github.com/googleapis/java-storage/commit/c3b05ac8798140f9ddcab098948a3a2f3638dc6b))
+
 ## [2.57.0](https://github.com/googleapis/java-storage/compare/v2.56.0...v2.57.0) (2025-09-09)
 
 
