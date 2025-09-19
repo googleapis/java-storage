@@ -20,15 +20,10 @@ import static com.google.cloud.storage.TestUtils.hashMapOf;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Objects.requireNonNull;
 
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.*;
 import com.google.cloud.storage.BlobInfo.ObjectContexts;
 import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
-import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITNestedUpdateMaskTest.NestedUpdateMaskParametersProvider;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -78,6 +73,7 @@ public final class ITNestedUpdateMaskTest {
     private static final Map<String, String> k1a_k2null = hashMapOf("k1", "a", "k2", null);
     private static final Map<String, String> k1null = hashMapOf("k1", null);
     private static final Map<String, String> k2null = hashMapOf("k2", null);
+    private static final Map<String, String> k1null_k2null = hashMapOf("k1", null, "k2", null);
 
     /**
      *
@@ -109,9 +105,9 @@ public final class ITNestedUpdateMaskTest {
           new Param("2 keys, modify 1 value (fine)", k1a_k2b, k1z, k1z_k2b),
           new Param("2 keys, modify 1 null (full)", k1a_k2b, k1a_k2null, k1a),
           new Param("2 keys, modify 1 null (fine)", k1a_k2b, k2null, k1a),
-          new Param("1 key, set empty", k1a, empty, null),
+          new Param("1 key, set null", k1a, k1null, null),
           new Param("1 key, null key", k1a, k1null, null),
-          new Param("2 keys, set null", k1a_k2b, null, null));
+          new Param("2 keys, set null", k1a_k2b, k1null_k2null, null));
     }
   }
 
@@ -122,7 +118,7 @@ public final class ITNestedUpdateMaskTest {
         TemporaryBucket.newBuilder().setBucketInfo(bucket).setStorage(storage).build()) {
       BucketInfo gen1 = tempB.getBucket();
       BucketInfo modified = gen1.toBuilder().setLabels(param.update).build();
-      Bucket gen2 = storage.update(modified, BucketTargetOption.metagenerationMatch());
+      Bucket gen2 = storage.update(modified, Storage.BucketTargetOption.metagenerationMatch());
       assertThat(gen2.getLabels()).isEqualTo(param.expected);
     }
   }
@@ -133,6 +129,17 @@ public final class ITNestedUpdateMaskTest {
     Blob gen1 = storage.create(blob, BlobTargetOption.doesNotExist());
     BlobInfo modified = gen1.toBuilder().setMetadata(param.update).build();
     Blob gen2 = storage.update(modified, BlobTargetOption.metagenerationMatch());
+    assertThat(gen2.getMetadata()).isEqualTo(param.expected);
+  }
+
+  @Test
+  public void testBlobMetadata_updateBaseOnNewInfoInsteadOfResolvedInfo() {
+    BlobInfo blob = newBlobInfo(param.initial);
+    Blob gen1 = storage.create(blob, BlobTargetOption.doesNotExist());
+    BlobInfo updated =
+        BlobInfo.newBuilder(bucket, gen1.getName()).setMetadata(param.update).build();
+    Blob gen2 =
+        storage.update(updated, BlobTargetOption.metagenerationMatch(gen1.getMetageneration()));
     assertThat(gen2.getMetadata()).isEqualTo(param.expected);
   }
 
@@ -156,6 +163,26 @@ public final class ITNestedUpdateMaskTest {
   }
 
   @Test
+  public void testBlobContexts_updateBaseOnNewInfoInsteadOfResolvedInfo() {
+    ObjectContexts initial = contextsFromMap(param.initial);
+    ObjectContexts update = contextsFromMap(param.update);
+    ObjectContexts expected = contextsFromMap(param.expected);
+
+    String blobName = generator.randomObjectName();
+    BlobInfo.Builder builder = BlobInfo.newBuilder(bucket, blobName);
+    if (initial != null) {
+      builder.setContexts(initial);
+    }
+    BlobInfo info = builder.build();
+    Blob gen1 = storage.create(info, BlobTargetOption.doesNotExist());
+
+    BlobInfo modified = BlobInfo.newBuilder(bucket, gen1.getName()).setContexts(update).build();
+    Blob gen2 =
+        storage.update(modified, BlobTargetOption.metagenerationMatch(gen1.getMetageneration()));
+    assertContextsWithEqualValues(gen2.getContexts(), expected);
+  }
+
+  @Test
   public void testBlob_metadataAndContext() {
     ObjectContexts initial = contextsFromMap(param.initial);
     ObjectContexts update = contextsFromMap(param.update);
@@ -175,6 +202,35 @@ public final class ITNestedUpdateMaskTest {
 
     BlobInfo modified = gen1.toBuilder().setContexts(update).setMetadata(param.update).build();
     Blob gen2 = storage.update(modified, BlobTargetOption.metagenerationMatch());
+    assertContextsWithEqualValues(gen2.getContexts(), expected);
+    assertThat(gen2.getMetadata()).isEqualTo(param.expected);
+  }
+
+  @Test
+  public void testBlob_metadataAndContext_updateBaseOnNewInfoInsteadOfResolvedInfo() {
+    ObjectContexts initial = contextsFromMap(param.initial);
+    ObjectContexts update = contextsFromMap(param.update);
+    ObjectContexts expected = contextsFromMap(param.expected);
+
+    String blobName = generator.randomObjectName();
+    BlobInfo.Builder builder = BlobInfo.newBuilder(bucket, blobName);
+    if (initial != null) {
+      builder.setContexts(initial);
+    }
+    if (param.initial != null) {
+      builder.setMetadata(param.initial);
+    }
+
+    BlobInfo info = builder.build();
+    Blob gen1 = storage.create(info, BlobTargetOption.doesNotExist());
+
+    BlobInfo modified =
+        BlobInfo.newBuilder(bucket, gen1.getName())
+            .setContexts(update)
+            .setMetadata(param.update)
+            .build();
+    Blob gen2 =
+        storage.update(modified, BlobTargetOption.metagenerationMatch(gen1.getMetageneration()));
     assertContextsWithEqualValues(gen2.getContexts(), expected);
     assertThat(gen2.getMetadata()).isEqualTo(param.expected);
   }

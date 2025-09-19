@@ -279,20 +279,19 @@ public final class TestUtils {
   }
 
   /** ImmutableMap does not allow null values, this method does */
-  public static Map<@NonNull String, @Nullable String> hashMapOf(
-      @NonNull String k1, @Nullable String v1) {
+  public static <K, V> Map<@NonNull K, @Nullable V> hashMapOf(@NonNull K k1, @Nullable V v1) {
     requireNonNull(k1, "k1 must be non null");
-    HashMap<String, String> map = new HashMap<>();
+    HashMap<K, V> map = new HashMap<>();
     map.put(k1, v1);
     return Collections.unmodifiableMap(map);
   }
 
   /** ImmutableMap does not allow null values, this method does */
-  public static Map<@NonNull String, @Nullable String> hashMapOf(
-      @NonNull String k1, @Nullable String v1, @NonNull String k2, @Nullable String v2) {
+  public static <K, V> Map<@NonNull K, @Nullable V> hashMapOf(
+      @NonNull K k1, @Nullable V v1, @NonNull K k2, @Nullable V v2) {
     requireNonNull(k1, "k1 must be non null");
     requireNonNull(k2, "k2 must be non null");
-    HashMap<String, String> map = new HashMap<>();
+    HashMap<K, V> map = new HashMap<>();
     map.put(k1, v1);
     map.put(k2, v2);
     return Collections.unmodifiableMap(map);
