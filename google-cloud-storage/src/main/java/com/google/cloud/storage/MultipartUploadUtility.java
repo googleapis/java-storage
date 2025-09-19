@@ -26,6 +26,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -42,11 +46,41 @@ public class MultipartUploadUtility {
     return response.toString();
   }
 
-  public static String signRequest(String httpVerb, String contentMd5, String contentType, String date, String canonicalizedResource, String googleSecretKey) {
+  public static String signRequest(
+      String httpVerb,
+      String contentMd5,
+      String contentType,
+      String date,
+      Map<String, String> extensionHeaders,
+      String canonicalizedResource,
+      String googleSecretKey) {
     try {
-      String stringToSign = httpVerb + "\n" + contentMd5 + "\n" + contentType + "\n" + date + "\n" + canonicalizedResource;
+      String canonicalizedExtensionHeaders = "";
+      if (extensionHeaders != null && !extensionHeaders.isEmpty()) {
+        SortedMap<String, String> sortedHeaders = new TreeMap<>();
+        for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
+          sortedHeaders.put(entry.getKey().toLowerCase(), entry.getValue());
+        }
+        canonicalizedExtensionHeaders =
+            sortedHeaders.entrySet().stream()
+                .map(entry -> entry.getKey() + ":" + entry.getValue().trim().replaceAll("\\s+", " "))
+                .collect(Collectors.joining("\n"))
+                + "\n";
+      }
+      String stringToSign =
+          httpVerb
+              + "\n"
+              + contentMd5
+              + "\n"
+              + contentType
+              + "\n"
+              + date
+              + "\n"
+              + canonicalizedExtensionHeaders
+              + canonicalizedResource;
       Mac sha1Hmac = Mac.getInstance("HmacSHA1");
-      SecretKeySpec secretKey = new SecretKeySpec(googleSecretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
+      SecretKeySpec secretKey =
+          new SecretKeySpec(googleSecretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
       sha1Hmac.init(secretKey);
       byte[] signatureBytes = sha1Hmac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
       return Base64.getEncoder().encodeToString(signatureBytes);
