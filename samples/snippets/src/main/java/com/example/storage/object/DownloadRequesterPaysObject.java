@@ -26,7 +26,7 @@ import java.nio.file.Path;
 
 public class DownloadRequesterPaysObject {
   public static void downloadRequesterPaysObject(
-      String projectId, String bucketName, String objectName, Path destFilePath) {
+      String projectId, String bucketName, String objectName, Path destFilePath) throws Exception {
     // The project ID to bill
     // String projectId = "my-billable-project-id";
 
@@ -39,14 +39,20 @@ public class DownloadRequesterPaysObject {
     // The path to which the file should be downloaded
     // Path destFilePath = Paths.get("/local/path/to/file.txt");
 
-    Storage storage = StorageOptions.getDefaultInstance().getService();
-    Blob blob =
-        storage.get(
-            BlobId.of(bucketName, objectName), Storage.BlobGetOption.userProject(projectId));
-    blob.downloadTo(destFilePath, Blob.BlobSourceOption.userProject(projectId));
+    try (Storage storage = StorageOptions.getDefaultInstance().getService()) {
+      Blob blob =
+          storage.get(
+              BlobId.of(bucketName, objectName), Storage.BlobGetOption.userProject(projectId));
+      blob.downloadTo(destFilePath, Blob.BlobSourceOption.userProject(projectId));
 
-    System.out.println(
-        "Object " + objectName + " downloaded to " + destFilePath + " and billed to " + projectId);
+      System.out.println(
+          "Object "
+              + objectName
+              + " downloaded to "
+              + destFilePath
+              + " and billed to "
+              + projectId);
+    }
   }
 }
 // [END storage_download_file_requester_pays]

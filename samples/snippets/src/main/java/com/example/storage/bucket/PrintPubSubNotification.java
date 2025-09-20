@@ -23,17 +23,19 @@ import com.google.cloud.storage.StorageOptions;
 
 public class PrintPubSubNotification {
 
-  public static void printPubSubNotification(String bucketName, String notificationId) {
+  public static void printPubSubNotification(String bucketName, String notificationId)
+      throws Exception {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
     // The Pub/Sub topic you would like to find
     // String notificationId = "your-unique-notification-id"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    Notification notification = storage.getNotification(bucketName, notificationId);
-    System.out.println(
-        "Found notification " + notification.getTopic() + " for bucket " + bucketName);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      Notification notification = storage.getNotification(bucketName, notificationId);
+      System.out.println(
+          "Found notification " + notification.getTopic() + " for bucket " + bucketName);
+    }
   }
 }
 // [END storage_print_pubsub_bucket_notification]

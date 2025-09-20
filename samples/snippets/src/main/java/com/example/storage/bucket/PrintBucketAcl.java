@@ -26,25 +26,27 @@ import java.util.List;
 
 public class PrintBucketAcl {
 
-  public static void printBucketAcl(String projectId, String bucketName) {
+  public static void printBucketAcl(String projectId, String bucketName) throws Exception {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
-    List<Acl> bucketAcls = bucket.getAcl();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      List<Acl> bucketAcls = bucket.getAcl();
 
-    for (Acl acl : bucketAcls) {
+      for (Acl acl : bucketAcls) {
 
-      // This will give you the role.
-      // See https://cloud.google.com/storage/docs/access-control/lists#permissions
-      String role = acl.getRole().name();
+        // This will give you the role.
+        // See https://cloud.google.com/storage/docs/access-control/lists#permissions
+        String role = acl.getRole().name();
 
-      // This will give you the Entity type (i.e. User, Group, Project etc.)
-      // See https://cloud.google.com/storage/docs/access-control/lists#scopes
-      String entityType = acl.getEntity().getType().name();
+        // This will give you the Entity type (i.e. User, Group, Project etc.)
+        // See https://cloud.google.com/storage/docs/access-control/lists#scopes
+        String entityType = acl.getEntity().getType().name();
 
-      System.out.printf("%s: %s \n", role, entityType);
+        System.out.printf("%s: %s \n", role, entityType);
+      }
     }
   }
 }
