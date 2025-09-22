@@ -15,7 +15,6 @@
  */
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._1MiB;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
@@ -44,6 +43,7 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersPr
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -222,7 +222,7 @@ public final class ITAppendableUploadTest {
           storage.blobAppendableUpload(BlobInfo.newBuilder(bid).build(), p.uploadConfig);
       try (SeekableByteChannel r = tmpFile.reader();
           AppendableUploadWriteableByteChannel w = appendable.open()) {
-        long copied = Buffers.copyUsingBuffer(Buffers.allocate(8 * _1MiB), r, w);
+        long copied = ByteStreams.copy(r, w);
         assertThat(copied).isEqualTo(fileSize);
       }
       BlobInfo bi = appendable.getResult().get(5, TimeUnit.SECONDS);
