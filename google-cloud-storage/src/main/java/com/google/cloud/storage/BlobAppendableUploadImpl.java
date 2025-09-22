@@ -111,6 +111,7 @@ final class BlobAppendableUploadImpl implements BlobAppendableUpload {
 
     @Override
     public boolean isOpen() {
+      lock.lock();
       try {
         return buffered.isOpen();
       } finally {
