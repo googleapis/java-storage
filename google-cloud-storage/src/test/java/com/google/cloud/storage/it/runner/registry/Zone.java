@@ -89,7 +89,7 @@ public final class Zone {
     @Override
     public void start() {
       try {
-        zone = MetadataService.zone().orElseGet(() -> parse("us-central1-a"));
+        zone = MetadataService.zone().orElseGet(() -> parse("us-east1-c"));
         LOGGER.info("Resolved zone = {}", zone);
       } catch (IOException e) {
         throw new RuntimeException(e);

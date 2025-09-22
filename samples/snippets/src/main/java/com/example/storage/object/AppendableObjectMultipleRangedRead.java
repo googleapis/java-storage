@@ -19,68 +19,47 @@ package com.example.storage.object;
 // [START storage_read_appendable_object_multiple_ranges]
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobReadSession;
 import com.google.cloud.storage.RangeSpec;
-import com.google.cloud.storage.ReadAsChannel;
 import com.google.cloud.storage.ReadProjectionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.nio.ByteBuffer;
-import java.nio.channels.ScatteringByteChannel;
-import java.util.Locale;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AppendableObjectMultipleRangedRead {
   public static void appendableObjectMultipleRangedRead(
       String bucketName, String objectName, long offset1, int length1, long offset2, int length2)
       throws Exception {
-    Storage storage = StorageOptions.grpc().build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
+    try (Storage storage = StorageOptions.grpc().build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+      RangeSpec rangeSpec1 = RangeSpec.of(offset1, length1);
+      RangeSpec rangeSpec2 = RangeSpec.of(offset2, length2);
 
-    ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+      try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
+        ApiFuture<byte[]> future1 =
+            blobReadSession.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(rangeSpec1));
+        ApiFuture<byte[]> future2 =
+            blobReadSession.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(rangeSpec2));
 
-    try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
-      RangeSpec rangeSpec1 = RangeSpec.of(offset1, offset1 + length1);
-      ReadAsChannel readAsChannelConfig1 =
-          ReadProjectionConfigs.asChannel().withRangeSpec(rangeSpec1);
+        List<byte[]> allBytes = ApiFutures.allAsList(ImmutableList.of(future1, future2)).get();
 
-      RangeSpec rangeSpec2 = RangeSpec.of(offset2, offset2 + length2);
-      ReadAsChannel readAsChannelConfig2 =
-          ReadProjectionConfigs.asChannel().withRangeSpec(rangeSpec2);
+        byte[] bytes1 = allBytes.get(0);
+        byte[] bytes2 = allBytes.get(1);
 
-      ByteBuffer buf1 = ByteBuffer.allocate(length1);
-      ByteBuffer buf2 = ByteBuffer.allocate(length2);
-      int bytesRead1 = 0;
-      int bytesRead2 = 0;
-
-      try (ScatteringByteChannel channel1 = blobReadSession.readAs(readAsChannelConfig1)) {
-        int currentRead = 0;
-        while (buf1.hasRemaining() && currentRead != -1) {
-          currentRead = channel1.read(buf1);
-          if (currentRead > 0) {
-            bytesRead1 += currentRead;
-          }
-        }
+        System.out.println(
+            "Successfully read "
+                + bytes1.length
+                + " bytes from range 1 and "
+                + bytes2.length
+                + " bytes from range 2.");
       }
-      try (ScatteringByteChannel channel2 = blobReadSession.readAs(readAsChannelConfig2)) {
-        int currentRead = 0;
-        while (buf2.hasRemaining() && currentRead != -1) {
-          currentRead = channel2.read(buf2);
-          if (currentRead > 0) {
-            bytesRead2 += currentRead;
-          }
-        }
-      }
-
-      System.out.printf(
-          Locale.US,
-          "Read %d bytes from range %s and %d bytes from range %s%n",
-          bytesRead1,
-          rangeSpec1,
-          bytesRead2,
-          rangeSpec2);
     }
   }
 }
+
 // [END storage_read_appendable_object_multiple_ranges]

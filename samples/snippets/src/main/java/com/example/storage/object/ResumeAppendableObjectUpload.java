@@ -45,46 +45,47 @@ public class ResumeAppendableObjectUpload {
     // The path to the file to upload
     // String filePath = "path/to/your/file";
 
-    Storage storage = StorageOptions.grpc().build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    Blob existingBlob = storage.get(blobId);
-    BlobInfo blobInfoForTakeover = BlobInfo.newBuilder(existingBlob.getBlobId()).build();
-    FileChannel fileChannel = FileChannel.open(Paths.get(filePath));
+    try (Storage storage = StorageOptions.grpc().build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      Blob existingBlob = storage.get(blobId);
+      BlobInfo blobInfoForTakeover = BlobInfo.newBuilder(existingBlob.getBlobId()).build();
 
-    long currentObjectSize = existingBlob.getSize();
-    System.out.printf(
-        Locale.US,
-        "Resuming upload for %s. Currently uploaded size: %d bytes\n",
-        blobId.toGsUtilUri(),
-        currentObjectSize);
+      long currentObjectSize = existingBlob.getSize();
+      System.out.printf(
+          Locale.US,
+          "Resuming upload for %s. Currently uploaded size: %d bytes\n",
+          blobId.toGsUtilUri(),
+          currentObjectSize);
 
-    BlobAppendableUploadConfig config =
-        BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
-    BlobAppendableUpload resumeUploadSession =
-        storage.blobAppendableUpload(blobInfoForTakeover, config);
-    try (AppendableUploadWriteableByteChannel channel = resumeUploadSession.open()) {
+      BlobAppendableUploadConfig config =
+          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
+      BlobAppendableUpload resumeUploadSession =
+          storage.blobAppendableUpload(blobInfoForTakeover, config);
+      try (FileChannel fileChannel = FileChannel.open(Paths.get(filePath));
+          AppendableUploadWriteableByteChannel channel = resumeUploadSession.open()) {
 
-      if (fileChannel.size() < currentObjectSize) {
-        throw new IOException(
-            "Local file is smaller than the already uploaded data. File size: "
-                + fileChannel.size()
-                + ", Uploaded size: "
-                + currentObjectSize);
-      } else if (fileChannel.size() == currentObjectSize) {
-        System.out.println("No more data to upload.");
-      } else {
-        fileChannel.position(currentObjectSize);
-        System.out.printf(
-            Locale.US, "Appending %d bytes\n", fileChannel.size() - currentObjectSize);
-        ByteStreams.copy(fileChannel, channel);
+        if (fileChannel.size() < currentObjectSize) {
+          throw new IOException(
+              "Local file is smaller than the already uploaded data. File size: "
+                  + fileChannel.size()
+                  + ", Uploaded size: "
+                  + currentObjectSize);
+        } else if (fileChannel.size() == currentObjectSize) {
+          System.out.println("No more data to upload.");
+        } else {
+          fileChannel.position(currentObjectSize);
+          System.out.printf(
+              Locale.US, "Appending %d bytes\n", fileChannel.size() - currentObjectSize);
+          ByteStreams.copy(fileChannel, channel);
+        }
       }
+      BlobInfo result = storage.get(blobId);
+      System.out.printf(
+          Locale.US,
+          "Object %s successfully resumed. Total size: %d\n",
+          result.getBlobId().toGsUtilUriWithGeneration(),
+          result.getSize());
     }
-    BlobInfo result = storage.get(blobId);
-    System.out.printf(
-        Locale.US,
-        "Object %s successfully resumed. Total size: %d\n",
-        result.getBlobId().toGsUtilUriWithGeneration(),
-        result.getSize());
   }
 }
 // [END storage_resume_appendable_object_upload]

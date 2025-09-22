@@ -33,35 +33,30 @@ import java.util.concurrent.TimeUnit;
 public class AppendableObjectReadFullObject {
   public static void appendableObjectReadFullObject(String bucketName, String objectName)
       throws Exception {
+    try (Storage storage = StorageOptions.grpc().build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
 
-    Storage storage = StorageOptions.grpc().build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+      try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
 
-    try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
-      ReadAsChannel readAsChannelConfig = ReadProjectionConfigs.asChannel();
+        ReadAsChannel readAsChannelConfig = ReadProjectionConfigs.asChannel();
+        try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
+          long totalBytesRead = 0;
+          ByteBuffer buffer = ByteBuffer.allocate(64 * 1024);
+          int bytesRead;
 
-      long newlineCount = 0;
-      try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
-        ByteBuffer buffer = ByteBuffer.allocate(8 * 1024);
-        int bytesRead = 0;
-        while ((bytesRead = channel.read(buffer)) != -1) {
-          if (bytesRead > 0) {
-            buffer.flip();
-            while (buffer.hasRemaining()) {
-              if (buffer.get() == '\n') {
-                newlineCount++;
-              }
-            }
+          while ((bytesRead = channel.read(buffer)) != -1) {
+            totalBytesRead += bytesRead;
             buffer.clear();
           }
+
+          System.out.printf(
+              Locale.US,
+              "Successfully read a total of %d bytes from object %s%n",
+              totalBytesRead,
+              blobId.toGsUtilUri());
         }
       }
-      System.out.printf(
-          Locale.US,
-          "Found %d newline characters in object %s %n",
-          newlineCount,
-          blobId.toGsUtilUri());
     }
   }
 }

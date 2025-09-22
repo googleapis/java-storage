@@ -45,24 +45,25 @@ public class StartAppendableObjectUpload {
     // The path to the file to upload
     // String filePath = "path/to/your/file";
 
-    Storage storage = StorageOptions.grpc().build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    ReadableByteChannel readableByteChannel = FileChannel.open(Paths.get(filePath));
+    try (Storage storage = StorageOptions.grpc().build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-    BlobAppendableUploadConfig config =
-        BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
-    BlobAppendableUpload uploadSession = storage.blobAppendableUpload(blobInfo, config);
-    try (AppendableUploadWriteableByteChannel channel = uploadSession.open()) {
-      ByteStreams.copy(readableByteChannel, channel);
-    } catch (IOException ex) {
-      throw new IOException("Failed to upload to object " + blobId.toGsUtilUri(), ex);
+      BlobAppendableUploadConfig config =
+          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
+      BlobAppendableUpload uploadSession = storage.blobAppendableUpload(blobInfo, config);
+      try (AppendableUploadWriteableByteChannel channel = uploadSession.open();
+          ReadableByteChannel readableByteChannel = FileChannel.open(Paths.get(filePath))) {
+        ByteStreams.copy(readableByteChannel, channel);
+      } catch (IOException ex) {
+        throw new IOException("Failed to upload to object " + blobId.toGsUtilUri(), ex);
+      }
+      BlobInfo result = storage.get(blobId);
+      System.out.printf(
+          Locale.US,
+          "Object %s successfully uploaded",
+          result.getBlobId().toGsUtilUriWithGeneration());
     }
-    BlobInfo result = storage.get(blobId);
-    System.out.printf(
-        Locale.US,
-        "Object %s successfully uploaded",
-        result.getBlobId().toGsUtilUriWithGeneration());
   }
 }
 

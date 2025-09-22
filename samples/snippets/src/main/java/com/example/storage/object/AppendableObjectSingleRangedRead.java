@@ -22,44 +22,36 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobReadSession;
 import com.google.cloud.storage.RangeSpec;
-import com.google.cloud.storage.ReadAsChannel;
 import com.google.cloud.storage.ReadProjectionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.nio.ByteBuffer;
-import java.nio.channels.ScatteringByteChannel;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AppendableObjectSingleRangedRead {
   public static void appendableObjectSingleRangedRead(
       String bucketName, String objectName, long offset, int length) throws Exception {
-    Storage storage = StorageOptions.grpc().build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
 
-    ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
+    try (Storage storage = StorageOptions.grpc().build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
 
-    try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
-      ByteBuffer buf = ByteBuffer.allocate(length);
-      RangeSpec rangeSpec = RangeSpec.of(offset, offset + length);
+      try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
+        // Define the range of bytes to read.
+        RangeSpec rangeSpec = RangeSpec.of(offset, length);
+        ApiFuture<byte[]> future =
+            blobReadSession.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(rangeSpec));
 
-      ReadAsChannel readAsChannelConfig =
-          ReadProjectionConfigs.asChannel().withRangeSpec(rangeSpec);
+        // Wait for the read to complete.
+        byte[] bytes = future.get();
 
-      try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
-        int bytesRead = 0;
-        while (buf.hasRemaining() && bytesRead != -1) {
-          bytesRead = channel.read(buf);
-        }
+        System.out.println(
+            "Successfully read "
+                + bytes.length
+                + " bytes from object "
+                + objectName
+                + " in bucket "
+                + bucketName);
       }
-
-      buf.flip();
-      System.out.printf(
-          Locale.US,
-          "Read %d bytes from range %s of object %s%n",
-          buf.remaining(),
-          rangeSpec,
-          blobReadSession.getBlobInfo().getBlobId().toGsUtilUriWithGeneration());
     }
   }
 }
