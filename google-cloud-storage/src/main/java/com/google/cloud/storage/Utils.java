@@ -29,7 +29,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
@@ -282,57 +281,28 @@ final class Utils {
    */
   static void diffMaps(
       NamedField parent, Map<String, ?> left, Map<String, ?> right, Consumer<NamedField> sink) {
-    diffMaps(parent, left, right, Function.identity(), sink);
-  }
-
-  /**
-   * Diff two maps, and append each differing key to {@code sink} with the parent of {{@code
-   * parent}. Conditionally apply {@code dec} if deeper qualification is necessary.
-   */
-  static void diffMaps(
-      NamedField parent,
-      Map<String, ?> left,
-      Map<String, ?> right,
-      Function<NamedField, NamedField> dec,
-      Consumer<NamedField> sink) {
-    final Stream<NamedField> keys;
+    final Stream<String> keys;
     if (left != null && right == null) {
-      keys = left.keySet().stream().map(NamedField::literal);
+      keys = left.keySet().stream();
     } else if (left == null && right != null) {
-      keys = right.keySet().stream().map(NamedField::literal).map(dec);
+      keys = right.keySet().stream();
     } else if (left != null && right != null) {
       MapDifference<String, ?> difference = Maps.difference(left, right);
       keys =
           Stream.of(
                   // keys with modified values
-                  difference.entriesDiffering().entrySet().stream()
-                      .map(
-                          e -> {
-                            String key = e.getKey();
-                            NamedField literal = NamedField.literal(key);
-                            ValueDifference<?> diff = e.getValue();
-
-                            if (diff.leftValue() != null && diff.rightValue() == null) {
-                              return literal;
-                            } else if (diff.leftValue() == null && diff.rightValue() != null) {
-                              return literal;
-                            } else {
-                              return dec.apply(literal);
-                            }
-                          }),
+                  difference.entriesDiffering().keySet().stream(),
                   // Only include keys to remove if ALL keys were removed
                   right.isEmpty()
-                      ? difference.entriesOnlyOnLeft().keySet().stream().map(NamedField::literal)
-                      : Stream.<NamedField>empty(),
+                      ? difference.entriesOnlyOnLeft().keySet().stream()
+                      : Stream.<String>empty(),
                   // new keys
-                  difference.entriesOnlyOnRight().keySet().stream()
-                      .map(NamedField::literal)
-                      .map(dec))
+                  difference.entriesOnlyOnRight().keySet().stream())
               .flatMap(x -> x);
     } else {
       keys = Stream.empty();
     }
-    keys.map(k -> NamedField.nested(parent, k)).forEach(sink);
+    keys.map(NamedField::literal).map(k -> NamedField.nested(parent, k)).forEach(sink);
   }
 
   static <T> T[] subArray(T[] ts, int offset, int length) {

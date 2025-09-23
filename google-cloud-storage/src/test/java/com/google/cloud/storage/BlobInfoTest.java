@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static com.google.cloud.storage.Acl.Role.READER;
 import static com.google.cloud.storage.Acl.Role.WRITER;
+import static com.google.cloud.storage.TestUtils.hashMapOf;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -30,12 +32,16 @@ import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BlobInfo.ObjectContexts;
 import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 public class BlobInfoTest {
@@ -351,5 +357,50 @@ public class BlobInfoTest {
   @Test
   public void testBlobId() {
     assertEquals(BlobId.of("b", "n", GENERATION), BLOB_INFO.getBlobId());
+  }
+
+  @Test
+  public void deepFieldDiffDetectionWorksCorrectly_mutateRetrievedObject() {
+    BlobInfo info =
+        BlobInfo.newBuilder("bucket", "object")
+            .setContexts(
+                ObjectContexts.newBuilder()
+                    .setCustom(
+                        hashMapOf(
+                            "c1", ObjectCustomContextPayload.newBuilder().setValue("C1").build(),
+                            "c2", ObjectCustomContextPayload.newBuilder().setValue("C2").build()))
+                    .build())
+            .setMetadata(
+                hashMapOf(
+                    "m1", "M1",
+                    "m2", "M2"))
+            .build();
+
+    BlobInfo modified =
+        info.toBuilder()
+            .setMetadata(hashMapOf("m2", null))
+            .setContexts(ObjectContexts.newBuilder().setCustom(hashMapOf("k2", null)).build())
+            .build();
+    Set<String> modifiedFields =
+        modified.getModifiedFields().stream()
+            .map(NamedField::getGrpcName)
+            .collect(Collectors.toSet());
+
+    assertThat(modifiedFields).isEqualTo(ImmutableSet.of("contexts.custom.k2", "metadata.m2"));
+  }
+
+  @Test
+  public void deepFieldDiffDetectionWorksCorrectly_declaredDiff() {
+    BlobInfo modified =
+        BlobInfo.newBuilder("bucket", "object")
+            .setMetadata(hashMapOf("m2", null))
+            .setContexts(ObjectContexts.newBuilder().setCustom(hashMapOf("k2", null)).build())
+            .build();
+    Set<String> modifiedFields =
+        modified.getModifiedFields().stream()
+            .map(UnifiedOpts.NamedField::getGrpcName)
+            .collect(Collectors.toSet());
+
+    assertThat(modifiedFields).isEqualTo(ImmutableSet.of("contexts.custom.k2", "metadata.m2"));
   }
 }

@@ -78,6 +78,7 @@ public final class ITNestedUpdateMaskTest {
     private static final Map<String, String> k1a_k2null = hashMapOf("k1", "a", "k2", null);
     private static final Map<String, String> k1null = hashMapOf("k1", null);
     private static final Map<String, String> k2null = hashMapOf("k2", null);
+    private static final Map<String, String> k1null_k2null = hashMapOf("k1", null, "k2", null);
 
     /**
      *
@@ -95,7 +96,7 @@ public final class ITNestedUpdateMaskTest {
      * | {"k1":"a","k2":"b"} | {"k2":null}          | {"k1":"a"}          |
      * | {"k1":"a"}          | {}                   | null                |
      * | {"k1":"a"}          | {"k1":null}          | null                |
-     * | {"k1":"a","k2":"b"} | null                 | null                |
+     * | {"k1":"a","k2":"b"} | {"k1:null,"k2":null} | null                |
      * </pre>
      */
     @Override
@@ -111,7 +112,7 @@ public final class ITNestedUpdateMaskTest {
           new Param("2 keys, modify 1 null (fine)", k1a_k2b, k2null, k1a),
           new Param("1 key, set empty", k1a, empty, null),
           new Param("1 key, null key", k1a, k1null, null),
-          new Param("2 keys, set null", k1a_k2b, null, null));
+          new Param("2 keys, set null", k1a_k2b, k1null_k2null, null));
     }
   }
 
