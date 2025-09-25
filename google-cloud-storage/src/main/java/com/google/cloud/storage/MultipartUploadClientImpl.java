@@ -19,9 +19,6 @@ import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
 import static com.google.cloud.storage.MultipartUploadUtility.signRequest;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.cloud.storage.Retrying.Retrier;
@@ -50,16 +47,17 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   // Add HMAC keys from GCS Settings > Interoperability
 
+
   // --- End Configuration ---
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
 
-  private final HttpRequestFactory requestFactory;
+  private final HttpRequestManager httpRequestManager;
 
   public MultipartUploadClientImpl(URI uri, HttpRequestFactory requestFactory, Retrier retrier) {
-    this.requestFactory = requestFactory;
+    this.httpRequestManager = new HttpRequestManager(requestFactory);
   }
 
-  private Map<String, String> getExtensionHeader(){
+  private Map<String, String> getExtensionHeader() {
     Map<String, String> extensionHeaders = new HashMap<>();
     extensionHeaders.put(
         "x-goog-api-client",
@@ -89,17 +87,9 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
             GOOGLE_SECRET_KEY);
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
-    HttpRequest httpRequest =
-        requestFactory.buildPostRequest(
-            new GenericUrl(uri), new ByteArrayContent(contentType, new byte[0]));
-    httpRequest.getHeaders().set("Date", date);
-    httpRequest.getHeaders().setAuthorization(authHeader);
-    httpRequest.getHeaders().setContentType(contentType);
-    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    }
-    httpRequest.setThrowExceptionOnExecuteError(false);
-    HttpResponse response = httpRequest.execute();
+    HttpResponse response =
+        httpRequestManager.sendCreateMultipartUploadRequest(
+            uri, date, authHeader, contentType, extensionHeaders);
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -139,19 +129,16 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
-    HttpRequest httpRequest =
-        requestFactory.buildPutRequest(
-            new GenericUrl(uri), new ByteArrayContent(contentType, partData));
-    httpRequest.getHeaders().set("Date", date);
-    httpRequest.getHeaders().setAuthorization(authHeader);
-    httpRequest.getHeaders().setContentType(contentType);
-    httpRequest.getHeaders().setContentMD5(contentMd5);
-    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    }
-    httpRequest.setThrowExceptionOnExecuteError(false);
-    HttpResponse response = httpRequest.execute();
+    HttpResponse response =
+        httpRequestManager.sendUploadPartRequest(
+            uri,
+            partData,
+            date,
+            authHeader,
+            contentType,
+            contentMd5,
+            crc32cString,
+            extensionHeaders);
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -197,19 +184,16 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
             "POST", contentMd5, contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
-    HttpRequest httpRequest =
-        requestFactory.buildPostRequest(
-            new GenericUrl(uri), new ByteArrayContent(contentType, xmlBodyBytes));
-    httpRequest.getHeaders().set("Date", date);
-    httpRequest.getHeaders().setAuthorization(authHeader);
-    httpRequest.getHeaders().setContentType(contentType);
-    httpRequest.getHeaders().setContentMD5(contentMd5);
-    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    }
-    httpRequest.setThrowExceptionOnExecuteError(false);
-    HttpResponse response = httpRequest.execute();
+    HttpResponse response =
+        httpRequestManager.sendCompleteMultipartUploadRequest(
+            uri,
+            xmlBodyBytes,
+            date,
+            authHeader,
+            contentType,
+            contentMd5,
+            crc32cString,
+            extensionHeaders);
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -237,15 +221,9 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
-    HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(uri));
-    httpRequest.getHeaders().set("Date", date);
-    httpRequest.getHeaders().setAuthorization(authHeader);
-    httpRequest.getHeaders().setContentType(contentType);
-    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    }
-    httpRequest.setThrowExceptionOnExecuteError(false);
-    HttpResponse response = httpRequest.execute();
+    HttpResponse response =
+        httpRequestManager.sendAbortMultipartUploadRequest(
+            uri, date, authHeader, contentType, extensionHeaders);
 
     if (response.getStatusCode() != 204) {
       String error = response.parseAsString();
