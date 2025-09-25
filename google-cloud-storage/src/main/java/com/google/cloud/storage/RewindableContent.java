@@ -20,6 +20,7 @@ import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -49,6 +50,30 @@ abstract class RewindableContent extends AbstractHttpContent {
   abstract long writeTo(GatheringByteChannel gbc) throws IOException;
 
   abstract void flagDirty();
+
+  /**
+   * Returns the content as a byte array.
+   *
+   * <p><b>NOTE:</b> This method will read the entire content into memory. If the content is large,
+   * this may cause an OutOfMemoryError.
+   *
+   * @return The byte array representation of the content.
+   * @throws IOException if an I/O error occurs.
+   */
+  public byte[] asByteArray() {
+    if (getLength() == 0) {
+      return new byte[0];
+    }
+    Preconditions.checkState(
+        getLength() <= Integer.MAX_VALUE, "Content is too large to be represented as a byte array.");
+    ByteArrayOutputStream baos = new ByteArrayOutputStream((int) getLength());
+    try {
+      writeTo(baos);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return baos.toByteArray();
+  }
 
   @Override
   public final boolean retrySupported() {
