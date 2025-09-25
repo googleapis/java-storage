@@ -27,7 +27,7 @@ import java.nio.file.Path;
 public final class RequestBody {
 
   private final RewindableContent content;
-  private static byte[] byteArray;
+  private byte[] byteArray;
 
   private RequestBody(RewindableContent content) {
     this.content = content;
@@ -38,7 +38,9 @@ public final class RequestBody {
   }
 
   public static RequestBody empty() {
-    return new RequestBody(RewindableContent.empty());
+    RequestBody requestBody = new RequestBody(RewindableContent.empty());
+    requestBody.byteArray = new byte[0];
+    return requestBody;
   }
 
   public static RequestBody of(ByteBuffer... buffers) {
@@ -46,11 +48,12 @@ public final class RequestBody {
   }
 
   public static RequestBody fromByteBuffer(ByteBuffer buffer) {
-    byteArray = new byte[buffer.remaining()];
-    // The get() method copies the bytes from the buffer into the array.
-    // This operation advances the buffer's position.
-    buffer.get(byteArray);
-    return new RequestBody(RewindableContent.of(buffer));
+    ByteBuffer duplicate = buffer.duplicate();
+    byte[] arr = new byte[duplicate.remaining()];
+    duplicate.get(arr);
+    RequestBody requestBody = new RequestBody(RewindableContent.of(buffer));
+    requestBody.byteArray = arr;
+    return requestBody;
   }
 
   public static RequestBody of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {

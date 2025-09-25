@@ -47,7 +47,7 @@ public abstract class MultipartUploadClient {
       throws NoSuchAlgorithmException, IOException;
 
   public abstract AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request)
-      throws IOException;
+      throws IOException, NoSuchAlgorithmException;
 
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();

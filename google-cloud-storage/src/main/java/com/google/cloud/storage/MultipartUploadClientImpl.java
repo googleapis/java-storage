@@ -33,10 +33,12 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -52,16 +54,18 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
 
   private final HttpRequestFactory requestFactory;
-  private final Map<String, String> extensionHeaders;
 
   public MultipartUploadClientImpl(URI uri, HttpRequestFactory requestFactory, Retrier retrier) {
     this.requestFactory = requestFactory;
-    this.extensionHeaders = new HashMap<>();
-    //TODO fix the hard coded header
-    this.extensionHeaders.put(
+  }
+
+  private Map<String, String> getExtensionHeader(){
+    Map<String, String> extensionHeaders = new HashMap<>();
+    extensionHeaders.put(
         "x-goog-api-client",
         "gl-java/11.0.27__OpenLogic-OpenJDK__OpenLogic-OpenJDK gccl/2.56.1-SNAPSHOT--protobuf-3.25.8 gax/2.70.0 protobuf/3.25.8");
-    this.extensionHeaders.put("x-goog-user-project", "aipp-internal-testing");
+    extensionHeaders.put("x-goog-user-project", "aipp-internal-testing");
+    return extensionHeaders;
   }
 
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
@@ -72,6 +76,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
     String date = getRfc1123Date();
     String contentType = "application/x-www-form-urlencoded";
+    Map<String, String> extensionHeaders = getExtensionHeader();
     // GCS Signature Rule #1: The '?uploads' query string IS included for the initiate request.
     String signature =
         signRequest(
@@ -120,6 +125,14 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     MessageDigest md = MessageDigest.getInstance("MD5");
     byte[] partData = requestBody.getPartData();
     String contentMd5 = Base64.getEncoder().encodeToString(md.digest(partData));
+    String crc32cString =
+        Base64.getEncoder()
+            .encodeToString(
+                ByteBuffer.allocate(4)
+                    .putInt(Hashing.crc32c().hashBytes(partData).asInt())
+                    .array());
+    Map<String, String> extensionHeaders = getExtensionHeader();
+    extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     String signature =
         signRequest(
             "PUT", contentMd5, contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
@@ -133,6 +146,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     httpRequest.getHeaders().setContentMD5(contentMd5);
+    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }
@@ -168,8 +182,16 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String contentMd5 = Base64.getEncoder().encodeToString(md.digest(xmlBodyBytes));
     String date = getRfc1123Date();
     String contentType = "application/xml";
+    String crc32cString =
+        Base64.getEncoder()
+            .encodeToString(
+                ByteBuffer.allocate(4)
+                    .putInt(Hashing.crc32c().hashBytes(xmlBodyBytes).asInt())
+                    .array());
 
     // GCS Signature Rule #3: The query string IS NOT included for the POST complete request.
+    Map<String, String> extensionHeaders = getExtensionHeader();
+    extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     String signature =
         signRequest(
             "POST", contentMd5, contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
@@ -182,6 +204,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     httpRequest.getHeaders().setContentMD5(contentMd5);
+    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }
@@ -198,23 +221,26 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   @Override
   public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request)
-      throws IOException {
+      throws IOException, NoSuchAlgorithmException {
     String encodedBucket = encode(request.bucket());
     String encodedKey = encode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String date = getRfc1123Date();
+    String contentType = "application/x-www-form-urlencoded";
+    Map<String, String> extensionHeaders = getExtensionHeader();
 
     // GCS Signature Rule #4: The query string IS NOT included for the DELETE abort request.
     String signature =
-        signRequest("DELETE", "", "", date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
+        signRequest("DELETE", "", contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
 
     String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(uri));
     httpRequest.getHeaders().set("Date", date);
     httpRequest.getHeaders().setAuthorization(authHeader);
+    httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }

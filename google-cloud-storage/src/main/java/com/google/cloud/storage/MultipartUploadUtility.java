@@ -70,14 +70,15 @@ public class MultipartUploadUtility {
       String stringToSign =
           httpVerb
               + "\n"
-              + contentMd5
+              + (contentMd5 == null ? "" : contentMd5)
               + "\n"
-              + contentType
+              + (contentType == null ? "" : contentType)
               + "\n"
               + date
               + "\n"
               + canonicalizedExtensionHeaders
               + canonicalizedResource;
+      System.out.println(stringToSign);
       Mac sha1Hmac = Mac.getInstance("HmacSHA1");
       SecretKeySpec secretKey =
           new SecretKeySpec(googleSecretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
