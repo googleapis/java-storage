@@ -27,7 +27,7 @@ import com.google.cloud.storage.StorageOptions;
 
 public class AddBucketDefaultOwner {
 
-  public static void addBucketDefaultOwner(String bucketName, String userEmail) {
+  public static void addBucketDefaultOwner(String bucketName, String userEmail) throws Exception {
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
@@ -35,12 +35,13 @@ public class AddBucketDefaultOwner {
     // The email of the user you wish to add as a default owner
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
-    Bucket bucket = storage.get(bucketName);
-    Acl newDefaultOwner = Acl.of(new User(userEmail), Role.OWNER);
+    try (Storage storage = StorageOptions.newBuilder().build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+      Acl newDefaultOwner = Acl.of(new User(userEmail), Role.OWNER);
 
-    bucket.createDefaultAcl(newDefaultOwner);
-    System.out.println("Added user " + userEmail + " as an owner on " + bucketName);
+      bucket.createDefaultAcl(newDefaultOwner);
+      System.out.println("Added user " + userEmail + " as an owner on " + bucketName);
+    }
   }
 }
 // [END storage_add_bucket_default_owner]

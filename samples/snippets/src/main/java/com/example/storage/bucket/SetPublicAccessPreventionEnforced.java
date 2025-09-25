@@ -23,26 +23,29 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetPublicAccessPreventionEnforced {
-  public static void setPublicAccessPreventionEnforced(String projectId, String bucketName) {
+  public static void setPublicAccessPreventionEnforced(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
 
-    // Enforces public access prevention for the bucket
-    bucket.toBuilder()
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                .build())
-        .build()
-        .update();
+      // Enforces public access prevention for the bucket
+      bucket.toBuilder()
+          .setIamConfiguration(
+              BucketInfo.IamConfiguration.newBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                  .build())
+          .build()
+          .update();
 
-    System.out.println("Public access prevention is set to enforced for " + bucketName);
+      System.out.println("Public access prevention is set to enforced for " + bucketName);
+    }
   }
 }
 // [END storage_set_public_access_prevention_enforced]
