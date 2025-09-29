@@ -24,6 +24,7 @@ import com.google.cloud.storage.BlobAppendableUploadConfig;
 import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.FlushPolicy;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
@@ -33,8 +34,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-public class CreateAndWriteAppendableObjectUpload {
-  public static void createAndWriteAppendableObjectUpload(
+public class CreateAndWriteAppendableObject {
+  public static void createAndWriteAppendableObject(
       String bucketName, String objectName, String filePath) throws Exception {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
@@ -49,8 +50,12 @@ public class CreateAndWriteAppendableObjectUpload {
       BlobId blobId = BlobId.of(bucketName, objectName);
       BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
+      int flushSize = 64 * 1000;
+      FlushPolicy.MaxFlushSizeFlushPolicy flushPolicy = FlushPolicy.maxFlushSize(flushSize);
       BlobAppendableUploadConfig config =
-          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.FINALIZE_WHEN_CLOSING);
+          BlobAppendableUploadConfig.of()
+              .withCloseAction(CloseAction.FINALIZE_WHEN_CLOSING)
+              .withFlushPolicy(flushPolicy);
       BlobAppendableUpload uploadSession = storage.blobAppendableUpload(blobInfo, config);
       try (AppendableUploadWriteableByteChannel channel = uploadSession.open();
           ReadableByteChannel readableByteChannel = FileChannel.open(Paths.get(filePath))) {

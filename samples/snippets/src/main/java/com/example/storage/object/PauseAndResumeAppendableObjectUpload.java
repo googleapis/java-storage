@@ -51,17 +51,15 @@ public class PauseAndResumeAppendableObjectUpload {
       BlobId blobId = BlobId.of(bucketName, objectName);
       BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-      // --- STEP 1: INITIAL STRING WRITE (PAUSE) ---
-      System.out.println("--- STEP 1: Starting initial upload (simulating pause) ---");
-
+      // --- Step 1: Initial string write (PAUSE) ---
       BlobAppendableUploadConfig initialConfig =
           BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
       BlobAppendableUpload initialUploadSession =
           storage.blobAppendableUpload(blobInfo, initialConfig);
 
       try (AppendableUploadWriteableByteChannel channel = initialUploadSession.open()) {
-        String INITIAL_DATA = "Initial data segment.\n";
-        ByteBuffer buffer = ByteBuffer.wrap(INITIAL_DATA.getBytes(StandardCharsets.UTF_8));
+        String initialData = "Initial data segment.\n";
+        ByteBuffer buffer = ByteBuffer.wrap(initialData.getBytes(StandardCharsets.UTF_8));
         long totalBytesWritten = channel.write(buffer);
         channel.flush();
 
@@ -78,9 +76,7 @@ public class PauseAndResumeAppendableObjectUpload {
           "Initial upload paused. Currently uploaded size: %d bytes\n",
           currentObjectSize);
 
-      // --- STEP 2: RESUME WITH FILE CONTENT AND FINALIZE ---
-      System.out.println("\n--- STEP 2: Resuming upload with full file and finalizing ---");
-
+      // --- Step 2: Resume upload with file content and finalize ---
       // Use FINALIZE_WHEN_CLOSING to ensure the object is finalized on channel closure.
       BlobAppendableUploadConfig resumeConfig =
           BlobAppendableUploadConfig.of().withCloseAction(CloseAction.FINALIZE_WHEN_CLOSING);
