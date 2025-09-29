@@ -16,11 +16,12 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
-import static com.google.cloud.storage.MultipartUploadUtility.signRequest;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
@@ -40,21 +41,26 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MultipartUploadClientImpl extends MultipartUploadClient {
 
-  // Add HMAC keys from GCS Settings > Interoperability
-
-
-  // --- End Configuration ---
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
 
   private final HttpRequestManager httpRequestManager;
+  private final GoogleCredentials credentials;
 
   public MultipartUploadClientImpl(URI uri, HttpRequestFactory requestFactory, Retrier retrier) {
     this.httpRequestManager = new HttpRequestManager(requestFactory);
+    try {
+      this.credentials =
+          GoogleCredentials.getApplicationDefault()
+              .createScoped(Collections.singleton("https://www.googleapis.com/auth/devstorage.read_write"));
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to get application default credentials", e);
+    }
   }
 
   private Map<String, String> getExtensionHeader() {
@@ -75,17 +81,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String date = getRfc1123Date();
     String contentType = "application/x-www-form-urlencoded";
     Map<String, String> extensionHeaders = getExtensionHeader();
-    // GCS Signature Rule #1: The '?uploads' query string IS included for the initiate request.
-    String signature =
-        signRequest(
-            "POST",
-            "",
-            contentType,
-            date,
-            extensionHeaders,
-            resourcePath + "?uploads",
-            GOOGLE_SECRET_KEY);
-    String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
+
+    credentials.refreshIfExpired();
+    AccessToken accessToken = credentials.getAccessToken();
+    String authHeader = "Bearer " + accessToken.getTokenValue();
 
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
@@ -111,7 +110,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String date = getRfc1123Date();
     String contentType = "application/octet-stream";
-    // GCS Signature Rule #2: The query string IS NOT included for the PUT part request.
     MessageDigest md = MessageDigest.getInstance("MD5");
     byte[] partData = requestBody.getPartData();
     String contentMd5 = Base64.getEncoder().encodeToString(md.digest(partData));
@@ -123,11 +121,10 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
                     .array());
     Map<String, String> extensionHeaders = getExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-    String signature =
-        signRequest(
-            "PUT", contentMd5, contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
 
-    String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
+    credentials.refreshIfExpired();
+    AccessToken accessToken = credentials.getAccessToken();
+    String authHeader = "Bearer " + accessToken.getTokenValue();
 
     HttpResponse response =
         httpRequestManager.sendUploadPartRequest(
@@ -176,13 +173,12 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
                     .putInt(Hashing.crc32c().hashBytes(xmlBodyBytes).asInt())
                     .array());
 
-    // GCS Signature Rule #3: The query string IS NOT included for the POST complete request.
     Map<String, String> extensionHeaders = getExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-    String signature =
-        signRequest(
-            "POST", contentMd5, contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
-    String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
+
+    credentials.refreshIfExpired();
+    AccessToken accessToken = credentials.getAccessToken();
+    String authHeader = "Bearer " + accessToken.getTokenValue();
 
     HttpResponse response =
         httpRequestManager.sendCompleteMultipartUploadRequest(
@@ -215,11 +211,9 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String contentType = "application/x-www-form-urlencoded";
     Map<String, String> extensionHeaders = getExtensionHeader();
 
-    // GCS Signature Rule #4: The query string IS NOT included for the DELETE abort request.
-    String signature =
-        signRequest("DELETE", "", contentType, date, extensionHeaders, resourcePath, GOOGLE_SECRET_KEY);
-
-    String authHeader = "GOOG1 " + GOOGLE_ACCESS_KEY + ":" + signature;
+    credentials.refreshIfExpired();
+    AccessToken accessToken = credentials.getAccessToken();
+    String authHeader = "Bearer " + accessToken.getTokenValue();
 
     HttpResponse response =
         httpRequestManager.sendAbortMultipartUploadRequest(
