@@ -52,10 +52,13 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   private final HttpRequestManager httpRequestManager;
   private final GoogleCredentials credentials;
   private final XmlMapper xmlMapper;
+  private final HttpStorageOptions options;
 
-  public MultipartUploadClientImpl(URI uri, HttpRequestFactory requestFactory, Retrier retrier) {
+  public MultipartUploadClientImpl(
+      URI uri, HttpRequestFactory requestFactory, Retrier retrier, HttpStorageOptions options) {
     this.httpRequestManager = new HttpRequestManager(requestFactory);
     this.xmlMapper = new XmlMapper();
+    this.options = options;
     try {
       this.credentials =
           GoogleCredentials.getApplicationDefault()
@@ -67,10 +70,12 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private Map<String, String> getExtensionHeader() {
     Map<String, String> extensionHeaders = new HashMap<>();
-    extensionHeaders.put(
-        "x-goog-api-client",
-        "gl-java/11.0.27__OpenLogic-OpenJDK__OpenLogic-OpenJDK gccl/2.56.1-SNAPSHOT--protobuf-3.25.8 gax/2.70.0 protobuf/3.25.8");
-    extensionHeaders.put("x-goog-user-project", "aipp-internal-testing");
+    if (options.getClientLibToken() != null) {
+      extensionHeaders.put("x-goog-api-client", options.getClientLibToken());
+    }
+    if (options.getProjectId() != null) {
+      extensionHeaders.put("x-goog-user-project", options.getProjectId());
+    }
     return extensionHeaders;
   }
 

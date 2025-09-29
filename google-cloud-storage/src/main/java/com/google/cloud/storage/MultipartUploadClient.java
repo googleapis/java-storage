@@ -54,6 +54,7 @@ public abstract class MultipartUploadClient {
     return new MultipartUploadClientImpl(
         URI.create(options.getHost()),
         options.getStorageRpcV1().getStorage().getRequestFactory(),
-        options.createRetrier());
+        options.createRetrier(),
+        options);
   }
 }
