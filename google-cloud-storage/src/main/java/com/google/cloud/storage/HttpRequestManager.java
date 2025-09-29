@@ -110,4 +110,17 @@ public class HttpRequestManager {
     httpRequest.setThrowExceptionOnExecuteError(false);
     return httpRequest.execute();
   }
+
+  public HttpResponse sendListPartsRequest(
+      String uri, String date, String authHeader, Map<String, String> extensionHeaders)
+      throws IOException {
+    HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(uri));
+    httpRequest.getHeaders().set("Date", date);
+    httpRequest.getHeaders().setAuthorization(authHeader);
+    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
+      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
+    }
+    httpRequest.setThrowExceptionOnExecuteError(false);
+    return httpRequest.execute();
+  }
 }

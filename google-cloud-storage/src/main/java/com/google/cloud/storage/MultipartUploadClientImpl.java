@@ -29,6 +29,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.common.hash.Hashing;
@@ -230,6 +232,38 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
           "Failed to abort upload: " + response.getStatusCode() + " " + error);
     }
     return new AbortMultipartUploadResponse();
+  }
+
+  @Override
+  public ListPartsResponse listParts(ListPartsRequest request) throws IOException {
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + encode(request.uploadId());
+    if (request.getMaxParts() != null) {
+      queryString += "&max-parts=" + request.getMaxParts();
+    }
+    if (request.getPartNumberMarker() != null) {
+      queryString += "&part-number-marker=" + request.getPartNumberMarker();
+    }
+    String uri = GCS_ENDPOINT + resourcePath + queryString;
+    String date = getRfc1123Date();
+    Map<String, String> extensionHeaders = getExtensionHeader();
+
+    credentials.refreshIfExpired();
+    AccessToken accessToken = credentials.getAccessToken();
+    String authHeader = "Bearer " + accessToken.getTokenValue();
+
+    HttpResponse response =
+        httpRequestManager.sendListPartsRequest(uri, date, authHeader, extensionHeaders);
+
+    if (!response.isSuccessStatusCode()) {
+      String error = response.parseAsString();
+      throw new RuntimeException(
+          "Failed to list parts: " + response.getStatusCode() + " " + error);
+    }
+
+    return xmlMapper.readValue(response.getContent(), ListPartsResponse.class);
   }
 
   private String encode(String value) throws UnsupportedEncodingException {

@@ -24,6 +24,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
@@ -48,6 +50,8 @@ public abstract class MultipartUploadClient {
 
   public abstract AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request)
       throws IOException, NoSuchAlgorithmException;
+
+  public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest) throws IOException;
 
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();

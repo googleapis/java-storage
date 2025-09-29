@@ -33,11 +33,17 @@ public final class ListPartsResponse {
   @JacksonXmlProperty(localName = "UploadId")
   private String uploadId;
 
-  @JacksonXmlProperty(localName = "IsTruncated")
-  private boolean isTruncated;
+  @JacksonXmlProperty(localName = "PartNumberMarker")
+  private Integer partNumberMarker;
 
   @JacksonXmlProperty(localName = "NextPartNumberMarker")
-  private String nextPartNumberMarker;
+  private Integer nextPartNumberMarker;
+
+  @JacksonXmlProperty(localName = "MaxParts")
+  private Integer maxParts;
+
+  @JacksonXmlProperty(localName = "IsTruncated")
+  private boolean isTruncated;
 
   @JacksonXmlProperty(localName = "Owner")
   private String owner;
@@ -61,12 +67,20 @@ public final class ListPartsResponse {
     return uploadId;
   }
 
-  public boolean isTruncated() {
-    return isTruncated;
+  public Integer getPartNumberMarker() {
+    return partNumberMarker;
   }
 
-  public String getNextPartNumberMarker() {
+  public Integer getNextPartNumberMarker() {
     return nextPartNumberMarker;
+  }
+
+  public Integer getMaxParts() {
+    return maxParts;
+  }
+
+  public boolean isTruncated() {
+    return isTruncated;
   }
 
   public String getOwner() {
@@ -93,8 +107,10 @@ public final class ListPartsResponse {
     return Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
-        && Objects.equals(isTruncated, that.isTruncated)
+        && Objects.equals(partNumberMarker, that.partNumberMarker)
         && Objects.equals(nextPartNumberMarker, that.nextPartNumberMarker)
+        && Objects.equals(maxParts, that.maxParts)
+        && Objects.equals(isTruncated, that.isTruncated)
         && Objects.equals(owner, that.owner)
         && Objects.equals(storageClass, that.storageClass)
         && Objects.equals(parts, that.parts);
@@ -103,7 +119,16 @@ public final class ListPartsResponse {
   @Override
   public int hashCode() {
     return Objects.hash(
-        bucket, key, uploadId, isTruncated, nextPartNumberMarker, owner, storageClass, parts);
+        bucket,
+        key,
+        uploadId,
+        partNumberMarker,
+        nextPartNumberMarker,
+        maxParts,
+        isTruncated,
+        owner,
+        storageClass,
+        parts);
   }
 
   @Override
@@ -112,8 +137,10 @@ public final class ListPartsResponse {
         .add("bucket", bucket)
         .add("key", key)
         .add("uploadId", uploadId)
-        .add("isTruncated", isTruncated)
+        .add("partNumberMarker", partNumberMarker)
         .add("nextPartNumberMarker", nextPartNumberMarker)
+        .add("maxParts", maxParts)
+        .add("isTruncated", isTruncated)
         .add("owner", owner)
         .add("storageClass", storageClass)
         .add("parts", parts)
