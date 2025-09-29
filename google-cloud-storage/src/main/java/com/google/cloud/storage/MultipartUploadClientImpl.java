@@ -51,9 +51,11 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final HttpRequestManager httpRequestManager;
   private final GoogleCredentials credentials;
+  private final XmlMapper xmlMapper;
 
   public MultipartUploadClientImpl(URI uri, HttpRequestFactory requestFactory, Retrier retrier) {
     this.httpRequestManager = new HttpRequestManager(requestFactory);
+    this.xmlMapper = new XmlMapper();
     try {
       this.credentials =
           GoogleCredentials.getApplicationDefault()
@@ -96,7 +98,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
           "Failed to initiate upload: " + response.getStatusCode() + " " + error);
     }
 
-    XmlMapper xmlMapper = new XmlMapper();
     return xmlMapper.readValue(response.getContent(), CreateMultipartUploadResponse.class);
   }
 
@@ -159,7 +160,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
 
-    XmlMapper xmlMapper = new XmlMapper();
     byte[] xmlBodyBytes = xmlMapper.writeValueAsBytes(request.multipartUpload());
 
     MessageDigest md = MessageDigest.getInstance("MD5");
