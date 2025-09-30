@@ -32,7 +32,14 @@ public class HttpRequestManager {
   }
 
   public HttpResponse sendCreateMultipartUploadRequest(
-      String uri, String date, String authHeader, String contentType, Map<String, String> extensionHeaders)
+      String uri,
+      String date,
+      String authHeader,
+      String contentType,
+      String contentDisposition,
+      String contentEncoding,
+      String contentLanguage,
+      Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
@@ -40,6 +47,15 @@ public class HttpRequestManager {
     httpRequest.getHeaders().set("Date", date);
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
+    if (contentDisposition != null) {
+      httpRequest.getHeaders().set("Content-Disposition", contentDisposition);
+    }
+    if (contentEncoding != null) {
+      httpRequest.getHeaders().setContentEncoding(contentEncoding);
+    }
+    if (contentLanguage != null) {
+      httpRequest.getHeaders().set("Content-Language", contentLanguage);
+    }
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }

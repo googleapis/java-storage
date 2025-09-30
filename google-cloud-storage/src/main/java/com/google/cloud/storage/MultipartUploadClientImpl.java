@@ -88,8 +88,22 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
     String date = getRfc1123Date();
-    String contentType = "application/x-www-form-urlencoded";
+    String contentType =
+        request.getContentType() == null
+            ? "application/x-www-form-urlencoded"
+            : request.getContentType();
     Map<String, String> extensionHeaders = getExtensionHeader();
+    if (request.getCannedAcl() != null) {
+      extensionHeaders.put("x-goog-acl", request.getCannedAcl().toString());
+    }
+    if (request.getMetadata() != null) {
+      for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
+        extensionHeaders.put("x-goog-meta-" + entry.getKey(), entry.getValue());
+      }
+    }
+    if (request.getStorageClass() != null) {
+      extensionHeaders.put("x-goog-storage-class", request.getStorageClass());
+    }
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
@@ -97,7 +111,14 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
-            uri, date, authHeader, contentType, extensionHeaders);
+            uri,
+            date,
+            authHeader,
+            contentType,
+            request.getContentDisposition(),
+            request.getContentEncoding(),
+            request.getContentLanguage(),
+            extensionHeaders);
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
