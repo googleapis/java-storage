@@ -23,17 +23,32 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 @JacksonXmlRootElement(localName = "InitiateMultipartUploadResult")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateMultipartUploadResponse {
+
+  @JacksonXmlProperty(localName = "Bucket")
+  private String bucket;
+
+  @JacksonXmlProperty(localName = "Key")
+  private String key;
 
   @JacksonXmlProperty(localName = "UploadId")
   private String uploadId;
 
   private CreateMultipartUploadResponse(Builder builder) {
+    this.bucket = builder.bucket;
+    this.key = builder.key;
     this.uploadId = builder.uploadId;
   }
 
   private CreateMultipartUploadResponse() {}
+
+  public String bucket() {
+    return bucket;
+  }
+
+  public String key() {
+    return key;
+  }
 
   public String uploadId() {
     return uploadId;
@@ -48,17 +63,23 @@ public class CreateMultipartUploadResponse {
       return false;
     }
     CreateMultipartUploadResponse that = (CreateMultipartUploadResponse) o;
-    return Objects.equals(uploadId, that.uploadId);
+    return Objects.equals(bucket, that.bucket)
+        && Objects.equals(key, that.key)
+        && Objects.equals(uploadId, that.uploadId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uploadId);
+    return Objects.hash(bucket, key, uploadId);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("uploadId", uploadId).toString();
+    return MoreObjects.toStringHelper(this)
+        .add("bucket", bucket)
+        .add("key", key)
+        .add("uploadId", uploadId)
+        .toString();
   }
 
   public static Builder builder() {
@@ -66,9 +87,21 @@ public class CreateMultipartUploadResponse {
   }
 
   public static class Builder {
+    private String bucket;
+    private String key;
     private String uploadId;
 
     private Builder() {}
+
+    public Builder bucket(String bucket) {
+      this.bucket = bucket;
+      return this;
+    }
+
+    public Builder key(String key) {
+      this.key = key;
+      return this;
+    }
 
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
