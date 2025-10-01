@@ -25,16 +25,12 @@ public final class CompleteMultipartUploadRequest {
   private final String key;
   private final String uploadId;
   private final CompletedMultipartUpload multipartUpload;
-  private final String requestPayer;
-  private final String expectedBucketOwner;
 
   private CompleteMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
     this.multipartUpload = builder.multipartUpload;
-    this.requestPayer = builder.requestPayer;
-    this.expectedBucketOwner = builder.expectedBucketOwner;
   }
 
   public String bucket() {
@@ -53,14 +49,6 @@ public final class CompleteMultipartUploadRequest {
     return multipartUpload;
   }
 
-  public String requestPayer() {
-    return requestPayer;
-  }
-
-  public String expectedBucketOwner() {
-    return expectedBucketOwner;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -73,14 +61,12 @@ public final class CompleteMultipartUploadRequest {
     return Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
-        && Objects.equals(multipartUpload, that.multipartUpload)
-        && Objects.equals(requestPayer, that.requestPayer)
-        && Objects.equals(expectedBucketOwner, that.expectedBucketOwner);
+        && Objects.equals(multipartUpload, that.multipartUpload);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, multipartUpload, requestPayer, expectedBucketOwner);
+    return Objects.hash(bucket, key, uploadId, multipartUpload);
   }
 
   @Override
@@ -90,8 +76,6 @@ public final class CompleteMultipartUploadRequest {
         .add("key", key)
         .add("uploadId", uploadId)
         .add("completedMultipartUpload", multipartUpload)
-        .add("requestPayer", requestPayer)
-        .add("expectedBucketOwner", expectedBucketOwner)
         .toString();
   }
 
@@ -104,8 +88,6 @@ public final class CompleteMultipartUploadRequest {
     private String key;
     private String uploadId;
     private CompletedMultipartUpload multipartUpload;
-    private String requestPayer;
-    private String expectedBucketOwner;
 
     private Builder() {}
 
@@ -126,16 +108,6 @@ public final class CompleteMultipartUploadRequest {
 
     public Builder multipartUpload(CompletedMultipartUpload completedMultipartUpload) {
       this.multipartUpload = completedMultipartUpload;
-      return this;
-    }
-
-    public Builder requestPayer(String requestPayer) {
-      this.requestPayer = requestPayer;
-      return this;
-    }
-
-    public Builder expectedBucketOwner(String expectedBucketOwner) {
-      this.expectedBucketOwner = expectedBucketOwner;
       return this;
     }
 
