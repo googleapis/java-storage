@@ -16,39 +16,33 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.cloud.storage.ObjectLockMode;
 import com.google.cloud.storage.Storage.PredefinedAcl;
+import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
 public class CreateMultipartUploadRequest {
   private final String bucket;
-
   private final String key;
   private final PredefinedAcl cannedAcl;
-  private final String contentDisposition;
-  private final String contentEncoding;
-  private final String contentLanguage;
   private final String contentType;
   private final Map<String, String> metadata;
-  private final String storageClass;
-  private final String cacheControl;
-  private final String customTime;
+  private final StorageClass storageClass;
+  private final Date customTime;
   private final String kmsKeyName;
-  private final String objectLockMode;
-  private final String objectLockRetainUntilDate;
+  private final ObjectLockMode objectLockMode;
+  private final Date objectLockRetainUntilDate;
 
   private CreateMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.cannedAcl = builder.cannedAcl;
-    this.contentDisposition = builder.contentDisposition;
-    this.contentEncoding = builder.contentEncoding;
-    this.contentLanguage = builder.contentLanguage;
     this.contentType = builder.contentType;
     this.metadata = builder.metadata;
     this.storageClass = builder.storageClass;
-    this.cacheControl = builder.cacheControl;
     this.customTime = builder.customTime;
     this.kmsKeyName = builder.kmsKeyName;
     this.objectLockMode = builder.objectLockMode;
@@ -67,18 +61,6 @@ public class CreateMultipartUploadRequest {
     return cannedAcl;
   }
 
-  public String getContentDisposition() {
-    return contentDisposition;
-  }
-
-  public String getContentEncoding() {
-    return contentEncoding;
-  }
-
-  public String getContentLanguage() {
-    return contentLanguage;
-  }
-
   public String getContentType() {
     return contentType;
   }
@@ -87,15 +69,11 @@ public class CreateMultipartUploadRequest {
     return metadata;
   }
 
-  public String getStorageClass() {
+  public StorageClass getStorageClass() {
     return storageClass;
   }
 
-  public String getCacheControl() {
-    return cacheControl;
-  }
-
-  public String getCustomTime() {
+  public Date getCustomTime() {
     return customTime;
   }
 
@@ -103,11 +81,11 @@ public class CreateMultipartUploadRequest {
     return kmsKeyName;
   }
 
-  public String getObjectLockMode() {
+  public ObjectLockMode getObjectLockMode() {
     return objectLockMode;
   }
 
-  public String getObjectLockRetainUntilDate() {
+  public Date getObjectLockRetainUntilDate() {
     return objectLockRetainUntilDate;
   }
 
@@ -123,16 +101,12 @@ public class CreateMultipartUploadRequest {
     return Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
         && cannedAcl == that.cannedAcl
-        && Objects.equals(contentDisposition, that.contentDisposition)
-        && Objects.equals(contentEncoding, that.contentEncoding)
-        && Objects.equals(contentLanguage, that.contentLanguage)
         && Objects.equals(contentType, that.contentType)
         && Objects.equals(metadata, that.metadata)
         && Objects.equals(storageClass, that.storageClass)
-        && Objects.equals(cacheControl, that.cacheControl)
         && Objects.equals(customTime, that.customTime)
         && Objects.equals(kmsKeyName, that.kmsKeyName)
-        && Objects.equals(objectLockMode, that.objectLockMode)
+        && objectLockMode == that.objectLockMode
         && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate);
   }
 
@@ -142,13 +116,9 @@ public class CreateMultipartUploadRequest {
         bucket,
         key,
         cannedAcl,
-        contentDisposition,
-        contentEncoding,
-        contentLanguage,
         contentType,
         metadata,
         storageClass,
-        cacheControl,
         customTime,
         kmsKeyName,
         objectLockMode,
@@ -161,13 +131,9 @@ public class CreateMultipartUploadRequest {
         .add("bucket", bucket)
         .add("key", key)
         .add("cannedAcl", cannedAcl)
-        .add("contentDisposition", contentDisposition)
-        .add("contentEncoding", contentEncoding)
-        .add("contentLanguage", contentLanguage)
         .add("contentType", contentType)
         .add("metadata", metadata)
         .add("storageClass", storageClass)
-        .add("cacheControl", cacheControl)
         .add("customTime", customTime)
         .add("kmsKeyName", kmsKeyName)
         .add("objectLockMode", objectLockMode)
@@ -183,86 +149,125 @@ public class CreateMultipartUploadRequest {
     private String bucket;
     private String key;
     private PredefinedAcl cannedAcl;
-    private String contentDisposition;
-    private String contentEncoding;
-    private String contentLanguage;
     private String contentType;
     private Map<String, String> metadata;
-    private String storageClass;
-    private String cacheControl;
-    private String customTime;
+    private StorageClass storageClass;
+    private Date customTime;
     private String kmsKeyName;
-    private String objectLockMode;
-    private String objectLockRetainUntilDate;
+    private ObjectLockMode objectLockMode;
+    private Date objectLockRetainUntilDate;
 
     private Builder() {}
 
+    /**
+     * The bucket to which the object is being uploaded.
+     *
+     * @param bucket The bucket name
+     * @return this builder
+     */
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
     }
 
+    /**
+     * The name of the object.
+     *
+     * @param key The object name
+     * @return this builder
+     */
     public Builder key(String key) {
       this.key = key;
       return this;
     }
 
+    /**
+     * A canned ACL to apply to the object.
+     *
+     * @param cannedAcl The canned ACL
+     * @return this builder
+     */
     public Builder cannedAcl(PredefinedAcl cannedAcl) {
       this.cannedAcl = cannedAcl;
       return this;
     }
 
-    public Builder contentDisposition(String contentDisposition) {
-      this.contentDisposition = contentDisposition;
-      return this;
-    }
-
-    public Builder contentEncoding(String contentEncoding) {
-      this.contentEncoding = contentEncoding;
-      return this;
-    }
-
-    public Builder contentLanguage(String contentLanguage) {
-      this.contentLanguage = contentLanguage;
-      return this;
-    }
-
+    /**
+     * The MIME type of the data you are uploading.
+     *
+     * @param contentType The Content-Type
+     * @return this builder
+     */
     public Builder contentType(String contentType) {
       this.contentType = contentType;
       return this;
     }
 
+    /**
+     * The custom metadata of the object.
+     *
+     * @param metadata The custom metadata
+     * @return this builder
+     */
     public Builder metadata(Map<String, String> metadata) {
       this.metadata = metadata;
       return this;
     }
 
-    public Builder storageClass(String storageClass) {
+    /**
+     * Gives each part of the upload and the resulting object a storage class besides the default
+     * storage class of the associated bucket.
+     *
+     * @param storageClass The Storage-Class
+     * @return this builder
+     */
+    public Builder storageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
     }
 
-    public Builder cacheControl(String cacheControl) {
-      this.cacheControl = cacheControl;
-      return this;
-    }
-
-    public Builder customTime(String customTime) {
+    /**
+     * A user-specified date and time.
+     *
+     * @param customTime The custom time
+     * @return this builder
+     */
+    public Builder customTime(Date customTime) {
       this.customTime = customTime;
       return this;
     }
 
+    /**
+     * The customer-managed encryption key to use to encrypt the object. Refer: <a
+     * href="https://cloud.google.com/storage/docs/encryption/customer-managed-keys">Customer Managed Keys</a>
+     *
+     * @param kmsKeyName The Cloud KMS key
+     * @return this builder
+     */
     public Builder kmsKeyName(String kmsKeyName) {
       this.kmsKeyName = kmsKeyName;
       return this;
     }
 
-    public Builder objectLockMode(String objectLockMode) {
+    /**
+     * Mode of the object's retention configuration. GOVERNANCE corresponds to unlocked mode, and
+     * COMPLIANCE corresponds to locked mode.
+     *
+     * @param objectLockMode The object lock mode
+     * @return this builder
+     */
+    public Builder objectLockMode(ObjectLockMode objectLockMode) {
       this.objectLockMode = objectLockMode;
       return this;
     }
 
-    public Builder objectLockRetainUntilDate(String objectLockRetainUntilDate) {
+    /**
+     * Date that determines the time until which the object is retained as immutable.
+     *
+     * @param objectLockRetainUntilDate The object lock retention until date
+     * @return this builder
+     */
+    public Builder objectLockRetainUntilDate(Date objectLockRetainUntilDate) {
       this.objectLockRetainUntilDate = objectLockRetainUntilDate;
       return this;
     }

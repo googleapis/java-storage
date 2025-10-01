@@ -42,10 +42,13 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MultipartUploadClientImpl extends MultipartUploadClient {
 
@@ -70,7 +73,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     }
   }
 
-  private Map<String, String> getExtensionHeader() {
+  private Map<String, String> getGenericExtensionHeader() {
     Map<String, String> extensionHeaders = new HashMap<>();
     if (options.getClientLibToken() != null) {
       extensionHeaders.put("x-goog-api-client", options.getClientLibToken());
@@ -116,13 +119,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   }
 
   private Map<String, String> getExtensionHeadersForCreateMultipartUpload(CreateMultipartUploadRequest request){
-    Map<String, String> extensionHeaders = getExtensionHeader();
-    if (request.getContentDisposition() != null) {
-      extensionHeaders.put("Content-Disposition", request.getContentDisposition());
-    }
-    if (request.getContentLanguage() != null && !request.getContentLanguage().isEmpty()) {
-      extensionHeaders.put("Content-Language", request.getContentLanguage());
-    }
+    Map<String, String> extensionHeaders = getGenericExtensionHeader();
     if (request.getCannedAcl() != null) {
       extensionHeaders.put("x-goog-acl", request.getCannedAcl().toString());
     }
@@ -133,24 +130,20 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
         }
       }
     }
-    if (request.getStorageClass() != null && !request.getStorageClass().isEmpty()) {
-      extensionHeaders.put("x-goog-storage-class", request.getStorageClass());
+    if (request.getStorageClass() != null) {
+      extensionHeaders.put("x-goog-storage-class", request.getStorageClass().toString());
     }
     if (request.getKmsKeyName() != null && !request.getKmsKeyName().isEmpty()) {
       extensionHeaders.put("x-goog-encryption-kms-key-name", request.getKmsKeyName());
     }
     // x-goog-object-lock-mode and x-goog-object-lock-retain-until-date should be specified together
     // Refer: https://cloud.google.com/storage/docs/xml-api/post-object-multipart#request_headers
-    if (request.getObjectLockMode() != null
-        && !request.getObjectLockMode().isEmpty()
-        && request.getObjectLockRetainUntilDate() != null
-        && !request.getObjectLockRetainUntilDate().isEmpty()) {
-      extensionHeaders.put("x-goog-object-lock-mode", request.getObjectLockMode());
-      extensionHeaders.put("x-goog-object-lock-retain-until-date",
-          request.getObjectLockRetainUntilDate());
+    if (request.getObjectLockMode() != null && request.getObjectLockRetainUntilDate() != null) {
+      extensionHeaders.put("x-goog-object-lock-mode", request.getObjectLockMode().toString());
+      extensionHeaders.put("x-goog-object-lock-retain-until-date", toRfc3339String(request.getObjectLockRetainUntilDate()));
     }
-    if (request.getCustomTime() != null && !request.getCustomTime().isEmpty()) {
-      extensionHeaders.put("x-goog-custom-time", request.getCustomTime());
+    if (request.getCustomTime() != null) {
+      extensionHeaders.put("x-goog-custom-time", toRfc3339String(request.getCustomTime()));
     }
     return extensionHeaders;
   }
@@ -173,7 +166,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
                 ByteBuffer.allocate(4)
                     .putInt(Hashing.crc32c().hashBytes(partData).asInt())
                     .array());
-    Map<String, String> extensionHeaders = getExtensionHeader();
+    Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
 
     credentials.refreshIfExpired();
@@ -224,7 +217,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
                     .putInt(Hashing.crc32c().hashBytes(xmlBodyBytes).asInt())
                     .array());
 
-    Map<String, String> extensionHeaders = getExtensionHeader();
+    Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
 
     credentials.refreshIfExpired();
@@ -258,7 +251,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String contentType = "application/x-www-form-urlencoded";
-    Map<String, String> extensionHeaders = getExtensionHeader();
+    Map<String, String> extensionHeaders = getGenericExtensionHeader();
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
@@ -289,7 +282,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
       queryString += "&part-number-marker=" + request.getPartNumberMarker();
     }
     String uri = GCS_ENDPOINT + resourcePath + queryString;
-    Map<String, String> extensionHeaders = getExtensionHeader();
+    Map<String, String> extensionHeaders = getGenericExtensionHeader();
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
@@ -309,5 +302,12 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private String encode(String value) throws UnsupportedEncodingException {
     return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+  }
+
+  private String toRfc3339String(Date date) {
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    df.setTimeZone(tz);
+    return df.format(date);
   }
 }
