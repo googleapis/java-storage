@@ -203,6 +203,12 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     Map<String, String> extensionHeaders = getExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
+    if (request.requestPayer() != null) {
+      extensionHeaders.put("x-amz-request-payer", request.requestPayer());
+    }
+    if (request.expectedBucketOwner() != null) {
+      extensionHeaders.put("x-amz-expected-bucket-owner", request.expectedBucketOwner());
+    }
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
