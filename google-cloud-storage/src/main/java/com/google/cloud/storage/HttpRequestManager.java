@@ -46,12 +46,6 @@ public class HttpRequestManager {
             new GenericUrl(uri), new ByteArrayContent(contentType, new byte[0]));
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
-    if (request.getContentEncoding() != null && !request.getContentEncoding().isEmpty()) {
-      httpRequest.getHeaders().setContentEncoding(request.getContentEncoding());
-    }
-    if (request.getCacheControl() != null && !request.getCacheControl().isEmpty()) {
-      httpRequest.getHeaders().setCacheControl(request.getCacheControl());
-    }
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }
