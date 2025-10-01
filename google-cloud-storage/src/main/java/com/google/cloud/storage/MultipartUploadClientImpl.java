@@ -34,6 +34,7 @@ import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.common.hash.Hashing;
+import com.google.common.net.MediaType;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -96,10 +97,17 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     AccessToken accessToken = credentials.getAccessToken();
     String authHeader = "Bearer " + accessToken.getTokenValue();
 
-    String contentType =
-        request.getContentType() == null
-            ? "application/x-www-form-urlencoded"
-            : request.getContentType();
+    String contentType;
+    if (request.getContentType() == null) {
+      contentType = "application/x-www-form-urlencoded";
+    } else {
+      try {
+        contentType = MediaType.parse(request.getContentType()).toString();
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException(
+            "Invalid Content-Type header provided: " + request.getContentType(), e);
+      }
+    }
 
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
