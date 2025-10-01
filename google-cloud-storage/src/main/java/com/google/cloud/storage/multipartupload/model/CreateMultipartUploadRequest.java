@@ -32,6 +32,11 @@ public class CreateMultipartUploadRequest {
   private final String contentType;
   private final Map<String, String> metadata;
   private final String storageClass;
+  private final String cacheControl;
+  private final String customTime;
+  private final String kmsKeyName;
+  private final String objectLockMode;
+  private final String objectLockRetainUntilDate;
 
   private CreateMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
@@ -43,6 +48,11 @@ public class CreateMultipartUploadRequest {
     this.contentType = builder.contentType;
     this.metadata = builder.metadata;
     this.storageClass = builder.storageClass;
+    this.cacheControl = builder.cacheControl;
+    this.customTime = builder.customTime;
+    this.kmsKeyName = builder.kmsKeyName;
+    this.objectLockMode = builder.objectLockMode;
+    this.objectLockRetainUntilDate = builder.objectLockRetainUntilDate;
   }
 
   public String bucket() {
@@ -81,6 +91,26 @@ public class CreateMultipartUploadRequest {
     return storageClass;
   }
 
+  public String getCacheControl() {
+    return cacheControl;
+  }
+
+  public String getCustomTime() {
+    return customTime;
+  }
+
+  public String getKmsKeyName() {
+    return kmsKeyName;
+  }
+
+  public String getObjectLockMode() {
+    return objectLockMode;
+  }
+
+  public String getObjectLockRetainUntilDate() {
+    return objectLockRetainUntilDate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -98,7 +128,12 @@ public class CreateMultipartUploadRequest {
         && Objects.equals(contentLanguage, that.contentLanguage)
         && Objects.equals(contentType, that.contentType)
         && Objects.equals(metadata, that.metadata)
-        && Objects.equals(storageClass, that.storageClass);
+        && Objects.equals(storageClass, that.storageClass)
+        && Objects.equals(cacheControl, that.cacheControl)
+        && Objects.equals(customTime, that.customTime)
+        && Objects.equals(kmsKeyName, that.kmsKeyName)
+        && Objects.equals(objectLockMode, that.objectLockMode)
+        && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate);
   }
 
   @Override
@@ -112,7 +147,12 @@ public class CreateMultipartUploadRequest {
         contentLanguage,
         contentType,
         metadata,
-        storageClass);
+        storageClass,
+        cacheControl,
+        customTime,
+        kmsKeyName,
+        objectLockMode,
+        objectLockRetainUntilDate);
   }
 
   @Override
@@ -127,6 +167,11 @@ public class CreateMultipartUploadRequest {
         .add("contentType", contentType)
         .add("metadata", metadata)
         .add("storageClass", storageClass)
+        .add("cacheControl", cacheControl)
+        .add("customTime", customTime)
+        .add("kmsKeyName", kmsKeyName)
+        .add("objectLockMode", objectLockMode)
+        .add("objectLockRetainUntilDate", objectLockRetainUntilDate)
         .toString();
   }
 
@@ -144,6 +189,11 @@ public class CreateMultipartUploadRequest {
     private String contentType;
     private Map<String, String> metadata;
     private String storageClass;
+    private String cacheControl;
+    private String customTime;
+    private String kmsKeyName;
+    private String objectLockMode;
+    private String objectLockRetainUntilDate;
 
     private Builder() {}
 
@@ -189,6 +239,31 @@ public class CreateMultipartUploadRequest {
 
     public Builder storageClass(String storageClass) {
       this.storageClass = storageClass;
+      return this;
+    }
+
+    public Builder cacheControl(String cacheControl) {
+      this.cacheControl = cacheControl;
+      return this;
+    }
+
+    public Builder customTime(String customTime) {
+      this.customTime = customTime;
+      return this;
+    }
+
+    public Builder kmsKeyName(String kmsKeyName) {
+      this.kmsKeyName = kmsKeyName;
+      return this;
+    }
+
+    public Builder objectLockMode(String objectLockMode) {
+      this.objectLockMode = objectLockMode;
+      return this;
+    }
+
+    public Builder objectLockRetainUntilDate(String objectLockRetainUntilDate) {
+      this.objectLockRetainUntilDate = objectLockRetainUntilDate;
       return this;
     }
 

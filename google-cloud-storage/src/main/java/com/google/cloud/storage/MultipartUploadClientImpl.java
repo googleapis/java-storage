@@ -78,6 +78,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     if (options.getProjectId() != null) {
       extensionHeaders.put("x-goog-user-project", options.getProjectId());
     }
+    extensionHeaders.put("Date", getRfc1123Date());
     return extensionHeaders;
   }
 
@@ -87,38 +88,23 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String encodedKey = encode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
-    String date = getRfc1123Date();
-    String contentType =
-        request.getContentType() == null
-            ? "application/x-www-form-urlencoded"
-            : request.getContentType();
-    Map<String, String> extensionHeaders = getExtensionHeader();
-    if (request.getCannedAcl() != null) {
-      extensionHeaders.put("x-goog-acl", request.getCannedAcl().toString());
-    }
-    if (request.getMetadata() != null) {
-      for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
-        extensionHeaders.put("x-goog-meta-" + entry.getKey(), entry.getValue());
-      }
-    }
-    if (request.getStorageClass() != null) {
-      extensionHeaders.put("x-goog-storage-class", request.getStorageClass());
-    }
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
     String authHeader = "Bearer " + accessToken.getTokenValue();
 
+    String contentType =
+        request.getContentType() == null
+            ? "application/x-www-form-urlencoded"
+            : request.getContentType();
+
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
             uri,
-            date,
             authHeader,
             contentType,
-            request.getContentDisposition(),
-            request.getContentEncoding(),
-            request.getContentLanguage(),
-            extensionHeaders);
+            request,
+            getExtensionHeadersForCreateMultipartUpload(request));
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -129,6 +115,46 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     return xmlMapper.readValue(response.getContent(), CreateMultipartUploadResponse.class);
   }
 
+  private Map<String, String> getExtensionHeadersForCreateMultipartUpload(CreateMultipartUploadRequest request){
+    Map<String, String> extensionHeaders = getExtensionHeader();
+    if (request.getContentDisposition() != null) {
+      extensionHeaders.put("Content-Disposition", request.getContentDisposition());
+    }
+    if (request.getContentLanguage() != null && !request.getContentLanguage().isEmpty()) {
+      extensionHeaders.put("Content-Language", request.getContentLanguage());
+    }
+    if (request.getCannedAcl() != null) {
+      extensionHeaders.put("x-goog-acl", request.getCannedAcl().toString());
+    }
+    if (request.getMetadata() != null) {
+      for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
+        if (entry.getKey() != null || entry.getValue() != null) {
+          extensionHeaders.put("x-goog-meta-" + entry.getKey(), entry.getValue());
+        }
+      }
+    }
+    if (request.getStorageClass() != null && !request.getStorageClass().isEmpty()) {
+      extensionHeaders.put("x-goog-storage-class", request.getStorageClass());
+    }
+    if (request.getKmsKeyName() != null && !request.getKmsKeyName().isEmpty()) {
+      extensionHeaders.put("x-goog-encryption-kms-key-name", request.getKmsKeyName());
+    }
+    // x-goog-object-lock-mode and x-goog-object-lock-retain-until-date should be specified together
+    // Refer: https://cloud.google.com/storage/docs/xml-api/post-object-multipart#request_headers
+    if (request.getObjectLockMode() != null
+        && !request.getObjectLockMode().isEmpty()
+        && request.getObjectLockRetainUntilDate() != null
+        && !request.getObjectLockRetainUntilDate().isEmpty()) {
+      extensionHeaders.put("x-goog-object-lock-mode", request.getObjectLockMode());
+      extensionHeaders.put("x-goog-object-lock-retain-until-date",
+          request.getObjectLockRetainUntilDate());
+    }
+    if (request.getCustomTime() != null && !request.getCustomTime().isEmpty()) {
+      extensionHeaders.put("x-goog-custom-time", request.getCustomTime());
+    }
+    return extensionHeaders;
+  }
+
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody)
       throws IOException, NoSuchAlgorithmException {
     String encodedBucket = encode(request.bucket());
@@ -137,7 +163,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String queryString =
         "?partNumber=" + request.partNumber() + "&uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
-    String date = getRfc1123Date();
     String contentType = "application/octet-stream";
     MessageDigest md = MessageDigest.getInstance("MD5");
     byte[] partData = requestBody.getPartData();
@@ -159,7 +184,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
         httpRequestManager.sendUploadPartRequest(
             uri,
             partData,
-            date,
             authHeader,
             contentType,
             contentMd5,
@@ -192,7 +216,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     MessageDigest md = MessageDigest.getInstance("MD5");
     String contentMd5 = Base64.getEncoder().encodeToString(md.digest(xmlBodyBytes));
-    String date = getRfc1123Date();
     String contentType = "application/xml";
     String crc32cString =
         Base64.getEncoder()
@@ -203,12 +226,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     Map<String, String> extensionHeaders = getExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-    if (request.requestPayer() != null) {
-      extensionHeaders.put("x-amz-request-payer", request.requestPayer());
-    }
-    if (request.expectedBucketOwner() != null) {
-      extensionHeaders.put("x-amz-expected-bucket-owner", request.expectedBucketOwner());
-    }
 
     credentials.refreshIfExpired();
     AccessToken accessToken = credentials.getAccessToken();
@@ -218,7 +235,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
         httpRequestManager.sendCompleteMultipartUploadRequest(
             uri,
             xmlBodyBytes,
-            date,
             authHeader,
             contentType,
             contentMd5,
@@ -241,7 +257,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
-    String date = getRfc1123Date();
     String contentType = "application/x-www-form-urlencoded";
     Map<String, String> extensionHeaders = getExtensionHeader();
 
@@ -251,7 +266,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     HttpResponse response =
         httpRequestManager.sendAbortMultipartUploadRequest(
-            uri, date, authHeader, contentType, extensionHeaders);
+            uri, authHeader, contentType, extensionHeaders);
 
     if (response.getStatusCode() != 204) {
       String error = response.parseAsString();
@@ -274,7 +289,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
       queryString += "&part-number-marker=" + request.getPartNumberMarker();
     }
     String uri = GCS_ENDPOINT + resourcePath + queryString;
-    String date = getRfc1123Date();
     Map<String, String> extensionHeaders = getExtensionHeader();
 
     credentials.refreshIfExpired();
@@ -282,7 +296,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String authHeader = "Bearer " + accessToken.getTokenValue();
 
     HttpResponse response =
-        httpRequestManager.sendListPartsRequest(uri, date, authHeader, extensionHeaders);
+        httpRequestManager.sendListPartsRequest(uri, authHeader, extensionHeaders);
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
