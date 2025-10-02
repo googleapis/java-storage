@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -267,7 +266,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
 
     private final Hasher hasher;
     private final SettableApiFuture<Void> failFuture;
-    private final BlockingQueue<Closeable> queue;
+    private final ArrayBlockingQueue<Closeable> queue;
 
     private AtomicLong readId;
     private boolean complete;
@@ -384,7 +383,6 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
       }
 
       long read = 0;
-      long dstsRemaining = Buffers.totalRemaining(dsts, offset, length);
       if (leftovers != null) {
         read += leftovers.copy(dsts, offset, length);
         if (!leftovers.hasRemaining()) {
@@ -393,34 +391,41 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         }
       }
 
-      Object poll;
-      while (read < dstsRemaining && (poll = queue.poll()) != null) {
-        if (poll instanceof ChildRef) {
-          ChildRefHelper ref = new ChildRefHelper((ChildRef) poll);
-          read += ref.copy(dsts, offset, length);
-          if (ref.hasRemaining()) {
-            leftovers = ref;
+      try {
+        Object poll;
+        while ((poll = queue.poll(10, TimeUnit.MICROSECONDS)) != null) {
+          if (poll instanceof ChildRef) {
+            ChildRefHelper ref = new ChildRefHelper((ChildRef) poll);
+            read += ref.copy(dsts, offset, length);
+            if (ref.hasRemaining()) {
+              leftovers = ref;
+              break;
+            } else {
+              ref.ref.close();
+            }
+          } else if (poll == EofMarker.INSTANCE) {
+            complete = true;
+            if (read == 0) {
+              close();
+              return -1;
+            }
             break;
-          } else {
-            ref.ref.close();
-          }
-        } else if (poll == EofMarker.INSTANCE) {
-          complete = true;
-          if (read == 0) {
+          } else if (poll instanceof SmuggledFailure) {
+            SmuggledFailure throwable = (SmuggledFailure) poll;
             close();
-            return -1;
+            BaseServiceException coalesce = StorageException.coalesce(throwable.getSmuggled());
+            throw new IOException(coalesce);
+          } else {
+            //noinspection DataFlowIssue
+            Preconditions.checkState(
+                false, "unhandled queue element type %s", poll.getClass().getName());
           }
-          break;
-        } else if (poll instanceof SmuggledFailure) {
-          SmuggledFailure throwable = (SmuggledFailure) poll;
-          close();
-          BaseServiceException coalesce = StorageException.coalesce(throwable.getSmuggled());
-          throw new IOException(coalesce);
-        } else {
-          //noinspection DataFlowIssue
-          Preconditions.checkState(
-              false, "unhandled queue element type %s", poll.getClass().getName());
         }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        InterruptedIOException ioe = new InterruptedIOException();
+        ioe.initCause(e);
+        throw ioe;
       }
 
       return read;
@@ -431,7 +436,9 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         queue.put(offer);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        throw new InterruptedIOException();
+        InterruptedIOException ioe = new InterruptedIOException();
+        ioe.initCause(e);
+        throw ioe;
       }
     }
 
