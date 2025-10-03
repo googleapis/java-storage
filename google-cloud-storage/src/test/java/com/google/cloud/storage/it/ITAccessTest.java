@@ -385,12 +385,18 @@ public class ITAccessTest {
           BucketTargetOption.metagenerationMatch());
 
       Bucket remoteBucket =
-          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+          storage.get(
+              bpoBucket,
+              Storage.BucketGetOption.fields(
+                  BucketField.IAMCONFIGURATION, BucketField.METAGENERATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
 
-      remoteBucket.toBuilder().setIamConfiguration(ublaDisabledIamConfiguration).build().update();
+      remoteBucket.toBuilder()
+          .setIamConfiguration(ublaDisabledIamConfiguration)
+          .build()
+          .update(BucketTargetOption.metagenerationMatch());
 
       remoteBucket =
           storage.get(
@@ -600,7 +606,10 @@ public class ITAccessTest {
       assertThat(remoteBucket.retentionPolicyIsLocked()).isAnyOf(null, false);
 
       Bucket remoteBucket2 =
-          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.RETENTION_POLICY));
+          storage.get(
+              bucketName,
+              Storage.BucketGetOption.fields(
+                  BucketField.RETENTION_POLICY, BucketField.METAGENERATION));
       assertEquals(RETENTION_PERIOD, remoteBucket2.getRetentionPeriod());
       assertThat(remoteBucket2.getRetentionPeriodDuration()).isEqualTo(RETENTION_PERIOD_DURATION);
       assertNotNull(remoteBucket2.getRetentionEffectiveTime());
@@ -611,7 +620,11 @@ public class ITAccessTest {
       Blob remoteBlob = storage.create(blobInfo);
       assertNotNull(remoteBlob.getRetentionExpirationTime());
 
-      Bucket remoteBucket3 = remoteBucket2.toBuilder().setRetentionPeriod(null).build().update();
+      Bucket remoteBucket3 =
+          remoteBucket2.toBuilder()
+              .setRetentionPeriod(null)
+              .build()
+              .update(BucketTargetOption.metagenerationMatch());
       assertNull(remoteBucket3.getRetentionPeriod());
     }
   }
@@ -653,7 +666,7 @@ public class ITAccessTest {
           .setIamConfiguration(
               bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
           .build()
-          .update();
+          .update(BucketTargetOption.metagenerationMatch());
 
       remoteBucket =
           storage.get(
