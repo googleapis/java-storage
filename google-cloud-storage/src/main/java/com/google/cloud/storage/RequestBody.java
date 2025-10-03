@@ -27,7 +27,6 @@ import java.nio.file.Path;
 public final class RequestBody {
 
   private final RewindableContent content;
-  private byte[] byteArray;
 
   private RequestBody(RewindableContent content) {
     this.content = content;
@@ -38,9 +37,7 @@ public final class RequestBody {
   }
 
   public static RequestBody empty() {
-    RequestBody requestBody = new RequestBody(RewindableContent.empty());
-    requestBody.byteArray = new byte[0];
-    return requestBody;
+    return new RequestBody(RewindableContent.empty());
   }
 
   public static RequestBody of(ByteBuffer... buffers) {
@@ -51,9 +48,7 @@ public final class RequestBody {
     ByteBuffer duplicate = buffer.duplicate();
     byte[] arr = new byte[duplicate.remaining()];
     duplicate.get(arr);
-    RequestBody requestBody = new RequestBody(RewindableContent.of(buffer));
-    requestBody.byteArray = arr;
-    return requestBody;
+    return new RequestBody(RewindableContent.of(buffer));
   }
 
   public static RequestBody of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {
@@ -62,9 +57,5 @@ public final class RequestBody {
 
   public static RequestBody of(Path path) throws IOException {
     return new RequestBody(RewindableContent.of(path));
-  }
-
-  public byte[] getPartData() {
-    return byteArray;
   }
 }

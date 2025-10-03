@@ -19,6 +19,7 @@ import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
 
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
@@ -55,7 +56,7 @@ public class HttpRequestManager {
 
   public HttpResponse sendUploadPartRequest(
       String uri,
-      byte[] partData,
+      HttpContent content,
       String authHeader,
       String contentType,
       String contentMd5,
@@ -64,7 +65,7 @@ public class HttpRequestManager {
       throws IOException {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(
-            new GenericUrl(uri), new ByteArrayContent(contentType, partData));
+            new GenericUrl(uri), content);
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     httpRequest.getHeaders().setContentMD5(contentMd5);

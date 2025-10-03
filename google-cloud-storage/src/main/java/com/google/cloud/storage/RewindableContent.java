@@ -18,7 +18,10 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
+import com.google.api.client.util.Base64;
 import com.google.common.base.Preconditions;
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,10 +34,16 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
 
 abstract class RewindableContent extends AbstractHttpContent {
+
+  private String md5;
+  private String crc32c;
 
   private RewindableContent() {
     super((HttpMediaType) null);
@@ -58,7 +67,6 @@ abstract class RewindableContent extends AbstractHttpContent {
    * this may cause an OutOfMemoryError.
    *
    * @return The byte array representation of the content.
-   * @throws IOException if an I/O error occurs.
    */
   public byte[] asByteArray() {
     if (getLength() == 0) {
@@ -78,6 +86,31 @@ abstract class RewindableContent extends AbstractHttpContent {
   @Override
   public final boolean retrySupported() {
     return false;
+  }
+
+  public String getMd5() throws IOException {
+    if (md5 == null) {
+      try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        writeTo(new DigestOutputStream(ByteStreams.nullOutputStream(), md));
+        md5 = Base64.encodeBase64String(md.digest());
+      } catch (NoSuchAlgorithmException e) {
+        throw new IOException(e);
+      }
+    }
+    return md5;
+  }
+
+  public String getCrc32c() throws IOException {
+    if (crc32c == null) {
+      HashingOutputStream hashingOutputStream =
+          new HashingOutputStream(Hashing.crc32c(), ByteStreams.nullOutputStream());
+      writeTo(hashingOutputStream);
+      byte[] bytes =
+          ByteBuffer.allocate(4).putInt(hashingOutputStream.hash().asInt()).array();
+      crc32c = Base64.encodeBase64String(bytes);
+    }
+    return crc32c;
   }
 
   static RewindableContent empty() {
@@ -120,6 +153,8 @@ abstract class RewindableContent extends AbstractHttpContent {
     public void writeTo(OutputStream out) throws IOException {
       out.flush();
     }
+
+
 
     @Override
     long writeTo(WritableByteChannel gbc) {

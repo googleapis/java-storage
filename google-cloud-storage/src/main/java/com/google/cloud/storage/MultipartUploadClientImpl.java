@@ -169,15 +169,8 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
         "?partNumber=" + request.partNumber() + "&uploadId=" + encode(request.uploadId());
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     String contentType = "application/octet-stream";
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    byte[] partData = requestBody.getPartData();
-    String contentMd5 = Base64.getEncoder().encodeToString(md.digest(partData));
-    String crc32cString =
-        Base64.getEncoder()
-            .encodeToString(
-                ByteBuffer.allocate(4)
-                    .putInt(Hashing.crc32c().hashBytes(partData).asInt())
-                    .array());
+    String contentMd5 = requestBody.getContent().getMd5();
+    String crc32cString = requestBody.getContent().getCrc32c();
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
 
@@ -187,7 +180,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
           credentials.refreshIfExpired();
           AccessToken accessToken = credentials.getAccessToken();
           String authHeader = "Bearer " + accessToken.getTokenValue();
-          return httpRequestManager.sendUploadPartRequest(uri, partData, authHeader, contentType,
+          return httpRequestManager.sendUploadPartRequest(uri, requestBody.getContent(), authHeader, contentType,
               contentMd5, crc32cString, extensionHeaders);
         },
         Decoder.identity());
