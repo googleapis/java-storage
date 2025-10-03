@@ -18,6 +18,10 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
@@ -31,6 +35,8 @@ import com.google.api.gax.rpc.ResourceExhaustedException;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.storage.Backoff.Jitterer;
+import com.google.cloud.storage.RetryContext.BackoffComment;
+import com.google.cloud.storage.RetryContext.InterruptedBackoffComment;
 import com.google.cloud.storage.RetryContext.OnFailure;
 import com.google.cloud.storage.RetryContext.OnSuccess;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
@@ -42,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -421,6 +428,24 @@ public final class RetryContextTest {
                   "Operation failed to complete within attempt budget (attempts: 1, maxAttempts: 1,"
                       + " elapsed: PT0.001S, nextBackoff: PT3S)");
         });
+  }
+
+  @Test
+  public void rejectedExecutionException_funneledToOnFailureHandlerAsSuppressedException() {
+    ScheduledExecutorService exec = mock(ScheduledExecutorService.class);
+    RejectedExecutionException alreadyShutdown = new RejectedExecutionException("already shutdown");
+    when(exec.schedule(any(Runnable.class), anyLong(), any())).thenThrow(alreadyShutdown);
+    Throwable t1 = new RuntimeException("{err1}", new Throwable("{err1Cause}"));
+    RetryContext ctx =
+        RetryContext.of(exec, maxAttempts(2), Retrying.alwaysRetry(), Jitterer.noJitter());
+
+    AtomicReference<Throwable> err1 = new AtomicReference<>();
+    ctx.recordError(t1, failOnSuccess(), err1::set);
+    Throwable t = err1.get();
+    assertThat(t).isNotNull();
+    assertThat(t.getSuppressed()[0]).isInstanceOf(BackoffComment.class);
+    assertThat(t.getSuppressed()[1]).isInstanceOf(InterruptedBackoffComment.class);
+    assertThat(t.getSuppressed()[1].getSuppressed()[0]).isSameInstanceAs(alreadyShutdown);
   }
 
   private static ApiException apiException(Code code, String message) {
