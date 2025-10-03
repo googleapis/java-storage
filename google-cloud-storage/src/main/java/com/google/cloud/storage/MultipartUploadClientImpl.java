@@ -22,6 +22,7 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
@@ -50,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MultipartUploadClientImpl extends MultipartUploadClient {
 
@@ -59,12 +61,14 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   private final GoogleCredentials credentials;
   private final XmlMapper xmlMapper;
   private final HttpStorageOptions options;
+  private final Retrier retrier;
 
   public MultipartUploadClientImpl(
       URI uri, HttpRequestFactory requestFactory, Retrier retrier, HttpStorageOptions options) {
     this.httpRequestManager = new HttpRequestManager(requestFactory);
     this.xmlMapper = new XmlMapper();
     this.options = options;
+    this.retrier = retrier;
     try {
       this.credentials =
           GoogleCredentials.getApplicationDefault()
@@ -177,19 +181,16 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
 
-    credentials.refreshIfExpired();
-    AccessToken accessToken = credentials.getAccessToken();
-    String authHeader = "Bearer " + accessToken.getTokenValue();
-
-    HttpResponse response =
-        httpRequestManager.sendUploadPartRequest(
-            uri,
-            partData,
-            authHeader,
-            contentType,
-            contentMd5,
-            crc32cString,
-            extensionHeaders);
+    HttpResponse response = retrier.run(
+        Retrying.alwaysRetry(),
+        () -> {
+          credentials.refreshIfExpired();
+          AccessToken accessToken = credentials.getAccessToken();
+          String authHeader = "Bearer " + accessToken.getTokenValue();
+          return httpRequestManager.sendUploadPartRequest(uri, partData, authHeader, contentType,
+              contentMd5, crc32cString, extensionHeaders);
+        },
+        Decoder.identity());
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -244,19 +245,22 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
 
-    credentials.refreshIfExpired();
-    AccessToken accessToken = credentials.getAccessToken();
-    String authHeader = "Bearer " + accessToken.getTokenValue();
-
-    HttpResponse response =
-        httpRequestManager.sendCompleteMultipartUploadRequest(
-            uri,
-            xmlBodyBytes,
-            authHeader,
-            contentType,
-            contentMd5,
-            crc32cString,
-            extensionHeaders);
+    HttpResponse response = retrier.run(
+        Retrying.alwaysRetry(),
+        () -> {
+          credentials.refreshIfExpired();
+          AccessToken accessToken = credentials.getAccessToken();
+          String authHeader = "Bearer " + accessToken.getTokenValue();
+          return httpRequestManager.sendCompleteMultipartUploadRequest(
+              uri,
+              xmlBodyBytes,
+              authHeader,
+              contentType,
+              contentMd5,
+              crc32cString,
+              extensionHeaders);
+        },
+        Decoder.identity());
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
@@ -277,13 +281,16 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String contentType = "application/x-www-form-urlencoded";
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
 
-    credentials.refreshIfExpired();
-    AccessToken accessToken = credentials.getAccessToken();
-    String authHeader = "Bearer " + accessToken.getTokenValue();
-
-    HttpResponse response =
-        httpRequestManager.sendAbortMultipartUploadRequest(
-            uri, authHeader, contentType, extensionHeaders);
+    HttpResponse response = retrier.run(
+        Retrying.alwaysRetry(),
+        () -> {
+          credentials.refreshIfExpired();
+          AccessToken accessToken = credentials.getAccessToken();
+          String authHeader = "Bearer " + accessToken.getTokenValue();
+          return httpRequestManager.sendAbortMultipartUploadRequest(
+              uri, authHeader, contentType, extensionHeaders);
+        },
+        Decoder.identity());
 
     if (response.getStatusCode() != 204) {
       String error = response.parseAsString();
@@ -308,12 +315,15 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String uri = GCS_ENDPOINT + resourcePath + queryString;
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
 
-    credentials.refreshIfExpired();
-    AccessToken accessToken = credentials.getAccessToken();
-    String authHeader = "Bearer " + accessToken.getTokenValue();
-
-    HttpResponse response =
-        httpRequestManager.sendListPartsRequest(uri, authHeader, extensionHeaders);
+    HttpResponse response = retrier.run(
+        Retrying.alwaysRetry(),
+        () -> {
+          credentials.refreshIfExpired();
+          AccessToken accessToken = credentials.getAccessToken();
+          String authHeader = "Bearer " + accessToken.getTokenValue();
+          return httpRequestManager.sendListPartsRequest(uri, authHeader, extensionHeaders);
+        },
+        Decoder.identity());
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();
