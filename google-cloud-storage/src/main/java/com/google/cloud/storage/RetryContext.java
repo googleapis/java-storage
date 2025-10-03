@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.api.client.util.Sleeper;
 import com.google.api.core.ApiClock;
 import com.google.api.core.ApiFuture;
@@ -40,6 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @InternalApi
 @InternalExtensionOnly
@@ -128,6 +131,16 @@ interface RetryContext {
 
     static BackoffComment of(String message) {
       return new BackoffComment(message);
+    }
+  }
+
+  final class InterruptedBackoffComment extends Throwable {
+    InterruptedBackoffComment(@NonNull String message) {
+      super(
+          requireNonNull(message, "message must be non null"),
+          /* cause= */ null,
+          /* enableSuppression= */ true,
+          /* writableStackTrace= */ false);
     }
   }
 
