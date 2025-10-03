@@ -202,7 +202,23 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
               + error);
     }
     String eTag = response.getHeaders().getETag();
-    return UploadPartResponse.builder().eTag(eTag).build();
+    String crc32cFromHeader = null;
+    String md5FromHeader = null;
+    String hashHeader = response.getHeaders().getFirstHeaderStringValue("x-goog-hash");
+    if (hashHeader != null) {
+      String[] hashes = hashHeader.split(",");
+      for (String hash : hashes) {
+        String[] kv = hash.trim().split("=", 2);
+        if (kv.length == 2) {
+          if ("crc32c".equalsIgnoreCase(kv[0])) {
+            crc32cFromHeader = kv[1];
+          } else if ("md5".equalsIgnoreCase(kv[0])) {
+            md5FromHeader = kv[1];
+          }
+        }
+      }
+    }
+    return UploadPartResponse.builder().eTag(eTag).crc32c(crc32cFromHeader).md5(md5FromHeader).build();
   }
 
   public CompleteMultipartUploadResponse completeMultipartUpload(

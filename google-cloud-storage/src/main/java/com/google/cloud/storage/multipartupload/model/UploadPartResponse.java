@@ -22,13 +22,25 @@ import java.util.Objects;
 public final class UploadPartResponse {
 
   private final String eTag;
+  private final String crc32c;
+  private final String md5;
 
   private UploadPartResponse(Builder builder) {
     this.eTag = builder.etag;
+    this.crc32c = builder.crc32c;
+    this.md5 = builder.md5;
   }
 
   public String eTag() {
     return eTag;
+  }
+
+  public String crc32c() {
+    return crc32c;
+  }
+
+  public String md5() {
+    return md5;
   }
 
   @Override
@@ -40,30 +52,44 @@ public final class UploadPartResponse {
       return false;
     }
     UploadPartResponse that = (UploadPartResponse) o;
-    return Objects.equals(eTag, that.eTag);
+    return Objects.equals(eTag, that.eTag) && Objects.equals(crc32c, that.crc32c) && Objects.equals(md5, that.md5);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(eTag);
+    return Objects.hash(eTag, crc32c, md5);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("etag", eTag).toString();
+    return MoreObjects.toStringHelper(this).add("etag", eTag).add("crc32c", crc32c).add("md5", md5).toString();
   }
 
   public static Builder builder() {
     return new Builder();
   }
 
+
+
   public static class Builder {
     private String etag;
+    private String crc32c;
+    private String md5;
 
     private Builder() {}
 
     public Builder eTag(String etag) {
       this.etag = etag;
+      return this;
+    }
+
+    public Builder crc32c(String crc32c) {
+      this.crc32c = crc32c;
+      return this;
+    }
+
+    public Builder md5(String md5) {
+      this.md5 = md5;
       return this;
     }
 
