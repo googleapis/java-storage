@@ -23,18 +23,20 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class ListObjects {
-  public static void listObjects(String projectId, String bucketName) {
+  public static void listObjects(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Page<Blob> blobs = storage.list(bucketName);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Page<Blob> blobs = storage.list(bucketName);
 
-    for (Blob blob : blobs.iterateAll()) {
-      System.out.println(blob.getName());
+      for (Blob blob : blobs.iterateAll()) {
+        System.out.println(blob.getName());
+      }
     }
   }
 }

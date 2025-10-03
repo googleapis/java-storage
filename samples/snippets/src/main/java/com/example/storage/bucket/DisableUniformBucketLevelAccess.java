@@ -22,33 +22,34 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketTargetOption;
-import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class DisableUniformBucketLevelAccess {
   public static void disableUniformBucketLevelAccess(String projectId, String bucketName)
-      throws StorageException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-    // first look up the bucket, so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
+      // first look up the bucket, so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
 
-    BucketInfo.IamConfiguration iamConfiguration =
-        BucketInfo.IamConfiguration.newBuilder()
-            .setIsUniformBucketLevelAccessEnabled(false)
-            .build();
+      BucketInfo.IamConfiguration iamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder()
+              .setIsUniformBucketLevelAccessEnabled(false)
+              .build();
 
-    storage.update(
-        bucket.toBuilder().setIamConfiguration(iamConfiguration).build(),
-        BucketTargetOption.metagenerationMatch());
+      storage.update(
+          bucket.toBuilder().setIamConfiguration(iamConfiguration).build(),
+          BucketTargetOption.metagenerationMatch());
 
-    System.out.println("Uniform bucket-level access was disabled for " + bucketName);
+      System.out.println("Uniform bucket-level access was disabled for " + bucketName);
+    }
   }
 }
 // [END storage_disable_uniform_bucket_level_access]
