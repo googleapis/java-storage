@@ -16,48 +16,54 @@
 
 package com.example.storage.object;
 
-// [START storage_read_appendable_object_full]
+// [START storage_open_object_single_ranged_read]
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobReadSession;
-import com.google.cloud.storage.ReadAsChannel;
+import com.google.cloud.storage.RangeSpec;
 import com.google.cloud.storage.ReadProjectionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.nio.ByteBuffer;
-import java.nio.channels.ScatteringByteChannel;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class AppendableObjectReadFullObject {
-  public static void appendableObjectReadFullObject(String bucketName, String objectName)
-      throws Exception {
+public class OpenObjectSingleRangedRead {
+  public static void openObjectSingleRangedRead(
+      String bucketName, String objectName, long offset, int length) throws Exception {
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
+
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
+
+    // The beginning of the range
+    // long offset = 0
+
+    // The maximum number of bytes to read from the object.
+    // int length = 64;
+
     try (Storage storage = StorageOptions.grpc().build().getService()) {
       BlobId blobId = BlobId.of(bucketName, objectName);
       ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
 
       try (BlobReadSession blobReadSession = futureBlobReadSession.get(10, TimeUnit.SECONDS)) {
+        // Define the range of bytes to read.
+        RangeSpec rangeSpec = RangeSpec.of(offset, length);
+        ApiFuture<byte[]> future =
+            blobReadSession.readAs(ReadProjectionConfigs.asFutureBytes().withRangeSpec(rangeSpec));
 
-        ReadAsChannel readAsChannelConfig = ReadProjectionConfigs.asChannel();
-        try (ScatteringByteChannel channel = blobReadSession.readAs(readAsChannelConfig)) {
-          long totalBytesRead = 0;
-          ByteBuffer buffer = ByteBuffer.allocate(64 * 1024);
-          int bytesRead;
+        // Wait for the read to complete.
+        byte[] bytes = future.get();
 
-          while ((bytesRead = channel.read(buffer)) != -1) {
-            totalBytesRead += bytesRead;
-            buffer.clear();
-          }
-
-          System.out.printf(
-              Locale.US,
-              "Successfully read a total of %d bytes from object %s%n",
-              totalBytesRead,
-              blobId.toGsUtilUri());
-        }
+        System.out.println(
+            "Successfully read "
+                + bytes.length
+                + " bytes from object "
+                + objectName
+                + " in bucket "
+                + bucketName);
       }
     }
   }
 }
-// [END storage_read_appendable_object_full]
+// [END storage_open_object_single_ranged_read]

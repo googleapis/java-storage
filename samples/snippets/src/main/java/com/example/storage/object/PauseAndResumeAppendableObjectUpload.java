@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 
 package com.example.storage.object;
 
-// [START storage_resume_appendable_object_upload]
+// [START storage_pause_and_resume_appendable_object_upload]
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobAppendableUpload;
@@ -29,17 +29,19 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-public class ResumeAppendableObjectUpload {
-  public static void resumeAppendableObjectUpload(
+public class PauseAndResumeAppendableObjectUpload {
+  public static void pauseAndResumeAppendableObjectUpload(
       String bucketName, String objectName, String filePath) throws Exception {
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // The ID of your GCS unfinalized appendable object
+    // The ID of your GCS object
     // String objectName = "your-object-name";
 
     // The path to the file to upload
@@ -47,45 +49,58 @@ public class ResumeAppendableObjectUpload {
 
     try (Storage storage = StorageOptions.grpc().build().getService()) {
       BlobId blobId = BlobId.of(bucketName, objectName);
-      Blob existingBlob = storage.get(blobId);
-      BlobInfo blobInfoForTakeover = BlobInfo.newBuilder(existingBlob.getBlobId()).build();
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
+      // --- Step 1: Initial string write (PAUSE) ---
+      BlobAppendableUploadConfig initialConfig =
+          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
+      BlobAppendableUpload initialUploadSession =
+          storage.blobAppendableUpload(blobInfo, initialConfig);
+
+      try (AppendableUploadWriteableByteChannel channel = initialUploadSession.open()) {
+        String initialData = "Initial data segment.\n";
+        ByteBuffer buffer = ByteBuffer.wrap(initialData.getBytes(StandardCharsets.UTF_8));
+        long totalBytesWritten = channel.write(buffer);
+        channel.flush();
+
+        System.out.printf(
+            Locale.US, "Wrote %d bytes (initial string) in first segment.\n", totalBytesWritten);
+      } catch (IOException ex) {
+        throw new IOException("Failed initial upload to object " + blobId.toGsUtilUri(), ex);
+      }
+
+      Blob existingBlob = storage.get(blobId);
       long currentObjectSize = existingBlob.getSize();
       System.out.printf(
           Locale.US,
-          "Resuming upload for %s. Currently uploaded size: %d bytes\n",
-          blobId.toGsUtilUri(),
+          "Initial upload paused. Currently uploaded size: %d bytes\n",
           currentObjectSize);
 
-      BlobAppendableUploadConfig config =
-          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
+      // --- Step 2: Resume upload with file content and finalize ---
+      // Use FINALIZE_WHEN_CLOSING to ensure the object is finalized on channel closure.
+      BlobAppendableUploadConfig resumeConfig =
+          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.FINALIZE_WHEN_CLOSING);
       BlobAppendableUpload resumeUploadSession =
-          storage.blobAppendableUpload(blobInfoForTakeover, config);
+          storage.blobAppendableUpload(existingBlob.toBuilder().build(), resumeConfig);
+
       try (FileChannel fileChannel = FileChannel.open(Paths.get(filePath));
           AppendableUploadWriteableByteChannel channel = resumeUploadSession.open()) {
+        long bytesToAppend = fileChannel.size();
+        System.out.printf(
+            Locale.US,
+            "Appending the entire file (%d bytes) after the initial string.\n",
+            bytesToAppend);
 
-        if (fileChannel.size() < currentObjectSize) {
-          throw new IOException(
-              "Local file is smaller than the already uploaded data. File size: "
-                  + fileChannel.size()
-                  + ", Uploaded size: "
-                  + currentObjectSize);
-        } else if (fileChannel.size() == currentObjectSize) {
-          System.out.println("No more data to upload.");
-        } else {
-          fileChannel.position(currentObjectSize);
-          System.out.printf(
-              Locale.US, "Appending %d bytes\n", fileChannel.size() - currentObjectSize);
-          ByteStreams.copy(fileChannel, channel);
-        }
+        ByteStreams.copy(fileChannel, channel);
       }
+
       BlobInfo result = storage.get(blobId);
       System.out.printf(
           Locale.US,
-          "Object %s successfully resumed. Total size: %d\n",
+          "\nObject %s successfully resumed and finalized. Total size: %d bytes\n",
           result.getBlobId().toGsUtilUriWithGeneration(),
           result.getSize());
     }
   }
 }
-// [END storage_resume_appendable_object_upload]
+// [END storage_pause_and_resume_appendable_object_upload]
