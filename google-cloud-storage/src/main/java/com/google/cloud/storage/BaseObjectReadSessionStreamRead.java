@@ -393,7 +393,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
 
       try {
         Object poll;
-        while ((poll = queue.poll(10, TimeUnit.MICROSECONDS)) != null) {
+        while (leftovers == null && (poll = queue.poll(10, TimeUnit.MICROSECONDS)) != null) {
           if (poll instanceof ChildRef) {
             ChildRefHelper ref = new ChildRefHelper((ChildRef) poll);
             read += ref.copy(dsts, offset, length);
