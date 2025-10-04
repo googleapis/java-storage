@@ -1025,7 +1025,9 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
         StorageInternal s, BlobInfo info, Opts<ObjectTargetOpt> opts) {
-      return new PCUSession(s, info, opts);
+      // if crc32cMatch or md5Match were specified, they will already be in opts
+      BlobInfo trimmed = info.toBuilder().clearCrc32c().clearMd5().build();
+      return new PCUSession(s, trimmed, opts);
     }
 
     private final class PCUSession
