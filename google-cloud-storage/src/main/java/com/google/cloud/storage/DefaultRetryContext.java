@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -142,17 +143,26 @@ final class DefaultRetryContext implements RetryContext {
         BackoffDuration backoffDuration = (BackoffDuration) nextBackoff;
 
         lastBackoffResult = nextBackoff;
-        pendingBackoff =
-            scheduledExecutorService.schedule(
-                () -> {
-                  try {
-                    onSuccess.onSuccess();
-                  } finally {
-                    clearPendingBackoff();
-                  }
-                },
-                backoffDuration.getDuration().toNanos(),
-                TimeUnit.NANOSECONDS);
+        try {
+          pendingBackoff =
+              scheduledExecutorService.schedule(
+                  () -> {
+                    try {
+                      onSuccess.onSuccess();
+                    } finally {
+                      clearPendingBackoff();
+                    }
+                  },
+                  backoffDuration.getDuration().toNanos(),
+                  TimeUnit.NANOSECONDS);
+        } catch (RejectedExecutionException e) {
+          InterruptedBackoffComment comment =
+              new InterruptedBackoffComment(
+                  "Interrupted backoff -- unretryable error due to executor service shutdown");
+          comment.addSuppressed(e);
+          t.addSuppressed(comment);
+          onFailure.onFailure(t);
+        }
       } else {
         String msg =
             String.format(
