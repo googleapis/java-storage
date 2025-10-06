@@ -39,6 +39,7 @@ import com.google.cloud.storage.UnifiedOpts.EncryptionKey;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -806,6 +807,41 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             opts);
     byte[] bytes = DataGenerator.base64Characters().genBytes(bufferCapacity * 3 - 1);
     pcu.write(ByteBuffer.wrap(bytes));
+
+    pcu.close();
+  }
+
+  @Test
+  public void partDoesNotSpecifyAnyChecksum() throws IOException {
+    FakeStorageInternal storageInternal =
+        new FakeStorageInternal() {
+          @Override
+          public BlobInfo compose(ComposeRequest composeRequest) {
+            BlobInfo target = composeRequest.getTarget();
+            if (target.getBlobId().getName().startsWith(partNamingStrategy.prefix)) {
+              assertThat(target.getCrc32c()).isNull();
+              assertThat(target.getMd5()).isNull();
+            }
+            return super.compose(composeRequest);
+          }
+        };
+    ChecksummedTestContent content = ChecksummedTestContent.gen(bufferCapacity * 3 - 1);
+    ParallelCompositeUploadWritableByteChannel pcu =
+        new ParallelCompositeUploadWritableByteChannel(
+            bufferHandlePool,
+            MoreExecutors.directExecutor(),
+            partNamingStrategy,
+            PartCleanupStrategy.always(),
+            2,
+            b -> b,
+            finalObject,
+            storageInternal,
+            info.toBuilder()
+                .setCrc32c(content.getCrc32cBase64())
+                .setMd5(content.getMd5Base64())
+                .build(),
+            opts);
+    pcu.write(content.asByteBuffer());
 
     pcu.close();
   }

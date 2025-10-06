@@ -425,7 +425,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
 
   private BlobInfo definePart(BlobInfo ultimateObject, PartRange partRange, long offset) {
     BlobId id = ultimateObject.getBlobId();
-    BlobInfo.Builder b = ultimateObject.toBuilder();
+    BlobInfo.Builder b = ultimateObject.toBuilder().clearCrc32c().clearMd5();
     String partName = partNamingStrategy.fmtName(id.getName(), partRange);
     b.setBlobId(BlobId.of(id.getBucket(), partName));
     ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
