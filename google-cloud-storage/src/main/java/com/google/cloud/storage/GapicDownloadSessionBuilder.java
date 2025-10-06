@@ -67,7 +67,7 @@ final class GapicDownloadSessionBuilder {
       this.read = read;
       this.retrier = retrier;
       this.resultRetryAlgorithm = resultRetryAlgorithm;
-      this.hasher = Hasher.noop();
+      this.hasher = Hasher.defaultHasher();
       this.autoGzipDecompression = false;
     }
 
