@@ -66,7 +66,8 @@ public class SetObjectContexts {
 
       /*
        * To delete a specific key from the context:
-       * Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap(); custom.put(key, null);
+       * Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
+       * custom.put(key, null);
        * ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
        */
       BlobInfo pendingUpdate = blob.toBuilder().setContexts(contexts).build();
