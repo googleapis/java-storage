@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -40,6 +39,7 @@ import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
@@ -62,12 +62,10 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -322,54 +320,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // Bug in UpdateMask
-  @CrossRun.Exclude(transports = Transport.GRPC)
-  @Ignore("Make hermetic, currently mutates global bucket")
-  public void testUpdateBucketLabel() {
-    Bucket remoteBucket =
-        storage.get(
-            bucket.getName(), Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertNull(remoteBucket.getLabels());
-    remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertEquals(BUCKET_LABELS, updatedBucket.getLabels());
-    remoteBucket.toBuilder().setLabels(Collections.emptyMap()).build().update();
-    assertNull(storage.get(bucket.getName()).getLabels());
-  }
-
-  @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
-  @Ignore("Make hermetic, currently mutates global bucket")
-  public void testUpdateBucketRequesterPays() {
-    // Bug in UpdateMask
-    unsetRequesterPays();
-    Bucket remoteBucket =
-        storage.get(
-            requesterPaysBucket.getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
-
-    String projectId = storage.getOptions().getProjectId();
-    Bucket.BlobTargetOption option = Bucket.BlobTargetOption.userProject(projectId);
-    String blobName = "test-create-empty-blob-requester-pays";
-    Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
-    assertNotNull(remoteBlob);
-    byte[] readBytes =
-        storage.readAllBytes(
-            requesterPaysBucket.getName(),
-            blobName,
-            Storage.BlobSourceOption.userProject(projectId));
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-
-    assertFalse(updatedBucket.requesterPays());
-  }
-
-  @Test
   public void testEnableDisableBucketDefaultEventBasedHold() {
     String bucketName = generator.randomBucketName();
     Bucket remoteBucket =
@@ -378,19 +328,30 @@ public class ITBucketTest {
       assertTrue(remoteBucket.getDefaultEventBasedHold());
       remoteBucket =
           storage.get(
-              bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
+              bucketName,
+              Storage.BucketGetOption.fields(
+                  BucketField.DEFAULT_EVENT_BASED_HOLD, BucketField.METAGENERATION));
       assertTrue(remoteBucket.getDefaultEventBasedHold());
       String blobName = generator.randomObjectName();
       BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
-      Blob remoteBlob = storage.create(blobInfo);
+      Blob remoteBlob = storage.create(blobInfo, BlobTargetOption.doesNotExist());
       assertTrue(remoteBlob.getEventBasedHold());
       remoteBlob =
           storage.get(
-              blobInfo.getBlobId(), Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD));
+              blobInfo.getBlobId(),
+              Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD, BlobField.METAGENERATION));
       assertTrue(remoteBlob.getEventBasedHold());
-      remoteBlob = remoteBlob.toBuilder().setEventBasedHold(false).build().update();
+      remoteBlob =
+          remoteBlob.toBuilder()
+              .setEventBasedHold(false)
+              .build()
+              .update(BlobTargetOption.metagenerationMatch());
       assertFalse(remoteBlob.getEventBasedHold());
-      remoteBucket = remoteBucket.toBuilder().setDefaultEventBasedHold(false).build().update();
+      remoteBucket =
+          remoteBucket.toBuilder()
+              .setDefaultEventBasedHold(false)
+              .build()
+              .update(BucketTargetOption.metagenerationMatch());
       assertFalse(remoteBucket.getDefaultEventBasedHold());
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
@@ -465,7 +426,9 @@ public class ITBucketTest {
                   .setRetainUntilTime(now.plusHours(1))
                   .build())
           .build()
-          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+          .update(
+              Storage.BlobTargetOption.overrideUnlockedRetention(true),
+              BlobTargetOption.metagenerationMatch());
 
       remoteBlob = storage.get(bucketName, "retentionObject");
       assertEquals(
@@ -480,7 +443,9 @@ public class ITBucketTest {
       remoteBlob.toBuilder()
           .setRetention(null)
           .build()
-          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+          .update(
+              Storage.BlobTargetOption.overrideUnlockedRetention(true),
+              BlobTargetOption.metagenerationMatch());
 
       remoteBlob = storage.get(bucketName, "retentionObject");
       assertNull(remoteBlob.getRetention());
@@ -545,7 +510,7 @@ public class ITBucketTest {
           storage.get(
               bucket.getName(), BucketGetOption.metagenerationMatch(bucket.getMetageneration()));
 
-      Bucket gen2 = storage.update(gen1);
+      Bucket gen2 = storage.update(gen1, BucketTargetOption.metagenerationMatch());
       assertThat(gen2).isEqualTo(gen1);
     }
   }
@@ -606,7 +571,7 @@ public class ITBucketTest {
                   .setRetentionDuration(Duration.ofDays(20))
                   .build())
           .build()
-          .update();
+          .update(BucketTargetOption.metagenerationMatch());
 
       assertEquals(
           Duration.ofDays(20),
@@ -686,21 +651,6 @@ public class ITBucketTest {
 
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
-    }
-  }
-
-  private void unsetRequesterPays() {
-    Bucket remoteBucket =
-        storage.get(
-            requesterPaysBucket.getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
-    // Disable requester pays in case a test fails to clean up.
-    if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket.toBuilder()
-          .setRequesterPays(false)
-          .build()
-          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
     }
   }
 }
