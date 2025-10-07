@@ -35,7 +35,7 @@ public class ListObjectContexts {
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
       /*
        * List any object that has a context with the specified key attached
-       *  String filter = "contexts.\"KEY\":*";
+       * String filter = "contexts.\"KEY\":*";
        *
        * List any object that that does not have a context with the specified key attached
        * String filter = "NOT contexts.\"KEY\":*";
@@ -43,8 +43,8 @@ public class ListObjectContexts {
        * List any object that has a context with the specified key and value attached
        * String filter = "contexts.\"KEY\"=\"VALUE\"";
        *
-       * List any object that does not have a context with the specified key and value
-       * attached String filter = "NOT contexts.\"KEY\"=\"VALUE\"";
+       * List any object that does not have a context with the specified key and value attached
+       * String filter = "NOT contexts.\"KEY\"=\"VALUE\"";
        */
       String key = "your-context-key";
       String filter = "contexts.\"" + key + "\":*";
