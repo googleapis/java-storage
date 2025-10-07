@@ -67,7 +67,7 @@ public class ReadAppendableObjectTail {
       try (AppendableUploadWriteableByteChannel channel = takeover.open()) {
         // Start a background thread to write some data on a periodic basis
         // In reality, you're application would probably be doing thing in another scope
-        Thread writeThread = getWriteThread(totalToWrite, channel, flushPolicy);
+        Thread writeThread = startWriteThread(totalToWrite, channel, flushPolicy);
         try (BlobReadSession readSession =
             storage.blobReadSession(gen1.getBlobId()).get(10, TimeUnit.SECONDS)) {
           int zeroCnt = 0;
@@ -103,7 +103,7 @@ public class ReadAppendableObjectTail {
     }
   }
 
-  private static Thread getWriteThread(
+  private static Thread startWriteThread(
       int totalToWrite,
       AppendableUploadWriteableByteChannel channel,
       FlushPolicy.MinFlushSizeFlushPolicy flushPolicy) {

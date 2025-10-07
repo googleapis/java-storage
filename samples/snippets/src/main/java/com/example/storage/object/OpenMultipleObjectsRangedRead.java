@@ -27,7 +27,6 @@ import com.google.cloud.storage.ReadAsFutureBytes;
 import com.google.cloud.storage.ReadProjectionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -56,13 +55,9 @@ public class OpenMultipleObjectsRangedRead {
         BlobId blobId = BlobId.of(bucketName, objectName);
         ApiFuture<BlobReadSession> futureReadSession = storage.blobReadSession(blobId);
 
-        ApiFuture<byte[]> readFuture =
-            ApiFutures.transformAsync(
-                futureReadSession,
-                (BlobReadSession session) -> session.readAs(rangeConfig),
-                MoreExecutors.directExecutor());
-
-        futuresToWaitOn.add(readFuture);
+        try (BlobReadSession session = futureReadSession.get(5, TimeUnit.SECONDS)) {
+          futuresToWaitOn.add(session.readAs(rangeConfig));
+        }
       }
       ApiFutures.allAsList(futuresToWaitOn).get(30, TimeUnit.SECONDS);
 

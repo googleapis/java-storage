@@ -26,6 +26,7 @@ import com.google.cloud.storage.BlobAppendableUploadConfig.CloseAction;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageChannelUtils;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
@@ -52,15 +53,15 @@ public class PauseAndResumeAppendableObjectUpload {
       BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
       // --- Step 1: Initial string write (PAUSE) ---
-      BlobAppendableUploadConfig initialConfig =
-          BlobAppendableUploadConfig.of().withCloseAction(CloseAction.CLOSE_WITHOUT_FINALIZING);
+      // Default close action will be CLOSE_WITHOUT_FINALIZING
+      BlobAppendableUploadConfig initialConfig = BlobAppendableUploadConfig.of();
       BlobAppendableUpload initialUploadSession =
           storage.blobAppendableUpload(blobInfo, initialConfig);
 
       try (AppendableUploadWriteableByteChannel channel = initialUploadSession.open()) {
         String initialData = "Initial data segment.\n";
         ByteBuffer buffer = ByteBuffer.wrap(initialData.getBytes(StandardCharsets.UTF_8));
-        long totalBytesWritten = channel.write(buffer);
+        long totalBytesWritten = StorageChannelUtils.blockingEmptyTo(buffer, channel);
         channel.flush();
 
         System.out.printf(
