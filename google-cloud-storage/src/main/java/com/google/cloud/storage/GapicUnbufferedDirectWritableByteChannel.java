@@ -273,11 +273,14 @@ final class GapicUnbufferedDirectWritableByteChannel implements UnbufferedWritab
       try {
         invocationHandle.get();
       } catch (InterruptedException | ExecutionException e) {
+        RuntimeException runtimeException;
         if (e.getCause() instanceof RuntimeException) {
-          throw (RuntimeException) e.getCause();
+          runtimeException = (RuntimeException) e.getCause();
         } else {
-          throw new RuntimeException(e);
+          runtimeException = new RuntimeException(e);
         }
+        runtimeException.addSuppressed(new AsyncStorageTaskException());
+        throw runtimeException;
       }
     }
   }
