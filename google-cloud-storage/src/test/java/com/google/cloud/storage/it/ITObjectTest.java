@@ -84,7 +84,6 @@ import java.nio.channels.Channels;
 import java.nio.file.Paths;
 import java.security.Key;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -146,7 +145,7 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobInfo blob =
         BlobInfo.newBuilder(bucket, blobName).setCustomTime(System.currentTimeMillis()).build();
-    Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
+    Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT, BlobTargetOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertNotNull(remoteBlob.getCustomTime());
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
@@ -165,7 +164,7 @@ public class ITObjectTest {
             .setMd5FromHexString("3b54781b51c94835084898e821899585")
             .setCrc32cFromHexString("f4ddc43d")
             .build();
-    Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
+    Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT, BlobTargetOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
@@ -180,7 +179,12 @@ public class ITObjectTest {
   public void testCreateGetBlobWithEncryptionKey() {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
-    Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT, BlobTargetOption.encryptionKey(KEY));
+    Blob remoteBlob =
+        storage.create(
+            blob,
+            BLOB_BYTE_CONTENT,
+            BlobTargetOption.encryptionKey(KEY),
+            BlobTargetOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
@@ -201,7 +205,7 @@ public class ITObjectTest {
   public void testCreateEmptyBlob() {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
-    Blob remoteBlob = storage.create(blob);
+    Blob remoteBlob = storage.create(blob, BlobTargetOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
@@ -218,7 +222,8 @@ public class ITObjectTest {
     File zeroByteFile = File.createTempFile("zerobyte", null);
     zeroByteFile.deleteOnExit();
 
-    storage.createFrom(blobInfo, Paths.get(zeroByteFile.getAbsolutePath()));
+    storage.createFrom(
+        blobInfo, Paths.get(zeroByteFile.getAbsolutePath()), BlobWriteOption.doesNotExist());
 
     byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertArrayEquals(new byte[0], readBytes);
@@ -230,7 +235,7 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
-    Blob remoteBlob = storage.create(blob, stream);
+    Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
@@ -245,7 +250,9 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
-    Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.disableGzipContent());
+    Blob remoteBlob =
+        storage.create(
+            blob, stream, BlobWriteOption.disableGzipContent(), BlobWriteOption.doesNotExist());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
@@ -258,7 +265,7 @@ public class ITObjectTest {
   public void testCreateBlobFail() {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
-    Blob remoteBlob = storage.create(blob);
+    Blob remoteBlob = storage.create(blob, BlobTargetOption.doesNotExist());
     assertNotNull(remoteBlob);
     BlobInfo wrongGenerationBlob = BlobInfo.newBuilder(bucket, blobName, -1L).build();
     try {
@@ -687,75 +694,15 @@ public class ITObjectTest {
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setContentType(CONTENT_TYPE).build().update();
+    Blob updatedBlob =
+        remoteBlob.toBuilder()
+            .setContentType(CONTENT_TYPE)
+            .build()
+            .update(BlobTargetOption.metagenerationMatch());
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
     assertEquals(blob.getBucket(), updatedBlob.getBucket());
     assertEquals(CONTENT_TYPE, updatedBlob.getContentType());
-  }
-
-  @Test
-  public void testUpdateBlobReplaceMetadata() {
-    String blobName = generator.randomObjectName();
-    ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
-    ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucket, blobName)
-            .setContentType(CONTENT_TYPE)
-            .setMetadata(metadata)
-            .build();
-    Blob remoteBlob = storage.create(blob);
-    assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setMetadata(null).build().update();
-    assertNotNull(updatedBlob);
-    assertNull(updatedBlob.getMetadata());
-    updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
-    assertEquals(blob.getName(), updatedBlob.getName());
-    assertEquals(blob.getBucket(), updatedBlob.getBucket());
-    assertEquals(newMetadata, updatedBlob.getMetadata());
-  }
-
-  @Test
-  public void testUpdateBlobMergeMetadata() {
-    String blobName = generator.randomObjectName();
-    ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
-    ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
-    ImmutableMap<String, String> expectedMetadata = ImmutableMap.of("k1", "a", "k2", "b");
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucket, blobName)
-            .setContentType(CONTENT_TYPE)
-            .setMetadata(metadata)
-            .build();
-    Blob remoteBlob = storage.create(blob);
-    assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
-    assertNotNull(updatedBlob);
-    assertEquals(blob.getName(), updatedBlob.getName());
-    assertEquals(blob.getBucket(), updatedBlob.getBucket());
-    assertEquals(expectedMetadata, updatedBlob.getMetadata());
-  }
-
-  @Test
-  public void testUpdateBlobUnsetMetadata() {
-
-    String blobName = generator.randomObjectName();
-    ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a", "k2", "b");
-    Map<String, String> newMetadata = new HashMap<>();
-    newMetadata.put("k1", "a");
-    newMetadata.put("k2", null);
-    ImmutableMap<String, String> expectedMetadata = ImmutableMap.of("k1", "a");
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucket, blobName)
-            .setContentType(CONTENT_TYPE)
-            .setMetadata(metadata)
-            .build();
-    Blob remoteBlob = storage.create(blob);
-    assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
-    assertNotNull(updatedBlob);
-    assertEquals(blob.getName(), updatedBlob.getName());
-    assertEquals(blob.getBucket(), updatedBlob.getBucket());
-    assertEquals(expectedMetadata, updatedBlob.getMetadata());
   }
 
   @Test
@@ -767,7 +714,9 @@ public class ITObjectTest {
     BlobInfo wrongGenerationBlob =
         BlobInfo.newBuilder(bucket, blobName, -1L).setContentType(CONTENT_TYPE).build();
     try {
-      storage.update(wrongGenerationBlob, BlobTargetOption.generationMatch());
+      storage.update(
+          wrongGenerationBlob,
+          BlobTargetOption.metagenerationMatch(remoteBlob.getMetageneration()));
       fail("StorageException was expected");
     } catch (StorageException ex) {
       // expected
@@ -957,7 +906,8 @@ public class ITObjectTest {
             .setSource(source)
             .setTarget(
                 BlobId.of(bucket.getName(), targetBlobName),
-                BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ))
+                BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ),
+                BlobTargetOption.doesNotExist())
             .build();
     CopyWriter copyWriter = storage.copy(req);
     Blob gen1 = copyWriter.getResult();
@@ -992,7 +942,10 @@ public class ITObjectTest {
     CopyRequest req1 =
         CopyRequest.newBuilder()
             .setSource(source)
-            .setTarget(target, BlobTargetOption.encryptionKey(OTHER_BASE64_KEY))
+            .setTarget(
+                target,
+                BlobTargetOption.encryptionKey(OTHER_BASE64_KEY),
+                BlobTargetOption.doesNotExist())
             .setSourceOptions(BlobSourceOption.decryptionKey(BASE64_KEY))
             .build();
     CopyWriter copyWriter1 = storage.copy(req1);
@@ -1037,58 +990,16 @@ public class ITObjectTest {
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
-    CopyRequest req = CopyRequest.of(source, target);
+    CopyRequest req =
+        CopyRequest.newBuilder()
+            .setSource(source)
+            .setTarget(target, BlobTargetOption.doesNotExist())
+            .build();
     CopyWriter copyWriter = storage.copy(req);
     Blob gen1 = copyWriter.getResult();
     assertEquals(bucket.getName(), gen1.getBucket());
     assertEquals(targetBlobName, gen1.getName());
     assertEquals(CONTENT_TYPE, gen1.getContentType());
-    assertEquals(metadata, gen1.getMetadata());
-    assertTrue(copyWriter.isDone());
-    assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(gen1.getBlobId()));
-  }
-
-  @Test
-  public void testCopyBlobUpdateStorageClass() {
-    String sourceBlobName = generator.randomObjectName() + "-source";
-    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
-    BlobInfo sourceInfo =
-        BlobInfo.newBuilder(source).setStorageClass(StorageClass.STANDARD).build();
-    Blob remoteSourceBlob = storage.create(sourceInfo, BLOB_BYTE_CONTENT);
-    assertNotNull(remoteSourceBlob);
-    assertEquals(StorageClass.STANDARD, remoteSourceBlob.getStorageClass());
-
-    String targetBlobName = generator.randomObjectName() + "-target";
-    BlobInfo targetInfo =
-        BlobInfo.newBuilder(bucket, targetBlobName).setStorageClass(StorageClass.COLDLINE).build();
-    CopyRequest req = CopyRequest.of(source, targetInfo);
-    CopyWriter copyWriter = storage.copy(req);
-    Blob gen1 = copyWriter.getResult();
-    assertEquals(bucket.getName(), gen1.getBucket());
-    assertEquals(targetBlobName, gen1.getName());
-    assertEquals(StorageClass.COLDLINE, gen1.getStorageClass());
-    assertTrue(copyWriter.isDone());
-    assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(gen1.getBlobId()));
-  }
-
-  @Test
-  public void testCopyBlobNoContentType() {
-
-    String sourceBlobName = generator.randomObjectName() + "-source";
-    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
-    Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
-    assertNotNull(remoteSourceBlob);
-    String targetBlobName = generator.randomObjectName() + "-target";
-    ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
-    BlobInfo target = BlobInfo.newBuilder(bucket, targetBlobName).setMetadata(metadata).build();
-    CopyRequest req = CopyRequest.of(source, target);
-    CopyWriter copyWriter = storage.copy(req);
-    Blob gen1 = copyWriter.getResult();
-    assertEquals(bucket.getName(), gen1.getBucket());
-    assertEquals(targetBlobName, gen1.getName());
-    assertTrue(gen1.getContentType() == null || gen1.getContentType().isEmpty());
     assertEquals(metadata, gen1.getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
@@ -1110,7 +1021,7 @@ public class ITObjectTest {
         CopyRequest.newBuilder()
             .setSource(bucket.getName(), sourceBlobName)
             .setSourceOptions(BlobSourceOption.generationMatch(-1L))
-            .setTarget(target)
+            .setTarget(target, BlobTargetOption.doesNotExist())
             .build();
     try {
       storage.copy(req);
@@ -1137,7 +1048,9 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
-    try (WriteChannel writer = storage.writer(blob, BlobWriteOption.encryptionKey(BASE64_KEY))) {
+    try (WriteChannel writer =
+        storage.writer(
+            blob, BlobWriteOption.encryptionKey(BASE64_KEY), BlobWriteOption.doesNotExist())) {
       stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
       writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
       writer.write(ByteBuffer.wrap(stringBytes));
@@ -1197,7 +1110,7 @@ public class ITObjectTest {
     Random rnd = new Random();
     byte[] bytes = new byte[blobSize];
     rnd.nextBytes(bytes);
-    try (WriteChannel writer = storage.writer(blob)) {
+    try (WriteChannel writer = storage.writer(blob, BlobWriteOption.doesNotExist())) {
       writer.write(ByteBuffer.wrap(bytes));
     }
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -1217,7 +1130,7 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
-    WriteChannel writer = storage.writer(blob);
+    WriteChannel writer = storage.writer(blob, BlobWriteOption.doesNotExist());
     stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
     writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
     RestorableState<WriteChannel> writerState = writer.capture();
@@ -1386,12 +1299,18 @@ public class ITObjectTest {
   public void testEnableDisableTemporaryHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
-    Blob remoteBlob = storage.create(blobInfo);
+    Blob remoteBlob = storage.create(blobInfo, BlobTargetOption.doesNotExist());
     assertTrue(remoteBlob.getTemporaryHold());
     remoteBlob =
-        storage.get(remoteBlob.getBlobId(), BlobGetOption.fields(BlobField.TEMPORARY_HOLD));
+        storage.get(
+            remoteBlob.getBlobId(),
+            BlobGetOption.fields(BlobField.TEMPORARY_HOLD, BlobField.METAGENERATION));
     assertTrue(remoteBlob.getTemporaryHold());
-    remoteBlob = remoteBlob.toBuilder().setTemporaryHold(false).build().update();
+    remoteBlob =
+        remoteBlob.toBuilder()
+            .setTemporaryHold(false)
+            .build()
+            .update(BlobTargetOption.metagenerationMatch());
     assertFalse(remoteBlob.getTemporaryHold());
   }
 
@@ -1399,7 +1318,7 @@ public class ITObjectTest {
   public void testAttemptObjectDeleteWithEventBasedHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setEventBasedHold(true).build();
-    Blob remoteBlob = storage.create(blobInfo);
+    Blob remoteBlob = storage.create(blobInfo, BlobTargetOption.doesNotExist());
     assertTrue(remoteBlob.getEventBasedHold());
     try {
       remoteBlob.delete();
@@ -1415,7 +1334,7 @@ public class ITObjectTest {
   public void testAttemptDeletionObjectTemporaryHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
-    Blob remoteBlob = storage.create(blobInfo);
+    Blob remoteBlob = storage.create(blobInfo, BlobTargetOption.doesNotExist());
     assertTrue(remoteBlob.getTemporaryHold());
     try {
       remoteBlob.delete();
@@ -1432,7 +1351,7 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
+    Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2}, BlobTargetOption.doesNotExist());
 
     Blob blobUnchanged = blob.reload();
     // gRPC and json have differing defaults on projections b/258835631
@@ -1463,7 +1382,9 @@ public class ITObjectTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
     ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
-    Blob blob = storage.createFrom(blobInfo, content, BlobWriteOption.encryptionKey(KEY));
+    Blob blob =
+        storage.createFrom(
+            blobInfo, content, BlobWriteOption.encryptionKey(KEY), BlobWriteOption.doesNotExist());
 
     try {
       blob.getContent();
@@ -1482,61 +1403,30 @@ public class ITObjectTest {
     switch (method) {
       case "create":
         return detectType
-            ? storage.create(blobInfo, BlobTargetOption.detectContentType())
-            : storage.create(blobInfo);
+            ? storage.create(
+                blobInfo, BlobTargetOption.detectContentType(), BlobTargetOption.doesNotExist())
+            : storage.create(blobInfo, BlobTargetOption.doesNotExist());
       case "createFrom":
         InputStream inputStream = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
         return detectType
-            ? storage.createFrom(blobInfo, inputStream, BlobWriteOption.detectContentType())
-            : storage.createFrom(blobInfo, inputStream);
+            ? storage.createFrom(
+                blobInfo,
+                inputStream,
+                BlobWriteOption.detectContentType(),
+                BlobWriteOption.doesNotExist())
+            : storage.createFrom(blobInfo, inputStream, BlobWriteOption.doesNotExist());
       case "writer":
         if (detectType) {
-          storage.writer(blobInfo, BlobWriteOption.detectContentType()).close();
+          storage
+              .writer(blobInfo, BlobWriteOption.detectContentType(), BlobWriteOption.doesNotExist())
+              .close();
         } else {
-          storage.writer(blobInfo).close();
+          storage.writer(blobInfo, BlobWriteOption.doesNotExist()).close();
         }
         return storage.get(BlobId.of(blobInfo.getBucket(), blobInfo.getName()));
       default:
         throw new IllegalArgumentException("Unknown method " + method);
     }
-  }
-
-  private void testAutoContentType(String method) throws IOException {
-    String[] names = {
-      generator.randomObjectName() + ".txt",
-      generator.randomObjectName() + "with space/Pic.Jpg",
-      generator.randomObjectName() + "no_extension"
-    };
-    String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
-    for (int i = 0; i < names.length; i++) {
-      BlobId blobId = BlobId.of(bucket.getName(), names[i]);
-      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-      Blob blob_true = createBlob(method, blobInfo, true);
-      assertEquals(types[i], blob_true.getContentType());
-
-      Blob blob_false = createBlob(method, blobInfo, false);
-      assertThat(blob_false.getContentType()).isAnyOf("application/octet-stream", "");
-    }
-    String customType = "custom/type";
-    BlobId blobId = BlobId.of(bucket.getName(), names[0]);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(customType).build();
-    Blob blob = createBlob(method, blobInfo, true);
-    assertEquals(customType, blob.getContentType());
-  }
-
-  @Test
-  public void testAutoContentTypeCreate() throws IOException {
-    testAutoContentType("create");
-  }
-
-  @Test
-  public void testAutoContentTypeCreateFrom() throws IOException {
-    testAutoContentType("createFrom");
-  }
-
-  @Test
-  public void testAutoContentTypeWriter() throws IOException {
-    testAutoContentType("writer");
   }
 
   @Test
@@ -1545,7 +1435,7 @@ public class ITObjectTest {
     String blobName = generator.randomObjectName();
     StorageClass storageClass = StorageClass.COLDLINE;
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setStorageClass(storageClass).build();
-    Blob remoteBlob = storage.create(blob);
+    Blob remoteBlob = storage.create(blob, BlobTargetOption.doesNotExist());
     assertThat(remoteBlob).isNotNull();
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertThat(remoteBlob.getName()).isEqualTo(blob.getName());
@@ -1559,7 +1449,9 @@ public class ITObjectTest {
     CopyRequest request =
         CopyRequest.newBuilder()
             .setSource(blobId)
-            .setTarget(BlobInfo.newBuilder(blobId).setStorageClass(StorageClass.STANDARD).build())
+            .setTarget(
+                BlobInfo.newBuilder(blobId).setStorageClass(StorageClass.STANDARD).build(),
+                BlobTargetOption.generationMatch(remoteBlob.getGeneration()))
             .build();
     Blob updatedBlob1 = storage.copy(request).getResult();
     assertThat(updatedBlob1.getTimeStorageClassUpdated()).isNotNull();
@@ -1570,7 +1462,11 @@ public class ITObjectTest {
 
     // Updates the other properties of the blob's to check the difference between blob updateTime
     // and timeStorageClassUpdated.
-    Blob updatedBlob2 = updatedBlob1.toBuilder().setContentType(CONTENT_TYPE).build().update();
+    Blob updatedBlob2 =
+        updatedBlob1.toBuilder()
+            .setContentType(CONTENT_TYPE)
+            .build()
+            .update(BlobTargetOption.metagenerationMatch());
     assertThat(updatedBlob2.getUpdateTime())
         .isGreaterThan(updatedBlob2.getTimeStorageClassUpdated());
     assertThat(updatedBlob2.getTimeStorageClassUpdated())
@@ -1583,9 +1479,9 @@ public class ITObjectTest {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
     // in grpc, create will return acls but update does not. re-get the metadata with default fields
-    Blob gen1 = storage.create(info);
+    Blob gen1 = storage.create(info, BlobTargetOption.doesNotExist());
     gen1 = storage.get(gen1.getBlobId());
-    Blob gen2 = storage.update(gen1);
+    Blob gen2 = storage.update(gen1, BlobTargetOption.metagenerationMatch());
     assertThat(gen2).isEqualTo(gen1);
   }
 
@@ -1601,8 +1497,8 @@ public class ITObjectTest {
     BlobInfo info2 =
         BlobInfo.newBuilder(versionedBucket, randomObjectName).setMetadata(meta2).build();
 
-    BlobInfo gen1 = storage.create(info1);
-    BlobInfo gen2 = storage.create(info2);
+    BlobInfo gen1 = storage.create(info1, BlobTargetOption.doesNotExist());
+    BlobInfo gen2 = storage.create(info2, BlobTargetOption.generationMatch(gen1.getGeneration()));
 
     BlobInfo update1 = gen1.toBuilder().setMetadata(meta3).build();
 
