@@ -44,13 +44,6 @@ public final class RequestBody {
     return new RequestBody(RewindableContent.of(buffers));
   }
 
-  public static RequestBody fromByteBuffer(ByteBuffer buffer) {
-    ByteBuffer duplicate = buffer.duplicate();
-    byte[] arr = new byte[duplicate.remaining()];
-    duplicate.get(arr);
-    return new RequestBody(RewindableContent.of(buffer));
-  }
-
   public static RequestBody of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {
     return new RequestBody(RewindableContent.of(srcs, srcsOffset, srcsLength));
   }
