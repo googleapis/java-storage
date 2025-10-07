@@ -31,26 +31,9 @@ import java.util.Map;
 public class SetObjectContexts {
   public static void setObjectContexts(String projectId, String bucketName, String objectName)
       throws Exception {
-    // The ID of your GCP project
-    // String projectId = "your-project-id";
-
-    // The ID of your GCS bucket
-    // String bucketName = "your-unique-bucket-name";
-
-    // The name of your GCS object
-    // String objectName = "your-object-name";
 
     try (Storage storage =
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
-      String key = "your-context-key";
-      String value = "your-context-value";
-
-      ObjectCustomContextPayload payload =
-          ObjectCustomContextPayload.newBuilder().setValue(value).build();
-      Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
-      custom.put(key, payload);
-      ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
-
       BlobId blobId = BlobId.of(bucketName, objectName);
       Blob blob = storage.get(blobId);
       if (blob == null) {
@@ -58,14 +41,34 @@ public class SetObjectContexts {
         return;
       }
 
-      // Optional: set a generation-match precondition to avoid potential race
-      // conditions and data corruptions. The request to upload returns a 412 error if
+      // Optional: Set a generation-match precondition to avoid potential race
+      // conditions and data corruptions. The request to update returns a 412 error if
       // the object's generation number does not match your precondition.
       Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
 
-      // Does an upsert operation, if the key already exists it's replaced by the new value,
-      // otherwise
-      // it's added.
+      String key = "your-context-key";
+      String value = "your-context-value";
+
+      // This section demonstrates how to upsert, delete all, and delete a specific context.
+
+      // To upsert a context (if the key already exists, its value is replaced;
+      // otherwise, a new key-value pair is added):
+      ObjectCustomContextPayload payload =
+          ObjectCustomContextPayload.newBuilder().setValue(value).build();
+      Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
+      custom.put(key, payload);
+      ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
+
+      /*
+       * To delete all existing contexts:
+       * ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(null).build();
+       */
+
+      /*
+       * To delete a specific key from the context:
+       * Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap(); custom.put(key, null);
+       * ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
+       */
       BlobInfo pendingUpdate = blob.toBuilder().setContexts(contexts).build();
       storage.update(pendingUpdate, precondition);
 
