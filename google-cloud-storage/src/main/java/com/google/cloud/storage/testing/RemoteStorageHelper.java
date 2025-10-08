@@ -18,7 +18,7 @@ package com.google.cloud.storage.testing;
 
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -204,7 +204,7 @@ public class RemoteStorageHelper {
           transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
       StorageOptions storageOptions =
           StorageOptions.http()
-              .setCredentials(GoogleCredentials.fromStream(keyStream))
+              .setCredentials(ServiceAccountCredentials.fromStream(keyStream))
               .setProjectId(projectId)
               .setRetrySettings(retrySettings())
               .setTransportOptions(transportOptions)
