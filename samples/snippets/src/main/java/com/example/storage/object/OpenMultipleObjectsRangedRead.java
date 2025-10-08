@@ -27,6 +27,7 @@ import com.google.cloud.storage.ReadAsFutureBytes;
 import com.google.cloud.storage.ReadProjectionConfigs;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -55,9 +56,27 @@ public class OpenMultipleObjectsRangedRead {
         BlobId blobId = BlobId.of(bucketName, objectName);
         ApiFuture<BlobReadSession> futureReadSession = storage.blobReadSession(blobId);
 
-        try (BlobReadSession session = futureReadSession.get(5, TimeUnit.SECONDS)) {
-          futuresToWaitOn.add(session.readAs(rangeConfig));
-        }
+        ApiFuture<byte[]> readAndCloseFuture =
+            ApiFutures.transformAsync(
+                futureReadSession,
+                (BlobReadSession session) -> {
+                  ApiFuture<byte[]> readFuture = session.readAs(rangeConfig);
+
+                  readFuture.addListener(
+                      () -> {
+                        try {
+                          session.close();
+                        } catch (java.io.IOException e) {
+                          System.err.println(
+                              "WARN: Background error while closing session: " + e.getMessage());
+                        }
+                      },
+                      MoreExecutors.directExecutor());
+                  return readFuture;
+                },
+                MoreExecutors.directExecutor());
+
+        futuresToWaitOn.add(readAndCloseFuture);
       }
       ApiFutures.allAsList(futuresToWaitOn).get(30, TimeUnit.SECONDS);
 
