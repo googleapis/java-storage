@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
@@ -236,7 +237,7 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
   }
 
   @Test
-  public void ioException_if_crc32c_mismatch_individual_message()
+  public void ifCrc32cMismatchIndividualMessage_restartFromCorrectOffset()
       throws IOException, InterruptedException {
     StorageGrpc.StorageImplBase fakeStorage =
         new StorageGrpc.StorageImplBase() {
@@ -245,10 +246,12 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
               ReadObjectRequest request, StreamObserver<ReadObjectResponse> responseObserver) {
             if (request.equals(req1)) {
               responseObserver.onNext(resp1);
-              ReadObjectResponse.Builder b = resp2.toBuilder();
+              responseObserver.onNext(resp2);
+              ReadObjectResponse.Builder b = resp3.toBuilder();
               // set a bad checksum value
               b.getChecksummedDataBuilder().setCrc32C(1);
               responseObserver.onNext(b.build());
+            } else if (request.equals(req2)) {
               responseObserver.onNext(resp3);
               responseObserver.onNext(resp4);
               responseObserver.onCompleted();
@@ -276,10 +279,10 @@ public final class ITGapicUnbufferedReadableByteChannelTest {
                       retryOnly(DataLossException.class)));
       byte[] actualBytes = new byte[40];
       try (UnbufferedReadableByteChannel c = session.open()) {
-        IOException ioException =
-            assertThrows(IOException.class, () -> c.read(ByteBuffer.wrap(actualBytes)));
+        int read = c.read(ByteBuffer.wrap(actualBytes));
 
-        assertThat(ioException).hasMessageThat().contains("Mismatch checksum");
+        assertThat(read).isEqualTo(40);
+        assertThat(xxd(actualBytes)).isEqualTo(xxd(bytes));
       }
     }
   }
