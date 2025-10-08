@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.testing;
 
+import com.google.api.core.ObsoleteApi;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -186,7 +187,27 @@ public class RemoteStorageHelper {
   }
 
   /**
-   * Creates a {@code RemoteStorageHelper} object for the given project id and JSON key input
+   * This method is obsolete because of a potential security risk. Use the {@link #create(String,
+   * GoogleCredentials)} method instead.
+   *
+   * <p>If you know that you will be loading credential configurations of a specific type, it is
+   * recommended to use a credential-type-specific `fromStream()` method. This will ensure that an
+   * unexpected credential type with potential for malicious intent is not loaded unintentionally.
+   * You might still have to do validation for certain credential types. Please follow the
+   * recommendation for that method.
+   *
+   * <p>If you are loading your credential configuration from an untrusted source and have not
+   * mitigated the risks (e.g. by validating the configuration yourself), make these changes as soon
+   * as possible to prevent security risks to your environment.
+   *
+   * <p>Regardless of the method used, it is always your responsibility to validate configurations
+   * received from external sources.
+   *
+   * <p>See the {@link <a
+   * href="https://cloud.google.com/docs/authentication/external/externally-sourced-credentials">documentation</a>}
+   * for more details.
+   *
+   * <p>Creates a {@code RemoteStorageHelper} object for the given project id and JSON key input
    * stream.
    *
    * @param projectId id of the project to be used for running the tests
@@ -195,21 +216,11 @@ public class RemoteStorageHelper {
    * @throws com.google.cloud.storage.testing.RemoteStorageHelper.StorageHelperException if {@code
    *     keyStream} is not a valid JSON key stream
    */
+  @ObsoleteApi("This method is obsolete because of a potential security risk. Use the create() variant with Credential parameter instead")
   public static RemoteStorageHelper create(String projectId, InputStream keyStream)
       throws StorageHelperException {
     try {
-      HttpTransportOptions transportOptions =
-          HttpStorageOptions.defaults().getDefaultTransportOptions();
-      transportOptions =
-          transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
-      StorageOptions storageOptions =
-          StorageOptions.http()
-              .setCredentials(GoogleCredentials.fromStream(keyStream))
-              .setProjectId(projectId)
-              .setRetrySettings(retrySettings())
-              .setTransportOptions(transportOptions)
-              .build();
-      return new RemoteStorageHelper(storageOptions);
+        return create(projectId, GoogleCredentials.fromStream(keyStream));
     } catch (IOException ex) {
       if (log.isLoggable(Level.WARNING)) {
         log.log(Level.WARNING, ex.getMessage());
@@ -217,6 +228,28 @@ public class RemoteStorageHelper {
       throw StorageHelperException.translate(ex);
     }
   }
+
+    /**
+     * Creates a {@code RemoteStorageHelper} object for the given project id and Credential.
+     *
+     * @param projectId id of the project to be used for running the tests
+     * @param credentials GoogleCredential to set to StorageOptions
+     * @return A {@code RemoteStorageHelper} object for the provided options
+     */
+    public static RemoteStorageHelper create(String projectId, GoogleCredentials credentials) {
+        HttpTransportOptions transportOptions =
+                HttpStorageOptions.defaults().getDefaultTransportOptions();
+        transportOptions =
+                transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
+        StorageOptions storageOptions =
+                StorageOptions.http()
+                        .setCredentials(credentials)
+                        .setProjectId(projectId)
+                        .setRetrySettings(retrySettings())
+                        .setTransportOptions(transportOptions)
+                        .build();
+        return new RemoteStorageHelper(storageOptions);
+    }
 
   /**
    * Creates a {@code RemoteStorageHelper} object using default project id and authentication
