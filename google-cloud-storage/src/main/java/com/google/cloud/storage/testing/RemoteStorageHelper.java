@@ -203,8 +203,7 @@ public class RemoteStorageHelper {
    * <p>Regardless of the method used, it is always your responsibility to validate configurations
    * received from external sources.
    *
-   * <p>See the {@link <a
-   * href="https://cloud.google.com/docs/authentication/external/externally-sourced-credentials">documentation</a>}
+   * <p>See the {@link <a href="https://cloud.google.com/docs/authentication/external/externally-sourced-credentials">documentation</a>}
    * for more details.
    *
    * <p>Creates a {@code RemoteStorageHelper} object for the given project id and JSON key input
