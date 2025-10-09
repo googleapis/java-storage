@@ -30,6 +30,7 @@ import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.GrpcUtils.ZeroCopyServerStreamingCallable;
+import com.google.cloud.storage.Hasher.UncheckedChecksumMismatchException;
 import com.google.cloud.storage.ResponseContentLifecycleHandle.ChildRef;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
@@ -104,7 +105,11 @@ final class GapicUnbufferedReadableByteChannel
             boolean isWatchdogTimeout =
                 previousThrowable instanceof StorageException
                     && previousThrowable.getCause() instanceof WatchdogTimeoutException;
-            boolean shouldRetry = isWatchdogTimeout || alg.shouldRetry(previousThrowable, null);
+            boolean isChecksumMismatch =
+                previousThrowable instanceof StorageException
+                    && previousThrowable.getCause() instanceof UncheckedChecksumMismatchException;
+            boolean shouldRetry =
+                isWatchdogTimeout || isChecksumMismatch || alg.shouldRetry(previousThrowable, null);
             if (previousThrowable != null && !shouldRetry) {
               result.setException(previousThrowable);
             }
@@ -146,6 +151,16 @@ final class GapicUnbufferedReadableByteChannel
         Thread.currentThread().interrupt();
         throw new InterruptedIOException();
       }
+      if (take instanceof IOException) {
+        IOException ioe = (IOException) take;
+        if (alg.shouldRetry(ioe, null)) {
+          readObjectObserver = null;
+          continue;
+        } else {
+          ioe.addSuppressed(new AsyncStorageTaskException());
+          throw ioe;
+        }
+      }
       if (take instanceof Throwable) {
         Throwable throwable = (Throwable) take;
         BaseServiceException coalesce = StorageException.coalesce(throwable);
@@ -153,6 +168,7 @@ final class GapicUnbufferedReadableByteChannel
           readObjectObserver = null;
           continue;
         } else {
+          close();
           throw new IOException(coalesce);
         }
       }
@@ -160,45 +176,13 @@ final class GapicUnbufferedReadableByteChannel
         complete = true;
         break;
       }
-      readObjectObserver.request();
 
-      ReadObjectResponse resp = (ReadObjectResponse) take;
-      try (ResponseContentLifecycleHandle<ReadObjectResponse> handle =
-          read.getResponseContentLifecycleManager().get(resp)) {
-        ReadObjectResponseChildRef ref = ReadObjectResponseChildRef.from(handle);
-        if (resp.hasMetadata()) {
-          Object respMetadata = resp.getMetadata();
-          if (metadata == null) {
-            metadata = respMetadata;
-          } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
-            throw closeWithError(
-                String.format(
-                    Locale.US,
-                    "Mismatch Generation between subsequent reads. Expected %d but received %d",
-                    metadata.getGeneration(),
-                    respMetadata.getGeneration()));
-          }
-        }
-        ChecksummedData checksummedData = resp.getChecksummedData();
-        ByteString content = checksummedData.getContent();
-        int contentSize = content.size();
-        // Very important to know whether a crc32c value is set. Without checking, protobuf will
-        // happily return 0, which is a valid crc32c value.
-        if (checksummedData.hasCrc32C()) {
-          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
-          try {
-            hasher.validate(expected, content);
-          } catch (IOException e) {
-            close();
-            throw e;
-          }
-        }
-        ref.copy(c, dsts, offset, length);
-        if (ref.hasRemaining()) {
-          leftovers = ref;
-        } else {
-          ref.close();
-        }
+      ReadObjectResponseChildRef ref = (ReadObjectResponseChildRef) take;
+      ref.copy(c, dsts, offset, length);
+      if (ref.hasRemaining()) {
+        leftovers = ref;
+      } else {
+        ref.close();
       }
     }
     long read = c.read();
@@ -321,11 +305,10 @@ final class GapicUnbufferedReadableByteChannel
     }
   }
 
-  private IOException closeWithError(String message) throws IOException {
-    close();
+  private IOException createError(String message) throws IOException {
     StorageException cause =
         new StorageException(HttpStatusCodes.STATUS_CODE_PRECONDITION_FAILED, message);
-    throw new IOException(message, cause);
+    return new IOException(message, cause);
   }
 
   private final class ReadObjectObserver extends StateCheckingResponseObserver<ReadObjectResponse> {
@@ -334,10 +317,6 @@ final class GapicUnbufferedReadableByteChannel
     private final SettableApiFuture<Throwable> cancellation = SettableApiFuture.create();
 
     private volatile StreamController controller;
-
-    void request() {
-      controller.request(1);
-    }
 
     void cancel() {
       controller.cancel();
@@ -352,16 +331,50 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     protected void onResponseImpl(ReadObjectResponse response) {
-      try {
-        open.set(null);
-        queue.offer(response);
-        fetchOffset.addAndGet(response.getChecksummedData().getContent().size());
+      controller.request(1);
+      open.set(null);
+      try (ResponseContentLifecycleHandle<ReadObjectResponse> handle =
+          read.getResponseContentLifecycleManager().get(response)) {
+        ChecksummedData checksummedData = response.getChecksummedData();
+        ByteString content = checksummedData.getContent();
+        int contentSize = content.size();
+        // Very important to know whether a crc32c value is set. Without checking, protobuf will
+        // happily return 0, which is a valid crc32c value.
+        if (checksummedData.hasCrc32C()) {
+          Crc32cLengthKnown expected = Crc32cValue.of(checksummedData.getCrc32C(), contentSize);
+          try {
+            hasher.validateUnchecked(expected, content);
+          } catch (UncheckedChecksumMismatchException e) {
+            queue.offer(e);
+            return;
+          }
+        }
+        if (response.hasMetadata()) {
+          Object respMetadata = response.getMetadata();
+          if (metadata == null) {
+            metadata = respMetadata;
+          } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
+            IOException exception =
+                createError(
+                    String.format(
+                        Locale.US,
+                        "Mismatch Generation between subsequent reads. Expected %d but received %d",
+                        metadata.getGeneration(),
+                        respMetadata.getGeneration()));
+            queue.offer(exception);
+            return;
+          }
+        }
+        queue.offer(ReadObjectResponseChildRef.from(handle));
+        fetchOffset.addAndGet(contentSize);
         if (response.hasMetadata() && !result.isDone()) {
           result.set(response.getMetadata());
         }
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         throw Code.ABORTED.toStatus().withCause(e).asRuntimeException();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
     }
 
