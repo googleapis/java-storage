@@ -19,6 +19,7 @@ package com.example.storage.object;
 // [START storage_get_object_contexts]
 
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo.ObjectContexts;
 import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -44,15 +45,19 @@ public class GetObjectContexts {
         System.out.println("The object " + objectName + " was not found in " + bucketName);
         return;
       }
-      Map<String, ObjectCustomContextPayload> customContexts = blob.getContexts().getCustom();
-      if (customContexts == null) {
-        System.out.println("No custom contexts found for object: " + objectName);
-        return;
-      }
-      // Print blob's object contexts
-      System.out.println("\nCustom Contexts:");
-      for (Map.Entry<String, ObjectCustomContextPayload> custom : customContexts.entrySet()) {
-        System.out.println(custom.getKey() + "=" + custom.getValue());
+      ObjectContexts objectContexts = blob.getContexts();
+
+      if (objectContexts != null) {
+        Map<String, ObjectCustomContextPayload> customContexts = objectContexts.getCustom();
+        if (customContexts == null) {
+          System.out.println("No custom contexts found for object: " + objectName);
+          return;
+        }
+        // Print blob's object contexts
+        System.out.println("\nCustom Contexts:");
+        for (Map.Entry<String, ObjectCustomContextPayload> custom : customContexts.entrySet()) {
+          System.out.println(custom.getKey() + "=" + custom.getValue());
+        }
       }
     }
   }
