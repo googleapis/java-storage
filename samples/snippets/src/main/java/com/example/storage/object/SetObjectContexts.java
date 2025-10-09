@@ -29,8 +29,21 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class SetObjectContexts {
-  public static void setObjectContexts(String projectId, String bucketName, String objectName)
+  public static void setObjectContexts(
+      String projectId, String bucketName, String objectName, String key, String value)
       throws Exception {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
+
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
+
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
+
+    // The context key-value you want to add
+    // String key = "your-context-key";
+    // String value = "your-context-value";
 
     try (Storage storage =
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
@@ -41,13 +54,10 @@ public class SetObjectContexts {
         return;
       }
 
-      // Optional: Set a generation-match precondition to avoid potential race
+      // Recommended: Set a generation-match precondition to avoid potential race
       // conditions and data corruptions. The request to update returns a 412 error if
       // the object's generation number does not match your precondition.
       Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
-
-      String key = "your-context-key";
-      String value = "your-context-value";
 
       // This section demonstrates how to upsert, delete all, and delete a specific context.
 

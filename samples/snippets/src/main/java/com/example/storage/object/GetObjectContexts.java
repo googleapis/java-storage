@@ -25,7 +25,7 @@ import com.google.cloud.storage.StorageOptions;
 import java.util.Map;
 
 public class GetObjectContexts {
-  public static void getObjectMetadata(String projectId, String bucketName, String blobName)
+  public static void getObjectContexts(String projectId, String bucketName, String objectName)
       throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
@@ -39,8 +39,16 @@ public class GetObjectContexts {
     try (Storage storage =
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
-      Blob blob = storage.get(bucketName, blobName);
+      Blob blob = storage.get(bucketName, objectName);
+      if (blob == null) {
+        System.out.println("The object " + objectName + " was not found in " + bucketName);
+        return;
+      }
       Map<String, ObjectCustomContextPayload> customContexts = blob.getContexts().getCustom();
+      if (customContexts == null) {
+        System.out.println("No custom contexts found for object: " + objectName);
+        return;
+      }
       // Print blob's object contexts
       System.out.println("\nCustom Contexts:");
       for (Map.Entry<String, ObjectCustomContextPayload> custom : customContexts.entrySet()) {
