@@ -16,7 +16,7 @@
 
 package com.example.storage.object;
 
-// [START storage_read_appendable_object_multiple_ranges]
+// [START storage_open_object_multiple_ranged_read]
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -30,10 +30,28 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class AppendableObjectMultipleRangedRead {
-  public static void appendableObjectMultipleRangedRead(
+public class OpenObjectMultipleRangedRead {
+  public static void openObjectMultipleRangedRead(
       String bucketName, String objectName, long offset1, int length1, long offset2, int length2)
       throws Exception {
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
+
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
+
+    // The beginning of the range 1
+    // long offset = 0
+
+    // The maximum number of bytes to read in range 1
+    // int length = 16;
+
+    // The beginning of the range 2
+    // long offset = 16
+
+    // The maximum number of bytes to read in range 2
+    // int length = 32;
+
     try (Storage storage = StorageOptions.grpc().build().getService()) {
       BlobId blobId = BlobId.of(bucketName, objectName);
       ApiFuture<BlobReadSession> futureBlobReadSession = storage.blobReadSession(blobId);
@@ -62,4 +80,4 @@ public class AppendableObjectMultipleRangedRead {
   }
 }
 
-// [END storage_read_appendable_object_multiple_ranges]
+// [END storage_open_object_multiple_ranged_read]

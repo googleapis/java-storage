@@ -62,7 +62,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
               ResumableMedia.gapic()
                   .read()
                   .byteChannel(read, retrier, resultRetryAlgorithm)
-                  .setHasher(Hasher.noop())
+                  .setHasher(Hasher.defaultHasher())
                   .setAutoGzipDecompression(autoGzipDecompression);
           BufferHandle bufferHandle = getBufferHandle();
           // because we're erasing the specific type of channel, we need to declare it here.

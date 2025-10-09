@@ -20,7 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.SignatureInfo.Builder;
+import com.google.common.hash.Hashing;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -97,5 +99,40 @@ public class SignatureInfoTest {
         "X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=me%40google.com%2F20010909%2F"
             + "auto%2Fstorage%2Fgoog4_request&X-Goog-Date=20010909T014640Z&X-Goog-Expires=10&X-Goog-SignedHeaders=host",
         queryString);
+  }
+
+  @Test
+  public void constructV4UnsignedPayloadWithContentSha256Header() {
+    Builder builder = new SignatureInfo.Builder(HttpMethod.PUT, 10L, URI.create(RESOURCE));
+    builder.setSignatureVersion(Storage.SignUrlOption.SignatureVersion.V4);
+    builder.setAccountEmail("me@google.com");
+    builder.setTimestamp(1000000000000L);
+
+    Map<String, String> extensionHeaders = new HashMap<>();
+    // Add the header with a lowercase key, which triggers the bug.
+    String contentSha256 = "sha256";
+    extensionHeaders.put("X-goog-content-sha256", contentSha256);
+    builder.setCanonicalizedExtensionHeaders(extensionHeaders);
+
+    // This is the payload hash that SHOULD be generated
+    String correctCanonicalRequest =
+        "PUT\n"
+            + "/bucketName/blobName\n"
+            + "X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=me%40google.com%2F20010909%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20010909T014640Z&X-Goog-Expires=10&X-Goog-SignedHeaders=host%3Bx-goog-content-sha256\n"
+            + "host:storage.googleapis.com\n"
+            + "x-goog-content-sha256:"
+            + contentSha256
+            + "\n"
+            + "\n"
+            + "host;x-goog-content-sha256\n"
+            + contentSha256;
+    String expectedPayloadHash =
+        Hashing.sha256().hashString(correctCanonicalRequest, StandardCharsets.UTF_8).toString();
+
+    String unsignedPayload = builder.build().constructUnsignedPayload();
+    String[] parts = unsignedPayload.split("\n");
+    String generatedPayloadHash = parts[parts.length - 1];
+
+    assertEquals(expectedPayloadHash, generatedPayloadHash);
   }
 }
