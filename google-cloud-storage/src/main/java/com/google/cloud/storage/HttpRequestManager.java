@@ -15,8 +15,6 @@
  */
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
-
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
@@ -37,7 +35,6 @@ public class HttpRequestManager {
 
   public HttpResponse sendCreateMultipartUploadRequest(
       String uri,
-      String authHeader,
       String contentType,
       CreateMultipartUploadRequest request,
       Map<String, String> extensionHeaders)
@@ -45,7 +42,6 @@ public class HttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
             new GenericUrl(uri), new ByteArrayContent(contentType, new byte[0]));
-    httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
@@ -57,14 +53,12 @@ public class HttpRequestManager {
   public HttpResponse sendUploadPartRequest(
       String uri,
       HttpContent content,
-      String authHeader,
       String contentType,
       Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(
             new GenericUrl(uri), content);
-    httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
@@ -76,14 +70,12 @@ public class HttpRequestManager {
   public HttpResponse sendCompleteMultipartUploadRequest(
       String uri,
       byte[] xmlBodyBytes,
-      String authHeader,
       String contentType,
       Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
             new GenericUrl(uri), new ByteArrayContent(contentType, xmlBodyBytes));
-    httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
@@ -93,10 +85,9 @@ public class HttpRequestManager {
   }
 
   public HttpResponse sendAbortMultipartUploadRequest(
-      String uri, String authHeader, String contentType, Map<String, String> extensionHeaders)
+      String uri, String contentType, Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(uri));
-    httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
@@ -106,10 +97,9 @@ public class HttpRequestManager {
   }
 
   public HttpResponse sendListPartsRequest(
-      String uri, String authHeader, Map<String, String> extensionHeaders)
+      String uri, Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(uri));
-    httpRequest.getHeaders().setAuthorization(authHeader);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }

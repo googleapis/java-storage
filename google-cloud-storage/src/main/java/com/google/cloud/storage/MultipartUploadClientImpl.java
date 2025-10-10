@@ -20,8 +20,6 @@ import static com.google.cloud.storage.MultipartUploadUtility.getRfc1123Date;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
-import com.google.auth.oauth2.AccessToken;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
@@ -46,7 +44,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +55,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
   private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
 
   private final HttpRequestManager httpRequestManager;
-  private final GoogleCredentials credentials;
   private final XmlMapper xmlMapper;
   private final HttpStorageOptions options;
   private final Retrier retrier;
@@ -69,13 +65,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     this.xmlMapper = new XmlMapper();
     this.options = options;
     this.retrier = retrier;
-    try {
-      this.credentials =
-          GoogleCredentials.getApplicationDefault()
-              .createScoped(Collections.singleton("https://www.googleapis.com/auth/devstorage.read_write"));
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to get application default credentials", e);
-    }
   }
 
   private Map<String, String> getGenericExtensionHeader() {
@@ -97,10 +86,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String uri = GCS_ENDPOINT + resourcePath + "?uploads";
 
-    credentials.refreshIfExpired();
-    AccessToken accessToken = credentials.getAccessToken();
-    String authHeader = "Bearer " + accessToken.getTokenValue();
-
     String contentType;
     if (request.getContentType() == null) {
       contentType = "application/x-www-form-urlencoded";
@@ -116,7 +101,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
             uri,
-            authHeader,
             contentType,
             request,
             getExtensionHeadersForCreateMultipartUpload(request));
@@ -177,10 +161,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
         Retrying.alwaysRetry(),
         () -> {
           requestBody.getContent().rewindTo(0);
-          credentials.refreshIfExpired();
-          AccessToken accessToken = credentials.getAccessToken();
-          String authHeader = "Bearer " + accessToken.getTokenValue();
-          return httpRequestManager.sendUploadPartRequest(uri, requestBody.getContent(), authHeader, contentType,
+          return httpRequestManager.sendUploadPartRequest(uri, requestBody.getContent(), contentType,
               extensionHeaders);
         },
         Decoder.identity());
@@ -241,13 +222,9 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     HttpResponse response = retrier.run(
         Retrying.alwaysRetry(),
         () -> {
-          credentials.refreshIfExpired();
-          AccessToken accessToken = credentials.getAccessToken();
-          String authHeader = "Bearer " + accessToken.getTokenValue();
           return httpRequestManager.sendCompleteMultipartUploadRequest(
               uri,
               xmlBodyBytes,
-              authHeader,
               contentType,
               extensionHeaders);
         },
@@ -275,11 +252,8 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     HttpResponse response = retrier.run(
         Retrying.alwaysRetry(),
         () -> {
-          credentials.refreshIfExpired();
-          AccessToken accessToken = credentials.getAccessToken();
-          String authHeader = "Bearer " + accessToken.getTokenValue();
           return httpRequestManager.sendAbortMultipartUploadRequest(
-              uri, authHeader, contentType, extensionHeaders);
+              uri, contentType, extensionHeaders);
         },
         Decoder.identity());
 
@@ -309,10 +283,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     HttpResponse response = retrier.run(
         Retrying.alwaysRetry(),
         () -> {
-          credentials.refreshIfExpired();
-          AccessToken accessToken = credentials.getAccessToken();
-          String authHeader = "Bearer " + accessToken.getTokenValue();
-          return httpRequestManager.sendListPartsRequest(uri, authHeader, extensionHeaders);
+          return httpRequestManager.sendListPartsRequest(uri, extensionHeaders);
         },
         Decoder.identity());
 
