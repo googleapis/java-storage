@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.59.0](https://github.com/googleapis/java-storage/compare/v2.58.1...v2.59.0) (2025-10-10)
+
+
+### Features
+
+* Add per-message checksum validation for gRPC ReadObject operations ([#3336](https://github.com/googleapis/java-storage/issues/3336)) ([6eef1b0](https://github.com/googleapis/java-storage/commit/6eef1b0f587b9f32041ac4bcef1a16b1b0bc4bb3))
+
+
+### Bug Fixes
+
+* Add case insensitive check for X-Goog-Content-SHA256 in SignatureInfo ([#3337](https://github.com/googleapis/java-storage/issues/3337)) ([54bc2c1](https://github.com/googleapis/java-storage/commit/54bc2c12f2d0e8c164e4ddcaa1a61d2de3911131))
+* Migrate away from GoogleCredentials.fromStream() usages ([#3339](https://github.com/googleapis/java-storage/issues/3339)) ([7e42c2f](https://github.com/googleapis/java-storage/commit/7e42c2fbca53ca6b1266f784e58cee00cfed7d62))
+* Update grpc single-shot uploads to attach the callers stracktrace as suppressed exception if an error happens in the background ([#3330](https://github.com/googleapis/java-storage/issues/3330)) ([64e2b2e](https://github.com/googleapis/java-storage/commit/64e2b2ef839e69da0605b9e53989c1f5a2b09e66))
+
 ## [2.58.1](https://github.com/googleapis/java-storage/compare/v2.58.0...v2.58.1) (2025-10-06)
 
 
