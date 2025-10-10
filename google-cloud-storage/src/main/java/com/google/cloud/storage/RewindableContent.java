@@ -42,9 +42,6 @@ import java.util.Locale;
 
 abstract class RewindableContent extends AbstractHttpContent {
 
-  private String md5;
-  private String crc32c;
-
   private RewindableContent() {
     super((HttpMediaType) null);
   }
@@ -60,58 +57,14 @@ abstract class RewindableContent extends AbstractHttpContent {
 
   abstract void flagDirty();
 
-  /**
-   * Returns the content as a byte array.
-   *
-   * <p><b>NOTE:</b> This method will read the entire content into memory. If the content is large,
-   * this may cause an OutOfMemoryError.
-   *
-   * @return The byte array representation of the content.
-   */
-  public byte[] asByteArray() {
-    if (getLength() == 0) {
-      return new byte[0];
-    }
-    Preconditions.checkState(
-        getLength() <= Integer.MAX_VALUE, "Content is too large to be represented as a byte array.");
-    ByteArrayOutputStream baos = new ByteArrayOutputStream((int) getLength());
-    try {
-      writeTo(baos);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    return baos.toByteArray();
-  }
-
   @Override
   public final boolean retrySupported() {
     return false;
   }
 
-  public String getMd5() throws IOException {
-    if (md5 == null) {
-      try {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        writeTo(new DigestOutputStream(ByteStreams.nullOutputStream(), md));
-        md5 = Base64.encodeBase64String(md.digest());
-      } catch (NoSuchAlgorithmException e) {
-        throw new IOException(e);
-      }
-    }
-    return md5;
-  }
+  abstract String getMd5() throws IOException;
 
-  public String getCrc32c() throws IOException {
-    if (crc32c == null) {
-      HashingOutputStream hashingOutputStream =
-          new HashingOutputStream(Hashing.crc32c(), ByteStreams.nullOutputStream());
-      writeTo(hashingOutputStream);
-      byte[] bytes =
-          ByteBuffer.allocate(4).putInt(hashingOutputStream.hash().asInt()).array();
-      crc32c = Base64.encodeBase64String(bytes);
-    }
-    return crc32c;
-  }
+  abstract String getCrc32c() throws IOException;
 
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
@@ -171,6 +124,16 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    String getMd5() throws IOException {
+      return "";
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      return "";
+    }
   }
 
   private static final class PathRewindableContent extends RewindableContent {
@@ -225,6 +188,31 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    String getMd5() throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        HashingOutputStream hos =
+            new HashingOutputStream(Hashing.md5(), ByteStreams.nullOutputStream());
+        ByteStreams.copy(in, Channels.newChannel(hos));
+        return Base64.encodeBase64String(hos.hash().asBytes());
+      }
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        HashingOutputStream hos =
+            new HashingOutputStream(Hashing.crc32c(), ByteStreams.nullOutputStream());
+        ByteStreams.copy(in, Channels.newChannel(hos));
+        int crc32cInt = hos.hash().asInt();
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(crc32cInt);
+        return Base64.encodeBase64String(bb.array());
+      }
+    }
   }
 
   private static final class ByteBufferContent extends RewindableContent {
@@ -319,6 +307,34 @@ abstract class RewindableContent extends AbstractHttpContent {
     @Override
     void flagDirty() {
       this.dirty = true;
+    }
+
+    @Override
+    String getMd5() throws IOException {
+      try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        // important to use duplicate, so we don't consume the buffer for the actual write
+        for (ByteBuffer buffer : buffers) {
+          md.update(buffer.duplicate());
+        }
+        return Base64.encodeBase64String(md.digest());
+      } catch (NoSuchAlgorithmException e) {
+        // should not happen
+        throw new IOException(e);
+      }
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      com.google.common.hash.Hasher crc32cHasher = Hashing.crc32c().newHasher();
+      // important to use duplicate, so we don't consume the buffer for the actual write
+      for (ByteBuffer buffer : buffers) {
+        crc32cHasher.putBytes(buffer.duplicate());
+      }
+      int crc32cInt = crc32cHasher.hash().asInt();
+      ByteBuffer bb = ByteBuffer.allocate(4);
+      bb.putInt(crc32cInt);
+      return Base64.encodeBase64String(bb.array());
     }
   }
 }

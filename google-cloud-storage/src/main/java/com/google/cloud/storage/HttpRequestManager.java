@@ -59,8 +59,6 @@ public class HttpRequestManager {
       HttpContent content,
       String authHeader,
       String contentType,
-      String contentMd5,
-      String crc32cString,
       Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest =
@@ -68,8 +66,6 @@ public class HttpRequestManager {
             new GenericUrl(uri), content);
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
-    httpRequest.getHeaders().setContentMD5(contentMd5);
-    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }
@@ -82,8 +78,6 @@ public class HttpRequestManager {
       byte[] xmlBodyBytes,
       String authHeader,
       String contentType,
-      String contentMd5,
-      String crc32cString,
       Map<String, String> extensionHeaders)
       throws IOException {
     HttpRequest httpRequest =
@@ -91,8 +85,6 @@ public class HttpRequestManager {
             new GenericUrl(uri), new ByteArrayContent(contentType, xmlBodyBytes));
     httpRequest.getHeaders().setAuthorization(authHeader);
     httpRequest.getHeaders().setContentType(contentType);
-    httpRequest.getHeaders().setContentMD5(contentMd5);
-    httpRequest.getHeaders().set("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }

@@ -173,15 +173,15 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String crc32cString = requestBody.getContent().getCrc32c();
     Map<String, String> extensionHeaders = getGenericExtensionHeader();
     extensionHeaders.put("x-goog-hash", "crc32c=" + crc32cString + ",md5=" + contentMd5);
-
     HttpResponse response = retrier.run(
         Retrying.alwaysRetry(),
         () -> {
+          requestBody.getContent().rewindTo(0);
           credentials.refreshIfExpired();
           AccessToken accessToken = credentials.getAccessToken();
           String authHeader = "Bearer " + accessToken.getTokenValue();
           return httpRequestManager.sendUploadPartRequest(uri, requestBody.getContent(), authHeader, contentType,
-              contentMd5, crc32cString, extensionHeaders);
+              extensionHeaders);
         },
         Decoder.identity());
 
@@ -249,8 +249,6 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
               xmlBodyBytes,
               authHeader,
               contentType,
-              contentMd5,
-              crc32cString,
               extensionHeaders);
         },
         Decoder.identity());
