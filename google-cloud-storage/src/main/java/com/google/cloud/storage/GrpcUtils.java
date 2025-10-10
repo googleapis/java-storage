@@ -70,6 +70,9 @@ final class GrpcUtils {
    * them all as suppressed exceptions on the first occurrence.
    */
   static <C extends Closeable> void closeAll(Collection<C> closeables) throws IOException {
+    if (closeables.isEmpty()) {
+      return;
+    }
     IOException ioException =
         closeables.stream()
             .filter(Objects::nonNull)

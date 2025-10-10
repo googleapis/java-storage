@@ -343,12 +343,8 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
     @Override
     public void internalClose() throws IOException {
       if (!closed) {
-        retryContext.reset();
         closed = true;
-        if (leftovers != null) {
-          leftovers.ref.close();
-        }
-        GrpcUtils.closeAll(queue);
+        internalCleanup();
       }
     }
 
@@ -378,7 +374,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         throw new ClosedChannelException();
       }
       if (complete) {
-        close();
+        internalCleanup();
         return -1;
       }
 
@@ -406,7 +402,7 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
           } else if (poll == EofMarker.INSTANCE) {
             complete = true;
             if (read == 0) {
-              close();
+              internalCleanup();
               return -1;
             }
             break;
@@ -440,6 +436,14 @@ abstract class BaseObjectReadSessionStreamRead<Projection>
         ioe.initCause(e);
         throw ioe;
       }
+    }
+
+    private void internalCleanup() throws IOException {
+      retryContext.reset();
+      if (leftovers != null) {
+        leftovers.ref.close();
+      }
+      GrpcUtils.closeAll(queue);
     }
 
     /**
