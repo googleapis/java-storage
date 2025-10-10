@@ -217,7 +217,8 @@ public class RemoteStorageHelper {
    *     keyStream} is not a valid JSON key stream
    */
   @ObsoleteApi(
-      "This method is obsolete because of a potential security risk. Use the create() variant with Credential parameter instead")
+      "This method is obsolete because of a potential security risk. Use the create() variant with"
+          + " Credential parameter instead")
   public static RemoteStorageHelper create(String projectId, InputStream keyStream)
       throws StorageHelperException {
     try {
