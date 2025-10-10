@@ -43,12 +43,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class MultipartUploadClientImpl extends MultipartUploadClient {
 
@@ -177,23 +181,21 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
               + error);
     }
     String eTag = response.getHeaders().getETag();
-    String crc32cFromHeader = null;
-    String md5FromHeader = null;
-    String hashHeader = response.getHeaders().getFirstHeaderStringValue("x-goog-hash");
-    if (hashHeader != null) {
-      String[] hashes = hashHeader.split(",");
-      for (String hash : hashes) {
-        String[] kv = hash.trim().split("=", 2);
-        if (kv.length == 2) {
-          if ("crc32c".equalsIgnoreCase(kv[0])) {
-            crc32cFromHeader = kv[1];
-          } else if ("md5".equalsIgnoreCase(kv[0])) {
-            md5FromHeader = kv[1];
-          }
-        }
-      }
-    }
-    return UploadPartResponse.builder().eTag(eTag).crc32c(crc32cFromHeader).md5(md5FromHeader).build();
+    Map<String, String> hashes = extractHashesFromHeader(response);
+    return UploadPartResponse.builder().eTag(eTag).crc32c(hashes.get("crc32c")).md5(hashes.get("md5")).build();
+  }
+
+  private Map<String, String> extractHashesFromHeader(HttpResponse response) {
+    return Optional.ofNullable(response.getHeaders().getFirstHeaderStringValue("x-goog-hash"))
+        .map(
+            h ->
+                Arrays.stream(h.split(","))
+                    .map(s -> s.trim().split("=", 2))
+                    .filter(a -> a.length == 2)
+                    .filter(a -> "crc32c".equalsIgnoreCase(a[0]) || "md5".equalsIgnoreCase(a[0]))
+                    .collect(
+                        Collectors.toMap(a -> a[0].toLowerCase(), a -> a[1], (v1, v2) -> v1)))
+        .orElse(Collections.emptyMap());
   }
 
   public CompleteMultipartUploadResponse completeMultipartUpload(
