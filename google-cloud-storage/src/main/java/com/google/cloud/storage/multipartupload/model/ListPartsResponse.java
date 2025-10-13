@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.common.base.MoreObjects;
@@ -42,6 +43,7 @@ public final class ListPartsResponse {
   @JacksonXmlProperty(localName = "MaxParts")
   private Integer maxParts;
 
+  @JsonAlias("truncated") // S3 returns "truncated", GCS returns "IsTruncated"
   @JacksonXmlProperty(localName = "IsTruncated")
   private boolean isTruncated;
 

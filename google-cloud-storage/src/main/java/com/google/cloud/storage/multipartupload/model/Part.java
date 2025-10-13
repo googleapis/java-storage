@@ -34,20 +34,34 @@ public final class Part {
   @JacksonXmlProperty(localName = "LastModified")
   private String lastModified;
 
-  public int getPartNumber() {
+  // for jackson
+  private Part() {}
+
+  private Part(Builder builder) {
+    this.partNumber = builder.partNumber;
+    this.eTag = builder.eTag;
+    this.size = builder.size;
+    this.lastModified = builder.lastModified;
+  }
+
+  public int partNumber() {
     return partNumber;
   }
 
-  public String getETag() {
+  public String eTag() {
     return eTag;
   }
 
-  public long getSize() {
+  public long size() {
     return size;
   }
 
-  public String getLastModified() {
+  public String lastModified() {
     return lastModified;
+  }
+
+  public static Builder builder() {
+    return new Builder();
   }
 
   @Override
@@ -78,5 +92,38 @@ public final class Part {
         .add("size", size)
         .add("lastModified", lastModified)
         .toString();
+  }
+
+  public static final class Builder {
+    private int partNumber;
+    private String eTag;
+    private long size;
+    private String lastModified;
+
+    private Builder() {}
+
+    public Builder partNumber(int partNumber) {
+      this.partNumber = partNumber;
+      return this;
+    }
+
+    public Builder eTag(String eTag) {
+      this.eTag = eTag;
+      return this;
+    }
+
+    public Builder size(long size) {
+      this.size = size;
+      return this;
+    }
+
+    public Builder lastModified(String lastModified) {
+      this.lastModified = lastModified;
+      return this;
+    }
+
+    public Part build() {
+      return new Part(this);
+    }
   }
 }

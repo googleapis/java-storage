@@ -37,19 +37,19 @@ public final class CompleteMultipartUploadResponse {
     this.etag = builder.etag;
   }
 
-  public String getLocation() {
+  public String location() {
     return location;
   }
 
-  public String getBucket() {
+  public String bucket() {
     return bucket;
   }
 
-  public String getKey() {
+  public String key() {
     return key;
   }
 
-  public String getEtag() {
+  public String etag() {
     return etag;
   }
 
@@ -97,25 +97,25 @@ public final class CompleteMultipartUploadResponse {
     private Builder() {}
 
     @JsonProperty("Location")
-    public Builder setLocation(String location) {
+    public Builder location(String location) {
       this.location = location;
       return this;
     }
 
     @JsonProperty("Bucket")
-    public Builder setBucket(String bucket) {
+    public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
     }
 
     @JsonProperty("Key")
-    public Builder setKey(String key) {
+    public Builder key(String key) {
       this.key = key;
       return this;
     }
 
     @JsonProperty("ETag")
-    public Builder setEtag(String etag) {
+    public Builder etag(String etag) {
       this.etag = etag;
       return this;
     }
