@@ -43,8 +43,8 @@ import com.example.storage.object.DownloadPublicObject;
 import com.example.storage.object.GenerateEncryptionKey;
 import com.example.storage.object.GenerateV4GetObjectSignedUrl;
 import com.example.storage.object.GenerateV4PutObjectSignedUrl;
-import com.example.storage.object.GetObjectMetadata;
 import com.example.storage.object.GetObjectContexts;
+import com.example.storage.object.GetObjectMetadata;
 import com.example.storage.object.ListObjectContexts;
 import com.example.storage.object.ListObjects;
 import com.example.storage.object.ListObjectsWithOldVersions;
@@ -68,8 +68,8 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.cloud.storage.BlobInfo.ObjectContexts;
+import com.google.cloud.storage.BlobInfo.ObjectCustomContextPayload;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
@@ -638,69 +638,72 @@ public class ITObjectSnippets extends TestBase {
     }
   }
 
-    @Test
-    public void testSetObjectContexts() throws Exception {
-        String blobName = generator.randomObjectName();
-        String key = "test-key-get";
-        String value = "test-value-get";
+  @Test
+  public void testSetObjectContexts() throws Exception {
+    String blobName = generator.randomObjectName();
+    String key = "test-key-get";
+    String value = "test-value-get";
 
-        Blob initialBlob = storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
+    Blob initialBlob = storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
 
-        SetObjectContexts.setObjectContexts(
-                GOOGLE_CLOUD_PROJECT, bucket.getName(), blobName, key, value);
-        String setOutput = stdOut.getCapturedOutputAsUtf8String();
-        assertThat(setOutput).contains("Updated custom contexts for object " + blobName);
+    SetObjectContexts.setObjectContexts(
+        GOOGLE_CLOUD_PROJECT, bucket.getName(), blobName, key, value);
+    String setOutput = stdOut.getCapturedOutputAsUtf8String();
+    assertThat(setOutput).contains("Updated custom contexts for object " + blobName);
 
-        Blob updatedBlob = storage.get(bucket.getName(), blobName);
-        assertThat(updatedBlob.getContexts().getCustom().get(key).getValue()).isEqualTo(value);
-    }
+    Blob updatedBlob = storage.get(bucket.getName(), blobName);
+    assertThat(updatedBlob.getContexts().getCustom().get(key).getValue()).isEqualTo(value);
+  }
 
-    @Test
-    public void testGetObjectContexts() throws Exception {
-        String blobName = generator.randomObjectName();
-        String key = "test-key-get";
-        String value = "test-value-get";
+  @Test
+  public void testGetObjectContexts() throws Exception {
+    String blobName = generator.randomObjectName();
+    String key = "test-key-get";
+    String value = "test-value-get";
 
-        storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
+    storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
 
-        ObjectCustomContextPayload payload =
-                ObjectCustomContextPayload.newBuilder().setValue(value).build();
-        Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
-        custom.put(key, payload);
-        ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
-        BlobInfo pendingUpdate = storage.get(bucket.getName(), blobName).toBuilder().setContexts(contexts).build();
-        storage.update(pendingUpdate);
+    ObjectCustomContextPayload payload =
+        ObjectCustomContextPayload.newBuilder().setValue(value).build();
+    Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
+    custom.put(key, payload);
+    ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
+    BlobInfo pendingUpdate =
+        storage.get(bucket.getName(), blobName).toBuilder().setContexts(contexts).build();
+    storage.update(pendingUpdate);
 
-        GetObjectContexts.getObjectContexts(GOOGLE_CLOUD_PROJECT, bucket.getName(), blobName);
+    GetObjectContexts.getObjectContexts(GOOGLE_CLOUD_PROJECT, bucket.getName(), blobName);
 
-        String getOutput = stdOut.getCapturedOutputAsUtf8String();
+    String getOutput = stdOut.getCapturedOutputAsUtf8String();
 
-        assertThat(getOutput).contains("Custom Contexts:");
-        assertThat(getOutput).contains(key + "=ObjectCustomContextPayload{");
-        assertThat(getOutput).contains("value=" + value);
-    }
+    assertThat(getOutput).contains("Custom Contexts:");
+    assertThat(getOutput).contains(key + "=ObjectCustomContextPayload{");
+    assertThat(getOutput).contains("value=" + value);
+  }
 
-    @Test
-    public void testListObjectContexts() throws Exception {
-        String blobName = generator.randomObjectName();
-        String key = "test-key-list";
-        String value = "test-value-list";
+  @Test
+  public void testListObjectContexts() throws Exception {
+    String blobName = generator.randomObjectName();
+    String key = "test-key-list";
+    String value = "test-value-list";
 
-        storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
+    storage.create(info(blobName), CONTENT, BlobTargetOption.doesNotExist());
 
-        ObjectCustomContextPayload payload =
-                ObjectCustomContextPayload.newBuilder().setValue(value).build();
-        Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
-        custom.put(key, payload);
-        ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
-        BlobInfo pendingUpdate = storage.get(bucket.getName(), blobName).toBuilder().setContexts(contexts).build();
-        storage.update(pendingUpdate);
+    ObjectCustomContextPayload payload =
+        ObjectCustomContextPayload.newBuilder().setValue(value).build();
+    Map<String, ObjectCustomContextPayload> custom = Maps.newHashMap();
+    custom.put(key, payload);
+    ObjectContexts contexts = ObjectContexts.newBuilder().setCustom(custom).build();
+    BlobInfo pendingUpdate =
+        storage.get(bucket.getName(), blobName).toBuilder().setContexts(contexts).build();
+    storage.update(pendingUpdate);
 
-        ListObjectContexts.listObjectContexts(GOOGLE_CLOUD_PROJECT, bucket.getName(), key);
-        String listOutput = stdOut.getCapturedOutputAsUtf8String();
+    ListObjectContexts.listObjectContexts(GOOGLE_CLOUD_PROJECT, bucket.getName(), key);
+    String listOutput = stdOut.getCapturedOutputAsUtf8String();
 
-        assertThat(listOutput).contains("gs://" + bucket.getName() + "/" + blobName);
+    assertThat(listOutput).contains("gs://" + bucket.getName() + "/" + blobName);
 
-        assertThat(listOutput).contains("Listing objects for bucket: " + bucket.getName() + "with context key: " + key);
-    }
+    assertThat(listOutput)
+        .contains("Listing objects for bucket: " + bucket.getName() + "with context key: " + key);
+  }
 }
