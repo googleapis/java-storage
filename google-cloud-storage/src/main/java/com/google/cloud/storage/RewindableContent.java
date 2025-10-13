@@ -18,8 +18,12 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
+import com.google.api.client.util.Base64;
 import com.google.common.base.Preconditions;
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
 import com.google.common.io.ByteStreams;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -30,6 +34,9 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -54,6 +61,10 @@ abstract class RewindableContent extends AbstractHttpContent {
   public final boolean retrySupported() {
     return false;
   }
+
+  abstract String getMd5() throws IOException;
+
+  abstract String getCrc32c() throws IOException;
 
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
@@ -96,6 +107,8 @@ abstract class RewindableContent extends AbstractHttpContent {
       out.flush();
     }
 
+
+
     @Override
     long writeTo(WritableByteChannel gbc) {
       return 0;
@@ -111,6 +124,16 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    String getMd5() throws IOException {
+      return "";
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      return "";
+    }
   }
 
   private static final class PathRewindableContent extends RewindableContent {
@@ -165,6 +188,31 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    String getMd5() throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        HashingOutputStream hos =
+            new HashingOutputStream(Hashing.md5(), ByteStreams.nullOutputStream());
+        ByteStreams.copy(in, Channels.newChannel(hos));
+        return Base64.encodeBase64String(hos.hash().asBytes());
+      }
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        HashingOutputStream hos =
+            new HashingOutputStream(Hashing.crc32c(), ByteStreams.nullOutputStream());
+        ByteStreams.copy(in, Channels.newChannel(hos));
+        int crc32cInt = hos.hash().asInt();
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(crc32cInt);
+        return Base64.encodeBase64String(bb.array());
+      }
+    }
   }
 
   private static final class ByteBufferContent extends RewindableContent {
@@ -259,6 +307,34 @@ abstract class RewindableContent extends AbstractHttpContent {
     @Override
     void flagDirty() {
       this.dirty = true;
+    }
+
+    @Override
+    String getMd5() throws IOException {
+      try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        // important to use duplicate, so we don't consume the buffer for the actual write
+        for (ByteBuffer buffer : buffers) {
+          md.update(buffer.duplicate());
+        }
+        return Base64.encodeBase64String(md.digest());
+      } catch (NoSuchAlgorithmException e) {
+        // should not happen
+        throw new IOException(e);
+      }
+    }
+
+    @Override
+    String getCrc32c() throws IOException {
+      com.google.common.hash.Hasher crc32cHasher = Hashing.crc32c().newHasher();
+      // important to use duplicate, so we don't consume the buffer for the actual write
+      for (ByteBuffer buffer : buffers) {
+        crc32cHasher.putBytes(buffer.duplicate());
+      }
+      int crc32cInt = crc32cHasher.hash().asInt();
+      ByteBuffer bb = ByteBuffer.allocate(4);
+      bb.putInt(crc32cInt);
+      return Base64.encodeBase64String(bb.array());
     }
   }
 }
