@@ -425,6 +425,7 @@ public class ITBucketSnippets {
             .build());
   }
 
+  @Ignore("This test cannot run in an environment with Public Access Prevention enforced.")
   @Test
   public void testMakeBucketPublic() throws Throwable {
     MakeBucketPublic.makeBucketPublic(PROJECT_ID, BUCKET);

@@ -167,6 +167,7 @@ public class ITObjectSnippets extends TestBase {
     assertThat(snippetOutput).contains("The contents of " + objectName);
   }
 
+  @Ignore("This test cannot run in an environment with Public Access Prevention enforced.")
   @Test
   public void testDownloadPublicObject() throws Exception {
     try (TemporaryBucket tmpBucket =
@@ -436,6 +437,7 @@ public class ITObjectSnippets extends TestBase {
     }
   }
 
+  @Ignore("This test cannot run in an environment with Public Access Prevention enforced.")
   @Test
   public void testMakeObjectPublic() {
     String aclBlob = generator.randomObjectName();
