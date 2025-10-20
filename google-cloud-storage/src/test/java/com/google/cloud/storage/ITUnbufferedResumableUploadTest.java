@@ -24,6 +24,7 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ITUnbufferedResumableUploadTest.ObjectSizes;
 import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
@@ -241,7 +242,8 @@ public final class ITUnbufferedResumableUploadTest {
             .resumableWrite(
                 storageClient.startResumableWriteCallable().withDefaultCallContext(merge),
                 request,
-                opts);
+                opts,
+                RetrierWithAlg.attemptOnce());
 
     return ResumableMedia.gapic()
         .write()

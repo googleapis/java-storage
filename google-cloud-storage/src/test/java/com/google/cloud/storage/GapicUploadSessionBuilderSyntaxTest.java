@@ -20,9 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
@@ -60,8 +60,8 @@ public final class GapicUploadSessionBuilderSyntaxTest {
 
   @Before
   public void setUp() throws Exception {
-    when(startResumableWrite.futureCall(any()))
-        .thenReturn(ApiFutures.immediateFuture(StartResumableWriteResponse.getDefaultInstance()));
+    when(startResumableWrite.call(any()))
+        .thenReturn(StartResumableWriteResponse.getDefaultInstance());
   }
 
   @Test
@@ -95,7 +95,9 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableUnbuffered_fluent() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(startResumableWrite, req, Opts.empty(), RetrierWithAlg.attemptOnce());
     UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
@@ -111,7 +113,9 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableBuffered_fluent() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(startResumableWrite, req, Opts.empty(), RetrierWithAlg.attemptOnce());
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
@@ -151,7 +155,9 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableUnbuffered_incremental() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(startResumableWrite, req, Opts.empty(), RetrierWithAlg.attemptOnce());
     GapicWritableByteChannelSessionBuilder b1 =
         ResumableMedia.gapic()
             .write()
@@ -165,7 +171,9 @@ public final class GapicUploadSessionBuilderSyntaxTest {
   @Test
   public void syntax_resumableBuffered_incremental() {
     ApiFuture<ResumableWrite> startAsync =
-        ResumableMedia.gapic().write().resumableWrite(startResumableWrite, req, Opts.empty());
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(startResumableWrite, req, Opts.empty(), RetrierWithAlg.attemptOnce());
     GapicWritableByteChannelSessionBuilder b1 =
         ResumableMedia.gapic()
             .write()

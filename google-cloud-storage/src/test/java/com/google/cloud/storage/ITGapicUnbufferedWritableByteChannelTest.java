@@ -20,9 +20,12 @@ import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetrierWithAlg;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.WriteCtx.SimpleWriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.common.collect.ImmutableList;
@@ -47,7 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
@@ -207,6 +213,45 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
         }
       }
       assertThat(result.get()).isEqualTo(resp5);
+    }
+  }
+
+  @Test
+  public void startResumableUpload_deadlineExceeded_isRetried()
+      throws IOException, InterruptedException, ExecutionException, TimeoutException {
+
+    String uploadId = UUID.randomUUID().toString();
+    AtomicInteger callCount = new AtomicInteger(0);
+    StorageImplBase service =
+        new StorageImplBase() {
+          @Override
+          public void startResumableWrite(
+              StartResumableWriteRequest req, StreamObserver<StartResumableWriteResponse> respond) {
+            if (callCount.getAndIncrement() > 0) {
+              respond.onNext(
+                  StartResumableWriteResponse.newBuilder().setUploadId(uploadId).build());
+              respond.onCompleted();
+            }
+          }
+        };
+    try (FakeServer fake = FakeServer.of(service)) {
+      GrpcStorageImpl gsi = (GrpcStorageImpl) fake.getGrpcStorageOptions().getService();
+      ApiFuture<ResumableWrite> f =
+          gsi.startResumableWrite(
+              GrpcCallContext.createDefault(),
+              WriteObjectRequest.newBuilder()
+                  .setWriteObjectSpec(
+                      WriteObjectSpec.newBuilder()
+                          .setResource(
+                              Object.newBuilder().setBucket("bucket").setName("name").build())
+                          .setIfGenerationMatch(0)
+                          .build())
+                  .build(),
+              Opts.empty());
+
+      ResumableWrite resumableWrite = f.get(2, TimeUnit.MINUTES);
+      assertThat(callCount.get()).isEqualTo(2);
+      assertThat(resumableWrite.newBuilder().build().getUploadId()).isEqualTo(uploadId);
     }
   }
 

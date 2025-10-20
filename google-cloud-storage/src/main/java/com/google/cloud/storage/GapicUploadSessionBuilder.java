@@ -17,13 +17,14 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.RetrierWithAlg;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.StartResumableWriteRequest;
@@ -53,7 +54,8 @@ final class GapicUploadSessionBuilder {
   ApiFuture<ResumableWrite> resumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> callable,
       WriteObjectRequest writeObjectRequest,
-      Opts<ObjectTargetOpt> opts) {
+      Opts<ObjectTargetOpt> opts,
+      RetrierWithAlg retrier) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
       b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
@@ -68,23 +70,27 @@ final class GapicUploadSessionBuilder {
     Function<String, WriteObjectRequest> f =
         uploadId ->
             writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
-    ApiFuture<ResumableWrite> futureResumableWrite =
-        ApiFutures.transform(
-            callable.futureCall(req),
-            (resp) -> new ResumableWrite(req, resp, f),
-            MoreExecutors.directExecutor());
-    // make sure we wrap any failure as a storage exception
-    return ApiFutures.catchingAsync(
-        futureResumableWrite,
-        Throwable.class,
-        throwable -> ApiFutures.immediateFailedFuture(StorageException.coalesce(throwable)),
-        MoreExecutors.directExecutor());
+    SettableApiFuture<ResumableWrite> future = SettableApiFuture.create();
+    try {
+      ResumableWrite resumableWrite =
+          retrier.run(
+              () -> {
+                StartResumableWriteResponse resp = callable.call(req);
+                return new ResumableWrite(req, resp, f);
+              },
+              Decoder.identity());
+      future.set(resumableWrite);
+    } catch (StorageException e) {
+      future.setException(e);
+    }
+    return future;
   }
 
   ApiFuture<BidiResumableWrite> bidiResumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
       BidiWriteObjectRequest writeObjectRequest,
-      Opts<ObjectTargetOpt> opts) {
+      Opts<ObjectTargetOpt> opts,
+      RetrierWithAlg retrier) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
       b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
@@ -99,9 +105,19 @@ final class GapicUploadSessionBuilder {
     Function<String, BidiWriteObjectRequest> f =
         uploadId ->
             writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
-    return ApiFutures.transform(
-        x.futureCall(req),
-        (resp) -> new BidiResumableWrite(req, resp, f),
-        MoreExecutors.directExecutor());
+    SettableApiFuture<BidiResumableWrite> future = SettableApiFuture.create();
+    try {
+      BidiResumableWrite resumableWrite =
+          retrier.run(
+              () -> {
+                StartResumableWriteResponse resp = x.call(req);
+                return new BidiResumableWrite(req, resp, f);
+              },
+              Decoder.identity());
+      future.set(resumableWrite);
+    } catch (StorageException e) {
+      future.setException(e);
+    }
+    return future;
   }
 }
