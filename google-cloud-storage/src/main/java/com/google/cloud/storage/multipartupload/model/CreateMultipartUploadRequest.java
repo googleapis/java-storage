@@ -24,6 +24,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents a request to initiate a multipart upload.
+ * This class holds all the necessary information to create a new multipart upload session.
+ */
 public final class CreateMultipartUploadRequest {
   private final String bucket;
   private final String key;
