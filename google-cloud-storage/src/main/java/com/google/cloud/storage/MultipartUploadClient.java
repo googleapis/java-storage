@@ -23,6 +23,14 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRespo
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * A client for interacting with Google Cloud Storage's Multipart Upload API.
+ *
+ * <p>This class is for internal use only and is not intended for public consumption. It provides a
+ * low-level interface for creating and managing multipart uploads.
+ *
+ * @see <a href="https://cloud.google.com/storage/docs/multipart-uploads">Multipart Uploads</a>
+ */
 @BetaApi
 @InternalExtensionOnly
 public abstract class MultipartUploadClient {

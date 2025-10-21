@@ -24,15 +24,15 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import java.io.IOException;
 import java.util.Map;
 
-public class MultipartUploadHttpRequestManager {
+final class MultipartUploadHttpRequestManager {
 
   private final HttpRequestFactory requestFactory;
 
-  public MultipartUploadHttpRequestManager(HttpRequestFactory requestFactory) {
+  MultipartUploadHttpRequestManager(HttpRequestFactory requestFactory) {
     this.requestFactory = requestFactory;
   }
 
-  public HttpResponse sendCreateMultipartUploadRequest(
+  HttpResponse sendCreateMultipartUploadRequest(
       String uri,
       String contentType,
       CreateMultipartUploadRequest request,

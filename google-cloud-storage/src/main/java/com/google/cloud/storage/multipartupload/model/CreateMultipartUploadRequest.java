@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
-public class CreateMultipartUploadRequest {
+public final class CreateMultipartUploadRequest {
   private final String bucket;
   private final String key;
   private final PredefinedAcl cannedAcl;

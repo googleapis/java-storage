@@ -15,17 +15,39 @@
  */
 package com.google.cloud.storage;
 
+/**
+ * Settings for configuring the {@link MultipartUploadClient}.
+ *
+ * <p>This class is for internal use only and is not intended for public consumption.
+ */
 public final class MultipartUploadSettings {
   private final HttpStorageOptions options;
 
+  /**
+   * Constructs a {@code MultipartUploadSettings} instance.
+   *
+   * @param options The {@link HttpStorageOptions} to use for multipart uploads.
+   */
   private MultipartUploadSettings(HttpStorageOptions options) {
     this.options = options;
   }
 
+  /**
+   * Returns the {@link HttpStorageOptions} configured for multipart uploads.
+   *
+   * @return The {@link HttpStorageOptions}.
+   */
   public HttpStorageOptions getOptions() {
     return options;
   }
 
+  /**
+   * Creates a new {@code MultipartUploadSettings} instance with the specified {@link
+   * HttpStorageOptions}.
+   *
+   * @param options The {@link HttpStorageOptions} to use.
+   * @return A new {@code MultipartUploadSettings} instance.
+   */
   public static MultipartUploadSettings of(HttpStorageOptions options) {
     return new MultipartUploadSettings(options);
   }

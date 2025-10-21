@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
@@ -37,14 +36,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class MultipartUploadClientImpl extends MultipartUploadClient {
-
-  private static final String GCS_ENDPOINT = "https://storage.googleapis.com";
+/**
+ * This class is an implementation of {@link MultipartUploadClient} that uses the Google Cloud
+ * Storage XML API to perform multipart uploads.
+ */
+public final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final MultipartUploadHttpRequestManager httpRequestManager;
   private final XmlMapper xmlMapper;
   private final HttpStorageOptions options;
   private final Retrier retrier;
+  private final URI uri;
 
   public MultipartUploadClientImpl(
       URI uri, HttpRequestFactory requestFactory, Retrier retrier, HttpStorageOptions options) {
@@ -52,6 +54,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     this.xmlMapper = new XmlMapper();
     this.options = options;
     this.retrier = retrier;
+    this.uri = uri;
   }
 
   private Map<String, String> getGenericExtensionHeader() {
@@ -71,7 +74,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
     String encodedBucket = encode(request.bucket());
     String encodedKey = encode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
-    String uri = GCS_ENDPOINT + resourcePath + "?uploads";
+    String createUri = uri.toString() + resourcePath + "?uploads";
 
     String contentType;
     if (request.getContentType() == null) {
@@ -87,7 +90,7 @@ public class MultipartUploadClientImpl extends MultipartUploadClient {
 
     HttpResponse response =
         httpRequestManager.sendCreateMultipartUploadRequest(
-            uri, contentType, request, getExtensionHeadersForCreateMultipartUpload(request));
+            createUri, contentType, request, getExtensionHeadersForCreateMultipartUpload(request));
 
     if (!response.isSuccessStatusCode()) {
       String error = response.parseAsString();

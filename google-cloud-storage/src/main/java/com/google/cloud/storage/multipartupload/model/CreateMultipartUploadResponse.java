@@ -26,7 +26,7 @@ import java.util.Objects;
  * of the initiated multipart upload, including the bucket, key, and the unique upload ID.
  */
 @JacksonXmlRootElement(localName = "InitiateMultipartUploadResult")
-public class CreateMultipartUploadResponse {
+public final class CreateMultipartUploadResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
   private String bucket;
