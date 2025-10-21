@@ -21,7 +21,6 @@ import static com.google.cloud.storage.ByteSizeConstants._1MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.CrossTransportUtils.fmtMethodName;
 import static com.google.cloud.storage.CrossTransportUtils.throwHttpJsonOnly;
-import static com.google.cloud.storage.GrpcToHttpStatusCodeTranslation.resultRetryAlgorithmToCodes;
 import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltEq;
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
@@ -42,7 +41,6 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
-import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
@@ -1831,30 +1829,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @VisibleForTesting
   ApiFuture<ResumableWrite> startResumableWrite(
       GrpcCallContext grpcCallContext, WriteObjectRequest req, Opts<ObjectTargetOpt> opts) {
-    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
         .write()
         .resumableWrite(
-            storageClient
-                .startResumableWriteCallable()
-                .withDefaultCallContext(merge.withRetryableCodes(codes)),
+            storageClient.startResumableWriteCallable().withDefaultCallContext(merge),
             req,
-            opts);
+            opts,
+            retrier.withAlg(retryAlgorithmManager.getFor(req)));
   }
 
   ApiFuture<BidiResumableWrite> startResumableWrite(
       GrpcCallContext grpcCallContext, BidiWriteObjectRequest req, Opts<ObjectTargetOpt> opts) {
-    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
         .write()
         .bidiResumableWrite(
-            storageClient
-                .startResumableWriteCallable()
-                .withDefaultCallContext(merge.withRetryableCodes(codes)),
+            storageClient.startResumableWriteCallable().withDefaultCallContext(merge),
             req,
-            opts);
+            opts,
+            retrier.withAlg(retryAlgorithmManager.getFor(req)));
   }
 
   private SourceObject sourceObjectEncode(SourceBlob from) {

@@ -45,7 +45,6 @@ import com.google.api.gax.rpc.OutOfRangeException;
 import com.google.api.gax.rpc.RequestParamsBuilder;
 import com.google.api.gax.rpc.RequestParamsExtractor;
 import com.google.api.gax.rpc.ServerStreamingCallable;
-import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.api.pathtemplate.PathTemplate;
@@ -109,6 +108,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -360,8 +360,6 @@ public final class GrpcStorageOptions extends StorageOptions
             .setLogicalTimeout(java.time.Duration.ofDays(28))
             .build();
     java.time.Duration totalTimeout = baseRetrySettings.getTotalTimeoutDuration();
-    Set<Code> startResumableWriteRetryableCodes =
-        builder.startResumableWriteSettings().getRetryableCodes();
 
     // retries for unary methods are generally handled at a different level, except
     // StartResumableWrite
@@ -372,10 +370,22 @@ public final class GrpcStorageOptions extends StorageOptions
         });
 
     // configure the settings for StartResumableWrite
+    Duration startResumableTimeoutDuration;
+    // the default for initialRpcTimeout is the same as totalTimeout. This is not good, because it
+    // will prevent our retries from even happening.
+    // If the default values is used, set our per-rpc timeout to 20 seconds to allow our retries
+    // a chance.
+    if (baseRetrySettings
+        .getInitialRpcTimeoutDuration()
+        .equals(getDefaultRetrySettings().getInitialRpcTimeoutDuration())) {
+      startResumableTimeoutDuration = Duration.ofSeconds(20);
+    } else {
+      startResumableTimeoutDuration = baseRetrySettings.getInitialRpcTimeoutDuration();
+    }
     builder
         .startResumableWriteSettings()
-        .setRetrySettings(baseRetrySettings)
-        .setRetryableCodes(startResumableWriteRetryableCodes);
+        // set this lower, to allow our retries a chance instead of it being totalTimeout
+        .setSimpleTimeoutNoRetriesDuration(startResumableTimeoutDuration);
     // for ReadObject disable retries and move the total timeout to the idle timeout
     builder
         .readObjectSettings()
