@@ -46,7 +46,8 @@ public class XmlObjectParserTest {
     InputStream in = new ByteArrayInputStream("<Test/>".getBytes(StandardCharsets.UTF_8));
     TestXmlObject expected = new TestXmlObject();
     when(xmlMapper.readValue(in, TestXmlObject.class)).thenReturn(expected);
-    TestXmlObject actual = xmlObjectParser.parseAndClose(in, StandardCharsets.UTF_8, TestXmlObject.class);
+    TestXmlObject actual =
+        xmlObjectParser.parseAndClose(in, StandardCharsets.UTF_8, TestXmlObject.class);
     assertThat(actual).isSameInstanceAs(expected);
   }
 
