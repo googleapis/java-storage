@@ -19,11 +19,13 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
 
 /** Represents a response to a list parts request. */
+@BetaApi
 public final class ListPartsResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
