@@ -53,8 +53,7 @@ final class MultipartUploadHttpRequestManager {
 
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
-            new GenericUrl(createUri),
-            new ByteArrayContent(request.getContentType(), new byte[0]));
+            new GenericUrl(createUri), new ByteArrayContent(request.getContentType(), new byte[0]));
     httpRequest.getHeaders().setContentType(request.getContentType());
     for (Map.Entry<String, String> entry :
         getExtensionHeadersForCreateMultipartUpload(request, options).entrySet()) {
@@ -71,7 +70,7 @@ final class MultipartUploadHttpRequestManager {
     if (request.getCannedAcl() != null) {
       extensionHeaders.put("x-goog-acl", request.getCannedAcl().toString());
     }
-    //TODO(shreyassinha) Add encoding for x-goog-meta-* headers
+    // TODO(shreyassinha) Add encoding for x-goog-meta-* headers
     if (request.getMetadata() != null) {
       for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
         if (entry.getKey() != null || entry.getValue() != null) {

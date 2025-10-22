@@ -17,6 +17,7 @@ package com.google.cloud.storage;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.util.ObjectParser;
+import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -26,6 +27,7 @@ import java.nio.charset.Charset;
 final class XmlObjectParser implements ObjectParser {
   private final XmlMapper xmlMapper;
 
+  @VisibleForTesting
   public XmlObjectParser(XmlMapper xmlMapper) {
     this.xmlMapper = xmlMapper;
   }

@@ -21,8 +21,8 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -61,7 +61,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void setUp() throws Exception {
     multipartUploadHttpRequestManager =
         new MultipartUploadHttpRequestManager(
-            transport.createRequestFactory(), new JsonObjectParser(gson));
+            transport.createRequestFactory(), new XmlObjectParser(new XmlMapper()));
     httpStorageOptions = HttpStorageOptions.newBuilder().setProjectId("test-project").build();
   }
 

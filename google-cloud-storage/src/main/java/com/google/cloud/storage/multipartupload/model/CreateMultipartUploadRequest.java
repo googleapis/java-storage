@@ -67,6 +67,7 @@ public final class CreateMultipartUploadRequest {
   /**
    * Returns the name of the object.
    *
+   * @see <a href="https://cloud.google.com/storage/docs/objects#naming">Object Naming</a>
    * @return The object name
    */
   public String key() {
@@ -234,6 +235,7 @@ public final class CreateMultipartUploadRequest {
     /**
      * The name of the object.
      *
+     * @see <a href="https://cloud.google.com/storage/docs/objects#naming">Object Naming</a>
      * @param key The object name
      * @return this builder
      */
