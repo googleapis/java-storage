@@ -75,7 +75,7 @@ final class FakeServer implements AutoCloseable {
                     .setRetryDelayMultiplier(1.2)
                     .setMaxRetryDelayDuration(Duration.ofSeconds(16))
                     .setMaxAttempts(6)
-                    .setInitialRpcTimeoutDuration(Duration.ofSeconds(25))
+                    .setInitialRpcTimeoutDuration(Duration.ofSeconds(1))
                     .setRpcTimeoutMultiplier(1.0)
                     .setMaxRpcTimeoutDuration(Duration.ofSeconds(25))
                     .build())

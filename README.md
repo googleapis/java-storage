@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.69.0</version>
+      <version>26.70.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -66,13 +66,13 @@ implementation 'com.google.cloud:google-cloud-storage'
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.58.1'
+implementation 'com.google.cloud:google-cloud-storage:2.59.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.58.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.59.0"
 ```
 
 ## Authentication
@@ -342,7 +342,9 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Generate Encryption Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/GenerateEncryptionKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/GenerateEncryptionKey.java) |
 | Generate V4 Get Object Signed Url | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/GenerateV4GetObjectSignedUrl.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/GenerateV4GetObjectSignedUrl.java) |
 | Generate V4 Put Object Signed Url | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/GenerateV4PutObjectSignedUrl.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/GenerateV4PutObjectSignedUrl.java) |
+| Get Object Contexts | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/GetObjectContexts.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/GetObjectContexts.java) |
 | Get Object Metadata | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/GetObjectMetadata.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/GetObjectMetadata.java) |
+| List Object Contexts | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ListObjectContexts.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ListObjectContexts.java) |
 | List Objects | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ListObjects.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ListObjects.java) |
 | List Objects With Old Versions | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ListObjectsWithOldVersions.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ListObjectsWithOldVersions.java) |
 | List Objects With Prefix | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ListObjectsWithPrefix.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ListObjectsWithPrefix.java) |
@@ -363,6 +365,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Restore Soft Deleted Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/RestoreSoftDeletedObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/RestoreSoftDeletedObject.java) |
 | Rotate Object Encryption Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/RotateObjectEncryptionKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/RotateObjectEncryptionKey.java) |
 | Set Event Based Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetEventBasedHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetEventBasedHold.java) |
+| Set Object Contexts | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetObjectContexts.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetObjectContexts.java) |
 | Set Object Metadata | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetObjectMetadata.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetObjectMetadata.java) |
 | Set Object Retention Policy | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetObjectRetentionPolicy.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetObjectRetentionPolicy.java) |
 | Set Temporary Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetTemporaryHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetTemporaryHold.java) |
@@ -481,7 +484,7 @@ Java is a registered trademark of Oracle and/or its affiliates.
 [kokoro-badge-link-5]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java11.html
 [stability-image]: https://img.shields.io/badge/stability-stable-green
 [maven-version-image]: https://img.shields.io/maven-central/v/com.google.cloud/google-cloud-storage.svg
-[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.58.1
+[maven-version-link]: https://central.sonatype.com/artifact/com.google.cloud/google-cloud-storage/2.59.0
 [authentication]: https://github.com/googleapis/google-cloud-java#authentication
 [auth-scopes]: https://developers.google.com/identity/protocols/oauth2/scopes
 [predefined-iam-roles]: https://cloud.google.com/iam/docs/understanding-roles#predefined_roles
