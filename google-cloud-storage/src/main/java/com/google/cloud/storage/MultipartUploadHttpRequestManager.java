@@ -66,7 +66,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(CreateMultipartUploadResponse.class);
   }
 
-  public ListPartsResponse sendListPartsRequest(
+  ListPartsResponse sendListPartsRequest(
       URI uri, ListPartsRequest request, HttpStorageOptions options) throws IOException {
 
     String encodedBucket = encode(request.bucket());
