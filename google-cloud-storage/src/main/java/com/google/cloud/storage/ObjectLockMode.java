@@ -16,9 +16,9 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFunction;
+import com.google.api.core.BetaApi;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
-import com.google.api.core.BetaApi;
 
 /**
  * Represents the object lock mode. See <a

@@ -16,9 +16,9 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
-import com.google.api.core.BetaApi;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
