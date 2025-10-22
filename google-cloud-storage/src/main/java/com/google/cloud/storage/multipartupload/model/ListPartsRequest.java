@@ -20,7 +20,7 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 /** Represents a request to list the parts of a multipart upload. */
-public class ListPartsRequest {
+public final class ListPartsRequest {
   private final String bucket;
 
   private final String key;
