@@ -20,12 +20,15 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * This class is an implementation of {@link MultipartUploadClient} that uses the Google Cloud
@@ -62,6 +65,18 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
     return retrier.run(
         Retrying.alwaysRetry(),
         () -> httpRequestManager.sendListPartsRequest(uri, request, options),
+        Decoder.identity());
+  }
+
+  @Override
+  @BetaApi
+  public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request)
+      throws IOException, NoSuchAlgorithmException {
+
+    return retrier.run(
+        Retrying.alwaysRetry(),
+        () -> httpRequestManager.sendAbortMultipartUploadRequest(
+              uri, request, options),
         Decoder.identity());
   }
 }

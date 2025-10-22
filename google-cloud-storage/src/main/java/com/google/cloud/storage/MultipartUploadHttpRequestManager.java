@@ -20,6 +20,8 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.util.ObjectParser;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -66,7 +68,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(CreateMultipartUploadResponse.class);
   }
 
-  public ListPartsResponse sendListPartsRequest(
+   ListPartsResponse sendListPartsRequest(
       URI uri, ListPartsRequest request, HttpStorageOptions options) throws IOException {
 
     String encodedBucket = encode(request.bucket());
@@ -89,6 +91,28 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListPartsResponse.class);
+  }
+
+    AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
+      URI uri, AbortMultipartUploadRequest request, HttpStorageOptions options)
+      throws IOException {
+
+      String encodedBucket = encode(request.bucket());
+      String encodedKey = encode(request.key());
+      String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+      String queryString = "?uploadId=" + encode(request.uploadId());
+      String abortUri = uri.toString() + resourcePath + queryString;
+      String contentType = "application/x-www-form-urlencoded";
+      Map<String, String> extensionHeaders = getGenericExtensionHeader(options);
+
+      HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
+    httpRequest.getHeaders().setContentType(contentType);
+    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
+      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
+    }
+      httpRequest.setParser(objectParser);
+      httpRequest.setThrowExceptionOnExecuteError(true);
+      return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
   private Map<String, String> getExtensionHeadersForCreateMultipartUpload(
