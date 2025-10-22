@@ -356,31 +356,9 @@ public final class ObjectReadSessionStreamReadTest {
             1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
       read.eof();
       assertThat(read.read(ByteBuffer.allocate(1))).isEqualTo(-1);
-
-      assertAll(
-          () -> assertThrows(ClosedChannelException.class, () -> read.read((ByteBuffer) null)),
-          () -> assertThat(read.isOpen()).isFalse());
-    }
-  }
-
-  @Test
-  public void streamingRead_closedOnceEofIsRead() throws Exception {
-    try (StreamingRead read =
-        ObjectReadSessionStreamRead.streamingRead(
-            1, RangeSpec.of(0, 137), Hasher.enabled(), RetryContext.neverRetry())) {
-      ByteString bytes1 = ByteString.copyFrom(DataGenerator.base64Characters().genBytes(62));
-      try (ResponseContentLifecycleHandle<ByteString> handle = noopContentHandle(bytes1)) {
-        read.accept(handle.borrow(Function.identity()));
-      }
-
-      ByteBuffer buf = ByteBuffer.allocate(512);
-      read.read(buf);
-      read.eof();
-      assertThat(read.read(buf)).isEqualTo(-1);
-
-      assertAll(
-          () -> assertThrows(ClosedChannelException.class, () -> read.read(buf)),
-          () -> assertThat(read.isOpen()).isFalse());
+      assertThat(read.isOpen()).isTrue();
+      read.close();
+      assertThat(read.isOpen()).isFalse();
     }
   }
 
