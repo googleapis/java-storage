@@ -27,7 +27,6 @@ import com.google.cloud.storage.HttpStorageOptions.HttpStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
 import com.google.cloud.storage.Retrying.DefaultRetrier;
-import com.google.cloud.storage.Retrying.HttpRetrier;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -73,10 +72,9 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   }
 
   Retrier createRetrier() {
-    return new HttpRetrier(
-        new DefaultRetrier(
-            OtelStorageDecorator.retryContextDecorator(getOpenTelemetry()),
-            RetryingDependencies.simple(getClock(), getRetrySettings())));
+    return new DefaultRetrier(
+        OtelStorageDecorator.retryContextDecorator(getOpenTelemetry()),
+        RetryingDependencies.simple(getClock(), getRetrySettings()));
   }
 
   /**

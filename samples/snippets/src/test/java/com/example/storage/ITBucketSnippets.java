@@ -101,7 +101,6 @@ import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -426,7 +425,6 @@ public class ITBucketSnippets {
             .build());
   }
 
-  @Ignore("This test cannot run in an environment with Public Access Prevention enforced.")
   @Test
   public void testMakeBucketPublic() throws Throwable {
     MakeBucketPublic.makeBucketPublic(PROJECT_ID, BUCKET);
