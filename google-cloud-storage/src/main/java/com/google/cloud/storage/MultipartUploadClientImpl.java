@@ -75,8 +75,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
     return retrier.run(
         Retrying.alwaysRetry(),
-        () -> httpRequestManager.sendAbortMultipartUploadRequest(
-              uri, request, options),
+        () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request, options),
         Decoder.identity());
   }
 }

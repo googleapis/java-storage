@@ -73,8 +73,7 @@ public abstract class MultipartUploadClient {
    */
   @BetaApi
   public abstract AbortMultipartUploadResponse abortMultipartUpload(
-      AbortMultipartUploadRequest request)
-      throws IOException, NoSuchAlgorithmException;
+      AbortMultipartUploadRequest request) throws IOException, NoSuchAlgorithmException;
 
   /**
    * Creates a new instance of {@link MultipartUploadClient}.

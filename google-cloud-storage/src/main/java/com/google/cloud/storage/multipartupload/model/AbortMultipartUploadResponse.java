@@ -22,6 +22,4 @@ import com.google.api.core.BetaApi;
  * abort operation does not return any specific data in its response body.
  */
 @BetaApi
-public final class AbortMultipartUploadResponse {
-
-}
+public final class AbortMultipartUploadResponse {}

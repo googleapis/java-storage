@@ -93,26 +93,25 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
-    AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
-      URI uri, AbortMultipartUploadRequest request, HttpStorageOptions options)
-      throws IOException {
+  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
+      URI uri, AbortMultipartUploadRequest request, HttpStorageOptions options) throws IOException {
 
-      String encodedBucket = encode(request.bucket());
-      String encodedKey = encode(request.key());
-      String resourcePath = "/" + encodedBucket + "/" + encodedKey;
-      String queryString = "?uploadId=" + encode(request.uploadId());
-      String abortUri = uri.toString() + resourcePath + queryString;
-      String contentType = "application/x-www-form-urlencoded";
-      Map<String, String> extensionHeaders = getGenericExtensionHeader(options);
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + encode(request.uploadId());
+    String abortUri = uri.toString() + resourcePath + queryString;
+    String contentType = "application/x-www-form-urlencoded";
+    Map<String, String> extensionHeaders = getGenericExtensionHeader(options);
 
-      HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
+    HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
     httpRequest.getHeaders().setContentType(contentType);
     for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
       httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
     }
-      httpRequest.setParser(objectParser);
-      httpRequest.setThrowExceptionOnExecuteError(true);
-      return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
   private Map<String, String> getExtensionHeadersForCreateMultipartUpload(
