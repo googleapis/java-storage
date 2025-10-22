@@ -22,6 +22,8 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.util.ObjectParser;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -62,6 +64,31 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CreateMultipartUploadResponse.class);
+  }
+
+  public ListPartsResponse sendListPartsRequest(
+      URI uri, ListPartsRequest request, HttpStorageOptions options) throws IOException {
+
+    String encodedBucket = encode(request.bucket());
+    String encodedKey = encode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + encode(request.uploadId());
+
+    if (request.getMaxParts() != null) {
+      queryString += "&max-parts=" + request.getMaxParts();
+    }
+    if (request.getPartNumberMarker() != null) {
+      queryString += "&part-number-marker=" + request.getPartNumberMarker();
+    }
+    String listUri = uri.toString() + resourcePath + queryString;
+    Map<String, String> extensionHeaders = getGenericExtensionHeader(options);
+    HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
+    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
+      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
+    }
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
   private Map<String, String> getExtensionHeadersForCreateMultipartUpload(

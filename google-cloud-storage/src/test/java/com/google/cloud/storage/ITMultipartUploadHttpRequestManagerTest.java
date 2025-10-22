@@ -31,6 +31,9 @@ import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
@@ -370,6 +373,96 @@ public final class ITMultipartUploadHttpRequestManagerTest {
 
       multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
           endpoint, request, httpStorageOptions);
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_success() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          String xmlResponse =
+              "<?xml version='1.0' encoding='UTF-8'?>\n"
+                  + "<ListPartsResult>\n"
+                  + "  <Bucket>test-bucket</Bucket>\n"
+                  + "  <Key>test-key</Key>\n"
+                  + "  <UploadId>test-upload-id</UploadId>\n"
+                  + "  <PartNumberMarker>0</PartNumberMarker>\n"
+                  + "  <NextPartNumberMarker>1</NextPartNumberMarker>\n"
+                  + "  <MaxParts>1</MaxParts>\n"
+                  + "  <IsTruncated>false</IsTruncated>\n"
+                  + "  <Part>\n"
+                  + "    <PartNumber>1</PartNumber>\n"
+                  + "    <ETag>\"etag\"</ETag>\n"
+                  + "    <Size>123</Size>\n"
+                  + "    <LastModified>2024-05-08T17:50:00.000Z</LastModified>\n"
+                  + "  </Part>\n"
+                  + "</ListPartsResult>";
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlResponse.getBytes());
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .maxParts(1)
+              .partNumberMarker(0)
+              .build();
+
+      ListPartsResponse response =
+          multipartUploadHttpRequestManager.sendListPartsRequest(
+              endpoint, request, httpStorageOptions);
+
+      assertThat(response).isNotNull();
+      assertThat(response.getBucket()).isEqualTo("test-bucket");
+      assertThat(response.getKey()).isEqualTo("test-key");
+      assertThat(response.getUploadId()).isEqualTo("test-upload-id");
+      assertThat(response.getPartNumberMarker()).isEqualTo(0);
+      assertThat(response.getNextPartNumberMarker()).isEqualTo(1);
+      assertThat(response.getMaxParts()).isEqualTo(1);
+      assertThat(response.isTruncated()).isFalse();
+      assertThat(response.getParts()).hasSize(1);
+      Part part = response.getParts().get(0);
+      assertThat(part.partNumber()).isEqualTo(1);
+      assertThat(part.eTag()).isEqualTo("\"etag\"");
+      assertThat(part.size()).isEqualTo(123);
+      assertThat(part.lastModified()).isEqualTo("2024-05-08T17:50:00.000Z");
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_error() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      StorageException se =
+          assertThrows(
+              StorageException.class,
+              () ->
+                  multipartUploadHttpRequestManager.sendListPartsRequest(
+                      endpoint, request, httpStorageOptions));
+      assertThat(se.getCode()).isEqualTo(400);
     }
   }
 }

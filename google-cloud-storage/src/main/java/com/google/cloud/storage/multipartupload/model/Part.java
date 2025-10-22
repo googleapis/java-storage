@@ -20,9 +20,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-/**
- * Represents a part of a multipart upload.
- */
+/** Represents a part of a multipart upload. */
 public final class Part {
 
   @JacksonXmlProperty(localName = "PartNumber")
@@ -49,6 +47,7 @@ public final class Part {
 
   /**
    * Returns the part number.
+   *
    * @return the part number.
    */
   public int partNumber() {
@@ -57,6 +56,7 @@ public final class Part {
 
   /**
    * Returns the ETag of the part.
+   *
    * @return the ETag of the part.
    */
   public String eTag() {
@@ -65,6 +65,7 @@ public final class Part {
 
   /**
    * Returns the size of the part.
+   *
    * @return the size of the part.
    */
   public long size() {
@@ -73,6 +74,7 @@ public final class Part {
 
   /**
    * Returns the last modified time of the part.
+   *
    * @return the last modified time of the part.
    */
   public String lastModified() {
@@ -81,6 +83,7 @@ public final class Part {
 
   /**
    * Returns a new builder for this class.
+   *
    * @return a new builder for this class.
    */
   public static Builder builder() {
@@ -117,9 +120,7 @@ public final class Part {
         .toString();
   }
 
-  /**
-   * A builder for {@link Part}.
-   */
+  /** A builder for {@link Part}. */
   public static final class Builder {
     private int partNumber;
     private String eTag;
@@ -130,6 +131,7 @@ public final class Part {
 
     /**
      * Sets the part number.
+     *
      * @param partNumber the part number.
      * @return this builder.
      */
@@ -140,6 +142,7 @@ public final class Part {
 
     /**
      * Sets the ETag of the part.
+     *
      * @param eTag the ETag of the part.
      * @return this builder.
      */
@@ -150,6 +153,7 @@ public final class Part {
 
     /**
      * Sets the size of the part.
+     *
      * @param size the size of the part.
      * @return this builder.
      */
@@ -160,6 +164,7 @@ public final class Part {
 
     /**
      * Sets the last modified time of the part.
+     *
      * @param lastModified the last modified time of the part.
      * @return this builder.
      */
@@ -170,6 +175,7 @@ public final class Part {
 
     /**
      * Builds a new {@link Part} object.
+     *
      * @return a new {@link Part} object.
      */
     public Part build() {

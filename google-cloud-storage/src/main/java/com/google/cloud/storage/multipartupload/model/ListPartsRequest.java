@@ -19,9 +19,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-/**
- * Represents a request to list the parts of a multipart upload.
- */
+/** Represents a request to list the parts of a multipart upload. */
 public class ListPartsRequest {
   private final String bucket;
 
@@ -43,6 +41,7 @@ public class ListPartsRequest {
 
   /**
    * Returns the bucket name.
+   *
    * @return the bucket name.
    */
   public String bucket() {
@@ -51,6 +50,7 @@ public class ListPartsRequest {
 
   /**
    * Returns the object name.
+   *
    * @return the object name.
    */
   public String key() {
@@ -59,6 +59,7 @@ public class ListPartsRequest {
 
   /**
    * Returns the upload ID.
+   *
    * @return the upload ID.
    */
   public String uploadId() {
@@ -67,6 +68,7 @@ public class ListPartsRequest {
 
   /**
    * Returns the maximum number of parts to return.
+   *
    * @return the maximum number of parts to return.
    */
   public Integer getMaxParts() {
@@ -75,6 +77,7 @@ public class ListPartsRequest {
 
   /**
    * Returns the part number marker.
+   *
    * @return the part number marker.
    */
   public Integer getPartNumberMarker() {
@@ -115,15 +118,14 @@ public class ListPartsRequest {
 
   /**
    * Returns a new builder for this class.
+   *
    * @return a new builder for this class.
    */
   public static Builder builder() {
     return new Builder();
   }
 
-  /**
-   * A builder for {@link ListPartsRequest}.
-   */
+  /** A builder for {@link ListPartsRequest}. */
   public static class Builder {
     private String bucket;
     private String key;
@@ -135,6 +137,7 @@ public class ListPartsRequest {
 
     /**
      * Sets the bucket name.
+     *
      * @param bucket the bucket name.
      * @return this builder.
      */
@@ -145,6 +148,7 @@ public class ListPartsRequest {
 
     /**
      * Sets the object name.
+     *
      * @param key the object name.
      * @return this builder.
      */
@@ -155,6 +159,7 @@ public class ListPartsRequest {
 
     /**
      * Sets the upload ID.
+     *
      * @param uploadId the upload ID.
      * @return this builder.
      */
@@ -165,6 +170,7 @@ public class ListPartsRequest {
 
     /**
      * Sets the maximum number of parts to return.
+     *
      * @param maxParts the maximum number of parts to return.
      * @return this builder.
      */
@@ -175,6 +181,7 @@ public class ListPartsRequest {
 
     /**
      * Sets the part number marker.
+     *
      * @param partNumberMarker the part number marker.
      * @return this builder.
      */
@@ -185,6 +192,7 @@ public class ListPartsRequest {
 
     /**
      * Builds a new {@link ListPartsRequest} object.
+     *
      * @return a new {@link ListPartsRequest} object.
      */
     public ListPartsRequest build() {

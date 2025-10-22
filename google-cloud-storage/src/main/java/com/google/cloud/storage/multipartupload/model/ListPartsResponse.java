@@ -23,9 +23,7 @@ import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Represents a response to a list parts request.
- */
+/** Represents a response to a list parts request. */
 public final class ListPartsResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
@@ -62,6 +60,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the bucket name.
+   *
    * @return the bucket name.
    */
   public String getBucket() {
@@ -70,6 +69,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the object name.
+   *
    * @return the object name.
    */
   public String getKey() {
@@ -78,6 +78,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the upload ID.
+   *
    * @return the upload ID.
    */
   public String getUploadId() {
@@ -86,6 +87,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the part number marker.
+   *
    * @return the part number marker.
    */
   public Integer getPartNumberMarker() {
@@ -94,6 +96,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the next part number marker.
+   *
    * @return the next part number marker.
    */
   public Integer getNextPartNumberMarker() {
@@ -102,6 +105,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the maximum number of parts to return.
+   *
    * @return the maximum number of parts to return.
    */
   public Integer getMaxParts() {
@@ -110,6 +114,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns true if the response is truncated.
+   *
    * @return true if the response is truncated.
    */
   public boolean isTruncated() {
@@ -118,6 +123,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the owner of the object.
+   *
    * @return the owner of the object.
    */
   public String getOwner() {
@@ -126,6 +132,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the storage class of the object.
+   *
    * @return the storage class of the object.
    */
   public String getStorageClass() {
@@ -134,6 +141,7 @@ public final class ListPartsResponse {
 
   /**
    * Returns the list of parts.
+   *
    * @return the list of parts.
    */
   public List<Part> getParts() {
