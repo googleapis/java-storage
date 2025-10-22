@@ -37,9 +37,11 @@ public abstract class MultipartUploadClient {
 
   MultipartUploadClient() {}
 
+  @BetaApi
   public abstract CreateMultipartUploadResponse createMultipartUpload(
       CreateMultipartUploadRequest request) throws IOException;
 
+  @BetaApi
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();
     return new MultipartUploadClientImpl(

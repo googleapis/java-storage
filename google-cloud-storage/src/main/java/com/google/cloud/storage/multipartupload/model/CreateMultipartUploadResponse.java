@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.MoreObjects;
@@ -26,6 +27,7 @@ import java.util.Objects;
  * of the initiated multipart upload, including the bucket, key, and the unique upload ID.
  */
 @JacksonXmlRootElement(localName = "InitiateMultipartUploadResult")
+@BetaApi
 public final class CreateMultipartUploadResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
@@ -111,7 +113,7 @@ public final class CreateMultipartUploadResponse {
   }
 
   /** A builder for {@link CreateMultipartUploadResponse} objects. */
-  public static class Builder {
+  public static final class Builder {
     private String bucket;
     private String key;
     private String uploadId;

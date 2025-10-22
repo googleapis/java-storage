@@ -15,11 +15,14 @@
  */
 package com.google.cloud.storage;
 
+import com.google.api.core.BetaApi;
+
 /**
  * Settings for configuring the {@link MultipartUploadClient}.
  *
  * <p>This class is for internal use only and is not intended for public consumption.
  */
+@BetaApi
 public final class MultipartUploadSettings {
   private final HttpStorageOptions options;
 
@@ -37,6 +40,7 @@ public final class MultipartUploadSettings {
    *
    * @return The {@link HttpStorageOptions}.
    */
+  @BetaApi
   public HttpStorageOptions getOptions() {
     return options;
   }
@@ -48,6 +52,7 @@ public final class MultipartUploadSettings {
    * @param options The {@link HttpStorageOptions} to use.
    * @return A new {@code MultipartUploadSettings} instance.
    */
+  @BetaApi
   public static MultipartUploadSettings of(HttpStorageOptions options) {
     return new MultipartUploadSettings(options);
   }

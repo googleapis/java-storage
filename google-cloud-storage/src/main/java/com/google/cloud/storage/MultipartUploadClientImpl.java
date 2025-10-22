@@ -16,6 +16,7 @@
 package com.google.cloud.storage;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.api.core.BetaApi;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.cloud.storage.Retrying.Retrier;
@@ -27,19 +28,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * This class is an implementation of {@link MultipartUploadClient} that uses the Google Cloud
  * Storage XML API to perform multipart uploads.
  */
+@BetaApi
 public final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final MultipartUploadHttpRequestManager httpRequestManager;
@@ -69,6 +69,7 @@ public final class MultipartUploadClientImpl extends MultipartUploadClient {
     return extensionHeaders;
   }
 
+  @BetaApi
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
     String encodedBucket = encode(request.bucket());
@@ -138,11 +139,8 @@ public final class MultipartUploadClientImpl extends MultipartUploadClient {
     return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
   }
 
-  private String toRfc3339String(Date date) {
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    df.setTimeZone(tz);
-    return df.format(date);
+  private String toRfc3339String(OffsetDateTime dateTime) {
+    return DateTimeFormatter.ISO_INSTANT.format(dateTime);
   }
 
   public static String getRfc1123Date() {

@@ -18,12 +18,14 @@ package com.google.cloud.storage;
 import com.google.api.core.ApiFunction;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
+import com.google.api.core.BetaApi;
 
 /**
  * Represents the object lock mode. See <a
  * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
  * for details.
  */
+@BetaApi
 public final class ObjectLockMode extends StringEnumValue {
   private static final long serialVersionUID = -1882734434792102329L;
 

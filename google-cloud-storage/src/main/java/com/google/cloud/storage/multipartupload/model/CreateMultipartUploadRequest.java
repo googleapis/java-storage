@@ -16,11 +16,12 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.ObjectLockMode;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ import java.util.Objects;
  * Represents a request to initiate a multipart upload. This class holds all the necessary
  * information to create a new multipart upload session.
  */
+@BetaApi
 public final class CreateMultipartUploadRequest {
   private final String bucket;
   private final String key;
@@ -35,10 +37,10 @@ public final class CreateMultipartUploadRequest {
   private final String contentType;
   private final Map<String, String> metadata;
   private final StorageClass storageClass;
-  private final Date customTime;
+  private final OffsetDateTime customTime;
   private final String kmsKeyName;
   private final ObjectLockMode objectLockMode;
-  private final Date objectLockRetainUntilDate;
+  private final OffsetDateTime objectLockRetainUntilDate;
 
   private CreateMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
@@ -53,43 +55,93 @@ public final class CreateMultipartUploadRequest {
     this.objectLockRetainUntilDate = builder.objectLockRetainUntilDate;
   }
 
+  /**
+   * Returns the name of the bucket to which the object is being uploaded.
+   *
+   * @return The bucket name
+   */
   public String bucket() {
     return bucket;
   }
 
+  /**
+   * Returns the name of the object.
+   *
+   * @return The object name
+   */
   public String key() {
     return key;
   }
 
+  /**
+   * Returns a canned ACL to apply to the object.
+   *
+   * @return The canned ACL
+   */
   public PredefinedAcl getCannedAcl() {
     return cannedAcl;
   }
 
+  /**
+   * Returns the MIME type of the data you are uploading.
+   *
+   * @return The Content-Type
+   */
   public String getContentType() {
     return contentType;
   }
 
+  /**
+   * Returns the custom metadata of the object.
+   *
+   * @return The custom metadata
+   */
   public Map<String, String> getMetadata() {
     return metadata;
   }
 
+  /**
+   * Returns the storage class for the object.
+   *
+   * @return The Storage-Class
+   */
   public StorageClass getStorageClass() {
     return storageClass;
   }
 
-  public Date getCustomTime() {
+  /**
+   * Returns a user-specified date and time.
+   *
+   * @return The custom time
+   */
+  public OffsetDateTime getCustomTime() {
     return customTime;
   }
 
+  /**
+   * Returns the customer-managed encryption key to use to encrypt the object.
+   *
+   * @return The Cloud KMS key
+   */
   public String getKmsKeyName() {
     return kmsKeyName;
   }
 
+  /**
+   * Returns the mode of the object's retention configuration.
+   *
+   * @return The object lock mode
+   */
   public ObjectLockMode getObjectLockMode() {
     return objectLockMode;
   }
 
-  public Date getObjectLockRetainUntilDate() {
+  /**
+   * Returns the date that determines the time until which the object is retained as immutable.
+   *
+   * @return The object lock retention until date
+   */
+  public OffsetDateTime getObjectLockRetainUntilDate() {
     return objectLockRetainUntilDate;
   }
 
@@ -145,21 +197,26 @@ public final class CreateMultipartUploadRequest {
         .toString();
   }
 
+  /**
+   * Returns a new {@link Builder} for creating a {@link CreateMultipartUploadRequest}.
+   *
+   * @return a new builder
+   */
   public static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  public static final class Builder {
     private String bucket;
     private String key;
     private PredefinedAcl cannedAcl;
     private String contentType;
     private Map<String, String> metadata;
     private StorageClass storageClass;
-    private Date customTime;
+    private OffsetDateTime customTime;
     private String kmsKeyName;
     private ObjectLockMode objectLockMode;
-    private Date objectLockRetainUntilDate;
+    private OffsetDateTime objectLockRetainUntilDate;
 
     private Builder() {}
 
@@ -236,7 +293,7 @@ public final class CreateMultipartUploadRequest {
      * @param customTime The custom time
      * @return this builder
      */
-    public Builder customTime(Date customTime) {
+    public Builder customTime(OffsetDateTime customTime) {
       this.customTime = customTime;
       return this;
     }
@@ -272,11 +329,16 @@ public final class CreateMultipartUploadRequest {
      * @param objectLockRetainUntilDate The object lock retention until date
      * @return this builder
      */
-    public Builder objectLockRetainUntilDate(Date objectLockRetainUntilDate) {
+    public Builder objectLockRetainUntilDate(OffsetDateTime objectLockRetainUntilDate) {
       this.objectLockRetainUntilDate = objectLockRetainUntilDate;
       return this;
     }
 
+    /**
+     * Creates a new {@link CreateMultipartUploadRequest} object.
+     *
+     * @return a new {@link CreateMultipartUploadRequest} object
+     */
     public CreateMultipartUploadRequest build() {
       return new CreateMultipartUploadRequest(this);
     }
