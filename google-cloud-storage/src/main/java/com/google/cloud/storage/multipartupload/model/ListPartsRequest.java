@@ -16,10 +16,12 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 /** Represents a request to list the parts of a multipart upload. */
+@BetaApi
 public final class ListPartsRequest {
   private final String bucket;
 
