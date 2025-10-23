@@ -520,11 +520,11 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .uploadId("test-upload-id")
               .build();
 
-          assertThrows(
-              HttpResponseException.class,
-              () ->
-                  multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(
-                      endpoint, request, httpStorageOptions));
+      assertThrows(
+          HttpResponseException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(
+                  endpoint, request, httpStorageOptions));
     }
   }
 }
