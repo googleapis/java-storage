@@ -20,6 +20,7 @@ import com.google.api.client.util.ObjectParser;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
@@ -35,21 +36,28 @@ final class XmlObjectParser implements ObjectParser {
   @Override
   public <T> T parseAndClose(InputStream in, Charset charset, Class<T> dataClass)
       throws IOException {
-    return xmlMapper.readValue(in, dataClass);
+    return parseAndClose(new InputStreamReader(in, charset), dataClass);
   }
 
   @Override
   public Object parseAndClose(InputStream in, Charset charset, Type dataType) throws IOException {
-    return xmlMapper.readValue(in, xmlMapper.getTypeFactory().constructType(dataType));
+    throw new UnsupportedOperationException(
+        "XmlObjectParse#"
+            + CrossTransportUtils.fmtMethodName(
+                "parseAndClose", InputStream.class, Charset.class, Type.class));
   }
 
   @Override
   public <T> T parseAndClose(Reader reader, Class<T> dataClass) throws IOException {
-    return xmlMapper.readValue(reader, dataClass);
+    try (Reader r = reader) {
+      return xmlMapper.readValue(r, dataClass);
+    }
   }
 
   @Override
   public Object parseAndClose(Reader reader, Type dataType) throws IOException {
-    return xmlMapper.readValue(reader, xmlMapper.getTypeFactory().constructType(dataType));
+    throw new UnsupportedOperationException(
+        "XmlObjectParse#"
+            + CrossTransportUtils.fmtMethodName("parseAndClose", Reader.class, Type.class));
   }
 }
