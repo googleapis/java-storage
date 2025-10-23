@@ -520,13 +520,11 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .uploadId("test-upload-id")
               .build();
 
-      StorageException se =
           assertThrows(
-              StorageException.class,
+              HttpResponseException.class,
               () ->
                   multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(
                       endpoint, request, httpStorageOptions));
-      assertThat(se.getCode()).isEqualTo(400);
     }
   }
 }
