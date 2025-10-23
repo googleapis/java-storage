@@ -17,7 +17,6 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.core.BetaApi;
-import com.google.cloud.storage.ObjectLockMode;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.storage;
+package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.BetaApi;

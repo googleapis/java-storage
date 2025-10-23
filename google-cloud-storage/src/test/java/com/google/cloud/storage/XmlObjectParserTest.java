@@ -17,13 +17,16 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -33,19 +36,25 @@ public class XmlObjectParserTest {
 
   @Mock private XmlMapper xmlMapper;
 
+  private AutoCloseable mocks;
   private XmlObjectParser xmlObjectParser;
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mocks = MockitoAnnotations.openMocks(this);
     xmlObjectParser = new XmlObjectParser(xmlMapper);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mocks.close();
   }
 
   @Test
   public void testParseAndClose() throws IOException {
     InputStream in = new ByteArrayInputStream("<Test/>".getBytes(StandardCharsets.UTF_8));
     TestXmlObject expected = new TestXmlObject();
-    when(xmlMapper.readValue(in, TestXmlObject.class)).thenReturn(expected);
+    when(xmlMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(expected);
     TestXmlObject actual =
         xmlObjectParser.parseAndClose(in, StandardCharsets.UTF_8, TestXmlObject.class);
     assertThat(actual).isSameInstanceAs(expected);

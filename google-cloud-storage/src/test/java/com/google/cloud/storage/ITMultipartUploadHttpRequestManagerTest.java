@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -31,6 +31,7 @@ import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
@@ -50,7 +51,7 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.PROD)
 @ParallelFriendly
 public final class ITMultipartUploadHttpRequestManagerTest {
-  private static final GsonFactory gson = GsonFactory.getDefaultInstance();
+  private static final XmlMapper xmlMapper = new XmlMapper();
   private static final NetHttpTransport transport = new NetHttpTransport.Builder().build();
   private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
   private HttpStorageOptions httpStorageOptions;
@@ -62,7 +63,11 @@ public final class ITMultipartUploadHttpRequestManagerTest {
     multipartUploadHttpRequestManager =
         new MultipartUploadHttpRequestManager(
             transport.createRequestFactory(), new XmlObjectParser(new XmlMapper()));
-    httpStorageOptions = HttpStorageOptions.newBuilder().setProjectId("test-project").build();
+    httpStorageOptions =
+        HttpStorageOptions.newBuilder()
+            .setProjectId("test-project")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
   }
 
   @Test
@@ -75,7 +80,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -143,7 +148,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -178,7 +183,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -212,7 +217,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -247,7 +252,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -281,7 +286,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -316,7 +321,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -350,7 +355,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .key("test-key")
                   .uploadId("test-upload-id")
                   .build();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
