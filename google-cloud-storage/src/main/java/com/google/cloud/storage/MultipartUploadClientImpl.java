@@ -15,8 +15,6 @@
  */
 package com.google.cloud.storage;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
@@ -32,15 +30,14 @@ import java.net.URI;
 final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final MultipartUploadHttpRequestManager httpRequestManager;
-  private final HttpStorageOptions options;
   private final Retrier retrier;
   private final URI uri;
 
   MultipartUploadClientImpl(
-      URI uri, HttpRequestFactory requestFactory, Retrier retrier, HttpStorageOptions options) {
-    this.httpRequestManager =
-        new MultipartUploadHttpRequestManager(requestFactory, new XmlObjectParser(new XmlMapper()));
-    this.options = options;
+      URI uri,
+      Retrier retrier,
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager) {
+    this.httpRequestManager = multipartUploadHttpRequestManager;
     this.retrier = retrier;
     this.uri = uri;
   }
@@ -48,6 +45,6 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   @BetaApi
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
-    return httpRequestManager.sendCreateMultipartUploadRequest(uri, request, options);
+    return httpRequestManager.sendCreateMultipartUploadRequest(uri, request);
   }
 }

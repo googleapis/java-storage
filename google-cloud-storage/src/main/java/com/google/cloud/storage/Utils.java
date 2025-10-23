@@ -83,6 +83,10 @@ final class Utils {
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
   static final Codec<Duration, Long> durationSecondsCodec =
       Codec.of(Duration::getSeconds, Duration::ofSeconds);
+  static final Codec<OffsetDateTime, String> offsetDateTimeRfc3339Codec =
+      Codec.of(
+          RFC_3339_DATE_TIME_FORMATTER::format,
+          s -> OffsetDateTime.parse(s, RFC_3339_DATE_TIME_FORMATTER));
 
   @VisibleForTesting
   static final Codec<OffsetDateTime, DateTime> dateTimeCodec =
