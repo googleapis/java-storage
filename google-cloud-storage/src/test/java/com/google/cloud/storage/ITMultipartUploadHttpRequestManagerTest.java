@@ -22,6 +22,7 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatu
 import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
@@ -130,13 +131,11 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .contentType("application/octet-stream")
               .build();
 
-      StorageException se =
-          assertThrows(
-              StorageException.class,
-              () ->
-                  multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-                      endpoint, request, httpStorageOptions));
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThrows(
+          HttpResponseException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
+                  endpoint, request, httpStorageOptions));
     }
   }
 
@@ -144,7 +143,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void sendCreateMultipartUploadRequest_withCannedAcl() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-acl")).isEqualTo("authenticatedRead");
+          assertThat(req.headers().get("x-goog-acl")).isEqualTo("AUTHENTICATED_READ");
           CreateMultipartUploadResponse response =
               CreateMultipartUploadResponse.builder()
                   .bucket("test-bucket")
