@@ -479,7 +479,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         req -> {
           assertThat(req.uri()).contains("?uploadId=test-upload-id");
           AbortMultipartUploadResponse response = new AbortMultipartUploadResponse();
-          ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(response));
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
