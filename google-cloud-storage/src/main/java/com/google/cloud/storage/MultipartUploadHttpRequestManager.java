@@ -75,12 +75,12 @@ final class MultipartUploadHttpRequestManager {
   }
 
   ListPartsResponse sendListPartsRequest(
-      URI uri, ListPartsRequest request, HttpStorageOptions options) throws IOException {
+      URI uri, ListPartsRequest request) throws IOException {
 
-    String encodedBucket = encode(request.bucket());
-    String encodedKey = encode(request.key());
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
-    String queryString = "?uploadId=" + encode(request.uploadId());
+    String queryString = "?uploadId=" + urlEncode(request.uploadId());
 
     if (request.getMaxParts() != null) {
       queryString += "&max-parts=" + request.getMaxParts();
@@ -89,11 +89,8 @@ final class MultipartUploadHttpRequestManager {
       queryString += "&part-number-marker=" + request.getPartNumberMarker();
     }
     String listUri = uri.toString() + resourcePath + queryString;
-    Map<String, String> extensionHeaders = getGenericExtensionHeader(options);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
-    for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-      httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    }
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListPartsResponse.class);

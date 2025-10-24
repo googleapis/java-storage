@@ -415,7 +415,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
 
       ListPartsResponse response =
           multipartUploadHttpRequestManager.sendListPartsRequest(
-              endpoint, request, httpStorageOptions);
+              endpoint, request);
 
       assertThat(response).isNotNull();
       assertThat(response.getBucket()).isEqualTo("test-bucket");
@@ -457,7 +457,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           HttpResponseException.class,
           () ->
               multipartUploadHttpRequestManager.sendListPartsRequest(
-                  endpoint, request, httpStorageOptions));
+                  endpoint, request));
     }
   }
 }
