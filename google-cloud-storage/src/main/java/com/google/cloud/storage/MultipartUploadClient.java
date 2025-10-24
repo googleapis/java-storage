@@ -71,8 +71,7 @@ public abstract class MultipartUploadClient {
     HttpStorageOptions options = config.getOptions();
     return new MultipartUploadClientImpl(
         URI.create(options.getHost()),
-        options.getStorageRpcV1().getStorage().getRequestFactory(),
         options.createRetrier(),
-        options);
+        MultipartUploadHttpRequestManager.createFrom(options));
   }
 }
