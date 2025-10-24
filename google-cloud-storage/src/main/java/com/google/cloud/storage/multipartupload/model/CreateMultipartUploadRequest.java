@@ -206,6 +206,8 @@ public final class CreateMultipartUploadRequest {
     return new Builder();
   }
 
+
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;

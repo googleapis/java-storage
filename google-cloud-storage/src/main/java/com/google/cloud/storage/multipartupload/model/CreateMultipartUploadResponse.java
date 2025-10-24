@@ -113,6 +113,7 @@ public final class CreateMultipartUploadResponse {
   }
 
   /** A builder for {@link CreateMultipartUploadResponse} objects. */
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;
