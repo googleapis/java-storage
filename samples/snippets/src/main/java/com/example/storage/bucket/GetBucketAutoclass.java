@@ -25,31 +25,33 @@ import com.google.cloud.storage.StorageOptions;
 import java.time.OffsetDateTime;
 
 public class GetBucketAutoclass {
-  public static void getBucketAutoclass(String projectId, String bucketName) {
+  public static void getBucketAutoclass(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Autoclass autoclass = storage.get(bucketName).getAutoclass();
-    String status = autoclass.getEnabled() ? "enabled" : "disabled";
-    String toggleTime = autoclass.getToggleTime().toString();
-    StorageClass terminalStorageClass = autoclass.getTerminalStorageClass();
-    OffsetDateTime terminalStorageClassUpdateTime = autoclass.getTerminalStorageClassUpdateTime();
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Autoclass autoclass = storage.get(bucketName).getAutoclass();
+      String status = autoclass.getEnabled() ? "enabled" : "disabled";
+      String toggleTime = autoclass.getToggleTime().toString();
+      StorageClass terminalStorageClass = autoclass.getTerminalStorageClass();
+      OffsetDateTime terminalStorageClassUpdateTime = autoclass.getTerminalStorageClassUpdateTime();
 
-    System.out.println(
-        "Autoclass is currently "
-            + status
-            + " for bucket "
-            + bucketName
-            + " and was last changed at "
-            + toggleTime
-            + ". The terminal storage class is set to be "
-            + terminalStorageClass.name()
-            + " last updated at "
-            + terminalStorageClassUpdateTime.toString());
+      System.out.println(
+          "Autoclass is currently "
+              + status
+              + " for bucket "
+              + bucketName
+              + " and was last changed at "
+              + toggleTime
+              + ". The terminal storage class is set to be "
+              + terminalStorageClass.name()
+              + " last updated at "
+              + terminalStorageClassUpdateTime.toString());
+    }
   }
 }
 // [END storage_get_autoclass]
