@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
-import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
 import java.util.List;
@@ -53,7 +52,7 @@ public final class ListPartsResponse {
   private boolean isTruncated;
 
   @JacksonXmlProperty(localName = "Owner")
-  private Acl.Entity owner;
+  private Owner owner;
 
   @JacksonXmlProperty(localName = "StorageClass")
   private StorageClass storageClass;
@@ -61,6 +60,8 @@ public final class ListPartsResponse {
   @JacksonXmlElementWrapper(useWrapping = false)
   @JacksonXmlProperty(localName = "Part")
   private List<Part> parts;
+
+  private ListPartsResponse() {}
 
   private ListPartsResponse(Builder builder) {
     this.bucket = builder.bucket;
@@ -152,7 +153,7 @@ public final class ListPartsResponse {
    *
    * @return the owner of the object.
    */
-  public Acl.Entity getOwner() {
+  public Owner getOwner() {
     return owner;
   }
 
@@ -236,7 +237,7 @@ public final class ListPartsResponse {
     private int nextPartNumberMarker;
     private int maxParts;
     private boolean isTruncated;
-    private Acl.Entity owner;
+    private Owner owner;
     private StorageClass storageClass;
     private List<Part> parts;
 
@@ -325,7 +326,7 @@ public final class ListPartsResponse {
      * @param owner The owner of the object.
      * @return The builder instance.
      */
-    public Builder setOwner(Acl.Entity owner) {
+    public Builder setOwner(Owner owner) {
       this.owner = owner;
       return this;
     }

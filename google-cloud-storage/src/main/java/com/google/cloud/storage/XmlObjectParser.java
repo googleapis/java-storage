@@ -16,6 +16,7 @@
 package com.google.cloud.storage;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.util.ObjectParser;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
@@ -31,6 +32,7 @@ final class XmlObjectParser implements ObjectParser {
   @VisibleForTesting
   public XmlObjectParser(XmlMapper xmlMapper) {
     this.xmlMapper = xmlMapper;
+    this.xmlMapper.registerModule(new JavaTimeModule());
   }
 
   @Override

@@ -22,6 +22,7 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatu
 import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
@@ -55,7 +56,12 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.PROD)
 @ParallelFriendly
 public final class ITMultipartUploadHttpRequestManagerTest {
-  private static final XmlMapper xmlMapper = new XmlMapper();
+  private static final XmlMapper xmlMapper;
+
+  static {
+    xmlMapper = new XmlMapper();
+    xmlMapper.registerModule(new JavaTimeModule());
+  }
 
   private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
