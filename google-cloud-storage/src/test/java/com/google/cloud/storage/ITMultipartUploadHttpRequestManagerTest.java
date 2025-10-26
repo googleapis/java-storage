@@ -43,6 +43,7 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -445,7 +446,79 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
-  public void sendListPartsRequest_error() throws Exception {
+  public void sendListPartsRequest_bucketNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Bucket not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_keyNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Key not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_badRequest() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.BAD_REQUEST,
+                Unpooled.wrappedBuffer("Invalid uploadId".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("invalid-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_errorResponse() throws Exception {
     HttpRequestHandler handler =
         req -> {
           FullHttpResponse resp =
