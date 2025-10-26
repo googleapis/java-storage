@@ -128,6 +128,7 @@ public final class ListPartsRequest {
   }
 
   /** A builder for {@link ListPartsRequest}. */
+  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;

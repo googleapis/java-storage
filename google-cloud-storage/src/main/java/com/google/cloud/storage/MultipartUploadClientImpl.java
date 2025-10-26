@@ -35,14 +35,17 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   private final MultipartUploadHttpRequestManager httpRequestManager;
   private final Retrier retrier;
   private final URI uri;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
 
   MultipartUploadClientImpl(
       URI uri,
       Retrier retrier,
-      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager,
+      HttpRetryAlgorithmManager retryAlgorithmManager) {
     this.httpRequestManager = multipartUploadHttpRequestManager;
     this.retrier = retrier;
     this.uri = uri;
+    this.retryAlgorithmManager = retryAlgorithmManager;
   }
 
   @Override
@@ -54,10 +57,10 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   @Override
   @BetaApi
-  public ListPartsResponse listParts(ListPartsRequest request) throws IOException {
+  public ListPartsResponse listParts(ListPartsRequest request) {
 
     return retrier.run(
-        Retrying.alwaysRetry(),
+        retryAlgorithmManager.idempotent(),
         () -> httpRequestManager.sendListPartsRequest(uri, request),
         Decoder.identity());
   }

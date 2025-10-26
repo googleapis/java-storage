@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
@@ -51,10 +53,10 @@ public final class ListPartsResponse {
   private boolean isTruncated;
 
   @JacksonXmlProperty(localName = "Owner")
-  private String owner;
+  private Acl.Entity owner;
 
   @JacksonXmlProperty(localName = "StorageClass")
-  private String storageClass;
+  private StorageClass storageClass;
 
   @JacksonXmlElementWrapper(useWrapping = false)
   @JacksonXmlProperty(localName = "Part")
@@ -150,7 +152,7 @@ public final class ListPartsResponse {
    *
    * @return the owner of the object.
    */
-  public String getOwner() {
+  public Acl.Entity getOwner() {
     return owner;
   }
 
@@ -159,7 +161,7 @@ public final class ListPartsResponse {
    *
    * @return the storage class of the object.
    */
-  public String getStorageClass() {
+  public StorageClass getStorageClass() {
     return storageClass;
   }
 
@@ -225,6 +227,7 @@ public final class ListPartsResponse {
   }
 
   /** Builder for {@code ListPartsResponse}. */
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;
@@ -233,8 +236,8 @@ public final class ListPartsResponse {
     private int nextPartNumberMarker;
     private int maxParts;
     private boolean isTruncated;
-    private String owner;
-    private String storageClass;
+    private Acl.Entity owner;
+    private StorageClass storageClass;
     private List<Part> parts;
 
     private Builder() {}
@@ -322,7 +325,7 @@ public final class ListPartsResponse {
      * @param owner The owner of the object.
      * @return The builder instance.
      */
-    public Builder setOwner(String owner) {
+    public Builder setOwner(Acl.Entity owner) {
       this.owner = owner;
       return this;
     }
@@ -333,7 +336,7 @@ public final class ListPartsResponse {
      * @param storageClass The storage class of the object.
      * @return The builder instance.
      */
-    public Builder setStorageClass(String storageClass) {
+    public Builder setStorageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
     }

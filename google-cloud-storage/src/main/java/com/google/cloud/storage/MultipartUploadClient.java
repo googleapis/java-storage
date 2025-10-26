@@ -55,10 +55,9 @@ public abstract class MultipartUploadClient {
    *
    * @param listPartsRequest The request object containing the details for listing the parts.
    * @return A {@link ListPartsResponse} object containing the list of parts.
-   * @throws IOException if an I/O error occurs.
    */
   @BetaApi
-  public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest) throws IOException;
+  public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest);
 
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
@@ -72,6 +71,7 @@ public abstract class MultipartUploadClient {
     return new MultipartUploadClientImpl(
         URI.create(options.getHost()),
         options.createRetrier(),
-        MultipartUploadHttpRequestManager.createFrom(options));
+        MultipartUploadHttpRequestManager.createFrom(options),
+        options.getRetryAlgorithmManager());
   }
 }

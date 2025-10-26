@@ -31,13 +31,15 @@ import java.util.Objects;
 public final class CreateMultipartUploadResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
-  private final String bucket;
+  private String bucket;
 
   @JacksonXmlProperty(localName = "Key")
-  private final String key;
+  private String key;
 
   @JacksonXmlProperty(localName = "UploadId")
-  private final String uploadId;
+  private String uploadId;
+
+  private CreateMultipartUploadResponse() {}
 
   private CreateMultipartUploadResponse(Builder builder) {
     this.bucket = builder.bucket;

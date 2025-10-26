@@ -44,6 +44,7 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,6 +56,7 @@ import org.junit.runner.RunWith;
 @ParallelFriendly
 public final class ITMultipartUploadHttpRequestManagerTest {
   private static final XmlMapper xmlMapper = new XmlMapper();
+
   private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
 
@@ -377,24 +379,26 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void sendListPartsRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          String xmlResponse =
-              "<?xml version='1.0' encoding='UTF-8'?>\n"
-                  + "<ListPartsResult>\n"
-                  + "  <Bucket>test-bucket</Bucket>\n"
-                  + "  <Key>test-key</Key>\n"
-                  + "  <UploadId>test-upload-id</UploadId>\n"
-                  + "  <PartNumberMarker>0</PartNumberMarker>\n"
-                  + "  <NextPartNumberMarker>1</NextPartNumberMarker>\n"
-                  + "  <MaxParts>1</MaxParts>\n"
-                  + "  <IsTruncated>false</IsTruncated>\n"
-                  + "  <Part>\n"
-                  + "    <PartNumber>1</PartNumber>\n"
-                  + "    <ETag>\"etag\"</ETag>\n"
-                  + "    <Size>123</Size>\n"
-                  + "    <LastModified>2024-05-08T17:50:00.000Z</LastModified>\n"
-                  + "  </Part>\n"
-                  + "</ListPartsResult>";
-          ByteBuf buf = Unpooled.wrappedBuffer(xmlResponse.getBytes());
+          OffsetDateTime lastModified = OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC);
+          ListPartsResponse listPartsResponse =
+              ListPartsResponse.builder()
+                  .setBucket("test-bucket")
+                  .setKey("test-key")
+                  .setUploadId("test-upload-id")
+                  .setPartNumberMarker(0)
+                  .setNextPartNumberMarker(1)
+                  .setMaxParts(1)
+                  .setIsTruncated(false)
+                  .setParts(
+                      Collections.singletonList(
+                          Part.builder()
+                              .partNumber(1)
+                              .eTag("\"etag\"")
+                              .size(123)
+                              .lastModified(lastModified)
+                              .build()))
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listPartsResponse));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -429,7 +433,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThat(part.partNumber()).isEqualTo(1);
       assertThat(part.eTag()).isEqualTo("\"etag\"");
       assertThat(part.size()).isEqualTo(123);
-      assertThat(part.lastModified()).isEqualTo("2024-05-08T17:50:00.000Z");
+      assertThat(part.lastModified())
+          .isEqualTo(OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC));
     }
   }
 
