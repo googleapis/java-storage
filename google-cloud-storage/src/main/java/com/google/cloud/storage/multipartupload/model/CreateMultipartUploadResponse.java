@@ -31,21 +31,19 @@ import java.util.Objects;
 public final class CreateMultipartUploadResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
-  private String bucket;
+  private final String bucket;
 
   @JacksonXmlProperty(localName = "Key")
-  private String key;
+  private final String key;
 
   @JacksonXmlProperty(localName = "UploadId")
-  private String uploadId;
+  private final String uploadId;
 
   private CreateMultipartUploadResponse(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
   }
-
-  private CreateMultipartUploadResponse() {}
 
   /**
    * Returns the name of the bucket where the multipart upload was initiated.
