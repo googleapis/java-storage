@@ -136,7 +136,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
   // If true, disable the bound-token-by-default feature for DirectPath.
   private static final boolean DIRECT_PATH_BOUND_TOKEN_DISABLED =
-      Boolean.parseBoolean(System.getProperty("STORAGE_DISABLE_DIRECTPATH_BOUND_TOKEN", "false"));
+Boolean.parseBoolean(System.getProperty("com.google.cloud.storage.grpc.bound_token", "false"));
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final java.time.Duration terminationAwaitDuration;
