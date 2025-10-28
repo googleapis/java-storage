@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.google.cloud.storage;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.util.ObjectParser;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
@@ -31,6 +32,7 @@ final class XmlObjectParser implements ObjectParser {
   @VisibleForTesting
   public XmlObjectParser(XmlMapper xmlMapper) {
     this.xmlMapper = xmlMapper;
+    this.xmlMapper.registerModule(new JavaTimeModule());
   }
 
   @Override

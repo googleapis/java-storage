@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package com.google.cloud.storage;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
@@ -28,7 +26,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * This class is an implementation of {@link MultipartUploadClient} that uses the Google Cloud
@@ -38,44 +35,44 @@ import java.security.NoSuchAlgorithmException;
 final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final MultipartUploadHttpRequestManager httpRequestManager;
-  private final HttpStorageOptions options;
   private final Retrier retrier;
   private final URI uri;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
 
   MultipartUploadClientImpl(
-      URI uri, HttpRequestFactory requestFactory, Retrier retrier, HttpStorageOptions options) {
-    this.httpRequestManager =
-        new MultipartUploadHttpRequestManager(requestFactory, new XmlObjectParser(new XmlMapper()));
-    this.options = options;
+      URI uri,
+      Retrier retrier,
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager,
+      HttpRetryAlgorithmManager retryAlgorithmManager) {
+    this.httpRequestManager = multipartUploadHttpRequestManager;
     this.retrier = retrier;
     this.uri = uri;
+    this.retryAlgorithmManager = retryAlgorithmManager;
   }
 
   @Override
   @BetaApi
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
-    return httpRequestManager.sendCreateMultipartUploadRequest(uri, request, options);
+    return httpRequestManager.sendCreateMultipartUploadRequest(uri, request);
   }
 
   @Override
   @BetaApi
-  public ListPartsResponse listParts(ListPartsRequest request) throws IOException {
+  public ListPartsResponse listParts(ListPartsRequest request) {
 
     return retrier.run(
-        Retrying.alwaysRetry(),
-        () -> httpRequestManager.sendListPartsRequest(uri, request, options),
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendListPartsRequest(uri, request),
         Decoder.identity());
   }
 
   @Override
   @BetaApi
-  public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request)
-      throws IOException, NoSuchAlgorithmException {
-
+  public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request) {
     return retrier.run(
-        Retrying.alwaysRetry(),
-        () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request, options),
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request),
         Decoder.identity());
   }
 }

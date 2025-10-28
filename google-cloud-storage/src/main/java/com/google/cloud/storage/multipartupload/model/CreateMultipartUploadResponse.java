@@ -39,13 +39,13 @@ public final class CreateMultipartUploadResponse {
   @JacksonXmlProperty(localName = "UploadId")
   private String uploadId;
 
+  private CreateMultipartUploadResponse() {}
+
   private CreateMultipartUploadResponse(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
   }
-
-  private CreateMultipartUploadResponse() {}
 
   /**
    * Returns the name of the bucket where the multipart upload was initiated.
@@ -113,6 +113,7 @@ public final class CreateMultipartUploadResponse {
   }
 
   /** A builder for {@link CreateMultipartUploadResponse} objects. */
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;

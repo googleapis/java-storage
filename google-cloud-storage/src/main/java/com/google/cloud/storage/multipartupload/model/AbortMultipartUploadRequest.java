@@ -70,6 +70,7 @@ public final class AbortMultipartUploadRequest {
   }
 
   /** A builder for creating {@link AbortMultipartUploadRequest} instances. */
+  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;

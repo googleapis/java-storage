@@ -26,7 +26,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * A client for interacting with Google Cloud Storage's Multipart Upload API.
@@ -58,22 +57,19 @@ public abstract class MultipartUploadClient {
    *
    * @param listPartsRequest The request object containing the details for listing the parts.
    * @return A {@link ListPartsResponse} object containing the list of parts.
-   * @throws IOException if an I/O error occurs.
    */
   @BetaApi
-  public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest) throws IOException;
+  public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest);
 
   /**
    * Aborts a multipart upload.
    *
    * @param request The request object containing the details for aborting the multipart upload.
    * @return An {@link AbortMultipartUploadResponse} object.
-   * @throws IOException if an I/O error occurs.
-   * @throws NoSuchAlgorithmException if the specified algorithm is not available.
    */
   @BetaApi
   public abstract AbortMultipartUploadResponse abortMultipartUpload(
-      AbortMultipartUploadRequest request) throws IOException, NoSuchAlgorithmException;
+      AbortMultipartUploadRequest request);
 
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
@@ -86,8 +82,8 @@ public abstract class MultipartUploadClient {
     HttpStorageOptions options = config.getOptions();
     return new MultipartUploadClientImpl(
         URI.create(options.getHost()),
-        options.getStorageRpcV1().getStorage().getRequestFactory(),
         options.createRetrier(),
-        options);
+        MultipartUploadHttpRequestManager.createFrom(options),
+        options.getRetryAlgorithmManager());
   }
 }

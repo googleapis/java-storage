@@ -18,6 +18,7 @@ package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.common.base.MoreObjects;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /** Represents a part of a multipart upload. */
@@ -33,7 +34,7 @@ public final class Part {
   private long size;
 
   @JacksonXmlProperty(localName = "LastModified")
-  private String lastModified;
+  private OffsetDateTime lastModified;
 
   // for jackson
   private Part() {}
@@ -77,7 +78,7 @@ public final class Part {
    *
    * @return the last modified time of the part.
    */
-  public String lastModified() {
+  public OffsetDateTime lastModified() {
     return lastModified;
   }
 
@@ -125,7 +126,7 @@ public final class Part {
     private int partNumber;
     private String eTag;
     private long size;
-    private String lastModified;
+    private OffsetDateTime lastModified;
 
     private Builder() {}
 
@@ -168,7 +169,7 @@ public final class Part {
      * @param lastModified the last modified time of the part.
      * @return this builder.
      */
-    public Builder lastModified(String lastModified) {
+    public Builder lastModified(OffsetDateTime lastModified) {
       this.lastModified = lastModified;
       return this;
     }

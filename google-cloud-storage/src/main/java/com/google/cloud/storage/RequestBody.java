@@ -44,37 +44,25 @@ public final class RequestBody {
     return content;
   }
 
-  /**
-   * Create a new empty RequestBody.
-   *
-   */
+  /** Create a new empty RequestBody. */
   @BetaApi
   public static RequestBody empty() {
     return new RequestBody(RewindableContent.empty());
   }
 
-  /**
-   * Create a new RequestBody from the given {@link ByteBuffer}s.
-   *
-   */
+  /** Create a new RequestBody from the given {@link ByteBuffer}s. */
   @BetaApi
   public static RequestBody of(ByteBuffer... buffers) {
     return new RequestBody(RewindableContent.of(buffers));
   }
 
-  /**
-   * Create a new RequestBody from the given {@link ByteBuffer}s.
-   *
-   */
+  /** Create a new RequestBody from the given {@link ByteBuffer}s. */
   @BetaApi
   public static RequestBody of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {
     return new RequestBody(RewindableContent.of(srcs, srcsOffset, srcsLength));
   }
 
-  /**
-   * Create a new RequestBody from the given {@link Path}.
-   *
-   */
+  /** Create a new RequestBody from the given {@link Path}. */
   @BetaApi
   public static RequestBody of(Path path) throws IOException {
     return new RequestBody(RewindableContent.of(path));
