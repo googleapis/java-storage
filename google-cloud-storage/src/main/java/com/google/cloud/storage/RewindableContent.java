@@ -22,7 +22,6 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.GuavaHasher;
 import com.google.cloud.storage.Hasher.NoOpHasher;
 import com.google.common.base.Preconditions;
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Locale;
 
 abstract class RewindableContent extends AbstractHttpContent {
