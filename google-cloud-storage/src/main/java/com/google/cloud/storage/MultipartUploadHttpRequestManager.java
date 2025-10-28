@@ -127,10 +127,6 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
             new GenericUrl(completeUri), getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
-    // httpRequest.getHeaders().setContentType(contentType);
-    // for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
-    //   httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
-    // }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
