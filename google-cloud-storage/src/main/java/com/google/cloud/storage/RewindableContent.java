@@ -18,6 +18,9 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Hasher.GuavaHasher;
+import com.google.cloud.storage.Hasher.NoOpHasher;
 import com.google.common.base.Preconditions;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
@@ -31,10 +34,8 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Base64; // Changed from com.google.api.client.util.Base64
+import java.util.Base64;
 import java.util.Locale;
 
 abstract class RewindableContent extends AbstractHttpContent {
@@ -59,9 +60,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     return false;
   }
 
-  abstract String getMd5() throws IOException;
-
-  abstract String getCrc32c() throws IOException;
+  abstract String getCrc32c();
 
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
@@ -121,13 +120,9 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    String getMd5() throws IOException {
-      return "";
-    }
-
-    @Override
-    String getCrc32c() throws IOException {
-      return "";
+    String getCrc32c() {
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
+      return Utils.crc32cCodec.encode(cumulative.getValue());
     }
   }
 
@@ -185,40 +180,33 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    String getMd5() throws IOException {
-      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
-        in.position(readOffset);
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] buffer = new byte[8192];
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-        while (in.read(byteBuffer) != -1) {
-          byteBuffer.flip();
-          md.update(byteBuffer);
-          byteBuffer.clear();
+    String getCrc32c() {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
         }
-        return Base64.getEncoder().encodeToString(md.digest());
-      } catch (NoSuchAlgorithmException e) {
-        throw new IOException(e);
       }
-    }
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
 
-    @Override
-    String getCrc32c() throws IOException {
-      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
-        in.position(readOffset);
-        com.google.common.hash.Hasher crc32cHasher = Hashing.crc32c().newHasher();
-        byte[] buffer = new byte[8192];
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-        while (in.read(byteBuffer) != -1) {
-          byteBuffer.flip();
-          crc32cHasher.putBytes(byteBuffer);
-          byteBuffer.clear();
+      int bufferSize = 8192; // 8KiB buffer for reading chunks
+      ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+
+      try (SeekableByteChannel channel = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        while (channel.read(buffer) != -1) {
+          buffer.flip();
+          if (buffer.hasRemaining()) {
+            cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
+          }
+          buffer.clear();
         }
-        int crc32cInt = crc32cHasher.hash().asInt();
-        ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.putInt(crc32cInt);
-        return Base64.getEncoder().encodeToString(bb.array());
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to read file for CRC32C calculation: " + path, e);
       }
+      return Utils.crc32cCodec.encode(cumulative.getValue());
     }
   }
 
@@ -317,28 +305,21 @@ abstract class RewindableContent extends AbstractHttpContent {
     }
 
     @Override
-    String getMd5() throws IOException {
-      try {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        for (ByteBuffer buffer : buffers) {
-          md.update(buffer.duplicate());
+    String getCrc32c() {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
         }
-        return Base64.getEncoder().encodeToString(md.digest());
-      } catch (NoSuchAlgorithmException e) {
-        throw new IOException(e);
       }
-    }
-
-    @Override
-    String getCrc32c() throws IOException {
-      com.google.common.hash.Hasher crc32cHasher = Hashing.crc32c().newHasher();
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
       for (ByteBuffer buffer : buffers) {
-        crc32cHasher.putBytes(buffer.duplicate());
+        cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
       }
-      int crc32cInt = crc32cHasher.hash().asInt();
-      ByteBuffer bb = ByteBuffer.allocate(4);
-      bb.putInt(crc32cInt);
-      return Base64.getEncoder().encodeToString(bb.array());
+      return Utils.crc32cCodec.encode(cumulative.getValue());
     }
   }
 }
