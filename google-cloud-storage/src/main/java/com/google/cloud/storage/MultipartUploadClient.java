@@ -20,6 +20,8 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -71,6 +73,17 @@ public abstract class MultipartUploadClient {
   public abstract AbortMultipartUploadResponse abortMultipartUpload(
       AbortMultipartUploadRequest request);
 
+  /**
+   * Completes a multipart upload.
+   *
+   * @param request The request object containing the details for completing the multipart upload.
+   * @return A {@link CompleteMultipartUploadResponse} object containing information about the
+   *     completed upload.
+   */
+  @BetaApi
+  public abstract CompleteMultipartUploadResponse completeMultipartUpload(
+      CompleteMultipartUploadRequest request);
+  
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
    *

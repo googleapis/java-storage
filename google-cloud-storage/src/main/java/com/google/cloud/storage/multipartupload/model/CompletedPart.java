@@ -17,6 +17,7 @@ package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+/** Represents a completed part of a multipart upload. */
 public final class CompletedPart {
 
   @JacksonXmlProperty(localName = "PartNumber")
@@ -30,32 +31,65 @@ public final class CompletedPart {
     this.eTag = eTag;
   }
 
+  /**
+   * Creates a new builder for {@link CompletedPart}.
+   *
+   * @return A new builder.
+   */
   public static Builder builder() {
     return new Builder();
   }
 
+  /**
+   * Returns the part number of this completed part.
+   *
+   * @return The part number.
+   */
   public int partNumber() {
     return partNumber;
   }
 
+  /**
+   * Returns the ETag of this completed part.
+   *
+   * @return The ETag.
+   */
   public String eTag() {
     return eTag;
   }
 
+  /** Builder for {@link CompletedPart}. */
   public static class Builder {
     private int partNumber;
     private String etag;
 
+    /**
+     * Sets the part number of the completed part.
+     *
+     * @param partNumber The part number.
+     * @return This builder.
+     */
     public Builder partNumber(int partNumber) {
       this.partNumber = partNumber;
       return this;
     }
 
+    /**
+     * Sets the ETag of the completed part.
+     *
+     * @param etag The ETag.
+     * @return This builder.
+     */
     public Builder eTag(String etag) {
       this.etag = etag;
       return this;
     }
 
+    /**
+     * Builds the {@link CompletedPart} object.
+     *
+     * @return The new {@link CompletedPart} object.
+     */
     public CompletedPart build() {
       return new CompletedPart(partNumber, etag);
     }

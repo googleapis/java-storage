@@ -20,6 +20,7 @@ import static com.google.cloud.storage.Utils.ifNonNull;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -30,6 +31,9 @@ import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -110,6 +114,32 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
+  }
+
+  public CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(URI uri, CompleteMultipartUploadRequest request)
+      throws IOException {
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + urlEncode(request.uploadId());
+    String completeUri = uri.toString() + resourcePath + queryString;
+    
+    HttpRequest httpRequest =
+        requestFactory.buildPostRequest(
+            new GenericUrl(completeUri), getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
+    // httpRequest.getHeaders().setContentType(contentType);
+    // for (Map.Entry<String, String> entry : extensionHeaders.entrySet()) {
+    //   httpRequest.getHeaders().set(entry.getKey(), entry.getValue());
+    // }
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
+  }
+
+  private HttpContent getHttpContentForCompleteMultipartUpload(
+      CompletedMultipartUpload completedMultipartUpload) throws IOException {
+    byte[] bytes = new XmlMapper().writeValueAsBytes(completedMultipartUpload);
+    return new ByteArrayContent("application/xml", bytes);
   }
 
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
