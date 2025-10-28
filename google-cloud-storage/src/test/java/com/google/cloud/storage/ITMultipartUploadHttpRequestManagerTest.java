@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatu
 import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -45,8 +45,10 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,23 +59,25 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.PROD)
 @ParallelFriendly
 public final class ITMultipartUploadHttpRequestManagerTest {
-  private static final XmlMapper xmlMapper = new XmlMapper();
-  private static final NetHttpTransport transport = new NetHttpTransport.Builder().build();
-  private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
-  private HttpStorageOptions httpStorageOptions;
+  private static final XmlMapper xmlMapper;
 
+  static {
+    xmlMapper = new XmlMapper();
+    xmlMapper.registerModule(new JavaTimeModule());
+  }
+
+  private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
-    multipartUploadHttpRequestManager =
-        new MultipartUploadHttpRequestManager(
-            transport.createRequestFactory(), new XmlObjectParser(new XmlMapper()));
-    httpStorageOptions =
+    HttpStorageOptions httpStorageOptions =
         HttpStorageOptions.newBuilder()
             .setProjectId("test-project")
             .setCredentials(NoCredentials.getInstance())
             .build();
+    multipartUploadHttpRequestManager =
+        MultipartUploadHttpRequestManager.createFrom(httpStorageOptions);
   }
 
   @Test
@@ -104,8 +108,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       CreateMultipartUploadResponse response =
-          multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-              endpoint, request, httpStorageOptions);
+          multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
 
       assertThat(response).isNotNull();
       assertThat(response.bucket()).isEqualTo("test-bucket");
@@ -137,7 +140,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           HttpResponseException.class,
           () ->
               multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-                  endpoint, request, httpStorageOptions));
+                  endpoint, request));
     }
   }
 
@@ -170,8 +173,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .cannedAcl(Storage.PredefinedAcl.AUTHENTICATED_READ)
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
@@ -205,8 +207,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .metadata(ImmutableMap.of("key1", "value1", "key2", "value2"))
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
@@ -239,8 +240,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .storageClass(StorageClass.ARCHIVE)
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
@@ -274,8 +274,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .kmsKeyName("projects/p/locations/l/keyRings/r/cryptoKeys/k")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
@@ -308,17 +307,19 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .objectLockMode(ObjectLockMode.GOVERNANCE)
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
   @Test
   public void sendCreateMultipartUploadRequest_withObjectLockRetainUntilDate() throws Exception {
+    OffsetDateTime retainUtil = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-object-lock-retain-until-date"))
-              .isEqualTo("2024-01-01T00:00:00Z");
+          OffsetDateTime actual =
+              Utils.offsetDateTimeRfc3339Codec.decode(
+                  req.headers().get("x-goog-object-lock-retain-until-date"));
+          assertThat(actual).isEqualTo(retainUtil);
           CreateMultipartUploadResponse response =
               CreateMultipartUploadResponse.builder()
                   .bucket("test-bucket")
@@ -340,19 +341,21 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .bucket("test-bucket")
               .key("test-key")
               .contentType("application/octet-stream")
-              .objectLockRetainUntilDate(OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+              .objectLockRetainUntilDate(retainUtil)
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
   @Test
   public void sendCreateMultipartUploadRequest_withCustomTime() throws Exception {
+    OffsetDateTime customTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-custom-time")).isEqualTo("2024-01-01T00:00:00Z");
+          OffsetDateTime actual =
+              Utils.offsetDateTimeRfc3339Codec.decode(req.headers().get("x-goog-custom-time"));
+          assertThat(actual).isEqualTo(customTime);
           CreateMultipartUploadResponse response =
               CreateMultipartUploadResponse.builder()
                   .bucket("test-bucket")
@@ -374,11 +377,10 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .bucket("test-bucket")
               .key("test-key")
               .contentType("application/octet-stream")
-              .customTime(OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+              .customTime(customTime)
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(
-          endpoint, request, httpStorageOptions);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
     }
   }
 
@@ -386,24 +388,26 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void sendListPartsRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          String xmlResponse =
-              "<?xml version='1.0' encoding='UTF-8'?>\n"
-                  + "<ListPartsResult>\n"
-                  + "  <Bucket>test-bucket</Bucket>\n"
-                  + "  <Key>test-key</Key>\n"
-                  + "  <UploadId>test-upload-id</UploadId>\n"
-                  + "  <PartNumberMarker>0</PartNumberMarker>\n"
-                  + "  <NextPartNumberMarker>1</NextPartNumberMarker>\n"
-                  + "  <MaxParts>1</MaxParts>\n"
-                  + "  <IsTruncated>false</IsTruncated>\n"
-                  + "  <Part>\n"
-                  + "    <PartNumber>1</PartNumber>\n"
-                  + "    <ETag>etag</ETag>\n"
-                  + "    <Size>123</Size>\n"
-                  + "    <LastModified>2024-05-08T17:50:00.000Z</LastModified>\n"
-                  + "  </Part>\n"
-                  + "</ListPartsResult>";
-          ByteBuf buf = Unpooled.wrappedBuffer(xmlResponse.getBytes());
+          OffsetDateTime lastModified = OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC);
+          ListPartsResponse listPartsResponse =
+              ListPartsResponse.builder()
+                  .setBucket("test-bucket")
+                  .setKey("test-key")
+                  .setUploadId("test-upload-id")
+                  .setPartNumberMarker(0)
+                  .setNextPartNumberMarker(1)
+                  .setMaxParts(1)
+                  .setIsTruncated(false)
+                  .setParts(
+                      Collections.singletonList(
+                          Part.builder()
+                              .partNumber(1)
+                              .eTag("\"etag\"")
+                              .size(123)
+                              .lastModified(lastModified)
+                              .build()))
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listPartsResponse));
 
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
@@ -423,8 +427,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       ListPartsResponse response =
-          multipartUploadHttpRequestManager.sendListPartsRequest(
-              endpoint, request, httpStorageOptions);
+          multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request);
 
       assertThat(response).isNotNull();
       assertThat(response.getBucket()).isEqualTo("test-bucket");
@@ -437,14 +440,87 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThat(response.getParts()).hasSize(1);
       Part part = response.getParts().get(0);
       assertThat(part.partNumber()).isEqualTo(1);
-      assertThat(part.eTag()).isEqualTo("etag");
+      assertThat(part.eTag()).isEqualTo("\"etag\"");
       assertThat(part.size()).isEqualTo(123);
-      assertThat(part.lastModified()).isEqualTo("2024-05-08T17:50:00.000Z");
+      assertThat(part.lastModified())
+          .isEqualTo(OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC));
     }
   }
 
   @Test
-  public void sendListPartsRequest_error() throws Exception {
+  public void sendListPartsRequest_bucketNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Bucket not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_keyNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Key not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_badRequest() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.BAD_REQUEST,
+                Unpooled.wrappedBuffer("Invalid uploadId".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("invalid-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_errorResponse() throws Exception {
     HttpRequestHandler handler =
         req -> {
           FullHttpResponse resp =
@@ -464,9 +540,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
 
       assertThrows(
           HttpResponseException.class,
-          () ->
-              multipartUploadHttpRequestManager.sendListPartsRequest(
-                  endpoint, request, httpStorageOptions));
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
     }
   }
 
@@ -494,8 +568,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       AbortMultipartUploadResponse response =
-          multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(
-              endpoint, request, httpStorageOptions);
+          multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(endpoint, request);
 
       assertThat(response).isNotNull();
     }
@@ -520,11 +593,10 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .uploadId("test-upload-id")
               .build();
 
-          assertThrows(
-              HttpResponseException.class,
-              () ->
-                  multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(
-                      endpoint, request, httpStorageOptions));
+      assertThrows(
+          HttpResponseException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(endpoint, request));
     }
   }
 }

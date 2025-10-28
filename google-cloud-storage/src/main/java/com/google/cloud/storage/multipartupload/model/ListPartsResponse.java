@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
@@ -38,27 +39,51 @@ public final class ListPartsResponse {
   private String uploadId;
 
   @JacksonXmlProperty(localName = "PartNumberMarker")
-  private Integer partNumberMarker;
+  private int partNumberMarker;
 
   @JacksonXmlProperty(localName = "NextPartNumberMarker")
-  private Integer nextPartNumberMarker;
+  private int nextPartNumberMarker;
 
   @JacksonXmlProperty(localName = "MaxParts")
-  private Integer maxParts;
+  private int maxParts;
 
   @JsonAlias("truncated") // S3 returns "truncated", GCS returns "IsTruncated"
   @JacksonXmlProperty(localName = "IsTruncated")
   private boolean isTruncated;
 
   @JacksonXmlProperty(localName = "Owner")
-  private String owner;
+  private Owner owner;
 
   @JacksonXmlProperty(localName = "StorageClass")
-  private String storageClass;
+  private StorageClass storageClass;
 
   @JacksonXmlElementWrapper(useWrapping = false)
   @JacksonXmlProperty(localName = "Part")
   private List<Part> parts;
+
+  private ListPartsResponse() {}
+
+  private ListPartsResponse(Builder builder) {
+    this.bucket = builder.bucket;
+    this.key = builder.key;
+    this.uploadId = builder.uploadId;
+    this.partNumberMarker = builder.partNumberMarker;
+    this.nextPartNumberMarker = builder.nextPartNumberMarker;
+    this.maxParts = builder.maxParts;
+    this.isTruncated = builder.isTruncated;
+    this.owner = builder.owner;
+    this.storageClass = builder.storageClass;
+    this.parts = builder.parts;
+  }
+
+  /**
+   * Creates a new {@code Builder} for {@code ListPartsResponse} objects.
+   *
+   * @return A new {@code Builder} instance.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
 
   /**
    * Returns the bucket name.
@@ -92,7 +117,7 @@ public final class ListPartsResponse {
    *
    * @return the part number marker.
    */
-  public Integer getPartNumberMarker() {
+  public int getPartNumberMarker() {
     return partNumberMarker;
   }
 
@@ -101,7 +126,7 @@ public final class ListPartsResponse {
    *
    * @return the next part number marker.
    */
-  public Integer getNextPartNumberMarker() {
+  public int getNextPartNumberMarker() {
     return nextPartNumberMarker;
   }
 
@@ -110,7 +135,7 @@ public final class ListPartsResponse {
    *
    * @return the maximum number of parts to return.
    */
-  public Integer getMaxParts() {
+  public int getMaxParts() {
     return maxParts;
   }
 
@@ -128,7 +153,7 @@ public final class ListPartsResponse {
    *
    * @return the owner of the object.
    */
-  public String getOwner() {
+  public Owner getOwner() {
     return owner;
   }
 
@@ -137,7 +162,7 @@ public final class ListPartsResponse {
    *
    * @return the storage class of the object.
    */
-  public String getStorageClass() {
+  public StorageClass getStorageClass() {
     return storageClass;
   }
 
@@ -200,5 +225,141 @@ public final class ListPartsResponse {
         .add("storageClass", storageClass)
         .add("parts", parts)
         .toString();
+  }
+
+  /** Builder for {@code ListPartsResponse}. */
+  @BetaApi
+  public static final class Builder {
+    private String bucket;
+    private String key;
+    private String uploadId;
+    private int partNumberMarker;
+    private int nextPartNumberMarker;
+    private int maxParts;
+    private boolean isTruncated;
+    private Owner owner;
+    private StorageClass storageClass;
+    private List<Part> parts;
+
+    private Builder() {}
+
+    /**
+     * Sets the bucket name.
+     *
+     * @param bucket The bucket name.
+     * @return The builder instance.
+     */
+    public Builder setBucket(String bucket) {
+      this.bucket = bucket;
+      return this;
+    }
+
+    /**
+     * Sets the object name.
+     *
+     * @param key The object name.
+     * @return The builder instance.
+     */
+    public Builder setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    /**
+     * Sets the upload ID.
+     *
+     * @param uploadId The upload ID.
+     * @return The builder instance.
+     */
+    public Builder setUploadId(String uploadId) {
+      this.uploadId = uploadId;
+      return this;
+    }
+
+    /**
+     * Sets the part number marker.
+     *
+     * @param partNumberMarker The part number marker.
+     * @return The builder instance.
+     */
+    public Builder setPartNumberMarker(int partNumberMarker) {
+      this.partNumberMarker = partNumberMarker;
+      return this;
+    }
+
+    /**
+     * Sets the next part number marker.
+     *
+     * @param nextPartNumberMarker The next part number marker.
+     * @return The builder instance.
+     */
+    public Builder setNextPartNumberMarker(int nextPartNumberMarker) {
+      this.nextPartNumberMarker = nextPartNumberMarker;
+      return this;
+    }
+
+    /**
+     * Sets the maximum number of parts to return.
+     *
+     * @param maxParts The maximum number of parts to return.
+     * @return The builder instance.
+     */
+    public Builder setMaxParts(int maxParts) {
+      this.maxParts = maxParts;
+      return this;
+    }
+
+    /**
+     * Sets whether the response is truncated.
+     *
+     * @param isTruncated True if the response is truncated, false otherwise.
+     * @return The builder instance.
+     */
+    public Builder setIsTruncated(boolean isTruncated) {
+      this.isTruncated = isTruncated;
+      return this;
+    }
+
+    /**
+     * Sets the owner of the object.
+     *
+     * @param owner The owner of the object.
+     * @return The builder instance.
+     */
+    public Builder setOwner(Owner owner) {
+      this.owner = owner;
+      return this;
+    }
+
+    /**
+     * Sets the storage class of the object.
+     *
+     * @param storageClass The storage class of the object.
+     * @return The builder instance.
+     */
+    public Builder setStorageClass(StorageClass storageClass) {
+      this.storageClass = storageClass;
+      return this;
+    }
+
+    /**
+     * Sets the list of parts.
+     *
+     * @param parts The list of parts.
+     * @return The builder instance.
+     */
+    public Builder setParts(List<Part> parts) {
+      this.parts = parts;
+      return this;
+    }
+
+    /**
+     * Builds a {@code ListPartsResponse} object.
+     *
+     * @return A new {@code ListPartsResponse} instance.
+     */
+    public ListPartsResponse build() {
+      return new ListPartsResponse(this);
+    }
   }
 }
