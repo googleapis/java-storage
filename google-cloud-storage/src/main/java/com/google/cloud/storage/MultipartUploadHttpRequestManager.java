@@ -34,6 +34,8 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -112,6 +114,23 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
+  public UploadPartResponse sendUploadPartRequest(
+      URI uri, UploadPartRequest request, RequestBody requestBody) throws IOException {
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString =
+        "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
+    String uploadUri = uri.toString() + resourcePath + queryString;
+    HttpRequest httpRequest =
+        requestFactory.buildPutRequest(new GenericUrl(uploadUri), requestBody.getContent());
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    addHeadersForUploadPart(requestBody, httpRequest.getHeaders());
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(UploadPartResponse.class);
+  }
+
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
     Storage storage = options.getStorageRpcV1().getStorage();
     ImmutableMap.Builder<String, String> stableHeaders =
@@ -131,6 +150,10 @@ final class MultipartUploadHttpRequestManager {
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
+  }
+
+  private void addHeadersForUploadPart(RequestBody requestBody, HttpHeaders headers) {
+    headers.put("x-goog-hash", "crc32c=" + requestBody.getContent().getCrc32c());
   }
 
   private void addHeadersForCreateMultipartUpload(

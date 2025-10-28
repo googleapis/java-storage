@@ -24,6 +24,8 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.net.URI;
 
@@ -73,6 +75,14 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
     return retrier.run(
         retryAlgorithmManager.idempotent(),
         () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request),
+        Decoder.identity());
+  }
+
+  @Override
+  public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody) {
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendUploadPartRequest(uri, request, requestBody),
         Decoder.identity());
   }
 }
