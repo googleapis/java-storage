@@ -26,6 +26,8 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.net.URI;
 
@@ -83,7 +85,17 @@ public abstract class MultipartUploadClient {
   @BetaApi
   public abstract CompleteMultipartUploadResponse completeMultipartUpload(
       CompleteMultipartUploadRequest request);
-  
+
+  /**
+   * Uploads a part in a multipart upload.
+   *
+   * @param request The request object containing the details for uploading the part.
+   * @param requestBody The content of the part to upload.
+   * @return An {@link UploadPartResponse} object containing the ETag of the uploaded part.
+   */
+  @BetaApi
+  public abstract UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody);
+
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
    *
