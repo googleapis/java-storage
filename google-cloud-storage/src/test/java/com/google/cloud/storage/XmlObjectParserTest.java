@@ -17,48 +17,156 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.common.base.MoreObjects;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import org.junit.After;
+import java.util.Objects;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 public class XmlObjectParserTest {
 
-  @Mock private XmlMapper xmlMapper;
-
-  private AutoCloseable mocks;
   private XmlObjectParser xmlObjectParser;
 
   @Before
   public void setUp() {
-    mocks = MockitoAnnotations.openMocks(this);
-    xmlObjectParser = new XmlObjectParser(xmlMapper);
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    mocks.close();
+    xmlObjectParser = new XmlObjectParser(new XmlMapper());
   }
 
   @Test
-  public void testParseAndClose() throws IOException {
-    InputStream in = new ByteArrayInputStream("<Test/>".getBytes(StandardCharsets.UTF_8));
-    TestXmlObject expected = new TestXmlObject();
-    when(xmlMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(expected);
-    TestXmlObject actual =
-        xmlObjectParser.parseAndClose(in, StandardCharsets.UTF_8, TestXmlObject.class);
-    assertThat(actual).isSameInstanceAs(expected);
+  public void testParseStringValueEnum() throws IOException {
+    // language=xml
+    String xml =
+        "<TestXmlObject2>\n" + "  <storageClass>STANDARD</storageClass>" + "</TestXmlObject2>";
+    InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+    TestXmlObject2 expected = new TestXmlObject2(StorageClass.STANDARD);
+    TestXmlObject2 actual =
+        xmlObjectParser.parseAndClose(in, StandardCharsets.UTF_8, TestXmlObject2.class);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void testNestedParseStringValueEnum_undefined() throws IOException {
+    // language=xml
+    String xml =
+        "<ListPartsResponse>\n"
+            + "  <truncated>false</truncated>\n"
+            + "  <Bucket>bucket</Bucket>\n"
+            + "  <Key>key</Key>\n"
+            + "  <UploadId/>\n"
+            + "  <PartNumberMarker>0</PartNumberMarker>\n"
+            + "  <NextPartNumberMarker>0</NextPartNumberMarker>\n"
+            + "  <MaxParts>0</MaxParts>\n"
+            + "  <IsTruncated>false</IsTruncated>\n"
+            + "  <Owner/>\n"
+            + "  <Part>\n"
+            + "    <PartNumber>1</PartNumber>\n"
+            + "    <ETag>etag</ETag>\n"
+            + "    <Size>33</Size>\n"
+            + "    <LastModified/>\n"
+            + "  </Part>\n"
+            + "</ListPartsResponse>";
+    System.out.println(xml);
+    ListPartsResponse listPartsResponse =
+        xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
+    assertThat(listPartsResponse.getStorageClass()).isNull();
+  }
+
+  @Test
+  public void testNestedParseStringValueEnum_null() throws IOException {
+    // language=xml
+    String xml =
+        "<ListPartsResponse>\n"
+            + "  <truncated>false</truncated>\n"
+            + "  <Bucket>bucket</Bucket>\n"
+            + "  <Key>key</Key>\n"
+            + "  <UploadId/>\n"
+            + "  <PartNumberMarker>0</PartNumberMarker>\n"
+            + "  <NextPartNumberMarker>0</NextPartNumberMarker>\n"
+            + "  <MaxParts>0</MaxParts>\n"
+            + "  <IsTruncated>false</IsTruncated>\n"
+            + "  <Owner/>\n"
+            + "  <StorageClass/>"
+            + "  <Part>\n"
+            + "    <PartNumber>1</PartNumber>\n"
+            + "    <ETag>etag</ETag>\n"
+            + "    <Size>33</Size>\n"
+            + "    <LastModified/>\n"
+            + "  </Part>\n"
+            + "</ListPartsResponse>";
+    System.out.println(xml);
+    ListPartsResponse listPartsResponse =
+        xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
+    assertThat(listPartsResponse.getStorageClass()).isNull();
+  }
+
+  @Test
+  public void testNestedParseStringValueEnum_nonNull() throws IOException {
+    // language=xml
+    String xml =
+        "<ListPartsResponse>\n"
+            + "  <truncated>false</truncated>\n"
+            + "  <Bucket>bucket</Bucket>\n"
+            + "  <Key>key</Key>\n"
+            + "  <UploadId/>\n"
+            + "  <PartNumberMarker>0</PartNumberMarker>\n"
+            + "  <NextPartNumberMarker>0</NextPartNumberMarker>\n"
+            + "  <MaxParts>0</MaxParts>\n"
+            + "  <IsTruncated>false</IsTruncated>\n"
+            + "  <Owner/>\n"
+            + "  <StorageClass>STANDARD</StorageClass>"
+            + "  <Part>\n"
+            + "    <PartNumber>1</PartNumber>\n"
+            + "    <ETag>etag</ETag>\n"
+            + "    <Size>33</Size>\n"
+            + "    <LastModified/>\n"
+            + "  </Part>\n"
+            + "</ListPartsResponse>";
+    System.out.println(xml);
+    ListPartsResponse listPartsResponse =
+        xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
+    assertThat(listPartsResponse.getStorageClass()).isEqualTo(StorageClass.STANDARD);
   }
 
   private static class TestXmlObject {}
+
+  private static final class TestXmlObject2 {
+    @JacksonXmlProperty(localName = "storageClass")
+    private StorageClass storageClass;
+
+    private TestXmlObject2() {}
+
+    public TestXmlObject2(StorageClass storageClass) {
+      this.storageClass = storageClass;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof TestXmlObject2)) {
+        return false;
+      }
+      TestXmlObject2 that = (TestXmlObject2) o;
+      return Objects.equals(storageClass, that.storageClass);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(storageClass);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("storageClass", storageClass).toString();
+    }
+  }
 }
