@@ -15,16 +15,31 @@
  */
 package com.google.cloud.storage;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleDeserializers;
+import com.fasterxml.jackson.databind.module.SimpleSerializers;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.util.ObjectParser;
+import com.google.cloud.StringEnumValue;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.function.Function;
 
 final class XmlObjectParser implements ObjectParser {
   private final XmlMapper xmlMapper;
@@ -33,6 +48,31 @@ final class XmlObjectParser implements ObjectParser {
   public XmlObjectParser(XmlMapper xmlMapper) {
     this.xmlMapper = xmlMapper;
     this.xmlMapper.registerModule(new JavaTimeModule());
+    this.xmlMapper.registerModule(
+        new Module() {
+          @Override
+          public String getModuleName() {
+            return this.getClass().getPackage().getName();
+          }
+
+          @Override
+          public Version version() {
+            return Version.unknownVersion();
+          }
+
+          @Override
+          public void setupModule(SetupContext context) {
+            context.addSerializers(
+                new SimpleSerializers(
+                    ImmutableList.of(new StringEnumValueSerializer<>(StorageClass.class))));
+            context.addDeserializers(
+                new SimpleDeserializers(
+                    ImmutableMap.of(
+                        StorageClass.class,
+                        new StringEnumValueDeserializer<>(
+                            StorageClass.class, StorageClass::valueOf))));
+          }
+        });
   }
 
   @Override
@@ -61,5 +101,40 @@ final class XmlObjectParser implements ObjectParser {
     throw new UnsupportedOperationException(
         "XmlObjectParse#"
             + CrossTransportUtils.fmtMethodName("parseAndClose", Reader.class, Type.class));
+  }
+
+  private static final class StringEnumValueDeserializer<E extends StringEnumValue>
+      extends StdDeserializer<E> {
+
+    private final Function<String, E> constructor;
+
+    private StringEnumValueDeserializer(Class<E> cl, Function<String, E> constructor) {
+      super(cl);
+      this.constructor = constructor;
+    }
+
+    @Override
+    public E deserialize(JsonParser p, DeserializationContext ctxt)
+        throws IOException, JacksonException {
+      String s = p.readValueAs(String.class);
+      if (s == null || s.trim().isEmpty()) {
+        return null;
+      }
+      return constructor.apply(s);
+    }
+  }
+
+  private static final class StringEnumValueSerializer<E extends StringEnumValue>
+      extends StdSerializer<E> {
+
+    private StringEnumValueSerializer(Class<E> cl) {
+      super(cl);
+    }
+
+    @Override
+    public void serialize(E value, JsonGenerator gen, SerializerProvider provider)
+        throws IOException {
+      gen.writeString(value.name());
+    }
   }
 }
