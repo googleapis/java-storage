@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents the XML payload for a completed multipart upload. This is used in the request body when
- * completing a multipart upload.
+ * Represents the XML payload for a completed multipart upload. This is used in the request body
+ * when completing a multipart upload.
  */
 @JacksonXmlRootElement(localName = "CompleteMultipartUpload")
 public class CompletedMultipartUpload {
@@ -65,9 +65,7 @@ public class CompletedMultipartUpload {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("completedPartList", completedPartList)
-        .toString();
+    return MoreObjects.toStringHelper(this).add("completedPartList", completedPartList).toString();
   }
 
   /**

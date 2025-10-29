@@ -29,6 +29,9 @@ import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Hasher.GuavaHasher;
+import com.google.cloud.storage.Hasher.NoOpHasher;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
@@ -46,6 +49,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -69,7 +73,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String createUri = uri.toString() + resourcePath + "?uploads";
 
     HttpRequest httpRequest =
@@ -86,7 +90,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + urlEncode(request.uploadId());
 
     if (request.getMaxParts() != null) {
@@ -108,7 +112,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + urlEncode(request.uploadId());
     String abortUri = uri.toString() + resourcePath + queryString;
 
@@ -118,20 +122,44 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
-  public CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(URI uri, CompleteMultipartUploadRequest request)
-      throws IOException {
+  public CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
+      URI uri, CompleteMultipartUploadRequest request) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + urlEncode(request.uploadId());
     String completeUri = uri.toString() + resourcePath + queryString;
-    
+
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
-            new GenericUrl(completeUri), getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
+            new GenericUrl(completeUri),
+            getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    addChecksumHeader(getCrc32cChecksum(request.multipartUpload()), httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
+  }
+
+  private String getCrc32cChecksum(CompletedMultipartUpload completedMultipartUpload) {
+    GuavaHasher hasher;
+    {
+      Hasher defaultHasher = Hasher.defaultHasher();
+      if (defaultHasher instanceof NoOpHasher) {
+        return null;
+      } else {
+        hasher = Hasher.enabled();
+      }
+    }
+    try {
+      byte[] bytes = new XmlMapper().writeValueAsBytes(completedMultipartUpload);
+      ByteBuffer buffer = ByteBuffer.wrap(bytes);
+      Crc32cLengthKnown crc32c = hasher.hash(buffer::duplicate);
+      return Utils.crc32cCodec.encode(crc32c.getValue());
+    } catch (IOException e) {
+      throw new RuntimeException(
+          "Failed to serialize CompleteMultipartUpload for CRC32C calculation", e);
+    }
   }
 
   private HttpContent getHttpContentForCompleteMultipartUpload(
@@ -144,14 +172,14 @@ final class MultipartUploadHttpRequestManager {
       URI uri, UploadPartRequest request, RequestBody requestBody) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString =
         "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
     String uploadUri = uri.toString() + resourcePath + queryString;
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), requestBody.getContent());
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addHeadersForUploadPart(requestBody, httpRequest.getHeaders());
+    addChecksumHeader(requestBody.getContent().getCrc32c(), httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(UploadPartResponse.class);
@@ -178,8 +206,8 @@ final class MultipartUploadHttpRequestManager {
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
   }
 
-  private void addHeadersForUploadPart(RequestBody requestBody, HttpHeaders headers) {
-    headers.put("x-goog-hash", "crc32c=" + requestBody.getContent().getCrc32c());
+  private void addChecksumHeader(String crc32cChecksum, HttpHeaders headers) {
+    headers.put("x-goog-hash", "crc32c=" + crc32cChecksum);
   }
 
   private void addHeadersForCreateMultipartUpload(
