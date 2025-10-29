@@ -134,6 +134,10 @@ public final class GrpcStorageOptions extends StorageOptions
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
+  // If true, disable the bound-token-by-default feature for DirectPath.
+  private static final boolean DIRECT_PATH_BOUND_TOKEN_DISABLED =
+      Boolean.parseBoolean(
+          System.getProperty("com.google.cloud.storage.grpc.bound_token", "false"));
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final java.time.Duration terminationAwaitDuration;
@@ -318,10 +322,12 @@ public final class GrpcStorageOptions extends StorageOptions
         InstantiatingGrpcChannelProvider.newBuilder()
             .setEndpoint(endpoint)
             .setAllowNonDefaultServiceAccount(true)
-            .setAttemptDirectPath(attemptDirectPath)
-            .setAllowHardBoundTokenTypes(
-                Collections.singletonList(
-                    InstantiatingGrpcChannelProvider.HardBoundTokenTypes.ALTS));
+            .setAttemptDirectPath(attemptDirectPath);
+
+    if (!DIRECT_PATH_BOUND_TOKEN_DISABLED) {
+      channelProviderBuilder.setAllowHardBoundTokenTypes(
+          Collections.singletonList(InstantiatingGrpcChannelProvider.HardBoundTokenTypes.ALTS));
+    }
 
     if (!NoopGrpcInterceptorProvider.INSTANCE.equals(grpcInterceptorProvider)) {
       channelProviderBuilder.setInterceptorProvider(grpcInterceptorProvider);
