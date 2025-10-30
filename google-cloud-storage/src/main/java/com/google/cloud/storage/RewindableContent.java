@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.GuavaHasher;
 import com.google.cloud.storage.Hasher.NoOpHasher;
@@ -58,6 +59,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     return false;
   }
 
+  @BetaApi
   abstract Crc32cLengthKnown getCrc32c();
 
   static RewindableContent empty() {
@@ -118,6 +120,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
+    @BetaApi
     Crc32cLengthKnown getCrc32c() {
       return Crc32cValue.zero();
     }
@@ -177,6 +180,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
+    @BetaApi
     Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
@@ -302,6 +306,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     }
 
     @Override
+    @BetaApi
     Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {

@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-final class UploadResponseParser {
+public final class UploadResponseParser {
 
   private UploadResponseParser() {}
 
-  static UploadPartResponse parse(HttpResponse response) {
+  public static UploadPartResponse parse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
     return UploadPartResponse.builder()

@@ -37,6 +37,7 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -127,9 +128,8 @@ final class MultipartUploadHttpRequestManager {
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
-    httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
-    return httpRequest.execute().parseAs(UploadPartResponse.class);
+    return UploadResponseParser.parse(httpRequest.execute());
   }
 
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
