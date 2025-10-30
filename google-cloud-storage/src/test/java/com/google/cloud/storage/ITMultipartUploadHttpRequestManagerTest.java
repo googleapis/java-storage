@@ -681,7 +681,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       assertThrows(
-          RuntimeException.class,
+          HttpResponseException.class,
           () ->
               multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(
                   endpoint, request));
