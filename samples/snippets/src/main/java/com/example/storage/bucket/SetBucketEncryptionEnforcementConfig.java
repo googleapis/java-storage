@@ -118,4 +118,4 @@ public class SetBucketEncryptionEnforcementConfig {
     System.out.println("Bucket " + bucket.getName() + " created with a policy to restrict CSEK.");
   }
 }
-// [END storage_get_encryption_enforcement_config]
+// [END storage_set_encryption_enforcement_config]
