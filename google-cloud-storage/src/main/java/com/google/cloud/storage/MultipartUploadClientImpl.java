@@ -82,6 +82,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   }
 
   @Override
+  @BetaApi
   public CompleteMultipartUploadResponse completeMultipartUpload(
       CompleteMultipartUploadRequest request) {
     return retrier.run(
@@ -91,6 +92,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   }
 
   @Override
+  @BetaApi
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody) {
     AtomicBoolean dirty = new AtomicBoolean(false);
     return retrier.run(
