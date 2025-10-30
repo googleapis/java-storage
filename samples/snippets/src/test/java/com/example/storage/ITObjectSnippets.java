@@ -92,6 +92,7 @@ import java.util.Date;
 import java.util.Random;
 import javax.net.ssl.HttpsURLConnection;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -167,6 +168,7 @@ public class ITObjectSnippets extends TestBase {
     assertThat(snippetOutput).contains("The contents of " + objectName);
   }
 
+  @Ignore("TODO(b/456381873): Test fails in CI due to project's public access prevention policy.")
   @Test
   public void testDownloadPublicObject() throws Exception {
     try (TemporaryBucket tmpBucket =
@@ -436,6 +438,7 @@ public class ITObjectSnippets extends TestBase {
     }
   }
 
+  @Ignore("TODO(b/456381873): Test fails in CI due to project's public access prevention policy.")
   @Test
   public void testMakeObjectPublic() {
     String aclBlob = generator.randomObjectName();

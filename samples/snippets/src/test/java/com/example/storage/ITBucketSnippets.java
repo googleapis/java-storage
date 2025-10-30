@@ -25,52 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.example.storage.bucket.AddBucketIamConditionalBinding;
-import com.example.storage.bucket.AddBucketIamMember;
-import com.example.storage.bucket.AddBucketLabel;
-import com.example.storage.bucket.ChangeDefaultStorageClass;
-import com.example.storage.bucket.ConfigureBucketCors;
-import com.example.storage.bucket.CreateBucket;
-import com.example.storage.bucket.CreateBucketWithObjectRetention;
-import com.example.storage.bucket.CreateBucketWithStorageClassAndLocation;
-import com.example.storage.bucket.CreateBucketWithTurboReplication;
-import com.example.storage.bucket.DeleteBucket;
-import com.example.storage.bucket.DisableBucketVersioning;
-import com.example.storage.bucket.DisableDefaultEventBasedHold;
-import com.example.storage.bucket.DisableLifecycleManagement;
-import com.example.storage.bucket.DisableRequesterPays;
-import com.example.storage.bucket.DisableSoftDelete;
-import com.example.storage.bucket.DisableUniformBucketLevelAccess;
-import com.example.storage.bucket.EnableBucketVersioning;
-import com.example.storage.bucket.EnableDefaultEventBasedHold;
-import com.example.storage.bucket.EnableLifecycleManagement;
-import com.example.storage.bucket.EnableRequesterPays;
-import com.example.storage.bucket.EnableUniformBucketLevelAccess;
-import com.example.storage.bucket.GetBucketMetadata;
-import com.example.storage.bucket.GetBucketRpo;
-import com.example.storage.bucket.GetDefaultEventBasedHold;
-import com.example.storage.bucket.GetPublicAccessPrevention;
-import com.example.storage.bucket.GetRetentionPolicy;
-import com.example.storage.bucket.GetUniformBucketLevelAccess;
-import com.example.storage.bucket.ListBucketIamMembers;
-import com.example.storage.bucket.ListBuckets;
-import com.example.storage.bucket.LockRetentionPolicy;
-import com.example.storage.bucket.MakeBucketPublic;
-import com.example.storage.bucket.RemoveBucketCors;
-import com.example.storage.bucket.RemoveBucketDefaultKmsKey;
-import com.example.storage.bucket.RemoveBucketIamConditionalBinding;
-import com.example.storage.bucket.RemoveBucketIamMember;
-import com.example.storage.bucket.RemoveBucketLabel;
-import com.example.storage.bucket.RemoveRetentionPolicy;
-import com.example.storage.bucket.SetAsyncTurboRpo;
-import com.example.storage.bucket.SetBucketDefaultKmsKey;
-import com.example.storage.bucket.SetBucketWebsiteInfo;
-import com.example.storage.bucket.SetClientEndpoint;
-import com.example.storage.bucket.SetDefaultRpo;
-import com.example.storage.bucket.SetPublicAccessPreventionEnforced;
-import com.example.storage.bucket.SetPublicAccessPreventionInherited;
-import com.example.storage.bucket.SetRetentionPolicy;
-import com.example.storage.bucket.SetSoftDeletePolicy;
+import com.example.storage.bucket.*;
 import com.example.storage.object.DownloadRequesterPaysObject;
 import com.example.storage.object.ReleaseEventBasedHold;
 import com.example.storage.object.ReleaseTemporaryHold;
@@ -98,11 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
 import org.threeten.bp.Duration;
@@ -425,6 +376,7 @@ public class ITBucketSnippets {
             .build());
   }
 
+  @Ignore("TODO(b/456381873): Test fails in CI due to project's public access prevention policy.")
   @Test
   public void testMakeBucketPublic() throws Throwable {
     MakeBucketPublic.makeBucketPublic(PROJECT_ID, BUCKET);
