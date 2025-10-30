@@ -15,6 +15,7 @@
  */
 package com.google.cloud.storage;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.api.core.ApiFunction;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
@@ -111,7 +112,11 @@ public final class StorageClass extends StringEnumValue {
   }
 
   /** Get the StorageClass for the given String constant, and allow unrecognized values. */
+  @JsonCreator
   public static StorageClass valueOf(String constant) {
+    if (constant == null || constant.isEmpty()) {
+      return null;
+    }
     return type.valueOf(constant);
   }
 

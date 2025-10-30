@@ -30,6 +30,8 @@ import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -70,6 +72,27 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CreateMultipartUploadResponse.class);
+  }
+
+  ListPartsResponse sendListPartsRequest(URI uri, ListPartsRequest request) throws IOException {
+
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + urlEncode(request.uploadId());
+
+    if (request.getMaxParts() != null) {
+      queryString += "&max-parts=" + request.getMaxParts();
+    }
+    if (request.getPartNumberMarker() != null) {
+      queryString += "&part-number-marker=" + request.getPartNumberMarker();
+    }
+    String listUri = uri.toString() + resourcePath + queryString;
+    HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
   @SuppressWarnings("DataFlowIssue")

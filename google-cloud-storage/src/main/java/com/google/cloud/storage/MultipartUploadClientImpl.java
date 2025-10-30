@@ -16,9 +16,12 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import java.io.IOException;
 import java.net.URI;
 
@@ -32,19 +35,33 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   private final MultipartUploadHttpRequestManager httpRequestManager;
   private final Retrier retrier;
   private final URI uri;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
 
   MultipartUploadClientImpl(
       URI uri,
       Retrier retrier,
-      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager,
+      HttpRetryAlgorithmManager retryAlgorithmManager) {
     this.httpRequestManager = multipartUploadHttpRequestManager;
     this.retrier = retrier;
     this.uri = uri;
+    this.retryAlgorithmManager = retryAlgorithmManager;
   }
 
+  @Override
   @BetaApi
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
       throws IOException {
     return httpRequestManager.sendCreateMultipartUploadRequest(uri, request);
+  }
+
+  @Override
+  @BetaApi
+  public ListPartsResponse listParts(ListPartsRequest request) {
+
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendListPartsRequest(uri, request),
+        Decoder.identity());
   }
 }

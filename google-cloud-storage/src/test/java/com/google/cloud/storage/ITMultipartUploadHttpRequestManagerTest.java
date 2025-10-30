@@ -22,6 +22,7 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatu
 import static org.junit.Assert.assertThrows;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
@@ -31,7 +32,10 @@ import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
+import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
+import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
@@ -39,8 +43,10 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,7 +57,13 @@ import org.junit.runner.RunWith;
 @SingleBackend(Backend.PROD)
 @ParallelFriendly
 public final class ITMultipartUploadHttpRequestManagerTest {
-  private static final XmlMapper xmlMapper = new XmlMapper();
+  private static final XmlMapper xmlMapper;
+
+  static {
+    xmlMapper = new XmlMapper();
+    xmlMapper.registerModule(new JavaTimeModule());
+  }
+
   private MultipartUploadHttpRequestManager multipartUploadHttpRequestManager;
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
 
@@ -367,6 +379,166 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_success() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          OffsetDateTime lastModified = OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC);
+          ListPartsResponse listPartsResponse =
+              ListPartsResponse.builder()
+                  .setBucket("test-bucket")
+                  .setKey("test-key")
+                  .setUploadId("test-upload-id")
+                  .setPartNumberMarker(0)
+                  .setNextPartNumberMarker(1)
+                  .setMaxParts(1)
+                  .setIsTruncated(false)
+                  .setParts(
+                      Collections.singletonList(
+                          Part.builder()
+                              .partNumber(1)
+                              .eTag("\"etag\"")
+                              .size(123)
+                              .lastModified(lastModified)
+                              .build()))
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listPartsResponse));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .maxParts(1)
+              .partNumberMarker(0)
+              .build();
+
+      ListPartsResponse response =
+          multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.getBucket()).isEqualTo("test-bucket");
+      assertThat(response.getKey()).isEqualTo("test-key");
+      assertThat(response.getUploadId()).isEqualTo("test-upload-id");
+      assertThat(response.getPartNumberMarker()).isEqualTo(0);
+      assertThat(response.getNextPartNumberMarker()).isEqualTo(1);
+      assertThat(response.getMaxParts()).isEqualTo(1);
+      assertThat(response.isTruncated()).isFalse();
+      assertThat(response.getParts()).hasSize(1);
+      Part part = response.getParts().get(0);
+      assertThat(part.partNumber()).isEqualTo(1);
+      assertThat(part.eTag()).isEqualTo("\"etag\"");
+      assertThat(part.size()).isEqualTo(123);
+      assertThat(part.lastModified())
+          .isEqualTo(OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_bucketNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Bucket not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_keyNotFound() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.NOT_FOUND,
+                Unpooled.wrappedBuffer("Key not found".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_badRequest() throws Exception {
+    HttpRequestHandler handler =
+        req ->
+            new DefaultFullHttpResponse(
+                req.protocolVersion(),
+                HttpResponseStatus.BAD_REQUEST,
+                Unpooled.wrappedBuffer("Invalid uploadId".getBytes(StandardCharsets.UTF_8)));
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("invalid-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendListPartsRequest_errorResponse() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
     }
   }
 }
