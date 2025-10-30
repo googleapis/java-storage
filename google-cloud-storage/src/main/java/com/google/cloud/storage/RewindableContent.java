@@ -58,7 +58,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     return false;
   }
 
-  abstract String getCrc32c();
+  abstract Crc32cLengthKnown getCrc32c();
 
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
@@ -118,9 +118,8 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    String getCrc32c() {
-      Crc32cLengthKnown cumulative = Crc32cValue.zero();
-      return Utils.crc32cCodec.encode(cumulative.getValue());
+    Crc32cLengthKnown getCrc32c() {
+      return Crc32cValue.zero();
     }
   }
 
@@ -178,7 +177,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    String getCrc32c() {
+    Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
@@ -204,7 +203,7 @@ abstract class RewindableContent extends AbstractHttpContent {
       } catch (IOException e) {
         throw new RuntimeException("Failed to read file for CRC32C calculation: " + path, e);
       }
-      return Utils.crc32cCodec.encode(cumulative.getValue());
+      return cumulative;
     }
   }
 
@@ -303,7 +302,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     }
 
     @Override
-    String getCrc32c() {
+    Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
@@ -317,7 +316,7 @@ abstract class RewindableContent extends AbstractHttpContent {
       for (ByteBuffer buffer : buffers) {
         cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
       }
-      return Utils.crc32cCodec.encode(cumulative.getValue());
+      return cumulative;
     }
   }
 }

@@ -28,6 +28,7 @@ import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
@@ -115,7 +116,7 @@ final class MultipartUploadHttpRequestManager {
   }
 
   public UploadPartResponse sendUploadPartRequest(
-      URI uri, UploadPartRequest request, RequestBody requestBody) throws IOException {
+      URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
@@ -123,9 +124,9 @@ final class MultipartUploadHttpRequestManager {
         "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
     String uploadUri = uri.toString() + resourcePath + queryString;
     HttpRequest httpRequest =
-        requestFactory.buildPutRequest(new GenericUrl(uploadUri), requestBody.getContent());
+        requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addHeadersForUploadPart(requestBody, httpRequest.getHeaders());
+    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(UploadPartResponse.class);
@@ -152,8 +153,8 @@ final class MultipartUploadHttpRequestManager {
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
   }
 
-  private void addHeadersForUploadPart(RequestBody requestBody, HttpHeaders headers) {
-    headers.put("x-goog-hash", "crc32c=" + requestBody.getContent().getCrc32c());
+  private void addChecksumHeader(Crc32cLengthKnown crc32c, HttpHeaders headers) {
+    headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
   }
 
   private void addHeadersForCreateMultipartUpload(
