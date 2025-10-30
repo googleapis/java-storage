@@ -51,9 +51,6 @@ public final class ListPartsResponse {
   @JacksonXmlProperty(localName = "IsTruncated")
   private boolean isTruncated;
 
-  @JacksonXmlProperty(localName = "Owner")
-  private Owner owner;
-
   @JacksonXmlProperty(localName = "StorageClass")
   private StorageClass storageClass;
 
@@ -71,7 +68,6 @@ public final class ListPartsResponse {
     this.nextPartNumberMarker = builder.nextPartNumberMarker;
     this.maxParts = builder.maxParts;
     this.isTruncated = builder.isTruncated;
-    this.owner = builder.owner;
     this.storageClass = builder.storageClass;
     this.parts = builder.parts;
   }
@@ -149,15 +145,6 @@ public final class ListPartsResponse {
   }
 
   /**
-   * Returns the owner of the object.
-   *
-   * @return the owner of the object.
-   */
-  public Owner getOwner() {
-    return owner;
-  }
-
-  /**
    * Returns the storage class of the object.
    *
    * @return the storage class of the object.
@@ -191,7 +178,6 @@ public final class ListPartsResponse {
         && Objects.equals(nextPartNumberMarker, that.nextPartNumberMarker)
         && Objects.equals(maxParts, that.maxParts)
         && Objects.equals(isTruncated, that.isTruncated)
-        && Objects.equals(owner, that.owner)
         && Objects.equals(storageClass, that.storageClass)
         && Objects.equals(parts, that.parts);
   }
@@ -206,7 +192,6 @@ public final class ListPartsResponse {
         nextPartNumberMarker,
         maxParts,
         isTruncated,
-        owner,
         storageClass,
         parts);
   }
@@ -221,7 +206,6 @@ public final class ListPartsResponse {
         .add("nextPartNumberMarker", nextPartNumberMarker)
         .add("maxParts", maxParts)
         .add("isTruncated", isTruncated)
-        .add("owner", owner)
         .add("storageClass", storageClass)
         .add("parts", parts)
         .toString();
@@ -237,7 +221,6 @@ public final class ListPartsResponse {
     private int nextPartNumberMarker;
     private int maxParts;
     private boolean isTruncated;
-    private Owner owner;
     private StorageClass storageClass;
     private List<Part> parts;
 
@@ -317,17 +300,6 @@ public final class ListPartsResponse {
      */
     public Builder setIsTruncated(boolean isTruncated) {
       this.isTruncated = isTruncated;
-      return this;
-    }
-
-    /**
-     * Sets the owner of the object.
-     *
-     * @param owner The owner of the object.
-     * @return The builder instance.
-     */
-    public Builder setOwner(Owner owner) {
-      this.owner = owner;
       return this;
     }
 
