@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -62,6 +64,15 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
     return retrier.run(
         retryAlgorithmManager.idempotent(),
         () -> httpRequestManager.sendListPartsRequest(uri, request),
+        Decoder.identity());
+  }
+
+  @Override
+  @BetaApi
+  public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request) {
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request),
         Decoder.identity());
   }
 }

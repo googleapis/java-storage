@@ -30,6 +30,8 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -539,6 +541,62 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThrows(
           HttpResponseException.class,
           () -> multipartUploadHttpRequestManager.sendListPartsRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendAbortMultipartUploadRequest_success() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.uri()).contains("?uploadId=test-upload-id");
+          AbortMultipartUploadResponse response = new AbortMultipartUploadResponse();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      AbortMultipartUploadRequest request =
+          AbortMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      AbortMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(endpoint, request);
+
+      assertThat(response).isNotNull();
+    }
+  }
+
+  @Test
+  public void sendAbortMultipartUploadRequest_error() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      AbortMultipartUploadRequest request =
+          AbortMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(endpoint, request));
     }
   }
 }

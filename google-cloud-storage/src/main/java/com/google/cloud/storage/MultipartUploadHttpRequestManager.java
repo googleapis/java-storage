@@ -28,6 +28,8 @@ import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -95,7 +97,21 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
-  @SuppressWarnings("DataFlowIssue")
+  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
+      URI uri, AbortMultipartUploadRequest request) throws IOException {
+
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + urlEncode(request.uploadId());
+    String abortUri = uri.toString() + resourcePath + queryString;
+
+    HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
+  }
+
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
     Storage storage = options.getStorageRpcV1().getStorage();
     ImmutableMap.Builder<String, String> stableHeaders =
