@@ -124,7 +124,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
-  public CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
+  CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
       URI uri, CompleteMultipartUploadRequest request) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
@@ -168,7 +168,7 @@ final class MultipartUploadHttpRequestManager {
     return new ByteArrayContent("application/xml", bytes);
   }
 
-  public UploadPartResponse sendUploadPartRequest(
+  UploadPartResponse sendUploadPartRequest(
       URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());

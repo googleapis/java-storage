@@ -24,9 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}.
- */
+/** A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}. */
 @BetaApi
 public final class UploadResponseParser {
 
