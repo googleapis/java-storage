@@ -43,7 +43,10 @@ import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.common.collect.ImmutableList;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.Hashing;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -51,6 +54,7 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -725,6 +729,114 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  public void sendUploadPartRequest_success() throws Exception {
+    String etag = "\"af1ed31420542285653c803a34aa839a\"";
+    String content = "hello world";
+    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
+
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.uri()).contains("?partNumber=1&uploadId=test-upload-id");
+          FullHttpRequest fullReq = (FullHttpRequest) req;
+          ByteBuf requestContent = fullReq.content();
+          byte[] receivedBytes = new byte[requestContent.readableBytes()];
+          requestContent.readBytes(receivedBytes);
+          assertThat(receivedBytes).isEqualTo(contentBytes);
+
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
+          resp.headers().set("ETag", etag);
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      UploadPartRequest request =
+          UploadPartRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .partNumber(1)
+              .build();
+
+      UploadPartResponse response =
+          multipartUploadHttpRequestManager.sendUploadPartRequest(
+              endpoint, request, RewindableContent.of(ByteBuffer.wrap(contentBytes)));
+
+      assertThat(response).isNotNull();
+      assertThat(response.eTag()).isEqualTo(etag);
+    }
+  }
+
+  @Test
+  public void sendUploadPartRequest_withChecksums() throws Exception {
+    String etag = "\"af1ed31420542285653c803a34aa839a\"";
+    String content = "hello world";
+    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
+    String md5 = Hashing.md5().hashBytes(contentBytes).toString();
+    String crc32c = "yZRlqg==";
+
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.uri()).contains("?partNumber=1&uploadId=test-upload-id");
+          assertThat(req.headers().get("x-goog-hash")).contains("crc32c=" + crc32c);
+          FullHttpRequest fullReq = (FullHttpRequest) req;
+          ByteBuf requestContent = fullReq.content();
+          byte[] receivedBytes = new byte[requestContent.readableBytes()];
+          requestContent.readBytes(receivedBytes);
+          assertThat(receivedBytes).isEqualTo(contentBytes);
+
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
+          resp.headers().set("ETag", etag);
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      UploadPartRequest request =
+          UploadPartRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .partNumber(1)
+              .build();
+
+      UploadPartResponse response =
+          multipartUploadHttpRequestManager.sendUploadPartRequest(
+              endpoint, request, RewindableContent.of(ByteBuffer.wrap(contentBytes)));
+
+      assertThat(response).isNotNull();
+      assertThat(response.eTag()).isEqualTo(etag);
+    }
+  }
+
+  @Test
+  public void sendUploadPartRequest_error() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      UploadPartRequest request =
+          UploadPartRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .partNumber(1)
+              .build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendUploadPartRequest(
+                  endpoint, request, RewindableContent.empty()));
     }
   }
 }

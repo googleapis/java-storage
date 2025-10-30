@@ -43,6 +43,7 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -54,6 +55,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class MultipartUploadHttpRequestManager {
 
@@ -141,7 +143,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
   }
 
-  private String getCrc32cChecksum(CompletedMultipartUpload completedMultipartUpload) {
+  private Crc32cLengthKnown getCrc32cChecksum(CompletedMultipartUpload completedMultipartUpload) {
     GuavaHasher hasher;
     {
       Hasher defaultHasher = Hasher.defaultHasher();
@@ -154,8 +156,7 @@ final class MultipartUploadHttpRequestManager {
     try {
       byte[] bytes = new XmlMapper().writeValueAsBytes(completedMultipartUpload);
       ByteBuffer buffer = ByteBuffer.wrap(bytes);
-      Crc32cLengthKnown crc32c = hasher.hash(buffer::duplicate);
-      return Utils.crc32cCodec.encode(crc32c.getValue());
+      return hasher.hash(buffer::duplicate);
     } catch (IOException e) {
       throw new RuntimeException(
           "Failed to serialize CompleteMultipartUpload for CRC32C calculation", e);
@@ -169,7 +170,7 @@ final class MultipartUploadHttpRequestManager {
   }
 
   public UploadPartResponse sendUploadPartRequest(
-      URI uri, UploadPartRequest request, RequestBody requestBody) throws IOException {
+      URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
     String resourcePath = encodedBucket + "/" + encodedKey;
@@ -177,9 +178,9 @@ final class MultipartUploadHttpRequestManager {
         "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
     String uploadUri = uri.toString() + resourcePath + queryString;
     HttpRequest httpRequest =
-        requestFactory.buildPutRequest(new GenericUrl(uploadUri), requestBody.getContent());
+        requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addChecksumHeader(requestBody.getContent().getCrc32c(), httpRequest.getHeaders());
+    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
     httpRequest.setThrowExceptionOnExecuteError(true);
     return UploadResponseParser.parse(httpRequest.execute());
   }
@@ -205,8 +206,8 @@ final class MultipartUploadHttpRequestManager {
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
   }
 
-  private void addChecksumHeader(String crc32cChecksum, HttpHeaders headers) {
-    headers.put("x-goog-hash", "crc32c=" + crc32cChecksum);
+  private void addChecksumHeader(Crc32cLengthKnown crc32c, HttpHeaders headers) {
+    headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
   }
 
   private void addHeadersForCreateMultipartUpload(
