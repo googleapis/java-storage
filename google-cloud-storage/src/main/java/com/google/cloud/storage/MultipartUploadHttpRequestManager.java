@@ -70,7 +70,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String createUri = uri.toString() + resourcePath + "?uploads";
 
     HttpRequest httpRequest =
@@ -87,7 +87,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + urlEncode(request.uploadId());
 
     if (request.getMaxParts() != null) {
@@ -109,7 +109,7 @@ final class MultipartUploadHttpRequestManager {
 
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + urlEncode(request.uploadId());
     String abortUri = uri.toString() + resourcePath + queryString;
 
@@ -124,7 +124,7 @@ final class MultipartUploadHttpRequestManager {
       URI uri, CompleteMultipartUploadRequest request) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + request.uploadId();
     String completeUri = uri.toString() + resourcePath + queryString;
     byte[] bytes = new XmlMapper().writeValueAsBytes(request.multipartUpload());
@@ -145,7 +145,7 @@ final class MultipartUploadHttpRequestManager {
       URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
-    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String resourcePath = encodedBucket + "/" + encodedKey;
     String queryString =
         "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
     String uploadUri = uri.toString() + resourcePath + queryString;

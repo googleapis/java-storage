@@ -109,7 +109,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -138,7 +138,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -174,7 +174,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -208,7 +208,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -241,7 +241,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -275,7 +275,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -308,7 +308,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -345,7 +345,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -381,7 +381,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -426,7 +426,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       ListPartsRequest request =
           ListPartsRequest.builder()
               .bucket("test-bucket")
@@ -467,7 +467,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                 Unpooled.wrappedBuffer("Bucket not found".getBytes(StandardCharsets.UTF_8)));
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       ListPartsRequest request =
           ListPartsRequest.builder()
               .bucket("test-bucket")
@@ -491,7 +491,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                 Unpooled.wrappedBuffer("Key not found".getBytes(StandardCharsets.UTF_8)));
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       ListPartsRequest request =
           ListPartsRequest.builder()
               .bucket("test-bucket")
@@ -515,7 +515,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                 Unpooled.wrappedBuffer("Invalid uploadId".getBytes(StandardCharsets.UTF_8)));
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       ListPartsRequest request =
           ListPartsRequest.builder()
               .bucket("test-bucket")
@@ -540,7 +540,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       ListPartsRequest request =
           ListPartsRequest.builder()
               .bucket("test-bucket")
@@ -569,7 +569,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       AbortMultipartUploadRequest request =
           AbortMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -595,7 +595,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       AbortMultipartUploadRequest request =
           AbortMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -629,7 +629,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CompleteMultipartUploadRequest request =
           CompleteMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -665,7 +665,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CompleteMultipartUploadRequest request =
           CompleteMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -713,7 +713,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       CompleteMultipartUploadRequest request =
           CompleteMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -753,7 +753,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       UploadPartRequest request =
           UploadPartRequest.builder()
               .bucket("test-bucket")
@@ -795,7 +795,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       UploadPartRequest request =
           UploadPartRequest.builder()
               .bucket("test-bucket")
@@ -824,7 +824,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
       UploadPartRequest request =
           UploadPartRequest.builder()
               .bucket("test-bucket")
