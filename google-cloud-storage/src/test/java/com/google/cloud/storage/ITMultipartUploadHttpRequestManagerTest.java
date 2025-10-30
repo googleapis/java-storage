@@ -32,16 +32,22 @@ import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
+import com.google.cloud.storage.multipartupload.model.CompletedPart;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.cloud.storage.multipartupload.model.Part;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
@@ -597,6 +603,128 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           HttpResponseException.class,
           () ->
               multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendCompleteMultipartUploadRequest_success() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag("\"test-etag\"")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      CompleteMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(endpoint, request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.etag()).isEqualTo("\"test-etag\"");
+    }
+  }
+
+  @Test
+  public void sendCompleteMultipartUploadRequest_error() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      assertThrows(
+          RuntimeException.class,
+          () ->
+              multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(
+                  endpoint, request));
+    }
+  }
+
+  @Test
+  public void sendCompleteMultipartUploadRequest_body() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpRequest fullHttpRequest = (FullHttpRequest) req;
+          ByteBuf content = fullHttpRequest.content();
+          String body = content.toString(StandardCharsets.UTF_8);
+          assertThat(body)
+              .isEqualTo(
+                  "<CompleteMultipartUpload><Part><PartNumber>1</PartNumber><ETag>\"etag1\"</ETag></Part><Part><PartNumber>2</PartNumber><ETag>\"etag2\"</ETag></Part></CompleteMultipartUpload>");
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag("\"test-etag\"")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = fakeHttpServer.getEndpoint();
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(endpoint, request);
     }
   }
 }

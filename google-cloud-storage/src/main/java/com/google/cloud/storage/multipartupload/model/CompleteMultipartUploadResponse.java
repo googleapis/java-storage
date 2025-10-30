@@ -43,6 +43,7 @@ public final class CompleteMultipartUploadResponse {
    *
    * @return The URL of the completed object.
    */
+  @JsonProperty("Location")
   public String location() {
     return location;
   }
@@ -52,6 +53,7 @@ public final class CompleteMultipartUploadResponse {
    *
    * @return The bucket name.
    */
+  @JsonProperty("Bucket")
   public String bucket() {
     return bucket;
   }
@@ -61,6 +63,7 @@ public final class CompleteMultipartUploadResponse {
    *
    * @return The object name.
    */
+  @JsonProperty("Key")
   public String key() {
     return key;
   }
@@ -70,6 +73,7 @@ public final class CompleteMultipartUploadResponse {
    *
    * @return The ETag of the completed object.
    */
+  @JsonProperty("ETag")
   public String etag() {
     return etag;
   }
@@ -114,7 +118,7 @@ public final class CompleteMultipartUploadResponse {
   }
 
   /** Builder for {@link CompleteMultipartUploadResponse}. */
-  @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+  @JsonPOJOBuilder(buildMethodName = "build")
   public static class Builder {
     private String location;
     private String bucket;

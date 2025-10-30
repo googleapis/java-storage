@@ -117,6 +117,7 @@ final class MultipartUploadHttpRequestManager {
     String abortUri = uri.toString() + resourcePath + queryString;
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
@@ -127,16 +128,15 @@ final class MultipartUploadHttpRequestManager {
     String encodedBucket = urlEncode(request.bucket());
     String encodedKey = urlEncode(request.key());
     String resourcePath = encodedBucket + "/" + encodedKey;
-    String queryString = "?uploadId=" + urlEncode(request.uploadId());
+    String queryString = "?uploadId=" + request.uploadId();
     String completeUri = uri.toString() + resourcePath + queryString;
-
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
             new GenericUrl(completeUri),
             getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    httpRequest.getHeaders().setContentType("application/xml");
     addChecksumHeader(getCrc32cChecksum(request.multipartUpload()), httpRequest.getHeaders());
-    httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
   }
@@ -180,9 +180,8 @@ final class MultipartUploadHttpRequestManager {
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), requestBody.getContent());
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     addChecksumHeader(requestBody.getContent().getCrc32c(), httpRequest.getHeaders());
-    httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
-    return httpRequest.execute().parseAs(UploadPartResponse.class);
+    return UploadResponseParser.parse(httpRequest.execute());
   }
 
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
