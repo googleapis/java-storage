@@ -17,6 +17,7 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -122,6 +123,7 @@ public final class Part {
   }
 
   /** A builder for {@link Part}. */
+  @BetaApi
   public static final class Builder {
     private int partNumber;
     private String eTag;
