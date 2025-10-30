@@ -55,7 +55,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class MultipartUploadHttpRequestManager {
 
