@@ -17,16 +17,28 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.client.http.HttpResponse;
+import com.google.api.core.BetaApi;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}.
+ */
+@BetaApi
 public final class UploadResponseParser {
 
   private UploadResponseParser() {}
 
+  /**
+   * Parses an {@link HttpResponse} and returns a {@link UploadPartResponse}.
+   *
+   * @param response The {@link HttpResponse} from the upload part request.
+   * @return The parsed {@link UploadPartResponse}.
+   */
+  @BetaApi
   public static UploadPartResponse parse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
