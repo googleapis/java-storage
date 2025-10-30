@@ -732,6 +732,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
     }
   }
 
+  @Test
   public void sendUploadPartRequest_success() throws Exception {
     String etag = "\"af1ed31420542285653c803a34aa839a\"";
     String content = "hello world";
