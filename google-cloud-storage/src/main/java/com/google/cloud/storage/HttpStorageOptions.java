@@ -32,7 +32,6 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
-import com.google.cloud.storage.Retrying.DefaultRetrier;
 import com.google.cloud.storage.Retrying.HttpRetrier;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -409,13 +408,7 @@ public class HttpStorageOptions extends StorageOptions {
           WriterFactory factory = blobWriteSessionConfig.createFactory(clock);
           StorageImpl storage =
               new StorageImpl(
-                  httpStorageOptions,
-                  factory,
-                  new HttpRetrier(
-                      new DefaultRetrier(
-                          OtelStorageDecorator.retryContextDecorator(otel),
-                          RetryingDependencies.simple(
-                              options.getClock(), options.getRetrySettings()))));
+                  httpStorageOptions, factory, new HttpRetrier(options.createRetrier()));
           return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
         } catch (IOException e) {
           throw new IllegalStateException(
