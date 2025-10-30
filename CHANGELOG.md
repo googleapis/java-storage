@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.59.1](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.59.1) (2025-10-30)
+
+
+### Bug Fixes
+
+* Add new system property (com.google.cloud.storage.grpc.bound_token) to allow disabling bound token use with grpc ([#3365](https://github.com/googleapis/java-storage/issues/3365)) ([ebf5e6d](https://github.com/googleapis/java-storage/commit/ebf5e6d30d8dc197ab388a70cc0d465c0f740496))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.63.0 ([c1a8968](https://github.com/googleapis/java-storage/commit/c1a8968799c1cf5a970fe9f303adccdad0a117c8))
+* Ignore tests failing due to public access prevention policy ([#3374](https://github.com/googleapis/java-storage/issues/3374)) ([87c9c81](https://github.com/googleapis/java-storage/commit/87c9c8125cb97230c52e465012b5069d31744a79))
+
 ## [2.59.0](https://github.com/googleapis/java-storage/compare/v2.58.1...v2.59.0) (2025-10-21)
 
 
