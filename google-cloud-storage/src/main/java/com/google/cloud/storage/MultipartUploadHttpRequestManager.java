@@ -135,8 +135,8 @@ final class MultipartUploadHttpRequestManager {
             new GenericUrl(completeUri),
             getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    httpRequest.getHeaders().setContentType("application/xml");
     addChecksumHeader(getCrc32cChecksum(request.multipartUpload()), httpRequest.getHeaders());
+    httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
   }

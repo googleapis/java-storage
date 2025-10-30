@@ -35,10 +35,6 @@ final class XmlObjectParser implements ObjectParser {
     this.xmlMapper.registerModule(new JavaTimeModule());
   }
 
-  public XmlMapper getXmlMapper() {
-    return xmlMapper;
-  }
-
   @Override
   public <T> T parseAndClose(InputStream in, Charset charset, Class<T> dataClass)
       throws IOException {
