@@ -23,7 +23,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -37,7 +36,7 @@ public class DownloadByteRange {
       long startByte,
       long endBytes,
       String destFileName)
-      throws IOException {
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -56,18 +55,20 @@ public class DownloadByteRange {
     // The path to which the file should be downloaded
     // String destFileName = '/local/path/to/file.txt';
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    BlobId blobId = BlobId.of(bucketName, blobName);
-    try (ReadChannel from = storage.reader(blobId);
-        FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
-      from.seek(startByte);
-      from.limit(endBytes);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, blobName);
+      try (ReadChannel from = storage.reader(blobId);
+          FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
+        from.seek(startByte);
+        from.limit(endBytes);
 
-      ByteStreams.copy(from, to);
+        ByteStreams.copy(from, to);
 
-      System.out.printf(
-          "%s downloaded to %s from byte %d to byte %d%n",
-          blobId.toGsUtilUri(), destFileName, startByte, endBytes);
+        System.out.printf(
+            "%s downloaded to %s from byte %d to byte %d%n",
+            blobId.toGsUtilUri(), destFileName, startByte, endBytes);
+      }
     }
   }
 }

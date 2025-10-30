@@ -57,7 +57,7 @@ public final class ConfigureRetriesTest {
   }
 
   @Test
-  public void testConfigureRetries() {
+  public void testConfigureRetries() throws Exception {
     ConfigureRetries.deleteBlob(bucketName, blobName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Deletion");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("successfully");

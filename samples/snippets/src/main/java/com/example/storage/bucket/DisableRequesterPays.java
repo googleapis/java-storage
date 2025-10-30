@@ -22,21 +22,23 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class DisableRequesterPays {
-  public static void disableRequesterPays(String projectId, String bucketName) {
+  public static void disableRequesterPays(String projectId, String bucketName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName, Storage.BucketGetOption.userProject(projectId));
-    bucket.toBuilder()
-        .setRequesterPays(false)
-        .build()
-        .update(Storage.BucketTargetOption.userProject(projectId));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName, Storage.BucketGetOption.userProject(projectId));
+      bucket.toBuilder()
+          .setRequesterPays(false)
+          .build()
+          .update(Storage.BucketTargetOption.userProject(projectId));
 
-    System.out.println("Requester pays disabled for bucket " + bucketName);
+      System.out.println("Requester pays disabled for bucket " + bucketName);
+    }
   }
 }
 // [END storage_disable_requester_pays]
