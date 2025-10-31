@@ -28,12 +28,15 @@ import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -112,6 +115,22 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
   }
 
+  UploadPartResponse sendUploadPartRequest(
+      URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString =
+        "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
+    String uploadUri = uri.toString() + resourcePath + queryString;
+    HttpRequest httpRequest =
+        requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return UploadResponseParser.parse(httpRequest.execute());
+  }
+
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
     Storage storage = options.getStorageRpcV1().getStorage();
     ImmutableMap.Builder<String, String> stableHeaders =
@@ -131,6 +150,12 @@ final class MultipartUploadHttpRequestManager {
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
+  }
+
+  private void addChecksumHeader(Crc32cLengthKnown crc32c, HttpHeaders headers) {
+    if (crc32c != null) {
+      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+    }
   }
 
   private void addHeadersForCreateMultipartUpload(

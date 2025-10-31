@@ -24,8 +24,11 @@ import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadReque
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is an implementation of {@link MultipartUploadClient} that uses the Google Cloud
@@ -73,6 +76,21 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
     return retrier.run(
         retryAlgorithmManager.idempotent(),
         () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request),
+        Decoder.identity());
+  }
+
+  @Override
+  @BetaApi
+  public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody) {
+    AtomicBoolean dirty = new AtomicBoolean(false);
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> {
+          if (dirty.getAndSet(true)) {
+            requestBody.getContent().rewindTo(0);
+          }
+          return httpRequestManager.sendUploadPartRequest(uri, request, requestBody.getContent());
+        },
         Decoder.identity());
   }
 }
