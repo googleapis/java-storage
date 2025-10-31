@@ -131,41 +131,19 @@ final class MultipartUploadHttpRequestManager {
     String resourcePath = "/" + encodedBucket + "/" + encodedKey;
     String queryString = "?uploadId=" + request.uploadId();
     String completeUri = uri.toString() + resourcePath + queryString;
+    byte[] bytes = new XmlMapper().writeValueAsBytes(request.multipartUpload());
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
             new GenericUrl(completeUri),
-            getHttpContentForCompleteMultipartUpload(request.multipartUpload()));
+            new ByteArrayContent("application/xml", bytes));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addChecksumHeader(getCrc32cChecksum(request.multipartUpload()), httpRequest.getHeaders());
+    @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
+    if (crc32cValue != null) {
+      addChecksumHeader(crc32cValue, httpRequest.getHeaders());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
-  }
-
-  private Crc32cLengthKnown getCrc32cChecksum(CompletedMultipartUpload completedMultipartUpload) {
-    GuavaHasher hasher;
-    {
-      Hasher defaultHasher = Hasher.defaultHasher();
-      if (defaultHasher instanceof NoOpHasher) {
-        return null;
-      } else {
-        hasher = Hasher.enabled();
-      }
-    }
-    try {
-      byte[] bytes = new XmlMapper().writeValueAsBytes(completedMultipartUpload);
-      ByteBuffer buffer = ByteBuffer.wrap(bytes);
-      return hasher.hash(buffer::duplicate);
-    } catch (IOException e) {
-      throw new RuntimeException(
-          "Failed to serialize CompleteMultipartUpload for CRC32C calculation", e);
-    }
-  }
-
-  private HttpContent getHttpContentForCompleteMultipartUpload(
-      CompletedMultipartUpload completedMultipartUpload) throws IOException {
-    byte[] bytes = new XmlMapper().writeValueAsBytes(completedMultipartUpload);
-    return new ByteArrayContent("application/xml", bytes);
   }
 
   UploadPartResponse sendUploadPartRequest(
