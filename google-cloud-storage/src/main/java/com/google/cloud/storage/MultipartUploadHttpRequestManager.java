@@ -31,6 +31,8 @@ import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -43,6 +45,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -110,9 +113,31 @@ final class MultipartUploadHttpRequestManager {
     String abortUri = uri.toString() + resourcePath + queryString;
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
+  }
+
+  CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
+      URI uri, CompleteMultipartUploadRequest request) throws IOException {
+    String encodedBucket = urlEncode(request.bucket());
+    String encodedKey = urlEncode(request.key());
+    String resourcePath = "/" + encodedBucket + "/" + encodedKey;
+    String queryString = "?uploadId=" + request.uploadId();
+    String completeUri = uri.toString() + resourcePath + queryString;
+    byte[] bytes = new XmlMapper().writeValueAsBytes(request.multipartUpload());
+    HttpRequest httpRequest =
+        requestFactory.buildPostRequest(
+            new GenericUrl(completeUri), new ByteArrayContent("application/xml", bytes));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
+    if (crc32cValue != null) {
+      addChecksumHeader(crc32cValue, httpRequest.getHeaders());
+    }
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
   }
 
   UploadPartResponse sendUploadPartRequest(
