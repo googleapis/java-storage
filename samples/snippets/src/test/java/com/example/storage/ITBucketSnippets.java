@@ -101,6 +101,7 @@ import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -425,6 +426,7 @@ public class ITBucketSnippets {
             .build());
   }
 
+  @Ignore("TODO(b/456381873): Test fails in CI due to project's public access prevention policy.")
   @Test
   public void testMakeBucketPublic() throws Throwable {
     MakeBucketPublic.makeBucketPublic(PROJECT_ID, BUCKET);
