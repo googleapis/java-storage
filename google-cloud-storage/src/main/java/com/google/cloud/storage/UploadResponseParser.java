@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartupload.model;
+package com.google.cloud.storage;
 
 import com.google.api.client.http.HttpResponse;
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -25,8 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /** A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}. */
-@BetaApi
-public final class UploadResponseParser {
+final class UploadResponseParser {
 
   private UploadResponseParser() {}
 

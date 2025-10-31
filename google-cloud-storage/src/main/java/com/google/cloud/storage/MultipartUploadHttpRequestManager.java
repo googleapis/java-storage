@@ -37,7 +37,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -154,7 +153,9 @@ final class MultipartUploadHttpRequestManager {
   }
 
   private void addChecksumHeader(Crc32cLengthKnown crc32c, HttpHeaders headers) {
-    headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+    if (crc32c != null) {
+      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+    }
   }
 
   private void addHeadersForCreateMultipartUpload(

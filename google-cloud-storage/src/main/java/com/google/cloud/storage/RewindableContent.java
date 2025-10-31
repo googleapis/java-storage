@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Hasher.GuavaHasher;
 import com.google.cloud.storage.Hasher.NoOpHasher;
@@ -36,6 +35,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class RewindableContent extends AbstractHttpContent {
 
@@ -59,7 +60,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     return false;
   }
 
-  @BetaApi
+  @Nullable
   abstract Crc32cLengthKnown getCrc32c();
 
   static RewindableContent empty() {
@@ -120,8 +121,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    @BetaApi
-    Crc32cLengthKnown getCrc32c() {
+    @NonNull Crc32cLengthKnown getCrc32c() {
       return Crc32cValue.zero();
     }
   }
@@ -180,8 +180,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     void flagDirty() {}
 
     @Override
-    @BetaApi
-    Crc32cLengthKnown getCrc32c() {
+    @Nullable Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
@@ -306,8 +305,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     }
 
     @Override
-    @BetaApi
-    Crc32cLengthKnown getCrc32c() {
+    @Nullable Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
