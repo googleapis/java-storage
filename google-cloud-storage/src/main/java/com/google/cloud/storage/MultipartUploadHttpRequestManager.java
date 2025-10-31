@@ -20,7 +20,6 @@ import static com.google.cloud.storage.Utils.ifNonNull;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -30,13 +29,10 @@ import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.Hasher.GuavaHasher;
-import com.google.cloud.storage.Hasher.NoOpHasher;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
-import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
@@ -134,8 +130,7 @@ final class MultipartUploadHttpRequestManager {
     byte[] bytes = new XmlMapper().writeValueAsBytes(request.multipartUpload());
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
-            new GenericUrl(completeUri),
-            new ByteArrayContent("application/xml", bytes));
+            new GenericUrl(completeUri), new ByteArrayContent("application/xml", bytes));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
     if (crc32cValue != null) {
