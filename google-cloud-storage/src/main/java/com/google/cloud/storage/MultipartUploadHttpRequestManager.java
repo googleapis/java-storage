@@ -23,6 +23,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.UriTemplate;
 import com.google.api.client.util.ObjectParser;
 import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
@@ -43,14 +44,12 @@ import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class MultipartUploadHttpRequestManager {
 
@@ -68,10 +67,11 @@ final class MultipartUploadHttpRequestManager {
   CreateMultipartUploadResponse sendCreateMultipartUploadRequest(
       URI uri, CreateMultipartUploadRequest request) throws IOException {
 
-    String encodedBucket = urlEncode(request.bucket());
-    String encodedKey = urlEncode(request.key());
-    String resourcePath = encodedBucket + "/" + encodedKey;
-    String createUri = uri.toString() + resourcePath + "?uploads";
+    String createUri =
+        UriTemplate.expand(
+            uri.toString() + "{bucket}/{key}?uploads",
+            ImmutableMap.of("bucket", request.bucket(), "key", request.key()),
+            false);
 
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
@@ -85,18 +85,23 @@ final class MultipartUploadHttpRequestManager {
 
   ListPartsResponse sendListPartsRequest(URI uri, ListPartsRequest request) throws IOException {
 
-    String encodedBucket = urlEncode(request.bucket());
-    String encodedKey = urlEncode(request.key());
-    String resourcePath = encodedBucket + "/" + encodedKey;
-    String queryString = "?uploadId=" + urlEncode(request.uploadId());
-
+    ImmutableMap.Builder<String, Object> params =
+        ImmutableMap.<String, Object>builder()
+            .put("bucket", request.bucket())
+            .put("key", request.key())
+            .put("uploadId", request.uploadId());
     if (request.getMaxParts() != null) {
-      queryString += "&max-parts=" + request.getMaxParts();
+      params.put("max-parts", request.getMaxParts());
     }
     if (request.getPartNumberMarker() != null) {
-      queryString += "&part-number-marker=" + request.getPartNumberMarker();
+      params.put("part-number-marker", request.getPartNumberMarker());
     }
-    String listUri = uri.toString() + resourcePath + queryString;
+
+    String listUri =
+        UriTemplate.expand(
+            uri.toString() + "{bucket}/{key}{?uploadId,max-parts,part-number-marker}",
+            params.build(),
+            false);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     httpRequest.setParser(objectParser);
@@ -107,11 +112,12 @@ final class MultipartUploadHttpRequestManager {
   AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
       URI uri, AbortMultipartUploadRequest request) throws IOException {
 
-    String encodedBucket = urlEncode(request.bucket());
-    String encodedKey = urlEncode(request.key());
-    String resourcePath = encodedBucket + "/" + encodedKey;
-    String queryString = "?uploadId=" + urlEncode(request.uploadId());
-    String abortUri = uri.toString() + resourcePath + queryString;
+    String abortUri =
+        UriTemplate.expand(
+            uri.toString() + "{bucket}/{key}{?uploadId}",
+            ImmutableMap.of(
+                "bucket", request.bucket(), "key", request.key(), "uploadId", request.uploadId()),
+            false);
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
@@ -122,11 +128,12 @@ final class MultipartUploadHttpRequestManager {
 
   CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
       URI uri, CompleteMultipartUploadRequest request) throws IOException {
-    String encodedBucket = urlEncode(request.bucket());
-    String encodedKey = urlEncode(request.key());
-    String resourcePath = encodedBucket + "/" + encodedKey;
-    String queryString = "?uploadId=" + request.uploadId();
-    String completeUri = uri.toString() + resourcePath + queryString;
+    String completeUri =
+        UriTemplate.expand(
+            uri.toString() + "{bucket}/{key}{?uploadId}",
+            ImmutableMap.of(
+                "bucket", request.bucket(), "key", request.key(), "uploadId", request.uploadId()),
+            false);
     byte[] bytes = new XmlMapper().writeValueAsBytes(request.multipartUpload());
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
@@ -143,12 +150,19 @@ final class MultipartUploadHttpRequestManager {
 
   UploadPartResponse sendUploadPartRequest(
       URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
-    String encodedBucket = urlEncode(request.bucket());
-    String encodedKey = urlEncode(request.key());
-    String resourcePath = encodedBucket + "/" + encodedKey;
-    String queryString =
-        "?partNumber=" + request.partNumber() + "&uploadId=" + urlEncode(request.uploadId());
-    String uploadUri = uri.toString() + resourcePath + queryString;
+    String uploadUri =
+        UriTemplate.expand(
+            uri.toString() + "{bucket}/{key}{?partNumber,uploadId}",
+            ImmutableMap.of(
+                "bucket",
+                request.bucket(),
+                "key",
+                request.key(),
+                "partNumber",
+                request.partNumber(),
+                "uploadId",
+                request.uploadId()),
+            false);
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
@@ -215,10 +229,6 @@ final class MultipartUploadHttpRequestManager {
       headers.put(
           "x-goog-custom-time", Utils.offsetDateTimeRfc3339Codec.encode(request.getCustomTime()));
     }
-  }
-
-  private static String urlEncode(String value) throws UnsupportedEncodingException {
-    return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
   }
 
   private static String formatName(String name) {
