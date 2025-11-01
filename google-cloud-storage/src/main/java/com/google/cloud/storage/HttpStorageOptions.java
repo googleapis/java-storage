@@ -26,15 +26,13 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.tracing.ApiTracerFactory;
 import com.google.auth.Credentials;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
-import com.google.cloud.storage.Retrying.DefaultRetrier;
-import com.google.cloud.storage.Retrying.HttpRetrier;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
@@ -407,15 +405,7 @@ public class HttpStorageOptions extends StorageOptions {
             blobWriteSessionConfig = HttpStorageOptions.defaults().getDefaultStorageWriterConfig();
           }
           WriterFactory factory = blobWriteSessionConfig.createFactory(clock);
-          StorageImpl storage =
-              new StorageImpl(
-                  httpStorageOptions,
-                  factory,
-                  new HttpRetrier(
-                      new DefaultRetrier(
-                          OtelStorageDecorator.retryContextDecorator(otel),
-                          RetryingDependencies.simple(
-                              options.getClock(), options.getRetrySettings()))));
+          StorageImpl storage = new StorageImpl(httpStorageOptions, factory, options.createRetrier());
           return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
         } catch (IOException e) {
           throw new IllegalStateException(
