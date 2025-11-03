@@ -200,7 +200,8 @@ final class MultipartUploadHttpRequestManager {
   }
 
   private void addHeadersForCreateMultipartUpload(
-      CreateMultipartUploadRequest request, HttpHeaders headers) {
+      CreateMultipartUploadRequest request, HttpHeaders headers)
+      throws UnsupportedEncodingException {
     if (request.getCannedAcl() != null) {
       headers.put("x-goog-acl", request.getCannedAcl().getXmlEntry());
     }
