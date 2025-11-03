@@ -23,7 +23,6 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.UriTemplate;
 import com.google.api.client.util.ObjectParser;
 import com.google.api.gax.core.GaxProperties;
@@ -33,6 +32,7 @@ import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ChecksumResponseParser;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
@@ -41,7 +41,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import com.google.cloud.storage.multipartupload.model.ChecksumResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -213,7 +212,7 @@ final class MultipartUploadHttpRequestManager {
         }
       }
     }
-    if(request.getContentType() != null){
+    if (request.getContentType() != null) {
       headers.put("Content-Type", request.getContentType());
     }
     if (request.getStorageClass() != null) {

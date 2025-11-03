@@ -293,7 +293,10 @@ public final class ITMultipartUploadClientTest {
 
     try {
       ListPartsRequest.Builder listPartsBuilder =
-          ListPartsRequest.builder().bucket(info.getBucket()).key(info.getName()).uploadId(uploadId);
+          ListPartsRequest.builder()
+              .bucket(info.getBucket())
+              .key(info.getName())
+              .uploadId(uploadId);
       multipartUploadClient.listParts(listPartsBuilder.build());
       fail("Expected StorageException");
     } catch (StorageException e) {
@@ -314,8 +317,10 @@ public final class ITMultipartUploadClientTest {
     uploadPart(info, uploadId, 2, bytes2);
 
     List<CompletedPart> completedParts = new ArrayList<>();
-    completedParts.add(CompletedPart.builder().partNumber(1).eTag(uploadPartResponse1.eTag()).build());
-    completedParts.add(CompletedPart.builder().partNumber(2).eTag("\"dummytag\"").build()); // wrong etag
+    completedParts.add(
+        CompletedPart.builder().partNumber(1).eTag(uploadPartResponse1.eTag()).build());
+    completedParts.add(
+        CompletedPart.builder().partNumber(2).eTag("\"dummytag\"").build()); // wrong etag
 
     try {
       completeMultipartUpload(info, uploadId, completedParts);

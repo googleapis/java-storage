@@ -53,8 +53,7 @@ public final class ObjectLockMode extends StringEnumValue {
    *
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  @BetaApi
-  public static final ObjectLockMode GOVERNANCE = type.createAndRegister("GOVERNANCE");
+  @BetaApi public static final ObjectLockMode GOVERNANCE = type.createAndRegister("GOVERNANCE");
 
   /**
    * Compliance mode. See <a
@@ -63,8 +62,7 @@ public final class ObjectLockMode extends StringEnumValue {
    *
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  @BetaApi
-  public static final ObjectLockMode COMPLIANCE = type.createAndRegister("COMPLIANCE");
+  @BetaApi public static final ObjectLockMode COMPLIANCE = type.createAndRegister("COMPLIANCE");
 
   /**
    * Get the ObjectLockMode for the given String constant, and throw an exception if the constant is

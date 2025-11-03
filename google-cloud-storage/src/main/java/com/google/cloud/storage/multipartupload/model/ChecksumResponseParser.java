@@ -46,19 +46,15 @@ public final class ChecksumResponseParser {
   public static UploadPartResponse parseUploadResponse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
-    return UploadPartResponse.builder()
-        .eTag(eTag)
-        .md5(hashes.get("md5"))
-        .build();
+    return UploadPartResponse.builder().eTag(eTag).md5(hashes.get("md5")).build();
   }
 
   public static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
       throws IOException {
     Map<String, String> hashes = extractHashesFromHeader(response);
-    CompleteMultipartUploadResponse completeMpuResponse = response.parseAs(
-        CompleteMultipartUploadResponse.class);
-    return CompleteMultipartUploadResponse
-        .builder()
+    CompleteMultipartUploadResponse completeMpuResponse =
+        response.parseAs(CompleteMultipartUploadResponse.class);
+    return CompleteMultipartUploadResponse.builder()
         .location(completeMpuResponse.location())
         .bucket(completeMpuResponse.bucket())
         .key(completeMpuResponse.key())
