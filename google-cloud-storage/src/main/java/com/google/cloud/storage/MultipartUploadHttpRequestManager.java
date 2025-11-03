@@ -205,13 +205,15 @@ final class MultipartUploadHttpRequestManager {
     if (request.getCannedAcl() != null) {
       headers.put("x-goog-acl", request.getCannedAcl().getXmlEntry());
     }
-    // TODO(shreyassinha) Add encoding for x-goog-meta-* headers
     if (request.getMetadata() != null) {
       for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
         if (entry.getKey() != null || entry.getValue() != null) {
           headers.put("x-goog-meta-" + urlEncode(entry.getKey()), urlEncode(entry.getValue()));
         }
       }
+    }
+    if(request.getContentType() != null){
+      headers.put("Content-Type", request.getContentType());
     }
     if (request.getStorageClass() != null) {
       headers.put("x-goog-storage-class", request.getStorageClass().toString());

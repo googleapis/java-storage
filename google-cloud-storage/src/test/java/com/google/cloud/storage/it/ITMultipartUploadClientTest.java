@@ -18,6 +18,7 @@ package com.google.cloud.storage.it;
 
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Blob;
@@ -31,12 +32,14 @@ import com.google.cloud.storage.RequestBody;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.CrossRun.Ignore;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
@@ -228,6 +231,101 @@ public final class ITMultipartUploadClientTest {
 
     Blob blob = injectedStorage.get(info.getBlobId());
     assertThat(blob).isNull();
+  }
+
+  @Test
+  public void testMultipartUpload_singlePart() throws IOException {
+    doTest(bucket, _5MiB - 1, "");
+  }
+
+  @Test
+  public void testMultipartUpload_zeroByteFile() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+    byte[] bytes = new byte[0];
+
+    UploadPartResponse uploadPartResponse = uploadPart(info, uploadId, 1, bytes);
+
+    List<CompletedPart> completedParts = new ArrayList<>();
+    completedParts.add(
+        CompletedPart.builder().partNumber(1).eTag(uploadPartResponse.eTag()).build());
+
+    completeMultipartUpload(info, uploadId, completedParts);
+
+    Blob result = injectedStorage.get(info.getBlobId());
+    byte[] actual = injectedStorage.readAllBytes(info.getBlobId());
+
+    assertThat(result).isNotNull();
+    assertThat(result.getSize()).isEqualTo(0);
+    assertBytesEqual(actual, new byte[0]);
+  }
+
+  @Test
+  public void testComplete_noParts() {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+
+    List<CompletedPart> completedParts = new ArrayList<>();
+    try {
+      completeMultipartUpload(info, uploadId, completedParts);
+      fail("Expected StorageException");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("MalformedCompleteMultipartUploadRequest");
+    } finally {
+      // cleanup
+      abortMultipartUpload(info, uploadId);
+    }
+  }
+
+  @Test
+  public void testListParts_afterAbort() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+
+    byte[] bytes = DataGenerator.rand(rand).genBytes(_5MiB);
+    uploadPart(info, uploadId, 1, bytes);
+
+    abortMultipartUpload(info, uploadId);
+
+    try {
+      ListPartsRequest.Builder listPartsBuilder =
+          ListPartsRequest.builder().bucket(info.getBucket()).key(info.getName()).uploadId(uploadId);
+      multipartUploadClient.listParts(listPartsBuilder.build());
+      fail("Expected StorageException");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("The requested upload was not found.");
+    }
+  }
+
+  @Test
+  public void testComplete_wrongETag() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+
+    byte[] bytes1 = DataGenerator.rand(rand).genBytes(_5MiB);
+    UploadPartResponse uploadPartResponse1 = uploadPart(info, uploadId, 1, bytes1);
+
+    byte[] bytes2 = DataGenerator.rand(rand).genBytes(_5MiB);
+    uploadPart(info, uploadId, 2, bytes2);
+
+    List<CompletedPart> completedParts = new ArrayList<>();
+    completedParts.add(CompletedPart.builder().partNumber(1).eTag(uploadPartResponse1.eTag()).build());
+    completedParts.add(CompletedPart.builder().partNumber(2).eTag("\"dummytag\"").build()); // wrong etag
+
+    try {
+      completeMultipartUpload(info, uploadId, completedParts);
+      fail("Expected StorageException");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("The requested upload part was not found.");
+    } finally {
+      abortMultipartUpload(info, uploadId);
+    }
   }
 
   private void doTest(BucketInfo bucket, int objectSizeBytes, String userProject)

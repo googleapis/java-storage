@@ -44,6 +44,7 @@ public final class UploadResponseParser {
   @BetaApi
   public static UploadPartResponse parse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
+    System.out.println(response.getHeaders().getFirstHeaderStringValue("x-goog-hash"));
     Map<String, String> hashes = extractHashesFromHeader(response);
     return UploadPartResponse.builder()
         .eTag(eTag)
