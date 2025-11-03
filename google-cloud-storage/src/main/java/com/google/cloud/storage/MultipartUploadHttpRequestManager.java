@@ -44,8 +44,11 @@ import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -205,7 +208,7 @@ final class MultipartUploadHttpRequestManager {
     if (request.getMetadata() != null) {
       for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
         if (entry.getKey() != null || entry.getValue() != null) {
-          headers.put("x-goog-meta-" + entry.getKey(), entry.getValue());
+          headers.put("x-goog-meta-" + urlEncode(entry.getKey()), urlEncode(entry.getValue()));
         }
       }
     }
@@ -250,5 +253,9 @@ final class MultipartUploadHttpRequestManager {
     } else {
       return defaultValue;
     }
+  }
+
+  private static String urlEncode(String value) throws UnsupportedEncodingException {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
   }
 }

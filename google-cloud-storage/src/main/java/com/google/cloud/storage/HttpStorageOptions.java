@@ -407,7 +407,8 @@ public class HttpStorageOptions extends StorageOptions {
           }
           WriterFactory factory = blobWriteSessionConfig.createFactory(clock);
           StorageImpl storage =
-              new StorageImpl(httpStorageOptions, factory, new HttpRetrier(options.createRetrier()));
+              new StorageImpl(
+                  httpStorageOptions, factory, new HttpRetrier(options.createRetrier()));
           return OtelStorageDecorator.decorate(storage, otel, Transport.HTTP);
         } catch (IOException e) {
           throw new IllegalStateException(
