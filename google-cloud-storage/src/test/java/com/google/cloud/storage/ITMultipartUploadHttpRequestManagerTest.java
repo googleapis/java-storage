@@ -158,7 +158,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void sendCreateMultipartUploadRequest_withCannedAcl() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-acl")).isEqualTo("AUTHENTICATED_READ");
+          assertThat(req.headers().get("x-goog-acl")).isEqualTo("authenticated-read");
           CreateMultipartUploadResponse response =
               CreateMultipartUploadResponse.builder()
                   .bucket("test-bucket")
