@@ -200,8 +200,7 @@ final class MultipartUploadHttpRequestManager {
   }
 
   private void addHeadersForCreateMultipartUpload(
-      CreateMultipartUploadRequest request, HttpHeaders headers)
-      throws UnsupportedEncodingException {
+      CreateMultipartUploadRequest request, HttpHeaders headers) {
     if (request.getCannedAcl() != null) {
       headers.put("x-goog-acl", request.getCannedAcl().getXmlEntry());
     }
@@ -258,7 +257,11 @@ final class MultipartUploadHttpRequestManager {
     }
   }
 
-  private static String urlEncode(String value) throws UnsupportedEncodingException {
-    return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+  private static String urlEncode(String value) {
+    try {
+      return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      throw new StorageException(0, "Unable to load UTF-8 charset for encoding", e);
+    }
   }
 }
