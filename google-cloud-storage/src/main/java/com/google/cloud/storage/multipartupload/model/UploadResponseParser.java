@@ -24,7 +24,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/** A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}. */
+/**
+ * A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 public final class UploadResponseParser {
 
@@ -35,6 +39,7 @@ public final class UploadResponseParser {
    *
    * @param response The {@link HttpResponse} from the upload part request.
    * @return The parsed {@link UploadPartResponse}.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static UploadPartResponse parse(HttpResponse response) {

@@ -20,7 +20,11 @@ import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-/** Represents a request to list the parts of a multipart upload. */
+/**
+ * Represents a request to list the parts of a multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 public final class ListPartsRequest {
   private final String bucket;
@@ -45,7 +49,9 @@ public final class ListPartsRequest {
    * Returns the bucket name.
    *
    * @return the bucket name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -54,7 +60,9 @@ public final class ListPartsRequest {
    * Returns the object name.
    *
    * @return the object name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -63,7 +71,9 @@ public final class ListPartsRequest {
    * Returns the upload ID.
    *
    * @return the upload ID.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -72,7 +82,9 @@ public final class ListPartsRequest {
    * Returns the maximum number of parts to return.
    *
    * @return the maximum number of parts to return.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public Integer getMaxParts() {
     return maxParts;
   }
@@ -81,7 +93,9 @@ public final class ListPartsRequest {
    * Returns the part number marker.
    *
    * @return the part number marker.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public Integer getPartNumberMarker() {
     return partNumberMarker;
   }
@@ -122,12 +136,18 @@ public final class ListPartsRequest {
    * Returns a new builder for this class.
    *
    * @return a new builder for this class.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
 
-  /** A builder for {@link ListPartsRequest}. */
+  /**
+   * A builder for {@link ListPartsRequest}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public static class Builder {
     private String bucket;
@@ -143,7 +163,9 @@ public final class ListPartsRequest {
      *
      * @param bucket the bucket name.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -154,7 +176,9 @@ public final class ListPartsRequest {
      *
      * @param key the object name.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -165,7 +189,9 @@ public final class ListPartsRequest {
      *
      * @param uploadId the upload ID.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -176,7 +202,9 @@ public final class ListPartsRequest {
      *
      * @param maxParts the maximum number of parts to return.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder maxParts(Integer maxParts) {
       this.maxParts = maxParts;
       return this;
@@ -187,7 +215,9 @@ public final class ListPartsRequest {
      *
      * @param partNumberMarker the part number marker.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder partNumberMarker(Integer partNumberMarker) {
       this.partNumberMarker = partNumberMarker;
       return this;
@@ -197,7 +227,9 @@ public final class ListPartsRequest {
      * Builds a new {@link ListPartsRequest} object.
      *
      * @return a new {@link ListPartsRequest} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public ListPartsRequest build() {
       return new ListPartsRequest(this);
     }

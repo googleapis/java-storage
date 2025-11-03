@@ -22,7 +22,12 @@ import com.google.common.base.MoreObjects;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-/** Represents a part of a multipart upload. */
+/**
+ * Represents a part of a multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
 public final class Part {
 
   @JacksonXmlProperty(localName = "PartNumber")
@@ -51,7 +56,9 @@ public final class Part {
    * Returns the part number.
    *
    * @return the part number.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public int partNumber() {
     return partNumber;
   }
@@ -60,7 +67,9 @@ public final class Part {
    * Returns the ETag of the part.
    *
    * @return the ETag of the part.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String eTag() {
     return eTag;
   }
@@ -69,7 +78,9 @@ public final class Part {
    * Returns the size of the part.
    *
    * @return the size of the part.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public long size() {
     return size;
   }
@@ -78,7 +89,9 @@ public final class Part {
    * Returns the last modified time of the part.
    *
    * @return the last modified time of the part.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public OffsetDateTime lastModified() {
     return lastModified;
   }
@@ -87,7 +100,9 @@ public final class Part {
    * Returns a new builder for this class.
    *
    * @return a new builder for this class.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -122,7 +137,11 @@ public final class Part {
         .toString();
   }
 
-  /** A builder for {@link Part}. */
+  /**
+   * A builder for {@link Part}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public static final class Builder {
     private int partNumber;
@@ -137,7 +156,9 @@ public final class Part {
      *
      * @param partNumber the part number.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder partNumber(int partNumber) {
       this.partNumber = partNumber;
       return this;
@@ -148,7 +169,9 @@ public final class Part {
      *
      * @param eTag the ETag of the part.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder eTag(String eTag) {
       this.eTag = eTag;
       return this;
@@ -159,7 +182,9 @@ public final class Part {
      *
      * @param size the size of the part.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder size(long size) {
       this.size = size;
       return this;
@@ -170,7 +195,9 @@ public final class Part {
      *
      * @param lastModified the last modified time of the part.
      * @return this builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder lastModified(OffsetDateTime lastModified) {
       this.lastModified = lastModified;
       return this;
@@ -180,7 +207,9 @@ public final class Part {
      * Builds a new {@link Part} object.
      *
      * @return a new {@link Part} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Part build() {
       return new Part(this);
     }

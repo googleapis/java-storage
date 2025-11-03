@@ -19,10 +19,16 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-/** Represents the response from a completed multipart upload. */
+/**
+ * Represents the response from a completed multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
 @JsonDeserialize(builder = CompleteMultipartUploadResponse.Builder.class)
 public final class CompleteMultipartUploadResponse {
 
@@ -42,7 +48,9 @@ public final class CompleteMultipartUploadResponse {
    * Returns the URL of the completed object.
    *
    * @return The URL of the completed object.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   @JsonProperty("Location")
   public String location() {
     return location;
@@ -52,7 +60,9 @@ public final class CompleteMultipartUploadResponse {
    * Returns the bucket name.
    *
    * @return The bucket name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   @JsonProperty("Bucket")
   public String bucket() {
     return bucket;
@@ -62,7 +72,9 @@ public final class CompleteMultipartUploadResponse {
    * Returns the object name.
    *
    * @return The object name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   @JsonProperty("Key")
   public String key() {
     return key;
@@ -72,7 +84,9 @@ public final class CompleteMultipartUploadResponse {
    * Returns the ETag of the completed object.
    *
    * @return The ETag of the completed object.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   @JsonProperty("ETag")
   public String etag() {
     return etag;
@@ -112,12 +126,19 @@ public final class CompleteMultipartUploadResponse {
    * Creates a new builder for {@link CompleteMultipartUploadResponse}.
    *
    * @return A new builder.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
 
-  /** Builder for {@link CompleteMultipartUploadResponse}. */
+  /**
+   * Builder for {@link CompleteMultipartUploadResponse}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   @JsonPOJOBuilder(buildMethodName = "build")
   public static class Builder {
     private String location;
@@ -132,7 +153,9 @@ public final class CompleteMultipartUploadResponse {
      *
      * @param location The URL of the completed object.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     @JsonProperty("Location")
     public Builder location(String location) {
       this.location = location;
@@ -144,7 +167,9 @@ public final class CompleteMultipartUploadResponse {
      *
      * @param bucket The bucket name.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     @JsonProperty("Bucket")
     public Builder bucket(String bucket) {
       this.bucket = bucket;
@@ -156,7 +181,9 @@ public final class CompleteMultipartUploadResponse {
      *
      * @param key The object name.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     @JsonProperty("Key")
     public Builder key(String key) {
       this.key = key;
@@ -168,7 +195,9 @@ public final class CompleteMultipartUploadResponse {
      *
      * @param etag The ETag of the completed object.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     @JsonProperty("ETag")
     public Builder etag(String etag) {
       this.etag = etag;
@@ -179,7 +208,9 @@ public final class CompleteMultipartUploadResponse {
      * Builds the {@link CompleteMultipartUploadResponse} object.
      *
      * @return The new {@link CompleteMultipartUploadResponse} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CompleteMultipartUploadResponse build() {
       return new CompleteMultipartUploadResponse(this);
     }

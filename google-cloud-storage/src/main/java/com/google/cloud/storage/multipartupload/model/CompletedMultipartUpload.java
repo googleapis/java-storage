@@ -18,6 +18,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,10 @@ import java.util.Objects;
 /**
  * Represents the XML payload for a completed multipart upload. This is used in the request body
  * when completing a multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
+@BetaApi
 @JacksonXmlRootElement(localName = "CompleteMultipartUpload")
 public class CompletedMultipartUpload {
 
@@ -41,7 +45,9 @@ public class CompletedMultipartUpload {
    * Returns the list of completed parts for this multipart upload.
    *
    * @return The list of completed parts.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public List<CompletedPart> parts() {
     return completedPartList;
   }
@@ -72,12 +78,19 @@ public class CompletedMultipartUpload {
    * Creates a new builder for {@link CompletedMultipartUpload}.
    *
    * @return A new builder.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
 
-  /** Builder for {@link CompletedMultipartUpload}. */
+  /**
+   * Builder for {@link CompletedMultipartUpload}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static class Builder {
     private List<CompletedPart> parts;
 
@@ -88,7 +101,9 @@ public class CompletedMultipartUpload {
      *
      * @param completedPartList The list of completed parts.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder parts(List<CompletedPart> completedPartList) {
       this.parts = completedPartList;
       return this;
@@ -98,7 +113,9 @@ public class CompletedMultipartUpload {
      * Builds the {@link CompletedMultipartUpload} object.
      *
      * @return The new {@link CompletedMultipartUpload} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CompletedMultipartUpload build() {
       return new CompletedMultipartUpload(this);
     }

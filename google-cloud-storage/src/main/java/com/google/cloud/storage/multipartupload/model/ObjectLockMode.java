@@ -24,6 +24,8 @@ import com.google.cloud.StringEnumValue;
  * Represents the object lock mode. See <a
  * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
  * for details.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
 public final class ObjectLockMode extends StringEnumValue {
@@ -48,30 +50,49 @@ public final class ObjectLockMode extends StringEnumValue {
    * Governance mode. See <a
    * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
    * for details.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static final ObjectLockMode GOVERNANCE = type.createAndRegister("GOVERNANCE");
 
   /**
    * Compliance mode. See <a
    * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
    * for details.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static final ObjectLockMode COMPLIANCE = type.createAndRegister("COMPLIANCE");
 
   /**
    * Get the ObjectLockMode for the given String constant, and throw an exception if the constant is
    * not recognized.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static ObjectLockMode valueOfStrict(String constant) {
     return type.valueOfStrict(constant);
   }
 
-  /** Get the ObjectLockMode for the given String constant, and allow unrecognized values. */
+  /**
+   * Get the ObjectLockMode for the given String constant, and allow unrecognized values.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static ObjectLockMode valueOf(String constant) {
     return type.valueOf(constant);
   }
 
-  /** Return the known values for ObjectLockMode. */
+  /**
+   * Return the known values for ObjectLockMode.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static ObjectLockMode[] values() {
     return type.values();
   }

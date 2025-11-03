@@ -20,6 +20,8 @@ import com.google.api.core.BetaApi;
 /**
  * Represents a response to an abort multipart upload request. This class is currently empty as the
  * abort operation does not return any specific data in its response body.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
 public final class AbortMultipartUploadResponse {}

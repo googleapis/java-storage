@@ -16,8 +16,14 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.google.api.core.BetaApi;
 
-/** Represents a completed part of a multipart upload. */
+/**
+ * Represents a completed part of a multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
 public final class CompletedPart {
 
   @JacksonXmlProperty(localName = "PartNumber")
@@ -35,7 +41,9 @@ public final class CompletedPart {
    * Creates a new builder for {@link CompletedPart}.
    *
    * @return A new builder.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -44,7 +52,9 @@ public final class CompletedPart {
    * Returns the part number of this completed part.
    *
    * @return The part number.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public int partNumber() {
     return partNumber;
   }
@@ -53,12 +63,19 @@ public final class CompletedPart {
    * Returns the ETag of this completed part.
    *
    * @return The ETag.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String eTag() {
     return eTag;
   }
 
-  /** Builder for {@link CompletedPart}. */
+  /**
+   * Builder for {@link CompletedPart}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static class Builder {
     private int partNumber;
     private String etag;
@@ -68,7 +85,9 @@ public final class CompletedPart {
      *
      * @param partNumber The part number.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder partNumber(int partNumber) {
       this.partNumber = partNumber;
       return this;
@@ -79,7 +98,9 @@ public final class CompletedPart {
      *
      * @param etag The ETag.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder eTag(String etag) {
       this.etag = etag;
       return this;
@@ -89,7 +110,9 @@ public final class CompletedPart {
      * Builds the {@link CompletedPart} object.
      *
      * @return The new {@link CompletedPart} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CompletedPart build() {
       return new CompletedPart(partNumber, etag);
     }

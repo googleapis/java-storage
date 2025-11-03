@@ -16,10 +16,16 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-/** Represents a request to complete a multipart upload. */
+/**
+ * Represents a request to complete a multipart upload.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
+@BetaApi
 public final class CompleteMultipartUploadRequest {
 
   private final String bucket;
@@ -38,7 +44,9 @@ public final class CompleteMultipartUploadRequest {
    * Returns the bucket name.
    *
    * @return The bucket name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -47,7 +55,9 @@ public final class CompleteMultipartUploadRequest {
    * Returns the object name.
    *
    * @return The object name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -56,7 +66,9 @@ public final class CompleteMultipartUploadRequest {
    * Returns the upload ID of the multipart upload.
    *
    * @return The upload ID.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -65,7 +77,9 @@ public final class CompleteMultipartUploadRequest {
    * Returns the {@link CompletedMultipartUpload} payload for this request.
    *
    * @return The {@link CompletedMultipartUpload} payload.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public CompletedMultipartUpload multipartUpload() {
     return multipartUpload;
   }
@@ -104,12 +118,19 @@ public final class CompleteMultipartUploadRequest {
    * Creates a new builder for {@link CompleteMultipartUploadRequest}.
    *
    * @return A new builder.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
 
-  /** Builder for {@link CompleteMultipartUploadRequest}. */
+  /**
+   * Builder for {@link CompleteMultipartUploadRequest}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;
@@ -123,7 +144,9 @@ public final class CompleteMultipartUploadRequest {
      *
      * @param bucket The bucket name.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -134,7 +157,9 @@ public final class CompleteMultipartUploadRequest {
      *
      * @param key The object name.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -145,7 +170,9 @@ public final class CompleteMultipartUploadRequest {
      *
      * @param uploadId The upload ID.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -156,7 +183,9 @@ public final class CompleteMultipartUploadRequest {
      *
      * @param completedMultipartUpload The {@link CompletedMultipartUpload} payload.
      * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder multipartUpload(CompletedMultipartUpload completedMultipartUpload) {
       this.multipartUpload = completedMultipartUpload;
       return this;
@@ -166,7 +195,9 @@ public final class CompleteMultipartUploadRequest {
      * Builds the {@link CompleteMultipartUploadRequest} object.
      *
      * @return The new {@link CompleteMultipartUploadRequest} object.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CompleteMultipartUploadRequest build() {
       return new CompleteMultipartUploadRequest(this);
     }

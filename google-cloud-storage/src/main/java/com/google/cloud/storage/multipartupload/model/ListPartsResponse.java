@@ -25,7 +25,11 @@ import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
 
-/** Represents a response to a list parts request. */
+/**
+ * Represents a response to a list parts request.
+ *
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 public final class ListPartsResponse {
 
@@ -76,7 +80,9 @@ public final class ListPartsResponse {
    * Creates a new {@code Builder} for {@code ListPartsResponse} objects.
    *
    * @return A new {@code Builder} instance.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -85,7 +91,9 @@ public final class ListPartsResponse {
    * Returns the bucket name.
    *
    * @return the bucket name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String getBucket() {
     return bucket;
   }
@@ -94,7 +102,9 @@ public final class ListPartsResponse {
    * Returns the object name.
    *
    * @return the object name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String getKey() {
     return key;
   }
@@ -103,7 +113,9 @@ public final class ListPartsResponse {
    * Returns the upload ID.
    *
    * @return the upload ID.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String getUploadId() {
     return uploadId;
   }
@@ -112,7 +124,9 @@ public final class ListPartsResponse {
    * Returns the part number marker.
    *
    * @return the part number marker.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public int getPartNumberMarker() {
     return partNumberMarker;
   }
@@ -121,7 +135,9 @@ public final class ListPartsResponse {
    * Returns the next part number marker.
    *
    * @return the next part number marker.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public int getNextPartNumberMarker() {
     return nextPartNumberMarker;
   }
@@ -130,7 +146,9 @@ public final class ListPartsResponse {
    * Returns the maximum number of parts to return.
    *
    * @return the maximum number of parts to return.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public int getMaxParts() {
     return maxParts;
   }
@@ -139,7 +157,9 @@ public final class ListPartsResponse {
    * Returns true if the response is truncated.
    *
    * @return true if the response is truncated.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public boolean isTruncated() {
     return isTruncated;
   }
@@ -148,7 +168,9 @@ public final class ListPartsResponse {
    * Returns the storage class of the object.
    *
    * @return the storage class of the object.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public StorageClass getStorageClass() {
     return storageClass;
   }
@@ -157,7 +179,9 @@ public final class ListPartsResponse {
    * Returns the list of parts.
    *
    * @return the list of parts.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public List<Part> getParts() {
     return parts;
   }
@@ -211,7 +235,11 @@ public final class ListPartsResponse {
         .toString();
   }
 
-  /** Builder for {@code ListPartsResponse}. */
+  /**
+   * Builder for {@code ListPartsResponse}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public static final class Builder {
     private String bucket;
@@ -231,7 +259,9 @@ public final class ListPartsResponse {
      *
      * @param bucket The bucket name.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setBucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -242,7 +272,9 @@ public final class ListPartsResponse {
      *
      * @param key The object name.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setKey(String key) {
       this.key = key;
       return this;
@@ -253,7 +285,9 @@ public final class ListPartsResponse {
      *
      * @param uploadId The upload ID.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setUploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -264,7 +298,9 @@ public final class ListPartsResponse {
      *
      * @param partNumberMarker The part number marker.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setPartNumberMarker(int partNumberMarker) {
       this.partNumberMarker = partNumberMarker;
       return this;
@@ -275,7 +311,9 @@ public final class ListPartsResponse {
      *
      * @param nextPartNumberMarker The next part number marker.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setNextPartNumberMarker(int nextPartNumberMarker) {
       this.nextPartNumberMarker = nextPartNumberMarker;
       return this;
@@ -286,7 +324,9 @@ public final class ListPartsResponse {
      *
      * @param maxParts The maximum number of parts to return.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setMaxParts(int maxParts) {
       this.maxParts = maxParts;
       return this;
@@ -297,7 +337,9 @@ public final class ListPartsResponse {
      *
      * @param isTruncated True if the response is truncated, false otherwise.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setIsTruncated(boolean isTruncated) {
       this.isTruncated = isTruncated;
       return this;
@@ -308,7 +350,9 @@ public final class ListPartsResponse {
      *
      * @param storageClass The storage class of the object.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setStorageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
@@ -319,7 +363,9 @@ public final class ListPartsResponse {
      *
      * @param parts The list of parts.
      * @return The builder instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder setParts(List<Part> parts) {
       this.parts = parts;
       return this;
@@ -329,7 +375,9 @@ public final class ListPartsResponse {
      * Builds a {@code ListPartsResponse} object.
      *
      * @return A new {@code ListPartsResponse} instance.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public ListPartsResponse build() {
       return new ListPartsResponse(this);
     }
