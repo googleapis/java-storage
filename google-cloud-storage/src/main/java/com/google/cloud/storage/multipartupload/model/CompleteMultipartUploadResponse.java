@@ -36,12 +36,14 @@ public final class CompleteMultipartUploadResponse {
   private final String bucket;
   private final String key;
   private final String etag;
+  private final String crc32c;
 
   private CompleteMultipartUploadResponse(Builder builder) {
     this.location = builder.location;
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.etag = builder.etag;
+    this.crc32c = builder.crc32c;
   }
 
   /**
@@ -92,6 +94,17 @@ public final class CompleteMultipartUploadResponse {
     return etag;
   }
 
+  /**
+   * Returns the CRC32C checksum of the completed object.
+   *
+   * @return The CRC32C checksum of the completed object.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String crc32c() {
+    return crc32c;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -104,12 +117,13 @@ public final class CompleteMultipartUploadResponse {
     return Objects.equals(location, that.location)
         && Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
-        && Objects.equals(etag, that.etag);
+        && Objects.equals(etag, that.etag)
+        && Objects.equals(crc32c, that.crc32c);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(location, bucket, key, etag);
+    return Objects.hash(location, bucket, key, etag, crc32c);
   }
 
   @Override
@@ -119,6 +133,7 @@ public final class CompleteMultipartUploadResponse {
         .add("bucket", bucket)
         .add("key", key)
         .add("etag", etag)
+        .add("crc32c", crc32c)
         .toString();
   }
 
@@ -145,6 +160,7 @@ public final class CompleteMultipartUploadResponse {
     private String bucket;
     private String key;
     private String etag;
+    private String crc32c;
 
     private Builder() {}
 
@@ -201,6 +217,19 @@ public final class CompleteMultipartUploadResponse {
     @JsonProperty("ETag")
     public Builder etag(String etag) {
       this.etag = etag;
+      return this;
+    }
+
+    /**
+     * Sets the CRC32C checksum of the completed object.
+     *
+     * @param crc32c The CRC32C checksum of the completed object.
+     * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder crc32c(String crc32c) {
+      this.crc32c = crc32c;
       return this;
     }
 

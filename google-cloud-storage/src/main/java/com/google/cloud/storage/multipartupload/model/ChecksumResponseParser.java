@@ -18,6 +18,7 @@ package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.client.http.HttpResponse;
 import com.google.api.core.BetaApi;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -30,9 +31,9 @@ import java.util.stream.Collectors;
  * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
-public final class UploadResponseParser {
+public final class ChecksumResponseParser {
 
-  private UploadResponseParser() {}
+  private ChecksumResponseParser() {}
 
   /**
    * Parses an {@link HttpResponse} and returns a {@link UploadPartResponse}.
@@ -42,14 +43,27 @@ public final class UploadResponseParser {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public static UploadPartResponse parse(HttpResponse response) {
+  public static UploadPartResponse parseUploadResponse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
-    System.out.println(response.getHeaders().getFirstHeaderStringValue("x-goog-hash"));
     Map<String, String> hashes = extractHashesFromHeader(response);
     return UploadPartResponse.builder()
         .eTag(eTag)
-        .crc32c(hashes.get("crc32c"))
         .md5(hashes.get("md5"))
+        .build();
+  }
+
+  public static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
+      throws IOException {
+    Map<String, String> hashes = extractHashesFromHeader(response);
+    CompleteMultipartUploadResponse completeMpuResponse = response.parseAs(
+        CompleteMultipartUploadResponse.class);
+    return CompleteMultipartUploadResponse
+        .builder()
+        .location(completeMpuResponse.location())
+        .bucket(completeMpuResponse.bucket())
+        .key(completeMpuResponse.key())
+        .etag(completeMpuResponse.etag())
+        .crc32c(hashes.get("crc32c"))
         .build();
   }
 

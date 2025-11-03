@@ -23,6 +23,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.UriTemplate;
 import com.google.api.client.util.ObjectParser;
 import com.google.api.gax.core.GaxProperties;
@@ -40,7 +41,7 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import com.google.cloud.storage.multipartupload.model.UploadResponseParser;
+import com.google.cloud.storage.multipartupload.model.ChecksumResponseParser;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -148,7 +149,7 @@ final class MultipartUploadHttpRequestManager {
     }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
-    return httpRequest.execute().parseAs(CompleteMultipartUploadResponse.class);
+    return ChecksumResponseParser.parseCompleteResponse(httpRequest.execute());
   }
 
   UploadPartResponse sendUploadPartRequest(
@@ -171,7 +172,7 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
     httpRequest.setThrowExceptionOnExecuteError(true);
-    return UploadResponseParser.parse(httpRequest.execute());
+    return ChecksumResponseParser.parseUploadResponse(httpRequest.execute());
   }
 
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
