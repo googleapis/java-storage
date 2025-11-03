@@ -19,6 +19,7 @@ package com.google.cloud.storage.it;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
@@ -48,13 +49,25 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,32 +115,117 @@ public final class ITMultipartUploadClientTest {
   }
 
   @Test
+  public void testMultipartUpload_5GB_parallel() throws Exception {
+    // This test is slow and resource-intensive.
+    long objectSize = 5L * 1024 * 1024 * 1024; // 5 GiB
+    int partSize = 8 * 1024 * 1024; // 8 MiB
+
+    Path tempFile = Files.createTempFile("multipart-upload-it", ".bin");
+    try {
+      // Generate a 5GB file with random data
+      try (OutputStream os = new BufferedOutputStream(Files.newOutputStream(tempFile))) {
+        byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
+        Random random = new Random();
+        for (long i = 0; i < objectSize; i += buffer.length) {
+          random.nextBytes(buffer);
+          int len = (int) Math.min(buffer.length, objectSize - i);
+          os.write(buffer, 0, len);
+        }
+      }
+
+      BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+      CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+      String uploadId = createResponse.uploadId();
+
+      int numThreads = Runtime.getRuntime().availableProcessors();
+      ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+      List<Future<CompletedPart>> futures = new ArrayList<>();
+
+      long numParts = (objectSize + partSize - 1) / partSize;
+
+      for (int i = 0; i < numParts; i++) {
+        final int partNumber = i + 1;
+        final long offset = (long) i * partSize;
+        final long len = Math.min(partSize, objectSize - offset);
+
+        Callable<CompletedPart> uploadTask =
+            () -> {
+              ByteBuffer partBuffer = ByteBuffer.allocate((int) len);
+              try (FileChannel fileChannel = FileChannel.open(tempFile, StandardOpenOption.READ)) {
+                fileChannel.read(partBuffer, offset);
+              }
+              partBuffer.flip();
+              RequestBody partBody = RequestBody.of(partBuffer);
+              UploadPartResponse uploadPartResponse =
+                  uploadPart(info, uploadId, partNumber, partBody);
+              return CompletedPart.builder()
+                  .partNumber(partNumber)
+                  .eTag(uploadPartResponse.eTag())
+                  .build();
+            };
+        futures.add(executor.submit(uploadTask));
+      }
+
+      List<CompletedPart> completedParts = new ArrayList<>();
+      for (Future<CompletedPart> future : futures) {
+        completedParts.add(future.get());
+      }
+      executor.shutdown();
+
+      completedParts.sort(Comparator.comparingInt(CompletedPart::partNumber));
+
+      completeMultipartUpload(info, uploadId, completedParts);
+
+      Blob result = injectedStorage.get(info.getBlobId());
+      assertThat(result).isNotNull();
+      assertThat(result.getSize()).isEqualTo(objectSize);
+
+      // Verify content by reading from both sources chunk by chunk
+      try (ReadChannel reader = injectedStorage.reader(info.getBlobId());
+          InputStream expectedStream = new BufferedInputStream(Files.newInputStream(tempFile))) {
+
+        ByteBuffer cloudBuffer = ByteBuffer.allocate(1024 * 1024); // 1MB buffer
+
+        while (reader.read(cloudBuffer) > 0) {
+          cloudBuffer.flip();
+
+          byte[] actualBytes = new byte[cloudBuffer.remaining()];
+          cloudBuffer.get(actualBytes);
+
+          byte[] expectedBytes = new byte[actualBytes.length];
+          int bytesRead = 0;
+          while (bytesRead < expectedBytes.length) {
+            int readResult =
+                expectedStream.read(expectedBytes, bytesRead, expectedBytes.length - bytesRead);
+            if (readResult == -1) {
+              break;
+            }
+            bytesRead += readResult;
+          }
+
+          assertThat(bytesRead).isEqualTo(expectedBytes.length);
+          assertBytesEqual(actualBytes, expectedBytes);
+          cloudBuffer.clear();
+        }
+        assertThat(expectedStream.read()).isEqualTo(-1); // Ensure we have read the whole local file
+      }
+    } finally {
+      Files.deleteIfExists(tempFile);
+    }
+  }
+
+  @Test
   public void testAbort() throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
-    CreateMultipartUploadRequest.Builder createRequestBuilder =
-        CreateMultipartUploadRequest.builder().bucket(info.getBucket()).key(info.getName());
-    CreateMultipartUploadResponse createResponse =
-        multipartUploadClient.createMultipartUpload(createRequestBuilder.build());
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
     String uploadId = createResponse.uploadId();
 
     byte[] bytes = DataGenerator.rand(rand).genBytes(_5MiB);
 
-    RequestBody partBody = RequestBody.of(ByteBuffer.wrap(bytes));
-    UploadPartRequest.Builder uploadPartRequestBuilder =
-        UploadPartRequest.builder()
-            .partNumber(1)
-            .uploadId(uploadId)
-            .bucket(info.getBucket())
-            .key(info.getName());
-    multipartUploadClient.uploadPart(uploadPartRequestBuilder.build(), partBody);
-    AbortMultipartUploadRequest abortRequest =
-        AbortMultipartUploadRequest.builder()
-            .bucket(info.getBucket())
-            .key(info.getName())
-            .uploadId(uploadId)
-            .build();
-    multipartUploadClient.abortMultipartUpload(abortRequest);
+    uploadPart(info, uploadId, 1, bytes);
+    abortMultipartUpload(info, uploadId);
+
     Blob blob = injectedStorage.get(info.getBlobId());
     assertThat(blob).isNull();
   }
@@ -136,10 +234,7 @@ public final class ITMultipartUploadClientTest {
       throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
-    CreateMultipartUploadRequest.Builder createRequestBuilder =
-        CreateMultipartUploadRequest.builder().bucket(info.getBucket()).key(info.getName());
-    CreateMultipartUploadResponse createResponse =
-        multipartUploadClient.createMultipartUpload(createRequestBuilder.build());
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
     String uploadId = createResponse.uploadId();
     byte[] bytes = DataGenerator.rand(rand).genBytes(objectSizeBytes);
 
@@ -148,15 +243,7 @@ public final class ITMultipartUploadClientTest {
     for (int i = 0; i < objectSizeBytes; i += _5MiB) {
       int len = Math.min(_5MiB, objectSizeBytes - i);
       byte[] partBuffer = Arrays.copyOfRange(bytes, i, i + len);
-      RequestBody partBody = RequestBody.of(ByteBuffer.wrap(partBuffer));
-      UploadPartRequest.Builder uploadPartRequestBuilder =
-          UploadPartRequest.builder()
-              .partNumber(partNumber)
-              .uploadId(uploadId)
-              .bucket(info.getBucket())
-              .key(info.getName());
-      UploadPartResponse uploadPartResponse =
-          multipartUploadClient.uploadPart(uploadPartRequestBuilder.build(), partBody);
+      UploadPartResponse uploadPartResponse = uploadPart(info, uploadId, partNumber, partBuffer);
       completedParts.add(
           CompletedPart.builder().partNumber(partNumber).eTag(uploadPartResponse.eTag()).build());
       partNumber++;
@@ -167,31 +254,74 @@ public final class ITMultipartUploadClientTest {
         ListPartsRequest.builder().bucket(info.getBucket()).key(info.getName()).uploadId(uploadId);
     ListPartsResponse listPartsResponse = multipartUploadClient.listParts(listPartsBuilder.build());
     assertThat(listPartsResponse.getParts()).hasSize(completedParts.size());
+
+    completeMultipartUpload(info, uploadId, completedParts);
+
+    BlobGetOption[] getOptions =
+        userProject.isEmpty()
+            ? new BlobGetOption[0]
+            : new BlobGetOption[] {BlobGetOption.userProject(userProject)};
+    BlobSourceOption[] sourceOptions =
+        userProject.isEmpty()
+            ? new BlobSourceOption[0]
+            : new BlobSourceOption[] {BlobSourceOption.userProject(userProject)};
+
+    Blob result = injectedStorage.get(info.getBlobId(), getOptions);
+    byte[] actual = injectedStorage.readAllBytes(info.getBlobId(), sourceOptions);
+
+    assertThat(result).isNotNull();
+    assertBytesEqual(actual, bytes);
+  }
+
+  private void assertBytesEqual(byte[] actual, byte[] expected) {
+    assertThat(actual).isEqualTo(expected);
+    assertThat(xxd(actual)).isEqualTo(xxd(expected));
+  }
+
+  private CreateMultipartUploadResponse createMultipartUpload(BlobInfo info) {
+    CreateMultipartUploadRequest createRequest =
+        CreateMultipartUploadRequest.builder().bucket(info.getBucket()).key(info.getName()).build();
+    return multipartUploadClient.createMultipartUpload(createRequest);
+  }
+
+  private UploadPartResponse uploadPart(
+      BlobInfo info, String uploadId, int partNumber, byte[] bytes) {
+    RequestBody body = RequestBody.of(ByteBuffer.wrap(bytes));
+    return uploadPart(info, uploadId, partNumber, body);
+  }
+
+  private UploadPartResponse uploadPart(
+      BlobInfo info, String uploadId, int partNumber, RequestBody body) {
+    UploadPartRequest uploadPartRequest =
+        UploadPartRequest.builder()
+            .partNumber(partNumber)
+            .uploadId(uploadId)
+            .bucket(info.getBucket())
+            .key(info.getName())
+            .build();
+    return multipartUploadClient.uploadPart(uploadPartRequest, body);
+  }
+
+  private void completeMultipartUpload(BlobInfo info, String uploadId, List<CompletedPart> parts) {
     CompletedMultipartUpload completedMultipartUpload =
-        CompletedMultipartUpload.builder().parts(completedParts).build();
-    CompleteMultipartUploadRequest completeMultipartUploadRequest =
+        CompletedMultipartUpload.builder().parts(parts).build();
+    CompleteMultipartUploadRequest completeRequest =
         CompleteMultipartUploadRequest.builder()
             .bucket(info.getBucket())
             .key(info.getName())
             .uploadId(uploadId)
             .multipartUpload(completedMultipartUpload)
             .build();
-    multipartUploadClient.completeMultipartUpload(completeMultipartUploadRequest);
-    Blob result;
-    byte[] actual;
-    if (!userProject.isEmpty()) {
-      result =
-          injectedStorage.get(
-              info.getBucket(), info.getName(), BlobGetOption.userProject(userProject));
-      actual =
-          injectedStorage.readAllBytes(info.getBlobId(), BlobSourceOption.userProject(userProject));
-    } else {
-      result = injectedStorage.get(info.getBlobId());
-      actual = injectedStorage.readAllBytes(info.getBlobId());
-    }
-    assertThat(result).isNotNull();
+    multipartUploadClient.completeMultipartUpload(completeRequest);
+  }
 
-    assertThat(actual).isEqualTo(bytes);
-    assertThat(xxd(actual)).isEqualTo(xxd(bytes));
+  private void abortMultipartUpload(BlobInfo info, String uploadId) {
+    AbortMultipartUploadRequest abortRequest =
+        AbortMultipartUploadRequest.builder()
+            .bucket(info.getBucket())
+            .key(info.getName())
+            .uploadId(uploadId)
+            .build();
+    multipartUploadClient.abortMultipartUpload(abortRequest);
   }
 }
