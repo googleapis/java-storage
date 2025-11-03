@@ -198,10 +198,8 @@ final class MultipartUploadHttpRequestManager {
 
   private void addHeadersForCreateMultipartUpload(
       CreateMultipartUploadRequest request, HttpHeaders headers) {
-    // TODO(shreyassinha): add a PredefinedAcl::getXmlEntry with the corresponding value from
-    //   https://cloud.google.com/storage/docs/xml-api/reference-headers#xgoogacl
     if (request.getCannedAcl() != null) {
-      headers.put("x-goog-acl", request.getCannedAcl().toString());
+      headers.put("x-goog-acl", request.getCannedAcl().getXmlEntry());
     }
     // TODO(shreyassinha) Add encoding for x-goog-meta-* headers
     if (request.getMetadata() != null) {
