@@ -57,9 +57,11 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   @Override
   @BetaApi
-  public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request)
-      throws IOException {
-    return httpRequestManager.sendCreateMultipartUploadRequest(uri, request);
+  public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request) {
+    return retrier.run(
+        retryAlgorithmManager.nonIdempotent(),
+        () -> httpRequestManager.sendCreateMultipartUploadRequest(uri, request),
+        Decoder.identity());
   }
 
   @Override

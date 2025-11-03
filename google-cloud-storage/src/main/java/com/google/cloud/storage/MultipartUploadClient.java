@@ -50,11 +50,10 @@ public abstract class MultipartUploadClient {
    *
    * @param request The request object containing the details for creating the multipart upload.
    * @return A {@link CreateMultipartUploadResponse} object containing the upload ID.
-   * @throws IOException if an I/O error occurs.
    */
   @BetaApi
   public abstract CreateMultipartUploadResponse createMultipartUpload(
-      CreateMultipartUploadRequest request) throws IOException;
+      CreateMultipartUploadRequest request);
 
   /**
    * Lists the parts that have been uploaded for a specific multipart upload.
