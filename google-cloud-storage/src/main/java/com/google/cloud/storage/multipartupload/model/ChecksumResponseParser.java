@@ -49,6 +49,17 @@ public final class ChecksumResponseParser {
     return UploadPartResponse.builder().eTag(eTag).md5(hashes.get("md5")).build();
   }
 
+  /**
+   * Parses a {@link HttpResponse} from a complete multipart upload request and returns a {@link
+   * CompleteMultipartUploadResponse}. The checksums are parsed from the response headers, and the
+   * rest of the fields are parsed from the response body.
+   *
+   * @param response The {@link HttpResponse} from the complete multipart upload request.
+   * @return The parsed {@link CompleteMultipartUploadResponse}.
+   * @throws IOException if an I/O error occurs during parsing.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   public static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
       throws IOException {
     Map<String, String> hashes = extractHashesFromHeader(response);
