@@ -32,7 +32,6 @@ import com.google.api.services.storage.Storage;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
-import com.google.cloud.storage.multipartupload.model.ChecksumResponseParser;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;

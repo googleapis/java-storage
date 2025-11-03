@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.multipartupload.model;
+package com.google.cloud.storage;
 
 import com.google.api.client.http.HttpResponse;
-import com.google.api.core.BetaApi;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,42 +26,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}.
- *
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
- */
-@BetaApi
-public final class ChecksumResponseParser {
+/** A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}. */
+final class ChecksumResponseParser {
 
   private ChecksumResponseParser() {}
 
-  /**
-   * Parses an {@link HttpResponse} and returns a {@link UploadPartResponse}.
-   *
-   * @param response The {@link HttpResponse} from the upload part request.
-   * @return The parsed {@link UploadPartResponse}.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
-   */
-  @BetaApi
-  public static UploadPartResponse parseUploadResponse(HttpResponse response) {
+  static UploadPartResponse parseUploadResponse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
     return UploadPartResponse.builder().eTag(eTag).md5(hashes.get("md5")).build();
   }
 
-  /**
-   * Parses a {@link HttpResponse} from a complete multipart upload request and returns a {@link
-   * CompleteMultipartUploadResponse}. The checksums are parsed from the response headers, and the
-   * rest of the fields are parsed from the response body.
-   *
-   * @param response The {@link HttpResponse} from the complete multipart upload request.
-   * @return The parsed {@link CompleteMultipartUploadResponse}.
-   * @throws IOException if an I/O error occurs during parsing.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
-   */
-  @BetaApi
-  public static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
+  static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
       throws IOException {
     Map<String, String> hashes = extractHashesFromHeader(response);
     CompleteMultipartUploadResponse completeMpuResponse =
