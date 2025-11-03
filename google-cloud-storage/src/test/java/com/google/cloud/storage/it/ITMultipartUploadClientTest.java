@@ -18,7 +18,6 @@ package com.google.cloud.storage.it;
 
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
-import static java.lang.Thread.sleep;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
