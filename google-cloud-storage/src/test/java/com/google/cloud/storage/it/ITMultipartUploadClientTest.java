@@ -101,9 +101,9 @@ public final class ITMultipartUploadClientTest {
   }
 
   @Test
-  public void testMultipartUpload_5GB_parallel() throws Exception {
+  public void testMultipartUpload_parallel() throws Exception {
     // This test is slow and resource-intensive.
-    long objectSize = 5L * 1024 * 1024 * 1024; // 5 GiB
+    long objectSize = 513 * 1024 * 1024 + 29; // 513 MiB + 29 bytes
     int partSize = 8 * 1024 * 1024; // 8 MiB
 
     Path tempFile = Files.createTempFile("multipart-upload-it", ".bin");
