@@ -143,9 +143,7 @@ final class MultipartUploadHttpRequestManager {
             new GenericUrl(completeUri), new ByteArrayContent("application/xml", bytes));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
-    if (crc32cValue != null) {
-      addChecksumHeader(crc32cValue, httpRequest.getHeaders());
-    }
+    addChecksumHeader(crc32cValue, httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseCompleteResponse(httpRequest.execute());
@@ -195,8 +193,10 @@ final class MultipartUploadHttpRequestManager {
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
   }
 
-  private void addChecksumHeader(Crc32cLengthKnown crc32c, HttpHeaders headers) {
-    headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+  private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
+    if (crc32c != null) {
+      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+    }
   }
 
   private void addHeadersForCreateMultipartUpload(

@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class RewindableContent extends AbstractHttpContent {
 
@@ -59,7 +60,7 @@ abstract class RewindableContent extends AbstractHttpContent {
     return false;
   }
 
-  @BetaApi
+  @Nullable
   abstract Crc32cLengthKnown getCrc32c();
 
   static RewindableContent empty() {
@@ -121,8 +122,8 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     @BetaApi
-    Crc32cLengthKnown getCrc32c() {
-      return Crc32cValue.zero();
+    @Nullable Crc32cLengthKnown getCrc32c() {
+      return Hasher.defaultHasher().initialValue();
     }
   }
 
@@ -181,7 +182,7 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     @BetaApi
-    Crc32cLengthKnown getCrc32c() {
+    @Nullable Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
@@ -307,7 +308,7 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     @BetaApi
-    Crc32cLengthKnown getCrc32c() {
+    @Nullable Crc32cLengthKnown getCrc32c() {
       GuavaHasher hasher;
       {
         Hasher defaultHasher = Hasher.defaultHasher();
