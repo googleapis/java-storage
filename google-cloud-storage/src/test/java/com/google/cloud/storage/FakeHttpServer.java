@@ -20,6 +20,7 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 
+import com.google.api.client.http.UriTemplate;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.it.runner.registry.Registry;
@@ -48,6 +49,7 @@ import io.grpc.netty.shaded.io.netty.handler.logging.LoggingHandler;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Map;
 
 final class FakeHttpServer implements AutoCloseable {
 
@@ -64,12 +66,24 @@ final class FakeHttpServer implements AutoCloseable {
     this.httpStorageOptions = httpStorageOptions;
   }
 
-  public HttpStorageOptions getHttpStorageOptions() {
-    return httpStorageOptions;
+  /**
+   * overload which calls {@link #createUri(String, Map, boolean)} with {@code createUri(template,
+   * params, false)}
+   */
+  public URI createUri(String template, Map<String, String> params) {
+    return createUri(template, params, false);
   }
 
-  public URI getEndpoint() {
-    return endpoint;
+  /** Decorator for {@link UriTemplate#expand(String, String, Object, boolean)} */
+  public URI createUri(
+      String template, Map<String, String> params, boolean addUnusedParamsAsQueryParams) {
+    String expand =
+        UriTemplate.expand(endpoint.toString(), template, params, addUnusedParamsAsQueryParams);
+    return URI.create(expand);
+  }
+
+  public HttpStorageOptions getHttpStorageOptions() {
+    return httpStorageOptions;
   }
 
   @Override
