@@ -1,4 +1,22 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example.storage.multipartupload;
+
+// [START storage_upload_part]
 
 import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.MultipartUploadClient;
@@ -39,9 +57,7 @@ public class UploadPartFromFile {
     MultipartUploadClient mpuClient = MultipartUploadClient.create(mpuSettings);
 
     // The minimum part size for a multipart upload is 5 MiB, except for the last part.
-    // We are using 8MiB as our part size. You can change this to a different value
-    // to optimize for performance.
-    int partSize = 5 * 1024 * 1024;
+    int partSize = 8 * 1024 * 1024;
 
     Path path = Paths.get(filePath);
     long fileSize = Files.size(path);
@@ -55,7 +71,6 @@ public class UploadPartFromFile {
         int bytesRead = channel.read(buffer);
         buffer.flip();
 
-        // The RewindableContent is important for retrying failed uploads.
         RequestBody requestBody = RequestBody.of(buffer.slice(0, bytesRead));
 
         System.out.println("Uploading part " + partNumber);
@@ -78,3 +93,4 @@ public class UploadPartFromFile {
     System.out.println("All parts uploaded.");
   }
 }
+// [END storage_upload_part]

@@ -1,4 +1,22 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.example.storage.multipartupload;
+
+// [START storage_abort_multipart_upload]
 
 import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.MultipartUploadClient;
@@ -28,7 +46,6 @@ public class AbortMultipartUpload {
         CreateMultipartUploadRequest.builder().bucket(bucketName).key(objectName).build();
     CreateMultipartUploadResponse createResponse = mpuClient.createMultipartUpload(createRequest);
     String uploadId = createResponse.uploadId().trim();
-    System.out.println("Upload ID to be aborted: " + uploadId);
 
     System.out.println("Aborting multipart upload: " + uploadId);
     AbortMultipartUploadRequest abortRequest =
@@ -43,3 +60,4 @@ public class AbortMultipartUpload {
     System.out.println("Multipart upload with ID " + uploadId + " has been successfully aborted.");
   }
 }
+// [END storage_abort_multipart_upload]
