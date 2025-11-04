@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
@@ -110,10 +111,9 @@ public abstract class MultipartUploadClient {
   @BetaApi
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();
-    return new MultipartUploadClientImpl(
-        URI.create(options.getHost()),
-        options.createRetrier(),
-        MultipartUploadHttpRequestManager.createFrom(options),
-        options.getRetryAlgorithmManager());
+     MultipartUploadClient client = new MultipartUploadClientImpl(
+        URI.create(options.getHost()), options.createRetrier(),
+        MultipartUploadHttpRequestManager.createFrom(options), options.getRetryAlgorithmManager());
+        return OtelMultipartUploadClientDecorator.decorate(client, options.getOpenTelemetry(), Transport.HTTP);
   }
 }
