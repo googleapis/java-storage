@@ -50,6 +50,10 @@ final class HttpRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
+  ResultRetryAlgorithm<?> nonIdempotent() {
+    return retryStrategy.getNonidempotentHandler();
+  }
+
   public ResultRetryAlgorithm<?> getForBucketAclCreate(
       BucketAccessControl pb, Map<StorageRpc.Option, ?> optionsMap) {
     return retryStrategy.getNonidempotentHandler();
