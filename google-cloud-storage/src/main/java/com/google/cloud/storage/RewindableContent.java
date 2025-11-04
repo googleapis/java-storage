@@ -18,6 +18,9 @@ package com.google.cloud.storage;
 
 import com.google.api.client.http.AbstractHttpContent;
 import com.google.api.client.http.HttpMediaType;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Hasher.GuavaHasher;
+import com.google.cloud.storage.Hasher.NoOpHasher;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
@@ -32,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class RewindableContent extends AbstractHttpContent {
 
@@ -54,6 +58,9 @@ abstract class RewindableContent extends AbstractHttpContent {
   public final boolean retrySupported() {
     return false;
   }
+
+  @Nullable
+  abstract Crc32cLengthKnown getCrc32c();
 
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
@@ -111,6 +118,11 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    @Nullable Crc32cLengthKnown getCrc32c() {
+      return Hasher.defaultHasher().initialValue();
+    }
   }
 
   private static final class PathRewindableContent extends RewindableContent {
@@ -165,6 +177,36 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     void flagDirty() {}
+
+    @Override
+    @Nullable Crc32cLengthKnown getCrc32c() {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
+        }
+      }
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
+
+      int bufferSize = 8192; // 8KiB buffer for reading chunks
+      ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+
+      try (SeekableByteChannel channel = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        while (channel.read(buffer) != -1) {
+          buffer.flip();
+          if (buffer.hasRemaining()) {
+            cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
+          }
+          buffer.clear();
+        }
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to read file for CRC32C calculation: " + path, e);
+      }
+      return cumulative;
+    }
   }
 
   private static final class ByteBufferContent extends RewindableContent {
@@ -259,6 +301,24 @@ abstract class RewindableContent extends AbstractHttpContent {
     @Override
     void flagDirty() {
       this.dirty = true;
+    }
+
+    @Override
+    @Nullable Crc32cLengthKnown getCrc32c() {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
+        }
+      }
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
+      for (ByteBuffer buffer : buffers) {
+        cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
+      }
+      return cumulative;
     }
   }
 }
