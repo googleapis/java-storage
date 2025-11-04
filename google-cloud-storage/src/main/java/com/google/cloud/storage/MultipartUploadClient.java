@@ -20,6 +20,7 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;

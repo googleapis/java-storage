@@ -16,7 +16,12 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -34,14 +39,15 @@ import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.cloud.storage.otel.TestExporter;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

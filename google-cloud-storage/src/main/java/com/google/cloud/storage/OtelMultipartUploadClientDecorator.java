@@ -36,6 +36,7 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+import java.util.Locale;
 
 /**
  * A decorator for {@link MultipartUploadClient} that adds OpenTelemetry tracing.
@@ -61,8 +62,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("createMultipartUpload")
-            .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+            .setAttribute("gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.createMultipartUpload(request);
@@ -80,8 +80,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("listParts")
-            .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+            .setAttribute("gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.listParts(request);
@@ -99,8 +98,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("abortMultipartUpload")
-            .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+            .setAttribute("gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.abortMultipartUpload(request);
@@ -119,8 +117,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("completeMultipartUpload")
-            .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+            .setAttribute("gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.completeMultipartUpload(request);
@@ -138,8 +135,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("uploadPart")
-            .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+            .setAttribute("gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .setAttribute("partNumber", request.partNumber())
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
