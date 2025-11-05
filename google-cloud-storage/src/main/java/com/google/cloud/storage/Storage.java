@@ -93,23 +93,29 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   enum PredefinedAcl {
-    AUTHENTICATED_READ("authenticatedRead"),
-    ALL_AUTHENTICATED_USERS("allAuthenticatedUsers"),
-    PRIVATE("private"),
-    PROJECT_PRIVATE("projectPrivate"),
-    PUBLIC_READ("publicRead"),
-    PUBLIC_READ_WRITE("publicReadWrite"),
-    BUCKET_OWNER_READ("bucketOwnerRead"),
-    BUCKET_OWNER_FULL_CONTROL("bucketOwnerFullControl");
+    AUTHENTICATED_READ("authenticatedRead", "authenticated-read"),
+    ALL_AUTHENTICATED_USERS("allAuthenticatedUsers", "all-authenticated-users"),
+    PRIVATE("private", "private"),
+    PROJECT_PRIVATE("projectPrivate", "project-private"),
+    PUBLIC_READ("publicRead", "public-read"),
+    PUBLIC_READ_WRITE("publicReadWrite", "public-read-write"),
+    BUCKET_OWNER_READ("bucketOwnerRead", "bucket-owner-read"),
+    BUCKET_OWNER_FULL_CONTROL("bucketOwnerFullControl", "bucket-owner-full-control");
 
     private final String entry;
+    private final String xmlEntry;
 
-    PredefinedAcl(String entry) {
+    PredefinedAcl(String entry, String xmlEntry) {
       this.entry = entry;
+      this.xmlEntry = xmlEntry;
     }
 
     String getEntry() {
       return entry;
+    }
+
+    String getXmlEntry() {
+      return xmlEntry;
     }
   }
 

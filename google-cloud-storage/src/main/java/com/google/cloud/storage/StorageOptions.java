@@ -26,6 +26,9 @@ import com.google.cloud.storage.GrpcStorageOptions.GrpcStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
+import com.google.cloud.storage.Retrying.DefaultRetrier;
+import com.google.cloud.storage.Retrying.Retrier;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
@@ -66,6 +69,12 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
       // ignored
     }
     VERSION = tmp;
+  }
+
+  Retrier createRetrier() {
+    return new DefaultRetrier(
+        OtelStorageDecorator.retryContextDecorator(getOpenTelemetry()),
+        RetryingDependencies.simple(getClock(), getRetrySettings()));
   }
 
   /**
