@@ -41,9 +41,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  *     any other character (no special directory semantics).
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler",
-    comments = "Source: google/storage/v2/storage.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class StorageGrpc {
 
@@ -2259,9 +2256,9 @@ public final class StorageGrpc {
      * Permanently deletes an empty bucket.
      * </pre>
      */
-    public com.google.protobuf.Empty deleteBucket(
-        com.google.storage.v2.DeleteBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.protobuf.Empty deleteBucket(com.google.storage.v2.DeleteBucketRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteBucketMethod(), getCallOptions(), request);
     }
 
@@ -2272,8 +2269,9 @@ public final class StorageGrpc {
      * Returns metadata for the specified bucket.
      * </pre>
      */
-    public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBucketMethod(), getCallOptions(), request);
     }
 
@@ -2285,8 +2283,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Bucket createBucket(
-        com.google.storage.v2.CreateBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.CreateBucketRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateBucketMethod(), getCallOptions(), request);
     }
 
@@ -2298,8 +2296,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.ListBucketsResponse listBuckets(
-        com.google.storage.v2.ListBucketsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ListBucketsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListBucketsMethod(), getCallOptions(), request);
     }
 
@@ -2311,8 +2309,9 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Bucket lockBucketRetentionPolicy(
-        com.google.storage.v2.LockBucketRetentionPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.LockBucketRetentionPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getLockBucketRetentionPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2327,8 +2326,9 @@ public final class StorageGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2343,8 +2343,9 @@ public final class StorageGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2362,8 +2363,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
-        com.google.iam.v1.TestIamPermissionsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.iam.v1.TestIamPermissionsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
     }
 
@@ -2375,8 +2376,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Bucket updateBucket(
-        com.google.storage.v2.UpdateBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.UpdateBucketRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateBucketMethod(), getCallOptions(), request);
     }
 
@@ -2389,8 +2390,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Object composeObject(
-        com.google.storage.v2.ComposeObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ComposeObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getComposeObjectMethod(), getCallOptions(), request);
     }
 
@@ -2417,9 +2418,9 @@ public final class StorageGrpc {
      * the bucket.
      * </pre>
      */
-    public com.google.protobuf.Empty deleteObject(
-        com.google.storage.v2.DeleteObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.protobuf.Empty deleteObject(com.google.storage.v2.DeleteObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteObjectMethod(), getCallOptions(), request);
     }
 
@@ -2431,8 +2432,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Object restoreObject(
-        com.google.storage.v2.RestoreObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.RestoreObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRestoreObjectMethod(), getCallOptions(), request);
     }
 
@@ -2449,8 +2450,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.CancelResumableWriteResponse cancelResumableWrite(
-        com.google.storage.v2.CancelResumableWriteRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.CancelResumableWriteRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCancelResumableWriteMethod(), getCallOptions(), request);
     }
 
@@ -2466,8 +2467,9 @@ public final class StorageGrpc {
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
-    public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetObjectMethod(), getCallOptions(), request);
     }
 
@@ -2527,8 +2529,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.Object updateObject(
-        com.google.storage.v2.UpdateObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.UpdateObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateObjectMethod(), getCallOptions(), request);
     }
 
@@ -2645,8 +2647,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.ListObjectsResponse listObjects(
-        com.google.storage.v2.ListObjectsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ListObjectsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListObjectsMethod(), getCallOptions(), request);
     }
 
@@ -2659,8 +2661,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.RewriteResponse rewriteObject(
-        com.google.storage.v2.RewriteObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.RewriteObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRewriteObjectMethod(), getCallOptions(), request);
     }
 
@@ -2682,8 +2684,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.StartResumableWriteResponse startResumableWrite(
-        com.google.storage.v2.StartResumableWriteRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.StartResumableWriteRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getStartResumableWriteMethod(), getCallOptions(), request);
     }
 
@@ -2709,8 +2711,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.QueryWriteStatusResponse queryWriteStatus(
-        com.google.storage.v2.QueryWriteStatusRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.QueryWriteStatusRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getQueryWriteStatusMethod(), getCallOptions(), request);
     }
 
@@ -2721,9 +2723,9 @@ public final class StorageGrpc {
      * Moves the source object to the destination object in the same bucket.
      * </pre>
      */
-    public com.google.storage.v2.Object moveObject(
-        com.google.storage.v2.MoveObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Object moveObject(com.google.storage.v2.MoveObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getMoveObjectMethod(), getCallOptions(), request);
     }
   }
