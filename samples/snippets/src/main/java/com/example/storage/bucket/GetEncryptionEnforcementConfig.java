@@ -46,8 +46,7 @@ public class GetEncryptionEnforcementConfig {
         return;
       }
 
-      System.out.println("  Bucket Name: " + bucket.getName());
-      System.out.println("  Default KMS Key: " + bucket.getDefaultKmsKeyName());
+      System.out.println("Bucket Name: " + bucket.getName());
 
       GoogleManagedEncryptionEnforcementConfig gmekConfig =
           bucket.getGoogleManagedEncryptionEnforcementConfig();
@@ -58,13 +57,25 @@ public class GetEncryptionEnforcementConfig {
 
       System.out.println(
           "  GMEK Enforcement: "
-              + (gmekConfig != null ? gmekConfig.getRestrictionMode() : "NOT SET (Default)"));
+              + (gmekConfig != null
+                  ? String.format(
+                      "Mode: %s, Effective Time: %s",
+                      gmekConfig.getRestrictionMode(), gmekConfig.getEffectiveTime())
+                  : "NOT SET (Default)"));
       System.out.println(
           "  CMEK Enforcement: "
-              + (cmekConfig != null ? cmekConfig.getRestrictionMode() : "NOT SET (Default)"));
+              + (cmekConfig != null
+                  ? String.format(
+                      "Mode: %s, Effective Time: %s",
+                      cmekConfig.getRestrictionMode(), cmekConfig.getEffectiveTime())
+                  : "NOT SET (Default)"));
       System.out.println(
           "  CSEK Enforcement: "
-              + (csekConfig != null ? csekConfig.getRestrictionMode() : "NOT SET (Default)"));
+              + (csekConfig != null
+                  ? String.format(
+                      "Mode: %s, Effective Time: %s",
+                      csekConfig.getRestrictionMode(), csekConfig.getEffectiveTime())
+                  : "NOT SET (Default)"));
     }
   }
 }

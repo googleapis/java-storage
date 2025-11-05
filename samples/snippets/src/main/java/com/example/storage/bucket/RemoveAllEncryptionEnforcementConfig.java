@@ -16,14 +16,14 @@
 
 package com.example.storage.bucket;
 
-// [START storage_remove_encryption_enforcement_config]
+// [START storage_remove_all_encryption_enforcement_config]
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class RemoveEncryptionEnforcementConfig {
+public class RemoveAllEncryptionEnforcementConfig {
   public static void removeEncryptionEnforcementConfig(String projectId, String bucketName)
       throws Exception {
     // The ID of your GCP project
@@ -56,4 +56,4 @@ public class RemoveEncryptionEnforcementConfig {
     }
   }
 }
-// [END storage_remove_encryption_enforcement_config]
+// [END storage_remove_all_encryption_enforcement_config]

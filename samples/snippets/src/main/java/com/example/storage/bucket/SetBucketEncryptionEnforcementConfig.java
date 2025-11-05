@@ -28,34 +28,29 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetBucketEncryptionEnforcementConfig {
-  public static void setBucketEncryptionEnforcementConfig(
-      String projectId, String bucketName, String kmsKeyName) throws Exception {
+  public static void setBucketEncryptionEnforcementConfig(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // The name of the KMS key to use
-    // String kmsKeyName =
-    // "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
-
     try (Storage storage =
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       // Example 1: Enforce GMEK Only
-      setGmekOnlyPolicy(storage, bucketName + "_gmek_only");
+      setGmekEnforcedPolicy(storage, bucketName + "_gmek_only");
 
       // Example 2: Enforce CMEK Only
-      setCmekOnlyPolicy(storage, bucketName + "_cmek_only", kmsKeyName);
+      setCmekEnforcedPolicy(storage, bucketName + "_cmek_only");
 
       // Example 3: Restrict CSEK (Ransomware Protection)
       restrictCsekPolicy(storage, bucketName + "_restrict_csek");
     }
   }
 
-  public static void setGmekOnlyPolicy(Storage storage, String bucketName) {
-    System.out.println("--- Setting GMEK-Only Policy on bucket " + bucketName + " ---");
+  public static void setGmekEnforcedPolicy(Storage storage, String bucketName) {
     GoogleManagedEncryptionEnforcementConfig gmekConfig =
         GoogleManagedEncryptionEnforcementConfig.of(
             EncryptionEnforcementRestrictionMode.NOT_RESTRICTED);
@@ -78,8 +73,7 @@ public class SetBucketEncryptionEnforcementConfig {
         "Bucket " + bucket.getName() + " created with GMEK-only enforcement policy.");
   }
 
-  public static void setCmekOnlyPolicy(Storage storage, String bucketName, String kmsKeyName) {
-    System.out.println("--- Setting CMEK-Only Policy on bucket " + bucketName + " ---");
+  public static void setCmekEnforcedPolicy(Storage storage, String bucketName) {
     GoogleManagedEncryptionEnforcementConfig gmekConfig =
         GoogleManagedEncryptionEnforcementConfig.of(
             EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED);
@@ -92,7 +86,6 @@ public class SetBucketEncryptionEnforcementConfig {
 
     BucketInfo bucketInfo =
         BucketInfo.newBuilder(bucketName)
-            .setDefaultKmsKeyName(kmsKeyName)
             .setGoogleManagedEncryptionEnforcementConfig(gmekConfig)
             .setCustomerManagedEncryptionEnforcementConfig(cmekConfig)
             .setCustomerSuppliedEncryptionEnforcementConfig(csekConfig)
@@ -104,7 +97,6 @@ public class SetBucketEncryptionEnforcementConfig {
   }
 
   public static void restrictCsekPolicy(Storage storage, String bucketName) {
-    System.out.println("--- Setting Restrict-CSEK Policy on bucket " + bucketName + " ---");
     CustomerSuppliedEncryptionEnforcementConfig csekConfig =
         CustomerSuppliedEncryptionEnforcementConfig.of(
             EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED);
