@@ -48,18 +48,21 @@ import javax.annotation.Generated;
  * Service Description: ## API Overview and Naming Syntax
  *
  * <p>The Cloud Storage gRPC API allows applications to read and write data through the abstractions
- * of buckets and objects. For a description of these abstractions please see
- * https://cloud.google.com/storage/docs.
+ * of buckets and objects. For a description of these abstractions please see [Cloud Storage
+ * documentation](https://cloud.google.com/storage/docs).
  *
- * <p>Resources are named as follows: - Projects are referred to as they are defined by the Resource
- * Manager API, using strings like `projects/123456` or `projects/my-string-id`. - Buckets are named
- * using string names of the form: `projects/{project}/buckets/{bucket}` For globally unique
- * buckets, `_` may be substituted for the project. - Objects are uniquely identified by their name
- * along with the name of the bucket they belong to, as separate strings in this API. For example:
+ * <p>Resources are named as follows:
  *
- * <p>ReadObjectRequest { bucket: 'projects/_/buckets/my-bucket' object: 'my-object' } Note that
- * object names can contain `/` characters, which are treated as any other character (no special
- * directory semantics).
+ * <p>- Projects are referred to as they are defined by the Resource Manager API, using strings like
+ * `projects/123456` or `projects/my-string-id`. - Buckets are named using string names of the form:
+ * `projects/{project}/buckets/{bucket}`. For globally unique buckets, `_` might be substituted for
+ * the project. - Objects are uniquely identified by their name along with the name of the bucket
+ * they belong to, as separate strings in this API. For example:
+ *
+ * <p>``` ReadObjectRequest { bucket: 'projects/_/buckets/my-bucket' object: 'my-object' } ```
+ *
+ * <p>Note that object names can contain `/` characters, which are treated as any other character
+ * (no special directory semantics).
  *
  * <p>This class provides the ability to make remote calls to the backing service through method
  * calls that map to API methods. Sample code to get started:
@@ -88,7 +91,11 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> DeleteBucket</td>
- *      <td><p> Permanently deletes an empty bucket.</td>
+ *      <td><p> Permanently deletes an empty bucket. The request fails if there are any live or noncurrent objects in the bucket, but the request succeeds if the bucket only contains soft-deleted objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently delete soft-deleted objects.
+ * <p>  When this API is used to delete a bucket containing an object that has a soft delete policy enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set on the object.
+ * <p>  Objects and multipart uploads that were in the bucket at the time of deletion are also retained for the specified retention duration. When a soft-deleted bucket reaches the end of its retention duration, it is permanently deleted. The `hardDeleteTime` of the bucket always equals or exceeds the expiration time of the last soft-deleted object in the bucket.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.delete` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -107,7 +114,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetBucket</td>
- *      <td><p> Returns metadata for the specified bucket.</td>
+ *      <td><p> Returns metadata for the specified bucket.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.get` IAM permission on the bucket. Additionally, to return specific bucket metadata, the authenticated user must have the following permissions:
+ * <p>  - To return the IAM policies: `storage.buckets.getIamPolicy` - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -126,7 +136,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> CreateBucket</td>
- *      <td><p> Creates a new bucket.</td>
+ *      <td><p> Creates a new bucket.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.create` IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions:
+ * <p>  - To enable object retention using the `enableObjectRetention` query parameter: `storage.buckets.enableObjectRetention` - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -145,7 +158,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ListBuckets</td>
- *      <td><p> Retrieves a list of buckets for a given project.</td>
+ *      <td><p> Retrieves a list of buckets for a given project, ordered lexicographically by name.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions:
+ * <p>  - To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -165,7 +181,12 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> LockBucketRetentionPolicy</td>
- *      <td><p> Locks retention policy on a bucket.</td>
+ *      <td><p> Permanently locks the retention policy that is currently applied to the specified bucket.
+ * <p>  Caution: Locking a bucket is an irreversible action. Once you lock a bucket:
+ * <p>  - You cannot remove the retention policy from the bucket. - You cannot decrease the retention period for the policy.
+ * <p>  Once locked, you must delete the entire bucket in order to remove the bucket's retention policy. However, before you can delete the bucket, you must delete all the objects in the bucket, which is only possible if all the objects have reached the retention period set by the retention policy.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.update` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -184,7 +205,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> GetIamPolicy</td>
- *      <td><p> Gets the IAM policy for a specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
+ *      <td><p> Gets the IAM policy for a specified bucket or managed folder. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.getIamPolicy` on the bucket or `storage.managedFolders.getIamPolicy` IAM permission on the managed folder.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -203,7 +226,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> SetIamPolicy</td>
- *      <td><p> Updates an IAM policy for the specified bucket. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
+ *      <td><p> Updates an IAM policy for the specified bucket or managed folder. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a bucket, or `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -241,7 +264,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> UpdateBucket</td>
- *      <td><p> Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.</td>
+ *      <td><p> Updates a bucket. Changes to the bucket are readable immediately after writing, but configuration changes might take time to propagate. This method supports `patch` semantics.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.buckets.update` IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions:
+ * <p>  - To set bucket IP filtering rules: `storage.buckets.setIpFilter` - To update public access prevention policies or access control lists (ACLs): `storage.buckets.setIamPolicy`</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -259,7 +285,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> ComposeObject</td>
- *      <td><p> Concatenates a list of existing objects into a new object in the same bucket.</td>
+ *      <td><p> Concatenates a list of existing objects into a new object in the same bucket. The existing source objects are unaffected by this operation.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires the `storage.objects.create` and `storage.objects.get` IAM permissions to use this method. If the new composite object overwrites an existing object, the authenticated user must also have the `storage.objects.delete` permission. If the request body includes the retention property, the authenticated user must also have the `storage.objects.setRetention` IAM permission.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -273,10 +301,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> DeleteObject</td>
- *      <td><p> Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for the bucket, or if the generation parameter is used, or if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When this API is used to delete an object from a bucket that has soft delete policy enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
+ *      <td><p> Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for the bucket, or if the generation parameter is used, or if soft delete is not enabled for the bucket. When this API is used to delete an object from a bucket that has soft delete policy enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
  * <p>  You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore soft-deleted objects until the soft delete retention period has passed.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.delete` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
+ * <p>  Requires `storage.objects.delete` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -297,7 +325,12 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> RestoreObject</td>
- *      <td><p> Restores a soft-deleted object.</td>
+ *      <td><p> Restores a soft-deleted object. When a soft-deleted object is restored, a new copy of that object is created in the same bucket and inherits the same metadata as the soft-deleted object. The inherited metadata is the metadata that existed when the original object became soft deleted, with the following exceptions:
+ * <p>    - The `createTime` of the new object is set to the time at which the   soft-deleted object was restored.   - The `softDeleteTime` and `hardDeleteTime` values are cleared.   - A new generation is assigned and the metageneration is reset to 1.   - If the soft-deleted object was in a bucket that had Autoclass enabled,   the new object is     restored to Standard storage.   - The restored object inherits the bucket's default object ACL, unless   `copySourceAcl` is `true`.
+ * <p>  If a live object using the same name already exists in the bucket and becomes overwritten, the live object becomes a noncurrent object if Object Versioning is enabled on the bucket. If Object Versioning is not enabled, the live object becomes soft deleted.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires the following IAM permissions to use this method:
+ * <p>    - `storage.objects.restore`   - `storage.objects.create`   - `storage.objects.delete` (only required if overwriting an existing   object)   - `storage.objects.getIamPolicy` (only required if `projection` is `full`   and the relevant bucket     has uniform bucket-level access disabled)   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is   `true` and the relevant     bucket has uniform bucket-level access disabled)</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -317,8 +350,8 @@ import javax.annotation.Generated;
  *    <tr>
  *      <td><p> CancelResumableWrite</td>
  *      <td><p> Cancels an in-progress resumable upload.
- * <p>  Any attempts to write to the resumable upload after cancelling the upload will fail.
- * <p>  The behavior for currently in progress write operations is not guaranteed - they could either complete before the cancellation or fail if the cancellation completes first.</td>
+ * <p>  Any attempts to write to the resumable upload after cancelling the upload fail.
+ * <p>  The behavior for any in-progress write operations is not guaranteed; they could either complete before the cancellation or fail if the cancellation completes first.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -338,7 +371,7 @@ import javax.annotation.Generated;
  *      <td><p> GetObject</td>
  *      <td><p> Retrieves object metadata.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.get` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
+ * <p>  Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -361,7 +394,7 @@ import javax.annotation.Generated;
  *      <td><p> ReadObject</td>
  *      <td><p> Retrieves object data.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.get` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
+ * <p>  Requires `storage.objects.get` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
@@ -372,11 +405,9 @@ import javax.annotation.Generated;
  *    <tr>
  *      <td><p> BidiReadObject</td>
  *      <td><p> Reads an object's data.
- * <p>  This is a bi-directional API with the added support for reading multiple ranges within one stream both within and across multiple messages. If the server encountered an error for any of the inputs, the stream will be closed with the relevant error code. Because the API allows for multiple outstanding requests, when the stream is closed the error response will contain a BidiReadObjectRangesError proto in the error extension describing the error for each outstanding read_id.
+ * <p>  This bi-directional API reads data from an object, allowing you to request multiple data ranges within a single stream, even across several messages. If an error occurs with any request, the stream closes with a relevant error code. Since you can have multiple outstanding requests, the error response includes a `BidiReadObjectRangesError` field detailing the specific error for each pending `read_id`.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.get`
- * <p>  [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
- * <p>  This API is currently in preview and is not yet available for general use.</td>
+ * <p>  Requires `storage.objects.get` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
@@ -386,7 +417,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> UpdateObject</td>
- *      <td><p> Updates an object's metadata. Equivalent to JSON API's storage.objects.patch.</td>
+ *      <td><p> Updates an object's metadata. Equivalent to JSON API's `storage.objects.patch` method.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires `storage.objects.update` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -406,12 +439,13 @@ import javax.annotation.Generated;
  *      <td><p> WriteObject</td>
  *      <td><p> Stores a new object and metadata.
  * <p>  An object can be written either in a single message stream or in a resumable sequence of message streams. To write using a single stream, the client should include in the first message of the stream an `WriteObjectSpec` describing the destination bucket, object, and any preconditions. Additionally, the final message must set 'finish_write' to true, or else it is an error.
- * <p>  For a resumable write, the client should instead call `StartResumableWrite()`, populating a `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the first message of each following call to `WriteObject`. If the stream is closed before finishing the upload (either explicitly by the client or due to a network error or an error response from the server), the client should do as follows:   - Check the result Status of the stream, to determine if writing can be     resumed on this stream or must be restarted from scratch (by calling     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,     INTERNAL, and UNAVAILABLE. For each case, the client should use binary     exponential backoff before retrying.  Additionally, writes can be     resumed after RESOURCE_EXHAUSTED errors, but only after taking     appropriate measures, which may include reducing aggregate send rate     across clients and/or requesting a quota increase for your project.   - If the call to `WriteObject` returns `ABORTED`, that indicates     concurrent attempts to update the resumable write, caused either by     multiple racing clients or by a single client where the previous     request was timed out on the client side but nonetheless reached the     server. In this case the client should take steps to prevent further     concurrent writes (e.g., increase the timeouts, stop using more than     one process to perform the upload, etc.), and then should follow the     steps below for resuming the upload.   - For resumable errors, the client should call `QueryWriteStatus()` and     then continue writing from the returned `persisted_size`. This may be     less than the amount of data the client previously sent. Note also that     it is acceptable to send data starting at an offset earlier than the     returned `persisted_size`; in this case, the service will skip data at     offsets that were already persisted (without checking that it matches     the previously written data), and write only the data starting from the     persisted offset. Even though the data isn't written, it may still     incur a performance cost over resuming at the correct write offset.     This behavior can make client-side handling simpler in some cases.   - Clients must only send data that is a multiple of 256 KiB per message,     unless the object is being finished with `finish_write` set to `true`.
- * <p>  The service will not view the object as complete until the client has sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after sending a request with `finish_write` set to `true` will cause an error. The client &#42;&#42;should&#42;&#42; check the response it receives to determine how much data the service was able to commit and whether the service views the object as complete.
- * <p>  Attempting to resume an already finalized object will result in an OK status, with a `WriteObjectResponse` containing the finalized object's metadata.
- * <p>  Alternatively, the BidiWriteObject operation may be used to write an object with controls over flushing and the ability to fetch the ability to determine the current persisted size.
+ * <p>  For a resumable write, the client should instead call `StartResumableWrite()`, populating a `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the first message of each following call to `WriteObject`. If the stream is closed before finishing the upload (either explicitly by the client or due to a network error or an error response from the server), the client should do as follows:
+ * <p>    - Check the result Status of the stream, to determine if writing can be     resumed on this stream or must be restarted from scratch (by calling     `StartResumableWrite()`). The resumable errors are `DEADLINE_EXCEEDED`,     `INTERNAL`, and `UNAVAILABLE`. For each case, the client should use     binary exponential backoff before retrying.  Additionally, writes can     be resumed after `RESOURCE_EXHAUSTED` errors, but only after taking     appropriate measures, which might include reducing aggregate send rate     across clients and/or requesting a quota increase for your project.   - If the call to `WriteObject` returns `ABORTED`, that indicates     concurrent attempts to update the resumable write, caused either by     multiple racing clients or by a single client where the previous     request was timed out on the client side but nonetheless reached the     server. In this case the client should take steps to prevent further     concurrent writes. For example, increase the timeouts and stop using     more than one process to perform the upload. Follow the steps below for     resuming the upload.   - For resumable errors, the client should call `QueryWriteStatus()` and     then continue writing from the returned `persisted_size`. This might be     less than the amount of data the client previously sent. Note also that     it is acceptable to send data starting at an offset earlier than the     returned `persisted_size`; in this case, the service skips data at     offsets that were already persisted (without checking that it matches     the previously written data), and write only the data starting from the     persisted offset. Even though the data isn't written, it might still     incur a performance cost over resuming at the correct write offset.     This behavior can make client-side handling simpler in some cases.   - Clients must only send data that is a multiple of 256 KiB per message,     unless the object is being finished with `finish_write` set to `true`.
+ * <p>  The service does not view the object as complete until the client has sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after sending a request with `finish_write` set to `true` causes an error. The client must check the response it receives to determine how much data the service is able to commit and whether the service views the object as complete.
+ * <p>  Attempting to resume an already finalized object results in an `OK` status, with a `WriteObjectResponse` containing the finalized object's metadata.
+ * <p>  Alternatively, you can use the `BidiWriteObject` operation to write an object with controls over flushing and the ability to fetch the ability to determine the current persisted size.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.create` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
+ * <p>  Requires `storage.objects.create` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
@@ -422,8 +456,8 @@ import javax.annotation.Generated;
  *    <tr>
  *      <td><p> BidiWriteObject</td>
  *      <td><p> Stores a new object and metadata.
- * <p>  This is similar to the WriteObject call with the added support for manual flushing of persisted state, and the ability to determine current persisted size without closing the stream.
- * <p>  The client may specify one or both of the `state_lookup` and `flush` fields in each BidiWriteObjectRequest. If `flush` is specified, the data written so far will be persisted to storage. If `state_lookup` is specified, the service will respond with a BidiWriteObjectResponse that contains the persisted size. If both `flush` and `state_lookup` are specified, the flush will always occur before a `state_lookup`, so that both may be set in the same request and the returned state will be the state of the object post-flush. When the stream is closed, a BidiWriteObjectResponse will always be sent to the client, regardless of the value of `state_lookup`.</td>
+ * <p>  This is similar to the `WriteObject` call with the added support for manual flushing of persisted state, and the ability to determine current persisted size without closing the stream.
+ * <p>  The client might specify one or both of the `state_lookup` and `flush` fields in each `BidiWriteObjectRequest`. If `flush` is specified, the data written so far is persisted to storage. If `state_lookup` is specified, the service responds with a `BidiWriteObjectResponse` that contains the persisted size. If both `flush` and `state_lookup` are specified, the flush always occurs before a `state_lookup`, so that both might be set in the same request and the returned state is the state of the object post-flush. When the stream is closed, a `BidiWriteObjectResponse` is always sent to the client, regardless of the value of `state_lookup`.</td>
  *      <td>
  *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
  *      <ul>
@@ -435,7 +469,7 @@ import javax.annotation.Generated;
  *      <td><p> ListObjects</td>
  *      <td><p> Retrieves a list of objects matching the criteria.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  The authenticated user requires `storage.objects.list` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
+ * <p>  The authenticated user requires `storage.objects.list` IAM permission to use this method. To return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy` permission.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -469,9 +503,9 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> StartResumableWrite</td>
- *      <td><p> Starts a resumable write operation. This method is part of the [Resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to upload large objects in multiple chunks, which is more resilient to network interruptions than a single upload. The validity duration of the write operation, and the consequences of it becoming invalid, are service-dependent.
+ *      <td><p> Starts a resumable write operation. This method is part of the Resumable upload feature. This allows you to upload large objects in multiple chunks, which is more resilient to network interruptions than a single upload. The validity duration of the write operation, and the consequences of it becoming invalid, are service-dependent.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
- * <p>  Requires `storage.objects.create` [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.</td>
+ * <p>  Requires `storage.objects.create` IAM permission on the bucket.</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -485,7 +519,7 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> QueryWriteStatus</td>
- *      <td><p> Determines the `persisted_size` of an object that is being written. This method is part of the [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The returned value is the size of the object that has been persisted so far. The value can be used as the `write_offset` for the next `Write()` call.
+ *      <td><p> Determines the `persisted_size` of an object that is being written. This method is part of the resumable upload feature. The returned value is the size of the object that has been persisted so far. The value can be used as the `write_offset` for the next `Write()` call.
  * <p>  If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet reached the service, this method returns the error `NOT_FOUND`.
  * <p>  This method is useful for clients that buffer data and need to know which data can be safely evicted. The client can call `QueryWriteStatus()` at any time to determine how much data has been logged for this object. For any sequence of `QueryWriteStatus()` calls for a given object name, the sequence of returned `persisted_size` values are non-decreasing.</td>
  *      <td>
@@ -505,7 +539,10 @@ import javax.annotation.Generated;
  *    </tr>
  *    <tr>
  *      <td><p> MoveObject</td>
- *      <td><p> Moves the source object to the destination object in the same bucket.</td>
+ *      <td><p> Moves the source object to the destination object in the same bucket. This operation moves a source object to a destination object in the same bucket by renaming the object. The move itself is an atomic transaction, ensuring all steps either complete successfully or no changes are made.
+ * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
+ * <p>  Requires the following IAM permissions to use this method:
+ * <p>    - `storage.objects.move`   - `storage.objects.create`   - `storage.objects.delete` (only required if overwriting an existing   object)</td>
  *      <td>
  *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
  *      <ul>
@@ -612,7 +649,23 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty bucket.
+   * Permanently deletes an empty bucket. The request fails if there are any live or noncurrent
+   * objects in the bucket, but the request succeeds if the bucket only contains soft-deleted
+   * objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently
+   * delete soft-deleted objects.
+   *
+   * <p>When this API is used to delete a bucket containing an object that has a soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object.
+   *
+   * <p>Objects and multipart uploads that were in the bucket at the time of deletion are also
+   * retained for the specified retention duration. When a soft-deleted bucket reaches the end of
+   * its retention duration, it is permanently deleted. The `hardDeleteTime` of the bucket always
+   * equals or exceeds the expiration time of the last soft-deleted object in the bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -639,7 +692,23 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty bucket.
+   * Permanently deletes an empty bucket. The request fails if there are any live or noncurrent
+   * objects in the bucket, but the request succeeds if the bucket only contains soft-deleted
+   * objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently
+   * delete soft-deleted objects.
+   *
+   * <p>When this API is used to delete a bucket containing an object that has a soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object.
+   *
+   * <p>Objects and multipart uploads that were in the bucket at the time of deletion are also
+   * retained for the specified retention duration. When a soft-deleted bucket reaches the end of
+   * its retention duration, it is permanently deleted. The `hardDeleteTime` of the bucket always
+   * equals or exceeds the expiration time of the last soft-deleted object in the bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -665,7 +734,23 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty bucket.
+   * Permanently deletes an empty bucket. The request fails if there are any live or noncurrent
+   * objects in the bucket, but the request succeeds if the bucket only contains soft-deleted
+   * objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently
+   * delete soft-deleted objects.
+   *
+   * <p>When this API is used to delete a bucket containing an object that has a soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object.
+   *
+   * <p>Objects and multipart uploads that were in the bucket at the time of deletion are also
+   * retained for the specified retention duration. When a soft-deleted bucket reaches the end of
+   * its retention duration, it is permanently deleted. The `hardDeleteTime` of the bucket always
+   * equals or exceeds the expiration time of the last soft-deleted object in the bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -695,7 +780,23 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes an empty bucket.
+   * Permanently deletes an empty bucket. The request fails if there are any live or noncurrent
+   * objects in the bucket, but the request succeeds if the bucket only contains soft-deleted
+   * objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently
+   * delete soft-deleted objects.
+   *
+   * <p>When this API is used to delete a bucket containing an object that has a soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object.
+   *
+   * <p>Objects and multipart uploads that were in the bucket at the time of deletion are also
+   * retained for the specified retention duration. When a soft-deleted bucket reaches the end of
+   * its retention duration, it is permanently deleted. The `hardDeleteTime` of the bucket always
+   * equals or exceeds the expiration time of the last soft-deleted object in the bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -726,6 +827,14 @@ public class StorageClient implements BackgroundResource {
   /**
    * Returns metadata for the specified bucket.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.get` IAM permission on the bucket. Additionally, to return
+   * specific bucket metadata, the authenticated user must have the following permissions:
+   *
+   * <p>- To return the IAM policies: `storage.buckets.getIamPolicy` - To return the bucket IP
+   * filtering rules: `storage.buckets.getIpFilter`
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -753,6 +862,14 @@ public class StorageClient implements BackgroundResource {
   /**
    * Returns metadata for the specified bucket.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.get` IAM permission on the bucket. Additionally, to return
+   * specific bucket metadata, the authenticated user must have the following permissions:
+   *
+   * <p>- To return the IAM policies: `storage.buckets.getIamPolicy` - To return the bucket IP
+   * filtering rules: `storage.buckets.getIpFilter`
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -778,6 +895,14 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Returns metadata for the specified bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.get` IAM permission on the bucket. Additionally, to return
+   * specific bucket metadata, the authenticated user must have the following permissions:
+   *
+   * <p>- To return the IAM policies: `storage.buckets.getIamPolicy` - To return the bucket IP
+   * filtering rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -810,6 +935,14 @@ public class StorageClient implements BackgroundResource {
   /**
    * Returns metadata for the specified bucket.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.get` IAM permission on the bucket. Additionally, to return
+   * specific bucket metadata, the authenticated user must have the following permissions:
+   *
+   * <p>- To return the IAM policies: `storage.buckets.getIamPolicy` - To return the bucket IP
+   * filtering rules: `storage.buckets.getIpFilter`
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -840,6 +973,15 @@ public class StorageClient implements BackgroundResource {
   /**
    * Creates a new bucket.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.create` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To enable object retention using the `enableObjectRetention` query parameter:
+   * `storage.buckets.enableObjectRetention` - To set the bucket IP filtering rules:
+   * `storage.buckets.setIpFilter`
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -856,17 +998,17 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. The project to which this bucket will belong. This field must either be
+   * @param parent Required. The project to which this bucket belongs. This field must either be
    *     empty or `projects/_`. The project ID that owns this bucket should be specified in the
    *     `bucket.project` field.
    * @param bucket Optional. Properties of the new bucket being inserted. The name of the bucket is
-   *     specified in the `bucket_id` field. Populating `bucket.name` field will result in an error.
-   *     The project of the bucket must be specified in the `bucket.project` field. This field must
-   *     be in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     specified in the `bucket_id` field. Populating `bucket.name` field results in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
    *     project number. The `parent` field must be either empty or `projects/_`.
-   * @param bucketId Required. The ID to use for this bucket, which will become the final component
-   *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
-   *     the name `projects/123456/buckets/foo`.
+   * @param bucketId Required. The ID to use for this bucket, which becomes the final component of
+   *     the bucket's resource name. For example, the value `foo` might result in a bucket with the
+   *     name `projects/123456/buckets/foo`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Bucket createBucket(ProjectName parent, Bucket bucket, String bucketId) {
@@ -882,6 +1024,15 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.create` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To enable object retention using the `enableObjectRetention` query parameter:
+   * `storage.buckets.enableObjectRetention` - To set the bucket IP filtering rules:
+   * `storage.buckets.setIpFilter`
    *
    * <p>Sample code:
    *
@@ -899,17 +1050,17 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param parent Required. The project to which this bucket will belong. This field must either be
+   * @param parent Required. The project to which this bucket belongs. This field must either be
    *     empty or `projects/_`. The project ID that owns this bucket should be specified in the
    *     `bucket.project` field.
    * @param bucket Optional. Properties of the new bucket being inserted. The name of the bucket is
-   *     specified in the `bucket_id` field. Populating `bucket.name` field will result in an error.
-   *     The project of the bucket must be specified in the `bucket.project` field. This field must
-   *     be in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     specified in the `bucket_id` field. Populating `bucket.name` field results in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
    *     project number. The `parent` field must be either empty or `projects/_`.
-   * @param bucketId Required. The ID to use for this bucket, which will become the final component
-   *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
-   *     the name `projects/123456/buckets/foo`.
+   * @param bucketId Required. The ID to use for this bucket, which becomes the final component of
+   *     the bucket's resource name. For example, the value `foo` might result in a bucket with the
+   *     name `projects/123456/buckets/foo`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Bucket createBucket(String parent, Bucket bucket, String bucketId) {
@@ -925,6 +1076,15 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Creates a new bucket.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.create` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To enable object retention using the `enableObjectRetention` query parameter:
+   * `storage.buckets.enableObjectRetention` - To set the bucket IP filtering rules:
+   * `storage.buckets.setIpFilter`
    *
    * <p>Sample code:
    *
@@ -959,6 +1119,15 @@ public class StorageClient implements BackgroundResource {
   /**
    * Creates a new bucket.
    *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.create` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To enable object retention using the `enableObjectRetention` query parameter:
+   * `storage.buckets.enableObjectRetention` - To set the bucket IP filtering rules:
+   * `storage.buckets.setIpFilter`
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -989,7 +1158,15 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of buckets for a given project.
+   * Retrieves a list of buckets for a given project, ordered lexicographically by name.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering
+   * rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -1020,7 +1197,15 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of buckets for a given project.
+   * Retrieves a list of buckets for a given project, ordered lexicographically by name.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering
+   * rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -1048,7 +1233,15 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of buckets for a given project.
+   * Retrieves a list of buckets for a given project, ordered lexicographically by name.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering
+   * rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -1066,6 +1259,7 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
+   *           .setReturnPartialSuccess(true)
    *           .build();
    *   for (Bucket element : storageClient.listBuckets(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -1082,7 +1276,15 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of buckets for a given project.
+   * Retrieves a list of buckets for a given project, ordered lexicographically by name.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering
+   * rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -1100,6 +1302,7 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
+   *           .setReturnPartialSuccess(true)
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.listBucketsPagedCallable().futureCall(request);
    *   // Do something.
@@ -1116,7 +1319,15 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of buckets for a given project.
+   * Retrieves a list of buckets for a given project, ordered lexicographically by name.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.list` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To list the IAM policies: `storage.buckets.getIamPolicy` - To list the bucket IP filtering
+   * rules: `storage.buckets.getIpFilter`
    *
    * <p>Sample code:
    *
@@ -1134,6 +1345,7 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
+   *           .setReturnPartialSuccess(true)
    *           .build();
    *   while (true) {
    *     ListBucketsResponse response = storageClient.listBucketsCallable().call(request);
@@ -1156,7 +1368,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Locks retention policy on a bucket.
+   * Permanently locks the retention policy that is currently applied to the specified bucket.
+   *
+   * <p>Caution: Locking a bucket is an irreversible action. Once you lock a bucket:
+   *
+   * <p>- You cannot remove the retention policy from the bucket. - You cannot decrease the
+   * retention period for the policy.
+   *
+   * <p>Once locked, you must delete the entire bucket in order to remove the bucket's retention
+   * policy. However, before you can delete the bucket, you must delete all the objects in the
+   * bucket, which is only possible if all the objects have reached the retention period set by the
+   * retention policy.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1185,7 +1411,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Locks retention policy on a bucket.
+   * Permanently locks the retention policy that is currently applied to the specified bucket.
+   *
+   * <p>Caution: Locking a bucket is an irreversible action. Once you lock a bucket:
+   *
+   * <p>- You cannot remove the retention policy from the bucket. - You cannot decrease the
+   * retention period for the policy.
+   *
+   * <p>Once locked, you must delete the entire bucket in order to remove the bucket's retention
+   * policy. However, before you can delete the bucket, you must delete all the objects in the
+   * bucket, which is only possible if all the objects have reached the retention period set by the
+   * retention policy.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1212,7 +1452,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Locks retention policy on a bucket.
+   * Permanently locks the retention policy that is currently applied to the specified bucket.
+   *
+   * <p>Caution: Locking a bucket is an irreversible action. Once you lock a bucket:
+   *
+   * <p>- You cannot remove the retention policy from the bucket. - You cannot decrease the
+   * retention period for the policy.
+   *
+   * <p>Once locked, you must delete the entire bucket in order to remove the bucket's retention
+   * policy. However, before you can delete the bucket, you must delete all the objects in the
+   * bucket, which is only possible if all the objects have reached the retention period set by the
+   * retention policy.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1241,7 +1495,21 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Locks retention policy on a bucket.
+   * Permanently locks the retention policy that is currently applied to the specified bucket.
+   *
+   * <p>Caution: Locking a bucket is an irreversible action. Once you lock a bucket:
+   *
+   * <p>- You cannot remove the retention policy from the bucket. - You cannot decrease the
+   * retention period for the policy.
+   *
+   * <p>Once locked, you must delete the entire bucket in order to remove the bucket's retention
+   * policy. However, before you can delete the bucket, you must delete all the objects in the
+   * bucket, which is only possible if all the objects have reached the retention period set by the
+   * retention policy.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1271,9 +1539,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Gets the IAM policy for a specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.getIamPolicy` on the bucket or
+   * `storage.managedFolders.getIamPolicy` IAM permission on the managed folder.
    *
    * <p>Sample code:
    *
@@ -1304,9 +1577,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Gets the IAM policy for a specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.getIamPolicy` on the bucket or
+   * `storage.managedFolders.getIamPolicy` IAM permission on the managed folder.
    *
    * <p>Sample code:
    *
@@ -1334,9 +1612,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Gets the IAM policy for a specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.getIamPolicy` on the bucket or
+   * `storage.managedFolders.getIamPolicy` IAM permission on the managed folder.
    *
    * <p>Sample code:
    *
@@ -1367,9 +1650,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Gets the IAM policy for a specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.getIamPolicy` on the bucket or
+   * `storage.managedFolders.getIamPolicy` IAM permission on the managed folder.
    *
    * <p>Sample code:
    *
@@ -1399,8 +1687,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Updates an IAM policy for the specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
@@ -1437,8 +1725,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Updates an IAM policy for the specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
@@ -1472,8 +1760,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Updates an IAM policy for the specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
@@ -1506,8 +1794,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket. The `resource` field in the request should be
-   * `projects/_/buckets/{bucket}` for a bucket, or
+   * Updates an IAM policy for the specified bucket or managed folder. The `resource` field in the
+   * request should be `projects/_/buckets/{bucket}` for a bucket, or
    * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}` for a managed folder.
    *
    * <p>Sample code:
@@ -1692,7 +1980,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+   * Updates a bucket. Changes to the bucket are readable immediately after writing, but
+   * configuration changes might take time to propagate. This method supports `patch` semantics.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To set bucket IP filtering rules: `storage.buckets.setIpFilter` - To update public access
+   * prevention policies or access control lists (ACLs): `storage.buckets.setIamPolicy`
    *
    * <p>Sample code:
    *
@@ -1709,12 +2006,12 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param bucket Required. The bucket to update. The bucket's `name` field will be used to
-   *     identify the bucket.
+   * @param bucket Required. The bucket to update. The bucket's `name` field is used to identify the
+   *     bucket.
    * @param updateMask Required. List of fields to be updated.
    *     <p>To specify ALL fields, equivalent to the JSON API's "update" function, specify a single
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
-   *     later time, an older client updating with the `&#42;` may accidentally reset the new
+   *     later time, an older client updating with the `&#42;` might accidentally reset the new
    *     field's value.
    *     <p>Not specifying any fields is an error.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
@@ -1727,7 +2024,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+   * Updates a bucket. Changes to the bucket are readable immediately after writing, but
+   * configuration changes might take time to propagate. This method supports `patch` semantics.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To set bucket IP filtering rules: `storage.buckets.setIpFilter` - To update public access
+   * prevention policies or access control lists (ACLs): `storage.buckets.setIamPolicy`
    *
    * <p>Sample code:
    *
@@ -1760,7 +2066,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+   * Updates a bucket. Changes to the bucket are readable immediately after writing, but
+   * configuration changes might take time to propagate. This method supports `patch` semantics.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.buckets.update` IAM permission on the bucket. Additionally, to enable
+   * specific bucket features, the authenticated user must have the following permissions:
+   *
+   * <p>- To set bucket IP filtering rules: `storage.buckets.setIpFilter` - To update public access
+   * prevention policies or access control lists (ACLs): `storage.buckets.setIamPolicy`
    *
    * <p>Sample code:
    *
@@ -1792,7 +2107,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Concatenates a list of existing objects into a new object in the same bucket.
+   * Concatenates a list of existing objects into a new object in the same bucket. The existing
+   * source objects are unaffected by this operation.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the `storage.objects.create` and `storage.objects.get` IAM permissions to use this
+   * method. If the new composite object overwrites an existing object, the authenticated user must
+   * also have the `storage.objects.delete` permission. If the request body includes the retention
+   * property, the authenticated user must also have the `storage.objects.setRetention` IAM
+   * permission.
    *
    * <p>Sample code:
    *
@@ -1829,7 +2153,16 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Concatenates a list of existing objects into a new object in the same bucket.
+   * Concatenates a list of existing objects into a new object in the same bucket. The existing
+   * source objects are unaffected by this operation.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the `storage.objects.create` and `storage.objects.get` IAM permissions to use this
+   * method. If the new composite object overwrites an existing object, the authenticated user must
+   * also have the `storage.objects.delete` permission. If the request body includes the retention
+   * property, the authenticated user must also have the `storage.objects.setRetention` IAM
+   * permission.
    *
    * <p>Sample code:
    *
@@ -1866,20 +2199,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1913,20 +2244,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -1957,20 +2286,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2008,20 +2335,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2059,20 +2384,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2108,20 +2431,18 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the generation parameter is used, or if [soft
-   * delete](https://cloud.google.com/storage/docs/soft-delete) is not enabled for the bucket. When
-   * this API is used to delete an object from a bucket that has soft delete policy enabled, the
-   * object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime` properties are set
-   * on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted
-   * objects are permanently deleted according to their `hardDeleteTime`.
+   * the bucket, or if the generation parameter is used, or if soft delete is not enabled for the
+   * bucket. When this API is used to delete an object from a bucket that has soft delete policy
+   * enabled, the object becomes soft deleted, and the `softDeleteTime` and `hardDeleteTime`
+   * properties are set on the object. This API cannot be used to permanently delete soft-deleted
+   * objects. Soft-deleted objects are permanently deleted according to their `hardDeleteTime`.
    *
    * <p>You can use the [`RestoreObject`][google.storage.v2.Storage.RestoreObject] API to restore
    * soft-deleted objects until the soft delete retention period has passed.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.delete` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.delete` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2155,7 +2476,30 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Restores a soft-deleted object.
+   * Restores a soft-deleted object. When a soft-deleted object is restored, a new copy of that
+   * object is created in the same bucket and inherits the same metadata as the soft-deleted object.
+   * The inherited metadata is the metadata that existed when the original object became soft
+   * deleted, with the following exceptions:
+   *
+   * <p>- The `createTime` of the new object is set to the time at which the soft-deleted object was
+   * restored. - The `softDeleteTime` and `hardDeleteTime` values are cleared. - A new generation is
+   * assigned and the metageneration is reset to 1. - If the soft-deleted object was in a bucket
+   * that had Autoclass enabled, the new object is restored to Standard storage. - The restored
+   * object inherits the bucket's default object ACL, unless `copySourceAcl` is `true`.
+   *
+   * <p>If a live object using the same name already exists in the bucket and becomes overwritten,
+   * the live object becomes a noncurrent object if Object Versioning is enabled on the bucket. If
+   * Object Versioning is not enabled, the live object becomes soft deleted.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.restore` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object) - `storage.objects.getIamPolicy` (only required if
+   * `projection` is `full` and the relevant bucket has uniform bucket-level access disabled) -
+   * `storage.objects.setIamPolicy` (only required if `copySourceAcl` is `true` and the relevant
+   * bucket has uniform bucket-level access disabled)
    *
    * <p>Sample code:
    *
@@ -2190,7 +2534,30 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Restores a soft-deleted object.
+   * Restores a soft-deleted object. When a soft-deleted object is restored, a new copy of that
+   * object is created in the same bucket and inherits the same metadata as the soft-deleted object.
+   * The inherited metadata is the metadata that existed when the original object became soft
+   * deleted, with the following exceptions:
+   *
+   * <p>- The `createTime` of the new object is set to the time at which the soft-deleted object was
+   * restored. - The `softDeleteTime` and `hardDeleteTime` values are cleared. - A new generation is
+   * assigned and the metageneration is reset to 1. - If the soft-deleted object was in a bucket
+   * that had Autoclass enabled, the new object is restored to Standard storage. - The restored
+   * object inherits the bucket's default object ACL, unless `copySourceAcl` is `true`.
+   *
+   * <p>If a live object using the same name already exists in the bucket and becomes overwritten,
+   * the live object becomes a noncurrent object if Object Versioning is enabled on the bucket. If
+   * Object Versioning is not enabled, the live object becomes soft deleted.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.restore` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object) - `storage.objects.getIamPolicy` (only required if
+   * `projection` is `full` and the relevant bucket has uniform bucket-level access disabled) -
+   * `storage.objects.setIamPolicy` (only required if `copySourceAcl` is `true` and the relevant
+   * bucket has uniform bucket-level access disabled)
    *
    * <p>Sample code:
    *
@@ -2225,7 +2592,30 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Restores a soft-deleted object.
+   * Restores a soft-deleted object. When a soft-deleted object is restored, a new copy of that
+   * object is created in the same bucket and inherits the same metadata as the soft-deleted object.
+   * The inherited metadata is the metadata that existed when the original object became soft
+   * deleted, with the following exceptions:
+   *
+   * <p>- The `createTime` of the new object is set to the time at which the soft-deleted object was
+   * restored. - The `softDeleteTime` and `hardDeleteTime` values are cleared. - A new generation is
+   * assigned and the metageneration is reset to 1. - If the soft-deleted object was in a bucket
+   * that had Autoclass enabled, the new object is restored to Standard storage. - The restored
+   * object inherits the bucket's default object ACL, unless `copySourceAcl` is `true`.
+   *
+   * <p>If a live object using the same name already exists in the bucket and becomes overwritten,
+   * the live object becomes a noncurrent object if Object Versioning is enabled on the bucket. If
+   * Object Versioning is not enabled, the live object becomes soft deleted.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.restore` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object) - `storage.objects.getIamPolicy` (only required if
+   * `projection` is `full` and the relevant bucket has uniform bucket-level access disabled) -
+   * `storage.objects.setIamPolicy` (only required if `copySourceAcl` is `true` and the relevant
+   * bucket has uniform bucket-level access disabled)
    *
    * <p>Sample code:
    *
@@ -2262,7 +2652,30 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Restores a soft-deleted object.
+   * Restores a soft-deleted object. When a soft-deleted object is restored, a new copy of that
+   * object is created in the same bucket and inherits the same metadata as the soft-deleted object.
+   * The inherited metadata is the metadata that existed when the original object became soft
+   * deleted, with the following exceptions:
+   *
+   * <p>- The `createTime` of the new object is set to the time at which the soft-deleted object was
+   * restored. - The `softDeleteTime` and `hardDeleteTime` values are cleared. - A new generation is
+   * assigned and the metageneration is reset to 1. - If the soft-deleted object was in a bucket
+   * that had Autoclass enabled, the new object is restored to Standard storage. - The restored
+   * object inherits the bucket's default object ACL, unless `copySourceAcl` is `true`.
+   *
+   * <p>If a live object using the same name already exists in the bucket and becomes overwritten,
+   * the live object becomes a noncurrent object if Object Versioning is enabled on the bucket. If
+   * Object Versioning is not enabled, the live object becomes soft deleted.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.restore` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object) - `storage.objects.getIamPolicy` (only required if
+   * `projection` is `full` and the relevant bucket has uniform bucket-level access disabled) -
+   * `storage.objects.setIamPolicy` (only required if `copySourceAcl` is `true` and the relevant
+   * bucket has uniform bucket-level access disabled)
    *
    * <p>Sample code:
    *
@@ -2300,10 +2713,10 @@ public class StorageClient implements BackgroundResource {
   /**
    * Cancels an in-progress resumable upload.
    *
-   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   * <p>Any attempts to write to the resumable upload after cancelling the upload fail.
    *
-   * <p>The behavior for currently in progress write operations is not guaranteed - they could
-   * either complete before the cancellation or fail if the cancellation completes first.
+   * <p>The behavior for any in-progress write operations is not guaranteed; they could either
+   * complete before the cancellation or fail if the cancellation completes first.
    *
    * <p>Sample code:
    *
@@ -2333,10 +2746,10 @@ public class StorageClient implements BackgroundResource {
   /**
    * Cancels an in-progress resumable upload.
    *
-   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   * <p>Any attempts to write to the resumable upload after cancelling the upload fail.
    *
-   * <p>The behavior for currently in progress write operations is not guaranteed - they could
-   * either complete before the cancellation or fail if the cancellation completes first.
+   * <p>The behavior for any in-progress write operations is not guaranteed; they could either
+   * complete before the cancellation or fail if the cancellation completes first.
    *
    * <p>Sample code:
    *
@@ -2365,10 +2778,10 @@ public class StorageClient implements BackgroundResource {
   /**
    * Cancels an in-progress resumable upload.
    *
-   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   * <p>Any attempts to write to the resumable upload after cancelling the upload fail.
    *
-   * <p>The behavior for currently in progress write operations is not guaranteed - they could
-   * either complete before the cancellation or fail if the cancellation completes first.
+   * <p>The behavior for any in-progress write operations is not guaranteed; they could either
+   * complete before the cancellation or fail if the cancellation completes first.
    *
    * <p>Sample code:
    *
@@ -2399,10 +2812,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2438,10 +2849,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2474,10 +2883,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2517,10 +2924,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2560,10 +2965,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2605,10 +3008,8 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket. To return
-   * object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
-   * permission.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket. To return object ACLs, the
+   * authenticated user must also have the `storage.objects.getIamPolicy` permission.
    *
    * <p>Sample code:
    *
@@ -2649,8 +3050,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2690,20 +3090,15 @@ public class StorageClient implements BackgroundResource {
   /**
    * Reads an object's data.
    *
-   * <p>This is a bi-directional API with the added support for reading multiple ranges within one
-   * stream both within and across multiple messages. If the server encountered an error for any of
-   * the inputs, the stream will be closed with the relevant error code. Because the API allows for
-   * multiple outstanding requests, when the stream is closed the error response will contain a
-   * BidiReadObjectRangesError proto in the error extension describing the error for each
-   * outstanding read_id.
+   * <p>This bi-directional API reads data from an object, allowing you to request multiple data
+   * ranges within a single stream, even across several messages. If an error occurs with any
+   * request, the stream closes with a relevant error code. Since you can have multiple outstanding
+   * requests, the error response includes a `BidiReadObjectRangesError` field detailing the
+   * specific error for each pending `read_id`.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.get`
-   *
-   * <p>[IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
-   *
-   * <p>This API is currently in preview and is not yet available for general use.
+   * <p>Requires `storage.objects.get` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2735,7 +3130,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an object's metadata. Equivalent to JSON API's storage.objects.patch.
+   * Updates an object's metadata. Equivalent to JSON API's `storage.objects.patch` method.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2759,7 +3158,7 @@ public class StorageClient implements BackgroundResource {
    * @param updateMask Required. List of fields to be updated.
    *     <p>To specify ALL fields, equivalent to the JSON API's "update" function, specify a single
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
-   *     later time, an older client updating with the `&#42;` may accidentally reset the new
+   *     later time, an older client updating with the `&#42;` might accidentally reset the new
    *     field's value.
    *     <p>Not specifying any fields is an error.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
@@ -2772,7 +3171,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an object's metadata. Equivalent to JSON API's storage.objects.patch.
+   * Updates an object's metadata. Equivalent to JSON API's `storage.objects.patch` method.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2808,7 +3211,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an object's metadata. Equivalent to JSON API's storage.objects.patch.
+   * Updates an object's metadata. Equivalent to JSON API's `storage.objects.patch` method.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires `storage.objects.update` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2855,45 +3262,45 @@ public class StorageClient implements BackgroundResource {
    * `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the
    * first message of each following call to `WriteObject`. If the stream is closed before finishing
    * the upload (either explicitly by the client or due to a network error or an error response from
-   * the server), the client should do as follows: - Check the result Status of the stream, to
-   * determine if writing can be resumed on this stream or must be restarted from scratch (by
-   * calling `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED, INTERNAL, and
-   * UNAVAILABLE. For each case, the client should use binary exponential backoff before retrying.
-   * Additionally, writes can be resumed after RESOURCE_EXHAUSTED errors, but only after taking
-   * appropriate measures, which may include reducing aggregate send rate across clients and/or
-   * requesting a quota increase for your project. - If the call to `WriteObject` returns `ABORTED`,
-   * that indicates concurrent attempts to update the resumable write, caused either by multiple
-   * racing clients or by a single client where the previous request was timed out on the client
-   * side but nonetheless reached the server. In this case the client should take steps to prevent
-   * further concurrent writes (e.g., increase the timeouts, stop using more than one process to
-   * perform the upload, etc.), and then should follow the steps below for resuming the upload. -
-   * For resumable errors, the client should call `QueryWriteStatus()` and then continue writing
-   * from the returned `persisted_size`. This may be less than the amount of data the client
-   * previously sent. Note also that it is acceptable to send data starting at an offset earlier
-   * than the returned `persisted_size`; in this case, the service will skip data at offsets that
-   * were already persisted (without checking that it matches the previously written data), and
-   * write only the data starting from the persisted offset. Even though the data isn't written, it
-   * may still incur a performance cost over resuming at the correct write offset. This behavior can
-   * make client-side handling simpler in some cases. - Clients must only send data that is a
-   * multiple of 256 KiB per message, unless the object is being finished with `finish_write` set to
-   * `true`.
+   * the server), the client should do as follows:
    *
-   * <p>The service will not view the object as complete until the client has sent a
+   * <p>- Check the result Status of the stream, to determine if writing can be resumed on this
+   * stream or must be restarted from scratch (by calling `StartResumableWrite()`). The resumable
+   * errors are `DEADLINE_EXCEEDED`, `INTERNAL`, and `UNAVAILABLE`. For each case, the client should
+   * use binary exponential backoff before retrying. Additionally, writes can be resumed after
+   * `RESOURCE_EXHAUSTED` errors, but only after taking appropriate measures, which might include
+   * reducing aggregate send rate across clients and/or requesting a quota increase for your
+   * project. - If the call to `WriteObject` returns `ABORTED`, that indicates concurrent attempts
+   * to update the resumable write, caused either by multiple racing clients or by a single client
+   * where the previous request was timed out on the client side but nonetheless reached the server.
+   * In this case the client should take steps to prevent further concurrent writes. For example,
+   * increase the timeouts and stop using more than one process to perform the upload. Follow the
+   * steps below for resuming the upload. - For resumable errors, the client should call
+   * `QueryWriteStatus()` and then continue writing from the returned `persisted_size`. This might
+   * be less than the amount of data the client previously sent. Note also that it is acceptable to
+   * send data starting at an offset earlier than the returned `persisted_size`; in this case, the
+   * service skips data at offsets that were already persisted (without checking that it matches the
+   * previously written data), and write only the data starting from the persisted offset. Even
+   * though the data isn't written, it might still incur a performance cost over resuming at the
+   * correct write offset. This behavior can make client-side handling simpler in some cases. -
+   * Clients must only send data that is a multiple of 256 KiB per message, unless the object is
+   * being finished with `finish_write` set to `true`.
+   *
+   * <p>The service does not view the object as complete until the client has sent a
    * `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after
-   * sending a request with `finish_write` set to `true` will cause an error. The client
-   * &#42;&#42;should&#42;&#42; check the response it receives to determine how much data the
-   * service was able to commit and whether the service views the object as complete.
+   * sending a request with `finish_write` set to `true` causes an error. The client must check the
+   * response it receives to determine how much data the service is able to commit and whether the
+   * service views the object as complete.
    *
-   * <p>Attempting to resume an already finalized object will result in an OK status, with a
+   * <p>Attempting to resume an already finalized object results in an `OK` status, with a
    * `WriteObjectResponse` containing the finalized object's metadata.
    *
-   * <p>Alternatively, the BidiWriteObject operation may be used to write an object with controls
+   * <p>Alternatively, you can use the `BidiWriteObject` operation to write an object with controls
    * over flushing and the ability to fetch the ability to determine the current persisted size.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.create` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.create` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -2943,18 +3350,18 @@ public class StorageClient implements BackgroundResource {
   /**
    * Stores a new object and metadata.
    *
-   * <p>This is similar to the WriteObject call with the added support for manual flushing of
+   * <p>This is similar to the `WriteObject` call with the added support for manual flushing of
    * persisted state, and the ability to determine current persisted size without closing the
    * stream.
    *
-   * <p>The client may specify one or both of the `state_lookup` and `flush` fields in each
-   * BidiWriteObjectRequest. If `flush` is specified, the data written so far will be persisted to
-   * storage. If `state_lookup` is specified, the service will respond with a
-   * BidiWriteObjectResponse that contains the persisted size. If both `flush` and `state_lookup`
-   * are specified, the flush will always occur before a `state_lookup`, so that both may be set in
-   * the same request and the returned state will be the state of the object post-flush. When the
-   * stream is closed, a BidiWriteObjectResponse will always be sent to the client, regardless of
-   * the value of `state_lookup`.
+   * <p>The client might specify one or both of the `state_lookup` and `flush` fields in each
+   * `BidiWriteObjectRequest`. If `flush` is specified, the data written so far is persisted to
+   * storage. If `state_lookup` is specified, the service responds with a `BidiWriteObjectResponse`
+   * that contains the persisted size. If both `flush` and `state_lookup` are specified, the flush
+   * always occurs before a `state_lookup`, so that both might be set in the same request and the
+   * returned state is the state of the object post-flush. When the stream is closed, a
+   * `BidiWriteObjectResponse` is always sent to the client, regardless of the value of
+   * `state_lookup`.
    *
    * <p>Sample code:
    *
@@ -2994,8 +3401,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>The authenticated user requires `storage.objects.list` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * <p>The authenticated user requires `storage.objects.list` IAM permission to use this method. To
    * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
    * permission.
    *
@@ -3032,8 +3438,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>The authenticated user requires `storage.objects.list` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * <p>The authenticated user requires `storage.objects.list` IAM permission to use this method. To
    * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
    * permission.
    *
@@ -3067,8 +3472,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>The authenticated user requires `storage.objects.list` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * <p>The authenticated user requires `storage.objects.list` IAM permission to use this method. To
    * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
    * permission.
    *
@@ -3117,8 +3521,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>The authenticated user requires `storage.objects.list` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * <p>The authenticated user requires `storage.objects.list` IAM permission to use this method. To
    * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
    * permission.
    *
@@ -3167,8 +3570,7 @@ public class StorageClient implements BackgroundResource {
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>The authenticated user requires `storage.objects.list` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) to use this method. To
+   * <p>The authenticated user requires `storage.objects.list` IAM permission to use this method. To
    * return object ACLs, the authenticated user must also have the `storage.objects.getIamPolicy`
    * permission.
    *
@@ -3322,16 +3724,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Starts a resumable write operation. This method is part of the [Resumable
-   * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to
-   * upload large objects in multiple chunks, which is more resilient to network interruptions than
-   * a single upload. The validity duration of the write operation, and the consequences of it
-   * becoming invalid, are service-dependent.
+   * Starts a resumable write operation. This method is part of the Resumable upload feature. This
+   * allows you to upload large objects in multiple chunks, which is more resilient to network
+   * interruptions than a single upload. The validity duration of the write operation, and the
+   * consequences of it becoming invalid, are service-dependent.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.create` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.create` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -3361,16 +3761,14 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Starts a resumable write operation. This method is part of the [Resumable
-   * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. This allows you to
-   * upload large objects in multiple chunks, which is more resilient to network interruptions than
-   * a single upload. The validity duration of the write operation, and the consequences of it
-   * becoming invalid, are service-dependent.
+   * Starts a resumable write operation. This method is part of the Resumable upload feature. This
+   * allows you to upload large objects in multiple chunks, which is more resilient to network
+   * interruptions than a single upload. The validity duration of the write operation, and the
+   * consequences of it becoming invalid, are service-dependent.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
-   * <p>Requires `storage.objects.create` [IAM
-   * permission](https://cloud.google.com/iam/docs/overview#permissions) on the bucket.
+   * <p>Requires `storage.objects.create` IAM permission on the bucket.
    *
    * <p>Sample code:
    *
@@ -3402,9 +3800,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Determines the `persisted_size` of an object that is being written. This method is part of the
-   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
-   * returned value is the size of the object that has been persisted so far. The value can be used
-   * as the `write_offset` for the next `Write()` call.
+   * resumable upload feature. The returned value is the size of the object that has been persisted
+   * so far. The value can be used as the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
    * reached the service, this method returns the error `NOT_FOUND`.
@@ -3441,9 +3838,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Determines the `persisted_size` of an object that is being written. This method is part of the
-   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
-   * returned value is the size of the object that has been persisted so far. The value can be used
-   * as the `write_offset` for the next `Write()` call.
+   * resumable upload feature. The returned value is the size of the object that has been persisted
+   * so far. The value can be used as the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
    * reached the service, this method returns the error `NOT_FOUND`.
@@ -3481,9 +3877,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Determines the `persisted_size` of an object that is being written. This method is part of the
-   * [resumable upload](https://cloud.google.com/storage/docs/resumable-uploads) feature. The
-   * returned value is the size of the object that has been persisted so far. The value can be used
-   * as the `write_offset` for the next `Write()` call.
+   * resumable upload feature. The returned value is the size of the object that has been persisted
+   * so far. The value can be used as the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist, meaning if it was deleted, or the first `Write()` has not yet
    * reached the service, this method returns the error `NOT_FOUND`.
@@ -3521,7 +3916,17 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Moves the source object to the destination object in the same bucket.
+   * Moves the source object to the destination object in the same bucket. This operation moves a
+   * source object to a destination object in the same bucket by renaming the object. The move
+   * itself is an atomic transaction, ensuring all steps either complete successfully or no changes
+   * are made.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.move` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object)
    *
    * <p>Sample code:
    *
@@ -3556,7 +3961,17 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Moves the source object to the destination object in the same bucket.
+   * Moves the source object to the destination object in the same bucket. This operation moves a
+   * source object to a destination object in the same bucket by renaming the object. The move
+   * itself is an atomic transaction, ensuring all steps either complete successfully or no changes
+   * are made.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.move` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object)
    *
    * <p>Sample code:
    *
@@ -3591,7 +4006,17 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Moves the source object to the destination object in the same bucket.
+   * Moves the source object to the destination object in the same bucket. This operation moves a
+   * source object to a destination object in the same bucket by renaming the object. The move
+   * itself is an atomic transaction, ensuring all steps either complete successfully or no changes
+   * are made.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.move` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object)
    *
    * <p>Sample code:
    *
@@ -3629,7 +4054,17 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Moves the source object to the destination object in the same bucket.
+   * Moves the source object to the destination object in the same bucket. This operation moves a
+   * source object to a destination object in the same bucket by renaming the object. The move
+   * itself is an atomic transaction, ensuring all steps either complete successfully or no changes
+   * are made.
+   *
+   * <p>&#42;&#42;IAM Permissions&#42;&#42;:
+   *
+   * <p>Requires the following IAM permissions to use this method:
+   *
+   * <p>- `storage.objects.move` - `storage.objects.create` - `storage.objects.delete` (only
+   * required if overwriting an existing object)
    *
    * <p>Sample code:
    *

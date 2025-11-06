@@ -23,8 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Message for deleting an object.
- * `bucket` and `object` **must** be set.
+ * Request message for deleting an object.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.DeleteObjectRequest}
@@ -673,8 +672,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Message for deleting an object.
-   * `bucket` and `object` **must** be set.
+   * Request message for deleting an object.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.DeleteObjectRequest}

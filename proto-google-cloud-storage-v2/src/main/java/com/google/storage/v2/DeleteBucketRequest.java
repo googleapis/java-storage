@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for DeleteBucket.
+ * Request message for [DeleteBucket][google.storage.v2.Storage.DeleteBucket].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.DeleteBucketRequest}
@@ -386,7 +386,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request message for DeleteBucket.
+   * Request message for [DeleteBucket][google.storage.v2.Storage.DeleteBucket].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.DeleteBucketRequest}

@@ -216,7 +216,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
    *
    *
    * <pre>
-   * An optional write handle that will periodically be present in response
+   * An optional write handle that is returned periodically in response
    * messages. Clients should save it for later use in establishing a new stream
    * if a connection is interrupted.
    * </pre>
@@ -234,7 +234,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
    *
    *
    * <pre>
-   * An optional write handle that will periodically be present in response
+   * An optional write handle that is returned periodically in response
    * messages. Clients should save it for later use in establishing a new stream
    * if a connection is interrupted.
    * </pre>
@@ -254,7 +254,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
    *
    *
    * <pre>
-   * An optional write handle that will periodically be present in response
+   * An optional write handle that is returned periodically in response
    * messages. Clients should save it for later use in establishing a new stream
    * if a connection is interrupted.
    * </pre>
@@ -1036,7 +1036,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1053,7 +1053,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1076,7 +1076,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1101,7 +1101,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1123,7 +1123,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1153,7 +1153,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1175,7 +1175,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1192,7 +1192,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>
@@ -1213,7 +1213,7 @@ public final class BidiWriteObjectResponse extends com.google.protobuf.Generated
      *
      *
      * <pre>
-     * An optional write handle that will periodically be present in response
+     * An optional write handle that is returned periodically in response
      * messages. Clients should save it for later use in establishing a new stream
      * if a connection is interrupted.
      * </pre>

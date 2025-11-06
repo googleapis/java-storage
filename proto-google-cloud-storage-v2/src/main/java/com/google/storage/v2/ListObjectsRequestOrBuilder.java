@@ -60,8 +60,8 @@ public interface ListObjectsRequestOrBuilder
    * <pre>
    * Optional. Maximum number of `items` plus `prefixes` to return
    * in a single page of responses. As duplicate `prefixes` are
-   * omitted, fewer total results may be returned than requested. The service
-   * will use this parameter or 1,000 items, whichever is smaller.
+   * omitted, fewer total results might be returned than requested. The service
+   * uses this parameter or 1,000 items, whichever is smaller.
    * </pre>
    *
    * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -102,11 +102,11 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If set, returns results in a directory-like mode. `items` will
-   * contain only objects whose names, aside from the `prefix`, do not contain
+   * Optional. If set, returns results in a directory-like mode. `items`
+   * contains only objects whose names, aside from the `prefix`, do not contain
    * `delimiter`. Objects whose names, aside from the `prefix`, contain
-   * `delimiter` will have their name, truncated after the `delimiter`, returned
-   * in `prefixes`. Duplicate `prefixes` are omitted.
+   * `delimiter` has their name, truncated after the `delimiter`, returned in
+   * `prefixes`. Duplicate `prefixes` are omitted.
    * </pre>
    *
    * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -119,11 +119,11 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If set, returns results in a directory-like mode. `items` will
-   * contain only objects whose names, aside from the `prefix`, do not contain
+   * Optional. If set, returns results in a directory-like mode. `items`
+   * contains only objects whose names, aside from the `prefix`, do not contain
    * `delimiter`. Objects whose names, aside from the `prefix`, contain
-   * `delimiter` will have their name, truncated after the `delimiter`, returned
-   * in `prefixes`. Duplicate `prefixes` are omitted.
+   * `delimiter` has their name, truncated after the `delimiter`, returned in
+   * `prefixes`. Duplicate `prefixes` are omitted.
    * </pre>
    *
    * <code>string delimiter = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -137,7 +137,7 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. If true, objects that end in exactly one instance of `delimiter`
-   * will have their metadata included in `items` in addition to
+   * has their metadata included in `items` in addition to
    * `prefixes`.
    * </pre>
    *
@@ -178,9 +178,6 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. If `true`, lists all versions of an object as distinct results.
-   * For more information, see
-   * [Object
-   * Versioning](https://cloud.google.com/storage/docs/object-versioning).
    * </pre>
    *
    * <code>bool versions = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -194,9 +191,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.acl and
-   * items.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, defaults to all fields except `items.acl` and
+   * `items.owner`.
+   * `*` might be used to mean all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 8;</code>
@@ -210,9 +207,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.acl and
-   * items.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, defaults to all fields except `items.acl` and
+   * `items.owner`.
+   * `*` might be used to mean all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 8;</code>
@@ -226,9 +223,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.acl and
-   * items.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, defaults to all fields except `items.acl` and
+   * `items.owner`.
+   * `*` might be used to mean all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 8;</code>
@@ -240,9 +237,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects whose names are lexicographically equal
-   * to or after lexicographic_start. If lexicographic_end is also set, the
-   * objects listed have names between lexicographic_start (inclusive) and
-   * lexicographic_end (exclusive).
+   * to or after `lexicographic_start`. If `lexicographic_end` is also set, the
+   * objects listed have names between `lexicographic_start` (inclusive) and
+   * `lexicographic_end` (exclusive).
    * </pre>
    *
    * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -256,9 +253,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects whose names are lexicographically equal
-   * to or after lexicographic_start. If lexicographic_end is also set, the
-   * objects listed have names between lexicographic_start (inclusive) and
-   * lexicographic_end (exclusive).
+   * to or after `lexicographic_start`. If `lexicographic_end` is also set, the
+   * objects listed have names between `lexicographic_start` (inclusive) and
+   * `lexicographic_end` (exclusive).
    * </pre>
    *
    * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -272,9 +269,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects whose names are lexicographically
-   * before lexicographic_end. If lexicographic_start is also set, the objects
-   * listed have names between lexicographic_start (inclusive) and
-   * lexicographic_end (exclusive).
+   * before `lexicographic_end`. If `lexicographic_start` is also set, the
+   * objects listed have names between `lexicographic_start` (inclusive) and
+   * `lexicographic_end` (exclusive).
    * </pre>
    *
    * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -288,9 +285,9 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects whose names are lexicographically
-   * before lexicographic_end. If lexicographic_start is also set, the objects
-   * listed have names between lexicographic_start (inclusive) and
-   * lexicographic_end (exclusive).
+   * before `lexicographic_end`. If `lexicographic_start` is also set, the
+   * objects listed have names between `lexicographic_start` (inclusive) and
+   * `lexicographic_end` (exclusive).
    * </pre>
    *
    * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -317,8 +314,8 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If true, will also include folders and managed folders (besides
-   * objects) in the returned `prefixes`. Requires `delimiter` to be set to '/'.
+   * Optional. If true, includes folders and managed folders (besides objects)
+   * in the returned `prefixes`. Requires `delimiter` to be set to '/'.
    * </pre>
    *
    * <code>bool include_folders_as_prefixes = 13 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -332,8 +329,8 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects and prefixes that match this glob
-   * pattern. See [List Objects Using
-   * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
+   * pattern. See [List objects using
+   * glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
    * for the full syntax.
    * </pre>
    *
@@ -348,8 +345,8 @@ public interface ListObjectsRequestOrBuilder
    *
    * <pre>
    * Optional. Filter results to objects and prefixes that match this glob
-   * pattern. See [List Objects Using
-   * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
+   * pattern. See [List objects using
+   * glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
    * for the full syntax.
    * </pre>
    *
@@ -363,9 +360,11 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. Filter the returned objects. Currently only supported for the
-   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
-   * from this filter.
+   * Optional. An expression used to filter the returned objects by the
+   * `context` field. For the full syntax, see [Filter objects by contexts
+   * syntax](https://cloud.google.com/storage/docs/listing-objects#filter-by-object-contexts-syntax).
+   * If a `delimiter` is set, the returned `prefixes` are exempt from this
+   * filter.
    * </pre>
    *
    * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -378,9 +377,11 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. Filter the returned objects. Currently only supported for the
-   * `contexts` field. If `delimiter` is set, the returned `prefixes` are exempt
-   * from this filter.
+   * Optional. An expression used to filter the returned objects by the
+   * `context` field. For the full syntax, see [Filter objects by contexts
+   * syntax](https://cloud.google.com/storage/docs/listing-objects#filter-by-object-contexts-syntax).
+   * If a `delimiter` is set, the returned `prefixes` are exempt from this
+   * filter.
    * </pre>
    *
    * <code>string filter = 15 [(.google.api.field_behavior) = OPTIONAL];</code>
