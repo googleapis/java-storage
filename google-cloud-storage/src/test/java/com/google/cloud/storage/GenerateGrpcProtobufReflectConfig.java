@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import com.google.protobuf.AbstractMessage;
-import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -57,7 +56,7 @@ public final class GenerateGrpcProtobufReflectConfig {
                           + "    \"methods\":[{\"name\":\"<init>\",\"parameterTypes\":[] }]\n"
                           + "  }"),
                   Stream.of(
-                          scanResult.getSubclasses(Message.class).stream(),
+                          scanResult.getSubclasses(AbstractMessage.class).stream(),
                           scanResult.getSubclasses(AbstractMessage.Builder.class).stream(),
                           scanResult
                               .getAllEnums()
