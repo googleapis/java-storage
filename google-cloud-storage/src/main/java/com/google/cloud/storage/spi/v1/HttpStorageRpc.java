@@ -1156,7 +1156,9 @@ public class HttpStorageRpc implements StorageRpc {
       if (response.getStatusCode() != 200) {
         throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
       }
-      return response.getHeaders().getLocation();
+      String location = response.getHeaders().getLocation();
+      response.disconnect();
+      return location;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -1190,7 +1192,9 @@ public class HttpStorageRpc implements StorageRpc {
       if (response.getStatusCode() != 201) {
         throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
       }
-      return response.getHeaders().getLocation();
+      String location = response.getHeaders().getLocation();
+      response.disconnect();
+      return location;
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);

@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.60.0](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.60.0) (2025-11-07)
+
+
+### Features
+
+* Add preview MultipartUploadClient#abortMultipartUpload https://github.com/googleapis/java-storage/pull/3361 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#completeMultipartUpload https://github.com/googleapis/java-storage/pull/3372 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#createMultipartUpload https://github.com/googleapis/java-storage/pull/3356 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#listParts https://github.com/googleapis/java-storage/pull/3359 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#uploadPart https://github.com/googleapis/java-storage/pull/3375 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadSettings ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+
+
+### Bug Fixes
+
+* Add new system property (com.google.cloud.storage.grpc.bound_token) to allow disabling bound token use with grpc ([#3365](https://github.com/googleapis/java-storage/issues/3365)) ([ebf5e6d](https://github.com/googleapis/java-storage/commit/ebf5e6d30d8dc197ab388a70cc0d465c0f740496))
+* Call response.disconnect() after resolving resumable upload url ([#3385](https://github.com/googleapis/java-storage/issues/3385)) ([ac3be4b](https://github.com/googleapis/java-storage/commit/ac3be4b7e82d9340ede7d527a26ffe3e2ba58909))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.63.0 ([c1a8968](https://github.com/googleapis/java-storage/commit/c1a8968799c1cf5a970fe9f303adccdad0a117c8))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.1 ([#3381](https://github.com/googleapis/java-storage/issues/3381)) ([e3d3700](https://github.com/googleapis/java-storage/commit/e3d3700e06de2b0113e1cb01e99ef4aeed3c62c9))
+
 ## [2.59.0](https://github.com/googleapis/java-storage/compare/v2.58.1...v2.59.0) (2025-10-21)
 
 
