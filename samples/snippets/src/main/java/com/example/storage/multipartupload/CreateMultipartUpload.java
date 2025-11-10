@@ -23,6 +23,8 @@ import com.google.cloud.storage.MultipartUploadClient;
 import com.google.cloud.storage.MultipartUploadSettings;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateMultipartUpload {
   public static void createMultipartUpload(String projectId, String bucketName, String objectName) {
@@ -41,8 +43,18 @@ public class CreateMultipartUpload {
     MultipartUploadClient mpuClient = MultipartUploadClient.create(mpuSettings);
 
     System.out.println("Initiating multipart upload for " + objectName);
+
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put("key1", "value1");
+    String contentType = "text/plain";
     CreateMultipartUploadRequest createRequest =
-        CreateMultipartUploadRequest.builder().bucket(bucketName).key(objectName).build();
+        CreateMultipartUploadRequest.builder()
+            .bucket(bucketName)
+            .key(objectName)
+            .metadata(metadata)
+            .contentType(contentType)
+            .build();
+
     CreateMultipartUploadResponse createResponse = mpuClient.createMultipartUpload(createRequest);
     String uploadId = createResponse.uploadId();
     System.out.println("Upload ID: " + uploadId);
