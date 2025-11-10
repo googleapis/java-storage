@@ -29,46 +29,46 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 
 public class UploadPart {
-    public static void uploadPart(
-            String projectId, String bucketName, String objectName, String uploadId, int partNumber)
-            throws IOException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void uploadPart(
+      String projectId, String bucketName, String objectName, String uploadId, int partNumber)
+      throws IOException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
 
-        // The ID of the multipart upload
-        // String uploadId = "your-upload-id";
+    // The ID of the multipart upload
+    // String uploadId = "your-upload-id";
 
-        // The part number of the part being uploaded
-        // int partNumber = 1;
+    // The part number of the part being uploaded
+    // int partNumber = 1;
 
-        HttpStorageOptions storageOptions =
-                HttpStorageOptions.newBuilder().setProjectId(projectId).build();
-        MultipartUploadSettings mpuSettings = MultipartUploadSettings.of(storageOptions);
-        MultipartUploadClient mpuClient = MultipartUploadClient.create(mpuSettings);
+    HttpStorageOptions storageOptions =
+        HttpStorageOptions.newBuilder().setProjectId(projectId).build();
+    MultipartUploadSettings mpuSettings = MultipartUploadSettings.of(storageOptions);
+    MultipartUploadClient mpuClient = MultipartUploadClient.create(mpuSettings);
 
-        // The minimum part size for a multipart upload is 5 MiB, except for the last part.
-        byte[] bytes = new byte[5 * 1024 * 1024];
-        new Random().nextBytes(bytes);
-        RequestBody requestBody = RequestBody.of(ByteBuffer.wrap(bytes));
+    // The minimum part size for a multipart upload is 5 MiB, except for the last part.
+    byte[] bytes = new byte[5 * 1024 * 1024];
+    new Random().nextBytes(bytes);
+    RequestBody requestBody = RequestBody.of(ByteBuffer.wrap(bytes));
 
-        System.out.println("Uploading part " + partNumber);
-        UploadPartRequest uploadPartRequest =
-                UploadPartRequest.builder()
-                        .bucket(bucketName)
-                        .key(objectName)
-                        .partNumber(partNumber)
-                        .uploadId(uploadId)
-                        .build();
+    System.out.println("Uploading part " + partNumber);
+    UploadPartRequest uploadPartRequest =
+        UploadPartRequest.builder()
+            .bucket(bucketName)
+            .key(objectName)
+            .partNumber(partNumber)
+            .uploadId(uploadId)
+            .build();
 
-        UploadPartResponse uploadPartResponse = mpuClient.uploadPart(uploadPartRequest, requestBody);
+    UploadPartResponse uploadPartResponse = mpuClient.uploadPart(uploadPartRequest, requestBody);
 
-        System.out.println("Part " + partNumber + " uploaded with ETag: " + uploadPartResponse.eTag());
-    }
+    System.out.println("Part " + partNumber + " uploaded with ETag: " + uploadPartResponse.eTag());
+  }
 }
 // [END storage_upload_part]
