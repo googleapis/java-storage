@@ -65,11 +65,11 @@ public interface ObjectRangeDataOrBuilder
    *
    *
    * <pre>
-   * The ReadRange describes the content being returned with read_id set to the
-   * corresponding ReadObjectRequest in the stream. Multiple ObjectRangeData
-   * messages may have the same read_id but increasing offsets.
-   * ReadObjectResponse messages with the same read_id are guaranteed to be
-   * delivered in increasing offset order.
+   * The `ReadRange` describes the content being returned with `read_id` set to
+   * the corresponding `ReadObjectRequest` in the stream. Multiple
+   * `ObjectRangeData` messages might have the same read_id but increasing
+   * offsets. `ReadObjectResponse` messages with the same `read_id` are
+   * guaranteed to be delivered in increasing offset order.
    * </pre>
    *
    * <code>.google.storage.v2.ReadRange read_range = 2;</code>
@@ -82,11 +82,11 @@ public interface ObjectRangeDataOrBuilder
    *
    *
    * <pre>
-   * The ReadRange describes the content being returned with read_id set to the
-   * corresponding ReadObjectRequest in the stream. Multiple ObjectRangeData
-   * messages may have the same read_id but increasing offsets.
-   * ReadObjectResponse messages with the same read_id are guaranteed to be
-   * delivered in increasing offset order.
+   * The `ReadRange` describes the content being returned with `read_id` set to
+   * the corresponding `ReadObjectRequest` in the stream. Multiple
+   * `ObjectRangeData` messages might have the same read_id but increasing
+   * offsets. `ReadObjectResponse` messages with the same `read_id` are
+   * guaranteed to be delivered in increasing offset order.
    * </pre>
    *
    * <code>.google.storage.v2.ReadRange read_range = 2;</code>
@@ -99,11 +99,11 @@ public interface ObjectRangeDataOrBuilder
    *
    *
    * <pre>
-   * The ReadRange describes the content being returned with read_id set to the
-   * corresponding ReadObjectRequest in the stream. Multiple ObjectRangeData
-   * messages may have the same read_id but increasing offsets.
-   * ReadObjectResponse messages with the same read_id are guaranteed to be
-   * delivered in increasing offset order.
+   * The `ReadRange` describes the content being returned with `read_id` set to
+   * the corresponding `ReadObjectRequest` in the stream. Multiple
+   * `ObjectRangeData` messages might have the same read_id but increasing
+   * offsets. `ReadObjectResponse` messages with the same `read_id` are
+   * guaranteed to be delivered in increasing offset order.
    * </pre>
    *
    * <code>.google.storage.v2.ReadRange read_range = 2;</code>

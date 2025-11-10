@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for BidiReadObject.
+ * Request message for
+ * [BidiReadObject][google.storage.v2.Storage.BidiReadObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.BidiReadObjectRequest}
@@ -73,8 +74,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    * <pre>
    * Optional. The first message of each stream should set this field. If this
-   * is not the first message, an error will be returned. Describes the object
-   * to read.
+   * is not the first message, an error is returned. Describes the object to
+   * read.
    * </pre>
    *
    * <code>
@@ -93,8 +94,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    * <pre>
    * Optional. The first message of each stream should set this field. If this
-   * is not the first message, an error will be returned. Describes the object
-   * to read.
+   * is not the first message, an error is returned. Describes the object to
+   * read.
    * </pre>
    *
    * <code>
@@ -115,8 +116,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    * <pre>
    * Optional. The first message of each stream should set this field. If this
-   * is not the first message, an error will be returned. Describes the object
-   * to read.
+   * is not the first message, an error is returned. Describes the object to
+   * read.
    * </pre>
    *
    * <code>
@@ -141,10 +142,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    * <pre>
    * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
    * single range is large enough to require multiple responses, they are
-   * guaranteed to be delivered in increasing offset order. There are no
-   * ordering guarantees across ranges. When no ranges are provided, the
-   * response message will not include ObjectRangeData. For full object
-   * downloads, the offset and size can be set to 0.
+   * delivered in increasing offset order. There are no ordering guarantees
+   * across ranges. When no ranges are provided, the response message
+   * doesn't  include `ObjectRangeData`. For full object downloads, the
+   * offset and size can be set to `0`.
    * </pre>
    *
    * <code>
@@ -162,10 +163,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    * <pre>
    * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
    * single range is large enough to require multiple responses, they are
-   * guaranteed to be delivered in increasing offset order. There are no
-   * ordering guarantees across ranges. When no ranges are provided, the
-   * response message will not include ObjectRangeData. For full object
-   * downloads, the offset and size can be set to 0.
+   * delivered in increasing offset order. There are no ordering guarantees
+   * across ranges. When no ranges are provided, the response message
+   * doesn't  include `ObjectRangeData`. For full object downloads, the
+   * offset and size can be set to `0`.
    * </pre>
    *
    * <code>
@@ -184,10 +185,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    * <pre>
    * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
    * single range is large enough to require multiple responses, they are
-   * guaranteed to be delivered in increasing offset order. There are no
-   * ordering guarantees across ranges. When no ranges are provided, the
-   * response message will not include ObjectRangeData. For full object
-   * downloads, the offset and size can be set to 0.
+   * delivered in increasing offset order. There are no ordering guarantees
+   * across ranges. When no ranges are provided, the response message
+   * doesn't  include `ObjectRangeData`. For full object downloads, the
+   * offset and size can be set to `0`.
    * </pre>
    *
    * <code>
@@ -205,10 +206,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    * <pre>
    * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
    * single range is large enough to require multiple responses, they are
-   * guaranteed to be delivered in increasing offset order. There are no
-   * ordering guarantees across ranges. When no ranges are provided, the
-   * response message will not include ObjectRangeData. For full object
-   * downloads, the offset and size can be set to 0.
+   * delivered in increasing offset order. There are no ordering guarantees
+   * across ranges. When no ranges are provided, the response message
+   * doesn't  include `ObjectRangeData`. For full object downloads, the
+   * offset and size can be set to `0`.
    * </pre>
    *
    * <code>
@@ -226,10 +227,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    * <pre>
    * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
    * single range is large enough to require multiple responses, they are
-   * guaranteed to be delivered in increasing offset order. There are no
-   * ordering guarantees across ranges. When no ranges are provided, the
-   * response message will not include ObjectRangeData. For full object
-   * downloads, the offset and size can be set to 0.
+   * delivered in increasing offset order. There are no ordering guarantees
+   * across ranges. When no ranges are provided, the response message
+   * doesn't  include `ObjectRangeData`. For full object downloads, the
+   * offset and size can be set to `0`.
    * </pre>
    *
    * <code>
@@ -421,7 +422,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
    *
    *
    * <pre>
-   * Request message for BidiReadObject.
+   * Request message for
+   * [BidiReadObject][google.storage.v2.Storage.BidiReadObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.BidiReadObjectRequest}
@@ -686,8 +688,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -705,8 +707,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -730,8 +732,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -757,8 +759,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -782,8 +784,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -814,8 +816,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -838,8 +840,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -857,8 +859,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -880,8 +882,8 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      *
      * <pre>
      * Optional. The first message of each stream should set this field. If this
-     * is not the first message, an error will be returned. Describes the object
-     * to read.
+     * is not the first message, an error is returned. Describes the object to
+     * read.
      * </pre>
      *
      * <code>
@@ -927,10 +929,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -951,10 +953,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -975,10 +977,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -999,10 +1001,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1029,10 +1031,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1057,10 +1059,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1087,10 +1089,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1117,10 +1119,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1144,10 +1146,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1172,10 +1174,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1200,10 +1202,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1227,10 +1229,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1254,10 +1256,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1274,10 +1276,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1298,10 +1300,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1323,10 +1325,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1344,10 +1346,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>
@@ -1365,10 +1367,10 @@ public final class BidiReadObjectRequest extends com.google.protobuf.GeneratedMe
      * <pre>
      * Optional. Provides a list of 0 or more (up to 100) ranges to read. If a
      * single range is large enough to require multiple responses, they are
-     * guaranteed to be delivered in increasing offset order. There are no
-     * ordering guarantees across ranges. When no ranges are provided, the
-     * response message will not include ObjectRangeData. For full object
-     * downloads, the offset and size can be set to 0.
+     * delivered in increasing offset order. There are no ordering guarantees
+     * across ranges. When no ranges are provided, the response message
+     * doesn't  include `ObjectRangeData`. For full object downloads, the
+     * offset and size can be set to `0`.
      * </pre>
      *
      * <code>

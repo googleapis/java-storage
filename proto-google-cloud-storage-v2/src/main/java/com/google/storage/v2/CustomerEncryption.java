@@ -23,8 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Describes the Customer-Supplied Encryption Key mechanism used to store an
- * Object's data at rest.
+ * Describes the customer-supplied encryption key mechanism used to store an
+ * object's data at rest.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.CustomerEncryption}
@@ -311,8 +311,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Describes the Customer-Supplied Encryption Key mechanism used to store an
-   * Object's data at rest.
+   * Describes the customer-supplied encryption key mechanism used to store an
+   * object's data at rest.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.CustomerEncryption}
