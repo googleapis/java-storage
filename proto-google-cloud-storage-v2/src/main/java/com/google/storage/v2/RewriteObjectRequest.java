@@ -23,14 +23,15 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for RewriteObject.
+ * Request message for [RewriteObject][google.storage.v2.Storage.RewriteObject].
  * If the source object is encrypted using a Customer-Supplied Encryption Key
- * the key information must be provided in the copy_source_encryption_algorithm,
- * copy_source_encryption_key_bytes, and copy_source_encryption_key_sha256_bytes
- * fields. If the destination object should be encrypted the keying information
- * should be provided in the encryption_algorithm, encryption_key_bytes, and
- * encryption_key_sha256_bytes fields of the
- * common_object_request_params.customer_encryption field.
+ * the key information must be provided in the
+ * `copy_source_encryption_algorithm`, `copy_source_encryption_key_bytes`, and
+ * `copy_source_encryption_key_sha256_bytes` fields. If the destination object
+ * should be encrypted the keying information should be provided in the
+ * `encryption_algorithm`, `encryption_key_bytes`, and
+ * `encryption_key_sha256_bytes` fields of the
+ * `common_object_request_params.customer_encryption` field.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.RewriteObjectRequest}
@@ -218,7 +219,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * Optional. The name of the Cloud KMS key that is used to encrypt the
    * destination object. The Cloud KMS key must be located in same location as
    * the object. If the parameter is not specified, the request uses the
    * destination bucket's default encryption key, if any, or else the
@@ -248,7 +249,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * Optional. The name of the Cloud KMS key that is used to encrypt the
    * destination object. The Cloud KMS key must be located in same location as
    * the object. If the parameter is not specified, the request uses the
    * destination bucket's default encryption key, if any, or else the
@@ -285,8 +286,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -308,8 +309,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -331,8 +332,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -545,8 +546,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -571,8 +572,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -901,7 +902,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The maximum number of bytes that will be rewritten per rewrite
+   * Optional. The maximum number of bytes that are rewritten per rewrite
    * request. Most callers shouldn't need to specify this parameter - it is
    * primarily in place to support testing. If specified the value must be an
    * integral multiple of 1 MiB (1048576). Also, this only applies to requests
@@ -1093,8 +1094,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>
@@ -1112,8 +1113,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>
@@ -1133,8 +1134,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>
@@ -1585,14 +1586,15 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Request message for RewriteObject.
+   * Request message for [RewriteObject][google.storage.v2.Storage.RewriteObject].
    * If the source object is encrypted using a Customer-Supplied Encryption Key
-   * the key information must be provided in the copy_source_encryption_algorithm,
-   * copy_source_encryption_key_bytes, and copy_source_encryption_key_sha256_bytes
-   * fields. If the destination object should be encrypted the keying information
-   * should be provided in the encryption_algorithm, encryption_key_bytes, and
-   * encryption_key_sha256_bytes fields of the
-   * common_object_request_params.customer_encryption field.
+   * the key information must be provided in the
+   * `copy_source_encryption_algorithm`, `copy_source_encryption_key_bytes`, and
+   * `copy_source_encryption_key_sha256_bytes` fields. If the destination object
+   * should be encrypted the keying information should be provided in the
+   * `encryption_algorithm`, `encryption_key_bytes`, and
+   * `encryption_key_sha256_bytes` fields of the
+   * `common_object_request_params.customer_encryption` field.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.RewriteObjectRequest}
@@ -2395,7 +2397,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * Optional. The name of the Cloud KMS key that is used to encrypt the
      * destination object. The Cloud KMS key must be located in same location as
      * the object. If the parameter is not specified, the request uses the
      * destination bucket's default encryption key, if any, or else the
@@ -2424,7 +2426,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * Optional. The name of the Cloud KMS key that is used to encrypt the
      * destination object. The Cloud KMS key must be located in same location as
      * the object. If the parameter is not specified, the request uses the
      * destination bucket's default encryption key, if any, or else the
@@ -2453,7 +2455,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * Optional. The name of the Cloud KMS key that is used to encrypt the
      * destination object. The Cloud KMS key must be located in same location as
      * the object. If the parameter is not specified, the request uses the
      * destination bucket's default encryption key, if any, or else the
@@ -2481,7 +2483,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * Optional. The name of the Cloud KMS key that is used to encrypt the
      * destination object. The Cloud KMS key must be located in same location as
      * the object. If the parameter is not specified, the request uses the
      * destination bucket's default encryption key, if any, or else the
@@ -2505,7 +2507,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt the
+     * Optional. The name of the Cloud KMS key that is used to encrypt the
      * destination object. The Cloud KMS key must be located in same location as
      * the object. If the parameter is not specified, the request uses the
      * destination bucket's default encryption key, if any, or else the
@@ -2545,8 +2547,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2567,8 +2569,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2595,8 +2597,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2625,8 +2627,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2652,8 +2654,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2687,8 +2689,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2714,8 +2716,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2736,8 +2738,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -2762,8 +2764,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * The `name`, `bucket` and `kms_key` fields must not be populated (these
      * values are specified in the `destination_name`, `destination_bucket`, and
      * `destination_kms_key` fields).
-     * If `destination` is present it will be used to construct the destination
-     * object's metadata; otherwise the destination object's metadata will be
+     * If `destination` is present it is used to construct the destination
+     * object's metadata; otherwise the destination object's metadata is
      * copied from the source object.
      * </pre>
      *
@@ -3216,8 +3218,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
@@ -3242,8 +3244,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
@@ -3268,8 +3270,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
@@ -3293,8 +3295,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
@@ -3314,8 +3316,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];
@@ -3961,7 +3963,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * Optional. The maximum number of bytes that are rewritten per rewrite
      * request. Most callers shouldn't need to specify this parameter - it is
      * primarily in place to support testing. If specified the value must be an
      * integral multiple of 1 MiB (1048576). Also, this only applies to requests
@@ -3984,7 +3986,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * Optional. The maximum number of bytes that are rewritten per rewrite
      * request. Most callers shouldn't need to specify this parameter - it is
      * primarily in place to support testing. If specified the value must be an
      * integral multiple of 1 MiB (1048576). Also, this only applies to requests
@@ -4011,7 +4013,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The maximum number of bytes that will be rewritten per rewrite
+     * Optional. The maximum number of bytes that are rewritten per rewrite
      * request. Most callers shouldn't need to specify this parameter - it is
      * primarily in place to support testing. If specified the value must be an
      * integral multiple of 1 MiB (1048576). Also, this only applies to requests
@@ -4531,8 +4533,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4549,8 +4551,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4573,8 +4575,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4599,8 +4601,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4623,8 +4625,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4654,8 +4656,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4677,8 +4679,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4695,8 +4697,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>
@@ -4717,8 +4719,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be used to
-     * validate the destination object after rewriting.
+     * Optional. The checksums of the complete object. This is used to validate
+     * the destination object after rewriting.
      * </pre>
      *
      * <code>

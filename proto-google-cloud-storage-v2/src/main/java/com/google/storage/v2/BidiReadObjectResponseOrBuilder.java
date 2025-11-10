@@ -28,13 +28,13 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * A portion of the object's data. The service **may** leave data
-   * empty for any given ReadResponse. This enables the service to inform the
+   * A portion of the object's data. The service might leave data
+   * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
-   * The service **may** pipeline multiple responses belonging to different read
-   * requests. Each ObjectRangeData entry will have a read_id
-   * set to the same value as the corresponding source read request.
+   * The service might pipeline multiple responses belonging to different read
+   * requests. Each `ObjectRangeData` entry has a `read_id` that is set
+   * to the same value as the corresponding source read request.
    * </pre>
    *
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
@@ -45,13 +45,13 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * A portion of the object's data. The service **may** leave data
-   * empty for any given ReadResponse. This enables the service to inform the
+   * A portion of the object's data. The service might leave data
+   * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
-   * The service **may** pipeline multiple responses belonging to different read
-   * requests. Each ObjectRangeData entry will have a read_id
-   * set to the same value as the corresponding source read request.
+   * The service might pipeline multiple responses belonging to different read
+   * requests. Each `ObjectRangeData` entry has a `read_id` that is set
+   * to the same value as the corresponding source read request.
    * </pre>
    *
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
@@ -62,13 +62,13 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * A portion of the object's data. The service **may** leave data
-   * empty for any given ReadResponse. This enables the service to inform the
+   * A portion of the object's data. The service might leave data
+   * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
-   * The service **may** pipeline multiple responses belonging to different read
-   * requests. Each ObjectRangeData entry will have a read_id
-   * set to the same value as the corresponding source read request.
+   * The service might pipeline multiple responses belonging to different read
+   * requests. Each `ObjectRangeData` entry has a `read_id` that is set
+   * to the same value as the corresponding source read request.
    * </pre>
    *
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
@@ -79,13 +79,13 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * A portion of the object's data. The service **may** leave data
-   * empty for any given ReadResponse. This enables the service to inform the
+   * A portion of the object's data. The service might leave data
+   * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
-   * The service **may** pipeline multiple responses belonging to different read
-   * requests. Each ObjectRangeData entry will have a read_id
-   * set to the same value as the corresponding source read request.
+   * The service might pipeline multiple responses belonging to different read
+   * requests. Each `ObjectRangeData` entry has a `read_id` that is set
+   * to the same value as the corresponding source read request.
    * </pre>
    *
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
@@ -97,13 +97,13 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * A portion of the object's data. The service **may** leave data
-   * empty for any given ReadResponse. This enables the service to inform the
+   * A portion of the object's data. The service might leave data
+   * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
-   * The service **may** pipeline multiple responses belonging to different read
-   * requests. Each ObjectRangeData entry will have a read_id
-   * set to the same value as the corresponding source read request.
+   * The service might pipeline multiple responses belonging to different read
+   * requests. Each `ObjectRangeData` entry has a `read_id` that is set
+   * to the same value as the corresponding source read request.
    * </pre>
    *
    * <code>repeated .google.storage.v2.ObjectRangeData object_data_ranges = 6;</code>
@@ -157,7 +157,7 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * This field will be periodically refreshed, however it may not be set in
+   * This field is periodically refreshed, however it might not be set in
    * every response. It allows the client to more efficiently open subsequent
    * bidirectional streams to the same object.
    * </pre>
@@ -172,7 +172,7 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * This field will be periodically refreshed, however it may not be set in
+   * This field is periodically refreshed, however it might not be set in
    * every response. It allows the client to more efficiently open subsequent
    * bidirectional streams to the same object.
    * </pre>
@@ -187,7 +187,7 @@ public interface BidiReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * This field will be periodically refreshed, however it may not be set in
+   * This field is periodically refreshed, however it might not be set in
    * every response. It allows the client to more efficiently open subsequent
    * bidirectional streams to the same object.
    * </pre>

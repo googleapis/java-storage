@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response object for `StartResumableWrite`.
+ * Response object for
+ * [StartResumableWrite][google.storage.v2.Storage.StartResumableWrite].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.StartResumableWriteResponse}
@@ -289,7 +290,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
    *
    *
    * <pre>
-   * Response object for `StartResumableWrite`.
+   * Response object for
+   * [StartResumableWrite][google.storage.v2.Storage.StartResumableWrite].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.StartResumableWriteResponse}

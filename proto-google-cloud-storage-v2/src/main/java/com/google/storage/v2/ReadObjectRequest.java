@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for ReadObject.
+ * Request message for [ReadObject][google.storage.v2.Storage.ReadObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ReadObjectRequest}
@@ -206,12 +206,12 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * Optional. The offset for the first byte to return in the read, relative to
    * the start of the object.
    *
-   * A negative `read_offset` value will be interpreted as the number of bytes
+   * A negative `read_offset` value is interpreted as the number of bytes
    * back from the end of the object to be returned. For example, if an object's
-   * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
-   * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-   * a negative offset with magnitude larger than the size of the object will
-   * return the entire object.
+   * length is `15` bytes, a `ReadObjectRequest` with `read_offset` = `-5` and
+   * `read_limit` = `3` would return bytes `10` through `12` of the object.
+   * Requesting a negative offset with magnitude larger than the size of the
+   * object returns the entire object.
    * </pre>
    *
    * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -232,7 +232,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * <pre>
    * Optional. The maximum number of `data` bytes the server is allowed to
    * return in the sum of all `Object` messages. A `read_limit` of zero
-   * indicates that there is no limit, and a negative `read_limit` will cause an
+   * indicates that there is no limit, and a negative `read_limit` causes an
    * error.
    *
    * If the stream returns fewer bytes than allowed by the `read_limit` and no
@@ -474,10 +474,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -494,10 +494,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -514,10 +514,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -813,7 +813,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * Request message for ReadObject.
+   * Request message for [ReadObject][google.storage.v2.Storage.ReadObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ReadObjectRequest}
@@ -1453,12 +1453,12 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * Optional. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative `read_offset` value will be interpreted as the number of bytes
+     * A negative `read_offset` value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
-     * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object.
+     * length is `15` bytes, a `ReadObjectRequest` with `read_offset` = `-5` and
+     * `read_limit` = `3` would return bytes `10` through `12` of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1477,12 +1477,12 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * Optional. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative `read_offset` value will be interpreted as the number of bytes
+     * A negative `read_offset` value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
-     * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object.
+     * length is `15` bytes, a `ReadObjectRequest` with `read_offset` = `-5` and
+     * `read_limit` = `3` would return bytes `10` through `12` of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1505,12 +1505,12 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * Optional. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative `read_offset` value will be interpreted as the number of bytes
+     * A negative `read_offset` value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
-     * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object.
+     * length is `15` bytes, a `ReadObjectRequest` with `read_offset` = `-5` and
+     * `read_limit` = `3` would return bytes `10` through `12` of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1532,7 +1532,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * <pre>
      * Optional. The maximum number of `data` bytes the server is allowed to
      * return in the sum of all `Object` messages. A `read_limit` of zero
-     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * indicates that there is no limit, and a negative `read_limit` causes an
      * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
@@ -1555,7 +1555,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * <pre>
      * Optional. The maximum number of `data` bytes the server is allowed to
      * return in the sum of all `Object` messages. A `read_limit` of zero
-     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * indicates that there is no limit, and a negative `read_limit` causes an
      * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
@@ -1582,7 +1582,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * <pre>
      * Optional. The maximum number of `data` bytes the server is allowed to
      * return in the sum of all `Object` messages. A `read_limit` of zero
-     * indicates that there is no limit, and a negative `read_limit` will cause an
+     * indicates that there is no limit, and a negative `read_limit` causes an
      * error.
      *
      * If the stream returns fewer bytes than allowed by the `read_limit` and no
@@ -2156,10 +2156,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2175,10 +2175,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2198,10 +2198,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2225,10 +2225,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2249,10 +2249,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2281,10 +2281,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2305,10 +2305,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2324,10 +2324,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
@@ -2345,10 +2345,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>

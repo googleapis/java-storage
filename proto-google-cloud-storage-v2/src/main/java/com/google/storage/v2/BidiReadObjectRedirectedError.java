@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Error proto containing details for a redirected read. This error may be
+ * Error proto containing details for a redirected read. This error might be
  * attached as details for an ABORTED response to BidiReadObject.
  * </pre>
  *
@@ -73,8 +73,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -90,8 +90,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -109,8 +109,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -380,7 +380,7 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
    *
    *
    * <pre>
-   * Error proto containing details for a redirected read. This error may be
+   * Error proto containing details for a redirected read. This error might be
    * attached as details for an ABORTED response to BidiReadObject.
    * </pre>
    *
@@ -601,8 +601,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -617,8 +617,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -639,8 +639,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -663,8 +663,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -684,8 +684,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -713,8 +713,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -734,8 +734,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -750,8 +750,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -770,8 +770,8 @@ public final class BidiReadObjectRedirectedError extends com.google.protobuf.Gen
      *
      *
      * <pre>
-     * The read handle for the redirected read. If set, the client may use this in
-     * the BidiReadObjectSpec when retrying the read stream.
+     * The read handle for the redirected read. If set, the client might use this
+     * in the BidiReadObjectSpec when retrying the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>

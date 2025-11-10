@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Message for restoring an object.
+ * Request message for
+ * [RestoreObject][google.storage.v2.Storage.RestoreObject].
  * `bucket`, `object`, and `generation` **must** be set.
  * </pre>
  *
@@ -419,7 +420,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * If false or unset, the bucket's default object ACL will be used.
+   * If false or unset, the bucket's default object ACL is used.
    * If true, copy the source object's access controls.
    * Return an error if bucket has UBLA enabled.
    * </pre>
@@ -437,7 +438,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * If false or unset, the bucket's default object ACL will be used.
+   * If false or unset, the bucket's default object ACL is used.
    * If true, copy the source object's access controls.
    * Return an error if bucket has UBLA enabled.
    * </pre>
@@ -792,7 +793,8 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Message for restoring an object.
+   * Request message for
+   * [RestoreObject][google.storage.v2.Storage.RestoreObject].
    * `bucket`, `object`, and `generation` **must** be set.
    * </pre>
    *
@@ -1858,7 +1860,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If false or unset, the bucket's default object ACL will be used.
+     * If false or unset, the bucket's default object ACL is used.
      * If true, copy the source object's access controls.
      * Return an error if bucket has UBLA enabled.
      * </pre>
@@ -1876,7 +1878,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If false or unset, the bucket's default object ACL will be used.
+     * If false or unset, the bucket's default object ACL is used.
      * If true, copy the source object's access controls.
      * Return an error if bucket has UBLA enabled.
      * </pre>
@@ -1894,7 +1896,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If false or unset, the bucket's default object ACL will be used.
+     * If false or unset, the bucket's default object ACL is used.
      * If true, copy the source object's access controls.
      * Return an error if bucket has UBLA enabled.
      * </pre>
@@ -1916,7 +1918,7 @@ public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * If false or unset, the bucket's default object ACL will be used.
+     * If false or unset, the bucket's default object ACL is used.
      * If true, copy the source object's access controls.
      * Return an error if bucket has UBLA enabled.
      * </pre>
